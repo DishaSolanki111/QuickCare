@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Appointment Contact</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            font-family: "Poppins", sans-serif;
+            background: #f5f9ff;
+        }
+
+        .header {
+            text-align: center;
+            padding: 60px 20px;
+            background: linear-gradient(to right, #0a59c7, #1e88ff);
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+
+        .contact-container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 40px auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+        }
+
+        /* LEFT CONTACT ICONS */
+        .contact-box {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .contact-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.07);
+        }
+
+        .icon {
+            width: 50px;
+            height: 50px;
+            background: #1e88ff;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 22px;
+        }
+
+        /* RIGHT FORM */
+        .contact-form {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.07);
+        }
+
+        .contact-form h2 {
+            margin-bottom: 10px;
+            color: #0a59c7;
+        }
+
+        .contact-form input,
+        .contact-form textarea {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border: 1px solid #c8d8f4;
+            font-size: 15px;
+        }
+
+        .contact-form button {
+            width: 100%;
+            padding: 14px;
+            margin-top: 15px;
+            background: #0a59c7;
+            color: white;
+            font-size: 18px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: .3s;
+        }
+
+        .contact-form button:hover {
+            background: #1e88ff;
+        }
+
+        @media(max-width: 900px) {
+            .contact-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>Contact Us</h1>
+        <p>Book your appointment or reach out for any medical inquiries.</p>
+    </div>
+
+    <div class="contact-container">
+
+        <!-- LEFT SIDE CONTACT DETAILS -->
+        <div class="contact-box">
+
+            <div class="contact-card">
+                <div class="icon">📞</div>
+                <div>
+                    <h3>Phone</h3>
+                    <p>+1 234 567 890</p>
+                </div>
+            </div>
+
+            <div class="contact-card">
+                <div class="icon">💬</div>
+                <div>
+                    <h3>Whatsapp</h3>
+                    <p>+1 987 654 321</p>
+                </div>
+            </div>
+
+            <div class="contact-card">
+                <div class="icon">📧</div>
+                <div>
+                    <h3>Email</h3>
+                    <p>support@hospital.com</p>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- RIGHT SIDE FORM -->
+        <div class="contact-form">
+            <h2>Book an Appointment</h2>
+            <p>Please fill out the form below and our team will contact you shortly.</p>
+
+            <form>
+                <input type="text" placeholder="Full Name" required>
+                <input type="email" placeholder="Email Address" required>
+                <input type="text" placeholder="Phone Number" required>
+                <input type="text" placeholder="Appointment Reason">
+                <textarea rows="5" placeholder="Message"></textarea>
+
+                <button type="submit">Send Request</button>
+            </form>
+        </div>
+
+    </div>
+
+</body>
+</html>
