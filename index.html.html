@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Hospital Appointment Booking</title>
+
+  <!-- Font Awesome for icons -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+  <script defer src="script.js"></script>
+</head>
+<body>
+  <!-- NAVBAR (sticky) -->
+<header>
+    <nav class="navbar">
+        <div class="logo-area">
+            <img src="logo.JPG" alt="QuickCare Logo" class="logo-img">
+            <span class="site-name">quickcare</span>
+        </div>
+
+        <div class="nav-links">
+            <a href="#">Home</a>
+            <a href="#">Doctors</a>
+            <a href="#">About Us</a>
+            <a href="#">Contact Us</a>
+        
+
+        <div class="auth-icons">
+            <a href="login.php"><i class="fas fa-user"></i></a>
+            <a href="register.php"><i class="fas fa-user-plus"></i></a>
+        </div>
+        </div>
+        
+    </nav>
+</header>
+
+
+  <!-- HERO -->
+  <main>
+    <section class="hero container">
+      <div class="hero-left fade-in">
+        <!-- Preferred: put your provided Google-hosted image URL into the src below.
+             If the externally hosted URL fails, drop a local file named left-side-image.jpg in the same folder. -->
+        <img src="bac.jpg" alt="Caregiver with patient" id="hero-img">
+        
+      </div>
+
+      <div class="hero-right slide-in">
+        <h1>Quality Home Care for Your Loved Ones</h1>
+        <p class="lead">We provide compassionate, reliable in-home care — book appointments with our certified staff.</p>
+        <a class="cta" href="#">Make Appointment</a>
+      </div>
+    </section>
+
+    <!-- Feature Buttons -->
+    <section class="btn-section">
+      <a class="btn-box" href="book_appointment.html">Book Appointment</a>
+      <a class="btn-box" href="appointments.html">Doctor Schedule</a>
+      <a class="btn-box" href="feedback.html">View Feedback</a>
+    </section>
+
+    <!-- Simple mock-up of stats / about to mimic your sample -->
+    <section class="stats">
+      <div class="stat">750+ <div class="small">Patients</div></div>
+      <div class="stat">550+ <div class="small">Doctors</div></div>
+      <div class="stat">100+ <div class="small">Homecare Centers</div></div>
+      <div class="stat">25+ <div class="small">Years Experience</div></div>
+    </section>
+
+    <section id="about" class="about">
+      <h2>Caring for Your Loved Ones, Like Family</h2>
+      <p>We deliver personalized in-home care tailored to each patient.</p>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>&copy; <span id="year"></span> Hospital Booking System — All rights reserved.</p>
+  </footer>
+
+</body>
+</html>
