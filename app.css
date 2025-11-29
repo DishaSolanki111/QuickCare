@@ -128,3 +128,115 @@ body {
     background: #3456d1;
 }
 
+.appointment-container {
+    max-width: 700px;
+    margin: 50px auto;
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0px 4px 14px rgba(0,0,0,0.1);
+}
+
+.doctor-header {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.doctor-photo {
+    width: 120px;
+    height: 120px;
+    border-radius: 12px;
+    object-fit: cover;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+.container {
+    width: 90%;
+    margin: auto;
+    padding: 20px;
+}
+
+.doctor-info {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.doc-img {
+    width: 120px;
+    height: 120px;
+    border-radius: 12px;
+    background: #fff;
+    padding: 10px;
+}
+
+.date-picker {
+    padding: 12px;
+    width: 250px;
+    font-size: 16px;
+    margin-top: 10px;
+    border: 2px solid #ccc;
+    border-radius: 8px;
+}
+
+/* Popup Modal */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.3);
+}
+
+.modal-content {
+    background: white;
+    width: 50%;
+    margin: 80px auto;
+    padding: 30px;
+    border-radius: 15px;
+}
+
+.close {
+    float: right;
+    cursor: pointer;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.slot-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.slot-btn {
+    padding: 10px 20px;
+    border: 2px solid #3080ff;
+    background: white;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.slot-btn.active {
+    background: #3080ff;
+    color: white;
+}
+
+/* Confirm Button */
+.confirm-btn {
+    width: 100%;
+    background: #28a745;
+    border: none;
+    padding: 15px;
+    color: white;
+    font-size: 18px;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
