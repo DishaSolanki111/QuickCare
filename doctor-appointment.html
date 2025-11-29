@@ -19,7 +19,22 @@
     </div>
 
     <h3>Select Appointment Date</h3>
-    <input type="date" id="appointmentDate" class="date-picker">
+
+<div class="circular-datepicker">
+    <div class="cdp-header">
+        <button id="cdpPrev">&lt;</button>
+        <span id="cdpMonth"></span>
+        <button id="cdpNext">&gt;</button>
+    </div>
+
+    <div class="cdp-week">
+        <div>Su</div><div>Mo</div><div>Tu</div><div>We</div><div>Th</div><div>Fr</div><div>Sa</div>
+    </div>
+
+    <div id="cdpDays" class="cdp-days"></div>
+</div>
+
+
 
     <!-- POPUP MODAL -->
         <div id="slotModal" class="modal">
@@ -37,6 +52,26 @@
                 <button id="confirmSlotBtn" class="confirm-btn">Confirm Slot</button>
             </div>
         </div>
+
+    <!-- LOGIN POPUP MODAL -->
+<div id="loginModal" class="modal">
+    <div class="modal-content login-box">
+        <span class="close login-close">&times;</span>
+
+        <h3>Login to Continue</h3>
+
+        <input type="text" id="loginUser" class="login-input" placeholder="Enter Username">
+        <input type="password" id="loginPass" class="login-input" placeholder="Enter Password">
+
+        <button id="loginBtn" class="confirm-btn">Login</button>
+
+        <div class="login-links">
+            <a href="#" class="login-link">Forgot Password?</a>
+            <a href="#" class="login-link">New Patient? Register</a>
+        </div>
+    </div>
+</div>
+
 
 </div>
 
