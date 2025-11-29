@@ -12,25 +12,31 @@
 
     <div class="doctor-header">
         <img id="docImg" class="doctor-photo" alt="Doctor">
-
         <div class="doctor-info">
             <h2 id="docName"></h2>
             <p id="docRole"></p>
         </div>
     </div>
 
-    <h3>Select Available Slot</h3>
+    <h3>Select Appointment Date</h3>
+    <input type="date" id="appointmentDate" class="date-picker">
 
-    <div class="slots">
-        <button class="slot-btn">09:00 AM</button>
-        <button class="slot-btn">10:00 AM</button>
-        <button class="slot-btn">11:00 AM</button>
-        <button class="slot-btn">02:00 PM</button>
-        <button class="slot-btn">03:00 PM</button>
-        <button class="slot-btn">04:00 PM</button>
-    </div>
+    <!-- POPUP MODAL -->
+        <div id="slotModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
 
-    <button class="confirm-btn">Confirm Slot</button>
+                <h3>Select Time Slot</h3>
+
+                <h4>Morning Slots</h4>
+                <div class="slot-grid" id="morningSlots"></div>
+
+                <h4>Evening Slots</h4>
+                <div class="slot-grid" id="eveningSlots"></div>
+
+                <button id="confirmSlotBtn" class="confirm-btn">Confirm Slot</button>
+            </div>
+        </div>
 
 </div>
 
