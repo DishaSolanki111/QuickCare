@@ -16,6 +16,45 @@
     align-items: center;
     justify-content: space-between;
 }
+/* LEFT SIDE : LOGO + WEBSITE NAME */
+.logo-area {
+    display: flex;
+    align-items: lefts;
+    gap: 10px;
+    
+   
+}
+
+.logo-img {
+    width: 70px;
+    height: 70px;    /* YOU CAN INCREASE/DECREASE */
+}
+
+.site-name {
+    color: #fff;
+    font-size: 50px;
+    font-weight: 600;
+    letter-spacing: 1px;
+}
+
+/* CENTER NAV LINKS */
+.nav-links {
+    display: flex;
+    list-style: none;
+    gap: 15px;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: #fff;
+    font-size: 18px;
+    font-weight: 500;
+}
+
+.nav-links a:hover {
+    color: #d1e8ff;
+}
+
 /* FONT AWESOME INTERNAL ICON DEFINITIONS */
 .auth-icons {
     display: flex;
@@ -23,7 +62,16 @@
     align-items: center;
     padding: 0;
 }
+/* RIGHT SIDE : LOGIN / REGISTER ICONS */
+.auth-icons a {
+    color: #fff;
+    font-size: 20px;
+    margin-left: 20px;
+}
 
+.auth-icons a:hover {
+    color: #d1e8ff;
+}
 
 /* General icon container */
 .icon {
@@ -113,79 +161,46 @@
 }
 
 
-
-/* LEFT SIDE : LOGO + WEBSITE NAME */
-.logo-area {
-    display: flex;
-    align-items: lefts;
-    gap: 10px;
-    
-   
+*{
+    box-sizing:border-box
 }
-
-.logo-img {
-    width: 70px;
-    height: 70px;    /* YOU CAN INCREASE/DECREASE */
+html,body{
+    height:100%;
+    margin:0;
+    font-family:Inter, system-ui, Arial, sans-serif;
+    background:var(--c);
+    color:#102830
 }
-
-.site-name {
-    color: #fff;
-    font-size: 50px;
-    font-weight: 600;
-    letter-spacing: 1px;
-}
-
-/* CENTER NAV LINKS */
-.nav-links {
-    display: flex;
-    list-style: none;
-    gap: 15px;
-}
-
-.nav-links a {
-    text-decoration: none;
-    color: #fff;
-    font-size: 18px;
-    font-weight: 500;
-}
-
-.nav-links a:hover {
-    color: #d1e8ff;
-}
-.right-nav {
-    display: flex;
-    align-items: center;
-    gap: 30px;
-}
-.right-nav a {
-    color: white;
-    text-decoration: none;
-    font-size: 18px;
-    font-weight: 500;
-}
-/* RIGHT SIDE : LOGIN / REGISTER ICONS 
-.auth-icons a {
-    color: #fff;
-    font-size: 20px;
-    margin-left: 20px;
-}
-
-.auth-icons a:hover {
-    color: #d1e8ff;
-}*/
-
-*{box-sizing:border-box}
-html,body{height:100%;margin:0;font-family:Inter, system-ui, Arial, sans-serif;background:var(--c);color:#102830}
-
-/* Sticky top header made of two rows */
 
 
 /* top white strip with icons */
 
-.icon-group{display:flex;gap:18px;align-items:center}
-.icon-link{display:inline-flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:10px;text-decoration:none;transition:all .25s}
-.icon-link i{font-size:20px;color:white;text-shadow: 0 2px 4px rgba(0,0,0,0.06)}
-.icon-link:hover{transform:translateY(-3px);box-shadow:0 6px 18px rgba(7,45,68,0.12);background:linear-gradient(135deg,var(--c4),var(--c3));color:#fff}
+.icon-group{
+    display:flex;
+    gap:18px;
+    align-items:center
+}
+.icon-link{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:42px;
+    height:42px;
+    border-radius:10px;
+    text-decoration:none;
+    transition:all .25s
+}
+.icon-link i{
+    font-size:20px;
+    color:white;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.06)
+}
+.icon-link:hover{
+    transform:translateY(-3px);
+    box-shadow:0 6px 18px rgba(7,45,68,0.12);
+    background:linear-gradient(135deg,var(--c4),var(--c3));
+    color:#fff
+}
 
 /* colored nav row */
 .bottom-section{
