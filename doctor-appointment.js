@@ -1,3 +1,9 @@
+
+// -----------------------------------------------------
+// LOAD DOCTOR DETAILS FROM URL
+// -----------------------------------------------------
+
+
 const params = new URLSearchParams(window.location.search);
 
 document.getElementById("docName").innerText = params.get("name") || "";
@@ -80,8 +86,8 @@ document.getElementById("loginBtn").addEventListener("click", function () {
     let user = document.getElementById("loginUser").value.trim();
     let pass = document.getElementById("loginPass").value.trim();
 
-    if (user === "" || pass === "") {
-        alert("Please enter both username and password");
+    if (user === "admin" || pass === 123) {
+        alert("login successful");
         return;
     }
 
