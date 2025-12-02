@@ -125,6 +125,7 @@ CREATE TABLE `medicine_tbl` (
   `MEDICINE_ID` int NOT NULL,
   `RECEPTIONIST_ID` int  ,
   `MED_NAME` varchar(25) NOT NULL,
+  `MED_DOSE` VARCHAR(20) NOT NULL,
   `DESCRIPTION` text
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
