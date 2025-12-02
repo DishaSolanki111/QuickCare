@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Patient Dashboard</title>
+
+<style>
+/* COLOR PALETTE (Your palette) */
+:root {
+    --c1:#072D44;
+    --c2:#064469;
+    --c3:#5790AB;
+    --c4:#9CCDDB;
+    --c5:#D0D7E1;
+
+    --bg:#0B1824;
+    --card:#112E3E;
+    --text:white;
+    --muted:#8ea7b5;
+}
+
+/* RESET */
+* { margin:0; padding:0; box-sizing:border-box; font-family:Inter, sans-serif; }
+
+/* LAYOUT */
+body { background:var(--text); color:var(--c4); }
+.container { display:flex; }
+
+/* SIDEBAR */
+.sidebar {
+    width:250px;
+    height:100vh;
+    background:var(--c1);
+    padding:25px 20px;
+    display:flex;
+    flex-direction:column;
+}
+
+.logo {
+    font-size:26px;
+    font-weight:800;
+    text-align:center;
+    background:var(--c4);
+    color:var(--c1);
+    padding:18px;
+    border-radius:50%;
+    width:70px;
+    margin:auto;
+}
+
+.brand { text-align:center; color:var(--c4); font-size:22px; margin-top:10px; }
+
+.nav { margin-top:30px; display:flex; flex-direction:column; gap:10px; }
+
+.nav a {
+    padding:12px;
+    background:transparent;
+    color:var(--c5);
+    border-radius:8px;
+    font-size:15px;
+    font-weight:500;
+    transition:0.2s;
+}
+
+.nav a:hover,
+.nav a.active { background:var(--c2); color:#fff; }
+
+.logout { margin-top:auto; padding:12px; background:#082637; border-radius:8px; text-align:center; }
+
+/* MAIN */
+.main {
+    width:100%;
+    padding:25px;
+}
+
+/* HEADER */
+.header {
+    font-size:28px;
+    font-weight:700;
+    margin-bottom:20px;
+}
+
+/* GRID */
+.grid {
+    display:grid;
+    grid-template-columns:2fr 1fr 1fr;
+    gap:20px;
+}
+
+/* CARD */
+.card {
+    background:var(--card);
+    padding:20px;
+    border-radius:12px;
+    border:1px solid #0f2b3a;
+}
+
+/* UPCOMING */
+.up-title { font-size:16px; font-weight:600; color:var(--c4); }
+
+.up-box { margin-top:10px; display:flex; justify-content:space-between; }
+
+.date-circle {
+    width:65px; height:65px;
+    background:linear-gradient(180deg, var(--c3), var(--c2));
+    border-radius:12px;
+    display:flex; align-items:center; justify-content:center;
+    font-size:24px; font-weight:700;
+}
+
+.status {
+    background:var(--c3);
+    padding:10px 14px;
+    border-radius:8px;
+    font-weight:700;
+    height:fit-content;
+}
+
+/* STAT BOX */
+.stat .num {
+    font-size:32px;
+    font-weight:800;
+    color:var(--c4);
+}
+
+/* LOWER GRID */
+.lower {
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:20px;
+    margin-top:20px;
+}
+
+/* BUTTON ROW */
+.actions {
+    display:flex;
+    gap:15px;
+    margin-top:25px;
+}
+
+.btn {
+    flex:1;
+    background:var(--c1);
+    padding:14px;
+    border-radius:10px;
+    text-align:center;
+    font-weight:700;
+    color:var(--c5);
+    cursor:pointer;
+}
+.btn:hover { background:#0b2433; }
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+       <img src="imgs/logo.JPG" alt="QuickCare Logo" class="logo-img" style="display:block; margin: 0 auto 10px auto; width:80px; height:80px; border-radius:50%;">  
+        <h2 style="text-align: center;">QuickCare</h2>
+        
+
+        <div class="nav">
+            <a class="active">Dashboard</a>
+            <a>My Profile</a>
+            <a>Manage Appointments</a>
+            <a>View Doctor Schedule</a>
+            <a>My Prescriptions</a>
+            <a>Medicine Reminder</a>
+            <a>Payments</a>
+            <a>Feedback</a>
+            <a>View Doctor Profile</a>
+        </div>
+
+        <div class="logout">Logout</div>
+    </div>
+
+    <!-- MAIN -->
+    <div class="main">
+
+        <div class="header">Welcome, Jane Doe</div>
+
+        <!-- GRID -->
+        <div class="grid">
+
+            <!-- UPCOMING APPOINTMENT -->
+            <div class="card">
+                <div class="up-title">Upcoming Appointment</div>
+
+                <div class="up-box">
+                    <div style="display:flex; gap:15px;">
+                        <div class="date-circle">12</div>
+                        <div>
+                            <div>Oct 12, 2024</div>
+                            <div style="margin-top:4px; color:var(--muted);">10:00 AM • Dr. Smith</div>
+                        </div>
+                    </div>
+
+                    <div class="status">Confirmed</div>
+                </div>
+            </div>
+
+            <!-- STAT 1 -->
+            <div class="card stat">
+                <div>Total Appointments</div>
+                <div class="num">5</div>
+            </div>
+
+            <!-- STAT 2 -->
+            <div class="card stat">
+                <div>Completed Appointments</div>
+                <div class="num">3</div>
+            </div>
+        </div>
+
+        <!-- LOWER GRID -->
+        <div class="lower">
+            <div class="card">
+                <div>Upcoming Medicines</div>
+                <div class="num">3</div>
+            </div>
+
+            <div class="card">
+                <div>Recent Feedback</div>
+                <div class="num">★ 1</div>
+            </div>
+        </div>
+
+        <!-- BUTTONS -->
+        <div class="actions">
+            <div class="btn">Book Appointment</div>
+            <div class="btn">View Prescription</div>
+            <div class="btn">Give Feedback</div>
+            <div class="btn">Make Payment</div>
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>

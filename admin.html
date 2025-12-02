@@ -1,83 +1,212 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Hospital Appointment Booking</title>
+<meta charset="UTF-8">
+<title>Admin Dashboard</title>
 
-  <!-- Font Awesome for icons -->
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+<style>
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #D0D7E1;
+        display: flex;
+    }
 
-  <link rel="stylesheet" href="style.css">
-  <script defer src="script.js"></script>
+    /* Sidebar */
+    .sidebar {
+        width: 250px;
+        background: #072D44;
+        min-height: 100vh;
+        color: white;
+        padding-top: 30px;
+        position: fixed;
+    }
+
+    .sidebar h2 {
+        text-align: center;
+        margin-bottom: 40px;
+        color: #9CCDD8;
+    }
+
+    .sidebar a {
+        display: block;
+        padding: 15px 25px;
+        color: #D0D7E1;
+        text-decoration: none;
+        font-size: 17px;
+        border-left: 4px solid transparent;
+    }
+
+    .sidebar a:hover {
+        background: #064469;
+        border-left: 4px solid #9CCDD8;
+        color: white;
+    }
+
+    /* Main content */
+    .main {
+        margin-left: 250px;
+        padding: 20px;
+        width: calc(100% - 250px);
+    }
+
+    /* Top bar */
+    .topbar {
+        background: white;
+        padding: 15px 25px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        display: flex;
+        justify-content: space-between;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    .topbar h1 {
+        margin: 0;
+        color: #064469;
+    }
+
+    /* Cards */
+    .cards {
+        display: flex;
+        gap: 20px;
+        margin-bottom: 20px;
+    }
+
+    .card {
+        background: white;
+        padding: 20px;
+        border-radius: 12px;
+        flex: 1;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        border-left: 8px solid #5790AB;
+    }
+
+    .card h3 {
+        margin: 0;
+        color: #072D44;
+    }
+
+    .card p {
+        margin-top: 10px;
+        font-size: 22px;
+        color: #064469;
+        font-weight: bold;
+    }
+
+    /* Table Section */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    th, td {
+        padding: 14px;
+        border-bottom: 1px solid #D0D7E1;
+    }
+
+    th {
+        background: #5790AB;
+        color: white;
+        text-align: left;
+    }
+
+    tr:hover {
+        background: #F2F9FB;
+    }
+
+</style>
 </head>
+
 <body>
-  <!-- NAVBAR (sticky) -->
-<header>
-    <nav class="navbar">
-        <div class="logo-area">
-            <img src="/imgs/logo.JPG" alt="QuickCare Logo" class="logo-img">
-            <span class="site-name">quickcare</span>
+
+<!-- Sidebar -->
+<div class="sidebar">
+  <img src="imgs/logo.JPG" alt="QuickCare Logo" class="logo-img" style="display:block; margin: 0 auto 10px auto; width:80px; height:80px; border-radius:50%;">  
+        <h2>QuickCare</h2>
+
+    <a href="#">Dashboard</a>
+    <a href="#">Appointments</a>
+    <a href="#">Doctors</a>
+    <a href="#">Patients</a>
+    <a href="#">Medicine</a>
+    <a href="#">Payments</a>
+    <a href="#">Feedback</a>
+    <a href="#">Reports</a>
+    <a href="#">Settings</a>
+</div>
+
+<!-- Main Content -->
+<div class="main">
+
+    <!-- Topbar -->
+    <div class="topbar">
+        <h1>Admin Dashboard</h1>
+        <p>Welcome, Admin</p>
+    </div>
+
+    <!-- Cards -->
+    <div class="cards">
+        <div class="card">
+            <h3>Total Patients</h3>
+            <p>120</p>
         </div>
 
-        <div class="nav-links">
-            <a href="#">Home</a>
-            <a href="#">Doctors</a>
-            <a href="#">About Us</a>
-            <a href="#">Contact Us</a>
-        
-
-        <div class="auth-icons">
-            <a href="login.php"><i class="fas fa-user"></i></a>
-            <a href="register.php"><i class="fas fa-user-plus"></i></a>
+        <div class="card">
+            <h3>Total Appointments</h3>
+            <p>45</p>
         </div>
+
+        <div class="card">
+            <h3>Total Doctors</h3>
+            <p>10</p>
+        </div>
+        <div class="card">
+            <h3>Total Revenue</h3>
+            <p>$15,000</p>
         </div>
         
-    </nav>
-</header>
+        <div class="card">
+          <h3>New Registrations</h3>
+          <p>25</p>
+        </div>
 
+    </div>
 
-  <!-- HERO -->
-  <main>
-    <section class="hero container">
-      <div class="hero-left fade-in">
-        <!-- Preferred: put your provided Google-hosted image URL into the src below.
-             If the externally hosted URL fails, drop a local file named left-side-image.jpg in the same folder. -->
-        <img src="/imgs/bac.jpg" alt="Caregiver with patient" id="hero-img">
-        
-      </div>
+    <!-- Table -->
+    <h2 style="color:#064469;">Recent Appointments</h2>
+    <table>
+        <tr>
+            <th>Patient</th>
+            <th>Doctor</th>
+            <th>Date</th>
+            <th>Status</th>
+        </tr>
+        <tr>
+            <td>Riya Patel</td>
+            <td>Dr. Smith</td>
+            <td>30 Nov</td>
+            <td>Completed</td>
+        </tr>
+        <tr>
+            <td>Aman Shah</td>
+            <td>Dr. Mehta</td>
+            <td>29 Nov</td>
+            <td>Upcoming</td>
+        </tr>
+        <tr>
+            <td>Nikita Shah</td>
+            <td>Dr. Rohan</td>
+            <td>28 Nov</td>
+            <td>Cancelled</td>
+        </tr>
+    </table>
 
-      <div class="hero-right slide-in">
-        <h1>Quality Home Care for Your Loved Ones helloo </h1>
-        <p class="lead">We provide compassionate, reliable in-home care — book appointments with our certified staff.</p>
-        <a class="cta" href="#">Make Appointment</a>
-      </div>
-    </section>
-
-    <!-- Feature Buttons -->
-    <section class="btn-section">
-      <a class="btn-box" href="specialization.html">Book Appointment</a>
-      <a class="btn-box" href="appointments.html">Doctor Schedule</a>
-      <a class="btn-box" href="feedback.html">View Feedback</a>
-    </section>
-
-    <!-- Simple mock-up of stats / about to mimic your sample -->
-    <section class="stats">
-      <div class="stat">750+ <div class="small">Patients</div></div>
-      <div class="stat">550+ <div class="small">Doctors</div></div>
-      <div class="stat">50+ <div class="small">Medicine Reminders</div></div>
-      <div class="stat">25+ <div class="small">Doctor's Experience</div></div>
-    </section>
-
-    <section id="about" class="about">
-      <h2>Caring for Your Loved Ones, Like Family</h2>
-      <p>We deliver personalized in-home care tailored to each patient.</p>
-    </section>
-  </main>
-
-  <footer class="footer">
-    <p>&copy; <span id="year"></span> Hospital Booking System — All rights reserved.</p>
-  </footer>
+</div>
 
 </body>
 </html>

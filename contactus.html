@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Patient Appointment – Contact</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-
+    <link rel="stylesheet" href=style.css>
     <style>
         body {
             font-family: "Poppins", sans-serif;
@@ -140,14 +140,36 @@
                 grid-template-columns: 1fr;
             }
         }
-    </style>
-     <div class="logo-area">
-            <img src="imgs/logo.JPG" alt="QuickCare Logo" class="logo-img">
-            <span class="site-name">quickcare</span>
-        </div>   
+    </style>  
 </head>
 <body>
+<header>
+    <nav class="navbar">
+        <div class="logo-area">
+            <img src="imgs/logo.JPG" alt="QuickCare Logo" class="logo-img">
+            <span class="site-name">QuickCare</span>
+        </div>
+         <div class="nav-links">
+            <a href="#">Home</a>
+            <a href="#">Doctors</a>
+            <a href="#">About Us</a>
+            <a href="contactus.html">Contact Us</a>
 
+             <div class="auth-icons">
+               <!-- LOGIN icon -->
+                <a href="login.php">
+                <div class="icon user-icon"></div>
+                </a>
+                  <!-- REGISTER icon -->
+                  <a href="register.php">
+                  <div class="icon userplus-icon">
+                  <span class="plus"></span>
+                  </div>
+                  </a>
+              </div>
+            </div>
+      </nav>
+      </header>
     <!-- Header -->
     <div class="contact-header">
         <h1>Contact Us</h1>
