@@ -565,15 +565,9 @@ INSERT INTO medicine_reminder_tbl
 (MEDICINE_REMINDER_ID, MEDICINE_ID, CREATOR_ROLE, CREATOR_ID, PATIENT_ID, REMINDER_TIME, REMARKS)
 VALUES
 (1, 1, 'PATIENT', 3, 3, '09:00:00', 'Morning dose reminder'),
-(2, 1, 'PATIENT', 3, 3, '21:00:00', 'Night dose reminder'),
+(2, 1, 'RECEPTIONIST', 3, 3, '21:00:00', 'Night dose reminder'),
 
-(3, 2, 'RECEPTIONIST', 1, 5, '08:30:00', 'Take before breakfast'),
-(4, 3, 'RECEPTIONIST', 1, 5, '14:00:00', 'Afternoon reminder'),
 
-(5, 4, 'PATIENT', 7, 7, '19:30:00', 'Evening medicine'),
-
-(6, 2, 'RECEPTIONIST', 2, 8, '07:00:00', 'Daily early morning dose'),
-(7, 5, 'PATIENT', 10, 10, '18:00:00', 'Take after meal');
 
 INSERT INTO feedback_tbl 
 (FEEDBACK_ID, APPOINTMENT_ID, RATING, COMMENTS)
