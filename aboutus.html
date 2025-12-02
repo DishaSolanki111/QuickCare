@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us | Quick Care</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        /* ================= HERO SECTION ================= */
+        .hero {
+            background: url('your-hospital-image.jpg') center/cover no-repeat;
+            height: 50vh;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+        }
+
+        .hero .overlay {
+            height: 100%;
+            width: 100%;
+            background: rgba(0,0,0,0.4);
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            z-index: 2;
+        }
+
+        .hero p {
+            margin-top: 10px;
+            z-index: 2;
+        }
+
+        /* ================= VISION + RESPONSIBILITY ================= */
+        .vision-section {
+            display: flex;
+            justify-content: space-around;
+            padding: 40px 20px;
+            background: #0A4D9C;
+            color: white;
+        }
+
+        .vision-box {
+            width: 45%;
+        }
+
+        .vision-box h2 {
+            margin-bottom: 10px;
+            font-size: 1.8rem;
+        }
+
+        /* ================= ABOUT AREA ================= */
+        .about-area {
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        .about-area h2 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        /* ================= INFORMATION SECTION ================= */
+        .info-section {
+            padding: 40px 20px;
+        }
+
+        .info-section h2 {
+            margin-top: 30px;
+            color: #0A4D9C;
+        }
+
+        .info-section p {
+            margin-top: 10px;
+            line-height: 1.6;
+        }
+
+        /* ================= FOOTER ================= */
+        footer {
+            background: #0A4D9C;
+            color: white;
+            padding: 40px 20px;
+        }
+
+        .footer-grid {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+
+        .footer-grid div {
+            width: 22%;
+        }
+
+        footer ul {
+            list-style: none;
+            margin-top: 10px;
+        }
+
+        footer ul li {
+            margin-bottom: 8px;
+        }
+
+        .copyright {
+            margin-top: 20px;
+            text-align: center;
+            border-top: 1px solid #ffffff55;
+            padding-top: 10px;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .vision-section {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .vision-box {
+                width: 100%;
+                margin-bottom: 20px;
+            }
+
+            .footer-grid div {
+                width: 100%;
+                margin-bottom: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ================= HERO SECTION ================= -->
+    <section class="hero">
+        <div class="overlay"></div>
+        <h1>About Us</h1>
+        <p>Home > About Us</p>
+    </section>
+
+    <!-- ================= VISION + RESPONSIBILITY ================= -->
+    <section class="vision-section">
+        <div class="vision-box">
+            <h2>Our Vision</h2>
+            <p>
+                At Quick Care, our vision is to provide accessible, high-quality healthcare 
+                to every patient and support them physically, mentally, socially, and emotionally.
+            </p>
+        </div>
+
+        <div class="vision-box">
+            <h2>Social Responsibility</h2>
+            <p>
+                We aim to serve our community with trust, quality and compassion. 
+                Quick Care is committed to being a positive asset to society by offering 
+                reliable and affordable health services.
+            </p>
+        </div>
+    </section>
+
+    <!-- ================= ABOUT QUICK CARE ================= -->
+    <section class="about-area">
+        <h2>About Quick Care</h2>
+        <p>
+            Quick Care is a multi-speciality healthcare provider offering seamless patient 
+            appointment booking, quality treatment and modern medical support. Our goal is 
+            to make healthcare simple, fast and patient-friendly with advanced technology 
+            and compassionate care.
+        </p>
+    </section>
+
+    <!-- ================= SECTION LIST (like Sunflower hospital) ================= -->
+    <section class="info-section">
+        <h2>Infrastructure</h2>
+        <p>
+            Our hospital is equipped with modern medical equipment, emergency care units, 
+            digital appointment systems, advanced operation theatres and comfortable patient rooms.
+        </p>
+
+        <h2>Doctors</h2>
+        <p>
+            Quick Care proudly has a team of experienced, qualified and dedicated doctors from 
+            various specialities, ensuring the highest standard of medical treatment.
+        </p>
+
+        <h2>Awards</h2>
+        <p>
+            Quick Care has been recognized for its service quality, patient satisfaction 
+            and innovative digital healthcare practices.
+        </p>
+
+        <h2>Celebration & Events</h2>
+        <p>
+            We host health awareness camps, blood donation drives, staff celebrations and 
+            community wellness programs throughout the year.
+        </p>
+    </section>
+
+    <!-- ================= FOOTER ================= -->
+    <footer>
+        <div class="footer-grid">
+
+            <div class="footer-about">
+                <h3>Quick Care</h3>
+                <p>
+                    Quick Care is a trusted multi-speciality healthcare provider committed to 
+                    delivering quality medical services with modern technology and patient-first care.
+                </p>
+            </div>
+
+            <div class="footer-links">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li>Home</li>
+                    <li>About Us</li>
+                    <li>Services</li>
+                    <li>Treatments</li>
+                    <li>Patient Care</li>
+                    <li>Contact Us</li>
+                </ul>
+            </div>
+
+            <div class="footer-services">
+                <h4>Our Services</h4>
+                <ul>
+                    <li>Departments</li>
+                    <li>Facilities</li>
+                    <li>Specialities</li>
+                    <li>Scope of Service</li>
+                </ul>
+            </div>
+
+            <div class="footer-open">
+                <h4>Open - Time</h4>
+                <ul>
+                    <li>General: 24 × 7</li>
+                    <li>Emergency: 24 × 7</li>
+                    <li>Pharmacy: 24 × 7</li>
+                    <li>Ambulance: 24 × 7</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="copyright">
+            © 2025 Quick Care. All rights reserved.
+        </div>
+    </footer>
+
+</body>
+</html>
