@@ -488,3 +488,90 @@ COMMIT;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+
+INSERT INTO specialisation_tbl (SPECIALISATION_ID, SPECIALISATION_NAME) VALUES
+(1, 'Pediatrician'),
+(2, 'Cardiologist'),
+(3, 'Neurologist'),
+(4, 'Orthopedic');
+
+
+INSERT INTO patient_tbl 
+(P_ID, FIRST_NAME, LAST_NAME, USERNAME, PSW, DOB, GENDER, BLOOD_GROUP, DIABETES, PHONE, EMAIL, ADDRESS) 
+VALUES
+(1, 'Rohan', 'Shah', 'rohan123', 'pass123', '2000-05-12', 'MALE', 'A+', 'TYPE-1', 9876543210, 'rohan@gmail.com', 'Ahmedabad'),
+(2, 'Priya', 'Mehta', 'priya001', 'priya@123', '1999-11-22', 'FEMALE', 'B+', 'NONE', 9898989898, 'priya@gmail.com', 'Surat'),
+(3, 'Amit', 'Patel', 'amitp', 'amit321', '1988-04-10', 'MALE', 'O+', 'TYPE-2', 9123456780, 'amit@gmail.com', 'Vadodara');
+
+INSERT INTO doctor_tbl 
+(DOCTOR_ID, SPECIALISATION_ID, FIRST_NAME, LAST_NAME, DOB, USERNAME, PASSWORD, PHONE, EMAIL, GENDER) 
+VALUES
+(1, 1, 'Bhavesh', 'Trivedi', '1980-02-14', 'drbhavesh', 'dr123', 9887766554, 'bhavesh@clinic.com', 'MALE'),
+(2, 2, 'Kiran', 'Sharma', '1975-08-20', 'drkiran', 'kiran@123', 9876501234, 'kiran@clinic.com', 'FEMALE'),
+(3, 3, 'Sneha', 'Gupta', '1982-10-10', 'drsneha', 'sneha987', 9012345678, 'sneha@clinic.com', 'FEMALE'),
+(4, 4, 'Harish', 'Rathod', '1978-03-05', 'drharish', 'harish12', 9090909090, 'harish@clinic.com', 'MALE');
+
+INSERT INTO receptionist_tbl 
+(RECEPTIONIST_ID, FIRST_NAME, LAST_NAME, DOB, PHONE, EMAIL, USERNAME, PASSWORD, GENDER, ADDRESS)
+VALUES
+(1, 'Neha', 'Chauhan', '1995-01-12', 9876512345, 'neha@clinic.com', 'neha_rcp', 'neha123', 'FEMALE', 'Ahmedabad'),
+(2, 'Raj', 'Vyas', '1993-07-15', 9988776655, 'raj@clinic.com', 'raj_rcp', 'raj@123', 'MALE', 'Surat');
+
+INSERT INTO doctor_schedule_tbl 
+(SCHEDULE_ID, DOCTOR_ID, RECEPTIONIST_ID, START_TIME, END_TIME, AVAILABLE_DAY)
+VALUES
+(1, 1, 1, '10:00:00', '13:00:00', 'MON'),
+(2, 1, 1, '17:00:00', '20:00:00', 'WED'),
+(3, 2, 2, '09:00:00', '12:00:00', 'TUE'),
+(4, 3, 1, '14:00:00', '18:00:00', 'THU'),
+(5, 4, 2, '11:00:00', '15:00:00', 'FRI');
+
+INSERT INTO appointment_tbl 
+(APPOINTMENT_ID, PATIENT_ID, DOCTOR_ID, SCHEDULE_ID, CREATED_AT, APPOINTMENT_DATE, APPOINTMENT_TIME, STATUS)
+VALUES
+(1, 1, 1, 1, NOW(), '2025-01-05', '10:30:00', 'SCHEDULED'),
+(2, 2, 2, 3, NOW(), '2025-01-06', '09:30:00', 'COMPLETED'),
+(3, 3, 3, 4, NOW(), '2025-01-07', '14:15:00', 'CANCELLED');
+
+INSERT INTO appointment_reminder_tbl 
+(APPOINTMENT_REMINDER_ID, RECEPTIONIST_ID, APPOINTMENT_ID, REMINDER_TIME, REMARKS)
+VALUES
+(1, 1, 1, '09:30:00', 'Call patient for confirmation'),
+(2, 2, 2, '08:30:00', 'Send SMS reminder');
+
+INSERT INTO prescription_tbl 
+(PRESCRIPTION_ID, APPOINTMENT_ID, ISSUE_DATE, HEIGHT(CM), WEIGHT(KG), BLOOD_PRESSURE, SYMPTOMS, DIAGNOSIS, ADDITIONAL_NOTES, CREATED_AT)
+VALUES
+(1, 2, '2025-01-06', 160, 55.5, '120/80', 'Chest pain', 'Minor Cardiac Issue', 'Continue exercise', NOW());
+
+INSERT INTO medicine_tbl 
+(MEDICINE_ID, RECEPTIONIST_ID, MED_NAME, MED_DOSE, DESCRIPTION)
+VALUES
+(1, 1, 'Paracetamol', '500mg', 'Pain Relief'),
+(2, 1, 'Atorvastatin', '10mg', 'Cholesterol Control'),
+(3, 2, 'Neurolox', '5mg', 'Neural Pain Relief');
+
+INSERT INTO prescription_medicine_tbl 
+(PRESCRIPTION_MEDICINE_ID, PRESCRIPTION_ID, MEDICINE_ID, DOSAGE, DURATION, CREATED_AT)
+VALUES
+(1, 1, 1, '1 tablet', '5 Days', NOW()),
+(2, 1, 2, '1 tablet', '10 Days', NOW());
+
+INSERT INTO medicine_reminder_tbl 
+(MEDICINE_REMINDER_ID, PRESCRIPTION_ID, PATIENT_ID, REMINDER_TIME, REMARKS)
+VALUES
+(1, 1, 1, '09:00:00', 'Morning dose'),
+(2, 1, 1, '21:00:00', 'Night dose');
+
+INSERT INTO feedback_tbl 
+(FEEDBACK_ID, APPOINTMENT_ID, RATING, COMMENTS)
+VALUES
+(1, 2, 5, 'Very good service'),
+(2, 1, 4, 'Doctor was helpful');
+
+INSERT INTO payment_tbl 
+(PAYMENT_ID, APPOINTMENT_ID, AMOUNT, PAYMENT_DATE, PAYMENT_MODE, STATUS, TRANSACTION_ID)
+VALUES
+(1, 2, 500.00, '2025-01-06', 'UPI', 'COMPLETED', 'TXN12345'),
+(2, 1, 300.00, '2025-01-05', 'CREDIT CARD', 'COMPLETED', 'TXN98765');
+
