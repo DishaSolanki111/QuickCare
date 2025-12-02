@@ -556,10 +556,10 @@ VALUES
 (3, 2, 'Neurolox', '5mg', 'Neural Pain Relief');
 
 INSERT INTO prescription_medicine_tbl 
-(PRESCRIPTION_MEDICINE_ID, PRESCRIPTION_ID, MEDICINE_ID, DOSAGE, DURATION, CREATED_AT)
+(PRESCRIPTION_ID, MEDICINE_ID, DOSAGE, DURATION, CREATED_AT)
 VALUES
-(1, 1, 1, '1 tablet', '5 Days', NOW()),
-(2, 1, 2, '1 tablet', '10 Days', NOW());
+(1, 1, '1 tablet', '5 Days', NOW()),
+(1, 2, '1 tablet', '10 Days', NOW());
 
 INSERT INTO medicine_reminder_tbl 
 (MEDICINE_REMINDER_ID, PRESCRIPTION_ID, PATIENT_ID, REMINDER_TIME, REMARKS)
