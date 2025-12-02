@@ -64,7 +64,11 @@ CREATE TABLE `doctor_schedule_tbl` (
   `RECEPTIONIST_ID` int  ,
   `START_TIME` time NOT NULL,
   `END_TIME` time NOT NULL,
+<<<<<<< HEAD
   `AVAILABLE_DAY` enum('MON','TUE','WED','THUR','FRI','SAT','SUN')  
+=======
+  `AVAILABLE` enum('MON','TUE','WED','THUR','FRI','SAT','SUN')  
+>>>>>>> 8d9ff1661fbb006b6ab70b8f85b6229044d13444
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -179,8 +183,12 @@ CREATE TABLE `prescription_medicine_tbl` (
   `DOSAGE` int  ,
   `FREQUENCY` int  ,
   `DURATION` varchar(50)  ,
+<<<<<<< HEAD
   `REMARKS` text,
   `CREATED_AT` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+=======
+  `REMARKS` text
+>>>>>>> 8d9ff1661fbb006b6ab70b8f85b6229044d13444
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -190,6 +198,7 @@ CREATE TABLE `prescription_medicine_tbl` (
 --
 
 CREATE TABLE `prescription_tbl` (
+<<<<<<< HEAD
   `PRESCRIPTION_ID` INT NOT NULL,
   `APPOINTMENT_ID` INT,
   `ISSUE_DATE` DATE NOT NULL,
@@ -202,6 +211,13 @@ CREATE TABLE `prescription_tbl` (
   `REPORT` VARCHAR(255),
   `CREATED_AT` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+=======
+  `PRESCRIPTION_ID` int NOT NULL,
+  `APPOINTMENT_ID` int  ,
+  `ISSUE_DATE` date NOT NULL,
+  `REMARKS` text
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+>>>>>>> 8d9ff1661fbb006b6ab70b8f85b6229044d13444
 
 -- --------------------------------------------------------
 
