@@ -390,7 +390,7 @@ ALTER TABLE `medicine_tbl`
 -- AUTO_INCREMENT for table `patient_tbl`
 --
 ALTER TABLE `patient_tbl`
-  MODIFY `P_ID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT;
+  MODIFY `P_ID` int NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `payment_tbl`
