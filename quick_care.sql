@@ -456,6 +456,7 @@ ALTER TABLE `feedback_tbl`
 ALTER TABLE `medicine_reminder_tbl`
   ADD CONSTRAINT `medicine_reminder_tbl_ibfk_1` FOREIGN KEY (`MEDICINE_ID`) REFERENCES `medicine_tbl` (`MEDICINE_ID`),
   ADD CONSTRAINT `medicine_reminder_tbl_ibfk_2` FOREIGN KEY (`PATIENT_ID`) REFERENCES `patient_tbl` (`P_ID`);
+  
 
 --
 -- Constraints for table `medicine_tbl`
