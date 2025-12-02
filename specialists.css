@@ -1,0 +1,96 @@
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f7ff;
+    margin: 0;
+    padding: 20px;
+}
+
+.main-title {
+    text-align: center;
+    font-size: 42px;
+    color: #2d3e50;
+    font-weight: bold;
+    margin-bottom: 40px;
+}
+
+.container {
+    background: #fff;
+    width: 85%;
+    margin: auto;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0px 8px 25px rgba(0,0,0,0.1);
+}
+
+.sub-title {
+    text-align: center;
+    font-size: 30px;
+    margin-bottom: 40px;
+    color: #2d3e50;
+    font-weight: bold;
+}
+
+.cards {
+    display: flex;
+    gap: 40px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.card {
+    width: 330px;
+    background: #ffffff;
+    padding: 25px;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    transition: 0.3s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+.doc-img {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    background: #ddd;
+    object-fit: cover;
+    margin-bottom: 15px;
+}
+
+.doc-name {
+    font-size: 24px;
+    font-weight: bold;
+    color: #2d3e50;
+    margin: 8px 0;
+}
+
+.doc-type {
+    font-size: 18px;
+    color: #555;
+    margin-bottom: 20px;
+}
+
+.btn {
+    display: inline-block;
+    padding: 12px 25px;
+    background: #497DF0;
+    color: #fff;
+    border-radius: 40px;
+    text-decoration: none;
+    font-size: 18px;
+    transition: 0.3s;
+}
+
+.btn:hover {
+    background: #2e64e3;
+}
+
+.no-data {
+    text-align: center;
+    font-size: 20px;
+    color: #444;
+    width: 100%;
+}
