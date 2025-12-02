@@ -33,7 +33,7 @@ CREATE TABLE `appointment_reminder_tbl` (
   `APPOINTMENT_ID` int  ,
   `REMINDER_TIME` time  ,
   `REMARKS` text
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -50,7 +50,7 @@ CREATE TABLE `appointment_tbl` (
   `APPOINTMENT_DATE` date NOT NULL,
   `APPOINTMENT_TIME` time NOT NULL,
   `status` enum('SCHEDULED','COMPLETED','CANCELLED') DEFAULT 'SCHEDULED'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -65,7 +65,7 @@ CREATE TABLE `doctor_schedule_tbl` (
   `START_TIME` time NOT NULL,
   `END_TIME` time NOT NULL,
   `AVAILABLE` enum('MON','TUE','WED','THUR','FRI','SAT','SUN')  
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -85,7 +85,7 @@ CREATE TABLE `doctor_tbl` (
   `PHONE` bigint  ,
   `EMAIL` varchar(30)  ,
   `GENDER` enum('MALE','FEMALE','OTHER')  
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -98,7 +98,7 @@ CREATE TABLE `feedback_tbl` (
   `APPOINTMENT_ID` int  ,
   `RATING` int  ,
   `COMMENTS` varchar(255)  
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -114,7 +114,7 @@ CREATE TABLE `medicine_reminder_tbl` (
   `PATIENT_ID` int  ,
   `REMINDER_TIME` time NOT NULL,
   `REMARKS` text
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -127,7 +127,7 @@ CREATE TABLE `medicine_tbl` (
   `RECEPTIONIST_ID` int  ,
   `MED_NAME` varchar(25) NOT NULL,
   `DESCRIPTION` text
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -146,7 +146,7 @@ CREATE TABLE `patient_tbl` (
   `PHONE` bigint  ,
   `EMAIL` varchar(30)  ,
   `ADDRESS` text
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `patient_tbl`
@@ -169,7 +169,7 @@ CREATE TABLE `payment_tbl` (
   `PAYMENT_MODE` enum('CREDIT CARD','GOOGLE PAY','UPI','NET BANKING')  ,
   `STATUS` enum('PENDING','COMPLETED','FAILED') DEFAULT 'PENDING',
   `TRANSACTION_ID` varchar(100)  
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -184,7 +184,7 @@ CREATE TABLE `prescription_medicine_tbl` (
   `FREQUENCY` int  ,
   `DURATION` varchar(50)  ,
   `REMARKS` text
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -197,7 +197,7 @@ CREATE TABLE `prescription_tbl` (
   `APPOINTMENT_ID` int  ,
   `ISSUE_DATE` date NOT NULL,
   `REMARKS` text
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -217,7 +217,7 @@ CREATE TABLE `receptionist_tbl` (
   `ADDRESS` text,
   `USERNAME` varchar(50)  ,
   `PASSWORD` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -228,7 +228,7 @@ CREATE TABLE `receptionist_tbl` (
 CREATE TABLE `specialisation_tbl` (
   `SPECIALISATION_ID` int NOT NULL,
   `SPECIALISATION_NAME` varchar(50) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Indexes for dumped tables
