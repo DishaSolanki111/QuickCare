@@ -565,7 +565,7 @@ INSERT INTO medicine_reminder_tbl
 (MEDICINE_REMINDER_ID, MEDICINE_ID, CREATOR_ROLE, CREATOR_ID, PATIENT_ID, REMINDER_TIME, REMARKS)
 VALUES
 (1, 1, 'PATIENT', 3, 3, '09:00:00', 'Morning dose reminder'),
-(2, 1, 'RECEPTIONIST', 3, 3, '21:00:00', 'Night dose reminder'),
+(2, 1, 'RECEPTIONIST', 3, 3, '21:00:00', 'Night dose reminder');
 
 
 
