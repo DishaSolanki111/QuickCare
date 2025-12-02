@@ -29,9 +29,9 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `appointment_reminder_tbl` (
   `APPOINTMENT_REMINDER_ID` int NOT NULL,
-  `RECEPTIONIST_ID` int DEFAULT NULL,
-  `APPOINTMENT_ID` int DEFAULT NULL,
-  `REMINDER_TIME` time DEFAULT NULL,
+  `RECEPTIONIST_ID` int  ,
+  `APPOINTMENT_ID` int  ,
+  `REMINDER_TIME` time  ,
   `REMARKS` text
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
@@ -43,9 +43,9 @@ CREATE TABLE `appointment_reminder_tbl` (
 
 CREATE TABLE `appointment_tbl` (
   `APPOINTMENT_ID` int NOT NULL,
-  `PATIENT_ID` int DEFAULT NULL,
-  `DOCTOR_ID` int DEFAULT NULL,
-  `SCHEDULE_ID` int DEFAULT NULL,
+  `PATIENT_ID` int  ,
+  `DOCTOR_ID` int  ,
+  `SCHEDULE_ID` int  ,
   `CREATED_AT` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `APPOINTMENT_DATE` date NOT NULL,
   `APPOINTMENT_TIME` time NOT NULL,
@@ -60,11 +60,11 @@ CREATE TABLE `appointment_tbl` (
 
 CREATE TABLE `doctor_schedule_tbl` (
   `SCHEDULE_ID` int NOT NULL,
-  `DOCTOR_ID` int DEFAULT NULL,
-  `RECEPTIONIST_ID` int DEFAULT NULL,
+  `DOCTOR_ID` int  ,
+  `RECEPTIONIST_ID` int  ,
   `START_TIME` time NOT NULL,
   `END_TIME` time NOT NULL,
-  `AVAILABLE` enum('MON','TUE','WED','THUR','FRI','SAT','SUN') DEFAULT NULL
+  `AVAILABLE` enum('MON','TUE','WED','THUR','FRI','SAT','SUN')  
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
@@ -75,16 +75,16 @@ CREATE TABLE `doctor_schedule_tbl` (
 
 CREATE TABLE `doctor_tbl` (
   `DOCTOR_ID` int NOT NULL,
-  `SPECIALISATION_ID` int DEFAULT NULL,
+  `SPECIALISATION_ID` int  ,
   `FIRST_NAME` varchar(20) NOT NULL,
   `LAST_NAME` varchar(20) NOT NULL,
-  `DOB` date DEFAULT NULL,
-  `DOJ` date DEFAULT NULL,
-  `USERNAME` varchar(20) DEFAULT NULL,
+  `DOB` date  ,
+  `DOJ` date  ,
+  `USERNAME` varchar(20)  ,
   `PASSWORD` varchar(60) NOT NULL,
-  `PHONE` bigint DEFAULT NULL,
-  `EMAIL` varchar(30) DEFAULT NULL,
-  `GENDER` enum('MALE','FEMALE','OTHER') DEFAULT NULL
+  `PHONE` bigint  ,
+  `EMAIL` varchar(30)  ,
+  `GENDER` enum('MALE','FEMALE','OTHER')  
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
@@ -95,9 +95,9 @@ CREATE TABLE `doctor_tbl` (
 
 CREATE TABLE `feedback_tbl` (
   `FEEDBACK_ID` int NOT NULL,
-  `APPOINTMENT_ID` int DEFAULT NULL,
-  `RATING` int DEFAULT NULL,
-  `COMMENTS` varchar(255) DEFAULT NULL
+  `APPOINTMENT_ID` int  ,
+  `RATING` int  ,
+  `COMMENTS` varchar(255)  
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
@@ -108,9 +108,9 @@ CREATE TABLE `feedback_tbl` (
 
 CREATE TABLE `medicine_reminder_tbl` (
   `MEDICINE_REMINDER_ID` int NOT NULL,
-  `MEDICINE_ID` int DEFAULT NULL,
-  `CREATED_BY` enum('PATIENT','RECEPTIONIST') DEFAULT NULL,
-  `PATIENT_ID` int DEFAULT NULL,
+  `MEDICINE_ID` int  ,
+  `CREATED_BY` enum('PATIENT','RECEPTIONIST')  ,
+  `PATIENT_ID` int  ,
   `REMINDER_TIME` time NOT NULL,
   `REMARKS` text
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -123,7 +123,7 @@ CREATE TABLE `medicine_reminder_tbl` (
 
 CREATE TABLE `medicine_tbl` (
   `MEDICINE_ID` int NOT NULL,
-  `RECEPTIONIST_ID` int DEFAULT NULL,
+  `RECEPTIONIST_ID` int  ,
   `MED_NAME` varchar(25) NOT NULL,
   `DESCRIPTION` text
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -138,12 +138,12 @@ CREATE TABLE `patient_tbl` (
   `P_ID` int NOT NULL,
   `FIRST_NAME` varchar(20) NOT NULL,
   `LAST_NAME` varchar(20) NOT NULL,
-  `USERNAME` varchar(20) DEFAULT NULL,
-  `PSW` varchar(60) DEFAULT NULL,
-  `DOB` date DEFAULT NULL,
-  `GENDER` enum('MALE','FEMALE','OTHER') DEFAULT NULL,
-  `PHONE` bigint DEFAULT NULL,
-  `EMAIL` varchar(30) DEFAULT NULL,
+  `USERNAME` varchar(20)  ,
+  `PSW` varchar(60)  ,
+  `DOB` date  ,
+  `GENDER` enum('MALE','FEMALE','OTHER')  ,
+  `PHONE` bigint  ,
+  `EMAIL` varchar(30)  ,
   `ADDRESS` text
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
@@ -162,12 +162,12 @@ INSERT INTO `patient_tbl` (`P_ID`, `FIRST_NAME`, `LAST_NAME`, `USERNAME`, `PSW`,
 
 CREATE TABLE `payment_tbl` (
   `PAYMENT_ID` int NOT NULL,
-  `APPOINTMENT_ID` int DEFAULT NULL,
+  `APPOINTMENT_ID` int  ,
   `AMOUNT` decimal(10,2) NOT NULL,
   `PAYMENT_DATE` date NOT NULL,
-  `PAYMENT_MODE` enum('CREDIT CARD','GOOGLE PAY','UPI','NET BANKING') DEFAULT NULL,
+  `PAYMENT_MODE` enum('CREDIT CARD','GOOGLE PAY','UPI','NET BANKING')  ,
   `STATUS` enum('PENDING','COMPLETED','FAILED') DEFAULT 'PENDING',
-  `TRANSACTION_ID` varchar(100) DEFAULT NULL
+  `TRANSACTION_ID` varchar(100)  
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
@@ -179,9 +179,9 @@ CREATE TABLE `payment_tbl` (
 CREATE TABLE `prescription_medicine_tbl` (
   `PRESCRIPTION_ID` int NOT NULL,
   `MEDICINE_ID` int NOT NULL,
-  `DOSAGE` int DEFAULT NULL,
-  `FREQUENCY` int DEFAULT NULL,
-  `DURATION` varchar(50) DEFAULT NULL,
+  `DOSAGE` int  ,
+  `FREQUENCY` int  ,
+  `DURATION` varchar(50)  ,
   `REMARKS` text
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
@@ -193,7 +193,7 @@ CREATE TABLE `prescription_medicine_tbl` (
 
 CREATE TABLE `prescription_tbl` (
   `PRESCRIPTION_ID` int NOT NULL,
-  `APPOINTMENT_ID` int DEFAULT NULL,
+  `APPOINTMENT_ID` int  ,
   `ISSUE_DATE` date NOT NULL,
   `REMARKS` text
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -208,13 +208,13 @@ CREATE TABLE `receptionist_tbl` (
   `RECEPTIONIST_ID` int NOT NULL,
   `FIRST_NAME` varchar(20) NOT NULL,
   `LAST_NAME` varchar(20) NOT NULL,
-  `DOB` date DEFAULT NULL,
-  `DOJ` date DEFAULT NULL,
-  `GENDER` enum('MALE','FEMALE','OTHER') DEFAULT NULL,
-  `PHONE` bigint DEFAULT NULL,
-  `EMAIL` varchar(100) DEFAULT NULL,
+  `DOB` date  ,
+  `DOJ` date  ,
+  `GENDER` enum('MALE','FEMALE','OTHER')  ,
+  `PHONE` bigint  ,
+  `EMAIL` varchar(100)  ,
   `ADDRESS` text,
-  `USERNAME` varchar(50) DEFAULT NULL,
+  `USERNAME` varchar(50)  ,
   `PASSWORD` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
