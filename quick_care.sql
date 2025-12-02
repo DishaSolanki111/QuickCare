@@ -33,7 +33,7 @@ CREATE TABLE `appointment_reminder_tbl` (
   `APPOINTMENT_ID` int  ,
   `REMINDER_TIME` time  ,
   `REMARKS` text
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -50,7 +50,7 @@ CREATE TABLE `appointment_tbl` (
   `APPOINTMENT_DATE` date NOT NULL,
   `APPOINTMENT_TIME` time NOT NULL,
   `status` enum('SCHEDULED','COMPLETED','CANCELLED') DEFAULT 'SCHEDULED'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -64,8 +64,8 @@ CREATE TABLE `doctor_schedule_tbl` (
   `RECEPTIONIST_ID` int  ,
   `START_TIME` time NOT NULL,
   `END_TIME` time NOT NULL,
-  `AVAILABLE` enum('MON','TUE','WED','THUR','FRI','SAT','SUN')  
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  `AVAILABLE_DAY` enum('MON','TUE','WED','THUR','FRI','SAT','SUN')  
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -85,7 +85,7 @@ CREATE TABLE `doctor_tbl` (
   `PHONE` bigint  ,
   `EMAIL` varchar(30)  ,
   `GENDER` enum('MALE','FEMALE','OTHER')  
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -98,7 +98,7 @@ CREATE TABLE `feedback_tbl` (
   `APPOINTMENT_ID` int  ,
   `RATING` int  ,
   `COMMENTS` varchar(255)  
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -114,7 +114,7 @@ CREATE TABLE `medicine_reminder_tbl` (
   `PATIENT_ID` int  ,
   `REMINDER_TIME` time NOT NULL,
   `REMARKS` text
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -127,7 +127,7 @@ CREATE TABLE `medicine_tbl` (
   `RECEPTIONIST_ID` int  ,
   `MED_NAME` varchar(25) NOT NULL,
   `DESCRIPTION` text
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -142,18 +142,14 @@ CREATE TABLE `patient_tbl` (
   `USERNAME` varchar(20)  ,
   `PSW` varchar(60)  ,
   `DOB` date  ,
-  `GENDER` enum('MALE','FEMALE','OTHER')  ,
+  `GENDER` enum('MALE','FEMALE','OTHER'),
+  `BLOOD_GROUP` enum('A+','A-','B+','B-','O+','O-','AB+','AB-'),
+  `DIABETES` enum('NO','TYPE-1','TYPE-2','PRE-DIABTIC')
   `PHONE` bigint  ,
   `EMAIL` varchar(30)  ,
   `ADDRESS` text
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `patient_tbl`
---
-
-INSERT INTO `patient_tbl` (`P_ID`, `FIRST_NAME`, `LAST_NAME`, `USERNAME`, `PSW`, `DOB`, `GENDER`, `PHONE`, `EMAIL`, `ADDRESS`) VALUES
-(1, 'disha', 'solanki', 'disha11', '$2y$10$9n7mbUHswUnSiz2QhPqM3eDR0/JcXAcEXJR0XVGStTXG9x7GyGT9K', '2006-07-17', 'FEMALE', 9725180685, 'solankidisha009@gmail.com', 'bapunagar,ahmedabad');
 
 -- --------------------------------------------------------
 
@@ -167,9 +163,9 @@ CREATE TABLE `payment_tbl` (
   `AMOUNT` decimal(10,2) NOT NULL,
   `PAYMENT_DATE` date NOT NULL,
   `PAYMENT_MODE` enum('CREDIT CARD','GOOGLE PAY','UPI','NET BANKING')  ,
-  `STATUS` enum('PENDING','COMPLETED','FAILED') DEFAULT 'PENDING',
+  `STATUS` enum('COMPLETED','FAILED'),
   `TRANSACTION_ID` varchar(100)  
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -183,8 +179,9 @@ CREATE TABLE `prescription_medicine_tbl` (
   `DOSAGE` int  ,
   `FREQUENCY` int  ,
   `DURATION` varchar(50)  ,
-  `REMARKS` text
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  `REMARKS` text,
+  `CREATED_AT` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -193,11 +190,18 @@ CREATE TABLE `prescription_medicine_tbl` (
 --
 
 CREATE TABLE `prescription_tbl` (
-  `PRESCRIPTION_ID` int NOT NULL,
-  `APPOINTMENT_ID` int  ,
-  `ISSUE_DATE` date NOT NULL,
-  `REMARKS` text
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  `PRESCRIPTION_ID` INT NOT NULL,
+  `APPOINTMENT_ID` INT,
+  `ISSUE_DATE` DATE NOT NULL,
+  `HEIGHT(CM)` INT,
+  `WEIGHT(KG)` DECIMAL(5,2),
+  `BLOOD_PRESSURE` VARCHAR(15),
+  `SYMPTOMS` TEXT,
+  `DIAGNOSIS` TEXT,
+  `ADDITIONAL_NOTES` TEXT,
+  `REPORT` VARCHAR(255),
+  `CREATED_AT` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -217,7 +221,7 @@ CREATE TABLE `receptionist_tbl` (
   `ADDRESS` text,
   `USERNAME` varchar(50)  ,
   `PASSWORD` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -228,7 +232,7 @@ CREATE TABLE `receptionist_tbl` (
 CREATE TABLE `specialisation_tbl` (
   `SPECIALISATION_ID` int NOT NULL,
   `SPECIALISATION_NAME` varchar(50) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Indexes for dumped tables
@@ -387,7 +391,7 @@ ALTER TABLE `medicine_tbl`
 -- AUTO_INCREMENT for table `patient_tbl`
 --
 ALTER TABLE `patient_tbl`
-  MODIFY `P_ID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `P_ID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `payment_tbl`
