@@ -143,9 +143,9 @@ CREATE TABLE `patient_tbl` (
   `DOB` date  ,
   `GENDER` enum('MALE','FEMALE','OTHER'),
   `BLOOD_GROUP` enum('A+','A-','B+','B-','O+','O-','AB+','AB-'),
-  `DIABETES` enum('NO','TYPE-1','TYPE-2','PRE-DIABTIC')
-  `PHONE` bigint  ,
-  `EMAIL` varchar(30)  ,
+  `DIABETES` enum('NO','TYPE-1','TYPE-2','PRE-DIABTIC'),
+  `PHONE` bigint ,
+  `EMAIL` varchar(30) ,
   `ADDRESS` text
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
