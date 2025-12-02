@@ -72,7 +72,7 @@ CREATE TABLE `doctor_schedule_tbl` (
 --
 -- Table structure for table `doctor_tbl`
 --
-
+--doctor
 CREATE TABLE `doctor_tbl` (
   `DOCTOR_ID` int NOT NULL,
   `SPECIALISATION_ID` int  ,
