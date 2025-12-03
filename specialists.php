@@ -28,9 +28,9 @@ $result = mysqli_query($conn, $query);
             while($row = mysqli_fetch_assoc($result)){ ?>
                 
                 <div class="card">
-                    <img src="<?php echo $row['IMAGE_URL']; ?>" class="doc-img" alt="">
+                    <img src="imgs/doctor.jpg" class="doc-img" alt="Doctor">
                     <h3 class="doc-name">Dr. <?php echo $row['FIRST_NAME']; ?></h3>
-                    <p class="doc-type"><?php echo $row['SPECIALISATION_ID']; ?></p>
+                    <p class="doc-type"><?php echo $row['SPECIALISATION_NAME']; ?></p>
                     <a href="book.php?doc_id=<?php echo $row['DOCTOR_ID']; ?>" 
                     <a class="btn">Book Now</a>
                     <a class="btn">View Profile</a>
