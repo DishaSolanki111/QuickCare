@@ -3,7 +3,14 @@
 
 $spec_id = $_GET['spec_id'] ?? 0;
 
-$query = "SELECT * FROM doctor_tbl WHERE SPECIALISATION_ID = '$spec_id'";
+#$query = "SELECT * FROM doctor_tbl WHERE SPECIALISATION_ID = '$spec_id'";
+$query = "
+SELECT d.*, s.SPECIALISATION_NAME 
+FROM doctor_tbl d
+JOIN specialisation_tbl s
+    ON d.SPECIALISATION_ID = s.SPECIALISATION_ID
+WHERE d.SPECIALISATION_ID = '$spec_id'
+";
 $result = mysqli_query($conn, $query);
 ?>
 
@@ -28,11 +35,10 @@ $result = mysqli_query($conn, $query);
             while($row = mysqli_fetch_assoc($result)){ ?>
                 
                 <div class="card">
-                    <img src="imgs/doctor.jpg" class="doc-img" alt="Doctor">
+                    <img src="imgs/doctor_<?php echo $row['DOCTOR_ID']; ?>.jpg" onerror="this.src='imgs/default.jpg'" class="doc-img" alt="doctor">
                     <h3 class="doc-name">Dr. <?php echo $row['FIRST_NAME']; ?></h3>
                     <p class="doc-type"><?php echo $row['SPECIALISATION_NAME']; ?></p>
-                    <a href="book.php?doc_id=<?php echo $row['DOCTOR_ID']; ?>" 
-                    <a class="btn">Book Now</a>
+                    <a href="book.php?doc_id=<?php echo $row['DOCTOR_ID']; ?>" class="btn">Book Now</a>
                     <a class="btn">View Profile</a>
                 </div>
 

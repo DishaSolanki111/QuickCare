@@ -52,10 +52,9 @@ body {
 }
 
 .doc-img {
-    width: 90px;
-    height: 90px;
+    width: 140px;
+    height: 140px;
     border-radius: 50%;
-    background: #ddd;
     object-fit: cover;
     margin-bottom: 15px;
 }
