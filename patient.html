@@ -4,200 +4,240 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Patient Dashboard</title>
-
 <style>
+    /* Admin Panel CSS Applied to Patient Panel */
     body {
         margin: 0;
         font-family: Arial, sans-serif;
-        background: #f4f7fc;
+        background: #D0D7E1;
         display: flex;
     }
 
     /* Sidebar */
     .sidebar {
-        width: 260px;
-        background: #1a237e;
+        width: 250px;
+        background: #072D44;
+        min-height: 100vh;
         color: white;
-        height: 100vh;
-        padding: 20px;
+        padding-top: 30px;
         position: fixed;
-        left: 0;
-        top: 0;
     }
 
-    .logo {
-        font-size: 22px;
-        font-weight: bold;
-        margin-bottom: 30px;
+    .sidebar h2 {
         text-align: center;
+        margin-bottom: 40px;
+        color: #9CCDD8;
     }
 
     .sidebar a {
         display: block;
-        padding: 12px;
-        margin: 8px 0;
-        background: #283593;
-        border-radius: 8px;
-        color: white;
+        padding: 15px 25px;
+        color: #D0D7E1;
         text-decoration: none;
-        font-size: 15px;
+        font-size: 17px;
+        border-left: 4px solid transparent;
     }
 
-    .sidebar a:hover {
-        background: #3949ab;
+    .sidebar a:hover, .sidebar a.active {
+        background: #064469;
+        border-left: 4px solid #9CCDD8;
+        color: white;
     }
 
-    /* Main Content */
-    .content {
-        margin-left: 280px;
+    .logout {
+        display: flex;
+        padding: 15px 25px;
+        color: #D0D7E1;
+        text-decoration: none;
+        font-size: 17px;
+        border-left: 4px solid transparent;
+        background: #082637;
+        text-align: center;
+        margin-top: auto;
+    }
+
+    /* Main content */
+    .main {
+        margin-left: 250px;
         padding: 20px;
-        width: calc(100% - 280px);
+        width: calc(100% - 250px);
+        position:fixed;
     }
 
-    h2 {
-        margin-top: 0;
-    }
-
-    .card-grid {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 20px;
-        margin-top: 20px;
+    /* Top bar */
+    .header {
+        background: white;
+        padding: 15px 25px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        font-size: 28px;
+        font-weight: 700;
+        color: #064469;
+        width: 94%;
     }
 
     /* Cards */
     .card {
         background: white;
-        padding: 20px;
+        padding: 25px;
         border-radius: 12px;
-        box-shadow: 0px 2px 8px rgba(0,0,0,0.1);
-        text-align: center;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        border-left: 8px solid #5790AB;
     }
 
-    .card h3 {
-        margin: 0;
-        font-size: 18px;
-        color: #1a237e;
+    /* Grid Layout for Patient Panel */
+    .grid {
+        display: flex;
+        grid-template-columns: 2fr 1fr 1fr;
+        gap: 35px;
+        margin-bottom: 30px;
     }
 
-    .card p {
-        font-size: 24px;
+
+    /* Upcoming Appointment */
+    .up-title {
+        font-size: 16px;
+        font-weight: 600;
+        color: #072D44;
+    }
+
+    .up-box {
         margin-top: 10px;
-        font-weight: bold;
-        color: #3949ab;
+        display: flex;
+        justify-content: space-between;
     }
 
-    /* Buttons under cards */
-    .button-grid {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 20px;
-        margin-top: 30px;
+    .date-circle {
+        width: 65px;
+        height: 65px;
+        background: #6c8e9d;        
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        font-weight: 700;
+        color: white;
+    }
+
+    .status {
+        margin-left:25px;
+       background: #6c8e9d; 
+        padding: 10px 14px;
+        border-radius: 8px;
+        font-weight: 700;
+        height: fit-content;
+        color: white;
+    }
+
+    /* Stat Box */
+    .stat .num {
+        font-size: 32px;
+        font-weight: 800;
+        color: #064469;
+        margin-top: 10px;
+    }
+
+    /* Button Row */
+    .actions {
+        display: flex;
+        gap: 15px;
+        margin-top: 25px;
+        width:95%;
     }
 
     .btn {
-        background: #1a237e;
-        color: white;
+        width: 80%;
+        flex: 1;
+        background: #072D44;
         padding: 15px;
-        text-align: center;
         border-radius: 10px;
-        font-size: 16px;
-        text-decoration: none;
-        font-weight: bold;
+        text-align: center;
+        font-weight: 700;
+        color: white;
+        cursor: pointer;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     }
 
     .btn:hover {
-        background: #303f9f;
+        background: #064469;
     }
-
-    /* Additional Cards Row */
-    .extra-grid {
-        display: grid;
-        grid-template-columns: repeat(2,1fr);
-        gap: 20px;
-        margin-top: 30px;
-    }
-
-    .appointment-box {
-        background: white;
-        padding: 20px;
-        border-radius: 12px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        width: 300px;
-    }
-
 </style>
 </head>
 <body>
+<div class="container">
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <img src="imgs/logo.JPG" alt="QuickCare Logo" class="logo-img" style="display:block; margin: 0 auto 10px auto; width:80px; height:80px; border-radius:50%;">
+        <h2>QuickCare</h2>
+        <div class="nav">
+            <a class="active">Dashboard</a>
+            <a>My Profile</a>
+            <a>Manage Appointments</a>
+            <a>View Doctor Schedule</a>
+            <a>My Prescriptions</a>
+            <a>Medicine Reminder</a>
+            <a>Payments</a>
+            <a>Feedback</a>
+            <a>View Doctor Profile</a>
+        </div>
+        <div class="logout">Logout</div>
+    </div>
 
-<!-- Sidebar -->
-<div class="sidebar">
-    <div class="logo">QuickCare Logo<br>QuickCare</div>
+    <!-- MAIN -->
+    <div class="main">
+        <div class="header">Welcome, Jane Doe</div>
+        
+        <!-- GRID -->
+        <div class="grid">
+            <!-- UPCOMING APPOINTMENT -->
+            <div class="card">
+                <div class="up-title">Upcoming Appointment</div>
+                <div class="up-box">
+                    <div style="display:flex; gap:15px;">
+                        <div class="date-circle">12</div>
+                        <div>
+                            <div>Oct 12, 2024</div>
+                            <div style="margin-top:4px; color:#8ea7b5;">10:00 AM • Dr. Smith</div>
+                        </div>
+                    </div>
+                    <div class="status">Confirmed</div>
+                </div>
+            </div>
+            
+            <!-- STAT 1 -->
+            <div class="card stat">
+                <div>Total Appointments</div>
+                <div class="num">5</div>
+            </div>
+            
+            <!-- STAT 2 -->
+            <div class="card stat">
+                <div>Completed Appointments</div>
+                <div class="num">3</div>
+            </div>
 
-    <a href="#">Dashboard</a>
-    <a href="#">My Profile</a>
-    <a href="#">Manage Appointments</a>
-    <a href="#">View Doctor Schedule</a>
-    <a href="#">My Prescriptions</a>
-    <a href="#">Medicine Reminder</a>
-    <a href="#">Payments</a>
-    <a href="#">Feedback</a>
-    <a href="#">View Doctor Profile</a>
-    <a href="#">Logout</a>
+          
+            <div class="card stat">
+                <div>Upcoming Medicines</div>
+                <div class="num">3</div>
+            
+          
+        </div>
+        </div>
+
+        <!-- LOWER GRID -->
+        
+
+        <!-- BUTTONS -->
+        <div class="actions">
+            <div class="btn">Book Appointment</div>
+            <div class="btn">View Prescription</div>
+            <div class="btn">Give Feedback</div>
+            <div class="btn">Make Payment</div>
+        </div>
+    </div>
 </div>
-
-<!-- Main Content -->
-<div class="content">
-
-    <h2>Welcome, Jane Doe</h2>
-
-    <!-- Upcoming Appointment -->
-    <div class="appointment-box">
-        <h3>Upcoming Appointment</h3>
-        <p><b>12 Oct 2024</b></p>
-        <p>10:00 AM • Dr. Smith</p>
-        <p style="color: green; font-weight: bold;">Confirmed</p>
-    </div>
-
-    <!-- 4 Main Cards -->
-    <div class="card-grid">
-        <div class="card">
-            <h3>Total Appointments</h3>
-            <p>5</p>
-        </div>
-        <div class="card">
-            <h3>Completed Appointments</h3>
-            <p>3</p>
-        </div>
-        <div class="card">
-            <h3>Upcoming Medicines</h3>
-            <p>3</p>
-        </div>
-        <div class="card">
-            <h3>Recent Feedback</h3>
-            <p>★ 1</p>
-        </div>
-    </div>
-
-    <!-- Buttons -->
-    <div class="button-grid">
-        <a class="btn" href="#">Book Appointment</a>
-        <a class="btn" href="#">View Prescription</a>
-    </div>
-
-    <!-- Extra Cards -->
-    <div class="extra-grid">
-        <div class="card">
-            <h3>Give Feedback</h3>
-            <p>→</p>
-        </div>
-        <div class="card">
-            <h3>Make Payment</h3>
-            <p>→</p>
-        </div>
-    </div>
-
-</div>
-
 </body>
 </html>
