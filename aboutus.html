@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>About Us | Quick Care Hospital</title>
-
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 <style>
     /* GLOBAL STYLES */
     * {
@@ -16,6 +16,98 @@
     body {
         background: #f3f8ff;
         color: #222;
+    }
+
+    /* ================= HEADER ================= */
+    .main-header {
+        background: linear-gradient(to right, #0056b3, #0074ff);
+        padding: 15px 0;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+    }
+    
+    .header-container {
+        width: 90%;
+        max-width: 1300px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .logo-area {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .logo-img {
+        width: 50px;
+        height: 50px;
+        object-fit: contain;
+        background-color: white;
+        padding: 5px;
+    }
+    
+    .site-name {
+        color: white;
+        font-size: 24px;
+        font-weight: 600;
+    }
+    
+    .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 25px;
+    }
+    
+    .nav-links a {
+        color: white;
+        text-decoration: none;
+        font-weight: 500;
+        transition: 0.3s;
+        position: relative;
+    }
+    
+    .nav-links a:hover {
+        opacity: 0.8;
+    }
+    
+    .nav-links a.active::after {
+        content: "";
+        position: absolute;
+        bottom: -5px;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background-color: white;
+    }
+    
+    .auth-icons {
+        display: flex;
+        gap: 15px;
+    }
+    
+    .icon {
+        width: 36px;
+        height: 36px;
+        background: rgb(255, 255, 255);
+        border-radius: 30%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        transition: 0.3s;
+    }
+    
+    .icon:hover {
+       
+    }
+    
+    .icon i {
+        font-size: 16px;
     }
 
     /* ================= HERO SECTION ================= */
@@ -189,11 +281,49 @@
         .footer-grid div {
             width: 100%;
         }
+        .header-container {
+            flex-direction: column;
+            gap: 15px;
+        }
+        .nav-links {
+            flex-wrap: wrap;
+            justify-content: center;
+        }
     }
 </style>
 
 </head>
 <body>
+
+<!-- ================= HEADER ================= -->
+<header class="main-header">
+    <div class="header-container">
+        <div class="logo-area">
+            <img src="imgs/logo.JPG" alt="QuickCare Logo" class="logo-img">
+            <span class="site-name">QuickCare</span>
+        </div>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="#">Doctors</a>
+            <a href="aboutus.html" class="active">About Us</a>
+            <a href="contactus.html">Contact Us</a>
+            <div class="auth-icons">
+                <!-- LOGIN icon -->
+                <a href="login.php">
+                    <div class="icon">
+                        <i class="fas fa-user"></i>
+                    </div>
+                </a>
+                <!-- REGISTER icon -->
+                <a href="register.php">
+                    <div class="icon">
+                        <i class="fas fa-user-plus"></i>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+</header>
 
 <!-- ================= HERO SECTION ================= -->
 <section class="hero">
@@ -249,4 +379,52 @@
 <section class="info-section">
     <h2>Infrastructure</h2>
     <p>
-        Our hospital features modern ICUs, advanced dia
+        Our hospital features modern ICUs, advanced diagnostic equipment, 
+        specialized operation theaters, and comfortable patient rooms. 
+        We maintain the highest standards of hygiene and safety to ensure 
+        the well-being of our patients and staff.
+    </p>
+</section>
+
+<!-- ================= FOOTER ================= -->
+<footer>
+    <div class="footer-grid">
+        <div>
+            <h3>QuickCare Hospital</h3>
+            <p>Providing quality healthcare with compassion and excellence.</p>
+        </div>
+        <div>
+            <h4>Quick Links</h4>
+            <ul>
+                <li><a href="#" style="color: white; text-decoration: none;">Home</a></li>
+                <li><a href="#" style="color: white; text-decoration: none;">Our Services</a></li>
+                <li><a href="#" style="color: white; text-decoration: none;">Find a Doctor</a></li>
+                <li><a href="#" style="color: white; text-decoration: none;">Patient Portal</a></li>
+            </ul>
+        </div>
+        <div>
+            <h4>Contact Info</h4>
+            <ul>
+                <li>123 Healthcare Avenue</li>
+                <li>City, State 12345</li>
+                <li>Phone: (123) 456-7890</li>
+                <li>Email: info@quickcare.com</li>
+            </ul>
+        </div>
+        <div>
+            <h4>Follow Us</h4>
+            <ul>
+                <li><a href="#" style="color: white; text-decoration: none;">Facebook</a></li>
+                <li><a href="#" style="color: white; text-decoration: none;">Twitter</a></li>
+                <li><a href="#" style="color: white; text-decoration: none;">Instagram</a></li>
+                <li><a href="#" style="color: white; text-decoration: none;">LinkedIn</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="copyright">
+        <p>&copy; 2023 QuickCare Hospital. All Rights Reserved.</p>
+    </div>
+</footer>
+
+</body>
+</html>

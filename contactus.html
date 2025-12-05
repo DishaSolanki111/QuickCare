@@ -5,38 +5,115 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Patient Appointment – Contact</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href=style.css>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <style>
         body {
             font-family: "Poppins", sans-serif;
             margin: 0;
             background: #f4f8ff;
         }
-     .logo-area {
-          display: flex;
-           align-items: lefts;
-           gap: 10px;
-           width: 90px;
-             height: 90px;
+        
+        /* HEADER STYLES */
+        .main-header {
+            background: linear-gradient(to right, #1d4ed8, #2563eb);
+            padding: 15px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .header-container {
+            width: 90%;
+            max-width: 1300px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .logo-img {
+            width: 70px;
+            height: 70px;
             object-fit: contain;
-           
-     }
-        /* TOP HEADER */
-        .contact-header {
-            background: linear-gradient(to right, #1d4ed8, #3b82f6);
-            padding: 60px 20px;
+            align-item:left;
+        }
+        
+        .site-name {
+            color: white;
+            font-size: 24px;
+            font-weight: 600;
+        }
+        
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            align: left;
+        }
+        
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: 0.3s;
+        }
+        
+        .nav-links a:hover {
+            opacity: 0.8;
+        }
+        
+        .auth-icons {
+            display: flex;
+            gap: 15px;
+            align: right;
+        }
+        
+        .icon {
+            width: 36px;
+            height: 36px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 30%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            transition: 0.3s;
+            position: relative;
+        }
+        
+        .icon:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        
+        /* FIXED ICON STYLES */
+        .icon i {
+            font-size: 16px;
+        }
+        
+        /* PAGE HEADER */
+        .page-header {
+            background: linear-gradient(to right, #1d4ed8, #2563eb);
+            padding: 10px;
             text-align: center;
             color: white;
         }
-
-        .contact-header h1 {
+        
+        .page-header h1 {
             margin: 0;
             font-size: 45px;
         }
-
-        .contact-header p {
+        
+        .page-header p {
             margin-top: 10px;
             font-size: 16px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         /* MAIN SECTION */
@@ -62,6 +139,12 @@
             border-radius: 15px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.07);
             text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
         }
 
         .card-icon {
@@ -108,6 +191,13 @@
             border-radius: 8px;
             border: 1px solid #c7d2fe;
             font-size: 15px;
+            transition: border-color 0.3s;
+        }
+        
+        .contact-form input:focus,
+        .contact-form textarea:focus {
+            outline: none;
+            border-color: #1d4ed8;
         }
 
         .contact-form textarea {
@@ -132,6 +222,11 @@
         }
 
         @media(max-width: 900px) {
+            .header-container {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
             .contact-section {
                 grid-template-columns: 1fr;
             }
@@ -143,45 +238,46 @@
     </style>  
 </head>
 <body>
-<header>
-    <nav class="navbar">
-        <div class="logo-area">
-            <img src="imgs/logo.JPG" alt="QuickCare Logo" class="logo-img">
-            <span class="site-name">QuickCare</span>
-        </div>
-         <div class="nav-links">
-            <a href="#">Home</a>
-            <a href="#">Doctors</a>
-            <a href="#">About Us</a>
-            <a href="contactus.html">Contact Us</a>
-
-             <div class="auth-icons">
-               <!-- LOGIN icon -->
-                <a href="login.php">
-                <div class="icon user-icon"></div>
-                </a>
-                  <!-- REGISTER icon -->
-                  <a href="register.php">
-                  <div class="icon userplus-icon">
-                  <span class="plus"></span>
-                  </div>
-                  </a>
-              </div>
+    <!-- Main Header with Navigation -->
+    <header class="main-header">
+        <div class="header-container">
+            <div class="logo-area">
+                <img src="imgs/logo.JPG" alt="QuickCare Logo" class="logo-img">
+                <span class="site-name">QuickCare</span>
             </div>
-      </nav>
-      </header>
-    <!-- Header -->
-    <div class="contact-header">
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="#">Doctors</a>
+                <a href="aboutus.html">About Us</a>
+                <a href="contactus.html">Contact Us</a>
+                <div class="auth-icons">
+                    <!-- LOGIN icon -->
+                    <a href="login.php">
+                        <div class="icon">
+                            <i class="fas fa-user"></i>
+                        </div>
+                    </a>
+                    <!-- REGISTER icon -->
+                    <a href="register.php">
+                        <div class="icon">
+                            <i class="fas fa-user-plus"></i>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Page Header -->
+    <div class="page-header">
         <h1>Contact Us</h1>
         <p>Reach out for appointments, inquiries, and medical support.</p>
     </div>
 
     <!-- Main Section -->
     <div class="contact-section">
-
         <!-- LEFT CONTACT INFO -->
         <div class="contact-cards">
-
             <div class="card">
                 <div class="card-icon">📞</div>
                 <h3>Phone</h3>
@@ -205,7 +301,6 @@
                 <h3>Customer Care</h3>
                 <p>24/7 Support Available</p>
             </div>
-
         </div>
 
         <!-- RIGHT FORM -->
@@ -223,8 +318,6 @@
                 <button type="submit">Send Now</button>
             </form>
         </div>
-
     </div>
-
 </body>
 </html>
