@@ -18,3 +18,4 @@ if(mysqli_num_rows($q) == 1){
 else{
     echo "<script>alert('Invalid Username or Password'); window.history.back();</script>";
 }
+
