@@ -1,296 +1,207 @@
 <?php
+session_start();
 @include 'config.php';
 
- $spec_id = $_GET['spec_id'] ?? 0;
+$spec_id = $_GET['spec_id'] ?? 0;
 
-// Use prepared statements to prevent SQL injection
- $stmt = mysqli_prepare($conn, "
-    SELECT d.*, s.SPECIALISATION_NAME 
-    FROM doctor_tbl d
-    JOIN specialisation_tbl s ON d.SPECIALISATION_ID = s.SPECIALISATION_ID
-    WHERE d.SPECIALISATION_ID = ?
-");
-mysqli_stmt_bind_param($stmt, "i", $spec_id);
-mysqli_stmt_execute($stmt);
- $result = mysqli_stmt_get_result($stmt);
+$query = "
+SELECT d.DOCTOR_ID, d.FIRST_NAME, d.LAST_NAME, s.SPECIALISATION_NAME
+FROM doctor_tbl d
+JOIN specialisation_tbl s 
+    ON d.SPECIALISATION_ID = s.SPECIALISATION_ID
+WHERE d.SPECIALISATION_ID = '$spec_id'
+";
+$result = mysqli_query($conn, $query);
 ?>
-
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
-<title>Specialists</title>
-<link rel="stylesheet" href="specialists.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>Available Specialists</title>
 
-<style>
-/* ===== MODAL STYLING ===== */
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 9999;
-    padding-top: 40px;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow-y: auto;
-    background: rgba(0,0,0,0.6);
-}
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f8ff;
+            margin: 0;
+            padding: 40px 0;
+            display: flex;
+            justify-content: center;
+        }
 
-.modal-content {
-    background: #fff;
-    margin: auto;
-    padding: 20px;
-    width: 90%;
-    max-width: 700px;
-    border-radius: 10px;
-    animation: popup 0.3s ease;
-}
+        .container {
+            width: 85%;
+            text-align: center;
+        }
 
-@keyframes popup {
-    from { transform: scale(0.8); opacity: 0; }
-    to   { transform: scale(1); opacity: 1; }
-}
+        h1 {
+            font-size: 32px;
+            color: #1a3c6e;
+            margin-bottom: 30px;
+        }
 
-.close {
-    float: right;
-    font-size: 28px;
-    cursor: pointer;
-    font-weight: bold;
-}
-.close:hover { color: red; }
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 25px;
+            margin-top: 25px;
+        }
 
-/* Calendar styles */
-.calendar-container {
-    margin: 20px 0;
-}
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0px 4px 15px rgba(0,0,0,0.1);
+            transition: 0.3s;
+        }
 
-.calendar-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
-}
+        .card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0px 6px 20px rgba(0,0,0,0.15);
+        }
 
-.calendar-nav {
-    background: #4a90e2;
-    color: white;
-    border: none;
-    padding: 8px 15px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background 0.3s;
-}
+        .doc-img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 15px;
+        }
 
-.calendar-nav:hover {
-    background: #3a7bc8;
-}
+        .doc-name {
+            font-size: 20px;
+            font-weight: bold;
+            color: #1a3c6e;
+        }
 
-.calendar-grid {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 5px;
-}
+        .doc-type {
+            color: #616161;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
 
-.calendar-day-header {
-    text-align: center;
-    font-weight: bold;
-    padding: 10px 0;
-    color: #4a90e2;
-}
+        .btn-row {
+            margin-top: 10px;
+        }
 
-.calendar-day {
-    aspect-ratio: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: all 0.2s;
-}
+        .btn {
+            display: inline-block;
+            background: #2e6ad6;
+            color: white;
+            padding: 10px 18px;
+            border-radius: 8px;
+            text-decoration: none;
+            margin: 5px;
+            font-size: 15px;
+            transition: 0.2s;
+        }
 
-.calendar-day:hover {
-    background: #f0f8ff;
-}
+        .btn:hover {
+            background: #1f56b3;
+        }
 
-.calendar-day.other-month {
-    color: #ccc;
-}
-
-.calendar-day.today {
-    background: #e6f2ff;
-    font-weight: bold;
-}
-
-.calendar-day.selected {
-    background: #4a90e2;
-    color: white;
-}
-
-.calendar-day.unavailable {
-    color: #ccc;
-    cursor: not-allowed;
-    text-decoration: line-through;
-}
-
-.calendar-day.available {
-    background: #e8f5e9;
-}
-
-.calendar-day.available:hover {
-    background: #c8e6c9;
-}
-
-.time-slots {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
-    margin-top: 20px;
-}
-
-.time-slot {
-    padding: 10px;
-    text-align: center;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.time-slot:hover {
-    background: #f0f8ff;
-}
-
-.time-slot.selected {
-    background: #4a90e2;
-    color: white;
-    border-color: #4a90e2;
-}
-
-.time-slot.unavailable {
-    background: #f5f5f5;
-    color: #999;
-    cursor: not-allowed;
-}
-
-.booking-form {
-    margin-top: 20px;
-    padding: 15px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-}
-
-.form-group {
-    margin-bottom: 15px;
-}
-
-.form-group label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
-}
-
-.form-group input, .form-group textarea {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-}
-
-.btn-book {
-    background: #4a90e2;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-    transition: background 0.3s;
-}
-
-.btn-book:hover {
-    background: #3a7bc8;
-}
-
-.notification {
-    padding: 10px;
-    margin: 10px 0;
-    border-radius: 5px;
-}
-
-.notification.success {
-    background: #d4edda;
-    color: #155724;
-    border: 1px solid #c3e6cb;
-}
-
-.notification.error {
-    background: #f8d7da;
-    color: #721c24;
-    border: 1px solid #f5c6cb;
-}
-</style>
-
-<script>
-// OPEN MODAL + LOAD book.php via AJAX
-function openBookingPopup(doctorId) {
-    document.getElementById('bookingModal').style.display = 'block';
-    document.getElementById('modal-body').innerHTML = "Loading…";
-
-    fetch("book.php?doctor_id=" + doctorId)
-    .then(res => res.text())
-    .then(html => {
-        document.getElementById('modal-body').innerHTML = html;
-    })
-    .catch(error => {
-        document.getElementById('modal-body').innerHTML = "Error loading booking form.";
-        console.error('Error:', error);
-    });
-}
-
-// CLOSE MODAL
-function closeModal() {
-    document.getElementById('bookingModal').style.display = 'none';
-    document.getElementById('modal-body').innerHTML = "";
-}
-</script>
+        .no-data {
+            font-size: 20px;
+            margin-top: 30px;
+            color: #455a64;
+        }
+    </style>
 </head>
 
 <body>
-<h1 class="main-title">Book Your Appointment</h1>
 
 <div class="container">
-    <h2 class="sub-title">Available Specialists</h2>
+    <h1>Available Specialists</h1>
 
     <div class="cards">
         <?php 
         if(mysqli_num_rows($result) > 0){
-            while($row = mysqli_fetch_assoc($result)){ ?>
-                <div class="card">
-                    <img src="imgs/doctor_<?php echo $row['DOCTOR_ID']; ?>.jpg" 
-                         onerror="this.src='imgs/default.jpg'" 
-                         class="doc-img">
+            while($row = mysqli_fetch_assoc($result)){
+        ?>
 
-                    <h3 class="doc-name">Dr. <?php echo $row['FIRST_NAME']; ?></h3>
-                    <p class="doc-type"><?php echo $row['SPECIALISATION_NAME']; ?></p>
+        <div class="card">
+            <img src="imgs/doctor_<?php echo $row['DOCTOR_ID']; ?>.jpg"
+                 onerror="this.src='imgs/default.jpg'"
+                 class="doc-img">
 
-                    <button class="btn" onclick="openBookingPopup(<?php echo $row['DOCTOR_ID']; ?>)">
-                        Book Now
-                    </button>
-                    <a class="btn" href="profile.php?id=<?php echo $row['DOCTOR_ID']; ?>">View Profile</a>
-                </div>
-        <?php }} else { ?>
-            <p class="no-data">No doctors found.</p>
-        <?php } ?>
+            <h3 class="doc-name">Dr. <?php echo $row['FIRST_NAME'] . " " . $row['LAST_NAME']; ?></h3>
+            <p class="doc-type"><?php echo $row['SPECIALISATION_NAME']; ?></p>
+
+            <div class="btn-row">
+                <a class="btn" href="javascript:void(0)" onclick="bookNow(<?php echo $row['DOCTOR_ID']; ?>)">Book Now</a>
+
+                <a href="doctor_profile.php?id=<?php echo $row['DOCTOR_ID']; ?>" class="btn">View Profile</a>
+
+            </div>
+        </div>
+
+        <?php 
+            }
+        } else {
+            echo '<p class="no-data">No doctors available for this specialization.</p>';
+        }
+        ?>
     </div>
-</div>
 
-<!-- FULL SCREEN MODAL -->
-<div id="bookingModal" class="modal">
-    <div class="modal-content">
-        <span class="close" onclick="closeModal()">&times;</span>
-        <div id="modal-body"></div>
+</div>
+<script>
+function bookNow(docId) {
+    fetch("check_login.php")
+    .then(response => response.text())
+    .then(status => {
+
+        if(status === "NOT_LOGGED_IN") {
+            // show login popup
+            document.getElementById("loginPopup").style.display = "flex";
+            document.getElementById("docIdInput").value = docId;
+        } 
+        else if(status === "LOGGED_IN") {
+            // start otp flow
+            window.location.href = "send_otp.php?doc_id=" + docId;
+        }
+    });
+}
+</script>
+
+<!-- LOGIN POPUP -->
+<div id="loginPopup" style="
+    display:none; 
+    position:fixed; 
+    top:0; left:0; 
+    width:100%; height:100%;
+    background:rgba(0,0,0,0.6); 
+    justify-content:center; 
+    align-items:center;
+">
+    <div style="
+        background:white;
+        padding:30px;
+        width:350px;
+        border-radius:12px;
+        text-align:center;
+    ">
+
+        <h2>Patient Login</h2>
+
+        <form method="POST" action="login_process.php">
+            <input type="hidden" name="doc_id" id="docIdInput">
+
+            <input type="text" name="username" placeholder="Username" required
+              style="width:100%; padding:10px; margin:10px 0; border-radius:8px; border:1px solid #ccc;">
+
+            <input type="password" name="password" placeholder="Password" required
+              style="width:100%; padding:10px; margin:10px 0; border-radius:8px; border:1px solid #ccc;">
+
+            <button style="
+                width:100%; padding:10px; background:#2e6ad6;
+                color:white; border:none; border-radius:8px; margin-top:10px;
+            ">Login</button>
+
+        </form>
+
+        <p style="margin-top:10px;">
+            New Patient?  
+            <a href="register.php" style="color:#2e6ad6; font-weight:bold;">Register</a>
+        </p>
     </div>
 </div>
 
