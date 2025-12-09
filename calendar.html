@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Appointment Calendar UI</title>
+
+<style>
+/* ---------- CONTAINER ---------- */
+.calendar-wrapper {
+    width: 380px;
+    margin: 40px auto;
+    padding: 20px;
+    border-radius: 18px;
+    background: #ffffff;
+    box-shadow: 0 2px 14px rgba(0,0,0,0.15);
+    font-family: Arial, sans-serif;
+}
+
+/* ---------- HEADER ---------- */
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.calendar-header button {
+    background: #0a7cff;
+    color: white;
+    padding: 6px 12px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.calendar-header button:hover {
+    background: #0055c9;
+}
+
+#monthYear {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+/* ---------- GRID ---------- */
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 7px;
+    margin-bottom: 25px;
+}
+
+.day-label {
+    font-weight: bold;
+    text-align: center;
+}
+
+.date {
+    padding: 10px;
+    text-align: center;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+}
+
+.date:hover {
+    background: #0a7cff;
+    color: white;
+}
+
+.inactive {
+    color: #aaa;
+    pointer-events: none;
+}
+
+.selected-date {
+    background: #28a745 !important;
+    color: white !important;
+}
+
+/* ---------- SLOTS SECTION ---------- */
+.slots-title {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+#slots {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.slot {
+    padding: 7px 14px;
+    background: #eee;
+    border-radius: 6px;
+    border: 1px solid #bbb;
+    cursor: pointer;
+}
+
+.slot:hover {
+    background: #0a7cff;
+    color: white;
+}
+</style>
+</head>
+
+<body>
+
+<div class="calendar-wrapper">
+    <div class="calendar-header">
+        <button id="prevMonth">❮</button>
+        <div id="monthYear"></div>
+        <button id="nextMonth">❯</button>
+    </div>
+
+    <div class="calendar-grid">
+        <div class="day-label">Sun</div>
+        <div class="day-label">Mon</div>
+        <div class="day-label">Tue</div>
+        <div class="day-label">Wed</div>
+        <div class="day-label">Thu</div>
+        <div class="day-label">Fri</div>
+        <div class="day-label">Sat</div>
+
+        <div id="calendar-days" style="display: contents;"></div>
+    </div>
+
+    <div class="slots-title">Available Slots</div>
+    <div id="slots"></div>
+</div>
+
+<script>
+let currentDate = new Date();
+let selectedDate = null;
+
+const monthYear = document.getElementById("monthYear");
+const daysContainer = document.getElementById("calendar-days");
+const slotsContainer = document.getElementById("slots");
+
+const sampleSlots = [
+    "09:00 AM", "09:30 AM", "10:00 AM",
+    "11:00 AM", "11:30 AM",
+    "01:00 PM", "02:00 PM",
+    "03:30 PM", "04:00 PM"
+];
+
+function renderCalendar() {
+    const year = currentDate.getFullYear();
+    const month = currentDate.getMonth();
+
+    monthYear.innerHTML = currentDate.toLocaleString("default", {
+        month: "long",
+        year: "numeric"
+    });
+
+    daysContainer.innerHTML = "";
+
+    const firstDay = new Date(year, month, 1).getDay();
+    const lastDate = new Date(year, month + 1, 0).getDate();
+
+    // Padding empty cells
+    for (let i = 0; i < firstDay; i++) {
+        const div = document.createElement("div");
+        daysContainer.appendChild(div);
+    }
+
+    // Actual dates
+    for (let d = 1; d <= lastDate; d++) {
+        const div = document.createElement("div");
+        div.className = "date";
+        div.textContent = d;
+
+        div.addEventListener("click", () => {
+            document.querySelectorAll(".date").forEach(x => x.classList.remove("selected-date"));
+            div.classList.add("selected-date");
+            selectedDate = `${year}-${month + 1}-${d}`;
+            renderSlots();
+        });
+
+        daysContainer.appendChild(div);
+    }
+}
+
+function renderSlots() {
+    slotsContainer.innerHTML = "";
+
+    sampleSlots.forEach(slot => {
+        const div = document.createElement("div");
+        div.className = "slot";
+        div.textContent = slot;
+
+        div.addEventListener("click", () => {
+            alert(`Selected:\nDate: ${selectedDate}\nSlot: ${slot}`);
+        });
+
+        slotsContainer.appendChild(div);
+    });
+}
+
+document.getElementById("prevMonth").onclick = () => {
+    currentDate.setMonth(currentDate.getMonth() - 1);
+    renderCalendar();
+};
+
+document.getElementById("nextMonth").onclick = () => {
+    currentDate.setMonth(currentDate.getMonth() + 1);
+    renderCalendar();
+};
+
+renderCalendar();
+</script>
+
+</body>
+</html>
