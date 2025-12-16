@@ -3,144 +3,135 @@ include 'config.php';
 
 $doctor_id = intval($_GET['doctor_id']);
 
-/* Fetch available days + time */
-$q = mysqli_query($conn, "
-    SELECT AVAILABLE_DAY, START_TIME, END_TIME, SCHEDULE_ID
-    FROM doctor_schedule_tbl
+/* Fetch schedule */
+$schedule = [];
+$q = mysqli_query($conn,"
+    SELECT AVAILABLE_DAY, START_TIME, END_TIME 
+    FROM doctor_schedule_tbl 
     WHERE DOCTOR_ID = $doctor_id
 ");
-
-$schedule = [];
 while($r = mysqli_fetch_assoc($q)){
     $schedule[$r['AVAILABLE_DAY']] = $r;
 }
 
-/* Month setup */
+/* Calendar setup */
 $month = date('m');
 $year  = date('Y');
 $totalDays = date('t');
-$startDay = date('N', strtotime("$year-$month-01"));
+$firstDay = date('N', strtotime("$year-$month-01"));
 
-$dayMap = [1=>'MON',2=>'TUE',3=>'WED',4=>'THU',5=>'FRI',6=>'SAT',7=>'SUN'];
+$map = [
+    1=>'MON',2=>'TUE',3=>'WED',
+    4=>'THU',5=>'FRI',6=>'SAT',7=>'SUN'
+];
 ?>
 <!DOCTYPE html>
 <html>
 <head>
 <title>Calendar</title>
-
 <style>
-body{font-family:Arial;background:#f5f8ff;padding:20px;}
-.calendar{background:#fff;padding:20px;border-radius:12px;}
-.grid{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;}
-.day{font-weight:bold;text-align:center;}
-.date{padding:12px;text-align:center;border-radius:6px;}
-.available{background:#3cb371;color:#fff;cursor:pointer;}
-.unavailable{background:#ddd;color:#777;}
-/* SLOT POPUP */
-#slotBox{
-    display:none;
-    position:fixed;
-    top:0;left:0;width:100%;height:100%;
-    background:rgba(0,0,0,.6);
-    justify-content:center;
-    align-items:center;
-}
-#slotContent{
-    background:#fff;
-    padding:20px;
-    width:300px;
-    border-radius:10px;
-}
-.slot{
-    background:#2e6ad6;
-    color:#fff;
-    padding:10px;
-    margin:6px 0;
-    border-radius:6px;
-    cursor:pointer;
-    text-align:center;
-}
+body{font-family:Arial;background:#f5f8ff;padding:20px}
+.calendar{background:white;padding:20px;border-radius:12px}
+.grid{display:grid;grid-template-columns:repeat(7,1fr);gap:8px}
+.day{font-weight:bold;text-align:center}
+.date{padding:12px;text-align:center;border-radius:8px}
+.available{background:#3cb371;color:white;cursor:pointer}
+.unavailable{background:#ccc;color:#666}
+#slots{margin-top:20px}
+.slot{padding:10px;margin:6px 0;background:#2e6ad6;color:white;border-radius:6px}
 </style>
 </head>
-
 <body>
 
 <div class="calendar">
 <h3><?php echo date('F Y'); ?></h3>
 
 <div class="grid">
+<?php foreach(['Mon','Tue','Wed','Thu','Fri','Sat','Sun'] as $d) echo "<div class='day'>$d</div>"; ?>
+
 <?php
-// Day headers
-foreach(['Mon','Tue','Wed','Thu','Fri','Sat','Sun'] as $d)
-    echo "<div class='day'>$d</div>";
+for($i=1;$i<$firstDay;$i++) echo "<div></div>";
 
-// Empty cells
-for($i=1;$i<$startDay;$i++) echo "<div></div>";
-
-// Dates
 for($d=1;$d<=$totalDays;$d++){
     $dayNum = date('N', strtotime("$year-$month-$d"));
-    $dbDay = $dayMap[$dayNum];
+    $dbDay  = $map[$dayNum];
 
     if(isset($schedule[$dbDay])){
         echo "<div class='date available'
-              onclick=\"openSlots('$dbDay','$d')\">$d</div>";
+              onclick=\"loadSlots('$dbDay','$year-$month-$d')\">$d</div>";
     }else{
         echo "<div class='date unavailable'>$d</div>";
     }
 }
 ?>
 </div>
-</div>
 
-<!-- SLOT POPUP -->
-<div id="slotBox">
-    <div id="slotContent">
-        <h4>Available Slots</h4>
-        <div id="slots"></div>
-        <button onclick="closeSlots()">Close</button>
-    </div>
+<div id="slots"></div>
 </div>
 
 <script>
 const schedule = <?php echo json_encode($schedule); ?>;
 
-function openSlots(day,date){
+function loadSlots(day,date){
     let s = schedule[day];
-    let start = s.START_TIME.substring(0,5);
-    let end   = s.END_TIME.substring(0,5);
+    let html = "<h4>Available Slots for "+date+"</h4>";
 
-    let slotsDiv = document.getElementById("slots");
-    slotsDiv.innerHTML = "";
+    let start = s.START_TIME.split(':')[0];
+    let end   = s.END_TIME.split(':')[0];
 
-    let [sh,sm] = start.split(":").map(Number);
-    let [eh,em] = end.split(":").map(Number);
-
-    let t = sh;
-
-    while(t < eh){
-        let slot = (t<10?"0":"")+t+":00";
-        slotsDiv.innerHTML += `
-            <div class="slot"
-                onclick="confirmSlot('${date}','${slot}','${s.SCHEDULE_ID}')">
-                ${slot}
-            </div>`;
-        t++;
+    for(let h=parseInt(start); h<parseInt(end); h++){
+        let time = (h<10?'0':'')+h+":00";
+        html += `<div class="slot" onclick="selectSlot('${date}','${time}')">
+        ${time}
+        </div>`;
     }
 
-    document.getElementById("slotBox").style.display="flex";
+    document.getElementById("slots").innerHTML = html;
 }
+</script>
+<script>
+let selectedDate = "";
+let selectedTime = "";
 
-function closeSlots(){
-    document.getElementById("slotBox").style.display="none";
+function selectSlot(date, time){
+    selectedDate = date;
+    selectedTime = time;
+
+    // highlight selected slot
+    document.querySelectorAll(".slot").forEach(s => {
+        s.style.background = "#2e6ad6";
+    });
+
+    event.target.style.background = "#1b4fb5";
+
+    document.getElementById("confirmBox").style.display = "block";
 }
+</script>
+<div id="confirmBox" style="display:none; margin-top:20px;">
+    <button onclick="confirmSlot()"
+        style="
+            padding:12px 20px;
+            background:#28a745;
+            color:white;
+            border:none;
+            border-radius:8px;
+            font-size:16px;
+            cursor:pointer;
+        ">
+        Confirm Slot
+    </button>
+</div>
+<script>
+function confirmSlot(){
+    if(!selectedDate || !selectedTime){
+        alert("Select a slot first");
+        return;
+    }
 
-function confirmSlot(date,time,scheduleId){
-    alert(
-        "Date: "+date+
-        "\nTime: "+time+
-        "\nSchedule ID: "+scheduleId+
-    );
+    window.location.href =
+        "confirm_booking.php?doctor_id=<?php echo $doctor_id; ?>" +
+        "&date=" + selectedDate +
+        "&time=" + selectedTime;
 }
 </script>
 

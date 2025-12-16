@@ -88,8 +88,9 @@ iframe{
         </a>
 
         <button onclick="openCalendar(<?php echo $row['DOCTOR_ID']; ?>)">
-            Book Now
+        Book Now
         </button>
+
     </div>
 <?php } ?>
 </div>
