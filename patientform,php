@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Doctor Registration</title>
+    <title>Patient Registration</title>
     <style>
         :root {
             --primary-blue: #0a4d68;
@@ -98,7 +98,6 @@
         input[type="email"],
         input[type="password"],
         input[type="date"],
-        input[type="file"],
         select,
         textarea {
             width: 100%;
@@ -180,34 +179,6 @@
             color: var(--error);
         }
 
-        .file-upload {
-            position: relative;
-            display: inline-block;
-            cursor: pointer;
-            width: 100%;
-        }
-
-        .file-upload input[type=file] {
-            position: absolute;
-            left: -9999px;
-        }
-
-        .file-upload-label {
-            display: block;
-            padding: 12px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            background-color: var(--white);
-            color: #666;
-            text-align: center;
-            transition: all 0.3s;
-        }
-
-        .file-upload-label:hover {
-            border-color: var(--accent-blue);
-            color: var(--primary-blue);
-        }
-
         @media (max-width: 768px) {
             .form-row {
                 flex-direction: column;
@@ -218,14 +189,14 @@
 </head>
 <body>
     <div class="container">
-        <h1>Doctor Registration</h1>
+        <h1>Patient Registration</h1>
         
         <?php
-        // Database connection
-       /* $servername = "localhost";
+      // Database connection
+        /*$servername = "localhost";
         $username = "username";
         $password = "password";
-        $dbname = "quick_care";
+        $dbname = "database_name";
         
         // Create connection
         $conn = new mysqli($servername, $username, $password, $dbname);
@@ -233,48 +204,32 @@
         // Check connection
         if ($conn->connect_error) {
             die("Connection failed: " . $conn->connect_error);
-        }*/
+        }
         
-        // Initialize variables
+        // Initialize variables*/
         $success = false;
         $error = "";
-        $profile_image_path = "";
         
         // Check if form is submitted
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
-            // Handle profile image upload
-            if (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] == 0) {
-                $upload_dir = "uploads/";
-                if (!file_exists($upload_dir)) {
-                    mkdir($upload_dir, 0777, true);
-                }
-                
-                $file_name = time() . '_' . basename($_FILES['profile_image']['name']);
-                $target_file = $upload_dir . $file_name;
-                
-                if (move_uploaded_file($_FILES['profile_image']['tmp_name'], $target_file)) {
-                    $profile_image_path = $target_file;
-                }
-            }
-            
             // Sanitize and validate inputs
             $first_name = mysqli_real_escape_string($conn, $_POST['first_name']);
             $last_name = mysqli_real_escape_string($conn, $_POST['last_name']);
-            $dob = mysqli_real_escape_string($conn, $_POST['dob']);
-            $doj = mysqli_real_escape_string($conn, $_POST['doj']);
-            $gender = mysqli_real_escape_string($conn, $_POST['gender']);
-            $phone = mysqli_real_escape_string($conn, $_POST['phone']);
-            $email = mysqli_real_escape_string($conn, $_POST['email']);
-            $specialisation_id = mysqli_real_escape_string($conn, $_POST['specialisation_id']);
             $username = mysqli_real_escape_string($conn, $_POST['username']);
             $password = mysqli_real_escape_string($conn, $_POST['password']);
+            $dob = mysqli_real_escape_string($conn, $_POST['dob']);
+            $gender = mysqli_real_escape_string($conn, $_POST['gender']);
+            $blood_group = mysqli_real_escape_string($conn, $_POST['blood_group']);
+            $phone = mysqli_real_escape_string($conn, $_POST['phone']);
+            $email = mysqli_real_escape_string($conn, $_POST['email']);
+            $address = mysqli_real_escape_string($conn, $_POST['address']);
             
             // Hash the password
             $hashed_password = password_hash($password, PASSWORD_DEFAULT);
             
             // SQL to insert data
-            $sql = "INSERT INTO doctor_tbl (SPECIALISATION_ID, PROFILE_IMAGE, FIRST_NAME, LAST_NAME, DOB, DOJ, USERNAME, PSWD, PHONE, EMAIL, GENDER) 
-                    VALUES ('$specialisation_id', '$profile_image_path', '$first_name', '$last_name', '$dob', '$doj', '$username', '$hashed_password', '$phone', '$email', '$gender')";
+            $sql = "INSERT INTO patient_tbl (FIRST_NAME, LAST_NAME, USERNAME, PSWD, DOB, GENDER, BLOOD_GROUP, PHONE, EMAIL, ADDRESS) 
+                    VALUES ('$first_name', '$last_name', '$username', '$hashed_password', '$dob', '$gender', '$blood_group', '$phone', '$email', '$address')";
             
             if ($conn->query($sql) === TRUE) {
                 $success = true;
@@ -298,35 +253,42 @@
             </div>
         <?php endif; ?>
         
-        <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post" id="doctorForm" enctype="multipart/form-data">
+        <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post" id="patientForm">
             <!-- First Name and Last Name -->
             <div class="form-row">
                 <div class="form-group">
-                    <label for="first_name">First Name <span class="required">*</span></label>
-                    <input type="text" id="first_name" name="first_name" required>
+                    <label for="first_name">First Name</label>
+                    <input type="text" id="first_name" name="first_name">
                     <div class="error-message" id="first_name_error"></div>
                 </div>
                 
                 <div class="form-group">
-                    <label for="last_name">Last Name <span class="required">*</span></label>
-                    <input type="text" id="last_name" name="last_name" required>
+                    <label for="last_name">Last Name</label>
+                    <input type="text" id="last_name" name="last_name">
                     <div class="error-message" id="last_name_error"></div>
                 </div>
             </div>
             
-            <!-- Date of Birth and Date of Joining -->
+            <!-- Username and Password -->
             <div class="form-row">
                 <div class="form-group">
-                    <label for="dob">Date of Birth</label>
-                    <input type="date" id="dob" name="dob">
-                    <div class="error-message" id="dob_error"></div>
+                    <label for="username">Username <span class="required">*</span></label>
+                    <input type="text" id="username" name="username" required>
+                    <div class="error-message" id="username_error"></div>
                 </div>
                 
                 <div class="form-group">
-                    <label for="doj">Date of Joining</label>
-                    <input type="date" id="doj" name="doj">
-                    <div class="error-message" id="doj_error"></div>
+                    <label for="password">Password <span class="required">*</span></label>
+                    <input type="password" id="password" name="password" required>
+                    <div class="error-message" id="password_error"></div>
                 </div>
+            </div>
+            
+            <!-- Date of Birth -->
+            <div class="form-group">
+                <label for="dob">Date of Birth</label>
+                <input type="date" id="dob" name="dob">
+                <div class="error-message" id="dob_error"></div>
             </div>
             
             <!-- Gender -->
@@ -348,7 +310,24 @@
                 </div>
             </div>
             
-            <!-- Phone Number and Email ID -->
+            <!-- Blood Group -->
+            <div class="form-group">
+                <label for="blood_group">Blood Group</label>
+                <select id="blood_group" name="blood_group">
+                    <option value="">Select Blood Group</option>
+                    <option value="A+">A+</option>
+                    <option value="A-">A-</option>
+                    <option value="B+">B+</option>
+                    <option value="B-">B-</option>
+                    <option value="O+">O+</option>
+                    <option value="O-">O-</option>
+                    <option value="AB+">AB+</option>
+                    <option value="AB-">AB-</option>
+                </select>
+                <div class="error-message" id="blood_group_error"></div>
+            </div>
+            
+            <!-- Phone Number and Email -->
             <div class="form-row">
                 <div class="form-group">
                     <label for="phone">Phone Number <span class="required">*</span></label>
@@ -363,43 +342,11 @@
                 </div>
             </div>
             
-            <!-- Specialisation and Profile Image -->
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="specialisation_id">Specialisation <span class="required">*</span></label>
-                    <select id="specialisation_id" name="specialisation_id" required>
-                        <option value="">Select Specialisation</option>
-                        <option value="1">Pediatrician</option>
-                        <option value="2">Cardiologist</option>
-                        <option value="3">Neurologist</option>
-                        <option value="4">Orthopedic</option>
-                    </select>
-                    <div class="error-message" id="specialisation_id_error"></div>
-                </div>
-                
-                <div class="form-group">
-                    <label for="profile_image">Profile Image</label>
-                    <div class="file-upload">
-                        <input type="file" id="profile_image" name="profile_image" accept="image/*">
-                        <label for="profile_image" class="file-upload-label" id="file-label">Choose Profile Image</label>
-                    </div>
-                    <div class="error-message" id="profile_image_error"></div>
-                </div>
-            </div>
-            
-            <!-- Username and Password -->
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="username">Username <span class="required">*</span></label>
-                    <input type="text" id="username" name="username" required>
-                    <div class="error-message" id="username_error"></div>
-                </div>
-                
-                <div class="form-group">
-                    <label for="password">Password <span class="required">*</span></label>
-                    <input type="password" id="password" name="password" required>
-                    <div class="error-message" id="password_error"></div>
-                </div>
+            <!-- Address -->
+            <div class="form-group">
+                <label for="address">Address</label>
+                <textarea id="address" name="address"></textarea>
+                <div class="error-message" id="address_error"></div>
             </div>
             
             <div class="btn-container">
@@ -409,17 +356,11 @@
     </div>
 
     <script>
-        // Handle file upload label update
-        document.getElementById('profile_image').addEventListener('change', function() {
-            const fileName = this.files[0]?.name || 'Choose Profile Image';
-            document.getElementById('file-label').textContent = fileName;
-        });
-        
-        document.getElementById('doctorForm').addEventListener('submit', function(event) {
+        document.getElementById('patientForm').addEventListener('submit', function(event) {
             let isValid = true;
             
             // Validate required fields
-            const requiredFields = ['first_name', 'last_name', 'phone', 'email', 'specialisation_id', 'username', 'password'];
+            const requiredFields = ['username', 'password', 'phone', 'email'];
             
             requiredFields.forEach(fieldId => {
                 const field = document.getElementById(fieldId);
