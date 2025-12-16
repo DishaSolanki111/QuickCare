@@ -1,6 +1,5 @@
 <?php
 include "config.php";
-
 $q = "SELECT SPECIALISATION_ID, SPECIALISATION_NAME FROM specialisation_tbl";
 $res = mysqli_query($conn,$q);
 ?>
