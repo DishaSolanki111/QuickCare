@@ -1,3 +1,6 @@
+<?php
+include 'config.php';
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -191,19 +194,19 @@
         <h1>Receptionist Registration Form</h1>
         
         <?php
-        // Database connection
-        $servername = "localhost";
-        $username = "username";
-        $password = "password";
-        $dbname = "database_name";
+        // // Database connection
+        // $servername = "localhost";
+        // $username = "username";
+        // $password = "password";
+        // $dbname = "database_name";
         
-        // Create connection
-        $conn = new mysqli($servername, $username, $password, $dbname);
+        // // Create connection
+        // $conn = new mysqli($servername, $username, $password, $dbname);
         
-        // Check connection
-        if ($conn->connect_error) {
-            die("Connection failed: " . $conn->connect_error);
-        }
+        // // Check connection
+        // if ($conn->connect_error) {
+        //     die("Connection failed: " . $conn->connect_error);
+        // }
         
         // Initialize variables
         $success = false;
