@@ -12,138 +12,7 @@ START TRANSACTION;
 SET time_zone = "+00:00";
 
 
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
-
---
--- Database: `quick_care`
---
-
--- --------------------------------------------------------
-
---
--- Table structure for table `appointment_reminder_tbl`
---
-
-CREATE TABLE `appointment_reminder_tbl` (
-  `APPOINTMENT_REMINDER_ID` int NOT NULL,
-  `RECEPTIONIST_ID` int  ,
-  `APPOINTMENT_ID` int  ,
-  `REMINDER_TIME` time  ,
-  `REMARKS` text
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `appointment_tbl`
---
-
-CREATE TABLE `appointment_tbl` (
-  `APPOINTMENT_ID` int NOT NULL,
-  `PATIENT_ID` int  ,
-  `DOCTOR_ID` int  ,
-  `SCHEDULE_ID` int  ,
-  `CREATED_AT` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `APPOINTMENT_DATE` date NOT NULL,
-  `APPOINTMENT_TIME` time NOT NULL,
-  `status` enum('SCHEDULED','COMPLETED','CANCELLED') DEFAULT 'SCHEDULED'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `doctor_schedule_tbl`
---
-
-CREATE TABLE `doctor_schedule_tbl` (
-  `SCHEDULE_ID` int NOT NULL,
-  `DOCTOR_ID` int  ,
-  `RECEPTIONIST_ID` int  ,
-  `START_TIME` time NOT NULL,
-  `END_TIME` time NOT NULL,
-  `AVAILABLE_DAY` enum('MON','TUE','WED','THUR','FRI','SAT','SUN')  
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `doctor_tbl`
---
-CREATE TABLE `doctor_tbl` (
-  `DOCTOR_ID` int NOT NULL,
-  `SPECIALISATION_ID` int  ,
-  `FIRST_NAME` varchar(20) NOT NULL,
-  `LAST_NAME` varchar(20) NOT NULL,
-  `DOB` date  ,
-  `DOJ` date  ,
-  `USERNAME` varchar(20)  ,
-  `PASSWORD` varchar(60) NOT NULL,
-  `PHONE` bigint  ,
-  `EMAIL` varchar(30)  ,
-  `GENDER` enum('MALE','FEMALE','OTHER')  
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `feedback_tbl`
---
-
-CREATE TABLE `feedback_tbl` (
-  `FEEDBACK_ID` int NOT NULL,
-  `APPOINTMENT_ID` int  ,
-  `RATING` int  ,
-  `COMMENTS` varchar(255)  
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `medicine_reminder_tbl`
---
-
-CREATE TABLE `medicine_reminder_tbl` (
-  `MEDICINE_REMINDER_ID` int NOT NULL,
-  `MEDICINE_ID` int  ,
-  `CREATOR_ROLE` ENUM('PATIENT','RECEPTIONIST') NOT NULL,
-  `CREATOR_ID` INT NOT NULL,
-  `PATIENT_ID` int  ,
-  `REMINDER_TIME` time NOT NULL,
-  `REMARKS` text
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `medicine_tbl`
---
-
-CREATE TABLE `medicine_tbl` (
-  `MEDICINE_ID` int NOT NULL,
-  `RECEPTIONIST_ID` int  ,
-  `MED_NAME` varchar(25) NOT NULL,
-  `MED_DOSE` VARCHAR(20) NOT NULL,
-  `DESCRIPTION` text
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `patient_tbl`
---
-
-CREATE TABLE `patient_tbl` (
-  `P_ID` int NOT NULL,
-  `FIRST_NAME` varchar(20) NOT NULL,
-  `LAST_NAME` varchar(20) NOT NULL,
-  `USERNAME` varchar(20)  ,
-  `PSW` varchar(60)  ,
-  `DOB` date  ,
-  `GENDER` enum('MALE','FEMALE','OTHER'),
-  `BLOOD_GROUP` enum('A+','A-','B+','B-','O+','O-','AB+','AB-'),
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACT
   `DIABETES` enum('NO','TYPE-1','TYPE-2','PRE-DIABTIC'),
   `PHONE` bigint ,
   `EMAIL` varchar(30) ,
@@ -582,3 +451,135 @@ VALUES
 (2, 1, 300.00, '2025-01-05', 'CREDIT CARD', 'COMPLETED', 'TXN98765');
 
 
+ER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
+
+--
+-- Database: `quick_care`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `appointment_reminder_tbl`
+--
+
+CREATE TABLE `appointment_reminder_tbl` (
+  `APPOINTMENT_REMINDER_ID` int NOT NULL,
+  `RECEPTIONIST_ID` int  ,
+  `APPOINTMENT_ID` int  ,
+  `REMINDER_TIME` time  ,
+  `REMARKS` text
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `appointment_tbl`
+--
+
+CREATE TABLE `appointment_tbl` (
+  `APPOINTMENT_ID` int NOT NULL,
+  `PATIENT_ID` int  ,
+  `DOCTOR_ID` int  ,
+  `SCHEDULE_ID` int  ,
+  `CREATED_AT` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `APPOINTMENT_DATE` date NOT NULL,
+  `APPOINTMENT_TIME` time NOT NULL,
+  `status` enum('SCHEDULED','COMPLETED','CANCELLED') DEFAULT 'SCHEDULED'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `doctor_schedule_tbl`
+--
+
+CREATE TABLE `doctor_schedule_tbl` (
+  `SCHEDULE_ID` int NOT NULL,
+  `DOCTOR_ID` int  ,
+  `RECEPTIONIST_ID` int  ,
+  `START_TIME` time NOT NULL,
+  `END_TIME` time NOT NULL,
+  `AVAILABLE_DAY` enum('MON','TUE','WED','THUR','FRI','SAT','SUN')  
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `doctor_tbl`
+--
+CREATE TABLE `doctor_tbl` (
+  `DOCTOR_ID` int NOT NULL,
+  `SPECIALISATION_ID` int  ,
+  `FIRST_NAME` varchar(20) NOT NULL,
+  `LAST_NAME` varchar(20) NOT NULL,
+  `DOB` date  ,
+  `DOJ` date  ,
+  `USERNAME` varchar(20)  ,
+  `PASSWORD` varchar(60) NOT NULL,
+  `PHONE` bigint  ,
+  `EMAIL` varchar(30)  ,
+  `GENDER` enum('MALE','FEMALE','OTHER')  
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `feedback_tbl`
+--
+
+CREATE TABLE `feedback_tbl` (
+  `FEEDBACK_ID` int NOT NULL,
+  `APPOINTMENT_ID` int  ,
+  `RATING` int  ,
+  `COMMENTS` varchar(255)  
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `medicine_reminder_tbl`
+--
+
+CREATE TABLE `medicine_reminder_tbl` (
+  `MEDICINE_REMINDER_ID` int NOT NULL,
+  `MEDICINE_ID` int  ,
+  `CREATOR_ROLE` ENUM('PATIENT','RECEPTIONIST') NOT NULL,
+  `CREATOR_ID` INT NOT NULL,
+  `PATIENT_ID` int  ,
+  `REMINDER_TIME` time NOT NULL,
+  `REMARKS` text
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `medicine_tbl`
+--
+
+CREATE TABLE `medicine_tbl` (
+  `MEDICINE_ID` int NOT NULL,
+  `RECEPTIONIST_ID` int  ,
+  `MED_NAME` varchar(25) NOT NULL,
+  `MED_DOSE` VARCHAR(20) NOT NULL,
+  `DESCRIPTION` text
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `patient_tbl`
+--
+
+CREATE TABLE `patient_tbl` (
+  `P_ID` int NOT NULL,
+  `FIRST_NAME` varchar(20) NOT NULL,
+  `LAST_NAME` varchar(20) NOT NULL,
+  `USERNAME` varchar(20)  ,
+  `PSW` varchar(60)  ,
+  `DOB` date  ,
+  `GENDER` enum('MALE','FEMALE','OTHER'),
+  `BLOOD_GROUP` enum('A+','A-','B+','B-','O+','O-','AB+','AB-'),
