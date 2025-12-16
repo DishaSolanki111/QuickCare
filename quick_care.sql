@@ -29,7 +29,7 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `appointment_reminder_tbl` (
   `APPOINTMENT_REMINDER_ID` int NOT NULL,
-  `RECEPTIONIST_ID` int  ,
+  `RECEPTIONIST_ID` int ,
   `APPOINTMENT_ID` int  ,
   `REMINDER_TIME` time  ,
   `REMARKS` text
