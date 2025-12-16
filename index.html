@@ -3,89 +3,1116 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Hospital Appointment Booking</title>
+  <title>QuickCare - Hospital Appointment Booking</title>
+  
+  <style>
+    :root {
+      --primary: #0066cc;
+      --primary-dark: #0052a3;
+      --primary-light: #e6f2ff;
+      --secondary: #00a8cc;
+      --accent: #00a86b;
+      --warning: #ff6b6b;
+      --dark: #1a3a5f;
+      --light: #f8fafc;
+      --white: #ffffff;
+      --text: #2c5282;
+      --text-light: #4a6fa5;
+      --gradient-1: linear-gradient(135deg, #0066cc 0%, #00a8cc 100%);
+      --gradient-2: linear-gradient(135deg, #00a8cc 0%, #00a86b 100%);
+      --gradient-3: linear-gradient(135deg, #0066cc 0%, #0052a3 100%);
+      --shadow-sm: 0 2px 4px rgba(0,0,0,0.06);
+      --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+      --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
+      --shadow-xl: 0 20px 25px rgba(0,0,0,0.1);
+      --shadow-2xl: 0 25px 50px rgba(0,0,0,0.25);
+    }
 
-  <!-- Font Awesome for icons -->
- 
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-  <link rel="stylesheet" href="style.css">
-  <script defer src="script.js"></script>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+      background: var(--light);
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 10px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #f1f1f1;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--primary);
+      border-radius: 5px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--primary-dark);
+    }
+
+    /* Animated Background */
+    .bg-animation {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      z-index: -1;
+      background: linear-gradient(45deg, #f0f7ff, #ffffff);
+      overflow: hidden;
+    }
+
+    .bg-animation::before {
+      content: '';
+      position: absolute;
+      width: 200%;
+      height: 200%;
+      top: -50%;
+      left: -50%;
+      background: radial-gradient(circle, rgba(0, 102, 204, 0.05) 0%, transparent 70%);
+      animation: rotate 30s linear infinite;
+    }
+
+    @keyframes rotate {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* NAVBAR - Right-Aligned Navigation */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 1000;
+      transition: all 0.3s ease;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(0, 102, 204, 0.1);
+    }
+
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 5%;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    /* Logo Area - Left Side */
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+    }
+
+    .logo-area:hover {
+      transform: scale(1.05);
+    }
+
+    .logo-img {
+      width: 45px;
+      height: 45px;
+      border-radius: 10px;
+      object-fit: cover;
+      box-shadow: var(--shadow-md);
+    }
+
+    .site-name {
+      font-size: 1.8rem;
+      font-weight: 700;
+      background: var(--gradient-1);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    /* Right Side Container */
+    .nav-right-container {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+    }
+
+    /* Navigation Links - Right Aligned */
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: var(--text);
+      font-weight: 500;
+      font-size: 1rem;
+      position: relative;
+      transition: all 0.3s ease;
+      padding: 0.5rem 0;
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--primary);
+      transition: width 0.3s ease;
+    }
+
+    .nav-links a:hover::after {
+      width: 100%;
+    }
+
+    .nav-links a:hover {
+      color: var(--primary);
+    }
+
+    .nav-links a.active {
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    /* Search Bar - Simplified */
+    .search-container {
+      position: relative;
+      margin: 0 1rem;
+    }
+
+    .search-input {
+      padding: 0.6rem 2.5rem 0.6rem 1rem;
+      border: 2px solid #e1e5e9;
+      border-radius: 20px;
+      background: white;
+      color: var(--text);
+      font-size: 0.9rem;
+      width: 180px;
+      transition: all 0.3s ease;
+      outline: none;
+    }
+
+    .search-input:focus {
+      width: 220px;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+    }
+
+    .search-btn {
+      position: absolute;
+      right: 8px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: var(--primary);
+      border: none;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 0.8rem;
+    }
+
+    .search-btn:hover {
+      background: var(--primary-dark);
+    }
+
+    /* Auth Buttons - More Simple */
+    .auth-buttons {
+      display: flex;
+      gap: 0.8rem;
+    }
+
+    .btn-login, .btn-register {
+      padding: 0.6rem 1.2rem;
+      border-radius: 20px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      border: none;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn-login {
+      background: transparent;
+      color: var(--primary);
+      border: 2px solid var(--primary);
+    }
+
+    .btn-login:hover {
+      background: var(--primary);
+      color: white;
+    }
+
+    .btn-register {
+      background: var(--primary);
+      color: white;
+    }
+
+    .btn-register:hover {
+      background: var(--primary-dark);
+    }
+
+    /* Mobile Menu Button - Simplified */
+    .mobile-menu-btn {
+      display: none;
+      background: var(--primary);
+      border: none;
+      border-radius: 8px;
+      width: 40px;
+      height: 40px;
+      color: white;
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .mobile-menu-btn:hover {
+      background: var(--primary-dark);
+    }
+
+    /* Mobile Navigation - Simplified */
+    .mobile-nav {
+      position: fixed;
+      top: 0;
+      right: -350px;
+      width: 350px;
+      height: 100vh;
+      background: white;
+      box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+      z-index: 1001;
+      transition: right 0.3s ease;
+      overflow-y: auto;
+    }
+
+    .mobile-nav.active {
+      right: 0;
+    }
+
+    .mobile-nav-header {
+      background: var(--primary);
+      padding: 1.5rem;
+      color: white;
+      position: relative;
+    }
+
+    .close-menu {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: rgba(255, 255, 255, 0.2);
+      border: none;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    .close-menu:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    .mobile-nav-links {
+      padding: 1.5rem;
+    }
+
+    .mobile-nav-links a {
+      display: block;
+      text-decoration: none;
+      color: var(--text);
+      font-weight: 500;
+      padding: 0.8rem;
+      margin-bottom: 0.5rem;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .mobile-nav-links a:hover {
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .mobile-nav-links a.active {
+      background: var(--primary);
+      color: white;
+    }
+
+    /* HERO SECTION - Simplified */
+    .hero {
+      display: flex;
+      align-items: center;
+      min-height: 100vh;
+      padding: 100px 5% 60px;
+      max-width: 1400px;
+      margin: 0 auto;
+      gap: 3rem;
+      position: relative;
+    }
+
+    .hero-left {
+      flex: 1;
+      position: relative;
+    }
+
+    .hero-image-container {
+      position: relative;
+      display: inline-block;
+    }
+
+    #hero-img {
+      width: 100%;
+      max-width: 500px;
+      border-radius: 15px;
+      box-shadow: var(--shadow-lg);
+      transition: transform 0.3s ease;
+    }
+
+    #hero-img:hover {
+      transform: scale(1.02);
+    }
+
+    .hero-right {
+      flex: 1;
+      padding: 1rem 0;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--primary-light);
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      margin-bottom: 1.5rem;
+      font-size: 0.9rem;
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .hero-badge .check-icon {
+      color: var(--accent);
+    }
+
+    .hero-right h1 {
+      font-size: 3rem;
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: 1.5rem;
+      color: var(--dark);
+    }
+
+    .hero-right h1 span {
+      background: var(--gradient-1);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .hero-description {
+      font-size: 1.1rem;
+      color: var(--text-light);
+      margin-bottom: 2rem;
+      line-height: 1.7;
+    }
+
+    .hero-buttons {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary, .btn-secondary {
+      padding: 0.8rem 1.5rem;
+      border-radius: 20px;
+      font-weight: 600;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      border: none;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .btn-secondary {
+      background: white;
+      color: var(--primary);
+      border: 2px solid var(--primary);
+    }
+
+    .btn-secondary:hover {
+      background: var(--primary);
+      color: white;
+    }
+
+    /* FEATURE BUTTONS */
+    .btn-section {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      padding: 3rem 5%;
+      flex-wrap: wrap;
+    }
+
+    .btn-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 200px;
+      height: 200px;
+      border-radius: 15px;
+      background: white;
+      box-shadow: var(--shadow-md);
+      text-decoration: none;
+      color: var(--text);
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-box::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 5px;
+      background: var(--gradient-1);
+    }
+
+    .btn-box:hover {
+      transform: translateY(-10px);
+      box-shadow: var(--shadow-2xl);
+    }
+
+    .btn-box .feature-icon {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: var(--gradient-1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    /* FEATURES SECTION */
+    .features-section {
+      padding: 80px 5%;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 4rem;
+    }
+
+    .section-subtitle {
+      color: var(--primary);
+      font-weight: 600;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 0.5rem;
+    }
+
+    .section-title {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: var(--dark);
+      margin-bottom: 1rem;
+    }
+
+    .section-description {
+      font-size: 1.1rem;
+      color: var(--text-light);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+    }
+
+    .feature-card {
+      background: white;
+      border-radius: 20px;
+      padding: 2rem;
+      box-shadow: var(--shadow-md);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: var(--gradient-1);
+      transform: scaleX(0);
+      transition: transform 0.3s ease;
+    }
+
+    .feature-card:hover::before {
+      transform: scaleX(1);
+    }
+
+    .feature-card:hover {
+      transform: translateY(-10px);
+      box-shadow: var(--shadow-2xl);
+    }
+
+    .feature-icon {
+      width: 60px;
+      height: 60px;
+      border-radius: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      margin-bottom: 1.5rem;
+      color: white;
+    }
+
+    .feature-icon.appointment {
+      background: var(--gradient-1);
+    }
+
+    .feature-icon.schedule {
+      background: var(--gradient-2);
+    }
+
+    .feature-icon.feedback {
+      background: var(--gradient-3);
+    }
+
+    .feature-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--dark);
+      margin-bottom: 0.5rem;
+    }
+
+    .feature-description {
+      color: var(--text-light);
+      line-height: 1.6;
+    }
+
+    /* STATS SECTION */
+    .stats-section {
+      background: var(--gradient-1);
+      padding: 80px 5%;
+      position: relative;
+      overflow: hidden;
+      border-radius: 50px;
+    }
+
+    .stats-section::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23ffffff" fill-opacity="0.1" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,133.3C960,128,1056,96,1152,90.7C1248,85,1344,107,1392,117.3L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>') no-repeat bottom;
+      background-size: cover;
+    }
+
+    .stats-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 3rem;
+    }
+
+    .stat-item {
+      text-align: center;
+      color: white;
+    }
+
+    .stat-number {
+      font-size: 3rem;
+      font-weight: 900;
+      margin-bottom: 0.5rem;
+      display: block;
+    }
+
+    .stat-label {
+      font-size: 1.1rem;
+      opacity: 0.9;
+      font-weight: 500;
+    }
+
+    /* ABOUT SECTION */
+    .about-section {
+      padding: 80px 5%;
+      background: white;
+    }
+
+    .about-container {
+      max-width: 1000px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .about-content {
+      font-size: 1.2rem;
+      color: var(--text-light);
+      line-height: 1.8;
+      margin-top: 2rem;
+    }
+
+    /* FOOTER */
+    footer {
+      background: var(--dark);
+      color: white;
+      padding: 3rem 5%;
+      text-align: center;
+    }
+
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .social-links {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    .social-link {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      transition: all 0.3s ease;
+      text-decoration: none;
+    }
+
+    .social-link:hover {
+      background: var(--primary);
+      transform: translateY(-3px);
+    }
+
+    /* Loading Animation - Simplified */
+    .loader {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      transition: opacity 0.5s ease;
+    }
+
+    .loader.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .loader-circle {
+      width: 40px;
+      height: 40px;
+      border: 3px solid #f1f1f1;
+      border-top: 3px solid var(--primary);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* RESPONSIVE DESIGN */
+    @media (max-width: 1200px) {
+      .search-container {
+        display: none;
+      }
+    }
+
+    @media (max-width: 992px) {
+      .nav-right-container {
+        display: none;
+      }
+
+      .mobile-menu-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .hero {
+        flex-direction: column;
+        text-align: center;
+        padding: 80px 5% 60px;
+      }
+
+      .hero-right h1 {
+        font-size: 2.5rem;
+      }
+
+      .hero-buttons {
+        justify-content: center;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .hero-right h1 {
+        font-size: 2rem;
+      }
+
+      .hero-description {
+        font-size: 1rem;
+      }
+
+      .mobile-nav {
+        width: 100%;
+        right: -100%;
+      }
+
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 2rem;
+      }
+
+      .features-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
 </head>
 <body>
-  
-  <!-- NAVBAR (sticky) -->
+  <!-- Loading Screen -->
+  <div class="loader" id="loader">
+    <div class="loader-circle"></div>
+  </div>
 
+  <!-- Animated Background -->
+  <div class="bg-animation"></div>
+
+  <!-- NAVBAR - Right-Aligned Navigation -->
   <header>
     <nav class="navbar">
         <div class="logo-area">
-            <img src="imgs/logo.JPG" alt="QuickCare Logo" class="logo-img">
+            <img src="./imgs/logo.JPG" alt="QuickCare Logo" class="logo-img">
             <span class="site-name">QuickCare</span>
         </div>
-         <div class="nav-links">
-            <a href="#">Home</a>
-            <a href="#">Doctors</a>
-            <a href="aboutus.html">About Us</a>
-            <a href="contactus.html">Contact Us</a>
-
-             <div class="auth-icons">
-               <!-- LOGIN icon -->
-                <a href="login.php">
-                <div class="icon user-icon"></div>
-                </a>
-                  <!-- REGISTER icon -->
-                  <a href="register.php">
-                  <div class="icon userplus-icon">
-                  <span class="plus"></span>
-                  </div>
-                  </a>
-              </div>
-            </div>
-      </nav>
-      </header>
-
-
-
-  <!-- HERO -->
-  <main>
-    <section class="hero container">
-      <div class="hero-left fade-in">
-        <!-- Preferred: put your provided Google-hosted image URL into the src below.
-             If the externally hosted URL fails, drop a local file named left-side-image.jpg in the same folder. -->
-        <img src="imgs/bac.jpg" alt="Caregiver with patient" id="hero-img">
         
+        <div class="nav-right-container">
+          <div class="nav-links">
+              <a href="#home" class="active">Home</a>
+              <a href="services.html">Services</a>
+              <a href="doctors.html">Doctors</a>
+              <a href="aboutus.html">About</a>
+              <a href="contactus.html">Contact</a>
+            </div>
+          
+            <div class="auth-buttons">
+              <a href="login.php" class="btn-login">
+                Login
+              </a>
+              <a href="register.php" class="btn-register">
+                Register
+              </a>
+            </div>
+        </div>
+          
+        <button class="mobile-menu-btn">
+          ☰
+        </button>
+    </nav>
+  </header>
+
+  <!-- Mobile Navigation -->
+  <div class="mobile-nav">
+    <div class="mobile-nav-header">
+      <h2>QuickCare Menu</h2>
+      <button class="close-menu">✕</button>
+    </div>
+    <div class="mobile-nav-links">
+        <a href="#home" class="active">Home</a>
+        <a href="services.html">Services</a>
+        <a href="doctors.html">Doctors</a>
+        <a href="aboutus.html">About Us</a>
+        <a href="contactus.html">Contact</a>
+        <a href="login.php">Login</a>
+        <a href="register.php">Register</a>
+    </div>
+  </div>
+
+  <!-- HERO SECTION -->
+  <main>
+    <section class="hero" id="home">
+      <div class="hero-left">
+        <div class="hero-image-container">
+          <img src="./imgs/bac.jpg" alt="Healthcare Professional" id="hero-img">
+        </div>
       </div>
 
-      <div class="hero-right slide-in">
-        <h1>Quality Home Care for Your Loved Ones helloo </h1>
-        <p class="lead">We provide compassionate, reliable in-home care — book appointments with our certified staff.</p>
-        <a class="cta" href="#">Make Appointment</a>
+      <div class="hero-right">
+        <div class="hero-badge">
+          <span class="check-icon">✓</span>
+          Trusted by 10,000+ Patients
+        </div>
+        <h1>Your Health is Our <span>Top Priority</span></h1>
+        <p class="hero-description">
+          Experience world-class healthcare from comfort of your home. Book appointments with certified doctors and get personalized care tailored to your needs.
+        </p>
+        <div class="hero-buttons">
+          <a href="appointment.php" class="btn-primary">
+            Book Appointment
+          </a>
+          <a href="#" class="btn-secondary">
+            Watch Demo
+          </a>
+        </div>
       </div>
     </section>
 
-    <!-- Feature Buttons -->
+    <!-- FEATURE BUTTONS -->
     <section class="btn-section">
-      <a class="btn-box" href="appointment.php">Book Appointment</a>
-      <a class="btn-box" href="appointments.html">Doctor Schedule</a>
-      <a class="btn-box" href="feedback.html">View Feedback</a>
+      <a class="btn-box" href="appointment.php">
+        <div class="feature-icon">📅</div>
+        <span>Book Appointment</span>
+      </a>
+      <a class="btn-box" href="appointments.html">
+        <div class="feature-icon">⏰</div>
+        <span>Doctor Schedule</span>
+      </a>
+      <a class="btn-box" href="feedback.html">
+        <div class="feature-icon">💬</div>
+        <span>View Feedback</span>
+      </a>
     </section>
 
-    <!-- Simple mock-up of stats / about to mimic your sample -->
-    <section class="stats">
-      <div class="stat">750+ <div class="small">Patients</div></div>
-      <div class="stat">550+ <div class="small">Doctors</div></div>
-      <div class="stat">50+ <div class="small">Medicine Reminders</div></div>
-      <div class="stat">25+ <div class="small">Doctor's Experience</div></div>
+    <!-- FEATURES SECTION -->
+    <section class="features-section" id="features">
+      <div class="section-header">
+        <div class="section-subtitle">Our Services</div>
+        <h2 class="section-title">Comprehensive Healthcare Solutions</h2>
+        <p class="section-description">
+          Access a wide range of medical services designed to meet all your healthcare needs
+        </p>
+    </div>
+      </div>
     </section>
 
-    <section id="about" class="about">
-      <h2>Caring for Your Loved Ones, Like Family</h2>
-      <p>We deliver personalized in-home care tailored to each patient.</p>
+    <!-- STATS SECTION -->
+    <section class="stats-section">
+      <div class="stats-container">
+        <div class="stats-grid">
+          <div class="stat-item">
+            <span class="stat-number">750+</span>
+            <span class="stat-label">Happy Patients</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number">550+</span>
+            <span class="stat-label">Expert Doctors</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number">50+</span>
+            <span class="stat-label">Health Services</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number">25+</span>
+            <span class="stat-label">Years Experience</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ABOUT SECTION -->
+    <section class="about-section" id="about">
+      <div class="about-container">
+        <div class="section-header">
+          <div class="section-subtitle">About QuickCare</div>
+          <h2 class="section-title">Caring for Your Loved Ones</h2>
+        </div>
+        <p class="about-content">
+          At QuickCare, we believe everyone deserves access to quality healthcare. Our platform connects you with certified medical professionals, 
+          ensuring you receive the best possible care from the comfort of your home. With state-of-the-art technology and a patient-first approach, 
+          we're revolutionizing healthcare delivery one appointment at a time.
+        </p>
+      </div>
     </section>
   </main>
 
-  <footer class="footer">
-    <p>&copy; <span id="year"></span> Hospital Booking System — All rights reserved.</p>
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-content">
+      <p>&copy; <span id="year"></span> QuickCare — Revolutionizing Healthcare Access</p>
+      <div class="social-links">
+        <a href="#" class="social-link">
+          <span>f</span>
+        </a>
+        <a href="#" class="social-link">
+          <span>𝕏</span>
+        </a>
+        <a href="#" class="social-link">
+          <span>in</span>
+        </a>
+        <a href="#" class="social-link">
+          <span>📷</span>
+        </a>
+      </div>
+    </div>
   </footer>
+  
+  <script>
+    // Hide loader when page loads
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        document.getElementById('loader').classList.add('hidden');
+      }, 500);
+    });
 
+    // Set current year
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Mobile menu toggle
+    const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+    const closeMenu = document.querySelector('.close-menu');
+    const mobileNav = document.querySelector('.mobile-nav');
+
+    mobileMenuBtn.addEventListener('click', () => {
+      mobileNav.classList.add('active');
+    });
+
+    closeMenu.addEventListener('click', () => {
+      mobileNav.classList.remove('active');
+    });
+
+    // Navbar scroll effect
+    let lastScroll = 0;
+    window.addEventListener('scroll', () => {
+      const header = document.querySelector('header');
+      const currentScroll = window.pageYOffset;
+      
+      if (currentScroll > 100) {
+        header.style.padding = '0.5rem 0';
+        header.style.boxShadow = '0 5px 15px rgba(0, 0, 0, 0.1)';
+      } else {
+        header.style.padding = '1rem 0';
+        header.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.05)';
+      }
+
+      lastScroll = currentScroll;
+    });
+
+    // Active link switching
+    document.querySelectorAll('.nav-links a, .mobile-nav-links a').forEach(link => {
+      link.addEventListener('click', function(e) {
+        // Remove active class from all links
+        document.querySelectorAll('.nav-links a, .mobile-nav-links a').forEach(l => {
+          l.classList.remove('active');
+        });
+        // Add active class to clicked link
+        this.classList.add('active');
+      });
+    });
+
+    // Smooth scrolling for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          window.scrollTo({
+            top: target.offsetTop - 80,
+            behavior: 'smooth'
+          });
+          // Close mobile menu if open
+          mobileNav.classList.remove('active');
+        }
+      });
+    });
+
+    // Add parallax effect to hero image
+    window.addEventListener('scroll', () => {
+      const scrolled = window.pageYOffset;
+      const heroImg = document.querySelector('.hero-image-container');
+      if (heroImg && scrolled < window.innerHeight) {
+        heroImg.style.transform = `translateY(${scrolled * 0.1}px)`;
+      }
+    });
+  </script>
 </body>
 </html>
