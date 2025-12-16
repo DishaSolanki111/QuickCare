@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Receptionist Registration Form</title>
+    <title>Receptionist Registration</title>
     <style>
         :root {
             --primary-blue: #0a4d68;
@@ -165,15 +165,6 @@
             display: none;
         }
 
-        .success-message {
-            background-color: var(--light-blue);
-            color: var(--primary-blue);
-            padding: 15px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-            display: none;
-        }
-
         .required {
             color: var(--error);
         }
@@ -188,7 +179,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>Receptionist Registration Form</h1>
+        <h1>Receptionist Registration</h1>
         
         <?php
         // Database connection
@@ -226,7 +217,7 @@
             // Hash the password
             $hashed_password = password_hash($password, PASSWORD_DEFAULT);
             
-            // SQL to insert data (removed RECEPTIONIST_ID as it's likely auto-increment)
+            // SQL to insert data
             $sql = "INSERT INTO receptionist_tbl (FIRST_NAME, LAST_NAME, DOB, DOJ, GENDER, PHONE, EMAIL, USERNAME, PASSWORD, ADDRESS) 
                     VALUES ('$first_name', '$last_name', '$dob', '$doj', '$gender', '$phone', '$email', '$username', '$hashed_password', '$address')";
             
@@ -240,30 +231,18 @@
         }
         ?>
         
-        <?php if ($success): ?>
-            <div class="success-message">
-                Registration successful! The receptionist has been added to the database.
-            </div>
-        <?php endif; ?>
-        
-        <?php if (!empty($error)): ?>
-            <div class="error-message" style="display: block;">
-                <?php echo $error; ?>
-            </div>
-        <?php endif; ?>
-        
         <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post" id="receptionistForm">
             <div class="form-row">
                 <div class="form-group">
                     <label for="first_name">First Name <span class="required">*</span></label>
                     <input type="text" id="first_name" name="first_name" required>
-                    <div class="error-message" id="first_name_error">Please enter your first name</div>
+                    <div class="error-message" id="first_name_error"></div>
                 </div>
                 
                 <div class="form-group">
                     <label for="last_name">Last Name <span class="required">*</span></label>
                     <input type="text" id="last_name" name="last_name" required>
-                    <div class="error-message" id="last_name_error">Please enter your last name</div>
+                    <div class="error-message" id="last_name_error"></div>
                 </div>
             </div>
             
@@ -271,13 +250,13 @@
                 <div class="form-group">
                     <label for="dob">Date of Birth</label>
                     <input type="date" id="dob" name="dob">
-                    <div class="error-message" id="dob_error">Please select a valid date</div>
+                    <div class="error-message" id="dob_error"></div>
                 </div>
                 
                 <div class="form-group">
                     <label for="doj">Date of Joining</label>
                     <input type="date" id="doj" name="doj">
-                    <div class="error-message" id="doj_error">Please select a valid date</div>
+                    <div class="error-message" id="doj_error"></div>
                 </div>
             </div>
             
@@ -303,13 +282,13 @@
                 <div class="form-group">
                     <label for="phone">Phone Number</label>
                     <input type="number" id="phone" name="phone">
-                    <div class="error-message" id="phone_error">Please enter a valid phone number</div>
+                    <div class="error-message" id="phone_error"></div>
                 </div>
                 
                 <div class="form-group">
                     <label for="email">Email</label>
                     <input type="email" id="email" name="email">
-                    <div class="error-message" id="email_error">Please enter a valid email address</div>
+                    <div class="error-message" id="email_error"></div>
                 </div>
             </div>
             
@@ -317,24 +296,24 @@
                 <div class="form-group">
                     <label for="username">Username <span class="required">*</span></label>
                     <input type="text" id="username" name="username" required>
-                    <div class="error-message" id="username_error">Please enter a username</div>
+                    <div class="error-message" id="username_error"></div>
                 </div>
                 
                 <div class="form-group">
                     <label for="password">Password <span class="required">*</span></label>
                     <input type="password" id="password" name="password" required>
-                    <div class="error-message" id="password_error">Please enter a password</div>
+                    <div class="error-message" id="password_error"></div>
                 </div>
             </div>
             
             <div class="form-group">
                 <label for="address">Address</label>
                 <textarea id="address" name="address"></textarea>
-                <div class="error-message" id="address_error">Please enter your address</div>
+                <div class="error-message" id="address_error"></div>
             </div>
             
             <div class="btn-container">
-                <button type="submit" class="btn">Register Receptionist</button>
+                <button type="submit" class="btn">Register</button>
             </div>
         </form>
     </div>
@@ -351,6 +330,7 @@
                 const errorElement = document.getElementById(fieldId + '_error');
                 
                 if (!field.value.trim()) {
+                    errorElement.textContent = 'This field is required';
                     errorElement.style.display = 'block';
                     isValid = false;
                 } else {
@@ -364,6 +344,7 @@
             const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             
             if (emailField.value && !emailPattern.test(emailField.value)) {
+                emailError.textContent = 'Invalid email format';
                 emailError.style.display = 'block';
                 isValid = false;
             } else {
@@ -375,6 +356,7 @@
             const phoneError = document.getElementById('phone_error');
             
             if (phoneField.value && (phoneField.value.length < 10 || phoneField.value.length > 15)) {
+                phoneError.textContent = 'Invalid phone number';
                 phoneError.style.display = 'block';
                 isValid = false;
             } else {
