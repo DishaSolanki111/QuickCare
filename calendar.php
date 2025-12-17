@@ -1,7 +1,7 @@
 <?php
 include 'config.php';
 
-$doctor_id = $_GET['doctor_id'];
+$doctor_id = (int)$_GET['doctor_id'];
 
 /* Fetch schedule */
 $q = mysqli_query($conn,"
@@ -36,9 +36,13 @@ $dayMap = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
 <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:10px">
 <?php
 for($d=1;$d<=$totalDays;$d++){
-    $dayName = strtoupper($dayMap[date('w',strtotime("$year-$month-$d"))]);
-    if($dayName == $schedule['AVAILABLE_DAY']){
-        echo "<div class='date available' onclick=\"showSlots('$d')\">$d</div>";
+
+    $fullDate = sprintf('%04d-%02d-%02d', $year, $month, $d);
+    $dayName  = strtoupper($dayMap[date('w', strtotime($fullDate))]);
+
+    if($dayName === $schedule['AVAILABLE_DAY']){
+        echo "<div class='date available'
+              onclick=\"showSlots('$fullDate')\">$d</div>";
     } else {
         echo "<div class='date unavailable'>$d</div>";
     }
@@ -49,14 +53,15 @@ for($d=1;$d<=$totalDays;$d++){
 <div id="slotBox"></div>
 
 <script>
-function showSlots(day){
-    fetch("slots.php?doctor_id=<?= $doctor_id ?>&date="+day)
-    .then(res=>res.text())
-    .then(data=>{
-        document.getElementById("slotBox").style.display="block";
-        document.getElementById("slotBox").innerHTML=data;
+function showSlots(fullDate){
+    fetch("slots.php?doctor_id=<?= $doctor_id ?>&date=" + fullDate)
+    .then(res => res.text())
+    .then(data => {
+        document.getElementById("slotBox").style.display = "block";
+        document.getElementById("slotBox").innerHTML = data;
     });
 }
 </script>
+
 </body>
 </html>

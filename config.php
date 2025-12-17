@@ -4,7 +4,7 @@ $user = "root";
 $pass = "";
 $db   = "quick_care";
 $pass = "your_password";
-$db   = "QuickCare";
+$db   = "quick_care";
 
 
 $conn = mysqli_connect(hostname: $host, username: $user, password: $pass, database: $db);
