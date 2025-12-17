@@ -1,5 +1,7 @@
 <?php
 include 'config.php'; // DB connection
+include 'header.php';
+include 'footer.php';
 
 if (!isset($_GET['id'])) {
     die("Doctor ID missing.");
@@ -141,5 +143,6 @@ body {
 
 </body>
 </html>
+
 
 
