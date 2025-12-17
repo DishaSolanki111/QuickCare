@@ -2,7 +2,7 @@
 $host = "localhost";
 $user = "root";
 $pass = "your_password";
-$db   = "QuickCare";
+$db   = "quick_care";
 
 $conn = mysqli_connect($host, $user, $pass, $db);
 
