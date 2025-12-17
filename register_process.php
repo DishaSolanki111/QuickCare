@@ -15,3 +15,4 @@ VALUES
 $_SESSION['P_ID'] = mysqli_insert_id($conn);
 
 header("Location: payment.php?doctor_id={$_POST['doctor_id']}&date={$_POST['date']}&time={$_POST['time']}&schedule_id={$_POST['schedule_id']}");
+

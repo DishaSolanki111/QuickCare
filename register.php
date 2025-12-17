@@ -17,6 +17,7 @@ button{background:#2e6ad6;color:white;border:none;}
 </head>
 <body>
 
+
 <form method="POST" action="register_process.php">
 <h2>Patient Registration</h2>
 

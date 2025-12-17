@@ -17,6 +17,7 @@ $end   = strtotime($row['END_TIME']);
 ?>
 <h3>Select Slot</h3>
 
+
 <?php
 while($start < $end){
     $slot = date("H:i",$start);

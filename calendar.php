@@ -58,6 +58,5 @@ function showSlots(day){
     });
 }
 </script>
-
 </body>
 </html>
