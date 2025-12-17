@@ -21,7 +21,7 @@ VALUES
 ('$patient_id', '$doctor_id', '$schedule_id', NOW(), '$date', '$time', 'scheduled')
 ";
 
-if (mysqli_query($conn, $sql)) {
+if (mysqli_query($conn, $q)) {
 ?>
 <!DOCTYPE html>
 <html>
