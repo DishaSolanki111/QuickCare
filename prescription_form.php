@@ -1,4 +1,5 @@
 <?php
+include "header.php";
 // Include your existing config file
 require_once 'config.php';
 
@@ -141,7 +142,47 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_prescription_i
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Prescriptions for <?php echo htmlspecialchars($patient['FIRST_NAME'] . ' ' . $patient['LAST_NAME']); ?></title>
-    <style> body { font-family: Arial, sans-serif; background-color: #f4f4f9; color: #333; margin: 0; padding: 20px; } .container { max-width: 1000px; margin: auto; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); } h1, h2 { color: #0056b3; border-bottom: 2px solid #eee; padding-bottom: 10px; } .back-link { display: inline-block; margin-bottom: 20px; color: #0056b3; text-decoration: none; font-weight: bold; } .message { padding: 15px; margin-bottom: 20px; border: 1px solid; border-radius: 4px; } .message.success { color: #3c763d; background-color: #dff0d8; border-color: #d6e9c6; } .message.error { color: #a94442; background-color: #f2dede; border-color: #ebccd1; } .form-container { margin-top: 30px; padding: 20px; border: 1px solid #ddd; border-radius: 8px; } .form-group { margin-bottom: 15px; } .form-group label { display: block; margin-bottom: 5px; font-weight: bold; } .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; } .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; } .btn { display: inline-block; padding: 10px 15px; text-decoration: none; border-radius: 5px; color: #fff; border: none; cursor: pointer; font-size: 14px; } .btn-submit { background-color: #007bff; width: 100%; font-size: 16px; margin-top: 10px;} .btn-submit:hover { background-color: #0056b3; } .btn-delete { background-color: #dc3545; float: right; } .btn-delete:hover { background-color: #c82333; } .prescription-list { margin-top: 40px; } .prescription-item { border: 1px solid #eee; padding: 15px; margin-bottom: 15px; border-radius: 5px; background-color: #fafafa; overflow: hidden; } .prescription-header { display: flex; justify-content: space-between; align-items: center; } </style>
+    <style> :root {
+      --primary: #0066cc;
+      --dark: #1a3a5f;
+    }
+
+    footer {
+      background: var(--dark);
+      color: white;
+      padding: 3rem 5%;
+      text-align: center;
+    }
+
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .social-links {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    .social-link {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      transition: all 0.3s ease;
+      text-decoration: none;
+    }
+
+    .social-link:hover {
+      background: var(--primary);
+      transform: translateY(-3px);
+    } body { font-family: Arial, sans-serif; background-color: #f4f4f9; color: #333; margin: 0; padding: 20px; } .container { max-width: 1000px; margin: auto; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); } h1, h2 { color: #0056b3; border-bottom: 2px solid #eee; padding-bottom: 10px; } .back-link { display: inline-block; margin-bottom: 20px; color: #0056b3; text-decoration: none; font-weight: bold; } .message { padding: 15px; margin-bottom: 20px; border: 1px solid; border-radius: 4px; } .message.success { color: #3c763d; background-color: #dff0d8; border-color: #d6e9c6; } .message.error { color: #a94442; background-color: #f2dede; border-color: #ebccd1; } .form-container { margin-top: 30px; padding: 20px; border: 1px solid #ddd; border-radius: 8px; } .form-group { margin-bottom: 15px; } .form-group label { display: block; margin-bottom: 5px; font-weight: bold; } .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; } .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; } .btn { display: inline-block; padding: 10px 15px; text-decoration: none; border-radius: 5px; color: #fff; border: none; cursor: pointer; font-size: 14px; } .btn-submit { background-color: #007bff; width: 100%; font-size: 16px; margin-top: 10px;} .btn-submit:hover { background-color: #0056b3; } .btn-delete { background-color: #dc3545; float: right; } .btn-delete:hover { background-color: #c82333; } .prescription-list { margin-top: 40px; } .prescription-item { border: 1px solid #eee; padding: 15px; margin-bottom: 15px; border-radius: 5px; background-color: #fafafa; overflow: hidden; } .prescription-header { display: flex; justify-content: space-between; align-items: center; } </style>
 </head>
 <body>
     <div class="container">
@@ -193,5 +234,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_prescription_i
             <?php endif; ?>
         </div>
     </div>
+    <footer>
+    <div class="footer-content">
+      <p>&copy; <span id="year"></span> QuickCare — Revolutionizing Healthcare Access</p>
+      <div class="social-links">
+        <a href="#" class="social-link"><span>f</span></a>
+        <a href="#" class="social-link"><span>𝕏</span></a>
+        <a href="#" class="social-link"><span>in</span></a>
+        <a href="#" class="social-link"><span>📷</span></a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+
 </body>
 </html>

@@ -80,11 +80,12 @@ button{margin-top:15px;padding:10px 16px;background:#2e6ad6;color:white;border:n
       </div>
     </div>
   </footer>
-  </script>
+
 
 </body>
  <script>
     document.getElementById('year').textContent = new Date().getFullYear();
-</html>
+  </script>
+    </html>
 
 
