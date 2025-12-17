@@ -53,7 +53,6 @@ button{
         <input type="hidden" name="time" value="<?= $time ?>">
         <input type="hidden" name="schedule_id" value="<?= $schedule_id ?>">
         <input type="hidden" name="amount" value="300">
-
         <button type="submit">Pay ₹300</button>
     </form>
 </div>

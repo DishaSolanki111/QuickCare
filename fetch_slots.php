@@ -17,6 +17,7 @@ if(mysqli_num_rows($q)==0){
     exit;
 }
 
+
 $row = mysqli_fetch_assoc($q);
 
 $start = strtotime($row['START_TIME']);

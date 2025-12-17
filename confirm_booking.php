@@ -5,6 +5,7 @@ include 'config.php';
 /* TEMP: hardcoded patient for demo */
 $patient_id = 1;
 
+
 $doctor_id = $_GET['doctor_id'];
 $date      = $_GET['date'];
 $time      = $_GET['time'];

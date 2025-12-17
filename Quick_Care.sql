@@ -584,12 +584,3 @@ INSERT INTO medicine_reminder_tbl (MEDICINE_ID, CREATOR_ROLE, CREATOR_ID, PATIEN
 (2, 'RECEPTIONIST', 10, 10, '14:00:00', 'Afternoon dose of Antibiotic'),
 (2, 'RECEPTIONIST', 10, 10, '20:00:00', 'Evening dose of Antibiotic'),
 (1, 'RECEPTIONIST', 10, 10, '22:00:00', 'Paracetamol for fever as needed');
-
-
-
-
-
-
-
-
-

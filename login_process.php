@@ -18,6 +18,7 @@ $q = mysqli_query($conn, "
     WHERE USERNAME='$user'
 ");
 
+
 if (!$q || mysqli_num_rows($q) !== 1) {
     die("Invalid username or password");
 }

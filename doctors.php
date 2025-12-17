@@ -115,6 +115,5 @@ function closeCalendar(){
     document.getElementById("calendarFrame").src = "";
 }
 </script>
-
 </body>
 </html>

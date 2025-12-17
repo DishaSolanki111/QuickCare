@@ -12,6 +12,7 @@ $schedule_id = $_POST['schedule_id'];
 $date        = $_POST['date'];
 $time        = $_POST['time'];
 
+
 // ✅ CORRECT INSERT — MATCHES TABLE STRUCTURE
 $q = "
 INSERT INTO appointment_tbl

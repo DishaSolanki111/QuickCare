@@ -7,6 +7,7 @@ if (!isset($_GET['id'])) {
 
 $doctor_id = intval($_GET['id']);
 
+
 // ===== 1. FETCH DOCTOR BASIC DETAILS =====
 $doc_sql = "
     SELECT d.*, s.SPECIALISATION_NAME 
