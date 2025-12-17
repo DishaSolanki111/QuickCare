@@ -23,17 +23,22 @@ button{background:#2e6ad6;color:white;border:none;}
 <h2>Patient Login</h2>
 
 <form action="login_process.php" method="post">
-    <input type="hidden" name="doctor_id" value="<?= $_GET['doctor_id'] ?>">
-    <input type="hidden" name="date" value="<?= $_GET['date'] ?>">
-    <input type="hidden" name="time" value="<?= $_GET['time'] ?>">
-    <input type="hidden" name="schedule_id" value="<?= $_GET['schedule_id'] ?>">
+
+    <input type="hidden" name="doctor_id" value="<?= $doctor_id ?>">
+    <input type="hidden" name="date" value="<?= $date ?>">
+    <input type="hidden" name="time" value="<?= $time ?>">
+    <input type="hidden" name="schedule_id" value="<?= $schedule_id ?>">
 
     <input name="username" placeholder="Username" required>
     <input name="password" type="password" placeholder="Password" required>
 
-    <button>Login</button>
-    <a href="register.php">Register Yourself</a><br>
-    <a href="forgot_password.php">Forgot Password</a>
+    <button type="submit">Login</button>
+
+    <p>
+        <a href="patientform.php">Register Yourself</a><br>
+        <a href="forgot_password.php">Forgot Password</a>
+    </p>
+
 </form>
 </div>
 
