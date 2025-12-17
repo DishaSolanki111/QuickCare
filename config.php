@@ -1,8 +1,8 @@
 <?php
 $host = "localhost";
 $user = "root";
-$pass = "";
-$db   = "quick_care";
+$pass = "your_password";
+$db   = "QuickCare";
 
 $conn = mysqli_connect($host, $user, $pass, $db);
 
