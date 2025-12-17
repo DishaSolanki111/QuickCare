@@ -8,20 +8,19 @@ if (!isset($_SESSION['PATIENT_ID'])) {
 
 $patient_id  = $_SESSION['PATIENT_ID'];
 $doctor_id   = $_POST['doctor_id'];
+$schedule_id = $_POST['schedule_id'];
 $date        = $_POST['date'];
 $time        = $_POST['time'];
-$schedule_id = $_POST['schedule_id'];
-$amount      = $_POST['amount'];
 
-// INSERT APPOINTMENT
+// ✅ CORRECT INSERT — MATCHES TABLE STRUCTURE
 $q = "
 INSERT INTO appointment_tbl
-(doctor_id, patient_id, schedule_id, appointment_date, appointment_time, amount, payment_status, status, created_at)
+(PATIENT_ID, DOCTOR_ID, SCHEDULE_ID, CREATED_AT, APPOINTMENT_DATE, APPOINTMENT_TIME, STATUS)
 VALUES
-('$doctor_id','$patient_id','$schedule_id','$date','$time','$amount','PAID','CONFIRMED',NOW())
+('$patient_id','$doctor_id','$schedule_id',NOW(),'$date','$time','CONFIRMED')
 ";
 
-if(mysqli_query($conn,$q)){
+if (mysqli_query($conn, $q)) {
     echo "<h2 style='color:green'>Payment Successful</h2>";
     echo "<p>Appointment Confirmed</p>";
     echo "<p>Date: $date</p>";
