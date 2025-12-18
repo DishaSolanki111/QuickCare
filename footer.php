@@ -15,7 +15,7 @@
       color: white;
       padding: 3rem 5%;
       text-align: center;
-      position: fixed;
+     
     }
 
     .footer-content {
