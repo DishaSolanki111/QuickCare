@@ -1,5 +1,5 @@
 <?php
-include "header.php";
+
 // Include your existing config file
 require_once 'config.php';
 
@@ -196,7 +196,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_prescription_i
             <?php if (empty($completed_appointments)): ?>
                 <p style="color: #8a6d3b; background-color: #fcf8e3; border: 1px solid #faebcc; padding: 15px; border-radius: 4px;"><strong>Note:</strong> This patient has no completed appointments.</p>
             <?php else: ?>
-                <form action="prescription_manager.php?patient_id=<?php echo $patient_id; ?>" method="POST">
+                <form action="prescription_form.php?patient_id=<?php echo $patient_id; ?>" method="POST">
                     <div class="form-group"><label for="appointment_id">Link to Completed Appointment:</label><select id="appointment_id" name="appointment_id" required><option value="">--Select an Appointment--</option><?php foreach ($completed_appointments as $apt): ?><option value="<?php echo $apt['APPOINTMENT_ID']; ?>"><?php echo htmlspecialchars($apt['APPOINTMENT_DATE'] . " with Dr. " . $apt['FIRST_NAME'] . " " . $apt['LAST_NAME'] . " (" . $apt['SPECIALISATION_NAME'] . ")"); ?></option><?php endforeach; ?></select></div>
                     <div class="form-grid">
                         <div class="form-group"><label for="issue_date">Issue Date:</label><input type="date" id="issue_date" name="issue_date" required></div>
@@ -215,7 +215,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_prescription_i
                         <div class="form-group"><label for="duration">Duration:</label><input type="text" id="duration" name="duration" placeholder="e.g., 7 days" required></div>
                         <div class="form-group"><label for="frequency">Frequency:</label><input type="text" id="frequency" name="frequency" placeholder="e.g., Twice a day" required></div>
                     </div>
-                    <button type="submit" name="add_prescription" class="btn btn-submit">Add Prescription</button>
+                    <button type="submit" name="add_prescription" class="btn btn-submit" onclick="manage_prescription.php">Add Prescription</button>
                 </form>
             <?php endif; ?>
         </div>
