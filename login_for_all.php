@@ -627,28 +627,35 @@
             <button class="tab active" data-target="receptionist">Receptionist</button>
         </div>
 
-        <div class="slider">
-            <form action="pateint.html" class="form" id="patient" style="left:0;">
+       <div class="slider">
+            <!-- CHANGE 1: Set form action to the PHP script -->
+            <!-- CHANGE 2: Set form method to POST -->
+            <!-- CHANGE 3: Add the 'name' attribute to inputs -->
+            <!-- CHANGE 4: Add a hidden input to identify the user type -->
+            <form action="patient.html" method="POST" class="form" id="patient" style="left:0;">
+                <input type="hidden" name="user_type" value="patient">
                 <h3>Patient Login</h3>
-                <input type="text" placeholder=" username">
-                <input type="password" placeholder="Password">
-                <button>Login</button>
-                <a href="register.php" class="small">Not registered yet? Create an account</a>
+                <input type="text" name="username" placeholder="username">
+                <input type="password" name="pswd" placeholder="Password">
+                <button type="submit" onClick="loginhome.php">Login</button>
+                <a href="patientform.php" class="small">Not registered yet? Create an account</a>
             </form>
 
-            <form class="form" id="doctor">
+            <form action="loginhome.php" method="POST" class="form" id="doctor">
+                <input type="hidden" name="user_type" value="doctor">
                 <h3>Doctor Login</h3>
-                <input type="text" placeholder="username">
-                <input type="password" placeholder="Password">
-                <button>Login</button>
+                <input type="text" name="username" placeholder="username">
+                <input type="password" name="pswd" placeholder="Password">
+                <button type="submit">Login</button>
                 <div class="small">Ask Receptionist to register you.</div>
             </form>
 
-            <form class="form" id="receptionist">
+            <form action="loginhome.php" method="POST" class="form" id="receptionist">
+                <input type="hidden" name="user_type" value="receptionist">
                 <h3>Receptionist Login</h3>
-                <input type="text" placeholder="username">
-                <input type="password" placeholder="Password">
-                <button>Login</button>
+                <input type="text" name="username" placeholder="username">
+                <input type="password" name="pswd" placeholder="Password">
+                <button type="submit">Login</button>
             </form>
         </div>
     </div>
@@ -713,6 +720,7 @@
             this.classList.add('active');
         });
     });
+    
 </script>
 
 </body>
