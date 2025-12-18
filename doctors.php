@@ -1,6 +1,7 @@
 <?php
 include "config.php";
-
+include "header.php";
+include "footer.php";
 $spec_id = $_GET['spec_id'];
 
 $q = "SELECT DOCTOR_ID, FIRST_NAME, LAST_NAME FROM doctor_tbl WHERE SPECIALISATION_ID = $spec_id";
@@ -12,6 +13,47 @@ $res = mysqli_query($conn,$q);
 <title>Doctors</title>
 
 <style>
+    :root {
+      --primary: #0066cc;
+      --dark: #1a3a5f;
+    }
+
+    footer {
+      background: var(--dark);
+      color: white;
+      padding: 3rem 5%;
+      text-align: center;
+    }
+
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .social-links {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    .social-link {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      transition: all 0.3s ease;
+      text-decoration: none;
+    }
+
+    .social-link:hover {
+      background: var(--primary);
+      transform: translateY(-3px);
+    }
 body{font-family:Arial;background:#f5f8ff;}
 .grid{
     display:grid;
@@ -92,6 +134,7 @@ iframe{
         </button>
 
     </div>
+
 <?php } ?>
 </div>
 
@@ -115,5 +158,22 @@ function closeCalendar(){
     document.getElementById("calendarFrame").src = "";
 }
 </script>
+<footer>
+    <div class="footer-content">
+      <p>&copy; <span id="year"></span> QuickCare — Revolutionizing Healthcare Access</p>
+      <div class="social-links">
+        <a href="#" class="social-link"><span>f</span></a>
+        <a href="#" class="social-link"><span>𝕏</span></a>
+        <a href="#" class="social-link"><span>in</span></a>
+        <a href="#" class="social-link"><span>📷</span></a>
+      </div>
+    </div>
+  </footer>
+
+
+</body>
+ <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
 </body>
 </html>
