@@ -578,12 +578,12 @@
         
         <div class="nav-right-container">
             <div class="nav-links">
-                <a href="index.html">Home</a>
-                <a href="services.html">Services</a>
-                <a href="doctors.html">Doctors</a>
-                <a href="aboutus.html">About</a>
-                <a href="contactus.html">Contact</a>
-            </div>
+                    <a href="index.php">Home</a>
+                    <a href="services.php">Services</a>
+                    <a href="doctors.php">Doctors</a>
+                    <a href="aboutus.php" class="active">About</a>
+                    <a href="contactus.php">Contact</a>
+                </div>
             
             <div class="auth-buttons">
                 <a href="register.php" class="btn-register">
@@ -605,11 +605,11 @@
         <button class="close-menu">✕</button>
     </div>
     <div class="mobile-nav-links">
-        <a href="index.html">Home</a>
-        <a href="services.html">Services</a>
-        <a href="doctors.html">Doctors</a>
-        <a href="aboutus.html">About Us</a>
-        <a href="contactus.html">Contact</a>
+        <a href="index.php">Home</a>
+        <a href="services.php">Services</a>
+        <a href="doctors.php">Doctors</a>
+        <a href="aboutus.php">About Us</a>
+        <a href="contactus.php">Contact</a>
         <a href="register.php">Register</a>
     </div>
 </div>
