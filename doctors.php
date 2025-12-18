@@ -1,7 +1,7 @@
 <?php
 include "config.php";
 include "header.php";
-include "footer.php";
+
 $spec_id = $_GET['spec_id'];
 
 $q = "SELECT DOCTOR_ID, FIRST_NAME, LAST_NAME FROM doctor_tbl WHERE SPECIALISATION_ID = $spec_id";
@@ -21,7 +21,7 @@ $res = mysqli_query($conn,$q);
     footer {
       background: var(--dark);
       color: white;
-      padding: 3rem 5%;
+      padding: 5rem 5%;
       text-align: center;
     }
 
@@ -64,7 +64,7 @@ body{font-family:Arial;background:#f5f8ff;}
 }
 .card{
     background:white;
-    padding:20px;
+    padding:70px;
     border-radius:15px;
     box-shadow:0 4px 12px rgba(0,0,0,.1);
     text-align:center;
@@ -156,6 +156,7 @@ function openCalendar(doctorId){
 function closeCalendar(){
     document.getElementById("calendarModal").style.display = "none";
     document.getElementById("calendarFrame").src = "";
+    document.getElementById('year').textContent = new Date().getFullYear();
 }
 </script>
 <footer>
@@ -172,8 +173,6 @@ function closeCalendar(){
 
 
 </body>
- <script>
-    document.getElementById('year').textContent = new Date().getFullYear();
-  </script>
+
 </body>
 </html>
