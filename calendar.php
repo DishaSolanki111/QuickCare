@@ -85,7 +85,7 @@ body{font-family:Arial;margin:0}
     justify-content:center;
 }
 .available{
-    background:#1fa739;
+    background:#47bb7dff;
     color:white;
     cursor:pointer;
     transition: all 0.2s ease;
@@ -137,7 +137,7 @@ body{font-family:Arial;margin:0}
 <!-- Legend -->
 <div class="legend">
     <div class="legend-item">
-        <div class="legend-color" style="background:#1fa739;"></div>
+        <div class="legend-color" style="background:#47bb7dff;"></div>
         <span>Available</span>
     </div>
     <div class="legend-item">
