@@ -51,138 +51,188 @@ while ($row = mysqli_fetch_assoc($bookedQuery)) {
 <head>
 <title>Select Date</title>
 <style>
-body{font-family:Arial;margin:0}
-.calendar-header{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:15px;
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: #f5f5f5;
 }
-.calendar-header a{
-    text-decoration:none;
-    font-size:20px;
-    font-weight:bold;
+
+.main-container {
+    max-width: 800px;
+    margin: 0 auto;
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
-.calendar-grid{
-    display:grid;
-    grid-template-columns:repeat(7,1fr);
-    gap:10px;
+
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
 }
-.day-name{
-    text-align:center;
-    font-weight:bold;
-    padding:10px 0;
+
+.calendar-header a {
+    text-decoration: none;
+    font-size: 20px;
+    font-weight: bold;
+    color: #47bb7dff;
 }
-.date{
-    padding:15px;
-    border-radius:6px;
-    text-align:center;
-    font-weight:bold;
-    font-size:16px;
-    min-height:50px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 10px;
 }
-.available{
-    background:#47bb7dff;
-    color:white;
-    cursor:pointer;
+
+.day-name {
+    text-align: center;
+    font-weight: bold;
+    padding: 10px 0;
+    color: #333;
+}
+
+.date {
+    padding: 15px;
+    border-radius: 6px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 16px;
+    min-height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.available {
+    background: #47bb7dff;
+    color: white;
+    cursor: pointer;
     transition: all 0.2s ease;
 }
-.available:hover{background:#17852d}
-.booked{
-    background:#ffcc00;
-    color:#333;
-    cursor:not-allowed;
+
+.available:hover {
+    background: #3a9466;
 }
-.unavailable{
-    background:#d9d9d9;
-    color:#777;
-    cursor:not-allowed;
+
+.booked {
+    background: #ffcc00;
+    color: #333;
+    cursor: not-allowed;
 }
-.legend{
-    display:flex;
-    justify-content:center;
-    margin:15px 0;
-    gap:15px;
+
+.unavailable {
+    background: #d9d9d9;
+    color: #777;
+    cursor: not-allowed;
 }
-.legend-item{
-    display:flex;
-    align-items:center;
-    gap:5px;
+
+.legend {
+    display: flex;
+    justify-content: center;
+    margin: 15px 0;
+    gap: 15px;
+    flex-wrap: wrap;
 }
-.legend-color{
-    width:20px;
-    height:20px;
-    border-radius:4px;
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
 }
-#slotBox{
-    display:none;
-    margin-top:20px;
+
+.legend-color {
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+}
+
+#slotBox {
+    margin-top: 20px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+    .date {
+        padding: 10px;
+        font-size: 14px;
+        min-height: 40px;
+    }
+    
+    .legend {
+        gap: 10px;
+    }
+    
+    .legend-item {
+        font-size: 14px;
+    }
 }
 </style>
 </head>
 <body>
 
-<h3>Select Date</h3>
+<div class="main-container">
+    <h3>Select Date</h3>
 
-<!-- Month Navigation -->
-<div class="calendar-header">
-    <a href="?doctor_id=<?= $doctor_id ?>&month=<?= $month-1 ?>&year=<?= $year ?>">◀</a>
-    <strong><?= date('F Y', $firstDayOfMonth) ?></strong>
-    <a href="?doctor_id=<?= $doctor_id ?>&month=<?= $month+1 ?>&year=<?= $year ?>">▶</a>
-</div>
-
-<!-- Legend -->
-<div class="legend">
-    <div class="legend-item">
-        <div class="legend-color" style="background:#47bb7dff;"></div>
-        <span>Available</span>
+    <!-- Month Navigation -->
+    <div class="calendar-header">
+        <a href="?doctor_id=<?= $doctor_id ?>&month=<?= $month-1 ?>&year=<?= $year ?>">◀</a>
+        <strong><?= date('F Y', $firstDayOfMonth) ?></strong>
+        <a href="?doctor_id=<?= $doctor_id ?>&month=<?= $month+1 ?>&year=<?= $year ?>">▶</a>
     </div>
-    <div class="legend-item">
-        <div class="legend-color" style="background:#ffcc00;"></div>
-        <span>Booked</span>
+
+    <!-- Legend -->
+    <div class="legend">
+        <div class="legend-item">
+            <div class="legend-color" style="background:#47bb7dff;"></div>
+            <span>Available</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background:#ffcc00;"></div>
+            <span>Booked</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background:#d9d9d9;"></div>
+            <span>Unavailable</span>
+        </div>
     </div>
-    <div class="legend-item">
-        <div class="legend-color" style="background:#d9d9d9;"></div>
-        <span>Unavailable</span>
+
+    <div class="calendar-grid">
+        <?php foreach ($dayMap as $day): ?>
+            <div class="day-name"><?= $day ?></div>
+        <?php endforeach; ?>
+
+        <?php
+        /* Empty slots before month starts */
+        for ($i = 0; $i < $startWeekDay; $i++) {
+            echo "<div></div>";
+        }
+
+        /* Dates */
+        for ($d = 1; $d <= $totalDays; $d++) {
+            $fullDate = sprintf('%04d-%02d-%02d', $year, $month, $d);
+            $dayName  = strtoupper($dayMap[date('w', strtotime($fullDate))]);
+            
+            // Check if it's a booked day
+            if (in_array($fullDate, $bookedDays)) {
+                echo "<div class='date booked' title='Booked'>$d</div>";
+            }
+            // Check if it's an available day and not in the past
+            else if (in_array($dayName, $availableDays) && $fullDate >= $today) {
+                echo "<div class='date available' onclick=\"showSlots('$fullDate')\">$d</div>";
+            }
+            // Otherwise, it's unavailable
+            else {
+                echo "<div class='date unavailable'>$d</div>";
+            }
+        }
+        ?>
     </div>
+
+    <div id="slotBox"></div>
 </div>
-
-<div class="calendar-grid">
-<?php foreach ($dayMap as $day): ?>
-    <div class="day-name"><?= $day ?></div>
-<?php endforeach; ?>
-
-<?php
-/* Empty slots before month starts */
-for ($i = 0; $i < $startWeekDay; $i++) {
-    echo "<div></div>";
-}
-
-/* Dates */
-for ($d = 1; $d <= $totalDays; $d++) {
-    $fullDate = sprintf('%04d-%02d-%02d', $year, $month, $d);
-    $dayName  = strtoupper($dayMap[date('w', strtotime($fullDate))]);
-    
-    // Check if it's a booked day
-    if (in_array($fullDate, $bookedDays)) {
-        echo "<div class='date booked' title='Booked'>$d</div>";
-    }
-    // Check if it's an available day and not in the past
-    else if (in_array($dayName, $availableDays) && $fullDate >= $today) {
-        echo "<div class='date available' onclick=\"showSlots('$fullDate')\">$d</div>";
-    }
-    // Otherwise, it's unavailable
-    else {
-        echo "<div class='date unavailable'>$d</div>";
-    }
-}
-?>
-</div>
-
-<div id="slotBox"></div>
 
 <script>
 function showSlots(fullDate){

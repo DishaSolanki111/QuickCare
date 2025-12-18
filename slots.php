@@ -33,6 +33,7 @@ if (mysqli_num_rows($q) > 0) {
         border: 1px solid #e0e0e0;
         border-radius: 8px;
         background-color: #f9f9f9;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     }
 
     .slot-selection-container h3 {
@@ -40,7 +41,7 @@ if (mysqli_num_rows($q) > 0) {
         margin-bottom: 20px;
         font-family: Arial, sans-serif;
         color: #333;
-        border-bottom: 2px solid #007bff;
+        border-bottom: 2px solid #47bb7dff;
         padding-bottom: 10px;
     }
 
@@ -67,7 +68,7 @@ if (mysqli_num_rows($q) > 0) {
 
     /* Hover effect for the slot button */
     .slot:hover {
-        background-color: #17852d; /* A darker blue on hover */
+        background-color: #3a9466; /* A darker blue on hover */
         transform: translateY(-2px); /* Slightly lifts the button up */
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); /* Enhances the shadow on hover */
     }
@@ -79,7 +80,6 @@ if (mysqli_num_rows($q) > 0) {
         font-style: italic;
     }
 </style>
-
 
 <div class="slot-selection-container">
     <h3>Select Slot for <?php echo date("l, F j, Y", strtotime($date)); ?></h3>
