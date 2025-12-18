@@ -84,8 +84,9 @@ body {
 .calendar-grid {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: 10px;
+    gap: 8px;
 }
+
 
 .day-name {
     text-align: center;
@@ -95,16 +96,17 @@ body {
 }
 
 .date {
-    padding: 15px;
+    padding: 8px;
     border-radius: 6px;
     text-align: center;
-    font-weight: bold;
-    font-size: 16px;
-    min-height: 50px;
+    font-weight: 600;
+    font-size: 14px;
+    min-height: 38px;
     display: flex;
     align-items: center;
     justify-content: center;
 }
+
 
 .available {
     background: #47bb7dff;

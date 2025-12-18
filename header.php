@@ -1,22 +1,24 @@
-<!DOCTYPE html>
-<html lang="en">
+<!-- HEADER START -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --primary:#0B5ED7;
+  --accent:#00C2CB;
+  --dark:#0f172a;
+  --text:#334155;
+  --bg:#f8fafc;
+  --card:#ffffff;
+}
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:'Inter',sans-serif;
+}
+
 <head>
-    <meta charset="UTF-8">
-    <title>QuickCare</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
-
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
-        }
-
-        body {
-            background: #f5f8fc;
-        }
-
         /* ===== HEADER ===== */
         header {
             background: #ffffff;
@@ -25,154 +27,88 @@
         
         }
 
-        .navbar {
-            display: flex;
-            align-items: center;
-        }
+/* NAVBAR */
+nav{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:18px 7%;
+  background:#fff;
+  position:sticky;
+  top:0;
+  z-index:100;
+  border-bottom:1px solid #e5e7eb;
+}
 
-        /* ===== LOGO ===== */
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
 
-        .logo-icon {
-            width: 42px;
-            height: 42px;
-            background: #e9f2ff;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            color: #007bff;
-        }
+.logo{
+  font-size:1.4rem;
+  font-weight:800;
+  color:var(--primary);
+}
 
-        .logo-text {
-            font-size: 22px;
-            font-weight: 600;
-            color: #007bff;
-        }
+/* RIGHT SIDE NAV */
+.nav-right{
+  display:flex;
+  align-items:center;
+  gap:36px;
+}
 
-        /* ===== RIGHT SECTION ===== */
-        .right-nav {
-            margin-left: auto;
-            display: flex;
-            align-items: center;
-            gap: 35px;
-        }
+nav ul{
+  display:flex;
+  gap:28px;
+  list-style:none;
+}
 
-        /* ===== NAV LINKS ===== */
-        .nav-links {
-            display: flex;
-            gap: 30px;
-        }
+nav ul li a{
+  text-decoration:none;
+  font-weight:600;
+  color:#1e293b;
+}
 
-        .nav-links a {
-            text-decoration: none;
-            color: #333;
-            font-size: 15px;
-            font-weight: 500;
-            position: relative;
-            padding-bottom: 4px;
-            transition: color 0.3s ease;
-        }
+nav ul li a:hover{
+  color:var(--primary);
+}
 
-        .nav-links a:hover {
-            color: #007bff;
-        }
+.nav-btns{
+  display:flex;
+  gap:14px;
+}
 
-        .nav-links a::after {
-            content: '';
-            position: absolute;
-            left: 0;
-            bottom: 0;
-            width: 0;
-            height: 2px;
-            background: #007bff;
-            transition: width 0.3s ease;
-        }
+.nav-btns a{
+  text-decoration:none;
+  padding:10px 22px;
+  border-radius:10px;
+  font-weight:600;
+}
 
-        .nav-links a:hover::after {
-            width: 100%;
-        }
+.login{
+  color:var(--primary);
+  border:2px solid var(--primary);
+}
 
-        /* ===== BUTTONS ===== */
-        .nav-buttons {
-            display: flex;
-            gap: 15px;
-        }
+.register{
+  background:linear-gradient(135deg,var(--primary),var(--accent));
+  color:#fff;
+}
+</style>
 
-        .btn-login {
-            padding: 8px 22px;
-            border: 2px solid #007bff;
-            background: transparent;
-            color: #007bff;
-            border-radius: 30px;
-            font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
+<nav>
+  <div class="logo">QuickCare</div>
 
-        .btn-login:hover {
-            background: #007bff;
-            color: #ffffff;
-        }
+  <div class="nav-right">
+    <ul>
+      <li><a href="index.html">Home</a></li>
+      <li><a href="appointment.php">Schedules</a></li>
+      <li><a href="appointment.php">Doctors</a></li>
+      <li><a href="aboutus.html">About</a></li>
+      <li><a href="contactus.html">Contact</a></li>
+    </ul>
 
-        .btn-register {
-            padding: 8px 22px;
-            border: none;
-            background: #007bff;
-            color: #ffffff;
-            border-radius: 30px;
-            font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .btn-register:hover {
-            background: #0056b3;
-            transform: translateY(-1px);
-        }
-    </style>
-</head>
-
-<body>
-
-<header>
-    <div class="navbar">
-
-        <!-- Logo -->
-        <div class="logo">
-            <div class="logo-icon">⚕️</div>
-            <div class="logo-text">QuickCare</div>
-        </div>
-
-        <!-- RIGHT SIDE -->
-        <div class="right-nav">
-
-            <!-- Navigation Links -->
-            <nav class="nav-links">
-                <a href="index.php">Home</a>
-                <a href="services.php">Services</a>
-                <a href="doctors.php">Doctors</a>
-                <a href="about.php">About us</a>
-                <a href="contact.php">Contact</a>
-            </nav>
-
-            <!-- Buttons -->
-            <div class="nav-buttons">
-                <a href="login.php"><button class="btn-login">Login</button></a>
-                <a href="register.php"><button class="btn-register">Register</button></a>
-            </div>
-
-        </div>
-
+    <div class="nav-btns">
+      <a href="login_for_all.php" class="login">Login</a>
+      <a href="patientform.php" class="register">Register</a>
     </div>
-</header>
-
-</body>
-</html>
+  </div>
+</nav>
+<!-- HEADER END -->

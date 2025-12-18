@@ -1,7 +1,6 @@
 <?php
-include 'config.php'; // DB connection
+include 'config.php';
 include 'header.php';
-
 
 if (!isset($_GET['id'])) {
     die("Doctor ID missing.");
@@ -9,32 +8,38 @@ if (!isset($_GET['id'])) {
 
 $doctor_id = intval($_GET['id']);
 
-
-// ===== 1. FETCH DOCTOR BASIC DETAILS =====
-$doc_sql = "
-    SELECT d.*, s.SPECIALISATION_NAME 
+/* FETCH DOCTOR DETAILS */
+$doctor_sql = "
+    SELECT d.DOCTOR_ID, d.FIRST_NAME, d.LAST_NAME, d.PHONE, d.EMAIL,
+           d.PROFILE_IMAGE, s.SPECIALISATION_NAME
     FROM doctor_tbl d
-    JOIN specialisation_tbl s ON d.SPECIALISATION_ID = s.SPECIALISATION_ID
+    JOIN specialisation_tbl s
+        ON d.SPECIALISATION_ID = s.SPECIALISATION_ID
     WHERE d.DOCTOR_ID = $doctor_id
 ";
 
-$doc_result = mysqli_query($conn, $doc_sql);
-$doctor = mysqli_fetch_assoc($doc_result);
+$doctor_res = mysqli_query($conn, $doctor_sql);
+$doctor = mysqli_fetch_assoc($doctor_res);
 
 if (!$doctor) {
     die("Doctor not found.");
 }
 
-// ===== 2. FETCH DOCTOR SCHEDULE =====
+/* FETCH DOCTOR SCHEDULE */
 $schedule_sql = "
     SELECT AVAILABLE_DAY, START_TIME, END_TIME
-    FROM doctor_schedule_tbl 
+    FROM doctor_schedule_tbl
     WHERE DOCTOR_ID = $doctor_id
     ORDER BY FIELD(AVAILABLE_DAY,'MON','TUE','WED','THU','FRI','SAT','SUN')
 ";
 
-$schedule_result = mysqli_query($conn, $schedule_sql);
+$schedule_res = mysqli_query($conn, $schedule_sql);
+
+$image_path = !empty($doctor['PROFILE_IMAGE'])
+    ? $doctor['PROFILE_IMAGE']
+    : 'imgs/default.jpg';
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -42,166 +47,96 @@ $schedule_result = mysqli_query($conn, $schedule_sql);
 <title>Doctor Profile</title>
 
 <style>
+:root {
+  --primary: #0066cc;
+  --dark: #1a3a5f;
+}
 
-    :root {
-      --primary: #0066cc;
-      --dark: #1a3a5f;
-    }
-
-    footer {
-      background: var(--dark);
-      color: white;
-      padding: 3rem 5%;
-      text-align: center;
-     
-    }
-
-    .footer-content {
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-
-    .social-links {
-      display: flex;
-      justify-content: center;
-      gap: 1rem;
-      margin-top: 1.5rem;
-    }
-
-    .social-link {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.1);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      transition: all 0.3s ease;
-      text-decoration: none;
-    }
-
-    .social-link:hover {
-      background: var(--primary);
-      transform: translateY(-3px);
-    }
-body {
+body{
     font-family: Arial, sans-serif;
-    background: #fdf5f5;
-    display: flex;
-    justify-content: center;
-    padding: 40px;
+    background:#f5f7fb;
+    display:flex;
+    justify-content:center;
+    padding:40px;
 }
 
-.profile-card {
-    width: 800px;
-    display: flex;
-    background: linear-gradient(135deg, #ffb199 0%, #ff0844 100%);
-    border-radius: 15px;
-    overflow: hidden;
+.profile-card{
+    width:800px;
+    display:flex;
+    background:#fff;
+    border-radius:15px;
+    overflow:hidden;
+    box-shadow:0 6px 20px rgba(0,0,0,.1);
 }
 
-.left {
-    width: 40%;
-    text-align: center;
-    background: #fff;
-    padding: 20px;
+.left{
+    width:35%;
+    background:#eef3ff;
+    text-align:center;
+    padding:25px;
 }
 
-.left img {
-    width: 100%;
-    border-radius: 10px;
+.left img{
+    width:100%;
+    height:280px;
+    object-fit:cover;
+    border-radius:12px;
 }
 
-.left h2 {
-    margin-top: 15px;
+.right{
+    width:65%;
+    padding:30px;
 }
 
-.right {
-    width: 60%;
-    padding: 30px;
-    color: white;
-    position: relative;
+.badge{
+    background:#2e6ad6;
+    color:#fff;
+    padding:6px 14px;
+    border-radius:20px;
 }
-
-.fee-tag {
-    position: absolute;
-    right: 20px;
-    top: 20px;
-    background: #ff4040;
-    padding: 8px 20px;
-    border-radius: 10px;
-    font-weight: bold;
-}
-
-.section-title {
-    font-weight: bold;
-    margin-top: 25px;
-    margin-bottom: 5px;
-}
-
-.badge {
-    display: inline-block;
-    background: rgba(255,255,255,0.2);
-    padding: 6px 14px;
-    border-radius: 20px;
-    margin: 5px 5px 0 0;
+footer{
+    background:var(--dark);
+    color:white;
+    padding:2rem;
+    text-align:center;
 }
 </style>
 </head>
+
 <body>
 
 <div class="profile-card">
-
     <div class="left">
-        <!-- Static Images (Not from DB) -->
-        <img src="imgs/doctor_<?php echo $doctor_id; ?>.jpg" alt="Doctor">
-        <h2><?php echo "Dr. " . $doctor['FIRST_NAME'] . " " . $doctor['LAST_NAME']; ?></h2>
+        <img src="<?= htmlspecialchars($image_path) ?>" alt="Doctor">
+        <h2>Dr. <?= htmlspecialchars($doctor['FIRST_NAME'].' '.$doctor['LAST_NAME']) ?></h2>
     </div>
 
     <div class="right">
+        <div class="badge"><?= htmlspecialchars($doctor['SPECIALISATION_NAME']) ?></div>
 
-        <div class="fee-tag">₹500</div>
+        <p>📞 <?= htmlspecialchars($doctor['PHONE']) ?></p>
+        <p>📧 <?= htmlspecialchars($doctor['EMAIL']) ?></p>
 
-        <h2>Profile</h2>
-        <p><strong>MBBS</strong></p>
-        <p>Experience: 20+ Years</p>
-
-        <div class="section-title">SPECIALTY</div>
-        <span class="badge"><?php echo $doctor['SPECIALISATION_NAME']; ?></span>
-
-        <div class="section-title">CONTACT</div>
-        <p>+91 <?php echo $doctor['PHONE']; ?></p>
-        <p><?php echo $doctor['EMAIL']; ?></p>
-
-        <div class="section-title">AVAILABLE DAYS</div>
-        <?php while ($row = mysqli_fetch_assoc($schedule_result)) { ?>
-            <p>
-                <strong><?php echo $row['AVAILABLE_DAY']; ?>:</strong>
-                <?php echo substr($row['START_TIME'], 0, 5) . " - " . substr($row['END_TIME'], 0, 5); ?>
-            </p>
-        <?php } ?>
-
+        <h3>Available Schedule</h3>
+        <?php
+        if (mysqli_num_rows($schedule_res) > 0) {
+            while ($row = mysqli_fetch_assoc($schedule_res)) {
+                echo "<p><strong>{$row['AVAILABLE_DAY']}:</strong> "
+                    . substr($row['START_TIME'],0,5)
+                    . " - "
+                    . substr($row['END_TIME'],0,5)
+                    . "</p>";
+            }
+        } else {
+            echo "<p>No schedule available</p>";
+        }
+        ?>
     </div>
 </div>
-<footer>
-    <div class="footer-content">
-      <p>&copy; <span id="year"></span> QuickCare — Revolutionizing Healthcare Access</p>
-      <div class="social-links">
-        <a href="#" class="social-link"><span>f</span></a>
-        <a href="#" class="social-link"><span>𝕏</span></a>
-        <a href="#" class="social-link"><span>in</span></a>
-        <a href="#" class="social-link"><span>📷</span></a>
-      </div>
-    </div>
-  </footer>
 
-  <script>
-    document.getElementById('year').textContent = new Date().getFullYear();
-  </script>
+<footer>
+<p>&copy; <?= date('Y') ?> QuickCare</p>
+</footer>
 
 </body>
 </html>
-
-
-

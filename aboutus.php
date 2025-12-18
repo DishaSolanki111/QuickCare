@@ -1,3 +1,4 @@
+<?php include 'header.php'; ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -533,11 +534,11 @@
             
             <div class="nav-right-container">
                 <div class="nav-links">
-                    <a href="index.html">Home</a>
-                    <a href="services.html">Services</a>
-                    <a href="doctors.html">Doctors</a>
-                    <a href="aboutus.html" class="active">About</a>
-                    <a href="contactus.html">Contact</a>
+                    <a href="index.php">Home</a>
+                    <a href="services.php">Services</a>
+                    <a href="doctors.php">Doctors</a>
+                    <a href="aboutus.php" class="active">About</a>
+                    <a href="contactus.php">Contact</a>
                 </div>
                 
                 <div class="auth-buttons">
@@ -563,11 +564,11 @@
             <button class="close-menu">✕</button>
         </div>
         <div class="mobile-nav-links">
-            <a href="index.html">Home</a>
-            <a href="services.html">Services</a>
-            <a href="doctors.html">Doctors</a>
-            <a href="aboutus.html" class="active">About Us</a>
-            <a href="contactus.html">Contact</a>
+            <a href="index.php">Home</a>
+            <a href="services.php">Services</a>
+            <a href="doctors.php">Doctors</a>
+            <a href="aboutus.php" class="active">About Us</a>
+            <a href="contactus.php">Contact</a>
             <a href="login.php">Login</a>
             <a href="register.php">Register</a>
         </div>

@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>QuickCare – Book Doctor Appointments</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --primary:#0B5ED7;
+  --accent:#00C2CB;
+  --dark:#0f172a;
+  --text:#334155;
+  --bg:#f8fafc;
+  --card:#ffffff;
+}
+
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif;}
+body{background:var(--bg);color:var(--text);}
+
+/* NAVBAR */
+nav{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:18px 7%;
+  background:#fff;
+  position:sticky;
+  top:0;
+  z-index:100;
+  border-bottom:1px solid #e5e7eb;
+}
+
+.logo{
+  font-size:1.4rem;
+  font-weight:800;
+  color:var(--primary);
+}
+
+/* RIGHT SIDE NAV */
+.nav-right{
+  display:flex;
+  align-items:center;
+  gap:36px;
+}
+
+nav ul{
+  display:flex;
+  gap:28px;
+  list-style:none;
+}
+
+nav ul li a{
+  text-decoration:none;
+  font-weight:600;              /* made bolder */
+  color:#1e293b;
+}
+
+nav ul li a:hover{
+  color:var(--primary);
+}
+
+.nav-btns{
+  display:flex;
+  gap:14px;
+}
+
+.nav-btns a{
+  text-decoration:none;
+  padding:10px 22px;
+  border-radius:10px;
+  font-weight:600;
+}
+
+.login{
+  color:var(--primary);
+  border:2px solid var(--primary);
+}
+
+.register{
+  background:linear-gradient(135deg,var(--primary),var(--accent));
+  color:#fff;
+}
+
+/* HERO */
+.hero{
+  display:grid;
+  grid-template-columns:1.1fr 0.9fr;
+  gap:60px;
+  padding:90px 7%;
+  align-items:center;
+}
+
+.hero h1{
+  font-size:3.2rem;
+  line-height:1.15;
+  color:var(--dark);
+}
+
+.hero h1 span{
+  color:var(--primary);
+}
+
+.hero p{
+  margin:22px 0 34px;
+  font-size:1.05rem;
+  max-width:480px;
+}
+
+.hero-actions{
+  display:flex;
+  gap:18px;
+}
+
+.hero-actions a{
+  padding:15px 28px;
+  border-radius:14px;
+  font-weight:700;
+  text-decoration:none;
+}
+
+.book{
+  background:linear-gradient(135deg,var(--primary),var(--accent));
+  color:#fff;
+}
+
+.demo{
+  border:2px solid var(--primary);
+  color:var(--primary);
+}
+
+/* STATS */
+.stats{
+  display:flex;
+  gap:22px;
+  margin-top:40px;
+}
+
+.stat{
+  background:var(--card);
+  padding:18px 24px;
+  border-radius:18px;
+  text-align:center;
+  min-width:140px;
+}
+
+.stat h3{
+  color:var(--primary);
+  font-size:1.4rem;
+}
+
+.stat span{
+  font-size:.85rem;
+  color:#64748b;
+}
+
+/* HERO IMAGE */
+.hero-img{
+  position:relative;
+}
+
+.hero-img img{
+  width:100%;
+  border-radius:26px;
+}
+
+.hero-img::after{
+  content:'';
+  position:absolute;
+  inset:-20px;
+  background:radial-gradient(circle,var(--accent),transparent 70%);
+  z-index:-1;
+  opacity:.25;
+}
+
+/* SPECIALISTS */
+.section{
+  padding:80px 7%;
+}
+
+.section h2{
+  font-size:2.1rem;
+  color:var(--dark);
+  margin-bottom:40px;
+}
+
+.cards{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:26px;
+}
+
+.card{
+  background:var(--card);
+  padding:28px;
+  border-radius:20px;
+  transition:.3s;
+  cursor:pointer;
+}
+
+.card:hover{
+  transform:translateY(-6px);
+  box-shadow:0 20px 40px rgba(0,0,0,.08);
+}
+
+.card h4{
+  margin-top:12px;
+  color:var(--dark);
+}
+
+.card span{
+  font-size:.85rem;
+  color:#64748b;
+}
+
+/* FOOTER */
+footer{
+  background:#020617;
+  color:#cbd5f5;
+  padding:40px 7%;
+  margin-top:80px;
+}
+
+footer p{
+  font-size:.85rem;
+  text-align:center;
+}
+</style>
+</head>
+
+<body>
+
+<nav>
+  <div class="logo">QuickCare</div>
+
+  <div class="nav-right">
+    <ul>
+      <li><a href="index.php">Home</a></li>
+      <li><a href="appointment.php">Schedules</a></li>
+      <li><a href="appointment.php">Doctors</a></li>
+      <li><a href="aboutus.php">About</a></li>
+      <li><a href="contactus.php">Contact</a></li>
+    </ul>
+
+    <div class="nav-btns">
+      <a href="login_for_all.php" class="login">Login</a>
+      <a href="patientform.php" class="register">Register</a>
+    </div>
+  </div>
+</nav>
+
+<section class="hero">
+  <div>
+    <h1>Book Doctor Appointments<br><span>Without Waiting</span></h1>
+    <p>Choose verified specialists, pick your slot, and get treated faster with QuickCare.</p>
+
+    <div class="hero-actions">
+      <a href="appointment.php" class="book">Book Appointment</a>
+      <a href="#" class="demo">Watch Demo</a>
+    </div>
+
+    <div class="stats">
+      <div class="stat">
+        <h3>550+</h3>
+        <span>Doctors</span>
+      </div>
+      <div class="stat">
+        <h3>750+</h3>
+        <span>Patients</span>
+      </div>
+      <div class="stat">
+        <h3>25+</h3>
+        <span>Years Experience</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-img">
+    <img src="./imgs/bac.jpg" alt="Doctor Consultation">
+  </div>
+</section>
+
+<section class="section">
+  <h2>Popular Specialists</h2>
+  <div class="cards">
+    <div class="card"><h4>Cardiologist</h4><span>Heart Specialist</span></div>
+    <div class="card"><h4>Neurologist</h4><span>Brain & Nerves</span></div>
+    <div class="card"><h4>Dermatologist</h4><span>Skin Care</span></div>
+    <div class="card"><h4>Orthopedic</h4><span>Bones & Joints</span></div>
+  </div>
+</section>
+
+<footer>
+  <p>© 2025 QuickCare. All rights reserved.</p>
+</footer>
+
+</body>
+</html>
