@@ -22,6 +22,7 @@
             background: #ffffff;
             padding: 14px 60px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            position: fixed;
         }
 
         .navbar {
