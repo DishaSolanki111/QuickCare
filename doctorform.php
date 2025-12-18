@@ -1,3 +1,4 @@
+<?php include 'config.php'; ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -221,19 +222,6 @@
         <h1>Doctor Registration</h1>
         
         <?php
-        // Database connection
-       /* $servername = "localhost";
-        $username = "username";
-        $password = "password";
-        $dbname = "quick_care";
-        
-        // Create connection
-        $conn = new mysqli($servername, $username, $password, $dbname);
-        
-        // Check connection
-        if ($conn->connect_error) {
-            die("Connection failed: " . $conn->connect_error);
-        }*/
         
         // Initialize variables
         $success = false;
