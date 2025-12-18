@@ -1,5 +1,5 @@
 <?php
-
+include "header.php";
 // Include your existing config file
 require_once 'config.php';
 
