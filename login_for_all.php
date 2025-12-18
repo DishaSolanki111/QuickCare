@@ -605,7 +605,7 @@
         <button class="close-menu">✕</button>
     </div>
     <div class="mobile-nav-links">
-        <a href="index.html">Home</a>
+        <a href="index.php">Home</a>
         <a href="services.html">Services</a>
         <a href="doctors.html">Doctors</a>
         <a href="aboutus.html">About Us</a>
