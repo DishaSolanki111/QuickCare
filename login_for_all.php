@@ -384,7 +384,7 @@
             flex: 1;
             background: transparent;
             border: none;
-            color: var(--text);
+            color: var(--light);
             padding: 15px;
             opacity: 0.7;
             cursor: pointer;
@@ -578,15 +578,15 @@
         
         <div class="nav-right-container">
             <div class="nav-links">
-                    <a href="index.php">Home</a>
-                    <a href="services.php">Services</a>
-                    <a href="doctors.php">Doctors</a>
-                    <a href="aboutus.php" class="active">About</a>
-                    <a href="contactus.php">Contact</a>
-                </div>
+                <a href="index.html">Home</a>
+                <a href="services.html">Services</a>
+                <a href="doctors.html">Doctors</a>
+                <a href="aboutus.html">About</a>
+                <a href="contactus.html">Contact</a>
+            </div>
             
             <div class="auth-buttons">
-                <a href="register.php" class="btn-register">
+                <a href="patientform.php" class="btn-register">
                     Register
                 </a>
             </div>
@@ -606,11 +606,11 @@
     </div>
     <div class="mobile-nav-links">
         <a href="index.php">Home</a>
-        <a href="services.php">Services</a>
-        <a href="doctors.php">Doctors</a>
-        <a href="aboutus.php">About Us</a>
-        <a href="contactus.php">Contact</a>
-        <a href="register.php">Register</a>
+        <a href="services.html">Services</a>
+        <a href="doctors.html">Doctors</a>
+        <a href="aboutus.html">About Us</a>
+        <a href="contactus.html">Contact</a>
+        <a href="patientform.php">Register</a>
     </div>
 </div>
 
@@ -623,14 +623,14 @@
     <div class="container">
         <div class="tabs">
             <button class="tab active" data-target="patient">Patient</button>
-            <button class="tab" data-target="doctor">Doctor</button>
-            <button class="tab" data-target="receptionist">Receptionist</button>
+            <button class="tab active" data-target="doctor">Doctor</button>
+            <button class="tab active" data-target="receptionist">Receptionist</button>
         </div>
 
         <div class="slider">
-            <form class="form" id="patient" style="left:0;">
+            <form action="pateint.html" class="form" id="patient" style="left:0;">
                 <h3>Patient Login</h3>
-                <input type="email" placeholder="Email Address">
+                <input type="text" placeholder=" username">
                 <input type="password" placeholder="Password">
                 <button>Login</button>
                 <a href="register.php" class="small">Not registered yet? Create an account</a>
@@ -638,7 +638,7 @@
 
             <form class="form" id="doctor">
                 <h3>Doctor Login</h3>
-                <input type="email" placeholder="Email Address">
+                <input type="text" placeholder="username">
                 <input type="password" placeholder="Password">
                 <button>Login</button>
                 <div class="small">Ask Receptionist to register you.</div>
@@ -646,7 +646,7 @@
 
             <form class="form" id="receptionist">
                 <h3>Receptionist Login</h3>
-                <input type="email" placeholder="Email Address">
+                <input type="text" placeholder="username">
                 <input type="password" placeholder="Password">
                 <button>Login</button>
             </form>
