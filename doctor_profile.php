@@ -1,5 +1,6 @@
 <?php
 include 'config.php';
+
 if (!isset($_GET['id'])) {
     die("Doctor ID missing.");
 }
@@ -157,7 +158,6 @@ body{
             }
             ?>
         </div>
-        
 
     </div>
 </div>

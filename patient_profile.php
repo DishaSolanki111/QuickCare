@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Doctor Profile - QuickCare</title>
+    <title>Patient Profile - QuickCare</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -202,13 +202,6 @@
             font-size: 36px;
             font-weight: bold;
             margin-right: 20px;
-            overflow: hidden;
-        }
-        
-        .profile-avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
         }
         
         .profile-title h2 {
@@ -435,107 +428,41 @@
             color: #ddd;
         }
         
-        .feedback-card {
+        .reminder-card {
             background-color: white;
             border-radius: 10px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
             padding: 20px;
             margin-bottom: 20px;
-        }
-        
-        .feedback-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-        
-        .patient-info {
             display: flex;
             align-items: center;
         }
         
-        .patient-avatar {
-            width: 40px;
-            height: 40px;
+        .reminder-icon {
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
-            background-color: var(--secondary-color);
-            color: white;
+            background-color: rgba(231, 76, 60, 0.1);
+            color: var(--danger-color);
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-right: 15px;
-            font-weight: bold;
+            margin-right: 20px;
+            font-size: 20px;
         }
         
-        .patient-name {
-            font-weight: 600;
+        .reminder-content {
+            flex: 1;
+        }
+        
+        .reminder-content h4 {
+            margin-bottom: 5px;
             color: var(--primary-color);
         }
         
-        .rating {
-            display: flex;
-            color: #f1c40f;
-        }
-        
-        .schedule-card {
-            background-color: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-        
-        .schedule-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #eee;
-        }
-        
-        .schedule-header h3 {
-            color: var(--primary-color);
-        }
-        
-        .schedule-day {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 0;
-            border-bottom: 1px solid #f0f0f0;
-        }
-        
-        .schedule-day:last-child {
-            border-bottom: none;
-        }
-        
-        .day-name {
-            font-weight: 600;
-            color: var(--dark-color);
-            width: 100px;
-        }
-        
-        .day-time {
+        .reminder-time {
             color: #666;
-        }
-        
-        .day-status {
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-        
-        .status-available {
-            background-color: rgba(46, 204, 113, 0.2);
-            color: var(--accent-color);
-        }
-        
-        .status-unavailable {
-            background-color: rgba(231, 76, 60, 0.2);
-            color: var(--danger-color);
+            font-size: 14px;
         }
         
         .edit-profile-form {
@@ -574,64 +501,6 @@
             gap: 20px;
         }
         
-        .stats-container {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-        
-        .stat-card {
-            background-color: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            padding: 20px;
-            display: flex;
-            align-items: center;
-        }
-        
-        .stat-icon {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 15px;
-            font-size: 20px;
-        }
-        
-        .stat-icon.appointments {
-            background-color: rgba(52, 152, 219, 0.1);
-            color: var(--secondary-color);
-        }
-        
-        .stat-icon.patients {
-            background-color: rgba(46, 204, 113, 0.1);
-            color: var(--accent-color);
-        }
-        
-        .stat-icon.prescriptions {
-            background-color: rgba(241, 196, 15, 0.1);
-            color: var(--warning-color);
-        }
-        
-        .stat-icon.rating {
-            background-color: rgba(231, 76, 60, 0.1);
-            color: var(--danger-color);
-        }
-        
-        .stat-info h3 {
-            font-size: 24px;
-            margin-bottom: 5px;
-            color: var(--primary-color);
-        }
-        
-        .stat-info p {
-            color: #777;
-            font-size: 14px;
-        }
-        
         @media (max-width: 992px) {
             .sidebar {
                 width: 70px;
@@ -645,7 +514,7 @@
                 margin-left: 70px;
             }
             
-            .info-grid, .form-row, .stats-container {
+            .info-grid, .form-row {
                 grid-template-columns: 1fr;
             }
         }
@@ -664,10 +533,6 @@
                 flex-direction: column;
                 gap: 10px;
             }
-            
-            .stats-container {
-                grid-template-columns: repeat(2, 1fr);
-            }
         }
     </style>
 </head>
@@ -683,19 +548,19 @@
                     <i class="fas fa-tachometer-alt"></i> <span>Dashboard</span>
                 </li>
                 <li class="nav-item active">
-                    <i class="fas fa-user-md"></i> <span>My Profile</span>
+                    <i class="fas fa-user"></i> <span>My Profile</span>
                 </li>
                 <li class="nav-item">
                     <i class="fas fa-calendar-check"></i> <span>Appointments</span>
                 </li>
                 <li class="nav-item">
-                    <i class="fas fa-users"></i> <span>Patients</span>
+                    <i class="fas fa-pills"></i> <span>Medicines</span>
                 </li>
                 <li class="nav-item">
                     <i class="fas fa-file-medical"></i> <span>Prescriptions</span>
                 </li>
                 <li class="nav-item">
-                    <i class="fas fa-clock"></i> <span>Schedule</span>
+                    <i class="fas fa-credit-card"></i> <span>Payments</span>
                 </li>
                 <li class="nav-item">
                     <i class="fas fa-comments"></i> <span>Feedback</span>
@@ -717,55 +582,12 @@
                 <div class="user-actions">
                     <button class="notification-btn">
                         <i class="far fa-bell"></i>
-                        <span class="notification-badge">5</span>
+                        <span class="notification-badge">3</span>
                     </button>
                     <div class="user-dropdown">
-                        <div class="user-avatar">AS</div>
-                        <span>Dr. Amar Kumar</span>
+                        <div class="user-avatar">JD</div>
+                        <span>Jane Doe</span>
                         <i class="fas fa-chevron-down" style="margin-left: 8px;"></i>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Stats Section -->
-            <div class="stats-container">
-                <div class="stat-card">
-                    <div class="stat-icon appointments">
-                        <i class="fas fa-calendar-check"></i>
-                    </div>
-                    <div class="stat-info">
-                        <h3>24</h3>
-                        <p>Total Appointments</p>
-                    </div>
-                </div>
-                
-                <div class="stat-card">
-                    <div class="stat-icon patients">
-                        <i class="fas fa-users"></i>
-                    </div>
-                    <div class="stat-info">
-                        <h3>18</h3>
-                        <p>Patients Treated</p>
-                    </div>
-                </div>
-                
-                <div class="stat-card">
-                    <div class="stat-icon prescriptions">
-                        <i class="fas fa-file-medical"></i>
-                    </div>
-                    <div class="stat-info">
-                        <h3>15</h3>
-                        <p>Prescriptions Written</p>
-                    </div>
-                </div>
-                
-                <div class="stat-card">
-                    <div class="stat-icon rating">
-                        <i class="fas fa-star"></i>
-                    </div>
-                    <div class="stat-info">
-                        <h3>4.8</h3>
-                        <p>Average Rating</p>
                     </div>
                 </div>
             </div>
@@ -775,12 +597,10 @@
                 <!-- Personal Information Card -->
                 <div class="profile-card">
                     <div class="profile-header">
-                        <div class="profile-avatar">
-                            <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Doctor Profile">
-                        </div>
+                        <div class="profile-avatar">JD</div>
                         <div class="profile-title">
-                            <h2>Dr. Amar Kumar</h2>
-                            <p>Doctor ID: DOC004</p>
+                            <h2>Jane Doe</h2>
+                            <p>Patient ID: PT001</p>
                         </div>
                     </div>
                     
@@ -789,35 +609,35 @@
                         <div class="info-grid">
                             <div class="info-item">
                                 <span class="info-label">First Name</span>
-                                <span class="info-value">Amar</span>
+                                <span class="info-value">Jane</span>
                             </div>
                             <div class="info-item">
                                 <span class="info-label">Last Name</span>
-                                <span class="info-value">Kumar</span>
+                                <span class="info-value">Doe</span>
                             </div>
                             <div class="info-item">
                                 <span class="info-label">Date of Birth</span>
-                                <span class="info-value">November 25, 1978</span>
+                                <span class="info-value">January 15, 1985</span>
                             </div>
                             <div class="info-item">
                                 <span class="info-label">Gender</span>
-                                <span class="info-value">Male</span>
+                                <span class="info-value">Female</span>
                             </div>
                             <div class="info-item">
-                                <span class="info-label">Date of Joining</span>
-                                <span class="info-value">March 10, 2015</span>
+                                <span class="info-label">Blood Group</span>
+                                <span class="info-value">O+</span>
                             </div>
                             <div class="info-item">
                                 <span class="info-label">Phone Number</span>
-                                <span class="info-value">+1 (555) 987-6543</span>
+                                <span class="info-value">+1 (555) 123-4567</span>
                             </div>
                             <div class="info-item">
                                 <span class="info-label">Email Address</span>
-                                <span class="info-value">a.kumar.cardio@hospital.com</span>
+                                <span class="info-value">jane.doe@example.com</span>
                             </div>
                             <div class="info-item">
-                                <span class="info-label">Username</span>
-                                <span class="info-value">a.kumar</span>
+                                <span class="info-label">Address</span>
+                                <span class="info-value">123 Main St, Anytown, USA</span>
                             </div>
                         </div>
                         
@@ -837,24 +657,24 @@
                             <div class="form-row">
                                 <div class="form-group">
                                     <label for="firstName">First Name</label>
-                                    <input type="text" class="form-control" id="firstName" value="Amar">
+                                    <input type="text" class="form-control" id="firstName" value="Jane">
                                 </div>
                                 <div class="form-group">
                                     <label for="lastName">Last Name</label>
-                                    <input type="text" class="form-control" id="lastName" value="Kumar">
+                                    <input type="text" class="form-control" id="lastName" value="Doe">
                                 </div>
                             </div>
                             
                             <div class="form-row">
                                 <div class="form-group">
                                     <label for="dob">Date of Birth</label>
-                                    <input type="date" class="form-control" id="dob" value="1978-11-25">
+                                    <input type="date" class="form-control" id="dob" value="1985-01-15">
                                 </div>
                                 <div class="form-group">
                                     <label for="gender">Gender</label>
                                     <select class="form-control" id="gender">
-                                        <option value="MALE" selected>Male</option>
-                                        <option value="FEMALE">Female</option>
+                                        <option value="FEMALE" selected>Female</option>
+                                        <option value="MALE">Male</option>
                                         <option value="OTHER">Other</option>
                                     </select>
                                 </div>
@@ -862,18 +682,32 @@
                             
                             <div class="form-row">
                                 <div class="form-group">
-                                    <label for="phone">Phone Number</label>
-                                    <input type="tel" class="form-control" id="phone" value="5559876543">
+                                    <label for="bloodGroup">Blood Group</label>
+                                    <select class="form-control" id="bloodGroup">
+                                        <option value="A+">A+</option>
+                                        <option value="A-">A-</option>
+                                        <option value="B+">B+</option>
+                                        <option value="B-">B-</option>
+                                        <option value="O+" selected>O+</option>
+                                        <option value="O-">O-</option>
+                                        <option value="AB+">AB+</option>
+                                        <option value="AB-">AB-</option>
+                                    </select>
                                 </div>
                                 <div class="form-group">
-                                    <label for="email">Email Address</label>
-                                    <input type="email" class="form-control" id="email" value="a.kumar.cardio@hospital.com">
+                                    <label for="phone">Phone Number</label>
+                                    <input type="tel" class="form-control" id="phone" value="5551234567">
                                 </div>
                             </div>
                             
                             <div class="form-group">
-                                <label for="username">Username</label>
-                                <input type="text" class="form-control" id="username" value="a.kumar">
+                                <label for="email">Email Address</label>
+                                <input type="email" class="form-control" id="email" value="jane.doe@example.com">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="address">Address</label>
+                                <textarea class="form-control" id="address" rows="3">123 Main St, Anytown, USA</textarea>
                             </div>
                             
                             <div class="btn-group">
@@ -888,37 +722,34 @@
                     </div>
                 </div>
                 
-                <!-- Professional Information Card -->
+                <!-- Medical Information Card -->
                 <div class="profile-card">
                     <div class="profile-header">
-                        <h2>Professional Information</h2>
+                        <h2>Medical Information</h2>
                     </div>
                     
                     <div class="info-grid">
                         <div class="info-item">
-                            <span class="info-label">Specialization</span>
-                            <span class="info-value">Cardiologist</span>
+                            <span class="info-label">Allergies</span>
+                            <span class="info-value">Penicillin, Peanuts</span>
                         </div>
                         <div class="info-item">
-                            <span class="info-label">Experience</span>
-                            <span class="info-value">9 years</span>
+                            <span class="info-label">Chronic Conditions</span>
+                            <span class="info-value">Hypertension</span>
                         </div>
                         <div class="info-item">
-                            <span class="info-label">License Number</span>
-                            <span class="info-value">MED-2025-IND-0421</span>
+                            <span class="info-label">Current Medications</span>
+                            <span class="info-value">Lisinopril 10mg daily</span>
                         </div>
                         <div class="info-item">
-                            <span class="info-label">Education</span>
-                            <span class="info-value">MD, DM Cardiology</span>
+                            <span class="info-label">Last Visit</span>
+                            <span class="info-value">June 15, 2023</span>
                         </div>
                     </div>
                     
                     <div class="btn-group">
                         <button class="btn btn-primary">
-                            <i class="fas fa-download"></i> Download CV
-                        </button>
-                        <button class="btn btn-success">
-                            <i class="fas fa-certificate"></i> View Certificates
+                            <i class="fas fa-download"></i> Download Medical History
                         </button>
                     </div>
                 </div>
@@ -927,9 +758,8 @@
             <!-- Tabs Section -->
             <div class="tabs">
                 <div class="tab active" data-tab="appointments">Appointments</div>
-                <div class="tab" data-tab="schedule">Schedule</div>
                 <div class="tab" data-tab="prescriptions">Prescriptions</div>
-                <div class="tab" data-tab="feedback">Patient Feedback</div>
+                <div class="tab" data-tab="reminders">Medicine Reminders</div>
             </div>
             
             <!-- Tab Content -->
@@ -938,20 +768,20 @@
                 
                 <div class="appointment-card">
                     <div class="appointment-info">
-                        <h3>Sunil Kapoor</h3>
-                        <p>Patient ID: PT003</p>
+                        <h3>Dr. Smith</h3>
+                        <p>Cardiologist</p>
                         <div class="appointment-details">
                             <div class="appointment-detail">
                                 <i class="far fa-calendar"></i>
-                                <span>August 1, 2024</span>
+                                <span>October 12, 2024</span>
                             </div>
                             <div class="appointment-detail">
                                 <i class="far fa-clock"></i>
                                 <span>10:00 AM</span>
                             </div>
                             <div class="appointment-detail">
-                                <i class="fas fa-stethoscope"></i>
-                                <span>Follow-up Consultation</span>
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>Main Hospital, Room 204</span>
                             </div>
                         </div>
                     </div>
@@ -959,10 +789,10 @@
                         <span class="status-badge status-confirmed">Confirmed</span>
                         <div class="btn-group" style="margin-top: 15px;">
                             <button class="btn btn-primary">
-                                <i class="fas fa-user"></i> View Patient Details
+                                <i class="fas fa-edit"></i> Reschedule
                             </button>
-                            <button class="btn btn-success">
-                                <i class="fas fa-file-medical"></i> Create Prescription
+                            <button class="btn btn-danger">
+                                <i class="fas fa-times"></i> Cancel
                             </button>
                         </div>
                     </div>
@@ -970,20 +800,20 @@
                 
                 <div class="appointment-card">
                     <div class="appointment-info">
-                        <h3>Vikram Singh</h3>
-                        <p>Patient ID: PT009</p>
+                        <h3>Dr. Johnson</h3>
+                        <p>General Physician</p>
                         <div class="appointment-details">
                             <div class="appointment-detail">
                                 <i class="far fa-calendar"></i>
-                                <span>August 5, 2024</span>
+                                <span>October 25, 2024</span>
                             </div>
                             <div class="appointment-detail">
                                 <i class="far fa-clock"></i>
                                 <span>2:30 PM</span>
                             </div>
                             <div class="appointment-detail">
-                                <i class="fas fa-stethoscope"></i>
-                                <span>Initial Consultation</span>
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>Main Hospital, Room 112</span>
                             </div>
                         </div>
                     </div>
@@ -991,10 +821,10 @@
                         <span class="status-badge status-confirmed">Confirmed</span>
                         <div class="btn-group" style="margin-top: 15px;">
                             <button class="btn btn-primary">
-                                <i class="fas fa-user"></i> View Patient Details
+                                <i class="fas fa-edit"></i> Reschedule
                             </button>
-                            <button class="btn btn-success">
-                                <i class="fas fa-file-medical"></i> Create Prescription
+                            <button class="btn btn-danger">
+                                <i class="fas fa-times"></i> Cancel
                             </button>
                         </div>
                     </div>
@@ -1004,20 +834,16 @@
                 
                 <div class="appointment-card">
                     <div class="appointment-info">
-                        <h3>Meera Nair</h3>
-                        <p>Patient ID: PT004</p>
+                        <h3>Dr. Williams</h3>
+                        <p>Dermatologist</p>
                         <div class="appointment-details">
                             <div class="appointment-detail">
                                 <i class="far fa-calendar"></i>
-                                <span>July 15, 2024</span>
+                                <span>September 5, 2024</span>
                             </div>
                             <div class="appointment-detail">
                                 <i class="far fa-clock"></i>
                                 <span>11:30 AM</span>
-                            </div>
-                            <div class="appointment-detail">
-                                <i class="fas fa-stethoscope"></i>
-                                <span>Follow-up Consultation</span>
                             </div>
                         </div>
                     </div>
@@ -1028,7 +854,7 @@
                                 <i class="fas fa-file-medical"></i> View Prescription
                             </button>
                             <button class="btn btn-success">
-                                <i class="fas fa-calendar-plus"></i> Book Follow-up
+                                <i class="fas fa-star"></i> Leave Feedback
                             </button>
                         </div>
                     </div>
@@ -1036,20 +862,16 @@
                 
                 <div class="appointment-card">
                     <div class="appointment-info">
-                        <h3>Rohan Verma</h3>
-                        <p>Patient ID: PT001</p>
+                        <h3>Dr. Anderson</h3>
+                        <p>Orthopedic Surgeon</p>
                         <div class="appointment-details">
                             <div class="appointment-detail">
                                 <i class="far fa-calendar"></i>
-                                <span>June 28, 2024</span>
+                                <span>August 14, 2024</span>
                             </div>
                             <div class="appointment-detail">
                                 <i class="far fa-clock"></i>
                                 <span>3:15 PM</span>
-                            </div>
-                            <div class="appointment-detail">
-                                <i class="fas fa-stethoscope"></i>
-                                <span>Initial Consultation</span>
                             </div>
                         </div>
                     </div>
@@ -1060,64 +882,9 @@
                                 <i class="fas fa-file-medical"></i> View Prescription
                             </button>
                             <button class="btn btn-success">
-                                <i class="fas fa-calendar-plus"></i> Book Follow-up
+                                <i class="fas fa-star"></i> Leave Feedback
                             </button>
                         </div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="tab-content" id="schedule">
-                <h3 style="margin-bottom: 20px;">Weekly Schedule</h3>
-                
-                <div class="schedule-card">
-                    <div class="schedule-header">
-                        <h3>Regular Schedule</h3>
-                        <button class="btn btn-primary">
-                            <i class="fas fa-edit"></i> Edit Schedule
-                        </button>
-                    </div>
-                    
-                    <div class="schedule-day">
-                        <div class="day-name">Monday</div>
-                        <div class="day-time">8:00 AM - 3:00 PM</div>
-                        <div class="day-status status-available">Available</div>
-                    </div>
-                    
-                    <div class="schedule-day">
-                        <div class="day-name">Tuesday</div>
-                        <div class="day-time">Not Available</div>
-                        <div class="day-status status-unavailable">Unavailable</div>
-                    </div>
-                    
-                    <div class="schedule-day">
-                        <div class="day-name">Wednesday</div>
-                        <div class="day-time">Not Available</div>
-                        <div class="day-status status-unavailable">Unavailable</div>
-                    </div>
-                    
-                    <div class="schedule-day">
-                        <div class="day-name">Thursday</div>
-                        <div class="day-time">8:00 AM - 3:00 PM</div>
-                        <div class="day-status status-available">Available</div>
-                    </div>
-                    
-                    <div class="schedule-day">
-                        <div class="day-name">Friday</div>
-                        <div class="day-time">Not Available</div>
-                        <div class="day-status status-unavailable">Unavailable</div>
-                    </div>
-                    
-                    <div class="schedule-day">
-                        <div class="day-name">Saturday</div>
-                        <div class="day-time">Not Available</div>
-                        <div class="day-status status-unavailable">Unavailable</div>
-                    </div>
-                    
-                    <div class="schedule-day">
-                        <div class="day-name">Sunday</div>
-                        <div class="day-time">9:00 AM - 1:00 PM</div>
-                        <div class="day-status status-available">Available</div>
                     </div>
                 </div>
             </div>
@@ -1127,71 +894,66 @@
                 
                 <div class="prescription-card">
                     <div class="prescription-header">
-                        <h3>Sunil Kapoor</h3>
-                        <span class="prescription-date">July 15, 2024</span>
+                        <h3>Dr. Smith - Cardiologist</h3>
+                        <span class="prescription-date">September 5, 2024</span>
                     </div>
                     
                     <div class="prescription-details">
-                        <p><strong>Patient ID:</strong> PT003</p>
-                        <p><strong>Diagnosis:</strong> Stable Angina</p>
-                        <p><strong>Symptoms:</strong> Chest pain on exertion, relieved by rest</p>
+                        <p><strong>Diagnosis:</strong> Hypertension</p>
+                        <p><strong>Symptoms:</strong> Occasional headaches, dizziness</p>
                     </div>
                     
-                    <h4 style="margin: 15px 0 10px;">Medications Prescribed</h4>
+                    <h4 style="margin: 15px 0 10px;">Medications</h4>
                     <div class="medicine-list">
                         <div class="medicine-item">
                             <div>
-                                <div class="medicine-name">Aspirin</div>
-                                <div class="medicine-details">75mg - Once daily</div>
+                                <div class="medicine-name">Lisinopril</div>
+                                <div class="medicine-details">10mg - Once daily</div>
                             </div>
-                            <div class="medicine-details">1 month</div>
+                            <div class="medicine-details">30 days</div>
                         </div>
                         <div class="medicine-item">
                             <div>
-                                <div class="medicine-name">Atorvastatin</div>
-                                <div class="medicine-details">20mg - Once daily at night</div>
+                                <div class="medicine-name">Aspirin</div>
+                                <div class="medicine-details">81mg - Once daily</div>
                             </div>
-                            <div class="medicine-details">3 months</div>
+                            <div class="medicine-details">30 days</div>
                         </div>
                     </div>
                     
                     <div class="btn-group" style="margin-top: 15px;">
                         <button class="btn btn-primary">
                             <i class="fas fa-download"></i> Download PDF
-                        </button>
-                        <button class="btn btn-success">
-                            <i class="fas fa-edit"></i> Edit Prescription
                         </button>
                     </div>
                 </div>
                 
                 <div class="prescription-card">
                     <div class="prescription-header">
-                        <h3>Meera Nair</h3>
-                        <span class="prescription-date">June 28, 2024</span>
+                        <h3>Dr. Williams - Dermatologist</h3>
+                        <span class="prescription-date">August 14, 2024</span>
                     </div>
                     
                     <div class="prescription-details">
-                        <p><strong>Patient ID:</strong> PT004</p>
-                        <p><strong>Diagnosis:</strong> Hypertension with Diabetes</p>
-                        <p><strong>Symptoms:</strong> Occasional palpitations and fatigue</p>
+                        <p><strong>Diagnosis:</strong> Eczema</p>
+                        <p><strong>Symptoms:</strong> Itchy, red skin patches</p>
                     </div>
                     
-                    <h4 style="margin: 15px 0 10px;">Medications Prescribed</h4>
+                    <h4 style="margin: 15px 0 10px;">Medications</h4>
                     <div class="medicine-list">
                         <div class="medicine-item">
                             <div>
-                                <div class="medicine-name">Metoprolol</div>
-                                <div class="medicine-details">50mg - Twice daily</div>
+                                <div class="medicine-name">Hydrocortisone Cream</div>
+                                <div class="medicine-details">1% - Apply twice daily</div>
                             </div>
-                            <div class="medicine-details">3 months</div>
+                            <div class="medicine-details">14 days</div>
                         </div>
                         <div class="medicine-item">
                             <div>
-                                <div class="medicine-name">Aspirin</div>
-                                <div class="medicine-details">75mg - Once daily</div>
+                                <div class="medicine-name">Cetirizine</div>
+                                <div class="medicine-details">10mg - Once daily at night</div>
                             </div>
-                            <div class="medicine-details">3 months</div>
+                            <div class="medicine-details">30 days</div>
                         </div>
                     </div>
                     
@@ -1199,77 +961,80 @@
                         <button class="btn btn-primary">
                             <i class="fas fa-download"></i> Download PDF
                         </button>
-                        <button class="btn btn-success">
-                            <i class="fas fa-edit"></i> Edit Prescription
-                        </button>
                     </div>
                 </div>
             </div>
             
-            <div class="tab-content" id="feedback">
-                <h3 style="margin-bottom: 20px;">Patient Feedback</h3>
+            <div class="tab-content" id="reminders">
+                <h3 style="margin-bottom: 20px;">Medicine Reminders</h3>
                 
-                <div class="feedback-card">
-                    <div class="feedback-header">
-                        <div class="patient-info">
-                            <div class="patient-avatar">MN</div>
-                            <div>
-                                <div class="patient-name">Meera Nair</div>
-                                <div style="color: #777; font-size: 14px;">July 15, 2024</div>
-                            </div>
-                        </div>
-                        <div class="rating">
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
+                <div class="reminder-card">
+                    <div class="reminder-icon">
+                        <i class="fas fa-pills"></i>
+                    </div>
+                    <div class="reminder-content">
+                        <h4>Lisinopril</h4>
+                        <p>Take 1 tablet (10mg) with water</p>
+                        <div class="reminder-time">
+                            <i class="far fa-clock"></i> Daily at 8:00 AM
                         </div>
                     </div>
-                    
-                    <p style="margin-top: 15px;">Dr. Sharma is very empathetic and provided a clear plan of action. She took time to explain my condition and treatment options in detail. Highly recommended!</p>
+                    <div class="btn-group">
+                        <button class="btn btn-primary">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-danger">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
                 </div>
                 
-                <div class="feedback-card">
-                    <div class="feedback-header">
-                        <div class="patient-info">
-                            <div class="patient-avatar">SK</div>
-                            <div>
-                                <div class="patient-name">Sunil Kapoor</div>
-                                <div style="color: #777; font-size: 14px;">June 28, 2024</div>
-                            </div>
-                        </div>
-                        <div class="rating">
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="far fa-star"></i>
+                <div class="reminder-card">
+                    <div class="reminder-icon">
+                        <i class="fas fa-pills"></i>
+                    </div>
+                    <div class="reminder-content">
+                        <h4>Aspirin</h4>
+                        <p>Take 1 tablet (81mg) with water</p>
+                        <div class="reminder-time">
+                            <i class="far fa-clock"></i> Daily at 9:00 AM
                         </div>
                     </div>
-                    
-                    <p style="margin-top: 15px;">Dr. Kumar is thorough. The consultation was good but the waiting time was a bit long. However, once I was in the consultation room, he gave me his full attention and answered all my questions.</p>
+                    <div class="btn-group">
+                        <button class="btn btn-primary">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-danger">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
                 </div>
                 
-                <div class="feedback-card">
-                    <div class="feedback-header">
-                        <div class="patient-info">
-                            <div class="patient-avatar">RV</div>
-                            <div>
-                                <div class="patient-name">Rohan Verma</div>
-                                <div style="color: #777; font-size: 14px;">May 10, 2024</div>
-                            </div>
-                        </div>
-                        <div class="rating">
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
+                <div class="reminder-card">
+                    <div class="reminder-icon">
+                        <i class="fas fa-pills"></i>
+                    </div>
+                    <div class="reminder-content">
+                        <h4>Cetirizine</h4>
+                        <p>Take 1 tablet (10mg) with water</p>
+                        <div class="reminder-time">
+                            <i class="far fa-clock"></i> Daily at 10:00 PM
                         </div>
                     </div>
-                    
-                    <p style="margin-top: 15px;">Dr. Kumar's detailed explanation put my mind at ease. He was very patient and made sure I understood everything about my condition and treatment. Highly recommend!</p>
+                    <div class="btn-group">
+                        <button class="btn btn-primary">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-danger">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div style="text-align: center; margin-top: 30px;">
+                    <button class="btn btn-success">
+                        <i class="fas fa-plus"></i> Add New Reminder
+                    </button>
                 </div>
             </div>
         </div>

@@ -18,6 +18,15 @@
   font-family:'Inter',sans-serif;
 }
 
+<head>
+        /* ===== HEADER ===== */
+        header {
+            background: #ffffff;
+            padding: 14px 60px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        
+        }
+
 /* NAVBAR */
 nav{
   display:flex;
@@ -30,6 +39,7 @@ nav{
   z-index:100;
   border-bottom:1px solid #e5e7eb;
 }
+
 
 .logo{
   font-size:1.4rem;
