@@ -104,12 +104,12 @@ nav ul li a:hover{
 
   <div class="nav-right">
     <ul>
-      <li><a href="index.html">Home</a></li>
-      <li><a href="appointment.php">Schedules</a></li>
+      <li><a href="index.php">Home</a></li>
+      <li><a href="appointment.php">schedules</a></li>
       <li><a href="appointment.php">Doctors</a></li>
-      <li><a href="aboutus.html">About</a></li>
+      <li><a href="aboutus.php">About us</a></li>
 
-      <li><a href="contactus.html">Contact</a></li>
+      <li><a href="contactus.html">Contact us</a></li>
     </ul>
 
     <div class="nav-btns">

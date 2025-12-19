@@ -701,7 +701,7 @@
         <!-- Hero Section -->
         <section class="hero">
             <div class="hero-content fade-in">
-                <h1>Book Doctor Appointments Without Waiting</h1>
+                <h1>Quick Doctor Appointments at Your Convenience</h1>
                 <p>Choose verified specialists, pick your slot, and get treated faster with QuickCare.</p>
                 <div class="hero-buttons">
                     <a href="appointment.php" class="btn btn-primary">Book Appointment</a>

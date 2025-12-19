@@ -54,69 +54,90 @@ while ($row = mysqli_fetch_assoc($bookedQuery)) {
 body {
     font-family: Arial, sans-serif;
     margin: 0;
-    padding: 20px;
+    padding: 10px;
     background-color: #f5f5f5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
 }
 
 .main-container {
-    max-width: 800px;
-    margin: 0 auto;
+    width: 500px;
+    height: 500px;
     background-color: white;
-    padding: 20px;
+    padding: 15px;
     border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    display: flex;
+    flex-direction: column;
 }
 
 .calendar-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
 }
 
 .calendar-header a {
     text-decoration: none;
-    font-size: 20px;
+    font-size: 18px;
     font-weight: bold;
     color: #47bb7dff;
+    padding: 5px 10px;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+.calendar-header a:hover {
+    background-color: rgba(71, 187, 125, 0.1);
+}
+
+.calendar-header strong {
+    font-size: 18px;
+    color: #333;
 }
 
 .calendar-grid {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: 8px;
+    grid-template-rows: repeat(7, 1fr);
+    gap: 4px;
+    flex-grow: 1;
 }
-
 
 .day-name {
     text-align: center;
     font-weight: bold;
-    padding: 10px 0;
+    padding: 8px 0;
     color: #333;
+    font-size: 14px;
+    background-color: #f8f9fa;
+    border-radius: 4px;
 }
 
 .date {
-    padding: 8px;
+    padding: 5px;
     border-radius: 6px;
     text-align: center;
     font-weight: 600;
     font-size: 14px;
-    min-height: 38px;
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: transform 0.2s;
 }
-
 
 .available {
     background: #47bb7dff;
     color: white;
     cursor: pointer;
-    transition: all 0.2s ease;
 }
 
 .available:hover {
     background: #3a9466;
+    transform: scale(1.05);
 }
 
 .booked {
@@ -134,7 +155,7 @@ body {
 .legend {
     display: flex;
     justify-content: center;
-    margin: 15px 0;
+    margin-top: 12px;
     gap: 15px;
     flex-wrap: wrap;
 }
@@ -142,33 +163,58 @@ body {
 .legend-item {
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 6px;
+    font-size: 14px;
 }
 
 .legend-color {
-    width: 20px;
-    height: 20px;
+    width: 16px;
+    height: 16px;
     border-radius: 4px;
 }
 
 #slotBox {
-    margin-top: 20px;
+    margin-top: 15px;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    padding: 15px;
 }
 
 /* Responsive adjustments */
 @media (max-width: 600px) {
-    .date {
+    .main-container {
+        width: 400px;
+        height: 400px;
         padding: 10px;
-        font-size: 14px;
-        min-height: 40px;
     }
     
-    .legend {
-        gap: 10px;
+    .calendar-header a, .calendar-header strong {
+        font-size: 16px;
+    }
+    
+    .day-name {
+        font-size: 12px;
+        padding: 6px 0;
+    }
+    
+    .date {
+        font-size: 12px;
+        padding: 4px;
     }
     
     .legend-item {
-        font-size: 14px;
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 450px) {
+    .main-container {
+        width: 350px;
+        height: 350px;
     }
 }
 </style>
@@ -176,7 +222,7 @@ body {
 <body>
 
 <div class="main-container">
-    <h3>Select Date</h3>
+    <h3 style="font-size: 18px; margin-bottom: 10px; text-align: center;">Select Date</h3>
 
     <!-- Month Navigation -->
     <div class="calendar-header">
