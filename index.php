@@ -177,6 +177,7 @@
 
         .hero p {
             font-size: 1.2rem;
+            font-style: bold;
             margin-bottom: 2.5rem;
             color: rgba(255, 255, 255, 0.9);
         }
@@ -258,7 +259,7 @@
         }
 
         .hero-image img {
-            max-width: 100%;
+            max-width: 80%;
             height: auto;
             border-radius: 15px;
             box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
