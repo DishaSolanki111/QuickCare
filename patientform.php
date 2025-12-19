@@ -1,7 +1,7 @@
 <?php
 session_start();
 include 'config.php';   // 🔴 REQUIRED — FIXES YOUR ERROR
-
+include 'header.php';
 $success = false;
 $error = "";
 

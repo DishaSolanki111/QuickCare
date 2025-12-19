@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Patient Profile - QuickCare</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax
+    /libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
             --primary-color: #1a3a5f;
@@ -66,7 +67,11 @@
             margin-right: 10px;
             color: var(--accent-color);
         }
-        
+        .logo-img {
+            height: 40px;
+            margin-right: 12px;
+            border-radius: 5px;
+        }
         .nav-menu {
             list-style: none;
         }
@@ -540,7 +545,8 @@
     <div class="container">
         <!-- Sidebar -->
         <div class="sidebar">
-            <div class="logo">
+            <div class="logo"><img src="./uploads/logo.JPG" alt="QuickCare Logo" class="logo-img">
+
                 <h1><i class="fas fa-heartbeat"></i> <span>QuickCare</span></h1>
             </div>
             <ul class="nav-menu">

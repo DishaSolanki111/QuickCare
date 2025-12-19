@@ -669,6 +669,11 @@
                 grid-template-columns: repeat(2, 1fr);
             }
         }
+        .logo-img {
+            height: 40px;
+            margin-right: 12px;
+            border-radius: 5px;
+        }
     </style>
 </head>
 <body>
@@ -676,6 +681,7 @@
         <!-- Sidebar -->
         <div class="sidebar">
             <div class="logo">
+                <img src="./uploads/logo.JPG" alt="QuickCare Logo" class="logo-img">
                 <h1><i class="fas fa-heartbeat"></i> <span>QuickCare</span></h1>
             </div>
             <ul class="nav-menu">

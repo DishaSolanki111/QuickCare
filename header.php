@@ -46,7 +46,11 @@ nav{
   font-weight:800;
   color:var(--primary);
 }
-
+.logo-img {
+            height: 40px;
+            margin-right: 12px;
+            border-radius: 5px;
+        }
 /* RIGHT SIDE NAV */
 .nav-right{
   display:flex;
@@ -94,7 +98,9 @@ nav ul li a:hover{
 </style>
 
 <nav>
-  <div class="logo">QuickCare</div>
+  <div class="logo">
+    <img src="./uploads/logo.JPG" alt="QuickCare Logo" class="logo-img">
+    QuickCare</div>
 
   <div class="nav-right">
     <ul>
@@ -102,6 +108,7 @@ nav ul li a:hover{
       <li><a href="appointment.php">Schedules</a></li>
       <li><a href="appointment.php">Doctors</a></li>
       <li><a href="aboutus.html">About</a></li>
+
       <li><a href="contactus.html">Contact</a></li>
     </ul>
 

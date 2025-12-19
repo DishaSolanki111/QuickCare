@@ -565,6 +565,11 @@
                 margin-top: 100px;
             }
         }
+        .logo-img {
+            height: 40px;
+            margin-right: 12px;
+            border-radius: 5px;
+        }
     </style>
 </head>
 <body>
@@ -572,7 +577,7 @@
 <header>
     <nav class="navbar">
         <div class="logo-area">
-            <img src="./imgs/logo.JPG" alt="QuickCare Logo" class="logo-img">
+            <img src="./uploads/logo.JPG" alt="QuickCare Logo" class="logo-img">
             <span class="site-name">QuickCare</span>
         </div>
         

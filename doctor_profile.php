@@ -1,6 +1,6 @@
 <?php
 include 'config.php';
-
+include 'header.php';
 if (!isset($_GET['id'])) {
     die("Doctor ID missing.");
 }
