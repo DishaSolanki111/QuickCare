@@ -227,7 +227,7 @@
 
         .stat-item {
             text-align: center;
-            background-color: color: rgba(255, 255, 255, 0.15);
+            background-color: rgba(255, 255, 255, 0.15);
             padding: 1rem;
             border-radius: 10px;
             min-width: 120px;
@@ -532,6 +532,37 @@
             color: rgba(255, 255, 255, 0.7);
         }
 
+        /* Add back to home button */
+        .back-to-home {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--primary-blue);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .back-to-home.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .back-to-home:hover {
+            background-color: var(--dark-blue);
+            transform: translateY(-3px);
+        }
+
         /* Responsive Design - Adjusted to keep sections side by side */
         @media (max-width: 1200px) {
             .hero h1 {
@@ -638,20 +669,25 @@
             opacity: 1;
             transform: translateY(0);
         }
+
+        /* Class to hide sections */
+        .hidden-section {
+            display: none !important;
+        }
     </style>
 </head>
 <body>
     <!-- Header -->
     <header>
         <nav>
-            <a href="#" class="logo">
+            <a href="#" class="logo" id="home-link">
                 <img src="./uploads/logo.JPG" alt="QuickCare Logo" class="logo-img">
                 QuickCare
             </a>
             <ul class="nav-links">
                 <li><a href="index.php">Home</a></li>
                 <li><a href="">Schedules</a></li>
-                <li><a href="appointment.php">Doctors</a></li>
+                <li><a href="#" id="doctors-link">Doctors</a></li>
                 <li><a href="aboutus.php">About</a></li>
                 <li><a href="contactus.php">Contact</a></li>
                 <li><a href="login_for_all.php" class="btn btn-login">Login</a></li>
@@ -661,7 +697,7 @@
     </header>
 
     <!-- Blue Section - Hero and Stats Only -->
-    <div class="blue-section">
+    <div class="blue-section" id="hero-section">
         <!-- Hero Section -->
         <section class="hero">
             <div class="hero-content fade-in">
@@ -696,7 +732,7 @@
     </div>
 
     <!-- Popular Specialists Section with White Background -->
-    <section class="specialists">
+    <section class="specialists" id="specialists-section">
         <div class="container">
             <h2 class="section-title fade-in">Popular Specialists</h2>
             <p class="section-subtitle fade-in">Find right specialist for your health needs</p>
@@ -738,7 +774,7 @@
     </section>
 
     <!-- Features Section with White Background -->
-    <section class="features">
+    <section class="features" id="features-section">
         <div class="container">
             <h2 class="section-title fade-in">Why Choose QuickCare?</h2>
             <p class="section-subtitle fade-in">Experience healthcare made simple with our innovative features</p>
@@ -769,7 +805,7 @@
     </section>
 
     <!-- Footer with Wave Effect -->
-    <footer>
+    <footer id="footer-section">
         <div class="footer-content">
             <div class="footer-column">
                 <h3>QuickCare</h3>
@@ -815,7 +851,71 @@
         </div>
     </footer>
 
+    <!-- Back to Home Button -->
+    <div class="back-to-home" id="back-to-home">
+        <i class="fas fa-home"></i>
+    </div>
+
     <script>
+        // Get references to the sections and buttons
+        const heroSection = document.getElementById('hero-section');
+        const specialistsSection = document.getElementById('specialists-section');
+        const featuresSection = document.getElementById('features-section');
+        const footerSection = document.getElementById('footer-section');
+        const doctorsLink = document.getElementById('doctors-link');
+        const homeLink = document.getElementById('home-link');
+        const backToHomeBtn = document.getElementById('back-to-home');
+        
+        // Variable to track if we're in doctors-only view
+        let doctorsOnlyView = false;
+        
+        // Function to show only the specialists section
+        function showDoctorsOnly() {
+            heroSection.classList.add('hidden-section');
+            featuresSection.classList.add('hidden-section');
+            footerSection.classList.add('hidden-section');
+            backToHomeBtn.classList.add('show');
+            doctorsOnlyView = true;
+            
+            // Scroll to the specialists section
+            window.scrollTo({
+                top: specialistsSection.offsetTop - 80,
+                behavior: 'smooth'
+            });
+        }
+        
+        // Function to show all sections
+        function showAllSections() {
+            heroSection.classList.remove('hidden-section');
+            featuresSection.classList.remove('hidden-section');
+            footerSection.classList.remove('hidden-section');
+            backToHomeBtn.classList.remove('show');
+            doctorsOnlyView = false;
+            
+            // Scroll to the top
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+        
+        // Event listener for the Doctors link
+        doctorsLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            showDoctorsOnly();
+        });
+        
+        // Event listener for the Home link
+        homeLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            showAllSections();
+        });
+        
+        // Event listener for the back to home button
+        backToHomeBtn.addEventListener('click', function() {
+            showAllSections();
+        });
+        
         // Fade in animation on scroll
         document.addEventListener('DOMContentLoaded', function() {
             const fadeElements = document.querySelectorAll('.fade-in');
@@ -841,6 +941,9 @@
         // Smooth scrolling for anchor links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
+                // Skip if this is the doctors link or home link as they're handled separately
+                if (anchor.id === 'doctors-link' || anchor.id === 'home-link') return;
+                
                 e.preventDefault();
                 
                 const targetId = this.getAttribute('href');
