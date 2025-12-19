@@ -226,7 +226,7 @@
 
         .stat-item {
             text-align: center;
-            background-color: rgba(255, 255, 255, 0.15);
+            background-color: color: rgba(255, 255, 255, 0.15);
             padding: 1rem;
             border-radius: 10px;
             min-width: 120px;
@@ -253,6 +253,7 @@
             align-items: center;
             padding-left: 3rem;
             position: relative;
+            width:10px;
             z-index: 2;
         }
 
@@ -643,17 +644,17 @@
     <header>
         <nav>
             <a href="#" class="logo">
-                <img src="https://z-cdn-media.chatglm.cn/files/2a7da7c7-2186-4874-8640-1ee2b6be2bd2.JPG?auth_key=1866143499-d2d60416c37c474c83c4ba00c8faa76c-0-1c4ea7f393c80b02243d32ae07ffe413" alt="QuickCare Logo" class="logo-img">
+                <img src="./uploads/logo.JPG" alt="QuickCare Logo" class="logo-img">
                 QuickCare
             </a>
             <ul class="nav-links">
-                <li><a href="#">Home</a></li>
-                <li><a href="#">Schedules</a></li>
-                <li><a href="#">Doctors</a></li>
-                <li><a href="#">About</a></li>
-                <li><a href="#">Contact</a></li>
-                <li><a href="#" class="btn btn-login">Login</a></li>
-                <li><a href="#" class="btn btn-register">Register</a></li>
+                <li><a href="index.php">Home</a></li>
+                <li><a href="">Schedules</a></li>
+                <li><a href="appointment.php">Doctors</a></li>
+                <li><a href="aboutus.php">About</a></li>
+                <li><a href="contactus.php">Contact</a></li>
+                <li><a href="login_for_all.php" class="btn btn-login">Login</a></li>
+                <li><a href="patientform.php" class="btn btn-login">Register</a></li>
             </ul>
         </nav>
     </header>
@@ -666,7 +667,7 @@
                 <h1>Book Doctor Appointments Without Waiting</h1>
                 <p>Choose verified specialists, pick your slot, and get treated faster with QuickCare.</p>
                 <div class="hero-buttons">
-                    <a href="#" class="btn btn-primary">Book Appointment</a>
+                    <a href="appointment.php" class="btn btn-primary">Book Appointment</a>
                     <a href="#" class="btn btn-secondary">Watch Demo</a>
                 </div>
                 <div class="stats">
@@ -685,7 +686,7 @@
                 </div>
             </div>
             <div class="hero-image fade-in">
-                 <img src="https://z-cdn-media.chatglm.cn/files/00dd8042-b057-44ce-8651-b48c5a1b0983.png?auth_key=1866141090-a165a7d6b546484fa03a28536d384ce7-0-6066138938f7c1173744e069e3e46f6f" alt="Doctor consultation"> -->
+                 <img src="./uploads/bac.jpg" alt="Doctor consultation"> 
             </div>
         </section>
 
@@ -789,7 +790,7 @@
                     <li><a href="#">FAQs</a></li>
                 </ul>
             </div>
-            <div class="footer-column">
+            <!-- <div class="footer-column">
                 <h3>Services</h3>
                 <ul>
                     <li><a href="#">Online Consultation</a></li>
@@ -798,7 +799,7 @@
                     <li><a href="#">Lab Tests</a></li>
                     <li><a href="#">Medicine Delivery</a></li>
                 </ul>
-            </div>
+            </div> -->
             <div class="footer-column">
                 <h3>Contact Us</h3>
                 <ul>
