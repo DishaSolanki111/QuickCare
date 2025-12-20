@@ -1,8 +1,12 @@
 <?php
 include "config.php";
 
-$doctor_id = $_GET['doctor_id'];
-$date = $_GET['date'];
+$doctor_id = $_GET['doctor_id'] ?? null;
+$date = $_GET['date'] ?? null;
+
+if (!$doctor_id || !$date) {
+    die("Doctor or date missing");
+}
 
 $day = strtoupper(date('D', strtotime($date)));
 
@@ -16,7 +20,6 @@ if(mysqli_num_rows($q)==0){
     echo "<p>No slots available.</p>";
     exit;
 }
-
 
 $row = mysqli_fetch_assoc($q);
 
@@ -39,11 +42,12 @@ while($start < $end){
 ?>
 
 <script>
-function confirmSlot(time,scheduleId){
-    alert(
-        "Selected Time: "+time+
-        "\nSchedule ID: "+scheduleId+
-        "\n(Next → OTP)"
-    );
+function confirmSlot(time, scheduleId){
+    window.location.href =
+        "login.php" +
+        "?doctor_id=<?= $doctor_id ?>" +
+        "&date=<?= $date ?>" +
+        "&time=" + time +
+        "&schedule_id=" + scheduleId;
 }
 </script>
