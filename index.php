@@ -1,3 +1,6 @@
+<?php
+include 'header.php';
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,6 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QuickCare - Book Doctor Appointments</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary-blue: #1a73e8;
@@ -17,32 +21,63 @@
             --text-light: #ffffff;
             --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             --shadow-hover: 0 10px 20px rgba(0, 0, 0, 0.15);
+            --primary: #0B5ED7;
+            --accent: #00C2CB;
+            --dark: #0f172a;
+            --text: #334155;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            
+            /* Header specific variables */
+            --header-primary: #0066cc;
+            --header-primary-dark: #0052a3;
+            --header-primary-light: #e6f2ff;
+            --header-secondary: #00a8cc;
+            --header-accent: #00a86b;
+            --header-warning: #ff6b6b;
+            --header-dark: #1a3a5f;
+            --header-light: #f8fafc;
+            --header-white: #ffffff;
+            --header-text: #2c5282;
+            --header-text-light: #4a6fa5;
+            --header-gradient-1: linear-gradient(135deg, #0066cc 0%, #00a8cc 100%);
+            --header-gradient-2: linear-gradient(135deg, #00a8cc 0%, #00a86b 100%);
+            --header-gradient-3: linear-gradient(135deg, #0066cc 0%, #0052a3 100%);
+            --header-shadow-sm: 0 2px 4px rgba(0,0,0,0.06);
+            --header-shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+            --header-shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
+            --header-shadow-xl: 0 20px 25px rgba(0,0,0,0.1);
+            --header-shadow-2xl: 0 25px 50px rgba(0,0,0,0.25);
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Inter', sans-serif;
         }
 
         body {
             color: var(--text-dark);
             line-height: 1.6;
             background-color: white;
+            padding-top: 80px; /* Account for fixed header */
         }
 
-        /* Header Styles */
+        /* Header Styles - Using variables from header.php */
         header {
-            background-color: white;
-            box-shadow: var(--shadow);
-            position: sticky;
+            position: fixed;
             top: 0;
-            z-index: 100;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
             transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0, 102, 204, 0.1);
         }
 
-        nav {
+        .navbar {
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -51,96 +86,211 @@
             margin: 0 auto;
         }
 
-        .logo {
-            font-size: 1.8rem;
-            font-weight: bold;
-            color: var(--primary-blue);
-            text-decoration: none;
+        /* Logo Area - Left Side */
+        .logo-area {
             display: flex;
             align-items: center;
+            gap: 12px;
+            cursor: pointer;
             transition: transform 0.3s ease;
         }
 
-        .logo:hover {
+        .logo-area:hover {
             transform: scale(1.05);
         }
 
         .logo-img {
-            height: 40px;
-            margin-right: 12px;
-            border-radius: 5px;
+            width: 45px;
+            height: 45px;
+            border-radius: 10px;
+            object-fit: cover;
+            box-shadow: var(--header-shadow-md);
         }
 
+        .site-name {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: var(--header-gradient-1);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        /* Right Side Container */
+        .nav-right-container {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        /* Navigation Links - Right Aligned */
         .nav-links {
             display: flex;
-            list-style: none;
             align-items: center;
-        }
-
-        .nav-links li {
-            margin-left: 2rem;
+            gap: 1.5rem;
         }
 
         .nav-links a {
             text-decoration: none;
-            color: var(--text-dark);
+            color: var(--header-text);
             font-weight: 500;
-            transition: color 0.3s ease;
+            font-size: 1rem;
             position: relative;
+            transition: all 0.3s ease;
+            padding: 0.5rem 0;
         }
 
         .nav-links a::after {
             content: '';
             position: absolute;
+            bottom: 0;
+            left: 0;
             width: 0;
             height: 2px;
-            bottom: -5px;
-            left: 0;
-            background-color: var(--primary-blue);
+            background: var(--header-primary);
             transition: width 0.3s ease;
-        }
-
-        .nav-links a:hover {
-            color: var(--primary-blue);
         }
 
         .nav-links a:hover::after {
             width: 100%;
         }
 
-        .btn {
-            padding: 0.5rem 1.2rem;
-            border-radius: 4px;
-            font-weight: 500;
-            cursor: pointer;
+        .nav-links a:hover {
+            color: var(--header-primary);
+        }
+
+        .nav-links a.active {
+            color: var(--header-primary);
+            font-weight: 600;
+        }
+
+        /* Auth Buttons */
+        .auth-buttons {
+            display: flex;
+            gap: 0.8rem;
+        }
+
+        .btn-login, .btn-register {
+            padding: 0.6rem 1.2rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
             transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-block;
+            cursor: pointer;
             border: none;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         .btn-login {
-            border: 1px solid var(--primary-blue);
-            color: var(--primary-blue);
-            background-color: white;
+            background: transparent;
+            color: var(--header-primary);
+            border: 2px solid var(--header-primary);
         }
 
         .btn-login:hover {
-            background-color: var(--light-blue);
-            transform: translateY(-2px);
-            box-shadow: var(--shadow);
+            background: var(--header-primary);
+            color: white;
         }
 
         .btn-register {
-            background-color: var(--primary-blue);
+            background: var(--header-primary);
             color: white;
-            margin-left: 1rem;
         }
 
         .btn-register:hover {
-            background-color: var(--dark-blue);
-            transform: translateY(-2px);
-            box-shadow: var(--shadow);
+            background: var(--header-primary-dark);
+        }
+
+        /* Mobile Menu Button */
+        .mobile-menu-btn {
+            display: none;
+            background: var(--header-primary);
+            border: none;
+            border-radius: 8px;
+            width: 40px;
+            height: 40px;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .mobile-menu-btn:hover {
+            background: var(--header-primary-dark);
+        }
+
+        /* Mobile Navigation */
+        .mobile-nav {
+            position: fixed;
+            top: 0;
+            right: -350px;
+            width: 350px;
+            height: 100vh;
+            background: white;
+            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+            z-index: 1001;
+            transition: right 0.3s ease;
+            overflow-y: auto;
+        }
+
+        .mobile-nav.active {
+            right: 0;
+        }
+
+        .mobile-nav-header {
+            background: var(--header-primary);
+            padding: 1.5rem;
+            color: white;
+            position: relative;
+        }
+
+        .close-menu {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        .close-menu:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .mobile-nav-links {
+            padding: 1.5rem;
+        }
+
+        .mobile-nav-links a {
+            display: block;
+            text-decoration: none;
+            color: var(--header-text);
+            font-weight: 500;
+            padding: 0.8rem;
+            margin-bottom: 0.5rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .mobile-nav-links a:hover {
+            background: var(--header-primary-light);
+            color: var(--header-primary);
+        }
+
+        .mobile-nav-links a.active {
+            background: var(--header-primary);
+            color: white;
         }
 
         /* Blue Section - Hero and Stats Only */
@@ -195,6 +345,8 @@
             font-size: 1.1rem;
             border-radius: 50px;
             font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
         }
 
         .btn-primary:hover {
@@ -211,6 +363,8 @@
             font-size: 1.1rem;
             border-radius: 50px;
             font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
         }
 
         .btn-secondary:hover {
@@ -254,7 +408,6 @@
             align-items: center;
             padding-left: 3rem;
             position: relative;
-            width:10px;
             z-index: 2;
         }
 
@@ -603,15 +756,19 @@
             .stat-number {
                 font-size: 1.8rem;
             }
+            
+            .nav-right-container {
+                display: none;
+            }
+
+            .mobile-menu-btn {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
         }
 
         @media (max-width: 768px) {
-            .nav-links {
-                display: none;
-            }
-            
-            /* Mobile menu toggle would go here */
-            
             .hero {
                 flex-direction: column;
                 padding: 2rem 5%;
@@ -653,8 +810,9 @@
                 grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             }
             
-            .logo-img {
-                height: 30px;
+            .mobile-nav {
+                width: 100%;
+                right: -100%;
             }
         }
 
@@ -677,25 +835,6 @@
     </style>
 </head>
 <body>
-    <!-- Header -->
-    <header>
-        <nav>
-            <a href="#" class="logo" id="home-link">
-                <img src="./uploads/logo.JPG" alt="QuickCare Logo" class="logo-img">
-                QuickCare
-            </a>
-            <ul class="nav-links">
-                <li><a href="index.php">Home</a></li>
-                <li><a href="">Schedules</a></li>
-                <li><a href="#" id="doctors-link">Doctors</a></li>
-                <li><a href="aboutus.php">About</a></li>
-                <li><a href="contactus.php">Contact</a></li>
-                <li><a href="login_for_all.php" class="btn btn-login">Login</a></li>
-                <li><a href="patientform.php" class="btn btn-login">Register</a></li>
-            </ul>
-        </nav>
-    </header>
-
     <!-- Blue Section - Hero and Stats Only -->
     <div class="blue-section" id="hero-section">
         <!-- Hero Section -->
@@ -704,8 +843,8 @@
                 <h1>Quick Doctor Appointments at Your Convenience</h1>
                 <p>Choose verified specialists, pick your slot, and get treated faster with QuickCare.</p>
                 <div class="hero-buttons">
-                    <a href="appointment.php" class="btn btn-primary">Book Appointment</a>
-                    <a href="#" class="btn btn-secondary">Watch Demo</a>
+                    <a href="appointment.php" class="btn-primary">Book Appointment</a>
+                    <a href="#" class="btn-secondary">Watch Demo</a>
                 </div>
                 <div class="stats">
                     <div class="stat-item">
@@ -862,8 +1001,6 @@
         const specialistsSection = document.getElementById('specialists-section');
         const featuresSection = document.getElementById('features-section');
         const footerSection = document.getElementById('footer-section');
-        const doctorsLink = document.getElementById('doctors-link');
-        const homeLink = document.getElementById('home-link');
         const backToHomeBtn = document.getElementById('back-to-home');
         
         // Variable to track if we're in doctors-only view
@@ -899,18 +1036,6 @@
             });
         }
         
-        // Event listener for the Doctors link
-        doctorsLink.addEventListener('click', function(e) {
-            e.preventDefault();
-            showDoctorsOnly();
-        });
-        
-        // Event listener for the Home link
-        homeLink.addEventListener('click', function(e) {
-            e.preventDefault();
-            showAllSections();
-        });
-        
         // Event listener for the back to home button
         backToHomeBtn.addEventListener('click', function() {
             showAllSections();
@@ -941,9 +1066,6 @@
         // Smooth scrolling for anchor links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
-                // Skip if this is the doctors link or home link as they're handled separately
-                if (anchor.id === 'doctors-link' || anchor.id === 'home-link') return;
-                
                 e.preventDefault();
                 
                 const targetId = this.getAttribute('href');
