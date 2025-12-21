@@ -109,7 +109,6 @@ button:hover {
   </select>
 
   <input type="text" name="BLOOD_GROUP" placeholder="Blood Group">
-  <input type="text" name="DIABETES" placeholder="Diabetes (Yes / No)">
   <input type="text" name="PHONE" placeholder="Phone Number" required>
   <input type="email" name="EMAIL" placeholder="Email">
   <input type="text" name="ADDRESS" placeholder="Address">
