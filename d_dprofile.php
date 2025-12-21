@@ -35,63 +35,47 @@
             min-height: 100vh;
         }
         
-        /* Sidebar Styles */
+        /* Sidebar Styles - Replaced with patient.php sidebar styles */
         .sidebar {
             width: 250px;
-            background-color: var(--primary-color);
+            background: #072D44;
+            min-height: 100vh;
             color: white;
-            padding: 20px 0;
+            padding-top: 30px;
             position: fixed;
-            height: 100vh;
-            overflow-y: auto;
-            z-index: 100;
         }
-        
-        .logo {
+
+        .sidebar h2 {
             text-align: center;
-            padding: 15px;
-            margin-bottom: 30px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 40px;
+            color: #9CCDD8;
         }
-        
-        .logo h1 {
-            font-size: 24px;
-            font-weight: 700;
+
+        .sidebar a {
+            display: block;
+            padding: 15px 25px;
+            color: #D0D7E1;
+            text-decoration: none;
+            font-size: 17px;
+            border-left: 4px solid transparent;
+        }
+
+        .sidebar a:hover, .sidebar a.active {
+            background: #064469;
+            border-left: 4px solid #9CCDD8;
+            color: white;
+        }
+
+        .logout {
             display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .logo i {
-            margin-right: 10px;
-            color: var(--accent-color);
-        }
-        
-        .nav-menu {
-            list-style: none;
-        }
-        
-        .nav-item {
-            padding: 12px 20px;
-            display: flex;
-            align-items: center;
-            transition: all 0.3s ease;
-        }
-        
-        .nav-item i {
-            margin-right: 10px;
-            width: 20px;
+            padding: 10px 95px;
+            color: #021e45;
+            text-decoration: none;
+            font-size: 17px;
+            border-left: 4px solid transparent;
+            background: #c5dbe8;
             text-align: center;
-        }
-        
-        .nav-item:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-            cursor: pointer;
-        }
-        
-        .nav-item.active {
-            background-color: rgba(255, 255, 255, 0.2);
-            border-left: 4px solid var(--accent-color);
+            margin-top: auto;
         }
         
         /* Main Content */
@@ -678,41 +662,21 @@
 </head>
 <body>
     <div class="container">
-        <!-- Sidebar -->
+        <!-- Sidebar - Replaced with patient.php sidebar -->
         <div class="sidebar">
-            <div class="logo">
-                <img src="./uploads/logo.JPG" alt="QuickCare Logo" class="logo-img">
-                <h1><i class="fas fa-heartbeat"></i> <span>QuickCare</span></h1>
+            <img src="./uploads/logo.JPG" alt="QuickCare Logo" class="logo-img" style="display:block; margin: 0 auto 10px auto; width:80px; height:80px; border-radius:50%;">
+            <h2>QuickCare</h2>
+            <div class="nav">
+                <a href="dashboard_doctor.html" class="active">Dashboard</a>
+                <a href="d_dprofile.php"> My Profile</a>
+                <a>Manage Schedule</a>
+                <a>Manage Appointments</a>
+                <a>View Patients</a>
+                <a>Manage Prescriptions</a>
+                <a>View Medicine</a>
+                <a>View Feedback</a>
             </div>
-            <ul class="nav-menu">
-                <li class="nav-item">
-                    <i class="fas fa-tachometer-alt"></i> <span>Dashboard</span>
-                </li>
-                <li class="nav-item active">
-                    <i class="fas fa-user-md"></i> <span>My Profile</span>
-                </li>
-                <li class="nav-item">
-                    <i class="fas fa-calendar-check"></i> <span>Appointments</span>
-                </li>
-                <li class="nav-item">
-                    <i class="fas fa-users"></i> <span>Patients</span>
-                </li>
-                <li class="nav-item">
-                    <i class="fas fa-file-medical"></i> <span>Prescriptions</span>
-                </li>
-                <li class="nav-item">
-                    <i class="fas fa-clock"></i> <span>Schedule</span>
-                </li>
-                <li class="nav-item">
-                    <i class="fas fa-comments"></i> <span>Feedback</span>
-                </li>
-                <li class="nav-item">
-                    <i class="fas fa-cog"></i> <span>Settings</span>
-                </li>
-                <li class="nav-item">
-                    <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
-                </li>
-            </ul>
+            <button class="logout">Logout</button>
         </div>
         
         <!-- Main Content -->
