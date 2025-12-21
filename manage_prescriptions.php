@@ -1,8 +1,6 @@
 <?php
 // Include your existing config file
 require_once 'config.php';
-include "header.php";
-
 // Check if the connection variable $conn exists and is valid
 if (!$conn) {
     die("Error: Database connection failed. Please check your config.php file.");
@@ -12,7 +10,7 @@ if (!$conn) {
  $alert_message = '';
 if (isset($_GET['status'])) {
     if ($_GET['status'] === 'success') {
-        $alert_message = "Prescription added successfully!";
+        $alert_message = "Prescription added suc    cessfully!";
     } elseif ($_GET['status'] === 'deleted_success') {
         $alert_message = "Prescription deleted successfully!";
     }

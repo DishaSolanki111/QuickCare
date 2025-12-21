@@ -328,7 +328,7 @@
                 </div>
                 
                 <div class="auth-buttons">
-                    <a href="login.php" class="btn-login">
+                    <a href="login_for_all.php" class="btn-login">
                         Login
                     </a>
                     <a href="patientform.php" class="btn-register">

@@ -1,13 +1,12 @@
 <?php
 include 'config.php';
-include 'header.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Receptionist Registration</title>
+    <title>Receptionist Registration | QuickCare</title>
     <style>
         :root {
             --primary-blue: #0a4d68;
@@ -18,6 +17,9 @@ include 'header.php';
             --white: #ffffff;
             --light-gray: #f5f5f5;
             --error: #ff5252;
+            --sidebar-bg: #072D44;
+            --sidebar-hover: #064469;
+            --sidebar-active: #9CCDD8;
         }
 
         * {
@@ -31,11 +33,20 @@ include 'header.php';
             background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
             min-height: 100vh;
             display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
+            padding: 0;
         }
 
+        /* Main Content */
+        .main-content {
+            margin-left: 250px;
+            width: calc(100% - 250px);
+            padding: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Form Container */
         .container {
             background-color: var(--white);
             border-radius: 15px;
@@ -169,11 +180,28 @@ include 'header.php';
             display: none;
         }
 
+        .success-message {
+            background-color: var(--light-blue);
+            color: var(--primary-blue);
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            display: none;
+            text-align: center;
+        }
+
         .required {
             color: var(--error);
         }
 
+        /* Responsive styles */
         @media (max-width: 768px) {
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+                padding: 20px;
+            }
+
             .form-row {
                 flex-direction: column;
                 gap: 0;
@@ -182,144 +210,147 @@ include 'header.php';
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Receptionist Registration</h1>
-        
-        <?php
-        // // Database connection
-        // $servername = "localhost";
-        // $username = "username";
-        // $password = "password";
-        // $dbname = "database_name";
-        
-        // // Create connection
-        // $conn = new mysqli($servername, $username, $password, $dbname);
-        
-        // // Check connection
-        // if ($conn->connect_error) {
-        //     die("Connection failed: " . $conn->connect_error);
-        // }
-        
-        // Initialize variables
-        $success = false;
-        $error = "";
-        
-        // Check if form is submitted
-        if ($_SERVER["REQUEST_METHOD"] == "POST") {
-            // Sanitize and validate inputs
-            $first_name = mysqli_real_escape_string($conn, $_POST['first_name']);
-            $last_name = mysqli_real_escape_string($conn, $_POST['last_name']);
-            $dob = mysqli_real_escape_string($conn, $_POST['dob']);
-            $doj = mysqli_real_escape_string($conn, $_POST['doj']);
-            $gender = mysqli_real_escape_string($conn, $_POST['gender']);
-            $phone = mysqli_real_escape_string($conn, $_POST['phone']);
-            $email = mysqli_real_escape_string($conn, $_POST['email']);
-            $username = mysqli_real_escape_string($conn, $_POST['username']);
-            $password = mysqli_real_escape_string($conn, $_POST['password']);
-            $address = mysqli_real_escape_string($conn, $_POST['address']);
+    <?php include 'admin_sidebar.php'; ?>
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="container">
+            <h1>Receptionist Registration</h1>
             
-            // Hash the password
-            $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+            <?php
+            // Initialize variables
+            $success = false;
+            $error = "";
             
-            // SQL to insert data
-            $sql = "INSERT INTO receptionist_tbl (FIRST_NAME, LAST_NAME, DOB, DOJ, GENDER, PHONE, EMAIL, USERNAME, PASSWORD, ADDRESS) 
-                    VALUES ('$first_name', '$last_name', '$dob', '$doj', '$gender', '$phone', '$email', '$username', '$hashed_password', '$address')";
-            
-            if ($conn->query($sql) === TRUE) {
-                $success = true;
-            } else {
-                $error = "Error: " . $sql . "<br>" . $conn->error;
+            // Check if form is submitted
+            if ($_SERVER["REQUEST_METHOD"] == "POST") {
+                // Sanitize and validate inputs
+                $first_name = mysqli_real_escape_string($conn, $_POST['first_name']);
+                $last_name = mysqli_real_escape_string($conn, $_POST['last_name']);
+                $dob = mysqli_real_escape_string($conn, $_POST['dob']);
+                $doj = mysqli_real_escape_string($conn, $_POST['doj']);
+                $gender = mysqli_real_escape_string($conn, $_POST['gender']);
+                $phone = mysqli_real_escape_string($conn, $_POST['phone']);
+                $email = mysqli_real_escape_string($conn, $_POST['email']);
+                $username = mysqli_real_escape_string($conn, $_POST['username']);
+                $password = mysqli_real_escape_string($conn, $_POST['password']);
+                $address = mysqli_real_escape_string($conn, $_POST['address']);
+                
+                // Hash password
+                $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+                
+                // SQL to insert data
+                $sql = "INSERT INTO receptionist_tbl (FIRST_NAME, LAST_NAME, DOB, DOJ, GENDER, PHONE, EMAIL, USERNAME, PASSWORD, ADDRESS) 
+                        VALUES ('$first_name', '$last_name', '$dob', '$doj', '$gender', '$phone', '$email', '$username', '$hashed_password', '$address')";
+                
+                if ($conn->query($sql) === TRUE) {
+                    $success = true;
+                } else {
+                    $error = "Error: " . $sql . "<br>" . $conn->error;
+                }
+                
+                $conn->close();
             }
+            ?>
             
-            $conn->close();
-        }
-        ?>
-        
-        <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post" id="receptionistForm">
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="first_name">First Name <span class="required">*</span></label>
-                    <input type="text" id="first_name" name="first_name" required>
-                    <div class="error-message" id="first_name_error"></div>
+            <?php if ($success): ?>
+                <div class="success-message" style="display: block;">
+                    Registration successful!
                 </div>
-                
-                <div class="form-group">
-                    <label for="last_name">Last Name <span class="required">*</span></label>
-                    <input type="text" id="last_name" name="last_name" required>
-                    <div class="error-message" id="last_name_error"></div>
-                </div>
-            </div>
+            <?php endif; ?>
             
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="dob">Date of Birth</label>
-                    <input type="date" id="dob" name="dob">
-                    <div class="error-message" id="dob_error"></div>
+            <?php if (!empty($error)): ?>
+                <div class="error-message" style="display: block;">
+                    <?php echo $error; ?>
                 </div>
-                
-                <div class="form-group">
-                    <label for="doj">Date of Joining</label>
-                    <input type="date" id="doj" name="doj">
-                    <div class="error-message" id="doj_error"></div>
-                </div>
-            </div>
+            <?php endif; ?>
             
-            <div class="form-group">
-                <label>Gender</label>
-                <div class="radio-group">
-                    <div class="radio-option">
-                        <input type="radio" id="male" name="gender" value="MALE">
-                        <label for="male">Male</label>
+            <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post" id="receptionistForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="first_name">First Name <span class="required">*</span></label>
+                        <input type="text" id="first_name" name="first_name" required>
+                        <div class="error-message" id="first_name_error"></div>
                     </div>
-                    <div class="radio-option">
-                        <input type="radio" id="female" name="gender" value="FEMALE">
-                        <label for="female">Female</label>
-                    </div>
-                    <div class="radio-option">
-                        <input type="radio" id="other" name="gender" value="OTHER">
-                        <label for="other">Other</label>
+                    
+                    <div class="form-group">
+                        <label for="last_name">Last Name <span class="required">*</span></label>
+                        <input type="text" id="last_name" name="last_name" required>
+                        <div class="error-message" id="last_name_error"></div>
                     </div>
                 </div>
-            </div>
-            
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="phone">Phone Number</label>
-                    <input type="number" id="phone" name="phone">
-                    <div class="error-message" id="phone_error"></div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="dob">Date of Birth</label>
+                        <input type="date" id="dob" name="dob">
+                        <div class="error-message" id="dob_error"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="doj">Date of Joining</label>
+                        <input type="date" id="doj" name="doj">
+                        <div class="error-message" id="doj_error"></div>
+                    </div>
                 </div>
                 
                 <div class="form-group">
-                    <label for="email">Email</label>
-                    <input type="email" id="email" name="email">
-                    <div class="error-message" id="email_error"></div>
+                    <label>Gender</label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" id="male" name="gender" value="MALE">
+                            <label for="male">Male</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="female" name="gender" value="FEMALE">
+                            <label for="female">Female</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="other" name="gender" value="OTHER">
+                            <label for="other">Other</label>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="username">Username <span class="required">*</span></label>
-                    <input type="text" id="username" name="username" required>
-                    <div class="error-message" id="username_error"></div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <input type="number" id="phone" name="phone">
+                        <div class="error-message" id="phone_error"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email">
+                        <div class="error-message" id="email_error"></div>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="username">Username <span class="required">*</span></label>
+                        <input type="text" id="username" name="username" required>
+                        <div class="error-message" id="username_error"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password">Password <span class="required">*</span></label>
+                        <input type="password" id="password" name="password" required>
+                        <div class="error-message" id="password_error"></div>
+                    </div>
                 </div>
                 
                 <div class="form-group">
-                    <label for="password">Password <span class="required">*</span></label>
-                    <input type="password" id="password" name="password" required>
-                    <div class="error-message" id="password_error"></div>
+                    <label for="address">Address</label>
+                    <textarea id="address" name="address"></textarea>
+                    <div class="error-message" id="address_error"></div>
                 </div>
-            </div>
-            
-            <div class="form-group">
-                <label for="address">Address</label>
-                <textarea id="address" name="address"></textarea>
-                <div class="error-message" id="address_error"></div>
-            </div>
-            
-            <div class="btn-container">
-                <button type="submit" class="btn">Register</button>
-            </div>
-        </form>
+                
+                <div class="btn-container">
+                    <button type="submit" class="btn">Register</button>
+                </div>
+            </form>
+        </div>
     </div>
 
     <script>
@@ -365,6 +396,18 @@ include 'header.php';
                 isValid = false;
             } else {
                 phoneError.style.display = 'none';
+            }
+            
+            // Validate password length
+            const passwordField = document.getElementById('password');
+            const passwordError = document.getElementById('password_error');
+            
+            if (passwordField.value && passwordField.value.length < 6) {
+                passwordError.textContent = 'Password must be at least 6 characters';
+                passwordError.style.display = 'block';
+                isValid = false;
+            } else {
+                passwordError.style.display = 'none';
             }
             
             if (!isValid) {
