@@ -529,7 +529,7 @@
             <div class="nav">
                 <a href="patient.html">Dashboard</a>
                 <a class="active">My Profile</a>
-                <a>Manage Appointments</a>
+                <a href="">Manage Appointments</a>
                 <a>View Doctor Schedule</a>
                 <a>My Prescriptions</a>
                 <a>Medicine Reminder</a>
@@ -688,7 +688,7 @@
                     </div>
                 </div>
                 
-                <!-- Medical Information Card -->
+                <!-- Medical Information Card
                 <div class="profile-card">
                     <div class="profile-header">
                         <h2>Medical Information</h2>
@@ -718,8 +718,8 @@
                             <i class="fas fa-download"></i> Download Medical History
                         </button>
                     </div>
-                </div>
-            </div>
+                </div>-->
+            </div> 
             
             <!-- Tabs Section -->
             <div class="tabs">
