@@ -1,3 +1,6 @@
+<?php
+include 'config.php';
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -34,64 +37,7 @@
             margin: 0;
         }
         
-        /* Sidebar Styles */
-        .sidebar {
-            background-color: var(--primary-dark-blue);
-            min-height: 100vh;
-            padding: 0;
-            position: fixed;
-            width: 250px;
-            z-index: 100;
-        }
-        
-        .sidebar-header {
-            padding: 20px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        .sidebar-header h3 {
-            color: var(--white);
-            font-weight: 600;
-            margin: 0;
-            display: flex;
-            align-items: center;
-        }
-        
-        .sidebar-header i {
-            margin-right: 10px;
-            font-size: 1.5rem;
-        }
-        
-        .sidebar-menu {
-            padding: 20px 0;
-        }
-        
-        .menu-item {
-            padding: 12px 20px;
-            color: rgba(255, 255, 255, 0.7);
-            display: flex;
-            align-items: center;
-            text-decoration: none;
-            transition: all 0.3s ease;
-        }
-        
-        .menu-item:hover {
-            color: var(--white);
-            background-color: rgba(255, 255, 255, 0.1);
-        }
-        
-        .menu-item.active {
-            color: var(--white);
-            background-color: var(--secondary-blue);
-            border-left: 4px solid var(--accent-blue);
-        }
-        
-        .menu-item i {
-            margin-right: 10px;
-            font-size: 1.2rem;
-        }
-        
-        /* Main Content Styles */
+        /* Main Content */
         .main-content {
             margin-left: 250px;
             padding: 20px;
@@ -188,6 +134,40 @@
             flex: 1;
         }
         
+        /* Statistics Styles */
+        .stats-card {
+            background-color: var(--white);
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+        
+        .stats-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .stats-icon {
+            font-size: 2rem;
+            color: var(--accent-blue);
+            margin-bottom: 15px;
+        }
+        
+        .stats-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-dark-blue);
+            margin-bottom: 5px;
+        }
+        
+        .stats-label {
+            color: var(--gray-dark);
+            font-size: 14px;
+        }
+        
         /* Professional Information Styles */
         .professional-info {
             background-color: var(--white);
@@ -237,35 +217,15 @@
         
         /* Responsive Styles */
         @media (max-width: 992px) {
-            .sidebar {
-                width: 70px;
-            }
-            
-            .sidebar-header h3 span {
-                display: none;
-            }
-            
-            .menu-item span {
-                display: none;
-            }
-            
             .main-content {
                 margin-left: 70px;
             }
         }
         
         @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-                transition: transform 0.3s ease;
-            }
-            
-            .sidebar.active {
-                transform: translateX(0);
-            }
-            
             .main-content {
                 margin-left: 0;
+                padding: 20px;
             }
             
             .mobile-menu-toggle {
@@ -292,41 +252,8 @@
 <body>
     <div class="container-fluid">
         <div class="row">
-            <!-- Sidebar -->
-            <div class="sidebar" id="sidebar">
-                <div class="sidebar-header">
-                    <h3><i class="bi bi-hospital"></i> <span>QuickCare</span></h3>
-                </div>
-                <div class="sidebar-menu">
-                    <a href="receptionist.html" class="menu-item">
-                        <i class="bi bi-speedometer2"></i> <span>Dashboard</span>
-                    </a>
-                    <a href="#" class="menu-item active">
-                        <i class="bi bi-person-circle"></i> <span>My Profile</span>
-                    </a>
-                    <a href="#" class="menu-item">
-                        <i class="bi bi-calendar3"></i> <span>Appointments</span>
-                    </a>
-                    <a href="#" class="menu-item">
-                        <i class="bi bi-people"></i> <span>Doctors</span>
-                    </a>
-                    <a href="#" class="menu-item">
-                        <i class="bi bi-people-fill"></i> <span>Patients</span>
-                    </a>
-                    <a href="#" class="menu-item">
-                        <i class="bi bi-capsule"></i> <span>Medicines</span>
-                    </a>
-                    <a href="#" class="menu-item">
-                        <i class="bi bi-bell"></i> <span>Reminders</span>
-                    </a>
-                    <a href="#" class="menu-item">
-                        <i class="bi bi-credit-card"></i> <span>Payments</span>
-                    </a>
-                    <a href="#" class="menu-item">
-                        <i class="bi bi-box-arrow-right"></i> <span>Logout</span>
-                    </a>
-                </div>
-            </div>
+            <!-- Include Sidebar -->
+            <?php include 'receptionist_sidebar.php'; ?>
             
             <!-- Main Content -->
             <div class="main-content">
@@ -395,8 +322,48 @@
                         </div>
                     </div>
                     
-                    <!-- Professional Information -->
+                    <!-- Statistics and Professional Information -->
                     <div class="col-lg-8">
+                        <!-- Statistics -->
+                        <div class="card">
+                            <div class="card-header">
+                                Statistics
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-3 col-sm-6 mb-4">
+                                        <div class="stats-card">
+                                            <i class="bi bi-calendar-check stats-icon"></i>
+                                            <div class="stats-number">24</div>
+                                            <div class="stats-label">Total Appointments</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 col-sm-6 mb-4">
+                                        <div class="stats-card">
+                                            <i class="bi bi-people stats-icon"></i>
+                                            <div class="stats-number">10</div>
+                                            <div class="stats-label">Doctors Managed</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 col-sm-6 mb-4">
+                                        <div class="stats-card">
+                                            <i class="bi bi-bell stats-icon"></i>
+                                            <div class="stats-number">9</div>
+                                            <div class="stats-label">Reminders</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 col-sm-6 mb-4">
+                                        <div class="stats-card">
+                                            <i class="bi bi-capsule stats-icon"></i>
+                                            <div class="stats-number">15</div>
+                                            <div class="stats-label">Medicine Management</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Professional Information -->
                         <div class="card">
                             <div class="card-header">
                                 Professional Information
@@ -444,16 +411,21 @@
     <script>
         // Mobile menu toggle
         document.getElementById('mobileMenuToggle').addEventListener('click', function() {
-            document.getElementById('sidebar').classList.toggle('active');
+            const sidebar = document.querySelector('.sidebar');
+            if (sidebar) {
+                sidebar.classList.toggle('active');
+            }
         });
         
         // Close sidebar when clicking outside on mobile
         document.addEventListener('click', function(event) {
-            const sidebar = document.getElementById('sidebar');
+            const sidebar = document.querySelector('.sidebar');
             const toggle = document.getElementById('mobileMenuToggle');
             
             if (window.innerWidth <= 768 && 
+                sidebar && 
                 !sidebar.contains(event.target) && 
+                toggle && 
                 !toggle.contains(event.target) && 
                 sidebar.classList.contains('active')) {
                 sidebar.classList.remove('active');
@@ -463,7 +435,10 @@
         // Handle window resize
         window.addEventListener('resize', function() {
             if (window.innerWidth > 768) {
-                document.getElementById('sidebar').classList.remove('active');
+                const sidebar = document.querySelector('.sidebar');
+                if (sidebar) {
+                    sidebar.classList.remove('active');
+                }
             }
         });
     </script>
