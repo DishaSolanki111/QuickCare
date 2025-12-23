@@ -10,8 +10,6 @@ if (session_status() == PHP_SESSION_NONE) {
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>QuickCare Hospital</title>
-
-
 <style>
     :root {
         --primary: #0066cc;
@@ -221,6 +219,7 @@ if (session_status() == PHP_SESSION_NONE) {
         display: flex;
         align-items: center;
         gap: 0.8rem;
+        position: relative;
     }
 
     .user-avatar {
@@ -234,6 +233,13 @@ if (session_status() == PHP_SESSION_NONE) {
         color: var(--primary);
         font-weight: 600;
         font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .user-avatar:hover {
+        transform: scale(1.05);
+        box-shadow: var(--shadow-md);
     }
 
     .user-info {
@@ -250,6 +256,44 @@ if (session_status() == PHP_SESSION_NONE) {
     .user-type {
         font-size: 0.8rem;
         color: var(--text-light);
+    }
+
+    /* Profile Dropdown */
+    .profile-dropdown {
+        position: absolute;
+        top: 100%;
+        right: 0;
+        background: white;
+        border-radius: 8px;
+        box-shadow: var(--shadow-lg);
+        min-width: 200px;
+        padding: 0.5rem 0;
+        margin-top: 0.5rem;
+        display: none;
+        z-index: 1001;
+    }
+
+    .profile-dropdown.active {
+        display: block;
+    }
+
+    .profile-dropdown a {
+        display: block;
+        padding: 0.7rem 1rem;
+        color: var(--text);
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+    .profile-dropdown a:hover {
+        background: var(--primary-light);
+        color: var(--primary);
+    }
+
+    .profile-dropdown a i {
+        margin-right: 0.5rem;
+        width: 20px;
+        text-align: center;
     }
 
     /* Mobile Menu Button */
@@ -395,6 +439,7 @@ if (session_status() == PHP_SESSION_NONE) {
         }
     }
 </style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
     <!-- ================= HEADER ================= -->
@@ -414,15 +459,17 @@ if (session_status() == PHP_SESSION_NONE) {
                     <a href="contactus.php">Contact</a>
                 </div>
                 
-                <?php if (isset($_SESSION['PATIENT_ID']) || isset($_SESSION['DOCTOR_ID'])): ?>
+                <?php if (isset($_SESSION['PATIENT_ID']) || isset($_SESSION['DOCTOR_ID']) || isset($_SESSION['RECEPTIONIST_ID'])): ?>
                     <!-- User Profile Section (when logged in) -->
                     <div class="user-profile">
-                        <div class="user-avatar">
+                        <div class="user-avatar" id="profile-icon">
                             <?php 
                             if (isset($_SESSION['PATIENT_ID'])) {
                                 echo isset($_SESSION['PATIENT_NAME']) ? strtoupper(substr($_SESSION['PATIENT_NAME'], 0, 2)) : 'PA';
-                            } else {
+                            } else if (isset($_SESSION['DOCTOR_ID'])) {
                                 echo isset($_SESSION['DOCTOR_NAME']) ? strtoupper(substr($_SESSION['DOCTOR_NAME'], 0, 2)) : 'DR';
+                            } else {
+                                echo isset($_SESSION['RECEPTIONIST_NAME']) ? strtoupper(substr($_SESSION['RECEPTIONIST_NAME'], 0, 2)) : 'RE';
                             }
                             ?>
                         </div>
@@ -431,8 +478,10 @@ if (session_status() == PHP_SESSION_NONE) {
                                 <?php 
                                 if (isset($_SESSION['PATIENT_ID'])) {
                                     echo isset($_SESSION['PATIENT_NAME']) ? htmlspecialchars($_SESSION['PATIENT_NAME']) : 'Patient';
-                                } else {
+                                } else if (isset($_SESSION['DOCTOR_ID'])) {
                                     echo isset($_SESSION['DOCTOR_NAME']) ? 'Dr. ' . htmlspecialchars($_SESSION['DOCTOR_NAME']) : 'Doctor';
+                                } else {
+                                    echo isset($_SESSION['RECEPTIONIST_NAME']) ? htmlspecialchars($_SESSION['RECEPTIONIST_NAME']) : 'Receptionist';
                                 }
                                 ?>
                             </div>
@@ -440,15 +489,43 @@ if (session_status() == PHP_SESSION_NONE) {
                                 <?php 
                                 if (isset($_SESSION['PATIENT_ID'])) {
                                     echo 'Patient';
-                                } else {
+                                } else if (isset($_SESSION['DOCTOR_ID'])) {
                                     echo 'Doctor';
+                                } else {
+                                    echo 'Receptionist';
                                 }
                                 ?>
                             </div>
                         </div>
-                        <a href="logout.php" class="btn-logout">
-                            <i class="fas fa-sign-out-alt"></i> Logout
-                        </a>
+                        
+                        <!-- Profile Dropdown Menu -->
+                        <div class="profile-dropdown" id="profile-dropdown">
+                            <?php 
+                            // Determine the correct profile and dashboard links based on user type
+                            $profile_link = '#';
+                            $dashboard_link = '#';
+                            
+                            if (isset($_SESSION['PATIENT_ID'])) {
+                                $profile_link = 'patient_profile.php';
+                                $dashboard_link = 'patient.php';
+                            } else if (isset($_SESSION['DOCTOR_ID'])) {
+                                $profile_link = 'doctor_profile.php';
+                                $dashboard_link = 'doctor.php';
+                            } else if (isset($_SESSION['RECEPTIONIST_ID'])) {
+                                $profile_link = 'receptionist_profile.php';
+                                $dashboard_link = 'receptionist.php';
+                            }
+                            ?>
+                            <a href="<?php echo $profile_link; ?>">
+                                <i class="fas fa-user"></i> My Profile
+                            </a>
+                            <a href="<?php echo $dashboard_link; ?>">
+                                <i class="fas fa-tachometer-alt"></i> Dashboard
+                            </a>
+                            <a href="logout.php">
+                                <i class="fas fa-sign-out-alt"></i> Logout
+                            </a>
+                        </div>
                     </div>
                 <?php else: ?>
                     <!-- Auth Buttons (when not logged in) -->
@@ -482,15 +559,17 @@ if (session_status() == PHP_SESSION_NONE) {
             <a href="aboutus.php" class="active">About Us</a>
             <a href="contactus.php">Contact</a>
             
-            <?php if (isset($_SESSION['PATIENT_ID']) || isset($_SESSION['DOCTOR_ID'])): ?>
+            <?php if (isset($_SESSION['PATIENT_ID']) || isset($_SESSION['DOCTOR_ID']) || isset($_SESSION['RECEPTIONIST_ID'])): ?>
                 <!-- User Profile Section (when logged in) -->
                 <div class="mobile-user-profile">
                     <div class="mobile-user-avatar">
                         <?php 
                         if (isset($_SESSION['PATIENT_ID'])) {
                             echo isset($_SESSION['PATIENT_NAME']) ? strtoupper(substr($_SESSION['PATIENT_NAME'], 0, 2)) : 'PA';
-                        } else {
+                        } else if (isset($_SESSION['DOCTOR_ID'])) {
                             echo isset($_SESSION['DOCTOR_NAME']) ? strtoupper(substr($_SESSION['DOCTOR_NAME'], 0, 2)) : 'DR';
+                        } else {
+                            echo isset($_SESSION['RECEPTIONIST_NAME']) ? strtoupper(substr($_SESSION['RECEPTIONIST_NAME'], 0, 2)) : 'RE';
                         }
                         ?>
                     </div>
@@ -499,8 +578,10 @@ if (session_status() == PHP_SESSION_NONE) {
                             <?php 
                             if (isset($_SESSION['PATIENT_ID'])) {
                                 echo isset($_SESSION['PATIENT_NAME']) ? htmlspecialchars($_SESSION['PATIENT_NAME']) : 'Patient';
-                            } else {
+                            } else if (isset($_SESSION['DOCTOR_ID'])) {
                                 echo isset($_SESSION['DOCTOR_NAME']) ? 'Dr. ' . htmlspecialchars($_SESSION['DOCTOR_NAME']) : 'Doctor';
+                            } else {
+                                echo isset($_SESSION['RECEPTIONIST_NAME']) ? htmlspecialchars($_SESSION['RECEPTIONIST_NAME']) : 'Receptionist';
                             }
                             ?>
                         </div>
@@ -508,21 +589,21 @@ if (session_status() == PHP_SESSION_NONE) {
                             <?php 
                             if (isset($_SESSION['PATIENT_ID'])) {
                                 echo 'Patient';
-                            } else {
+                            } else if (isset($_SESSION['DOCTOR_ID'])) {
                                 echo 'Doctor';
+                            } else {
+                                echo 'Receptionist';
                             }
                             ?>
                         </div>
                     </div>
                 </div>
-                <a href="logout.php">Logout</a>
                 <?php 
-                if (isset($_SESSION['PATIENT_ID'])) {
-                    echo '<a href="patient.php">Dashboard</a>';
-                } else {
-                    echo '<a href="doctor.php">Dashboard</a>';
-                }
+                // Use the same links determined above
+                echo '<a href="' . $profile_link . '">My Profile</a>';
+                echo '<a href="' . $dashboard_link . '">Dashboard</a>';
                 ?>
+                <a href="logout.php">Logout</a>
             <?php else: ?>
                 <!-- Auth Links (when not logged in) -->
                 <a href="login.php">Login</a>
@@ -544,6 +625,23 @@ if (session_status() == PHP_SESSION_NONE) {
         closeMenu.addEventListener('click', () => {
             mobileNav.classList.remove('active');
         });
+
+        // Profile dropdown toggle
+        const profileIcon = document.getElementById('profile-icon');
+        const profileDropdown = document.getElementById('profile-dropdown');
+        
+        if (profileIcon && profileDropdown) {
+            profileIcon.addEventListener('click', () => {
+                profileDropdown.classList.toggle('active');
+            });
+            
+            // Close dropdown when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!profileIcon.contains(e.target) && !profileDropdown.contains(e.target)) {
+                    profileDropdown.classList.remove('active');
+                }
+            });
+        }
 
         // Navbar scroll effect
         let lastScroll = 0;

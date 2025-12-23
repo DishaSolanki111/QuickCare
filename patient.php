@@ -1,8 +1,8 @@
 <?php
 session_start();
 
-if (!isset($_SESSION['LOGGED_IN']) || $_SESSION['LOGGED_IN'] !== true) {
-    header("Location: login.php");
+if (!isset($_SESSION['PATIENT_ID'])) {
+    header("Location: login_for_all.php");
     exit;
 }
 
@@ -14,11 +14,12 @@ include 'config.php';
  $patient_query = mysqli_query($conn, "SELECT * FROM patient_tbl WHERE PATIENT_ID = '$patient_id'");
  $patient = mysqli_fetch_assoc($patient_query);
 
-// Get upcoming appointments
+// Get upcoming appointments - FIXED QUERY
  $appointment_query = mysqli_query($conn, "
-    SELECT a.*, d.FIRST_NAME as DOC_FNAME, d.LAST_NAME as DOC_LNAME, d.SPECIALIZATION 
+    SELECT a.*, d.FIRST_NAME as DOC_FNAME, d.LAST_NAME as DOC_LNAME, s.SPECIALISATION_NAME as SPECIALIZATION 
     FROM appointment_tbl a
     JOIN doctor_tbl d ON a.DOCTOR_ID = d.DOCTOR_ID
+    JOIN specialisation_tbl s ON d.SPECIALISATION_ID = s.SPECIALISATION_ID
     WHERE a.PATIENT_ID = '$patient_id' AND a.APPOINTMENT_DATE >= CURDATE()
     ORDER BY a.APPOINTMENT_DATE ASC
     LIMIT 1
@@ -30,9 +31,17 @@ include 'config.php';
  $total_result = mysqli_fetch_assoc($total_query);
  $total_appointments = $total_result['total'];
 
- $completed_query = mysqli_query($conn, "SELECT COUNT(*) as completed FROM appointment_tbl WHERE PATIENT_ID = '$patient_id' AND STATUS = 'completed'");
+ $completed_query = mysqli_query($conn, "SELECT COUNT(*) as completed FROM appointment_tbl WHERE PATIENT_ID = '$patient_id' AND STATUS = 'COMPLETED'");
  $completed_result = mysqli_fetch_assoc($completed_query);
  $completed_appointments = $completed_result['completed'];
+
+// Get upcoming medicines count
+ $medicine_query = mysqli_query($conn, "
+    SELECT COUNT(*) as count FROM medicine_reminder_tbl 
+    WHERE PATIENT_ID = '$patient_id' AND REMINDER_TIME >= CURTIME()
+");
+ $medicine_result = mysqli_fetch_assoc($medicine_query);
+ $upcoming_medicines = $medicine_result['count'];
 ?>
 
 <!DOCTYPE html>
@@ -285,6 +294,7 @@ include 'config.php';
                             <div>
                                 <div><?php echo date('M d, Y', strtotime($upcoming_appointment['APPOINTMENT_DATE'])); ?></div>
                                 <div style="margin-top:4px; color:#8ea7b5;"><?php echo date('h:i A', strtotime($upcoming_appointment['APPOINTMENT_TIME'])); ?> • Dr. <?php echo htmlspecialchars($upcoming_appointment['DOC_FNAME'] . ' ' . $upcoming_appointment['DOC_LNAME']); ?></div>
+                                <div style="margin-top:4px; color:#8ea7b5;"><?php echo htmlspecialchars($upcoming_appointment['SPECIALIZATION']); ?></div>
                             </div>
                         </div>
                         <div class="status"><?php echo ucfirst($upcoming_appointment['STATUS']); ?></div>
@@ -304,6 +314,12 @@ include 'config.php';
             <div class="card stat">
                 <div>Completed Appointments</div>
                 <div class="num"><?php echo $completed_appointments; ?></div>
+            </div>
+            
+            <!-- STAT 3 -->
+            <div class="card stat">
+                <div>Upcoming Medicines</div>
+                <div class="num"><?php echo $upcoming_medicines; ?></div>
             </div>
         </div>
 
