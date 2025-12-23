@@ -58,6 +58,6 @@ if ($doctor_id && $date && $time && $schedule_id) {
     ]));
 } else {
     // Redirect to dashboard if no appointment data
-    header("Location: patient.php");
+    header("Location: payment.php");
 }
 exit;

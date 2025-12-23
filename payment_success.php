@@ -17,7 +17,7 @@ if (!isset($_SESSION['PATIENT_ID'])) {
 // Clear the pending appointment from session
 unset($_SESSION['PENDING_APPOINTMENT']);
 
-// ✅ CORRECT INSERT — MATCHES TABLE STRUCTURE
+// ✅ INSERT APPOINTMENT ONLY
  $q = "
 INSERT INTO appointment_tbl
 (PATIENT_ID, DOCTOR_ID, SCHEDULE_ID, CREATED_AT, APPOINTMENT_DATE, APPOINTMENT_TIME, STATUS)
@@ -26,15 +26,257 @@ VALUES
 ";
 
 if (mysqli_query($conn, $q)) {
-    // Redirect to dashboard after successful payment
-    header("Location: patient.php?payment=success");
-    exit;
+?>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Appointment Confirmed</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial;
+            background: #f5f8ff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 50px;
+            margin: 0;
+        }
+        .success-container {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            animation: slideIn 0.5s ease-out;
+        }
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background: #28a745;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            animation: scaleIn 0.5s ease-out;
+        }
+        @keyframes scaleIn {
+            from {
+                transform: scale(0);
+            }
+            to {
+                transform: scale(1);
+            }
+        }
+        .success-icon i {
+            color: white;
+            font-size: 36px;
+        }
+        h2 {
+            color: #072D44;
+            margin-bottom: 15px;
+        }
+        .appointment-info {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            text-align: left;
+        }
+        .appointment-info p {
+            margin: 8px 0;
+            color: #333;
+            font-size: 16px;
+        }
+        .appointment-info strong {
+            color: #072D44;
+            display: inline-block;
+            width: 100px;
+        }
+        .btn {
+            display: inline-block;
+            background: #072D44;
+            color: white;
+            padding: 12px 30px;
+            border-radius: 5px;
+            text-decoration: none;
+            margin-top: 20px;
+            transition: background 0.3s;
+            cursor: pointer;
+            border: none;
+            font-size: 16px;
+        }
+        .btn:hover {
+            background: #064469;
+        }
+        .note {
+            color: #666;
+            font-size: 14px;
+            margin-top: 20px;
+        }
+        .countdown {
+            font-size: 18px;
+            color: #072D44;
+            margin: 15px 0;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="success-container">
+        <div class="success-icon">
+            <i class="fas fa-check"></i>
+        </div>
+        <h2>Appointment Confirmed!</h2>
+        
+        <div class="appointment-info">
+            <p><strong>Date:</strong> <?php echo date('F d, Y', strtotime($date)); ?></p>
+            <p><strong>Time:</strong> <?php echo date('h:i A', strtotime($time)); ?></p>
+            <p><strong>Status:</strong> Scheduled</p>
+        </div>
+        
+        <div class="countdown" id="countdown">Redirecting to dashboard...</div>
+        
+        <p class="note">Your appointment has been successfully booked.</p>
+    </div>
+
+    <script>
+        // Function to redirect parent window and close popup
+        function redirectToDashboard() {
+            try {
+                // Check if this is a popup window
+                if (window.opener && !window.opener.closed) {
+                    // Redirect the parent window
+                    window.opener.location.href = 'patient.php';
+                    // Close the popup after a short delay to ensure redirect starts
+                    setTimeout(function() {
+                        window.close();
+                    }, 100);
+                } else {
+                    // If not a popup, redirect current window
+                    window.location.href = 'patient.php';
+                }
+            } catch (e) {
+                // Fallback: try to open in new window
+                window.open('patient.php', '_blank');
+                window.close();
+            }
+        }
+        
+        // Execute immediately when page loads
+        window.onload = function() {
+            // Show loading message
+            const countdownEl = document.getElementById('countdown');
+            let dots = 0;
+            
+            const loadingInterval = setInterval(function() {
+                dots = (dots + 1) % 4;
+                countdownEl.textContent = 'Redirecting to dashboard' + '.'.repeat(dots);
+            }, 500);
+            
+            // Redirect after 2 seconds
+            setTimeout(function() {
+                clearInterval(loadingInterval);
+                countdownEl.textContent = 'Opening dashboard...';
+                redirectToDashboard();
+            }, 2000);
+        };
+    </script>
+</body>
+</html>
+<?php
 } else {
-    echo "<div style='padding: 20px; text-align: center;'>";
-    echo "<h2>Payment Failed</h2>";
-    echo "<p>There was an error processing your appointment:</p>";
-    echo "<pre>" . mysqli_error($conn) . "</pre>";
-    echo "<a href='patient.php' style='display: inline-block; margin-top: 20px; padding: 10px 20px; background: #072D44; color: white; text-decoration: none; border-radius: 5px;'>Return to Dashboard</a>";
-    echo "</div>";
+    // Display error message
+    ?>
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Booking Failed</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+        <style>
+            body {
+                font-family: Arial;
+                background: #f5f8ff;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                min-height: 100vh;
+                padding: 50px;
+            }
+            .error-container {
+                background: white;
+                padding: 40px;
+                border-radius: 12px;
+                text-align: center;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+                max-width: 500px;
+            }
+            .error-icon {
+                width: 80px;
+                height: 80px;
+                background: #dc3545;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin: 0 auto 20px;
+            }
+            .error-icon i {
+                color: white;
+                font-size: 36px;
+            }
+            h2 {
+                color: #072D44;
+                margin-bottom: 15px;
+            }
+            .btn {
+                display: inline-block;
+                background: #072D44;
+                color: white;
+                padding: 12px 30px;
+                border-radius: 5px;
+                text-decoration: none;
+                margin-top: 20px;
+                transition: background 0.3s;
+                cursor: pointer;
+                border: none;
+                font-size: 16px;
+            }
+            .btn:hover {
+                background: #064469;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="error-container">
+            <div class="error-icon">
+                <i class="fas fa-times"></i>
+            </div>
+            <h2>Booking Failed</h2>
+            <p>There was an error booking your appointment. Please try again.</p>
+            <button class="btn" onclick="window.close()">
+                <i class="fas fa-times"></i> Close
+            </button>
+        </div>
+    </body>
+    </html>
+    <?php
 }
 ?>

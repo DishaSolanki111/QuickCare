@@ -1,13 +1,19 @@
 <?php
 session_start();
 
-$doctor_id   = $_GET['doctor_id']   ?? null;
-$date        = $_GET['date']        ?? null;
-$time        = $_GET['time']        ?? null;
-$schedule_id = $_GET['schedule_id'] ?? null;
+// Check if this is a standalone login (not from appointment booking)
+ $standalone = $_GET['standalone'] ?? false;
 
-if (!$doctor_id || !$date || !$time || !$schedule_id) {
-    die("Invalid access");
+// Only require these parameters if not standalone
+if (!$standalone) {
+    $doctor_id   = $_GET['doctor_id']   ?? null;
+    $date        = $_GET['date']        ?? null;
+    $time        = $_GET['time']        ?? null;
+    $schedule_id = $_GET['schedule_id'] ?? null;
+
+    if (!$doctor_id || !$date || !$time || !$schedule_id) {
+        die("Invalid access");
+    }
 }
 ?>
 <!DOCTYPE html>
@@ -85,6 +91,21 @@ if (!$doctor_id || !$date || !$time || !$schedule_id) {
             border-radius: 8px;
             cursor: pointer;
         }
+        
+        .signup-link {
+            text-align: center;
+            margin-top: 20px;
+            color: #666;
+        }
+        
+        .signup-link a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+        
+        .signup-link a:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
@@ -99,10 +120,12 @@ if (!$doctor_id || !$date || !$time || !$schedule_id) {
         <form action="login_process.php" method="post">
 
             <!-- 🔴 INVISIBLE BUT CRITICAL -->
+            <?php if (!$standalone): ?>
             <input type="hidden" name="doctor_id" value="<?= $doctor_id ?>">
             <input type="hidden" name="date" value="<?= $date ?>">
             <input type="hidden" name="time" value="<?= $time ?>">
             <input type="hidden" name="schedule_id" value="<?= $schedule_id ?>">
+            <?php endif; ?>
 
             <div class="form-group">
                 <i class="fas fa-user"></i>
