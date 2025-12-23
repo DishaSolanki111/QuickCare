@@ -2,13 +2,21 @@
 session_start();
 
 if (!isset($_SESSION['PATIENT_ID'])) {
-die("Login required");
+    header("Location: login.php");
+    exit;
 }
 
-$doctor_id = $_GET['doctor_id'];
-$date = $_GET['date'];
-$time = $_GET['time'];
-$schedule_id = $_GET['schedule_id'];
+// Check if there's a pending appointment in session
+if (!isset($_SESSION['PENDING_APPOINTMENT'])) {
+    header("Location: patient.php");
+    exit;
+}
+
+ $appointment = $_SESSION['PENDING_APPOINTMENT'];
+ $doctor_id = $appointment['doctor_id'];
+ $date = $appointment['date'];
+ $time = $appointment['time'];
+ $schedule_id = $appointment['schedule_id'];
 ?>
 
 <!DOCTYPE html>

@@ -1,89 +1,75 @@
 <?php
-// Start a session to store user information after login
 session_start();
+include 'config.php';
 
-// Include your database connection file
-require_once 'config.php';
+// Get form data
+ $username = $_POST['username'] ?? '';
+ $password = $_POST['pswd'] ?? '';
+ $user_type = $_POST['user_type'] ?? '';
 
-// Check if the form was submitted using POST
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-
-    // Get username, password, and user type from the form
-    $username = $_POST['username'];
-    $password = $_POST['pswd']; // 'pswd' matches the 'name' attribute in your HTML
-    $user_type = $_POST['user_type']; // This comes from the hidden input in the form
-
-    // Determine which database table and dashboard to use based on user type
-    $table = "";
-    $dashboard_page = "";
-    $id_field = "";
-    $name_field = "";
-
-    switch ($user_type) {
-        case 'patient':
-            $table = "patient_tbl";
-            $dashboard_page = "patient.html";
-            $id_field = "PATIENT_ID";
-            $name_field = "FIRST_NAME";
-            break;
-        case 'doctor':
-            $table = "doctor_tbl";
-            $dashboard_page = "dashboard_doctor.html";
-            $id_field = "DOCTOR_ID";
-            $name_field = "FIRST_NAME";
-            break;
-        case 'receptionist':
-            $table = "receptionist_tbl";
-            $dashboard_page = "receptionist.html";
-            $id_field = "RECEPTIONIST_ID";
-            $name_field = "FIRST_NAME";
-            break;
-        default:
-            // Invalid user type, redirect back with an error
-            header("location: login.html?error=1");
-            exit();
-    }
-
-    // Prepare the SQL statement to prevent SQL injection
-    $sql = "SELECT $id_field, $name_field FROM $table WHERE USERNAME = ? AND PSWD = ?";
-    $stmt = $conn->prepare($sql);
-
-    if ($stmt === false) {
-        // Error preparing the statement, redirect back with an error
-        header("location: login.html?error=1");
-        exit();
-    }
-
-    // Bind parameters (string, string) and execute the query
-    $stmt->bind_param("ss", $username, $password);
-    $stmt->execute();
-    $result = $stmt->get_result();
-
-    // Check if a user was found
-    if ($result->num_rows === 1) {
-        // Login successful!
-        $row = $result->fetch_assoc();
-
-        // Store user information in session variables
-        $_SESSION['loggedin'] = true;
-        $_SESSION['id'] = $row[$id_field];
-        $_SESSION['username'] = $username;
-        $_SESSION['name'] = $row[$name_field];
-        $_SESSION['role'] = $user_type;
-
-        // Redirect to the correct dashboard
-        header("location: " . $dashboard_page);
-        exit();
-
-    } else {
-        // Login failed, redirect back with an error
-        header("location: login.html?error=1");
-        exit();
-    }
-
-} else {
-    // If someone tries to access this file directly without submitting a form
-    header("location: login.html");
-    exit();
+// Validate input
+if (empty($username) || empty($password) || empty($user_type)) {
+    header("Location: login_for_all.php?error=Please fill all fields&user_type=$user_type");
+    exit;
 }
+
+// Sanitize input
+ $username = mysqli_real_escape_string($conn, $username);
+
+// Check user type and query appropriate table
+switch ($user_type) {
+    case 'patient':
+        $query = "SELECT PATIENT_ID, FIRST_NAME, LAST_NAME, EMAIL, PSWD FROM patient_tbl WHERE USERNAME='$username'";
+        $redirect_page = 'patient.php';
+        $session_id_key = 'PATIENT_ID';
+        $session_name_key = 'PATIENT_NAME';
+        break;
+        
+    case 'doctor':
+        $query = "SELECT DOCTOR_ID, FIRST_NAME, LAST_NAME, EMAIL, PSWD FROM doctor_tbl WHERE USERNAME='$username'";
+        $redirect_page = 'doctor.php';
+        $session_id_key = 'DOCTOR_ID';
+        $session_name_key = 'DOCTOR_NAME';
+        break;
+        
+    case 'receptionist':
+        $query = "SELECT RECEPTIONIST_ID, FIRST_NAME, LAST_NAME, EMAIL, PSWD FROM receptionist_tbl WHERE USERNAME='$username'";
+        $redirect_page = 'receptionist.php';
+        $session_id_key = 'RECEPTIONIST_ID';
+        $session_name_key = 'RECEPTIONIST_NAME';
+        break;
+        
+    default:
+        header("Location: login_for_all.php?error=Invalid user type&user_type=$user_type");
+        exit;
+}
+
+// Execute query
+ $result = mysqli_query($conn, $query);
+
+// Check if user exists
+if (!$result || mysqli_num_rows($result) !== 1) {
+    header("Location: login_for_all.php?error=Invalid username or password&user_type=$user_type");
+    exit;
+}
+
+// Get user data
+ $user = mysqli_fetch_assoc($result);
+
+// Verify password
+if (!password_verify($password, $user['PSWD'])) {
+    header("Location: login_for_all.php?error=Invalid username or password&user_type=$user_type");
+    exit;
+}
+
+// Set session variables
+ $_SESSION[$session_id_key] = $user[$session_id_key];
+ $_SESSION[$session_name_key] = $user['FIRST_NAME'] . ' ' . $user['LAST_NAME'];
+ $_SESSION['USER_TYPE'] = $user_type;
+ $_SESSION['EMAIL'] = $user['EMAIL'];
+ $_SESSION['LOGGED_IN'] = true;
+
+// Redirect to appropriate dashboard
+header("Location: $redirect_page");
+exit;
 ?>

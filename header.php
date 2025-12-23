@@ -1,9 +1,17 @@
+<?php
+// Start session only if it hasn't been started already
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>QuickCare Hospital</title>
+
+
 <style>
     :root {
         --primary: #0066cc;
@@ -165,7 +173,7 @@
         gap: 0.8rem;
     }
 
-    .btn-login, .btn-register {
+    .btn-login, .btn-register, .btn-logout {
         padding: 0.6rem 1.2rem;
         border-radius: 20px;
         font-weight: 600;
@@ -197,6 +205,51 @@
 
     .btn-register:hover {
         background: var(--primary-dark);
+    }
+
+    .btn-logout {
+        background: var(--warning);
+        color: white;
+    }
+
+    .btn-logout:hover {
+        background: #ff5252;
+    }
+
+    /* User Profile Section */
+    .user-profile {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+    }
+
+    .user-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: var(--primary-light);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--primary);
+        font-weight: 600;
+        font-size: 1rem;
+    }
+
+    .user-info {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .user-name {
+        font-weight: 600;
+        color: var(--text);
+        font-size: 0.9rem;
+    }
+
+    .user-type {
+        font-size: 0.8rem;
+        color: var(--text-light);
     }
 
     /* Mobile Menu Button */
@@ -288,6 +341,40 @@
         color: white;
     }
 
+    .mobile-user-profile {
+        padding: 1rem 1.5rem;
+        border-top: 1px solid #eee;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .mobile-user-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: var(--primary-light);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--primary);
+        font-weight: 600;
+    }
+
+    .mobile-user-info {
+        flex: 1;
+    }
+
+    .mobile-user-name {
+        font-weight: 600;
+        color: var(--text);
+    }
+
+    .mobile-user-type {
+        font-size: 0.8rem;
+        color: var(--text-light);
+    }
+
     /* RESPONSIVE */
     @media(max-width: 992px) {
         .nav-right-container {
@@ -327,14 +414,53 @@
                     <a href="contactus.php">Contact</a>
                 </div>
                 
-                <div class="auth-buttons">
-                    <a href="login_for_all.php" class="btn-login">
-                        Login
-                    </a>
-                    <a href="patientform.php" class="btn-register">
-                        Register
-                    </a>
-                </div>
+                <?php if (isset($_SESSION['PATIENT_ID']) || isset($_SESSION['DOCTOR_ID'])): ?>
+                    <!-- User Profile Section (when logged in) -->
+                    <div class="user-profile">
+                        <div class="user-avatar">
+                            <?php 
+                            if (isset($_SESSION['PATIENT_ID'])) {
+                                echo isset($_SESSION['PATIENT_NAME']) ? strtoupper(substr($_SESSION['PATIENT_NAME'], 0, 2)) : 'PA';
+                            } else {
+                                echo isset($_SESSION['DOCTOR_NAME']) ? strtoupper(substr($_SESSION['DOCTOR_NAME'], 0, 2)) : 'DR';
+                            }
+                            ?>
+                        </div>
+                        <div class="user-info">
+                            <div class="user-name">
+                                <?php 
+                                if (isset($_SESSION['PATIENT_ID'])) {
+                                    echo isset($_SESSION['PATIENT_NAME']) ? htmlspecialchars($_SESSION['PATIENT_NAME']) : 'Patient';
+                                } else {
+                                    echo isset($_SESSION['DOCTOR_NAME']) ? 'Dr. ' . htmlspecialchars($_SESSION['DOCTOR_NAME']) : 'Doctor';
+                                }
+                                ?>
+                            </div>
+                            <div class="user-type">
+                                <?php 
+                                if (isset($_SESSION['PATIENT_ID'])) {
+                                    echo 'Patient';
+                                } else {
+                                    echo 'Doctor';
+                                }
+                                ?>
+                            </div>
+                        </div>
+                        <a href="logout.php" class="btn-logout">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </a>
+                    </div>
+                <?php else: ?>
+                    <!-- Auth Buttons (when not logged in) -->
+                    <div class="auth-buttons">
+                        <a href="login_for_all.php" class="btn-login">
+                            Login
+                        </a>
+                        <a href="patientform.php" class="btn-register">
+                            Register
+                        </a>
+                    </div>
+                <?php endif; ?>
             </div>
             
             <button class="mobile-menu-btn">
@@ -355,8 +481,53 @@
             <a href="doctors.php">Doctors</a>
             <a href="aboutus.php" class="active">About Us</a>
             <a href="contactus.php">Contact</a>
-            <a href="login.php">Login</a>
-            <a href="register.php">Register</a>
+            
+            <?php if (isset($_SESSION['PATIENT_ID']) || isset($_SESSION['DOCTOR_ID'])): ?>
+                <!-- User Profile Section (when logged in) -->
+                <div class="mobile-user-profile">
+                    <div class="mobile-user-avatar">
+                        <?php 
+                        if (isset($_SESSION['PATIENT_ID'])) {
+                            echo isset($_SESSION['PATIENT_NAME']) ? strtoupper(substr($_SESSION['PATIENT_NAME'], 0, 2)) : 'PA';
+                        } else {
+                            echo isset($_SESSION['DOCTOR_NAME']) ? strtoupper(substr($_SESSION['DOCTOR_NAME'], 0, 2)) : 'DR';
+                        }
+                        ?>
+                    </div>
+                    <div class="mobile-user-info">
+                        <div class="mobile-user-name">
+                            <?php 
+                            if (isset($_SESSION['PATIENT_ID'])) {
+                                echo isset($_SESSION['PATIENT_NAME']) ? htmlspecialchars($_SESSION['PATIENT_NAME']) : 'Patient';
+                            } else {
+                                echo isset($_SESSION['DOCTOR_NAME']) ? 'Dr. ' . htmlspecialchars($_SESSION['DOCTOR_NAME']) : 'Doctor';
+                            }
+                            ?>
+                        </div>
+                        <div class="mobile-user-type">
+                            <?php 
+                            if (isset($_SESSION['PATIENT_ID'])) {
+                                echo 'Patient';
+                            } else {
+                                echo 'Doctor';
+                            }
+                            ?>
+                        </div>
+                    </div>
+                </div>
+                <a href="logout.php">Logout</a>
+                <?php 
+                if (isset($_SESSION['PATIENT_ID'])) {
+                    echo '<a href="patient.php">Dashboard</a>';
+                } else {
+                    echo '<a href="doctor.php">Dashboard</a>';
+                }
+                ?>
+            <?php else: ?>
+                <!-- Auth Links (when not logged in) -->
+                <a href="login.php">Login</a>
+                <a href="register.php">Register</a>
+            <?php endif; ?>
         </div>
     </div>
 
