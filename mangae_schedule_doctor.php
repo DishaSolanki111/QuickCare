@@ -1,4 +1,143 @@
-<div class="tab-content" id="schedule">
+
+<html>
+<head>
+    <title>Doctor Schedule Management</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        :root {
+    --dark-blue: #072D44;
+    --mid-blue: #064469;
+    --soft-blue: #5790AB;
+    --light-blue: #9CCDD8;
+    --gray-blue: #D0D7E1;
+    --white: #ffffff;
+    --card-bg: #F6F9FB;
+}
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #F5F8FA;
+  
+}
+        .main-content {
+            padding: 20px;
+            background-color: #f9f9f9;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .sidebar {
+    width: 240px;
+    background: #072D44;
+    height: 100vh;
+    color: var(--white);
+    padding: 20px 0;
+    position: fixed;
+}
+
+
+.sidebar h2 {
+        text-align: center;
+        margin-bottom: 40px;
+        color: #9CCDD8;
+    }
+.sidebar a {
+    display: block;
+    padding: 12px 20px;
+    text-decoration: none;
+    color: var(--gray-blue);
+    font-size: 15px;
+    margin: 4px 0;
+    transition: .2s;
+}
+
+.sidebar a:hover,
+.sidebar a.active {
+    background: var(--soft-blue);
+    color: var(--white);
+}
+
+        .schedule-card {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .schedule-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .schedule-header h3 {
+            color: var(--primary-color);
+        }
+        
+        .schedule-day {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .schedule-day:last-child {
+            border-bottom: none;
+        }
+        
+        .day-name {
+            font-weight: 600;
+            color: var(--dark-color);
+            width: 100px;
+        }
+        
+        .day-time {
+            color: #666;
+        }
+        
+        .day-status {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .status-available {
+            background-color: rgba(46, 204, 113, 0.2);
+            color: var(--accent-color);
+        }
+        
+        .status-unavailable {
+            background-color: rgba(231, 76, 60, 0.2);
+            color: var(--danger-color);
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+    <img src="uploads/logo.JPG" alt="QuickCare Logo" class="logo-img" style="display:block; margin: 0 auto 10px auto; width:80px; height:80px; border-radius:50%;">  
+    <h2>QuickCare</h2>
+
+    <a href="#" >Dashboard</a>
+    <a href="d_dprofile.php">My Profile</a>
+    <a href="mangae_schedule_doctor.php">Manage Schedule</a>
+    <a href="#">Manage Appointments</a>
+    <a href="manage_prescriptions.php">Manage Prescription</a>
+    <a href="#">View Medicine</a>
+    <a href="#">View Feedback</a>
+</div>
+
+   <div class="main-content">
+        <div class="container">
+
                 <h3 style="margin-bottom: 20px;">Weekly Schedule</h3>
                 
                 <div class="schedule-card">
