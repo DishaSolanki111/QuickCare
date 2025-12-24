@@ -1,3 +1,6 @@
+<?php
+session_start();
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -309,6 +312,15 @@
             margin-right: 12px;
             border-radius: 5px;
         }
+        
+        .error-message {
+            color: var(--warning);
+            background-color: rgba(255, 107, 107, 0.1);
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -326,38 +338,40 @@ include 'header.php';
     <div class="container">
         <div class="tabs">
             <button class="tab active" data-target="patient">Patient</button>
-            <button class="tab active" data-target="doctor">Doctor</button>
-            <button class="tab active" data-target="receptionist">Receptionist</button>
+            <button class="tab" data-target="doctor">Doctor</button>
+            <button class="tab" data-target="receptionist">Receptionist</button>
         </div>
 
        <div class="slider">
-            <!-- CHANGE 1: Set form action to the PHP script -->
-            <!-- CHANGE 2: Set form method to POST -->
-            <!-- CHANGE 3: Add the 'name' attribute to inputs -->
-            <!-- CHANGE 4: Add a hidden input to identify the user type -->
-            <form action="patient.html" method="POST" class="form" id="patient" style="left:0;">
+            <!-- Patient Login Form -->
+            <form action="loginhome.php" method="POST" class="form" id="patient" style="left:0;">
                 <input type="hidden" name="user_type" value="patient">
                 <h3>Patient Login</h3>
-                <input type="text" name="username" placeholder="username">
-                <input type="password" name="pswd" placeholder="Password">
-                <button type="submit" onClick="loginhome.php">Login</button>
+                <div class="error-message" id="patient-error"></div>
+                <input type="text" name="username" placeholder="Username" required>
+                <input type="password" name="pswd" placeholder="Password" required>
+                <button type="submit">Login</button>
                 <a href="patientform.php" class="small">Not registered yet? Create an account</a>
             </form>
 
+            <!-- Doctor Login Form -->
             <form action="loginhome.php" method="POST" class="form" id="doctor">
                 <input type="hidden" name="user_type" value="doctor">
                 <h3>Doctor Login</h3>
-                <input type="text" name="username" placeholder="username">
-                <input type="password" name="pswd" placeholder="Password">
+                <div class="error-message" id="doctor-error"></div>
+                <input type="text" name="username" placeholder="Username" required>
+                <input type="password" name="pswd" placeholder="Password" required>
                 <button type="submit">Login</button>
                 <div class="small">Ask Receptionist to register you.</div>
             </form>
 
+            <!-- Receptionist Login Form -->
             <form action="loginhome.php" method="POST" class="form" id="receptionist">
                 <input type="hidden" name="user_type" value="receptionist">
                 <h3>Receptionist Login</h3>
-                <input type="text" name="username" placeholder="username">
-                <input type="password" name="pswd" placeholder="Password">
+                <div class="error-message" id="receptionist-error"></div>
+                <input type="text" name="username" placeholder="Username" required>
+                <input type="password" name="pswd" placeholder="Password" required>
                 <button type="submit">Login</button>
             </form>
         </div>
@@ -424,6 +438,26 @@ include 'header.php';
         });
     });
     
+    // Show error messages from URL parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    const error = urlParams.get('error');
+    const userType = urlParams.get('user_type');
+    
+    if (error && userType) {
+        const errorElement = document.getElementById(`${userType}-error`);
+        if (errorElement) {
+            errorElement.textContent = error;
+            errorElement.style.display = 'block';
+            
+            // Show the corresponding tab
+            document.querySelector('.tab.active').classList.remove('active');
+            document.querySelector(`.tab[data-target="${userType}"]`).classList.add('active');
+            
+            forms.forEach(form => {
+                form.style.left = (form.id === userType) ? "0" : "500px";
+            });
+        }
+    }
 </script>
 
 </body>

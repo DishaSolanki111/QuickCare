@@ -1,3 +1,85 @@
+<?php
+session_start();
+
+// Check if user is logged in as a patient
+if (!isset($_SESSION['PATIENT_ID'])) {
+    header("Location: login_for_all.php");
+    exit;
+}
+
+include 'config.php';
+ $patient_id = $_SESSION['PATIENT_ID'];
+
+// Fetch patient data from database
+ $patient_query = mysqli_query($conn, "SELECT * FROM patient_tbl WHERE PATIENT_ID = '$patient_id'");
+ $patient = mysqli_fetch_assoc($patient_query);
+
+// Handle form submission for profile update
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_profile'])) {
+    $first_name = mysqli_real_escape_string($conn, $_POST['firstName']);
+    $last_name = mysqli_real_escape_string($conn, $_POST['lastName']);
+    $dob = mysqli_real_escape_string($conn, $_POST['dob']);
+    $gender = mysqli_real_escape_string($conn, $_POST['gender']);
+    $blood_group = mysqli_real_escape_string($conn, $_POST['bloodGroup']);
+    $phone = mysqli_real_escape_string($conn, $_POST['phone']);
+    $email = mysqli_real_escape_string($conn, $_POST['email']);
+    $address = mysqli_real_escape_string($conn, $_POST['address']);
+    
+    $update_query = "UPDATE patient_tbl SET 
+                   FIRST_NAME = '$first_name',
+                   LAST_NAME = '$last_name',
+                   DOB = '$dob',
+                   GENDER = '$gender',
+                   BLOOD_GROUP = '$blood_group',
+                   PHONE = '$phone',
+                   EMAIL = '$email',
+                   ADDRESS = '$address'
+                   WHERE PATIENT_ID = '$patient_id'";
+    
+    if (mysqli_query($conn, $update_query)) {
+        // Update session variables
+        $_SESSION['PATIENT_NAME'] = $first_name . ' ' . $last_name;
+        
+        // Refresh patient data
+        $patient_query = mysqli_query($conn, "SELECT * FROM patient_tbl WHERE PATIENT_ID = '$patient_id'");
+        $patient = mysqli_fetch_assoc($patient_query);
+        
+        $success_message = "Profile updated successfully!";
+    } else {
+        $error_message = "Error updating profile: " . mysqli_error($conn);
+    }
+}
+
+// Fetch appointments data
+ $appointments_query = mysqli_query($conn, "
+    SELECT a.*, d.FIRST_NAME as DOC_FNAME, d.LAST_NAME as DOC_LNAME, s.SPECIALISATION_NAME as SPECIALIZATION 
+    FROM appointment_tbl a
+    JOIN doctor_tbl d ON a.DOCTOR_ID = d.DOCTOR_ID
+    JOIN specialisation_tbl s ON d.SPECIALISATION_ID = s.SPECIALISATION_ID
+    WHERE a.PATIENT_ID = '$patient_id'
+    ORDER BY a.APPOINTMENT_DATE DESC
+");
+
+// Fetch prescriptions data
+ $prescriptions_query = mysqli_query($conn, "
+    SELECT p.*, d.FIRST_NAME as DOC_FNAME, d.LAST_NAME as DOC_LNAME
+    FROM prescription_tbl p
+    JOIN appointment_tbl a ON p.APPOINTMENT_ID = a.APPOINTMENT_ID
+    JOIN doctor_tbl d ON a.DOCTOR_ID = d.DOCTOR_ID
+    WHERE a.PATIENT_ID = '$patient_id'
+    ORDER BY p.ISSUE_DATE DESC
+");
+
+// Fetch medicine reminders
+ $reminders_query = mysqli_query($conn, "
+    SELECT mr.*, m.MED_NAME
+    FROM medicine_reminder_tbl mr
+    JOIN medicine_tbl m ON mr.MEDICINE_ID = m.MEDICINE_ID
+    WHERE mr.PATIENT_ID = '$patient_id'
+    ORDER BY mr.REMINDER_TIME
+");
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -35,7 +117,7 @@
             min-height: 100vh;
         }
         
-        /* Sidebar Styles - Replaced with patient.html styles */
+        /* Sidebar Styles */
         .sidebar {
             width: 250px;
             background: #072D44;
@@ -485,6 +567,24 @@
             gap: 20px;
         }
         
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+        
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .alert-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
         @media (max-width: 992px) {
             .sidebar {
                 width: 70px;
@@ -522,22 +622,22 @@
 </head>
 <body>
     <div class="container">
-        <!-- Sidebar - Replaced with patient.html sidebar -->
+        <!-- Sidebar -->
         <div class="sidebar">
             <img src="./uploads/logo.JPG" alt="QuickCare Logo" class="logo-img" style="display:block; margin: 0 auto 10px auto; width:80px; height:80px; border-radius:50%;">
             <h2>QuickCare</h2>
             <div class="nav">
-                <a href="patient.html">Dashboard</a>
+                <a href="patient.php">Dashboard</a>
                 <a class="active">My Profile</a>
-                <a href="">Manage Appointments</a>
-                <a>View Doctor Schedule</a>
-                <a>My Prescriptions</a>
-                <a>Medicine Reminder</a>
-                <a>Payments</a>
-                <a>Feedback</a>
-                <a>View Doctor Profile</a>
+                <a href="manage_appointments.php">Manage Appointments</a>
+                <a href="doctor_schedule.php">View Doctor Schedule</a>
+                <a href="prescriptions.php">My Prescriptions</a>
+                <a href="medicine_reminder.php">Medicine Reminder</a>
+                <a href="payments.php">Payments</a>
+                <a href="feedback.php">Feedback</a>
+                <a href="doctor_profiles.php">View Doctor Profile</a>
             </div>
-            <div class="logout">Logout</div>
+            <a href="logout.php" class="logout">Logout</a>
         </div>
         
         <!-- Main Content -->
@@ -551,22 +651,35 @@
                         <span class="notification-badge">3</span>
                     </button>
                     <div class="user-dropdown">
-                        <div class="user-avatar">JD</div>
-                        <span>Jane Doe</span>
+                        <div class="user-avatar"><?php echo strtoupper(substr($patient['FIRST_NAME'], 0, 1) . substr($patient['LAST_NAME'], 0, 1)); ?></div>
+                        <span><?php echo htmlspecialchars($patient['FIRST_NAME'] . ' ' . $patient['LAST_NAME']); ?></span>
                         <i class="fas fa-chevron-down" style="margin-left: 8px;"></i>
                     </div>
                 </div>
             </div>
+            
+            <!-- Success/Error Messages -->
+            <?php if (isset($success_message)): ?>
+                <div class="alert alert-success">
+                    <?php echo $success_message; ?>
+                </div>
+            <?php endif; ?>
+            
+            <?php if (isset($error_message)): ?>
+                <div class="alert alert-danger">
+                    <?php echo $error_message; ?>
+                </div>
+            <?php endif; ?>
             
             <!-- Profile Section -->
             <div class="profile-section">
                 <!-- Personal Information Card -->
                 <div class="profile-card">
                     <div class="profile-header">
-                        <div class="profile-avatar">JD</div>
+                        <div class="profile-avatar"><?php echo strtoupper(substr($patient['FIRST_NAME'], 0, 1) . substr($patient['LAST_NAME'], 0, 1)); ?></div>
                         <div class="profile-title">
-                            <h2>Jane Doe</h2>
-                            <p>Patient ID: PT001</p>
+                            <h2><?php echo htmlspecialchars($patient['FIRST_NAME'] . ' ' . $patient['LAST_NAME']); ?></h2>
+                            <p>Patient ID: <?php echo htmlspecialchars($patient['PATIENT_ID']); ?></p>
                         </div>
                     </div>
                     
@@ -575,35 +688,35 @@
                         <div class="info-grid">
                             <div class="info-item">
                                 <span class="info-label">First Name</span>
-                                <span class="info-value">Jane</span>
+                                <span class="info-value"><?php echo htmlspecialchars($patient['FIRST_NAME']); ?></span>
                             </div>
                             <div class="info-item">
                                 <span class="info-label">Last Name</span>
-                                <span class="info-value">Doe</span>
+                                <span class="info-value"><?php echo htmlspecialchars($patient['LAST_NAME']); ?></span>
                             </div>
                             <div class="info-item">
                                 <span class="info-label">Date of Birth</span>
-                                <span class="info-value">January 15, 1985</span>
+                                <span class="info-value"><?php echo date('F d, Y', strtotime($patient['DOB'])); ?></span>
                             </div>
                             <div class="info-item">
                                 <span class="info-label">Gender</span>
-                                <span class="info-value">Female</span>
+                                <span class="info-value"><?php echo htmlspecialchars($patient['GENDER']); ?></span>
                             </div>
                             <div class="info-item">
                                 <span class="info-label">Blood Group</span>
-                                <span class="info-value">O+</span>
+                                <span class="info-value"><?php echo htmlspecialchars($patient['BLOOD_GROUP']); ?></span>
                             </div>
                             <div class="info-item">
                                 <span class="info-label">Phone Number</span>
-                                <span class="info-value">+1 (555) 123-4567</span>
+                                <span class="info-value"><?php echo htmlspecialchars($patient['PHONE']); ?></span>
                             </div>
                             <div class="info-item">
                                 <span class="info-label">Email Address</span>
-                                <span class="info-value">jane.doe@example.com</span>
+                                <span class="info-value"><?php echo htmlspecialchars($patient['EMAIL']); ?></span>
                             </div>
                             <div class="info-item">
                                 <span class="info-label">Address</span>
-                                <span class="info-value">123 Main St, Anytown, USA</span>
+                                <span class="info-value"><?php echo htmlspecialchars($patient['ADDRESS']); ?></span>
                             </div>
                         </div>
                         
@@ -619,29 +732,30 @@
                     
                     <!-- Edit Profile Form -->
                     <div id="editProfileForm" class="edit-profile-form">
-                        <form>
+                        <form method="POST" action="patient_profile.php">
+                            <input type="hidden" name="update_profile" value="1">
                             <div class="form-row">
                                 <div class="form-group">
                                     <label for="firstName">First Name</label>
-                                    <input type="text" class="form-control" id="firstName" value="Jane">
+                                    <input type="text" class="form-control" id="firstName" name="firstName" value="<?php echo htmlspecialchars($patient['FIRST_NAME']); ?>" required>
                                 </div>
                                 <div class="form-group">
                                     <label for="lastName">Last Name</label>
-                                    <input type="text" class="form-control" id="lastName" value="Doe">
+                                    <input type="text" class="form-control" id="lastName" name="lastName" value="<?php echo htmlspecialchars($patient['LAST_NAME']); ?>" required>
                                 </div>
                             </div>
                             
                             <div class="form-row">
                                 <div class="form-group">
                                     <label for="dob">Date of Birth</label>
-                                    <input type="date" class="form-control" id="dob" value="1985-01-15">
+                                    <input type="date" class="form-control" id="dob" name="dob" value="<?php echo htmlspecialchars($patient['DOB']); ?>" required>
                                 </div>
                                 <div class="form-group">
                                     <label for="gender">Gender</label>
-                                    <select class="form-control" id="gender">
-                                        <option value="FEMALE" selected>Female</option>
-                                        <option value="MALE">Male</option>
-                                        <option value="OTHER">Other</option>
+                                    <select class="form-control" id="gender" name="gender" required>
+                                        <option value="MALE" <?php echo $patient['GENDER'] == 'MALE' ? 'selected' : ''; ?>>Male</option>
+                                        <option value="FEMALE" <?php echo $patient['GENDER'] == 'FEMALE' ? 'selected' : ''; ?>>Female</option>
+                                        <option value="OTHER" <?php echo $patient['GENDER'] == 'OTHER' ? 'selected' : ''; ?>>Other</option>
                                     </select>
                                 </div>
                             </div>
@@ -649,31 +763,31 @@
                             <div class="form-row">
                                 <div class="form-group">
                                     <label for="bloodGroup">Blood Group</label>
-                                    <select class="form-control" id="bloodGroup">
-                                        <option value="A+">A+</option>
-                                        <option value="A-">A-</option>
-                                        <option value="B+">B+</option>
-                                        <option value="B-">B-</option>
-                                        <option value="O+" selected>O+</option>
-                                        <option value="O-">O-</option>
-                                        <option value="AB+">AB+</option>
-                                        <option value="AB-">AB-</option>
+                                    <select class="form-control" id="bloodGroup" name="bloodGroup" required>
+                                        <option value="A+" <?php echo $patient['BLOOD_GROUP'] == 'A+' ? 'selected' : ''; ?>>A+</option>
+                                        <option value="A-" <?php echo $patient['BLOOD_GROUP'] == 'A-' ? 'selected' : ''; ?>>A-</option>
+                                        <option value="B+" <?php echo $patient['BLOOD_GROUP'] == 'B+' ? 'selected' : ''; ?>>B+</option>
+                                        <option value="B-" <?php echo $patient['BLOOD_GROUP'] == 'B-' ? 'selected' : ''; ?>>B-</option>
+                                        <option value="O+" <?php echo $patient['BLOOD_GROUP'] == 'O+' ? 'selected' : ''; ?>>O+</option>
+                                        <option value="O-" <?php echo $patient['BLOOD_GROUP'] == 'O-' ? 'selected' : ''; ?>>O-</option>
+                                        <option value="AB+" <?php echo $patient['BLOOD_GROUP'] == 'AB+' ? 'selected' : ''; ?>>AB+</option>
+                                        <option value="AB-" <?php echo $patient['BLOOD_GROUP'] == 'AB-' ? 'selected' : ''; ?>>AB-</option>
                                     </select>
                                 </div>
                                 <div class="form-group">
                                     <label for="phone">Phone Number</label>
-                                    <input type="tel" class="form-control" id="phone" value="5551234567">
+                                    <input type="tel" class="form-control" id="phone" name="phone" value="<?php echo htmlspecialchars($patient['PHONE']); ?>" required>
                                 </div>
                             </div>
                             
                             <div class="form-group">
                                 <label for="email">Email Address</label>
-                                <input type="email" class="form-control" id="email" value="jane.doe@example.com">
+                                <input type="email" class="form-control" id="email" name="email" value="<?php echo htmlspecialchars($patient['EMAIL']); ?>" required>
                             </div>
                             
                             <div class="form-group">
                                 <label for="address">Address</label>
-                                <textarea class="form-control" id="address" rows="3">123 Main St, Anytown, USA</textarea>
+                                <textarea class="form-control" id="address" name="address" rows="3"><?php echo htmlspecialchars($patient['ADDRESS']); ?></textarea>
                             </div>
                             
                             <div class="btn-group">
@@ -687,38 +801,6 @@
                         </form>
                     </div>
                 </div>
-                
-                <!-- Medical Information Card
-                <div class="profile-card">
-                    <div class="profile-header">
-                        <h2>Medical Information</h2>
-                    </div>
-                    
-                    <div class="info-grid">
-                        <div class="info-item">
-                            <span class="info-label">Allergies</span>
-                            <span class="info-value">Penicillin, Peanuts</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-label">Chronic Conditions</span>
-                            <span class="info-value">Hypertension</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-label">Current Medications</span>
-                            <span class="info-value">Lisinopril 10mg daily</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-label">Last Visit</span>
-                            <span class="info-value">June 15, 2023</span>
-                        </div>
-                    </div>
-                    
-                    <div class="btn-group">
-                        <button class="btn btn-primary">
-                            <i class="fas fa-download"></i> Download Medical History
-                        </button>
-                    </div>
-                </div>-->
             </div> 
             
             <!-- Tabs Section -->
@@ -732,270 +814,215 @@
             <div class="tab-content active" id="appointments">
                 <h3 style="margin-bottom: 20px;">Upcoming Appointments</h3>
                 
-                <div class="appointment-card">
-                    <div class="appointment-info">
-                        <h3>Dr. Smith</h3>
-                        <p>Cardiologist</p>
-                        <div class="appointment-details">
-                            <div class="appointment-detail">
-                                <i class="far fa-calendar"></i>
-                                <span>October 12, 2024</span>
-                            </div>
-                            <div class="appointment-detail">
-                                <i class="far fa-clock"></i>
-                                <span>10:00 AM</span>
-                            </div>
-                            <div class="appointment-detail">
-                                <i class="fas fa-map-marker-alt"></i>
-                                <span>Main Hospital, Room 204</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="appointment-actions">
-                        <span class="status-badge status-confirmed">Confirmed</span>
-                        <div class="btn-group" style="margin-top: 15px;">
-                            <button class="btn btn-primary">
-                                <i class="fas fa-edit"></i> Reschedule
-                            </button>
-                            <button class="btn btn-danger">
-                                <i class="fas fa-times"></i> Cancel
-                            </button>
-                        </div>
-                    </div>
-                </div>
+                <?php
+                $upcoming_appointments = [];
+                $past_appointments = [];
                 
-                <div class="appointment-card">
-                    <div class="appointment-info">
-                        <h3>Dr. Johnson</h3>
-                        <p>General Physician</p>
-                        <div class="appointment-details">
-                            <div class="appointment-detail">
-                                <i class="far fa-calendar"></i>
-                                <span>October 25, 2024</span>
+                if (mysqli_num_rows($appointments_query) > 0) {
+                    while ($appointment = mysqli_fetch_assoc($appointments_query)) {
+                        if ($appointment['APPOINTMENT_DATE'] >= date('Y-m-d')) {
+                            $upcoming_appointments[] = $appointment;
+                        } else {
+                            $past_appointments[] = $appointment;
+                        }
+                    }
+                }
+                
+                // Display upcoming appointments
+                if (count($upcoming_appointments) > 0) {
+                    foreach ($upcoming_appointments as $appointment) {
+                        $status_class = '';
+                        if ($appointment['STATUS'] == 'SCHEDULED') {
+                            $status_class = 'status-confirmed';
+                        } elseif ($appointment['STATUS'] == 'COMPLETED') {
+                            $status_class = 'status-completed';
+                        } elseif ($appointment['STATUS'] == 'CANCELLED') {
+                            $status_class = 'status-cancelled';
+                        }
+                        ?>
+                        <div class="appointment-card">
+                            <div class="appointment-info">
+                                <h3>Dr. <?php echo htmlspecialchars($appointment['DOC_FNAME'] . ' ' . $appointment['DOC_LNAME']); ?></h3>
+                                <p><?php echo htmlspecialchars($appointment['SPECIALIZATION']); ?></p>
+                                <div class="appointment-details">
+                                    <div class="appointment-detail">
+                                        <i class="far fa-calendar"></i>
+                                        <span><?php echo date('F d, Y', strtotime($appointment['APPOINTMENT_DATE'])); ?></span>
+                                    </div>
+                                    <div class="appointment-detail">
+                                        <i class="far fa-clock"></i>
+                                        <span><?php echo date('h:i A', strtotime($appointment['APPOINTMENT_TIME'])); ?></span>
+                                    </div>
+                                    <div class="appointment-detail">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                        <span>Main Hospital, Room 204</span>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="appointment-detail">
-                                <i class="far fa-clock"></i>
-                                <span>2:30 PM</span>
-                            </div>
-                            <div class="appointment-detail">
-                                <i class="fas fa-map-marker-alt"></i>
-                                <span>Main Hospital, Room 112</span>
+                            <div class="appointment-actions">
+                                <span class="status-badge <?php echo $status_class; ?>"><?php echo ucfirst(strtolower($appointment['STATUS'])); ?></span>
+                                <div class="btn-group" style="margin-top: 15px;">
+                                    <button class="btn btn-primary">
+                                        <i class="fas fa-edit"></i> Reschedule
+                                    </button>
+                                    <button class="btn btn-danger">
+                                        <i class="fas fa-times"></i> Cancel
+                                    </button>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="appointment-actions">
-                        <span class="status-badge status-confirmed">Confirmed</span>
-                        <div class="btn-group" style="margin-top: 15px;">
-                            <button class="btn btn-primary">
-                                <i class="fas fa-edit"></i> Reschedule
-                            </button>
-                            <button class="btn btn-danger">
-                                <i class="fas fa-times"></i> Cancel
-                            </button>
-                        </div>
-                    </div>
-                </div>
+                        <?php
+                    }
+                } else {
+                    echo '<div class="empty-state">
+                        <i class="far fa-calendar-times"></i>
+                        <p>No upcoming appointments</p>
+                    </div>';
+                }
+                ?>
                 
                 <h3 style="margin: 30px 0 20px;">Past Appointments</h3>
                 
-                <div class="appointment-card">
-                    <div class="appointment-info">
-                        <h3>Dr. Williams</h3>
-                        <p>Dermatologist</p>
-                        <div class="appointment-details">
-                            <div class="appointment-detail">
-                                <i class="far fa-calendar"></i>
-                                <span>September 5, 2024</span>
+                <?php
+                // Display past appointments
+                if (count($past_appointments) > 0) {
+                    foreach ($past_appointments as $appointment) {
+                        ?>
+                        <div class="appointment-card">
+                            <div class="appointment-info">
+                                <h3>Dr. <?php echo htmlspecialchars($appointment['DOC_FNAME'] . ' ' . $appointment['DOC_LNAME']); ?></h3>
+                                <p><?php echo htmlspecialchars($appointment['SPECIALIZATION']); ?></p>
+                                <div class="appointment-details">
+                                    <div class="appointment-detail">
+                                        <i class="far fa-calendar"></i>
+                                        <span><?php echo date('F d, Y', strtotime($appointment['APPOINTMENT_DATE'])); ?></span>
+                                    </div>
+                                    <div class="appointment-detail">
+                                        <i class="far fa-clock"></i>
+                                        <span><?php echo date('h:i A', strtotime($appointment['APPOINTMENT_TIME'])); ?></span>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="appointment-detail">
-                                <i class="far fa-clock"></i>
-                                <span>11:30 AM</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="appointment-actions">
-                        <span class="status-badge status-completed">Completed</span>
-                        <div class="btn-group" style="margin-top: 15px;">
-                            <button class="btn btn-primary">
-                                <i class="fas fa-file-medical"></i> View Prescription
-                            </button>
-                            <button class="btn btn-success">
-                                <i class="fas fa-star"></i> Leave Feedback
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="appointment-card">
-                    <div class="appointment-info">
-                        <h3>Dr. Anderson</h3>
-                        <p>Orthopedic Surgeon</p>
-                        <div class="appointment-details">
-                            <div class="appointment-detail">
-                                <i class="far fa-calendar"></i>
-                                <span>August 14, 2024</span>
-                            </div>
-                            <div class="appointment-detail">
-                                <i class="far fa-clock"></i>
-                                <span>3:15 PM</span>
+                            <div class="appointment-actions">
+                                <span class="status-badge status-completed">Completed</span>
+                                <div class="btn-group" style="margin-top: 15px;">
+                                    <button class="btn btn-primary">
+                                        <i class="fas fa-file-medical"></i> View Prescription
+                                    </button>
+                                    <button class="btn btn-success">
+                                        <i class="fas fa-star"></i> Leave Feedback
+                                    </button>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="appointment-actions">
-                        <span class="status-badge status-completed">Completed</span>
-                        <div class="btn-group" style="margin-top: 15px;">
-                            <button class="btn btn-primary">
-                                <i class="fas fa-file-medical"></i> View Prescription
-                            </button>
-                            <button class="btn btn-success">
-                                <i class="fas fa-star"></i> Leave Feedback
-                            </button>
-                        </div>
-                    </div>
-                </div>
+                        <?php
+                    }
+                } else {
+                    echo '<div class="empty-state">
+                        <i class="far fa-calendar-check"></i>
+                        <p>No past appointments</p>
+                    </div>';
+                }
+                ?>
             </div>
             
             <div class="tab-content" id="prescriptions">
                 <h3 style="margin-bottom: 20px;">Recent Prescriptions</h3>
                 
-                <div class="prescription-card">
-                    <div class="prescription-header">
-                        <h3>Dr. Smith - Cardiologist</h3>
-                        <span class="prescription-date">September 5, 2024</span>
-                    </div>
-                    
-                    <div class="prescription-details">
-                        <p><strong>Diagnosis:</strong> Hypertension</p>
-                        <p><strong>Symptoms:</strong> Occasional headaches, dizziness</p>
-                    </div>
-                    
-                    <h4 style="margin: 15px 0 10px;">Medications</h4>
-                    <div class="medicine-list">
-                        <div class="medicine-item">
-                            <div>
-                                <div class="medicine-name">Lisinopril</div>
-                                <div class="medicine-details">10mg - Once daily</div>
+                <?php
+                if (mysqli_num_rows($prescriptions_query) > 0) {
+                    while ($prescription = mysqli_fetch_assoc($prescriptions_query)) {
+                        // Get medicines for this prescription
+                        $medicines_query = mysqli_query($conn, "
+                            SELECT pm.MEDICINE_ID, pm.DOSAGE, pm.DURATION, pm.FREQUENCY, m.MED_NAME
+                            FROM prescription_medicine_tbl pm
+                            JOIN medicine_tbl m ON pm.MEDICINE_ID = m.MEDICINE_ID
+                            WHERE pm.PRESCRIPTION_ID = " . $prescription['PRESCRIPTION_ID']
+                        );
+                        ?>
+                        <div class="prescription-card">
+                            <div class="prescription-header">
+                                <h3>Dr. <?php echo htmlspecialchars($prescription['DOC_FNAME'] . ' ' . $prescription['DOC_LNAME']); ?></h3>
+                                <span class="prescription-date"><?php echo date('F d, Y', strtotime($prescription['ISSUE_DATE'])); ?></span>
                             </div>
-                            <div class="medicine-details">30 days</div>
-                        </div>
-                        <div class="medicine-item">
-                            <div>
-                                <div class="medicine-name">Aspirin</div>
-                                <div class="medicine-details">81mg - Once daily</div>
+                            
+                            <div class="prescription-details">
+                                <p><strong>Diagnosis:</strong> <?php echo htmlspecialchars($prescription['DIAGNOSIS']); ?></p>
+                                <p><strong>Symptoms:</strong> <?php echo htmlspecialchars($prescription['SYMPTOMS']); ?></p>
                             </div>
-                            <div class="medicine-details">30 days</div>
-                        </div>
-                    </div>
-                    
-                    <div class="btn-group" style="margin-top: 15px;">
-                        <button class="btn btn-primary">
-                            <i class="fas fa-download"></i> Download PDF
-                        </button>
-                    </div>
-                </div>
-                
-                <div class="prescription-card">
-                    <div class="prescription-header">
-                        <h3>Dr. Williams - Dermatologist</h3>
-                        <span class="prescription-date">August 14, 2024</span>
-                    </div>
-                    
-                    <div class="prescription-details">
-                        <p><strong>Diagnosis:</strong> Eczema</p>
-                        <p><strong>Symptoms:</strong> Itchy, red skin patches</p>
-                    </div>
-                    
-                    <h4 style="margin: 15px 0 10px;">Medications</h4>
-                    <div class="medicine-list">
-                        <div class="medicine-item">
-                            <div>
-                                <div class="medicine-name">Hydrocortisone Cream</div>
-                                <div class="medicine-details">1% - Apply twice daily</div>
+                            
+                            <h4 style="margin: 15px 0 10px;">Medications</h4>
+                            <div class="medicine-list">
+                                <?php
+                                if (mysqli_num_rows($medicines_query) > 0) {
+                                    while ($medicine = mysqli_fetch_assoc($medicines_query)) {
+                                        ?>
+                                        <div class="medicine-item">
+                                            <div>
+                                                <div class="medicine-name"><?php echo htmlspecialchars($medicine['MED_NAME']); ?></div>
+                                                <div class="medicine-details"><?php echo htmlspecialchars($medicine['DOSAGE']); ?> - <?php echo htmlspecialchars($medicine['FREQUENCY']); ?></div>
+                                            </div>
+                                            <div class="medicine-details"><?php echo htmlspecialchars($medicine['DURATION']); ?></div>
+                                        </div>
+                                        <?php
+                                    }
+                                }
+                                ?>
                             </div>
-                            <div class="medicine-details">14 days</div>
-                        </div>
-                        <div class="medicine-item">
-                            <div>
-                                <div class="medicine-name">Cetirizine</div>
-                                <div class="medicine-details">10mg - Once daily at night</div>
+                            
+                            <div class="btn-group" style="margin-top: 15px;">
+                                <button class="btn btn-primary">
+                                    <i class="fas fa-download"></i> Download PDF
+                                </button>
                             </div>
-                            <div class="medicine-details">30 days</div>
                         </div>
-                    </div>
-                    
-                    <div class="btn-group" style="margin-top: 15px;">
-                        <button class="btn btn-primary">
-                            <i class="fas fa-download"></i> Download PDF
-                        </button>
-                    </div>
-                </div>
+                        <?php
+                    }
+                } else {
+                    echo '<div class="empty-state">
+                        <i class="fas fa-file-medical"></i>
+                        <p>No prescriptions found</p>
+                    </div>';
+                }
+                ?>
             </div>
             
             <div class="tab-content" id="reminders">
                 <h3 style="margin-bottom: 20px;">Medicine Reminders</h3>
                 
-                <div class="reminder-card">
-                    <div class="reminder-icon">
-                        <i class="fas fa-pills"></i>
-                    </div>
-                    <div class="reminder-content">
-                        <h4>Lisinopril</h4>
-                        <p>Take 1 tablet (10mg) with water</p>
-                        <div class="reminder-time">
-                            <i class="far fa-clock"></i> Daily at 8:00 AM
+                <?php
+                if (mysqli_num_rows($reminders_query) > 0) {
+                    while ($reminder = mysqli_fetch_assoc($reminders_query)) {
+                        ?>
+                        <div class="reminder-card">
+                            <div class="reminder-icon">
+                                <i class="fas fa-pills"></i>
+                            </div>
+                            <div class="reminder-content">
+                                <h4><?php echo htmlspecialchars($reminder['MED_NAME']); ?></h4>
+                                <p><?php echo htmlspecialchars($reminder['REMARKS']); ?></p>
+                                <div class="reminder-time">
+                                    <i class="far fa-clock"></i> Daily at <?php echo date('h:i A', strtotime($reminder['REMINDER_TIME'])); ?>
+                                </div>
+                            </div>
+                            <div class="btn-group">
+                                <button class="btn btn-primary">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-danger">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
                         </div>
-                    </div>
-                    <div class="btn-group">
-                        <button class="btn btn-primary">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button class="btn btn-danger">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </div>
-                </div>
-                
-                <div class="reminder-card">
-                    <div class="reminder-icon">
-                        <i class="fas fa-pills"></i>
-                    </div>
-                    <div class="reminder-content">
-                        <h4>Aspirin</h4>
-                        <p>Take 1 tablet (81mg) with water</p>
-                        <div class="reminder-time">
-                            <i class="far fa-clock"></i> Daily at 9:00 AM
-                        </div>
-                    </div>
-                    <div class="btn-group">
-                        <button class="btn btn-primary">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button class="btn btn-danger">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </div>
-                </div>
-                
-                <div class="reminder-card">
-                    <div class="reminder-icon">
-                        <i class="fas fa-pills"></i>
-                    </div>
-                    <div class="reminder-content">
-                        <h4>Cetirizine</h4>
-                        <p>Take 1 tablet (10mg) with water</p>
-                        <div class="reminder-time">
-                            <i class="far fa-clock"></i> Daily at 10:00 PM
-                        </div>
-                    </div>
-                    <div class="btn-group">
-                        <button class="btn btn-primary">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button class="btn btn-danger">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </div>
-                </div>
+                        <?php
+                    }
+                } else {
+                    echo '<div class="empty-state">
+                        <i class="fas fa-bell-slash"></i>
+                        <p>No medicine reminders set</p>
+                    </div>';
+                }
+                ?>
                 
                 <div style="text-align: center; margin-top: 30px;">
                     <button class="btn btn-success">
