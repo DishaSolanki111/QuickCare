@@ -636,6 +636,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_profile'])) {
                 <a href="payments.php">Payments</a>
                 <a href="feedback.php">Feedback</a>
                 <a href="doctor_profiles.php">View Doctor Profile</a>
+                <a href="logout.php">Logout</a>
             </div>
             <a href="logout.php" class="logout">Logout</a>
         </div>
@@ -644,7 +645,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_profile'])) {
         <div class="main-content">
             <!-- Header -->
             <div class="header">
-                <div class="welcome-msg">My Profile</div>
+                <div class="welcome-msg">Personal Information</div>
                 <div class="user-actions">
                     <button class="notification-btn">
                         <i class="far fa-bell"></i>

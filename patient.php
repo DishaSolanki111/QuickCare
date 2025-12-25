@@ -261,6 +261,7 @@ include 'config.php';
             <a href="payments.php">Payments</a>
             <a href="feedback.php">Feedback</a>
             <a href="doctor_profiles.php">View Doctor Profile</a>
+            <a href="logout.php">Logout</a>
         </div>
         <a href="logout.php" class="logout">Logout</a>
     </div>
