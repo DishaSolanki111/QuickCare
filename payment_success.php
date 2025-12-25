@@ -108,31 +108,15 @@ if (mysqli_query($conn, $q)) {
             display: inline-block;
             width: 100px;
         }
-        .btn {
-            display: inline-block;
-            background: #072D44;
-            color: white;
-            padding: 12px 30px;
-            border-radius: 5px;
-            text-decoration: none;
-            margin-top: 20px;
-            transition: background 0.3s;
-            cursor: pointer;
-            border: none;
-            font-size: 16px;
-        }
-        .btn:hover {
-            background: #064469;
-        }
         .note {
             color: #666;
             font-size: 14px;
             margin-top: 20px;
         }
-        .countdown {
+        .close-message {
             font-size: 18px;
             color: #072D44;
-            margin: 15px 0;
+            margin-top: 20px;
             font-weight: bold;
         }
     </style>
@@ -150,33 +134,28 @@ if (mysqli_query($conn, $q)) {
             <p><strong>Status:</strong> Scheduled</p>
         </div>
         
-        <div class="countdown" id="countdown">Redirecting to home page...</div>
-        
         <p class="note">Your appointment has been successfully booked.</p>
+        
+        <p class="close-message">This window will close automatically...</p>
     </div>
 
     <script>
-        
-    window.onload = function () {
-    let countdownEl = document.getElementById('countdown');
-    let dots = 0;
-
-    const loadingInterval = setInterval(function () {
-        dots = (dots + 1) % 4;
-        countdownEl.textContent = 'Redirecting to home page' + '.'.repeat(dots);
-    }, 500);
-
-    setTimeout(function () {
-        clearInterval(loadingInterval);
-
-        // 🔥 Tell parent to close modal
-        window.parent.postMessage({
-            action: "APPOINTMENT_SUCCESS"
-        }, "*");
-
-    }, 2000);
-};
-
+        // Simply close the popup after showing confirmation
+        setTimeout(function() {
+            // Update the message
+            document.querySelector('.close-message').textContent = 'Closing window...';
+            
+            // Close the popup
+            setTimeout(function() {
+                if (window.opener) {
+                    // If opened in a popup, close it
+                    window.close();
+                } else {
+                    // If not a popup, you can redirect if needed
+                    // window.location.href = 'some_page.php';
+                }
+            }, 3000);
+        }, 1000);
     </script>
 </body>
 </html>
