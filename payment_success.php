@@ -150,52 +150,33 @@ if (mysqli_query($conn, $q)) {
             <p><strong>Status:</strong> Scheduled</p>
         </div>
         
-        <div class="countdown" id="countdown">Redirecting to dashboard...</div>
+        <div class="countdown" id="countdown">Redirecting to home page...</div>
         
         <p class="note">Your appointment has been successfully booked.</p>
     </div>
 
     <script>
-        // Function to redirect parent window and close popup
-        function redirectToDashboard() {
-            try {
-                // Check if this is a popup window
-                if (window.opener && !window.opener.closed) {
-                    // Redirect the parent window
-                    window.opener.location.href = 'patient.php';
-                    // Close the popup after a short delay to ensure redirect starts
-                    setTimeout(function() {
-                        window.close();
-                    }, 100);
-                } else {
-                    // If not a popup, redirect current window
-                    window.location.href = 'patient.php';
-                }
-            } catch (e) {
-                // Fallback: try to open in new window
-                window.open('patient.php', '_blank');
-                window.close();
-            }
-        }
         
-        // Execute immediately when page loads
-        window.onload = function() {
-            // Show loading message
-            const countdownEl = document.getElementById('countdown');
-            let dots = 0;
-            
-            const loadingInterval = setInterval(function() {
-                dots = (dots + 1) % 4;
-                countdownEl.textContent = 'Redirecting to dashboard' + '.'.repeat(dots);
-            }, 500);
-            
-            // Redirect after 2 seconds
-            setTimeout(function() {
-                clearInterval(loadingInterval);
-                countdownEl.textContent = 'Opening dashboard...';
-                redirectToDashboard();
-            }, 2000);
-        };
+    window.onload = function () {
+    let countdownEl = document.getElementById('countdown');
+    let dots = 0;
+
+    const loadingInterval = setInterval(function () {
+        dots = (dots + 1) % 4;
+        countdownEl.textContent = 'Redirecting to home page' + '.'.repeat(dots);
+    }, 500);
+
+    setTimeout(function () {
+        clearInterval(loadingInterval);
+
+        // 🔥 Tell parent to close modal
+        window.parent.postMessage({
+            action: "APPOINTMENT_SUCCESS"
+        }, "*");
+
+    }, 2000);
+};
+
     </script>
 </body>
 </html>

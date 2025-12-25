@@ -122,7 +122,7 @@ if (!isset($_SESSION['PENDING_APPOINTMENT'])) {
             
             <button type="submit" id="confirmBtn">
                 <i class="fas fa-spinner fa-spin spinner" id="spinner"></i>
-                <span id="btnText">Confirm Appointment</span>
+                <span id="btnText">Confirm Appointment and make payment</span>
             </button>
         </form>
         

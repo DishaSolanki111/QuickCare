@@ -281,6 +281,9 @@ body {
 
     <div id="slotBox"></div>
 </div>
+<script>
+window.parent.postMessage("closeCalendar", "*");
+</script>
 
 <script>
 function showSlots(fullDate){
