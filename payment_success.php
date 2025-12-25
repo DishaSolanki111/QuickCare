@@ -147,14 +147,27 @@ if (mysqli_query($conn, $q)) {
             
             // Close the popup
             setTimeout(function() {
-                if (window.opener) {
-                    // If opened in a popup, close it
-                    window.close();
-                } else {
-                    // If not a popup, you can redirect if needed
-                    // window.location.href = 'some_page.php';
+                try {
+                    // Try to close the parent window (calendar modal)
+                    if (window.parent && window.parent !== window) {
+                        // We're in an iframe, close the parent modal
+                        window.parent.closeCalendar();
+                        
+                        // Also refresh the parent page to show the updated appointment
+                        window.parent.location.reload();
+                    } else if (window.opener) {
+                        // If opened in a popup, close it
+                        window.close();
+                    } else {
+                        // If not a popup, you can redirect if needed
+                        window.location.href = 'patient.php';
+                    }
+                } catch (e) {
+                    console.error('Error closing window:', e);
+                    // Fallback to redirect
+                    window.location.href = 'patient.php';
                 }
-            }, 3000);
+            }, 2000);
         }, 1000);
     </script>
 </body>
@@ -231,10 +244,32 @@ if (mysqli_query($conn, $q)) {
             </div>
             <h2>Booking Failed</h2>
             <p>There was an error booking your appointment. Please try again.</p>
-            <button class="btn" onclick="window.close()">
+            <button class="btn" onclick="closeWindow()">
                 <i class="fas fa-times"></i> Close
             </button>
         </div>
+        
+        <script>
+            function closeWindow() {
+                try {
+                    // Try to close the parent window (calendar modal)
+                    if (window.parent && window.parent !== window) {
+                        // We're in an iframe, close the parent modal
+                        window.parent.closeCalendar();
+                    } else if (window.opener) {
+                        // If opened in a popup, close it
+                        window.close();
+                    } else {
+                        // If not a popup, you can redirect if needed
+                        window.location.href = 'patient.php';
+                    }
+                } catch (e) {
+                    console.error('Error closing window:', e);
+                    // Fallback to redirect
+                    window.location.href = 'patient.php';
+                }
+            }
+        </script>
     </body>
     </html>
     <?php
