@@ -10,15 +10,20 @@ include 'config.php';
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <style>
-        :root {
-            --primary-dark-blue: #1a3a5f;
-            --secondary-blue: #2c5282;
-            --light-blue: #e6f2ff;
-            --accent-blue: #4299e1;
-            --white: #ffffff;
-            --gray-light: #f8f9fa;
-            --gray-medium: #e9ecef;
-            --gray-dark: #6c757d;
+       :root {
+           --dark-blue: #072D44;
+    --mid-blue: #064469;
+    --soft-blue: #5790AB;
+    --light-blue: #9CCDD8;
+    --gray-blue: #D0D7E1;
+    --white: #ffffff;
+    --card-bg: #F6F9FB;
+    --primary-color: #1a3a5f;
+    --secondary-color: #3498db;
+    --accent-color: #2ecc71;
+    --danger-color: #e74c3c;
+    --warning-color: #f39c12;
+    --info-color: #17a2b8;
         }
         
         body {
@@ -27,7 +32,58 @@ include 'config.php';
             margin: 0;
             padding: 0;
             color: #333;
+         
         }
+
+          .sidebar {
+            width: 250px;
+            background: #072D44;
+            min-height: 100vh;
+            color: white;
+            padding-top: 30px;
+            position: fixed;
+        }
+
+        .sidebar h2 {
+            text-align: center;
+            margin-bottom: 40px;
+            color: #9CCDD8;
+        }
+
+        .sidebar a {
+            display: block;
+            padding: 15px 25px;
+            color: #D0D7E1;
+            text-decoration: none;
+            font-size: 17px;
+            border-left: 4px solid transparent;
+        }
+
+        .sidebar a:hover, .sidebar a.active {
+            background: #064469;
+            border-left: 10px solid #9CCDD8;
+            color: white;
+        }
+
+        .logout-btn:hover{
+            background-color: var(--light-blue);
+        }
+        .logout-btn {
+            
+            display: block;
+            width: 80%;
+            margin: 20px auto 0 auto;
+            padding: 10px;
+            background-color: var(--soft-blue);
+            color: var(--white);    
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            text-align: center;
+            transition: background-color 0.3s;
+        }
+        
         
         .container-fluid {
             padding: 0;
@@ -90,7 +146,7 @@ include 'config.php';
         }
         
         .card-body {
-            padding: 20px;
+            padding: 50px;
         }
         
         /* Personal Information Styles */
@@ -252,9 +308,24 @@ include 'config.php';
 <body>
     <div class="container-fluid">
         <div class="row">
-            <!-- Include Sidebar -->
-            <?php include 'receptionist_sidebar.php'; ?>
-            
+              <div class="container">
+        <!-- Sidebar - Replaced with patient.php sidebar -->
+        <div class="sidebar">
+    <img src="uploads/logo.JPG" alt="QuickCare Logo" class="logo-img" style="display:block; margin: 0 auto 10px auto; width:80px; height:80px; border-radius:50%;">  
+    <h2>QuickCare</h2>
+
+    <a href="receptionist.php" >Dashboard</a>
+    <a href="recep_profile.php">My Profile</a>
+    <a href="#">Appoitment</a>
+    <a href="#">Doctor</a>
+    <a href="#">patient</a>
+    <a href="#">View Medicine</a>
+    <a href="#">Reminder</a>
+    <a href="#">payment</a>
+    <button class="logout-btn">logout</button>
+
+    
+</div>    
             <!-- Main Content -->
             <div class="main-content">
                 <button class="mobile-menu-toggle" id="mobileMenuToggle">
