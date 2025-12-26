@@ -126,7 +126,7 @@ session_start();
             flex: 1;
             background: transparent;
             border: none;
-            color: var(--light);
+            color: var(--text-light);
             padding: 15px;
             opacity: 0.7;
             cursor: pointer;
@@ -143,24 +143,36 @@ session_start();
             box-shadow: var(--shadow-md);
         }
 
+        /* --- MODIFIED SLIDER & FORM STYLES --- */
         .slider {
             position: relative;
             width: 450px;
-            height: 350px;
-            overflow: hidden;
+            min-height: 350px;
+            overflow: hidden; /* This is crucial for the sliding effect */
         }
 
         .form {
             width: 450px;
-            height: 350px;
+            min-height: 350px;
             background: white;
             padding: 30px;
             border-radius: 15px;
             position: absolute;
-            left: 500px;
-            transition: 0.4s;
+            top: 0;
+            /* Default state: hidden to the right and transparent */
+            left: 100%; 
+            opacity: 0;
+            /* Smooth transition for sliding and fading */
+            transition: left 0.4s ease-in-out, opacity 0.3s ease-in-out;
             box-shadow: var(--shadow-lg);
         }
+
+        /* Active state: visible in the slider */
+        .form.active {
+            left: 0;
+            opacity: 1;
+        }
+        /* --- END OF MODIFIED STYLES --- */
 
         .form h3 {
             font-size: 1.8rem;
@@ -279,12 +291,11 @@ session_start();
 
             .slider {
                 width: 100%;
-                height: 350px;
             }
 
             .form {
                 width: 100%;
-                left: 500px;
+                left: 100%; /* Keep this for responsive */
             }
         }
 
@@ -344,7 +355,7 @@ include 'header.php';
 
        <div class="slider">
             <!-- Patient Login Form -->
-            <form action="loginhome.php" method="POST" class="form" id="patient" style="left:0;">
+            <form action="loginhome.php" method="POST" class="form active" id="patient">
                 <input type="hidden" name="user_type" value="patient">
                 <h3>Patient Login</h3>
                 <div class="error-message" id="patient-error"></div>
@@ -379,85 +390,97 @@ include 'header.php';
 </div>
 
 <script>
-    // Tab switching functionality
-    let tabs = document.querySelectorAll(".tab");
-    let forms = document.querySelectorAll(".form");
+    // --- MODIFIED JAVASCRIPT FOR TAB SWITCHING ---
+    document.addEventListener('DOMContentLoaded', () => {
+        const tabs = document.querySelectorAll(".tab");
+        const forms = document.querySelectorAll(".form");
 
-    tabs.forEach(tab => {
-        tab.addEventListener("click", () => {
-            document.querySelector(".tab.active").classList.remove("active");
-            tab.classList.add("active");
-
-            let target = tab.dataset.target;
-
-            forms.forEach(form => {
-                form.style.left = (form.id === target) ? "0" : "500px";
+        tabs.forEach(tab => {
+            tab.addEventListener("click", () => {
+                // 1. Get the target form ID from the clicked tab's data attribute
+                const targetFormId = tab.dataset.target;
+                
+                // 2. Remove 'active' class from all tabs and all forms
+                tabs.forEach(t => t.classList.remove("active"));
+                forms.forEach(f => f.classList.remove("active"));
+                
+                // 3. Add 'active' class to the clicked tab
+                tab.classList.add("active");
+                
+                // 4. Add 'active' class to the corresponding form
+                const targetForm = document.getElementById(targetFormId);
+                if (targetForm) {
+                    targetForm.classList.add("active");
+                }
             });
         });
-    });
-
-    // Mobile menu toggle
-    const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
-    const closeMenu = document.querySelector('.close-menu');
-    const mobileNav = document.querySelector('.mobile-nav');
-
-    mobileMenuBtn.addEventListener('click', () => {
-        mobileNav.classList.add('active');
-    });
-
-    closeMenu.addEventListener('click', () => {
-        mobileNav.classList.remove('active');
-    });
-
-    // Navbar scroll effect
-    let lastScroll = 0;
-    window.addEventListener('scroll', () => {
-        const header = document.querySelector('header');
-        const currentScroll = window.pageYOffset;
         
-        if (currentScroll > 100) {
-            header.style.padding = '0.5rem 0';
-            header.style.boxShadow = '0 5px 15px rgba(0, 0, 0, 0.1)';
-        } else {
-            header.style.padding = '1rem 0';
-            header.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.05)';
+        // --- Rest of your JavaScript remains the same ---
+        
+        // Mobile menu toggle
+        const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+        const closeMenu = document.querySelector('.close-menu');
+        const mobileNav = document.querySelector('.mobile-nav');
+
+        if (mobileMenuBtn) {
+            mobileMenuBtn.addEventListener('click', () => {
+                mobileNav.classList.add('active');
+            });
         }
 
-        lastScroll = currentScroll;
-    });
-
-    // Active link switching
-    document.querySelectorAll('.nav-links a, .mobile-nav-links a').forEach(link => {
-        link.addEventListener('click', function(e) {
-            // Remove active class from all links
-            document.querySelectorAll('.nav-links a, .mobile-nav-links a').forEach(l => {
-                l.classList.remove('active');
+        if (closeMenu) {
+            closeMenu.addEventListener('click', () => {
+                mobileNav.classList.remove('active');
             });
-            // Add active class to clicked link
-            this.classList.add('active');
+        }
+
+        // Navbar scroll effect
+        let lastScroll = 0;
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('header');
+            if (header) {
+                const currentScroll = window.pageYOffset;
+                
+                if (currentScroll > 100) {
+                    header.style.padding = '0.5rem 0';
+                    header.style.boxShadow = '0 5px 15px rgba(0, 0, 0, 0.1)';
+                } else {
+                    header.style.padding = '1rem 0';
+                    header.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.05)';
+                }
+                lastScroll = currentScroll;
+            }
         });
-    });
-    
-    // Show error messages from URL parameters
-    const urlParams = new URLSearchParams(window.location.search);
-    const error = urlParams.get('error');
-    const userType = urlParams.get('user_type');
-    
-    if (error && userType) {
-        const errorElement = document.getElementById(`${userType}-error`);
-        if (errorElement) {
-            errorElement.textContent = error;
-            errorElement.style.display = 'block';
-            
-            // Show the corresponding tab
-            document.querySelector('.tab.active').classList.remove('active');
-            document.querySelector(`.tab[data-target="${userType}"]`).classList.add('active');
-            
-            forms.forEach(form => {
-                form.style.left = (form.id === userType) ? "0" : "500px";
+
+        // Active link switching
+        document.querySelectorAll('.nav-links a, .mobile-nav-links a').forEach(link => {
+            link.addEventListener('click', function(e) {
+                document.querySelectorAll('.nav-links a, .mobile-nav-links a').forEach(l => {
+                    l.classList.remove('active');
+                });
+                this.classList.add('active');
             });
+        });
+        
+        // Show error messages from URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const error = urlParams.get('error');
+        const userType = urlParams.get('user_type');
+        
+        if (error && userType) {
+            const errorElement = document.getElementById(`${userType}-error`);
+            if (errorElement) {
+                errorElement.textContent = error;
+                errorElement.style.display = 'block';
+                
+                // Find and click the correct tab to show the form with the error
+                const tabWithError = document.querySelector(`.tab[data-target="${userType}"]`);
+                if (tabWithError) {
+                    tabWithError.click(); // Programmatically click the tab to trigger the switch
+                }
+            }
         }
-    }
+    });
 </script>
 
 </body>

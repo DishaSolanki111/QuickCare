@@ -137,6 +137,7 @@
     <a href="#">Dashboard</a>
     <a href="#">Appointments</a>
     <a href="#">Doctors</a>
+    <a href="#">Receptionist</a>
     <a href="#">Patients</a>
     <a href="#">Medicine</a>
     <a href="#">Payments</a>
@@ -179,8 +180,16 @@
           <h3>New Registrations</h3>
           <p>25</p>
         </div>
-
     </div>
+    <!-- Registration Links -->
+    <div class="cards">
+        <div class="card">
+            <a href="doctorform.php">Doctor New Registrations</a>
+        </div>
+        <div class="card">
+            <a href="receptionistform.php">Receptionist New Registrations</a>       
+        </div>
+    </div>  
 
     <!-- Table -->
     <h2 style="color:#064469;">Recent Appointments</h2>
