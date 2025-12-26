@@ -98,7 +98,22 @@ if ($row = $week_result->fetch_assoc()) {
     --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
     --shadow-xl: 0 20px 25px rgba(0,0,0,0.1);
     --shadow-2xl: 0 25px 50px rgba(0,0,0,0.25);
-}
+    --dark-blue: #072D44;
+    --mid-blue: #064469;
+    --soft-blue: #5790AB;
+    --light-blue: #9CCDD8;
+    --gray-blue: #D0D7E1;
+    --white: #ffffff;
+    --card-bg: #F6F9FB;
+    --primary-color: #1a3a5f;
+    --secondary-color: #3498db;
+    --accent-color: #2ecc71;
+    --danger-color: #e74c3c;
+    --warning-color: #f39c12;
+    --info-color: #17a2b8;
+        }
+
+
 
 * {
     margin: 0;
@@ -115,24 +130,6 @@ body {
 }
 
 /* Sidebar Styles */
-.sidebar {
-    width: 260px;
-    background: var(--dark);
-    min-height: 100vh;
-    position: fixed;
-    left: 0;
-    top: 0;
-    z-index: 100;
-    transition: all 0.3s ease;
-    box-shadow: var(--shadow-xl);
-}
-
-.sidebar-header {
-    padding: 25px 20px;
-    text-align: center;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-
 .logo-img {
     width: 80px;
     height: 80px;
@@ -142,71 +139,60 @@ body {
     border: 3px solid var(--primary-light);
 }
 
-.sidebar h2 {
-    color: var(--white);
-    font-weight: 700;
-    font-size: 24px;
-    margin: 0;
-}
+.container {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        /* Sidebar Styles - Replaced with patient.php sidebar styles */
+        .sidebar {
+            width: 250px;
+            background: #072D44;
+            min-height: 100vh;
+            color: white;
+            padding-top: 30px;
+            position: fixed;
+        }
 
-.sidebar-nav {
-    padding: 20px 0;
-}
+        .sidebar h2 {
+            text-align: center;
+            margin-bottom: 40px;
+            color: #9CCDD8;
+        }
 
-.sidebar-nav a {
-    display: flex;
-    align-items: center;
-    padding: 15px 25px;
-    color: rgba(255, 255, 255, 0.7);
-    text-decoration: none;
-    font-size: 16px;
-    transition: all 0.3s ease;
-    position: relative;
-}
+        .sidebar a {
+            display: block;
+            padding: 15px 25px;
+            color: #D0D7E1;
+            text-decoration: none;
+            font-size: 17px;
+            border-left: 4px solid transparent;
+        }
 
-.sidebar-nav a i {
-    margin-right: 12px;
-    font-size: 18px;
-    width: 24px;
-    text-align: center;
-}
+        .sidebar a:hover, .sidebar a.active {
+            background: #064469;
+            border-left: 4px solid #9CCDD8;
+            color: white;
+        }
 
-.sidebar-nav a:hover, .sidebar-nav a.active {
-    background: rgba(255, 255, 255, 0.1);
-    color: var(--white);
-}
-
-.sidebar-nav a.active::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 0;
-    height: 100%;
-    width: 4px;
-    background: var(--primary);
-}
-
-.logout-btn {
-    margin: 20px;
-    padding: 12px;
-    background: var(--warning);
-    color: var(--white);
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: 600;
-    text-align: center;
-    transition: all 0.3s ease;
-    text-decoration: none;
-    display: block;
-}
-
-.logout-btn:hover {
-    background: #e55555;
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
-}
+        .logout-btn:hover{
+            background-color: var(--light-blue);
+        }
+        .logout-btn {
+            
+            display: block;
+            width: 80%;
+            margin: 20px auto 0 auto;
+            padding: 10px;
+            background-color: var(--soft-blue);
+            color: var(--white);    
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            text-align: center;
+            transition: background-color 0.3s;
+        }
 
 /* Main Content */
 .main-content {
@@ -518,38 +504,18 @@ body {
 <body>
 
 <!-- Sidebar -->
-<div class="sidebar" id="sidebar">
-    <div class="sidebar-header">
-        <img src="uploads/logo.JPG" alt="QuickCare Logo" class="logo-img">
-        <h2>QuickCare</h2>
-    </div>
-    
-    <nav class="sidebar-nav">
-        <a href="doctor_dashboard.php" class="active">
-            <i class="fas fa-tachometer-alt"></i>
-            <span>Dashboard</span>
-        </a>
-        <a href="d_profile.php">
-            <i class="fas fa-user-md"></i>
-            <span>My Profile</span>
-        </a>
-        <a href="manage_schedule_doctor.php">
-            <i class="fas fa-calendar-alt"></i>
-            <span>Manage Schedule</span>
-        </a>
-        <a href="appointment_doctor.php">
-            <i class="fas fa-calendar-check"></i>
-            <span>Manage Appointments</span>
-        </a>
-        <a href="manage_prescriptions.php">
-            <i class="fas fa-prescription"></i>
-            <span>Manage Prescription</span>
-        </a>
-        <a href="logout.php" class="logout-btn">
-            <i class="fas fa-sign-out-alt"></i>
-            <span>Logout</span>
-        </a>
-    </nav>
+<div class="sidebar">
+    <img src="uploads/logo.JPG" alt="QuickCare Logo" class="logo-img" style="display:block; margin: 0 auto 10px auto; width:80px; height:80px; border-radius:50%;">  
+    <h2>QuickCare</h2>
+
+    <a href="doctor_dashboard.php" >Dashboard</a>
+    <a href="d_profile.php">My Profile</a>
+    <a href="mangae_schedule_doctor.php">Manage Schedule</a>
+    <a href="appointment_doctor.php">Manage Appointments</a>
+    <a href="manage_prescriptions.php">Manage Prescription</a>
+    <a href="#">View Medicine</a>
+    <a href="doctor_feedback.php">View Feedback</a>
+     <button class="logout-btn">Logout</button>
 </div>
 
 <!-- Main Content -->

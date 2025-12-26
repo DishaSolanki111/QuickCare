@@ -178,13 +178,13 @@ body {
     <img src="uploads/logo.JPG" alt="QuickCare Logo" class="logo-img" style="display:block; margin: 0 auto 10px auto; width:80px; height:80px; border-radius:50%;">  
     <h2>QuickCare</h2>
 
-    <a href="dashboard_doctor.php" >Dashboard</a>
-    <a href="d_dprofile.php">My Profile</a>
+    <a href="doctor_dashboard.php" >Dashboard</a>
+    <a href="d_profile.php">My Profile</a>
     <a href="mangae_schedule_doctor.php">Manage Schedule</a>
     <a href="appointment_doctor.php">Manage Appointments</a>
     <a href="manage_prescriptions.php">Manage Prescription</a>
     <a href="#">View Medicine</a>
-    <a href="#">View Feedback</a>
+    <a href="doctor_feedback.php">View Feedback</a>
      <button class="logout-btn">Logout</button>
 </div>
 
