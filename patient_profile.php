@@ -112,6 +112,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_profile'])) {
             --danger-color: #e74c3c;
             --warning-color: #f39c12;
             --info-color: #17a2b8;
+             --dark-blue: #072D44;
+            --mid-blue: #064469;
+            --soft-blue: #5790AB;
+            --light-blue: #9CCDD8;
+            --gray-blue: #D0D7E1;
+            --white: #ffffff;
+            --card-bg: #F6F9FB;
+            --primary-color: #1a3a5f;
+      
         }
         
         * {
@@ -133,7 +142,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_profile'])) {
         }
         
         /* Sidebar Styles */
-        .sidebar {
+      .sidebar {
             width: 250px;
             background: #072D44;
             min-height: 100vh;
@@ -163,18 +172,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_profile'])) {
             color: white;
         }
 
-        .logout {
-            display: flex;
-            padding: 15px 25px;
-            color: #D0D7E1;
-            text-decoration: none;
-            font-size: 17px;
-            border-left: 4px solid transparent;
-            background: #082637;
-            text-align: center;
-            margin-top: auto;
+        .logout-btn:hover{
+            background-color: var(--light-blue);
         }
-        
+        .logout-btn {
+            
+            display: block;
+            width: 80%;
+            margin: 20px auto 0 auto;
+            padding: 10px;
+            background-color: var(--soft-blue);
+            color: var(--white);    
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            text-align: center;
+            transition: background-color 0.3s;
+        }
         /* Main Content */
         .main-content {
             flex: 1;
@@ -764,10 +779,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_profile'])) {
                 <a href="payments.php">Payments</a>
                 <a href="feedback.php">Feedback</a>
                 <a href="doctor_profiles.php">View Doctor Profile</a>
-                <a href="logout.php">Logout</a>
-            </div>
-            <a href="logout.php" class="logout">Logout</a>
+                 <button class="logout-btn">logout</button>
+          
         </div>
+    </div>
         
         <!-- Main Content -->
         <div class="main-content">

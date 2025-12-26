@@ -34,8 +34,29 @@ body {
     background: #F5F8FA;
     display: flex;
 }
-.sidebar {
-    width: 250px;
+
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        /* Sidebar Styles - Replaced with patient.php sidebar styles */
+        .sidebar {
+            width: 250px;
             background: #072D44;
             min-height: 100vh;
             color: white;
@@ -82,7 +103,6 @@ body {
             text-align: center;
             transition: background-color 0.3s;
         }
-
 .topbar {
         background: white;
         padding: 15px 25px;
