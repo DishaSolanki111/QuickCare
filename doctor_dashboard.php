@@ -224,8 +224,6 @@ body {
     <h1>Doctor Dashboard</h1>
     <div class="top-icons">
         <span>🔔</span>
-        <span>💬</span>
-        <span>⚙️</span>
         <span style="margin-left:20px; background:#fff; color:#000; padding:6px 12px; border-radius:6px; font-size:14px; cursor:pointer;">
             Logout
         </span>

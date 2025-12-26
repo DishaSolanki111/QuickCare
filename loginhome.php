@@ -27,14 +27,14 @@ switch ($user_type) {
         
     case 'doctor':
         $query = "SELECT DOCTOR_ID, FIRST_NAME, LAST_NAME, EMAIL, PSWD FROM doctor_tbl WHERE USERNAME='$username'";
-        $redirect_page = 'doctor.php';
+        $redirect_page = 'doctor_dashboard.php';
         $session_id_key = 'DOCTOR_ID';
         $session_name_key = 'DOCTOR_NAME';
         break;
         
     case 'receptionist':
         $query = "SELECT RECEPTIONIST_ID, FIRST_NAME, LAST_NAME, EMAIL, PSWD FROM receptionist_tbl WHERE USERNAME='$username'";
-        $redirect_page = 'receptionist.php';
+        $redirect_page = 'receptionist_dashboard.php';
         $session_id_key = 'RECEPTIONIST_ID';
         $session_name_key = 'RECEPTIONIST_NAME';
         break;
