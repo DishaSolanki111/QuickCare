@@ -11,8 +11,8 @@ if (!isset($_SESSION['PATIENT_ID'])) {
  $patient_id = $_SESSION['PATIENT_ID'];
  $doctor_id = $_POST['doctor_id'];
  $schedule_id = $_POST['schedule_id'];
- $date        = $_POST['date'];
- $time        = $_POST['time'];
+ $date = $_POST['date'];
+ $time = $_POST['time'];
 
 // Clear the pending appointment from session
 unset($_SESSION['PENDING_APPOINTMENT']);
@@ -22,10 +22,27 @@ unset($_SESSION['PENDING_APPOINTMENT']);
 INSERT INTO appointment_tbl
 (PATIENT_ID, DOCTOR_ID, SCHEDULE_ID, CREATED_AT, APPOINTMENT_DATE, APPOINTMENT_TIME, STATUS)
 VALUES
-('$patient_id', '$doctor_id', '$schedule_id', NOW(), '$date', '$time', 'scheduled')
+('$patient_id', '$doctor_id', '$schedule_id', NOW(), '$date', '$time', 'SCHEDULED')
 ";
 
 if (mysqli_query($conn, $q)) {
+    // Get the appointment ID that was just inserted
+    $appointment_id = mysqli_insert_id($conn);
+    
+    // Create a reminder for when appointment is booked
+    $booked_remark = "Your appointment has been booked successfully with Dr. " . getDoctorName($conn, $doctor_id) . " on " . date('F d, Y', strtotime($date)) . " at " . date('h:i A', strtotime($time));
+    $reminder_time = date('H:i:s'); // Current time
+    
+    // Insert booking reminder
+    $reminder_query = "INSERT INTO appointment_reminder_tbl 
+    (RECEPTIONIST_ID, APPOINTMENT_ID, REMINDER_TIME, REMARKS) 
+    VALUES 
+    (1, '$appointment_id', '$reminder_time', '$booked_remark')";
+    
+    mysqli_query($conn, $reminder_query);
+    
+    // Schedule reminders for 24 hours before and 3 hours before
+    scheduleAppointmentReminders($conn, $appointment_id, $date, $time, $doctor_id);
 ?>
 <!DOCTYPE html>
 <html>
@@ -134,7 +151,7 @@ if (mysqli_query($conn, $q)) {
             <p><strong>Status:</strong> Scheduled</p>
         </div>
         
-        <p class="note">Your appointment has been successfully booked.</p>
+        <p class="note">Your appointment has been successfully booked. You will receive reminders before your appointment.</p>
         
         <p class="close-message">This window will close automatically...</p>
     </div>
@@ -273,5 +290,56 @@ if (mysqli_query($conn, $q)) {
     </body>
     </html>
     <?php
+}
+
+// Helper function to get doctor name
+function getDoctorName($conn, $doctor_id) {
+    $query = "SELECT FIRST_NAME, LAST_NAME FROM doctor_tbl WHERE DOCTOR_ID = $doctor_id";
+    $result = mysqli_query($conn, $query);
+    if ($row = mysqli_fetch_assoc($result)) {
+        return "Dr. " . $row['FIRST_NAME'] . " " . $row['LAST_NAME'];
+    }
+    return "Doctor";
+}
+
+// Function to schedule future reminders
+function scheduleAppointmentReminders($conn, $appointment_id, $date, $time, $doctor_id) {
+    $doctor_name = getDoctorName($conn, $doctor_id);
+    $appointment_datetime = new DateTime($date . ' ' . $time);
+    
+    // Schedule 24 hours before reminder
+    $day_before = clone $appointment_datetime;
+    $day_before->sub(new DateInterval('P1D')); // Subtract 1 day
+    
+    // Only schedule if it's in the future
+    $now = new DateTime();
+    if ($day_before > $now) {
+        $day_before_time = $day_before->format('H:i:s');
+        $day_before_remark = "Reminder: You have an appointment with $doctor_name tomorrow at " . $appointment_datetime->format('h:i A') . " on " . $appointment_datetime->format('F d, Y');
+        
+        $reminder_query = "INSERT INTO appointment_reminder_tbl 
+        (RECEPTIONIST_ID, APPOINTMENT_ID, REMINDER_TIME, REMARKS) 
+        VALUES 
+        (1, '$appointment_id', '$day_before_time', '$day_before_remark')";
+        
+        mysqli_query($conn, $reminder_query);
+    }
+    
+    // Schedule 3 hours before reminder
+    $hours_before = clone $appointment_datetime;
+    $hours_before->sub(new DateInterval('PT3H')); // Subtract 3 hours
+    
+    // Only schedule if it's in the future
+    if ($hours_before > $now) {
+        $hours_before_time = $hours_before->format('H:i:s');
+        $hours_before_remark = "Reminder: You have an appointment with $doctor_name in 3 hours at " . $appointment_datetime->format('h:i A') . " today";
+        
+        $reminder_query = "INSERT INTO appointment_reminder_tbl 
+        (RECEPTIONIST_ID, APPOINTMENT_ID, REMINDER_TIME, REMARKS) 
+        VALUES 
+        (1, '$appointment_id', '$hours_before_time', '$hours_before_remark')";
+        
+        mysqli_query($conn, $reminder_query);
+    }
 }
 ?>

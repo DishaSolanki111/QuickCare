@@ -42,6 +42,20 @@ include 'config.php';
 ");
  $medicine_result = mysqli_fetch_assoc($medicine_query);
  $upcoming_medicines = $medicine_result['count'];
+
+// Get appointment reminders
+ $reminder_query = mysqli_query($conn, "
+    SELECT ar.REMARKS, a.APPOINTMENT_DATE, a.APPOINTMENT_TIME, d.FIRST_NAME, d.LAST_NAME
+    FROM appointment_reminder_tbl ar
+    JOIN appointment_tbl a ON ar.APPOINTMENT_ID = a.APPOINTMENT_ID
+    JOIN doctor_tbl d ON a.DOCTOR_ID = d.DOCTOR_ID
+    WHERE a.PATIENT_ID = '$patient_id'
+    AND a.APPOINTMENT_DATE >= CURDATE()
+    AND ar.REMINDER_TIME <= CURTIME()
+    AND ar.REMINDER_TIME > DATE_SUB(CURTIME(), INTERVAL 1 HOUR)
+    ORDER BY ar.REMINDER_TIME DESC
+    LIMIT 5
+");
 ?>
 
 <!DOCTYPE html>
@@ -119,12 +133,101 @@ include 'config.php';
             font-size: 28px;
             font-weight: 700;
             color: #064469;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .logo-img {
             height: 40px;
             margin-right: 12px;
             border-radius: 5px;
+        }
+
+        /* Notification Bell */
+        .notification-bell {
+            position: relative;
+            cursor: pointer;
+            color: #072D44;
+            font-size: 24px;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background-color: #ff4d4d;
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: bold;
+        }
+
+        .notification-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            width: 350px;
+            max-height: 400px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+        }
+
+        .notification-dropdown.show {
+            display: block;
+        }
+
+        .notification-item {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .notification-item:last-child {
+            border-bottom: none;
+        }
+
+        .notification-icon {
+            color: #28a745;
+            margin-right: 10px;
+            margin-top: 2px;
+        }
+
+        .notification-content {
+            flex: 1;
+        }
+
+        .notification-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #072D44;
+        }
+
+        .notification-message {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .notification-time {
+            font-size: 12px;
+            color: #999;
+            margin-top: 5px;
+        }
+
+        .no-notifications {
+            padding: 20px;
+            text-align: center;
+            color: #666;
         }
 
         /* Cards */
@@ -243,6 +346,56 @@ include 'config.php';
             margin: 5px 0;
             color: #666;
         }
+
+        /* Notification popup */
+        .notification-popup {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 350px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 1000;
+            transform: translateX(400px);
+            transition: transform 0.3s ease-out;
+        }
+
+        .notification-popup.show {
+            transform: translateX(0);
+        }
+
+        .notification-popup-content {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+        }
+
+        .notification-popup-icon {
+            color: #28a745;
+            font-size: 20px;
+            margin-right: 12px;
+        }
+
+        .notification-popup-message {
+            flex-grow: 1;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .notification-popup-close {
+            background: none;
+            border: none;
+            font-size: 18px;
+            color: #999;
+            cursor: pointer;
+            padding: 0;
+            margin-left: 10px;
+        }
+
+        .notification-popup-close:hover {
+            color: #333;
+        }
     </style>
 </head>
 <body>
@@ -268,7 +421,36 @@ include 'config.php';
 
     <!-- MAIN -->
     <div class="main">
-        <div class="header">Welcome, <?php echo htmlspecialchars($patient['FIRST_NAME'] . ' ' . $patient['LAST_NAME']); ?></div>
+        <div class="header">
+            <div>Welcome, <?php echo htmlspecialchars($patient['FIRST_NAME'] . ' ' . $patient['LAST_NAME']); ?></div>
+            <div class="notification-bell" onclick="toggleNotifications()">
+                <i class="fas fa-bell"></i>
+                <?php
+                $reminder_count = mysqli_num_rows($reminder_query);
+                if ($reminder_count > 0) {
+                    echo '<span class="notification-badge">' . $reminder_count . '</span>';
+                }
+                ?>
+                <div class="notification-dropdown" id="notificationDropdown">
+                    <?php if ($reminder_count > 0): ?>
+                        <?php while ($reminder = mysqli_fetch_assoc($reminder_query)): ?>
+                            <div class="notification-item">
+                                <div class="notification-icon">
+                                    <i class="fas fa-calendar-check"></i>
+                                </div>
+                                <div class="notification-content">
+                                    <div class="notification-title">Appointment Reminder</div>
+                                    <div class="notification-message"><?php echo htmlspecialchars($reminder['REMARKS']); ?></div>
+                                    <div class="notification-time"><?php echo date('M d, Y h:i A', strtotime($reminder['APPOINTMENT_DATE'] . ' ' . $reminder['APPOINTMENT_TIME'])); ?></div>
+                                </div>
+                            </div>
+                        <?php endwhile; ?>
+                    <?php else: ?>
+                        <div class="no-notifications">No new notifications</div>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
         
         <!-- Profile Info -->
         <div class="card profile-info">
@@ -333,5 +515,77 @@ include 'config.php';
         </div>
     </div>
 </div>
+
+<!-- Notification Popup -->
+<div class="notification-popup" id="notificationPopup">
+    <div class="notification-popup-content">
+        <div class="notification-popup-icon">
+            <i class="fas fa-bell"></i>
+        </div>
+        <div class="notification-popup-message" id="notificationPopupMessage">
+            <!-- Message will be inserted here -->
+        </div>
+        <button class="notification-popup-close" onclick="closeNotificationPopup()">&times;</button>
+    </div>
+</div>
+
+<script>
+    // Toggle notification dropdown
+    function toggleNotifications() {
+        const dropdown = document.getElementById('notificationDropdown');
+        dropdown.classList.toggle('show');
+        
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function closeDropdown(e) {
+            if (!e.target.closest('.notification-bell')) {
+                dropdown.classList.remove('show');
+                document.removeEventListener('click', closeDropdown);
+            }
+        });
+    }
+    
+    // Close notification popup
+    function closeNotificationPopup() {
+        const popup = document.getElementById('notificationPopup');
+        popup.classList.remove('show');
+    }
+    
+    // Check for new reminders
+    function checkReminders() {
+        fetch('check_reminders.php')
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success' && data.reminders.length > 0) {
+                    // Show each reminder as a popup notification
+                    data.reminders.forEach(reminder => {
+                        showNotificationPopup(reminder.message);
+                    });
+                }
+            })
+            .catch(error => console.error('Error checking reminders:', error));
+    }
+    
+    // Show notification popup
+    function showNotificationPopup(message) {
+        const popup = document.getElementById('notificationPopup');
+        const messageElement = document.getElementById('notificationPopupMessage');
+        
+        messageElement.textContent = message;
+        popup.classList.add('show');
+        
+        // Auto hide after 5 seconds
+        setTimeout(() => {
+            popup.classList.remove('show');
+        }, 5000);
+    }
+    
+    // Check for reminders when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        checkReminders();
+        
+        // Check for reminders every 5 minutes
+        setInterval(checkReminders, 5 * 60 * 1000);
+    });
+</script>
 </body>
 </html>

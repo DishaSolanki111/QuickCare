@@ -78,6 +78,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_profile'])) {
     WHERE mr.PATIENT_ID = '$patient_id'
     ORDER BY mr.REMINDER_TIME
 ");
+
+// Get appointment reminders for notification
+ $reminder_query = mysqli_query($conn, "
+    SELECT ar.REMARKS, a.APPOINTMENT_DATE, a.APPOINTMENT_TIME, d.FIRST_NAME, d.LAST_NAME
+    FROM appointment_reminder_tbl ar
+    JOIN appointment_tbl a ON ar.APPOINTMENT_ID = a.APPOINTMENT_ID
+    JOIN doctor_tbl d ON a.DOCTOR_ID = d.DOCTOR_ID
+    WHERE a.PATIENT_ID = '$patient_id'
+    AND a.APPOINTMENT_DATE >= CURDATE()
+    AND ar.REMINDER_TIME <= CURTIME()
+    AND ar.REMINDER_TIME > DATE_SUB(CURTIME(), INTERVAL 1 HOUR)
+    ORDER BY ar.REMINDER_TIME DESC
+    LIMIT 5
+");
+ $reminder_count = mysqli_num_rows($reminder_query);
 ?>
 
 <!DOCTYPE html>
@@ -189,7 +204,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_profile'])) {
             align-items: center;
         }
         
-        .notification-btn {
+        /* Notification Bell Styles */
+        .notification-bell {
             position: relative;
             background: none;
             border: none;
@@ -213,6 +229,118 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_profile'])) {
             justify-content: center;
             font-size: 11px;
             font-weight: bold;
+        }
+        
+        .notification-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            width: 350px;
+            max-height: 400px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+        }
+        
+        .notification-dropdown.show {
+            display: block;
+        }
+        
+        .notification-item {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            align-items: flex-start;
+        }
+        
+        .notification-item:last-child {
+            border-bottom: none;
+        }
+        
+        .notification-icon {
+            color: #28a745;
+            margin-right: 10px;
+            margin-top: 2px;
+        }
+        
+        .notification-content {
+            flex: 1;
+        }
+        
+        .notification-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #072D44;
+        }
+        
+        .notification-message {
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .notification-time {
+            font-size: 12px;
+            color: #999;
+            margin-top: 5px;
+        }
+        
+        .no-notifications {
+            padding: 20px;
+            text-align: center;
+            color: #666;
+        }
+        
+        /* Notification popup */
+        .notification-popup {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 350px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 1000;
+            transform: translateX(400px);
+            transition: transform 0.3s ease-out;
+        }
+        
+        .notification-popup.show {
+            transform: translateX(0);
+        }
+        
+        .notification-popup-content {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+        }
+        
+        .notification-popup-icon {
+            color: #28a745;
+            font-size: 20px;
+            margin-right: 12px;
+        }
+        
+        .notification-popup-message {
+            flex-grow: 1;
+            font-size: 14px;
+            color: #333;
+        }
+        
+        .notification-popup-close {
+            background: none;
+            border: none;
+            font-size: 18px;
+            color: #999;
+            cursor: pointer;
+            padding: 0;
+            margin-left: 10px;
+        }
+        
+        .notification-popup-close:hover {
+            color: #333;
         }
         
         .user-dropdown {
@@ -647,9 +775,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_profile'])) {
             <div class="header">
                 <div class="welcome-msg">Personal Information</div>
                 <div class="user-actions">
-                    <button class="notification-btn">
+                    <button class="notification-bell" onclick="toggleNotifications()">
                         <i class="far fa-bell"></i>
-                        <span class="notification-badge">3</span>
+                        <?php if ($reminder_count > 0): ?>
+                            <span class="notification-badge"><?php echo $reminder_count; ?></span>
+                        <?php endif; ?>
+                        <div class="notification-dropdown" id="notificationDropdown">
+                            <?php if ($reminder_count > 0): ?>
+                                <?php 
+                                // Reset the result pointer to beginning
+                                mysqli_data_seek($reminder_query, 0);
+                                while ($reminder = mysqli_fetch_assoc($reminder_query)): 
+                                ?>
+                                    <div class="notification-item">
+                                        <div class="notification-icon">
+                                            <i class="fas fa-calendar-check"></i>
+                                        </div>
+                                        <div class="notification-content">
+                                            <div class="notification-title">Appointment Reminder</div>
+                                            <div class="notification-message"><?php echo htmlspecialchars($reminder['REMARKS']); ?></div>
+                                            <div class="notification-time"><?php echo date('M d, Y h:i A', strtotime($reminder['APPOINTMENT_DATE'] . ' ' . $reminder['APPOINTMENT_TIME'])); ?></div>
+                                        </div>
+                                    </div>
+                                <?php endwhile; ?>
+                            <?php else: ?>
+                                <div class="no-notifications">No new notifications</div>
+                            <?php endif; ?>
+                        </div>
                     </button>
                     <div class="user-dropdown">
                         <div class="user-avatar"><?php echo strtoupper(substr($patient['FIRST_NAME'], 0, 1) . substr($patient['LAST_NAME'], 0, 1)); ?></div>
@@ -820,6 +972,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_profile'])) {
                 $past_appointments = [];
                 
                 if (mysqli_num_rows($appointments_query) > 0) {
+                    // Reset the result pointer to beginning
+                    mysqli_data_seek($appointments_query, 0);
                     while ($appointment = mysqli_fetch_assoc($appointments_query)) {
                         if ($appointment['APPOINTMENT_DATE'] >= date('Y-m-d')) {
                             $upcoming_appointments[] = $appointment;
@@ -1034,6 +1188,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_profile'])) {
         </div>
     </div>
     
+    <!-- Notification Popup -->
+    <div class="notification-popup" id="notificationPopup">
+        <div class="notification-popup-content">
+            <div class="notification-popup-icon">
+                <i class="fas fa-bell"></i>
+            </div>
+            <div class="notification-popup-message" id="notificationPopupMessage">
+                <!-- Message will be inserted here -->
+            </div>
+            <button class="notification-popup-close" onclick="closeNotificationPopup()">&times;</button>
+        </div>
+    </div>
+    
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Tab functionality
@@ -1069,7 +1236,75 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_profile'])) {
                 profileView.style.display = 'block';
                 editProfileForm.style.display = 'none';
             });
+            
+            // Check for new reminders
+            checkReminders();
+            
+            // Check for reminders every 5 minutes
+            setInterval(checkReminders, 5 * 60 * 1000);
         });
+        
+        // Toggle notification dropdown
+        function toggleNotifications() {
+            const dropdown = document.getElementById('notificationDropdown');
+            dropdown.classList.toggle('show');
+            
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function closeDropdown(e) {
+                if (!e.target.closest('.notification-bell')) {
+                    dropdown.classList.remove('show');
+                    document.removeEventListener('click', closeDropdown);
+                }
+            });
+        }
+        
+        // Close notification popup
+        function closeNotificationPopup() {
+            const popup = document.getElementById('notificationPopup');
+            popup.classList.remove('show');
+        }
+        
+        // Check for new reminders
+        function checkReminders() {
+            fetch('check_reminders.php')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success' && data.reminders.length > 0) {
+                        // Show each reminder as a popup notification
+                        data.reminders.forEach(reminder => {
+                            showNotificationPopup(reminder.message);
+                        });
+                        
+                        // Update notification badge
+                        const badge = document.querySelector('.notification-badge');
+                        if (badge) {
+                            badge.textContent = data.reminders.length;
+                            badge.style.display = 'flex';
+                        } else {
+                            const bell = document.querySelector('.notification-bell');
+                            const newBadge = document.createElement('span');
+                            newBadge.className = 'notification-badge';
+                            newBadge.textContent = data.reminders.length;
+                            bell.appendChild(newBadge);
+                        }
+                    }
+                })
+                .catch(error => console.error('Error checking reminders:', error));
+        }
+        
+        // Show notification popup
+        function showNotificationPopup(message) {
+            const popup = document.getElementById('notificationPopup');
+            const messageElement = document.getElementById('notificationPopupMessage');
+            
+            messageElement.textContent = message;
+            popup.classList.add('show');
+            
+            // Auto hide after 5 seconds
+            setTimeout(() => {
+                popup.classList.remove('show');
+            }, 5000);
+        }
     </script>
 </body>
 </html>
