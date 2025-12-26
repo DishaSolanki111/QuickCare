@@ -1,272 +1,668 @@
 <?php
+// ================== SESSION & ACCESS CONTROL ==================
 session_start();
+
+if (
+    !isset($_SESSION['LOGGED_IN']) ||
+    $_SESSION['LOGGED_IN'] !== true ||
+    !isset($_SESSION['USER_TYPE']) ||
+    $_SESSION['USER_TYPE'] !== 'doctor'
+) {
+    header("Location: login.php");
+    exit();
+}
+
+// ================== DATABASE CONNECTION ==================
+
+include 'config.php';
+
+// ================== DOCTOR BASIC INFO ==================
+ $doctor_id = $_SESSION['DOCTOR_ID'];
+ $doctor_name = "Doctor";
+
+ $doc_sql = "SELECT FIRST_NAME, LAST_NAME FROM doctor_tbl WHERE DOCTOR_ID = ?";
+ $doc_stmt = $conn->prepare($doc_sql);
+ $doc_stmt->bind_param("i", $doctor_id);
+ $doc_stmt->execute();
+ $doc_result = $doc_stmt->get_result();
+
+if ($doc_result->num_rows === 1) {
+    $doc = $doc_result->fetch_assoc();
+    $doctor_name = htmlspecialchars($doc['FIRST_NAME'] . ' ' . $doc['LAST_NAME']);
+}
+ $doc_stmt->close();
+
+// ================== DASHBOARD METRICS ==================
+
+// Today's Appointments
+ $today_appointments = 0;
+ $appt_sql = "
+    SELECT COUNT(*) AS total 
+    FROM appointment_tbl 
+    WHERE DOCTOR_ID = ? AND DATE(APPOINTMENT_DATE) = CURDATE()
+";
+ $appt_stmt = $conn->prepare($appt_sql);
+ $appt_stmt->bind_param("i", $doctor_id);
+ $appt_stmt->execute();
+ $appt_result = $appt_stmt->get_result();
+if ($row = $appt_result->fetch_assoc()) {
+    $today_appointments = $row['total'];
+}
+ $appt_stmt->close();
+
+// Patients This Week
+ $patients_this_week = 0;
+ $week_sql = "
+    SELECT COUNT(DISTINCT PATIENT_ID) AS total 
+    FROM appointment_tbl 
+    WHERE DOCTOR_ID = ?
+      AND APPOINTMENT_DATE BETWEEN CURDATE() AND CURDATE() + INTERVAL 7 DAY
+";
+ $week_stmt = $conn->prepare($week_sql);
+ $week_stmt->bind_param("i", $doctor_id);
+ $week_stmt->execute();
+ $week_result = $week_stmt->get_result();
+if ($row = $week_result->fetch_assoc()) {
+    $patients_this_week = $row['total'];
+}
+ $week_stmt->close();
+
+ $conn->close();
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Doctor Dashboard - QuickCare</title>
-
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
-/* ----------------- COLOR PALETTE ----------------- */
 :root {
-
-    --dark-blue: #072D44;
-    --mid-blue: #064469;
-    --soft-blue: #5790AB;
-    --light-blue: #9CCDD8;
-    --gray-blue: #D0D7E1;
+    --primary: #0066cc;
+    --primary-dark: #0052a3;
+    --primary-light: #e6f2ff;
+    --secondary: #00a8cc;
+    --accent: #00a86b;
+    --warning: #ff6b6b;
+    --dark: #1a3a5f;
+    --light: #f8fafc;
     --white: #ffffff;
-    --card-bg: #F6F9FB;
-    --primary-color: #1a3a5f;
-    --secondary-color: #3498db;
-    --accent-color: #2ecc71;
-    --danger-color: #e74c3c;
-    --warning-color: #f39c12;
-    --info-color: #17a2b8;
-        }
+    --text: #2c5282;
+    --text-light: #4a6fa5;
+    --gradient-1: linear-gradient(135deg, #0066cc 0%, #00a8cc 100%);
+    --gradient-2: linear-gradient(135deg, #00a8cc 0%, #00a86b 100%);
+    --gradient-3: linear-gradient(135deg, #0066cc 0%, #0052a3 100%);
+    --shadow-sm: 0 2px 4px rgba(0,0,0,0.06);
+    --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+    --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
+    --shadow-xl: 0 20px 25px rgba(0,0,0,0.1);
+    --shadow-2xl: 0 25px 50px rgba(0,0,0,0.25);
 }
 
-/* ---------------- GLOBAL STYLES ---------------- */
-body {
+* {
     margin: 0;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: #F5F8FA;
-    display: flex;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 }
+
+body {
+    background-color: #f5f8fa;
+    color: var(--text);
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+
+/* Sidebar Styles */
 .sidebar {
-    width: 250px;
-            background: #072D44;
-            min-height: 100vh;
-            color: white;
-            padding-top: 30px;
-            position: fixed;
-        }
+    width: 260px;
+    background: var(--dark);
+    min-height: 100vh;
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 100;
+    transition: all 0.3s ease;
+    box-shadow: var(--shadow-xl);
+}
 
-        .sidebar h2 {
-            text-align: center;
-            margin-bottom: 40px;
-            color: #9CCDD8;
-        }
+.sidebar-header {
+    padding: 25px 20px;
+    text-align: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
 
-        .sidebar a {
-            display: block;
-            padding: 15px 25px;
-            color: #D0D7E1;
-            text-decoration: none;
-            font-size: 17px;
-            border-left: 4px solid transparent;
-        }
+.logo-img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    margin-bottom: 15px;
+    object-fit: cover;
+    border: 3px solid var(--primary-light);
+}
 
-        .sidebar a:hover, .sidebar a.active {
-            background: #064469;
-            border-left: 4px solid #9CCDD8;
-            color: white;
-        }
+.sidebar h2 {
+    color: var(--white);
+    font-weight: 700;
+    font-size: 24px;
+    margin: 0;
+}
 
-        .logout-btn:hover{
-            background-color: var(--light-blue);
-        }
-        .logout-btn {
-            
-            display: block;
-            width: 80%;
-            margin: 20px auto 0 auto;
-            padding: 10px;
-            background-color: var(--soft-blue);
-            color: var(--white);    
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            text-align: center;
-            transition: background-color 0.3s;
-        }
+.sidebar-nav {
+    padding: 20px 0;
+}
 
+.sidebar-nav a {
+    display: flex;
+    align-items: center;
+    padding: 15px 25px;
+    color: rgba(255, 255, 255, 0.7);
+    text-decoration: none;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.sidebar-nav a i {
+    margin-right: 12px;
+    font-size: 18px;
+    width: 24px;
+    text-align: center;
+}
+
+.sidebar-nav a:hover, .sidebar-nav a.active {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--white);
+}
+
+.sidebar-nav a.active::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 4px;
+    background: var(--primary);
+}
+
+.logout-btn {
+    margin: 20px;
+    padding: 12px;
+    background: var(--warning);
+    color: var(--white);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    text-align: center;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: block;
+}
+
+.logout-btn:hover {
+    background: #e55555;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+/* Main Content */
+.main-content {
+    margin-left: 260px;
+    padding: 0;
+    min-height: 100vh;
+}
+
+/* Header */
 .topbar {
-        background: white;
-        padding: 15px 25px;
-        border-radius: 10px;
-        margin-bottom: 20px;
-        display: flex;
-        justify-content: space-between;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    }
+    background: var(--white);
+    padding: 20px 30px;
+    box-shadow: var(--shadow-md);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+}
 
-    .topbar h1 {
-        margin: 0;
-        color: #064469;
-    }
+.topbar h1 {
+    color: var(--dark);
+    font-size: 24px;
+    font-weight: 700;
+}
 
-.top-icons span {
-    margin-left: 15px;
+.topbar-right {
+    display: flex;
+    align-items: center;
+}
+
+.notification-icon {
+    position: relative;
+    margin-right: 20px;
+    color: var(--text);
+    font-size: 20px;
     cursor: pointer;
 }
 
-/* ---------------- MAIN CONTENT ---------------- */
-.main-content {
-    margin-left: 240px;
-    padding: 20px;
-    width: calc(100% - 240px);
-}
-
-/* ---------------- TITLES ---------------- */
-.welcome-title {
-    font-size: 28px;
-    font-weight: bold;
-    color: var(--dark-blue);
-}
-
-.date {
-    font-size: 14px;
-    color: #777;
-    margin-top: -8px;
-}
-
-/* ---------------- DASHBOARD CARDS ---------------- */
-.cards-container {
+.notification-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: var(--warning);
+    color: var(--white);
+    font-size: 10px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
     display: flex;
-    gap: 20px;
-    margin-top: 25px;
+    align-items: center;
+    justify-content: center;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+}
+
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 12px;
+    border: 2px solid var(--primary-light);
+}
+
+.user-details h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--dark);
+    margin: 0;
+}
+
+.user-details p {
+    font-size: 13px;
+    color: var(--text-light);
+    margin: 0;
+}
+
+/* Dashboard Content */
+.dashboard-content {
+    padding: 30px;
+}
+
+.welcome-section {
+    margin-bottom: 30px;
+}
+
+.welcome-section h2 {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--dark);
+    margin-bottom: 5px;
+}
+
+.welcome-section p {
+    color: var(--text-light);
+    font-size: 16px;
+}
+
+/* Cards */
+.cards-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 25px;
+    margin-bottom: 30px;
 }
 
 .card {
-    flex: 1;
     background: var(--white);
     border-radius: 12px;
-    padding: 20px;
-    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    padding: 25px;
+    box-shadow: var(--shadow-md);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: var(--gradient-1);
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-xl);
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
 }
 
 .card h3 {
+    font-size: 18px;
+    color: var(--text);
     margin: 0;
-    font-size: 20px;
-    color: var(--dark-blue);
+}
+
+.card-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+}
+
+.appointments-icon {
+    background: rgba(0, 102, 204, 0.1);
+    color: var(--primary);
+}
+
+.feedback-icon {
+    background: rgba(255, 193, 7, 0.1);
+    color: #ffc107;
+}
+
+.patients-icon {
+    background: rgba(0, 168, 107, 0.1);
+    color: var(--accent);
 }
 
 .card-value {
-    font-size: 30px;
-    font-weight: bold;
-    margin-top: 10px;
-    color: var(--soft-blue);
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--dark);
+    margin-bottom: 5px;
 }
 
-/* ---------------- SCHEDULE SUMMARY ---------------- */
+.card-change {
+    font-size: 14px;
+    color: var(--text-light);
+}
+
+/* Schedule Card */
 .schedule-card {
-    width: 280px;
     background: var(--white);
     border-radius: 12px;
-    padding: 20px;
-    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    padding: 25px;
+    box-shadow: var(--shadow-md);
+    margin-bottom: 30px;
 }
 
 .schedule-card h3 {
-    margin: 0;
     font-size: 20px;
-    color: var(--dark-blue);
+    color: var(--dark);
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee;
 }
 
 .schedule-info {
-    margin-top: 10px;
-    font-size: 16px;
-    color: #555;
-}
-
-.add-pres-btn {
-    margin-top: 15px;
-    background: var(--soft-blue);
-    color: var(--white);
-    border: none;
-    padding: 12px 20px;
-    width: 100%;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: bold;
-}
-
-/* Fix layout */
-.row {
     display: flex;
     justify-content: space-between;
-    margin-top: 25px;
+    margin-bottom: 15px;
 }
-.logo-img {
-            height: 40px;
-            margin-right: 12px;
-            border-radius: 5px;
-        }
-</style>
 
+.schedule-info-item {
+    flex: 1;
+}
+
+.schedule-info-item h4 {
+    font-size: 14px;
+    color: var(--text-light);
+    margin-bottom: 5px;
+}
+
+.schedule-info-item p {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--dark);
+    margin: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 992px) {
+    .sidebar {
+        width: 70px;
+    }
+    
+    .sidebar-header h2 {
+        display: none;
+    }
+    
+    .sidebar-nav a span {
+        display: none;
+    }
+    
+    .sidebar-nav a {
+        justify-content: center;
+    }
+    
+    .sidebar-nav a i {
+        margin: 0;
+    }
+    
+    .main-content {
+        margin-left: 70px;
+    }
+    
+    .cards-container {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        transform: translateX(-100%);
+    }
+    
+    .sidebar.active {
+        transform: translateX(0);
+    }
+    
+    .main-content {
+        margin-left: 0;
+    }
+    
+    .topbar {
+        padding: 15px 20px;
+    }
+    
+    .dashboard-content {
+        padding: 20px;
+    }
+    
+    .cards-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .schedule-info {
+        flex-direction: column;
+    }
+    
+    .schedule-info-item {
+        margin-bottom: 15px;
+    }
+}
+
+/* Mobile Menu Toggle */
+.menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: var(--dark);
+    cursor: pointer;
+}
+
+@media (max-width: 768px) {
+    .menu-toggle {
+        display: block;
+    }
+}
+</style>
 </head>
 <body>
 
-<!-- ---------------- SIDEBAR ---------------- -->
-<div class="sidebar">
-    <img src="uploads/logo.JPG" alt="QuickCare Logo" class="logo-img" style="display:block; margin: 0 auto 10px auto; width:80px; height:80px; border-radius:50%;">  
-    <h2>QuickCare</h2>
-
-    <a href="dashboard_doctor.php" class="active">Dashboard</a>
-    <a href="d_dprofile.php">My Profile</a>
-    <a href="mangae_schedule_doctor.php">Manage Schedule</a>
-    <a href="appointment_doctor.php">Manage Appointments</a>
-    <a href="manage_prescriptions.php">Manage Prescription</a>
-    <a href="#">View Medicine</a>
-    <a href="#">View Feedback</a>
-    <button class="logout-btn">Logout</button>
-</div>
-
-
-
-<!-- ---------------- MAIN CONTENT ---------------- -->
-<div class="main-content">
-<!-- ---------------- TOP BAR ---------------- -->
-<div class="topbar">
-    <h1>Doctor Dashboard</h1>
-    <div class="top-icons">
-        <span>🔔</span>
-        <span style="margin-left:20px; background:#fff; color:#000; padding:6px 12px; border-radius:6px; font-size:14px; cursor:pointer;">
-            Logout
-        </span>
+<!-- Sidebar -->
+<div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+        <img src="uploads/logo.JPG" alt="QuickCare Logo" class="logo-img">
+        <h2>QuickCare</h2>
     </div>
+    
+    <nav class="sidebar-nav">
+        <a href="doctor_dashboard.php" class="active">
+            <i class="fas fa-tachometer-alt"></i>
+            <span>Dashboard</span>
+        </a>
+        <a href="d_profile.php">
+            <i class="fas fa-user-md"></i>
+            <span>My Profile</span>
+        </a>
+        <a href="manage_schedule_doctor.php">
+            <i class="fas fa-calendar-alt"></i>
+            <span>Manage Schedule</span>
+        </a>
+        <a href="appointment_doctor.php">
+            <i class="fas fa-calendar-check"></i>
+            <span>Manage Appointments</span>
+        </a>
+        <a href="manage_prescriptions.php">
+            <i class="fas fa-prescription"></i>
+            <span>Manage Prescription</span>
+        </a>
+        <a href="logout.php" class="logout-btn">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Logout</span>
+        </a>
+    </nav>
 </div>
-<br>
-    <!-- Title -->
-    <div class="welcome-title">Welcome, Dr. John Doe</div>
-    <br>
-    <div class="date">April 27, 2024</div>
 
-    <!-- Dashboard row -->
-    <div class="row">
-        <div style="flex: 1;">
-            <div class="cards-container">
-                <!-- Today's Appointments -->
-                <div class="card">
-                    <h3>Today's Appointments</h3>
-                    <div class="card-value">5</div>
-                </div>
-
-                <!-- Feedback Summary -->
-                <div class="card">
-                    <h3>Feedback Summary</h3>
-                    <div class="card-value">⭐ 4.8</div>
+<!-- Main Content -->
+<div class="main-content">
+    <!-- Header -->
+    <header class="topbar">
+        <button class="menu-toggle" id="menuToggle">
+            <i class="fas fa-bars"></i>
+        </button>
+        
+        <h1>Doctor Dashboard</h1>
+        
+        <div class="topbar-right">
+            <div class="notification-icon">
+                <i class="far fa-bell"></i>
+                <span class="notification-badge">3</span>
+            </div>
+            
+            <div class="user-info">
+                <img src="https://picsum.photos/seed/doctor/40/40.jpg" alt="Doctor" class="user-avatar">
+                <div class="user-details">
+                    <h3>Dr. <?php echo $doctor_name; ?></h3>
+                    <p><?php echo date("F j, Y"); ?></p>
                 </div>
             </div>
-
         </div>
-
-
-    </div>
-<br>
-        <!-- Schedule Summary -->
+    </header>
+    
+    <!-- Dashboard Content -->
+    <div class="dashboard-content">
+        <div class="welcome-section">
+            <h2>Welcome back, Dr. <?php echo $doctor_name; ?></h2>
+            <p>Here's what's happening with your practice today.</p>
+        </div>
+        
+        <div class="cards-container">
+            <div class="card">
+                <div class="card-header">
+                    <h3>Today's Appointments</h3>
+                    <div class="card-icon appointments-icon">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                </div>
+                <div class="card-value"><?php echo $today_appointments; ?></div>
+                <div class="card-change">
+                    <i class="fas fa-arrow-up"></i> 12% from last week
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h3>Feedback Summary</h3>
+                    <div class="card-icon feedback-icon">
+                        <i class="fas fa-star"></i>
+                    </div>
+                </div>
+                <div class="card-value">⭐ 4.8</div>
+                <div class="card-change">
+                    <i class="fas fa-arrow-up"></i> 0.3 from last month
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h3>Patients This Week</h3>
+                    <div class="card-icon patients-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                </div>
+                <div class="card-value"><?php echo $patients_this_week; ?></div>
+                <div class="card-change">
+                    <i class="fas fa-arrow-up"></i> 5% from last week
+                </div>
+            </div>
+        </div>
+        
         <div class="schedule-card">
             <h3>Schedule Summary</h3>
             <div class="schedule-info">
-                Next Available Slot: <br><b>10:00 AM</b><br><br>
-                Total Patients This Week: <b>15</b>
+                <div class="schedule-info-item">
+                    <h4>Next Available Slot</h4>
+                    <p>10:00 AM</p>
+                </div>
+                <div class="schedule-info-item">
+                    <h4>Total Patients This Week</h4>
+                    <p><?php echo $patients_this_week; ?></p>
+                </div>
+                <div class="schedule-info-item">
+                    <h4>Available Slots Today</h4>
+                    <p>5</p>
+                </div>
             </div>
-            
         </div>
+    </div>
 </div>
 
+<script>
+// Mobile menu toggle
+const menuToggle = document.getElementById('menuToggle');
+const sidebar = document.getElementById('sidebar');
+
+menuToggle.addEventListener('click', () => {
+    sidebar.classList.toggle('active');
+});
+
+// Close sidebar when clicking outside on mobile
+document.addEventListener('click', (e) => {
+    if (window.innerWidth <= 768) {
+        if (!sidebar.contains(e.target) && !menuToggle.contains(e.target)) {
+            sidebar.classList.remove('active');
+        }
+    }
+});
+</script>
 </body>
 </html>
