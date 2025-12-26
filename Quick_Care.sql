@@ -654,3 +654,21 @@ COMMIT;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+
+
+
+-- Add the education field to the doctor_tbl table
+ALTER TABLE `doctor_tbl` ADD COLUMN `EDUCATION` VARCHAR(255) COLLATE utf8mb4_general_ci DEFAULT NULL AFTER `GENDER`;
+
+-- Update the education data for each doctor based on their specialization
+UPDATE `doctor_tbl` SET `EDUCATION` = 'MBBS, MD (Pediatrics)' WHERE `DOCTOR_ID` = 1;
+UPDATE `doctor_tbl` SET `EDUCATION` = 'MBBS, DCH (Diploma in Child Health)' WHERE `DOCTOR_ID` = 2;
+UPDATE `doctor_tbl` SET `EDUCATION` = 'MBBS, DNB (Pediatrics)' WHERE `DOCTOR_ID` = 3;
+UPDATE `doctor_tbl` SET `EDUCATION` = 'MBBS, MD (Cardiology), DM (Cardiology)' WHERE `DOCTOR_ID` = 4;
+UPDATE `doctor_tbl` SET `EDUCATION` = 'MBBS, MD (Medicine), DM (Cardiology)' WHERE `DOCTOR_ID` = 5;
+UPDATE `doctor_tbl` SET `EDUCATION` = 'MBBS, MD (Cardiology)' WHERE `DOCTOR_ID` = 6;
+UPDATE `doctor_tbl` SET `EDUCATION` = 'MBBS, MS (Orthopedics), MCh (Orthopedics)' WHERE `DOCTOR_ID` = 7;
+UPDATE `doctor_tbl` SET `EDUCATION` = 'MBBS, DNB (Orthopedics)' WHERE `DOCTOR_ID` = 8;
+UPDATE `doctor_tbl` SET `EDUCATION` = 'MBBS, MD (Medicine), DM (Neurology)' WHERE `DOCTOR_ID` = 9;
+UPDATE `doctor_tbl` SET `EDUCATION` = 'MBBS, MD (Neurology)' WHERE `DOCTOR_ID` = 10;
+UPDATE `doctor_tbl` SET `EDUCATION` = 'MBBS, MD (Pediatrics), Fellowship in Neonatology' WHERE `DOCTOR_ID` = 13;
