@@ -142,113 +142,519 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_prescription_i
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Prescriptions for <?php echo htmlspecialchars($patient['FIRST_NAME'] . ' ' . $patient['LAST_NAME']); ?></title>
-    <style> :root {
-      --primary: #0066cc;
-      --dark: #1a3a5f;
-    }
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --dark-blue: #072D44;
+            --mid-blue: #064469;
+            --soft-blue: #5790AB;
+            --light-blue: #9CCDD8;
+            --gray-blue: #D0D7E1;
+            --white: #ffffff;
+            --card-bg: #F6F9FB;
+            --primary-color: #1a3a5f;
+            --secondary-color: #3498db;
+            --accent-color: #2ecc71;
+            --danger-color: #e74c3c;
+            --warning-color: #f39c12;
+            --info-color: #17a2b8;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        /* Sidebar Styles */
+        .sidebar {
+            width: 250px;
+            background: #072D44;
+            min-height: 100vh;
+            color: white;
+            padding-top: 30px;
+            position: fixed;
+        }
 
-    footer {
-      background: var(--dark);
-      color: white;
-      padding: 3rem 5%;
-      text-align: center;
-    }
+        .sidebar h2 {
+            text-align: center;
+            margin-bottom: 40px;
+            color: #9CCDD8;
+            border-bottom: none !important; /* Added to remove white line */
+            padding-bottom: 0 !important;
+        }
 
-    .footer-content {
-      max-width: 1200px;
-      margin: 0 auto;
-    }
+        .sidebar a {
+            display: block;
+            padding: 15px 25px;
+            color: #D0D7E1;
+            text-decoration: none;
+            font-size: 17px;
+            border-left: 4px solid transparent;
+        }
 
-    .social-links {
-      display: flex;
-      justify-content: center;
-      gap: 1rem;
-      margin-top: 1.5rem;
-    }
+        .sidebar a:hover, .sidebar a.active {
+            background: #064469;
+            border-left: 4px solid #9CCDD8;
+            color: white;
+        }
 
-    .social-link {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.1);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      transition: all 0.3s ease;
-      text-decoration: none;
-    }
+        .logout-btn:hover{
+            background-color: var(--light-blue);
+        }
+        .logout-btn {
+            display: block;
+            width: 80%;
+            margin: 20px auto 0 auto;
+            padding: 10px;
+            background-color: var(--soft-blue);
+            color: var(--white);    
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            text-align: center;
+            transition: background-color 0.3s;
+        }
+        
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 250px;
+            padding: 20px;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            margin-bottom: 25px;
+        }
+        
+        .welcome-msg {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+        
+        .user-actions {
+            display: flex;
+            align-items: center;
+        }
+        
+        .notification-btn {
+            position: relative;
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: var(--dark-color);
+            margin-right: 20px;
+            cursor: pointer;
+        }
+        
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: var(--danger-color);
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: bold;
+        }
+        
+        .user-dropdown {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--secondary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            font-weight: bold;
+        }
+        
+        /* Content Card Styles */
+        .content-card {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        h1, h2 {
+            color: #0056b3;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #0056b3;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        
+        .message {
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 1px solid;
+            border-radius: 4px;
+        }
+        
+        .message.success {
+            color: #3c763d;
+            background-color: #dff0d8;
+            border-color: #d6e9c6;
+        }
+        
+        .message.error {
+            color: #a94442;
+            background-color: #f2dede;
+            border-color: #ebccd1;
+        }
+        
+        .form-container {
+            margin-top: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 10px 15px;
+            text-decoration: none;
+            border-radius: 5px;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .btn-submit {
+            background-color: #007bff;
+            width: 100%;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        
+        .btn-submit:hover {
+            background-color: #0056b3;
+        }
+        
+        .btn-delete {
+            background-color: #dc3545;
+            float: right;
+        }
+        
+        .btn-delete:hover {
+            background-color: #c82333;
+        }
+        
+        .prescription-list {
+            margin-top: 40px;
+        }
+        
+        .prescription-item {
+            border: 1px solid #eee;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            background-color: #fafafa;
+            overflow: hidden;
+        }
+        
+        .prescription-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        /* Footer Styles */
+        footer {
+            background: var(--dark);
+            color: white;
+            padding: 3rem 5%;
+            text-align: center;
+        }
 
-    .social-link:hover {
-      background: var(--primary);
-      transform: translateY(-3px);
-    } body { font-family: Arial, sans-serif; background-color: #f4f4f9; color: #333; margin: 0; padding: 20px; } .container { max-width: 1000px; margin: auto; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); } h1, h2 { color: #0056b3; border-bottom: 2px solid #eee; padding-bottom: 10px; } .back-link { display: inline-block; margin-bottom: 20px; color: #0056b3; text-decoration: none; font-weight: bold; } .message { padding: 15px; margin-bottom: 20px; border: 1px solid; border-radius: 4px; } .message.success { color: #3c763d; background-color: #dff0d8; border-color: #d6e9c6; } .message.error { color: #a94442; background-color: #f2dede; border-color: #ebccd1; } .form-container { margin-top: 30px; padding: 20px; border: 1px solid #ddd; border-radius: 8px; } .form-group { margin-bottom: 15px; } .form-group label { display: block; margin-bottom: 5px; font-weight: bold; } .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; } .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; } .btn { display: inline-block; padding: 10px 15px; text-decoration: none; border-radius: 5px; color: #fff; border: none; cursor: pointer; font-size: 14px; } .btn-submit { background-color: #007bff; width: 100%; font-size: 16px; margin-top: 10px;} .btn-submit:hover { background-color: #0056b3; } .btn-delete { background-color: #dc3545; float: right; } .btn-delete:hover { background-color: #c82333; } .prescription-list { margin-top: 40px; } .prescription-item { border: 1px solid #eee; padding: 15px; margin-bottom: 15px; border-radius: 5px; background-color: #fafafa; overflow: hidden; } .prescription-header { display: flex; justify-content: space-between; align-items: center; } </style>
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .social-link {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .social-link:hover {
+            background: var(--primary);
+            transform: translateY(-3px);
+        }
+        
+        .logo-img {
+            height: 40px;
+            margin-right: 12px;
+            border-radius: 5px;
+        }
+        
+        @media (max-width: 992px) {
+            .sidebar {
+                width: 70px;
+            }
+            
+            .sidebar h2 span, .sidebar a span {
+                display: none;
+            }
+            
+            .main-content {
+                margin-left: 70px;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="container">
-        <a href="manage_prescriptions.php" class="back-link">&larr; Back to Patient List</a>
-        <h1>Prescriptions for: <?php echo htmlspecialchars($patient['FIRST_NAME'] . ' ' . $patient['LAST_NAME']); ?></h1>
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <img src="uploads/logo.JPG" alt="QuickCare Logo" class="logo-img" style="display:block; margin: 0 auto 10px auto; width:80px; height:80px; border-radius:50%;">  
+            <h2>QuickCare</h2>  
+            <a href="dashboard_doctor.php" >Dashboard</a>
+            <a href="d_dprofile.php">My Profile</a>
+            <a href="mangae_schedule_doctor.php">Manage Schedule</a>
+            <a href="appointment_doctor.php">Manage Appointments</a>
+            <a href="manage_prescriptions.php" class="active">Manage Prescription</a>
+            <a href="#">View Medicine</a>
+            <a href="#">View Feedback</a>
+            <button class="logout-btn">logout</button>
+        </div>
         
-        <?php echo $message; ?>
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Header -->
+            <div class="header">
+                <div class="welcome-msg">Prescriptions for: <?php echo htmlspecialchars($patient['FIRST_NAME'] . ' ' . $patient['LAST_NAME']); ?></div>
+                <div class="user-actions">
+                    <button class="notification-btn">
+                        <i class="far fa-bell"></i>
+                        <span class="notification-badge">5</span>
+                    </button>
+                    <div class="user-dropdown">
+                        <div class="user-avatar">AS</div>
+                        <span>Dr. Amar Kumar</span>
+                        <i class="fas fa-chevron-down" style="margin-left: 8px;"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Content Card -->
+            <div class="content-card">
+                <a href="manage_prescriptions.php" class="back-link">&larr; Back to Patient List</a>
+                
+                <?php echo $message; ?>
 
-        <div class="form-container">
-            <h2>Add New Prescription</h2>
-            <?php if (empty($completed_appointments)): ?>
-                <p style="color: #8a6d3b; background-color: #fcf8e3; border: 1px solid #faebcc; padding: 15px; border-radius: 4px;"><strong>Note:</strong> This patient has no completed appointments.</p>
-            <?php else: ?>
-                <form action="prescription_form.php?patient_id=<?php echo $patient_id; ?>" method="POST">
-                    <div class="form-group"><label for="appointment_id">Link to Completed Appointment:</label><select id="appointment_id" name="appointment_id" required><option value="">--Select an Appointment--</option><?php foreach ($completed_appointments as $apt): ?><option value="<?php echo $apt['APPOINTMENT_ID']; ?>"><?php echo htmlspecialchars($apt['APPOINTMENT_DATE'] . " with Dr. " . $apt['FIRST_NAME'] . " " . $apt['LAST_NAME'] . " (" . $apt['SPECIALISATION_NAME'] . ")"); ?></option><?php endforeach; ?></select></div>
-                    <div class="form-grid">
-                        <div class="form-group"><label for="issue_date">Issue Date:</label><input type="date" id="issue_date" name="issue_date" required></div>
-                        <div class="form-group"><label for="blood_pressure">Blood Pressure:</label><input type="text" id="blood_pressure" name="blood_pressure" placeholder="e.g., 120/80"></div>
-                        <div class="form-group"><label for="height_cm">Height (cm):</label><input type="number" id="height_cm" name="height_cm"></div>
-                        <div class="form-group"><label for="weight_kg">Weight (kg):</label><input type="number" step="0.1" id="weight_kg" name="weight_kg"></div>
-                         <div class="form-group"><label for="diabetes">Diabetes:</label><select id="diabetes" name="diabetes"><option value="NO">No</option><option value="TYPE-1">Type-1</option><option value="TYPE-2">Type-2</option><option value="PRE-DIABTIC">Pre-Diabetic</option></select></div>
+                <div class="form-container">
+                    <h2>Add New Prescription</h2>
+                    <?php if (empty($completed_appointments)): ?>
+                        <p style="color: #8a6d3b; background-color: #fcf8e3; border: 1px solid #faebcc; padding: 15px; border-radius: 4px;"><strong>Note:</strong> This patient has no completed appointments.</p>
+                    <?php else: ?>
+                        <form action="prescription_form.php?patient_id=<?php echo $patient_id; ?>" method="POST">
+                            <div class="form-group">
+                                <label for="appointment_id">Link to Completed Appointment:</label>
+                                <select id="appointment_id" name="appointment_id" required>
+                                    <option value="">--Select an Appointment--</option>
+                                    <?php foreach ($completed_appointments as $apt): ?>
+                                        <option value="<?php echo $apt['APPOINTMENT_ID']; ?>"><?php echo htmlspecialchars($apt['APPOINTMENT_DATE'] . " with Dr. " . $apt['FIRST_NAME'] . " " . $apt['LAST_NAME'] . " (" . $apt['SPECIALISATION_NAME'] . ")"); ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="issue_date">Issue Date:</label>
+                                    <input type="date" id="issue_date" name="issue_date" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="blood_pressure">Blood Pressure:</label>
+                                    <input type="text" id="blood_pressure" name="blood_pressure" placeholder="e.g., 120/80">
+                                </div>
+                                <div class="form-group">
+                                    <label for="height_cm">Height (cm):</label>
+                                    <input type="number" id="height_cm" name="height_cm">
+                                </div>
+                                <div class="form-group">
+                                    <label for="weight_kg">Weight (kg):</label>
+                                    <input type="number" step="0.1" id="weight_kg" name="weight_kg">
+                                </div>
+                                <div class="form-group">
+                                    <label for="diabetes">Diabetes:</label>
+                                    <select id="diabetes" name="diabetes">
+                                        <option value="NO">No</option>
+                                        <option value="TYPE-1">Type-1</option>
+                                        <option value="TYPE-2">Type-2</option>
+                                        <option value="PRE-DIABTIC">Pre-Diabetic</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="symptoms">Symptoms:</label>
+                                <textarea id="symptoms" name="symptoms" rows="3"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="diagnosis">Diagnosis:</label>
+                                <textarea id="diagnosis" name="diagnosis" rows="3"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="additional_notes">Additional Notes:</label>
+                                <textarea id="additional_notes" name="additional_notes" rows="3"></textarea>
+                            </div>
+                            <h3 style="color: #0056b3; border-bottom: 1px solid #eee; padding-bottom: 10px;">Medicine Details</h3>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="medicine_id">Medicine:</label>
+                                    <select id="medicine_id" name="medicine_id" required>
+                                        <option value="">--Select Medicine--</option>
+                                        <?php foreach ($medicines as $medicine): ?>
+                                            <option value="<?php echo $medicine['MEDICINE_ID']; ?>"><?php echo htmlspecialchars($medicine['MED_NAME']); ?></option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="dosage">Dosage:</label>
+                                    <input type="text" id="dosage" name="dosage" placeholder="e.g., 500mg" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="duration">Duration:</label>
+                                    <input type="text" id="duration" name="duration" placeholder="e.g., 7 days" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="frequency">Frequency:</label>
+                                    <input type="text" id="frequency" name="frequency" placeholder="e.g., Twice a day" required>
+                                </div>
+                            </div>
+                            <button type="submit" name="add_prescription" class="btn btn-submit">Add Prescription</button>
+                        </form>
+                    <?php endif; ?>
+                </div>
+                
+                <div class="prescription-list">
+                    <h2>Existing Prescriptions</h2>
+                    <?php if (count($prescriptions) > 0): ?>
+                        <?php foreach ($prescriptions as $prescription): ?>
+                            <div class="prescription-item">
+                                <div class="prescription-header">
+                                    <div>
+                                        <strong>Issue Date:</strong> <?php echo htmlspecialchars($prescription['ISSUE_DATE']); ?> | 
+                                        <strong>Doctor:</strong> <?php echo htmlspecialchars($prescription['DOC_FNAME'] . ' ' . $prescription['DOC_LNAME']); ?>
+                                    </div>
+                                    <form action="prescription_form.php?patient_id=<?php echo $patient_id; ?>" method="POST" onsubmit="return confirm('Are you sure?');">
+                                        <input type="hidden" name="delete_prescription_id" value="<?php echo $prescription['PRESCRIPTION_ID']; ?>">
+                                        <button type="submit" class="btn btn-delete">Delete</button>
+                                    </form>
+                                </div>
+                                <p style="margin-top: 10px;"><strong>Diagnosis:</strong> <?php echo nl2br(htmlspecialchars($prescription['DIAGNOSIS'])); ?></p>
+                                <p><strong>Symptoms:</strong> <?php echo nl2br(htmlspecialchars($prescription['SYMPTOMS'])); ?></p>
+                            </div>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <p>No prescriptions found for this patient.</p>
+                    <?php endif; ?>
+                </div>
+            </div>
+            
+            <!-- Footer -->
+            <footer>
+                <div class="footer-content">
+                    <p>&copy; <span id="year"></span> QuickCare — Revolutionizing Healthcare Access</p>
+                    <div class="social-links">
+                        <a href="#" class="social-link"><span>f</span></a>
+                        <a href="#" class="social-link"><span>𝕏</span></a>
+                        <a href="#" class="social-link"><span>in</span></a>
+                        <a href="#" class="social-link"><span>📷</span></a>
                     </div>
-                    <div class="form-group"><label for="symptoms">Symptoms:</label><textarea id="symptoms" name="symptoms" rows="3"></textarea></div>
-                    <div class="form-group"><label for="diagnosis">Diagnosis:</label><textarea id="diagnosis" name="diagnosis" rows="3"></textarea></div>
-                    <div class="form-group"><label for="additional_notes">Additional Notes:</label><textarea id="additional_notes" name="additional_notes" rows="3"></textarea></div>
-                    <h3 style="color: #0056b3; border-bottom: 1px solid #eee; padding-bottom: 10px;">Medicine Details</h3>
-                    <div class="form-grid">
-                        <div class="form-group"><label for="medicine_id">Medicine:</label><select id="medicine_id" name="medicine_id" required><option value="">--Select Medicine--</option><?php foreach ($medicines as $medicine): ?><option value="<?php echo $medicine['MEDICINE_ID']; ?>"><?php echo htmlspecialchars($medicine['MED_NAME']); ?></option><?php endforeach; ?></select></div>
-                        <div class="form-group"><label for="dosage">Dosage:</label><input type="text" id="dosage" name="dosage" placeholder="e.g., 500mg" required></div>
-                        <div class="form-group"><label for="duration">Duration:</label><input type="text" id="duration" name="duration" placeholder="e.g., 7 days" required></div>
-                        <div class="form-group"><label for="frequency">Frequency:</label><input type="text" id="frequency" name="frequency" placeholder="e.g., Twice a day" required></div>
-                    </div>
-                    <button type="submit" name="add_prescription" class="btn btn-submit" onclick="manage_prescription.php">Add Prescription</button>
-                </form>
-            <?php endif; ?>
-        </div>
-        <div class="prescription-list">
-            <h2>Existing Prescriptions</h2>
-            <?php if (count($prescriptions) > 0): ?>
-                <?php foreach ($prescriptions as $prescription): ?>
-                    <div class="prescription-item">
-                        <div class="prescription-header"><div><strong>Issue Date:</strong> <?php echo htmlspecialchars($prescription['ISSUE_DATE']); ?> | <strong>Doctor:</strong> <?php echo htmlspecialchars($prescription['DOC_FNAME'] . ' ' . $prescription['DOC_LNAME']); ?></div><form action="prescription_manager.php?patient_id=<?php echo $patient_id; ?>" method="POST" onsubmit="return confirm('Are you sure?');"><input type="hidden" name="delete_prescription_id" value="<?php echo $prescription['PRESCRIPTION_ID']; ?>"><button type="submit" class="btn btn-delete">Delete</button></form></div>
-                        <p style="margin-top: 10px;"><strong>Diagnosis:</strong> <?php echo nl2br(htmlspecialchars($prescription['DIAGNOSIS'])); ?></p>
-                        <p><strong>Symptoms:</strong> <?php echo nl2br(htmlspecialchars($prescription['SYMPTOMS'])); ?></p>
-                    </div>
-                <?php endforeach; ?>
-            <?php else: ?>
-                <p>No prescriptions found for this patient.</p>
-            <?php endif; ?>
+                </div>
+            </footer>
         </div>
     </div>
-    <footer>
-    <div class="footer-content">
-      <p>&copy; <span id="year"></span> QuickCare — Revolutionizing Healthcare Access</p>
-      <div class="social-links">
-        <a href="#" class="social-link"><span>f</span></a>
-        <a href="#" class="social-link"><span>𝕏</span></a>
-        <a href="#" class="social-link"><span>in</span></a>
-        <a href="#" class="social-link"><span>📷</span></a>
-      </div>
-    </div>
-  </footer>
 
-  <script>
-    document.getElementById('year').textContent = new Date().getFullYear();
-  </script>
-
+    <script>
+        document.getElementById('year').textContent = new Date().getFullYear();
+    </script>
 </body>
 </html>

@@ -1,40 +1,9 @@
-<?php
-// Include your existing config file
-require_once 'config.php';
-// Check if the connection variable $conn exists and is valid
-if (!$conn) {
-    die("Error: Database connection failed. Please check your config.php file.");
-}
-
-// --- NEW: Check for success message in URL ---
- $alert_message = '';
-if (isset($_GET['status'])) {
-    if ($_GET['status'] === 'success') {
-        $alert_message = "Prescription added successfully!";
-    } elseif ($_GET['status'] === 'deleted_success') {
-        $alert_message = "Prescription deleted successfully!";
-    }
-}
-
-// Fetch all patients from the database
- $sql = "SELECT PATIENT_ID, FIRST_NAME, LAST_NAME, DOB, PHONE FROM patient_tbl ORDER BY LAST_NAME, FIRST_NAME";
- $result = $conn->query($sql);
-
- $patients = [];
-if ($result && $result->num_rows > 0) {
-    while($row = $result->fetch_assoc()) {
-        $patients[] = $row;
-    }
-}
- $conn->close(); // Close the connection when done
-?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manage Prescriptions - QuickCare</title>
+    <title>View Feedback - QuickCare</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -85,6 +54,8 @@ if ($result && $result->num_rows > 0) {
             text-align: center;
             margin-bottom: 40px;
             color: #9CCDD8;
+            border-bottom: none !important;
+            padding-bottom: 0 !important;
         }
 
         .sidebar a {
@@ -194,56 +165,61 @@ if ($result && $result->num_rows > 0) {
             font-weight: bold;
         }
         
-        /* Table Styles */
+        /* Content Card Styles */
         .content-card {
             background: #fff;
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
         }
         
-        h1 {
+        h1, h2 {
             color: #0056b3;
             border-bottom: 2px solid #eee;
             padding-bottom: 10px;
             margin-bottom: 20px;
         }
         
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        
-        th, td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-        
-        thead {
-            background-color: #007bff;
-            color: white;
-        }
-        
-        tbody tr:hover {
-            background-color: #f5f5f5;
-        }
-        
-        .btn {
-            display: inline-block;
-            padding: 8px 15px;
-            text-decoration: none;
+        /* Feedback Card Styles */
+        .feedback-card {
+            background: #fafafa;
+            border: 1px solid #ddd;
             border-radius: 5px;
-            color: #fff;
-            background-color: #28a745;
-            border: none;
-            cursor: pointer;
-            font-size: 14px;
+            padding: 15px;
+            margin-bottom: 20px;
         }
         
-        .btn:hover {
-            background-color: #218838;
+        .feedback-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .patient-info {
+            display: flex;
+            align-items: center;
+        }
+        
+        .patient-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: #007BFF;
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 20px;
+            margin-right: 15px;
+        }
+        
+        .patient-name {
+            font-weight: bold;
+        }
+        
+        .rating i {
+            color: #FFD700;
         }
         
         /* Footer Styles */
@@ -316,9 +292,9 @@ if ($result && $result->num_rows > 0) {
             <a href="d_dprofile.php">My Profile</a>
             <a href="mangae_schedule_doctor.php">Manage Schedule</a>
             <a href="appointment_doctor.php">Manage Appointments</a>
-            <a href="manage_prescriptions.php" class="active">Manage Prescription</a>
+            <a href="manage_prescriptions.php">Manage Prescription</a>
             <a href="#">View Medicine</a>
-            <a href="#">View Feedback</a>
+            <a href="#" class="active">View Feedback</a>
             <button class="logout-btn">logout</button>
         </div>
         
@@ -326,7 +302,7 @@ if ($result && $result->num_rows > 0) {
         <div class="main-content">
             <!-- Header -->
             <div class="header">
-                <div class="welcome-msg">Manage Patient Prescriptions</div>
+                <div class="welcome-msg">Patient Feedback</div>
                 <div class="user-actions">
                     <button class="notification-btn">
                         <i class="far fa-bell"></i>
@@ -342,36 +318,71 @@ if ($result && $result->num_rows > 0) {
             
             <!-- Content Card -->
             <div class="content-card">
-                <p>Select a patient to view, add, or delete their prescriptions.</p>
-                
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Patient Name</th>
-                            <th>Date of Birth</th>
-                            <th>Contact</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php if (count($patients) > 0): ?>
-                            <?php foreach ($patients as $patient): ?>
-                                <tr>
-                                    <td><?php echo htmlspecialchars($patient['FIRST_NAME'] . ' ' . $patient['LAST_NAME']); ?></td>
-                                    <td><?php echo htmlspecialchars($patient['DOB']); ?></td>
-                                    <td><?php echo htmlspecialchars($patient['PHONE']); ?></td>
-                                    <td>
-                                        <a href="prescription_form.php?patient_id=<?php echo $patient['PATIENT_ID']; ?>" class="btn">Manage Prescriptions</a>
-                                    </td>
-                                </tr>
-                            <?php endforeach; ?>
-                        <?php else: ?>
-                            <tr>
-                                <td colspan="4" style="text-align: center;">No patients found in the database.</td>
-                            </tr>
-                        <?php endif; ?>
-                    </tbody>
-                </table>
+                <div class="feedback-section" style="margin-top: 30px;">
+                    <h3 style="margin-bottom: 20px;">Patient Feedback</h3>
+                    <div class="feedback-card">
+                        <div class="feedback-header">
+                            <div class="patient-info">
+                                <div class="patient-avatar">MN</div>
+                                <div>
+                                    <div class="patient-name">Meera Nair</div>
+                                    <div style="color: #777; font-size: 14px;">July 15, 2024</div>
+                                </div>
+                            </div>
+                            <div class="rating">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                        </div>
+                        
+                        <p style="margin-top: 15px;">Dr. Sharma is very empathetic and provided a clear plan of action. She took time to explain my condition and treatment options in detail. Highly recommended!</p>
+                    </div>
+                    
+                    <div class="feedback-card">
+                        <div class="feedback-header">
+                            <div class="patient-info">
+                                <div class="patient-avatar">SK</div>
+                                <div>
+                                    <div class="patient-name">Sunil Kapoor</div>
+                                    <div style="color: #777; font-size: 14px;">June 28, 2024</div>
+                                </div>
+                            </div>
+                            <div class="rating">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="far fa-star"></i>
+                            </div>
+                        </div>
+                        
+                        <p style="margin-top: 15px;">Dr. Kumar is thorough. The consultation was good but the waiting time was a bit long. However, once I was in the consultation room, he gave me his full attention and answered all my questions.</p>
+                    </div>
+                    
+                    <div class="feedback-card">
+                        <div class="feedback-header">
+                            <div class="patient-info">
+                                <div class="patient-avatar">RV</div>
+                                <div>
+                                    <div class="patient-name">Rohan Verma</div>
+                                    <div style="color: #777; font-size: 14px;">May 10, 2024</div>
+                                </div>
+                            </div>
+                            <div class="rating">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                        </div>
+                        
+                        <p style="margin-top: 15px;">Dr. Kumar's detailed explanation put my mind at ease. He was very patient and made sure I understood everything about my condition and treatment. Highly recommend!</p>
+                    </div>
+                </div>
             </div>
             
             <!-- Footer -->
@@ -389,16 +400,6 @@ if ($result && $result->num_rows > 0) {
         </div>
     </div>
 
-    <!-- JavaScript to show the pop-up alert -->
-    <?php if (!empty($alert_message)): ?>
-        <script>
-            // Wait for the page to fully load before showing the alert
-            window.onload = function() {
-                alert('<?php echo addslashes($alert_message); ?>');
-            }
-        </script>
-    <?php endif; ?>
-    
     <script>
         document.getElementById('year').textContent = new Date().getFullYear();
     </script>
