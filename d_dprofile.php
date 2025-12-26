@@ -7,14 +7,19 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --primary-color: #1a3a5f;
-            --secondary-color: #3498db;
-            --accent-color: #2ecc71;
-            --light-color: #f8f9fa;
-            --dark-color: #343a40;
-            --danger-color: #e74c3c;
-            --warning-color: #f39c12;
-            --info-color: #17a2b8;
+           --dark-blue: #072D44;
+    --mid-blue: #064469;
+    --soft-blue: #5790AB;
+    --light-blue: #9CCDD8;
+    --gray-blue: #D0D7E1;
+    --white: #ffffff;
+    --card-bg: #F6F9FB;
+    --primary-color: #1a3a5f;
+    --secondary-color: #3498db;
+    --accent-color: #2ecc71;
+    --danger-color: #e74c3c;
+    --warning-color: #f39c12;
+    --info-color: #17a2b8;
         }
         
         * {
@@ -66,16 +71,23 @@
             color: white;
         }
 
-        .logout {
-            display: flex;
-            padding: 10px 95px;
-            color: #021e45;
-            text-decoration: none;
-            font-size: 17px;
-            border-left: 4px solid transparent;
-            background: #c5dbe8;
+        .logout-btn:hover{
+            background-color: var(--light-blue);
+        }
+        .logout-btn {
+            
+            display: block;
+            width: 80%;
+            margin: 20px auto 0 auto;
+            padding: 10px;
+            background-color: var(--soft-blue);
+            color: var(--white);    
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
             text-align: center;
-            margin-top: auto;
+            transition: background-color 0.3s;
         }
         
         /* Main Content */
@@ -664,20 +676,18 @@
     <div class="container">
         <!-- Sidebar - Replaced with patient.php sidebar -->
         <div class="sidebar">
-            <img src="./uploads/logo.JPG" alt="QuickCare Logo" class="logo-img" style="display:block; margin: 0 auto 10px auto; width:80px; height:80px; border-radius:50%;">
-            <h2>QuickCare</h2>
-            <div class="nav">
-                <a href="dashboard_doctor.html" class="active">Dashboard</a>
-                <a href="d_dprofile.php"> My Profile</a>
-                <a>Manage Schedule</a>
-                <a>Manage Appointments</a>
-                <a>View Patients</a>
-                <a>Manage Prescriptions</a>
-                <a>View Medicine</a>
-                <a>View Feedback</a>
-            </div>
-            <button class="logout">Logout</button>
-        </div>
+    <img src="uploads/logo.JPG" alt="QuickCare Logo" class="logo-img" style="display:block; margin: 0 auto 10px auto; width:80px; height:80px; border-radius:50%;">  
+    <h2>QuickCare</h2>
+
+    <a href="dashboard_doctor.php" >Dashboard</a>
+    <a href="d_dprofile.php">My Profile</a>
+    <a href="mangae_schedule_doctor.php">Manage Schedule</a>
+    <a href="appointment_doctor.php">Manage Appointments</a>
+    <a href="manage_prescriptions.php">Manage Prescription</a>
+    <a href="#">View Medicine</a>
+    <a href="#">View Feedback</a>
+    <button class="logout-btn">logout</button>
+</div>
         
         <!-- Main Content -->
         <div class="main-content">

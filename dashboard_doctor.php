@@ -10,6 +10,7 @@ session_start();
 <style>
 /* ----------------- COLOR PALETTE ----------------- */
 :root {
+
     --dark-blue: #072D44;
     --mid-blue: #064469;
     --soft-blue: #5790AB;
@@ -17,47 +18,70 @@ session_start();
     --gray-blue: #D0D7E1;
     --white: #ffffff;
     --card-bg: #F6F9FB;
+    --primary-color: #1a3a5f;
+    --secondary-color: #3498db;
+    --accent-color: #2ecc71;
+    --danger-color: #e74c3c;
+    --warning-color: #f39c12;
+    --info-color: #17a2b8;
+        }
 }
 
 /* ---------------- GLOBAL STYLES ---------------- */
 body {
     margin: 0;
-    font-family: Arial, sans-serif;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background: #F5F8FA;
     display: flex;
 }
-
-/* ---------------- SIDEBAR ---------------- */
 .sidebar {
-    width: 240px;
-    background: var(--dark-blue);
-    height: 100vh;
-    color: var(--white);
-    padding: 20px 0;
-    position: fixed;
-}
+    width: 250px;
+            background: #072D44;
+            min-height: 100vh;
+            color: white;
+            padding-top: 30px;
+            position: fixed;
+        }
 
+        .sidebar h2 {
+            text-align: center;
+            margin-bottom: 40px;
+            color: #9CCDD8;
+        }
 
-.sidebar h2 {
-        text-align: center;
-        margin-bottom: 40px;
-        color: #9CCDD8;
-    }
-.sidebar a {
-    display: block;
-    padding: 12px 20px;
-    text-decoration: none;
-    color: var(--gray-blue);
-    font-size: 15px;
-    margin: 4px 0;
-    transition: .2s;
-}
+        .sidebar a {
+            display: block;
+            padding: 15px 25px;
+            color: #D0D7E1;
+            text-decoration: none;
+            font-size: 17px;
+            border-left: 4px solid transparent;
+        }
 
-.sidebar a:hover,
-.sidebar a.active {
-    background: var(--soft-blue);
-    color: var(--white);
-}
+        .sidebar a:hover, .sidebar a.active {
+            background: #064469;
+            border-left: 4px solid #9CCDD8;
+            color: white;
+        }
+
+        .logout-btn:hover{
+            background-color: var(--light-blue);
+        }
+        .logout-btn {
+            
+            display: block;
+            width: 80%;
+            margin: 20px auto 0 auto;
+            padding: 10px;
+            background-color: var(--soft-blue);
+            color: var(--white);    
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            text-align: center;
+            transition: background-color 0.3s;
+        }
 
 .topbar {
         background: white;
@@ -181,13 +205,14 @@ body {
     <img src="uploads/logo.JPG" alt="QuickCare Logo" class="logo-img" style="display:block; margin: 0 auto 10px auto; width:80px; height:80px; border-radius:50%;">  
     <h2>QuickCare</h2>
 
-    <a href="#" class="active">Dashboard</a>
+    <a href="dashboard_doctor.php" class="active">Dashboard</a>
     <a href="d_dprofile.php">My Profile</a>
-    <a href="#">Manage Schedule</a>
-    <a href="#">Manage Appointments</a>
+    <a href="mangae_schedule_doctor.php">Manage Schedule</a>
+    <a href="appointment_doctor.php">Manage Appointments</a>
     <a href="manage_prescriptions.php">Manage Prescription</a>
     <a href="#">View Medicine</a>
     <a href="#">View Feedback</a>
+    <button class="logout-btn">Logout</button>
 </div>
 
 
