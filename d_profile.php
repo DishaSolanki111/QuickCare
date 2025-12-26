@@ -884,23 +884,11 @@
                             <span class="info-value">9 years</span>
                         </div>
                         <div class="info-item">
-                            <span class="info-label">License Number</span>
-                            <span class="info-value">MED-2025-IND-0421</span>
-                        </div>
-                        <div class="info-item">
                             <span class="info-label">Education</span>
                             <span class="info-value">MD, DM Cardiology</span>
                         </div>
                     </div>
                     
-                    <div class="btn-group">
-                        <button class="btn btn-primary">
-                            <i class="fas fa-download"></i> Download CV
-                        </button>
-                        <button class="btn btn-success">
-                            <i class="fas fa-certificate"></i> View Certificates
-                        </button>
-                    </div>
                 </div>
             </div>
             
