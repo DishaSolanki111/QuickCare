@@ -18,47 +18,80 @@ session_start();
     --light-blue: #9CCDD8;    /* Cards */
     --gray-blue: #D0D7E1;     /* Text/Icons */
     --white: #ffffff;
+    --dark-blue: #072D44;
+    --mid-blue: #064469;
+    --soft-blue: #5790AB;
+    --light-blue: #9CCDD8;
+    --gray-blue: #D0D7E1;
+    --white: #ffffff;
+    --card-bg: #F6F9FB;
+    --primary-color: #1a3a5f;
+    --secondary-color: #3498db;
+    --accent-color: #2ecc71;
+    --danger-color: #e74c3c;
+    --warning-color: #f39c12;
+    --info-color: #17a2b8;
 }
 
 /* ---------------- GLOBAL STYLES ---------------- */
 body {
     margin: 0;
     font-family: Arial, sans-serif;
+    font-weight: bold;
     background: #F5F8FA;
     display: flex;
 }
 
 /* ---------------- SIDEBAR ---------------- */
 .sidebar {
-    width: 240px;
-    background: var(--dark-blue);
-    height: 100vh;
-    color: var(--white);
-    padding: 20px 0;
-    position: fixed;
-}
+            width: 250px;
+            background: #072D44;
+            min-height: 100vh;
+            color: white;
+            padding-top: 30px;
+            position: fixed;
+        }
 
-.sidebar h2 {
-        text-align: center;
-        margin-bottom: 40px;
-        color: #9CCDD8;
-    }
+        .sidebar h2 {
+            text-align: center;
+            margin-bottom: 40px;
+            color: #9CCDD8;
+        }
 
-.sidebar a {
-    display: block;
-    padding: 12px 20px;
-    text-decoration: none;
-    color: var(--gray-blue);
-    font-size: 15px;
-    margin: 4px 0;
-    transition: .2s;
-}
+        .sidebar a {
+            display: block;
+            padding: 15px 25px;
+            color: #D0D7E1;
+            text-decoration: none;
+            font-size: 17px;
+            border-left: 4px solid transparent;
+        }
 
-.sidebar a:hover,
-.sidebar a.active {
-    background: var(--soft-blue);
-    color: var(--white);
-}
+        .sidebar a:hover, .sidebar a.active {
+            background: #064469;
+            border-left: 4px solid #9CCDD8;
+            color: white;
+        }
+
+        .logout-btn:hover{
+            background-color: var(--light-blue);
+        }
+        .logout-btn {
+            
+            display: block;
+            width: 80%;
+            margin: 20px auto 0 auto;
+            padding: 10px;
+            background-color: var(--soft-blue);
+            color: var(--white);    
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            text-align: center;
+            transition: background-color 0.3s;
+        }
+        
 
     /* Top bar */
     .topbar {
@@ -195,6 +228,7 @@ body {
     <a href="#">Set Reminder</a>
     <a href="#">Manage User Profile</a>
     <a href="#">View Prescription</a>
+     <button class="logout-btn">logout</button>
    
 </div>
 
