@@ -31,73 +31,87 @@ if ($doc_result->num_rows === 1) {
 }
  $doc_stmt->close();
 
-// ================== HANDLE SCHEDULE ADDITION ==================
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_schedule'])) {
-    $start_time = $_POST['start_time'];
-    $end_time = $_POST['end_time'];
-    $available_day = $_POST['available_day'];
+// ================== HANDLE MEDICINE ADDITION ==================
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_medicine'])) {
+    $med_name = mysqli_real_escape_string($conn, $_POST['med_name']);
+    $description = mysqli_real_escape_string($conn, $_POST['description']);
     
     // Get a receptionist ID (using ID 1 as default)
     $receptionist_id = 1;
     
-    $add_sql = "INSERT INTO doctor_schedule_tbl (DOCTOR_ID, RECEPTIONIST_ID, START_TIME, END_TIME, AVAILABLE_DAY) 
-                VALUES (?, ?, ?, ?, ?)";
+    $add_sql = "INSERT INTO medicine_tbl (RECEPTIONIST_ID, MED_NAME, DESCRIPTION) 
+                VALUES (?, ?, ?)";
     $add_stmt = $conn->prepare($add_sql);
-    $add_stmt->bind_param("iisss", $doctor_id, $receptionist_id, $start_time, $end_time, $available_day);
+    $add_stmt->bind_param("iss", $receptionist_id, $med_name, $description);
     
     if ($add_stmt->execute()) {
-        $success_message = "Schedule added successfully!";
+        $success_message = "Medicine added successfully!";
     } else {
-        $error_message = "Error adding schedule: " . $conn->error;
+        $error_message = "Error adding medicine: " . $conn->error;
     }
     $add_stmt->close();
 }
 
-// ================== HANDLE SCHEDULE UPDATE ==================
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_schedule'])) {
-    $schedule_id = $_POST['schedule_id'];
-    $start_time = $_POST['start_time'];
-    $end_time = $_POST['end_time'];
-    $available_day = $_POST['available_day'];
+// ================== HANDLE MEDICINE UPDATE ==================
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_medicine'])) {
+    $medicine_id = $_POST['medicine_id'];
+    $med_name = mysqli_real_escape_string($conn, $_POST['med_name']);
+    $description = mysqli_real_escape_string($conn, $_POST['description']);
     
-    $update_sql = "UPDATE doctor_schedule_tbl SET 
-                   START_TIME = ?, 
-                   END_TIME = ?, 
-                   AVAILABLE_DAY = ? 
-                   WHERE SCHEDULE_ID = ? AND DOCTOR_ID = ?";
+    $update_sql = "UPDATE medicine_tbl SET 
+                   MED_NAME = ?, 
+                   DESCRIPTION = ? 
+                   WHERE MEDICINE_ID = ?";
     $update_stmt = $conn->prepare($update_sql);
-    $update_stmt->bind_param("sssii", $start_time, $end_time, $available_day, $schedule_id, $doctor_id);
+    $update_stmt->bind_param("ssi", $med_name, $description, $medicine_id);
     
     if ($update_stmt->execute()) {
-        $success_message = "Schedule updated successfully!";
+        $success_message = "Medicine updated successfully!";
     } else {
-        $error_message = "Error updating schedule: " . $conn->error;
+        $error_message = "Error updating medicine: " . $conn->error;
     }
     $update_stmt->close();
 }
 
-// ================== HANDLE SCHEDULE DELETION ==================
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_schedule'])) {
-    $schedule_id = $_POST['schedule_id'];
+// ================== HANDLE MEDICINE DELETION ==================
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_medicine'])) {
+    $medicine_id = $_POST['medicine_id'];
     
-    $delete_sql = "DELETE FROM doctor_schedule_tbl WHERE SCHEDULE_ID = ? AND DOCTOR_ID = ?";
-    $delete_stmt = $conn->prepare($delete_sql);
-    $delete_stmt->bind_param("ii", $schedule_id, $doctor_id);
+    // Check if medicine is used in any prescription
+    $check_sql = "SELECT COUNT(*) as count FROM prescription_medicine_tbl WHERE MEDICINE_ID = ?";
+    $check_stmt = $conn->prepare($check_sql);
+    $check_stmt->bind_param("i", $medicine_id);
+    $check_stmt->execute();
+    $check_result = $check_stmt->get_result();
+    $count = $check_result->fetch_assoc()['count'];
+    $check_stmt->close();
     
-    if ($delete_stmt->execute()) {
-        $success_message = "Schedule deleted successfully!";
+    if ($count > 0) {
+        $error_message = "Cannot delete medicine as it is used in prescriptions!";
     } else {
-        $error_message = "Error deleting schedule: " . $conn->error;
+        $delete_sql = "DELETE FROM medicine_tbl WHERE MEDICINE_ID = ?";
+        $delete_stmt = $conn->prepare($delete_sql);
+        $delete_stmt->bind_param("i", $medicine_id);
+        
+        if ($delete_stmt->execute()) {
+            $success_message = "Medicine deleted successfully!";
+        } else {
+            $error_message = "Error deleting medicine: " . $conn->error;
+        }
+        $delete_stmt->close();
     }
-    $delete_stmt->close();
 }
 
-// ================== FETCH DOCTOR SCHEDULE ==================
- $schedule_query = "SELECT * FROM doctor_schedule_tbl WHERE DOCTOR_ID = ? ORDER BY FIELD(AVAILABLE_DAY, 'MON', 'TUE', 'WED', 'THUR', 'FRI', 'SAT', 'SUN')";
- $schedule_stmt = $conn->prepare($schedule_query);
- $schedule_stmt->bind_param("i", $doctor_id);
- $schedule_stmt->execute();
- $schedule_result = $schedule_stmt->get_result();
+// ================== SEARCH FUNCTIONALITY ==================
+ $search = isset($_GET['search']) ? mysqli_real_escape_string($conn, $_GET['search']) : '';
+
+// ================== FETCH MEDICINES ==================
+ $medicines_query = "SELECT * FROM medicine_tbl";
+if (!empty($search)) {
+    $medicines_query .= " WHERE MED_NAME LIKE '%$search%' OR DESCRIPTION LIKE '%$search%'";
+}
+ $medicines_query .= " ORDER BY MED_NAME";
+ $medicines_result = $conn->query($medicines_query);
 
  $conn->close();
 ?>
@@ -107,7 +121,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_schedule'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manage Schedule - QuickCare</title>
+    <title>View Medicine - QuickCare</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -304,21 +318,44 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_schedule'])) {
             margin: 0;
         }
 
-        /* Schedule Content */
-        .schedule-content {
+        /* Medicine Content */
+        .medicine-content {
             padding: 30px;
         }
 
-        .schedule-header {
+        .medicine-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 30px;
         }
 
-        .schedule-header h2 {
+        .medicine-header h2 {
             font-size: 28px;
             color: var(--dark);
+        }
+
+        .search-bar {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .search-bar input {
+            flex: 1;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px 0 0 6px;
+            font-size: 16px;
+        }
+
+        .search-bar button {
+            padding: 12px 20px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 0 6px 6px 0;
+            cursor: pointer;
         }
 
         .btn {
@@ -369,13 +406,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_schedule'])) {
             background-color: #e67e22;
         }
 
-        .schedule-grid {
+        .medicine-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 25px;
         }
 
-        .schedule-card {
+        .medicine-card {
             background: var(--white);
             border-radius: 12px;
             padding: 25px;
@@ -383,12 +420,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_schedule'])) {
             transition: all 0.3s ease;
         }
 
-        .schedule-card:hover {
+        .medicine-card:hover {
             transform: translateY(-5px);
             box-shadow: var(--shadow-xl);
         }
 
-        .schedule-card-header {
+        .medicine-card-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -397,38 +434,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_schedule'])) {
             border-bottom: 1px solid #eee;
         }
 
-        .schedule-card-header h3 {
+        .medicine-card-header h3 {
             font-size: 20px;
             color: var(--dark);
             margin: 0;
         }
 
-        .day-badge {
-            display: inline-block;
-            padding: 5px 10px;
-            border-radius: 20px;
+        .medicine-id {
+            color: var(--text-light);
             font-size: 14px;
-            font-weight: 600;
-            background-color: rgba(0, 102, 204, 0.1);
-            color: var(--primary);
         }
 
-        .schedule-time {
-            display: flex;
-            align-items: center;
-            margin-bottom: 10px;
+        .medicine-description {
             color: #666;
+            margin-bottom: 20px;
         }
 
-        .schedule-time i {
-            margin-right: 10px;
-            color: var(--primary);
-        }
-
-        .schedule-actions {
+        .medicine-actions {
             display: flex;
             gap: 10px;
-            margin-top: 15px;
         }
 
         .empty-state {
@@ -554,7 +578,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_schedule'])) {
                 margin-left: 70px;
             }
             
-            .schedule-grid {
+            .medicine-grid {
                 grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
             }
         }
@@ -576,17 +600,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_schedule'])) {
                 padding: 15px 20px;
             }
             
-            .schedule-content {
+            .medicine-content {
                 padding: 20px;
             }
             
-            .schedule-header {
+            .medicine-header {
                 flex-direction: column;
                 align-items: flex-start;
                 gap: 15px;
             }
             
-            .schedule-grid {
+            .search-bar {
+                width: 100%;
+            }
+            
+            .medicine-grid {
                 grid-template-columns: 1fr;
             }
         }
@@ -616,10 +644,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_schedule'])) {
 
         <a href="doctor_dashboard.php" >Dashboard</a>
         <a href="d_profile.php">My Profile</a>
-        <a href="mangae_schedule_doctor.php" class="active">Manage Schedule</a>
+        <a href="mangae_schedule_doctor.php">Manage Schedule</a>
         <a href="appointment_doctor.php">Manage Appointments</a>
         <a href="manage_prescriptions.php">Manage Prescription</a>
-        <a href="view_medicine.php">View Medicine</a>
+        <a href="view_medicine.php" class="active">View Medicine</a>
         <a href="doctor_feedback.php">View Feedback</a>
         <button class="logout-btn">Logout</button>
     </div>
@@ -632,7 +660,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_schedule'])) {
                 <i class="fas fa-bars"></i>
             </button>
             
-            <h1>Manage Schedule</h1>
+            <h1>View Medicine</h1>
             
             <div class="topbar-right">
                 <div class="notification-icon">
@@ -650,8 +678,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_schedule'])) {
             </div>
         </header>
         
-        <!-- Schedule Content -->
-        <div class="schedule-content">
+        <!-- Medicine Content -->
+        <div class="medicine-content">
             <!-- Success/Error Messages -->
             <?php if (isset($success_message)): ?>
                 <div class="alert alert-success">
@@ -665,50 +693,45 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_schedule'])) {
                 </div>
             <?php endif; ?>
             
-            <!-- Schedule Header -->
-            <div class="schedule-header">
-                <h2>My Weekly Schedule</h2>
+            <!-- Medicine Header -->
+            <div class="medicine-header">
+                <h2>Medicine Inventory</h2>
                 <button class="btn btn-primary" onclick="openAddModal()">
-                    <i class="fas fa-plus"></i> Add Schedule
+                    <i class="fas fa-plus"></i> Add Medicine
                 </button>
             </div>
             
-            <!-- Schedule Grid -->
-            <?php if ($schedule_result->num_rows > 0): ?>
-                <div class="schedule-grid">
-                    <?php while ($schedule = $schedule_result->fetch_assoc()): ?>
-                        <div class="schedule-card">
-                            <div class="schedule-card-header">
-                                <h3>
-                                    <?php 
-                                    $day_name = '';
-                                    switch($schedule['AVAILABLE_DAY']) {
-                                        case 'MON': $day_name = 'Monday'; break;
-                                        case 'TUE': $day_name = 'Tuesday'; break;
-                                        case 'WED': $day_name = 'Wednesday'; break;
-                                        case 'THUR': $day_name = 'Thursday'; break;
-                                        case 'FRI': $day_name = 'Friday'; break;
-                                        case 'SAT': $day_name = 'Saturday'; break;
-                                        case 'SUN': $day_name = 'Sunday'; break;
-                                    }
-                                    echo $day_name;
-                                    ?>
-                                </h3>
-                                <span class="day-badge"><?php echo $schedule['AVAILABLE_DAY']; ?></span>
+            <!-- Search Bar -->
+            <div class="search-bar">
+                <form method="GET" action="view_medicine.php" style="display: flex; width: 100%;">
+                    <input type="text" name="search" placeholder="Search medicines by name or description..." value="<?php echo htmlspecialchars($search); ?>">
+                    <button type="submit">
+                        <i class="fas fa-search"></i> Search
+                    </button>
+                </form>
+            </div>
+            
+            <!-- Medicine Grid -->
+            <?php if ($medicines_result->num_rows > 0): ?>
+                <div class="medicine-grid">
+                    <?php while ($medicine = $medicines_result->fetch_assoc()): ?>
+                        <div class="medicine-card">
+                            <div class="medicine-card-header">
+                                <h3><?php echo htmlspecialchars($medicine['MED_NAME']); ?></h3>
+                                <span class="medicine-id">ID: #<?php echo $medicine['MEDICINE_ID']; ?></span>
                             </div>
                             
-                            <div class="schedule-time">
-                                <i class="far fa-clock"></i>
-                                <span><?php echo date('h:i A', strtotime($schedule['START_TIME'])); ?> - <?php echo date('h:i A', strtotime($schedule['END_TIME'])); ?></span>
+                            <div class="medicine-description">
+                                <?php echo htmlspecialchars($medicine['DESCRIPTION']); ?>
                             </div>
                             
-                            <div class="schedule-actions">
-                                <button class="btn btn-warning" onclick="openEditModal(<?php echo $schedule['SCHEDULE_ID']; ?>, '<?php echo $schedule['START_TIME']; ?>', '<?php echo $schedule['END_TIME']; ?>', '<?php echo $schedule['AVAILABLE_DAY']; ?>')">
+                            <div class="medicine-actions">
+                                <button class="btn btn-warning" onclick="openEditModal(<?php echo $medicine['MEDICINE_ID']; ?>, '<?php echo htmlspecialchars($medicine['MED_NAME']); ?>', '<?php echo htmlspecialchars($medicine['DESCRIPTION']); ?>')">
                                     <i class="fas fa-edit"></i> Edit
                                 </button>
                                 <form method="POST" style="display: inline;">
-                                    <input type="hidden" name="schedule_id" value="<?php echo $schedule['SCHEDULE_ID']; ?>">
-                                    <button type="submit" name="delete_schedule" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this schedule?')">
+                                    <input type="hidden" name="medicine_id" value="<?php echo $medicine['MEDICINE_ID']; ?>">
+                                    <button type="submit" name="delete_medicine" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this medicine?')">
                                         <i class="fas fa-trash"></i> Delete
                                     </button>
                                 </form>
@@ -718,88 +741,60 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_schedule'])) {
                 </div>
             <?php else: ?>
                 <div class="empty-state">
-                    <i class="far fa-calendar-times"></i>
-                    <h3>No Schedule Found</h3>
-                    <p>You haven't added any schedule yet. Click the "Add Schedule" button to get started.</p>
+                    <i class="fas fa-pills"></i>
+                    <h3>No Medicines Found</h3>
+                    <p><?php if (!empty($search)): ?>No medicines found matching your search criteria.<?php else: ?>No medicines found in the inventory.<?php endif; ?></p>
                 </div>
             <?php endif; ?>
         </div>
     </div>
     
-    <!-- Add Schedule Modal -->
+    <!-- Add Medicine Modal -->
     <div id="addModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeAddModal()">&times;</span>
-            <h2>Add New Schedule</h2>
-            <form method="POST" action="mangae_schedule_doctor.php">
-                <input type="hidden" name="add_schedule" value="1">
+            <h2>Add New Medicine</h2>
+            <form method="POST" action="view_medicine.php">
+                <input type="hidden" name="add_medicine" value="1">
                 
                 <div class="form-group">
-                    <label for="available_day">Day</label>
-                    <select class="form-control" id="available_day" name="available_day" required>
-                        <option value="">Select Day</option>
-                        <option value="MON">Monday</option>
-                        <option value="TUE">Tuesday</option>
-                        <option value="WED">Wednesday</option>
-                        <option value="THUR">Thursday</option>
-                        <option value="FRI">Friday</option>
-                        <option value="SAT">Saturday</option>
-                        <option value="SUN">Sunday</option>
-                    </select>
+                    <label for="med_name">Medicine Name</label>
+                    <input type="text" class="form-control" id="med_name" name="med_name" required>
                 </div>
                 
                 <div class="form-group">
-                    <label for="start_time">Start Time</label>
-                    <input type="time" class="form-control" id="start_time" name="start_time" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="end_time">End Time</label>
-                    <input type="time" class="form-control" id="end_time" name="end_time" required>
+                    <label for="description">Description</label>
+                    <textarea class="form-control" id="description" name="description" rows="4" required></textarea>
                 </div>
                 
                 <button type="submit" class="btn btn-success">
-                    <i class="fas fa-save"></i> Add Schedule
+                    <i class="fas fa-save"></i> Add Medicine
                 </button>
             </form>
         </div>
     </div>
     
-    <!-- Edit Schedule Modal -->
+    <!-- Edit Medicine Modal -->
     <div id="editModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeEditModal()">&times;</span>
-            <h2>Edit Schedule</h2>
-            <form method="POST" action="mangae_schedule_doctor.php">
-                <input type="hidden" id="edit_schedule_id" name="schedule_id">
-                <input type="hidden" name="update_schedule" value="1">
+            <h2>Edit Medicine</h2>
+            <form method="POST" action="view_medicine.php">
+                <input type="hidden" id="edit_medicine_id" name="medicine_id">
+                <input type="hidden" name="update_medicine" value="1">
                 
                 <div class="form-group">
-                    <label for="edit_available_day">Day</label>
-                    <select class="form-control" id="edit_available_day" name="available_day" required>
-                        <option value="">Select Day</option>
-                        <option value="MON">Monday</option>
-                        <option value="TUE">Tuesday</option>
-                        <option value="WED">Wednesday</option>
-                        <option value="THUR">Thursday</option>
-                        <option value="FRI">Friday</option>
-                        <option value="SAT">Saturday</option>
-                        <option value="SUN">Sunday</option>
-                    </select>
+                    <label for="edit_med_name">Medicine Name</label>
+                    <input type="text" class="form-control" id="edit_med_name" name="med_name" required>
                 </div>
                 
                 <div class="form-group">
-                    <label for="edit_start_time">Start Time</label>
-                    <input type="time" class="form-control" id="edit_start_time" name="start_time" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="edit_end_time">End Time</label>
-                    <input type="time" class="form-control" id="edit_end_time" name="end_time" required>
+                    <label for="edit_description">Description</label>
+                    <textarea class="form-control" id="edit_description" name="description" rows="4" required></textarea>
                 </div>
                 
                 <button type="submit" class="btn btn-success">
-                    <i class="fas fa-save"></i> Update Schedule
+                    <i class="fas fa-save"></i> Update Medicine
                 </button>
             </form>
         </div>
@@ -815,11 +810,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_schedule'])) {
             document.getElementById('addModal').style.display = 'none';
         }
         
-        function openEditModal(scheduleId, startTime, endTime, availableDay) {
-            document.getElementById('edit_schedule_id').value = scheduleId;
-            document.getElementById('edit_start_time').value = startTime;
-            document.getElementById('edit_end_time').value = endTime;
-            document.getElementById('edit_available_day').value = availableDay;
+        function openEditModal(medicineId, medName, description) {
+            document.getElementById('edit_medicine_id').value = medicineId;
+            document.getElementById('edit_med_name').value = medName;
+            document.getElementById('edit_description').value = description;
             document.getElementById('editModal').style.display = 'block';
         }
         

@@ -221,7 +221,7 @@
             <a href="doctorform.php">Doctor New Registrations</a>
         </div>
         <div class="card">
-            <a href="receptionistform.php">Receptionist New Registrations</a>       
+            <a href="recpt_regis.php">Receptionist New Registrations</a>       
         </div>
     </div>  
 

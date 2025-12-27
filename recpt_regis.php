@@ -240,7 +240,7 @@ include 'config.php';
                 $hashed_password = password_hash($password, PASSWORD_DEFAULT);
                 
                 // SQL to insert data
-                $sql = "INSERT INTO receptionist_tbl (FIRST_NAME, LAST_NAME, DOB, DOJ, GENDER, PHONE, EMAIL, USERNAME, PASSWORD, ADDRESS) 
+                $sql = "INSERT INTO receptionist_tbl (FIRST_NAME, LAST_NAME, DOB, DOJ, GENDER, PHONE, EMAIL, USERNAME, PSWD, ADDRESS) 
                         VALUES ('$first_name', '$last_name', '$dob', '$doj', '$gender', '$phone', '$email', '$username', '$hashed_password', '$address')";
                 
                 if ($conn->query($sql) === TRUE) {

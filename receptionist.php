@@ -222,11 +222,11 @@ body {
 
     <a href="#" class="active">Dashboard</a>
      <a href="recep_profile.php">View My Profile</a>
-    <a href="#">Manage Appointments</a>
-    <a href="#">Manage Doctor Schedule</a>
-    <a href="#">Manage Medicine</a>
-    <a href="#">Set Reminder</a>
-    <a href="#">Manage User Profile</a>
+    <a href="appointment_recep.php">Manage Appointments</a>
+    <a href="doctor_schedule_recep.php">Manage Doctor Schedule</a>
+    <a href="manage_medicine.php">Manage Medicine</a>
+    <a href="st_reminder.php">Set Reminder</a>
+    <a href="manage_user_profile.php">Manage User Profile</a>
     <a href="#">View Prescription</a>
      <button class="logout-btn">logout</button>
    

@@ -34,7 +34,7 @@ switch ($user_type) {
         
     case 'receptionist':
         $query = "SELECT RECEPTIONIST_ID, FIRST_NAME, LAST_NAME, EMAIL, PSWD FROM receptionist_tbl WHERE USERNAME='$username'";
-        $redirect_page = 'receptionist_dashboard.php';
+        $redirect_page = 'receptionist.php';
         $session_id_key = 'RECEPTIONIST_ID';
         $session_name_key = 'RECEPTIONIST_NAME';
         break;
