@@ -484,7 +484,7 @@ include 'config.php';
             <a href="medicine_reminder.php">Medicine Reminder</a>
             <a href="payments.php">Payments</a>
             <a href="feedback.php">Feedback</a>
-            <a href="doctor_profiles.php">View Doctor Profile</a>
+            <a href="view_doctor_patient.php">View Doctor Profile</a>
             <button class="logout-btn">logout</button>
         </div>
       
