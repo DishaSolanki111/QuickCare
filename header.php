@@ -554,9 +554,9 @@ if (session_status() == PHP_SESSION_NONE) {
         </div>
         <div class="mobile-nav-links">
             <a href="index.php">Home</a>
-            <a href="services.php">Services</a>
+            <a href="schedule.php">Schedule</a>
             <a href="doctors.php">Doctors</a>
-            <a href="aboutus.php" class="active">About Us</a>
+            <a href="aboutus.php" >About Us</a>
             <a href="contactus.php">Contact</a>
             
             <?php if (isset($_SESSION['PATIENT_ID']) || isset($_SESSION['DOCTOR_ID']) || isset($_SESSION['RECEPTIONIST_ID'])): ?>
@@ -606,13 +606,14 @@ if (session_status() == PHP_SESSION_NONE) {
                 <a href="logout.php">Logout</a>
             <?php else: ?>
                 <!-- Auth Links (when not logged in) -->
-                <a href="login.php">Login</a>
-                <a href="register.php">Register</a>
+                <a href="login_for_all.php">Login</a>
+                <a href="patientform.php">Register</a>
             <?php endif; ?>
         </div>
     </div>
 
     <script>
+        
         // Mobile menu toggle
         const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
         const closeMenu = document.querySelector('.close-menu');

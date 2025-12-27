@@ -476,7 +476,7 @@ include 'config.php';
         <img src="./uploads/logo.JPG" alt="QuickCare Logo" class="logo-img" style="display:block; margin: 0 auto 10px auto; width:80px; height:80px; border-radius:50%;">
         <h2>QuickCare</h2>
         <div class="nav">
-            <a class="active">Dashboard</a>
+            <a href="patient.php">Dashboard</a>
             <a href="patient_profile.php"> My Profile</a>
             <a href="manage_appointments.php">Manage Appointments</a>
             <a href="doctor_schedule.php">View Doctor Schedule</a>
@@ -485,7 +485,7 @@ include 'config.php';
             <a href="payments.php">Payments</a>
             <a href="feedback.php">Feedback</a>
             <a href="view_doctor_patient.php">View Doctor Profile</a>
-            <button class="logout-btn">logout</button>
+            <a href="logout.php" class="logout-btn">logout</a>
         </div>
       
     </div>
@@ -579,7 +579,7 @@ include 'config.php';
 
         <!-- BUTTONS -->
         <div class="actions">
-            <a href="book_appointment.php" class="btn">Book Appointment</a>
+            <a href="appointment.php" class="btn">Book Appointment</a>
             <a href="prescriptions.php" class="btn">View Prescription</a>
             <a href="feedback.php" class="btn">Give Feedback</a>
             <a href="payments.php" class="btn">Make Payment</a>
