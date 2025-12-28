@@ -279,7 +279,7 @@
         </div>
         <div class="card">
             <h3>Total Revenue</h3>
-            <p>$<?php 
+            <p>₹<?php 
             // PHP code to calculate total revenue
             $revenue_query = "SELECT SUM(AMOUNT) as total FROM payment_tbl WHERE STATUS = 'COMPLETED'";
             $revenue_result = mysqli_query($conn, $revenue_query);
