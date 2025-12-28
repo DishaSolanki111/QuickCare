@@ -216,7 +216,7 @@
         <h2>QuickCare</h2>
 
     
-    <a href="admin.php" class="active">Dashboard</a>
+    <a href="admin.php">Dashboard</a>
     <a href="Admin_appoitment.php" >View Appointments</a>
     <a href="Admin_doctor.php">Manage Doctors</a>
     <a href="Admin_recept.php">Manage Receptionist</a>
@@ -239,7 +239,7 @@
     <!-- Revenue Card -->
     <div class="revenue-card">
         <h3>Total Revenue</h3>
-        <p>$<?php 
+        <p>₹<?php 
         // PHP code to calculate total revenue
         include 'config.php';
         $revenue_query = "SELECT SUM(AMOUNT) as total FROM payment_tbl WHERE STATUS = 'COMPLETED'";
