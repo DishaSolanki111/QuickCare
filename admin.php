@@ -168,15 +168,14 @@
         <h2>QuickCare</h2>
 
     <a href="#">Dashboard</a>
-    <a href="#">Appointments</a>
-    <a href="#">Doctors</a>
-    <a href="#">Receptionist</a>
-    <a href="#">Patients</a>
-    <a href="#">Medicine</a>
-    <a href="#">Payments</a>
-    <a href="#">Feedback</a>
+    <a href="#">View Appointments</a>
+    <a href="#">Manage Doctors</a>
+    <a href="#">ManageReceptionist</a>
+    <a href="#">Manage Patients</a>
+    <a href="#">View Medicine</a>
+    <a href="#">View Payments</a>
+    <a href="#">View Feedback</a>
     <a href="#">Reports</a>
-    <a href="#">Settings</a>
     <button class="logout-btn">logout</button>
 </div>
 
