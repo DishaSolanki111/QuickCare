@@ -284,7 +284,7 @@
         </tr>
         <?php
         // PHP code to fetch payments from database
-        include 'db_connection.php';
+        include 'config.php';
         
         // Build query based on filters
         $query = "SELECT p.PAYMENT_ID, p.APPOINTMENT_ID, p.AMOUNT, p.PAYMENT_DATE, 
