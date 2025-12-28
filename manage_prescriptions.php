@@ -1,12 +1,43 @@
 <?php
+session_start();
+
+// Check if user is logged in and is a doctor
+if (
+    !isset($_SESSION['LOGGED_IN']) ||
+    $_SESSION['LOGGED_IN'] !== true ||
+    !isset($_SESSION['USER_TYPE']) ||
+    $_SESSION['USER_TYPE'] !== 'doctor'
+) {
+    header("Location: login.php");
+    exit();
+}
+
 // Include your existing config file
 require_once 'config.php';
-// Check if the connection variable $conn exists and is valid
+
+// Check if connection variable $conn exists and is valid
 if (!$conn) {
     die("Error: Database connection failed. Please check your config.php file.");
 }
 
-// --- NEW: Check for success message in URL ---
+// Get doctor information from session
+ $doctor_id = $_SESSION['DOCTOR_ID'];
+ $doctor_name = "Doctor";
+
+// Fetch doctor's name from database
+ $doc_sql = "SELECT FIRST_NAME, LAST_NAME FROM doctor_tbl WHERE DOCTOR_ID = ?";
+ $doc_stmt = $conn->prepare($doc_sql);
+ $doc_stmt->bind_param("i", $doctor_id);
+ $doc_stmt->execute();
+ $doc_result = $doc_stmt->get_result();
+
+if ($doc_result->num_rows === 1) {
+    $doc = $doc_result->fetch_assoc();
+    $doctor_name = htmlspecialchars($doc['FIRST_NAME'] . ' ' . $doc['LAST_NAME']);
+}
+ $doc_stmt->close();
+
+// Check for success message in URL
  $alert_message = '';
 if (isset($_GET['status'])) {
     if ($_GET['status'] === 'success') {
@@ -16,7 +47,7 @@ if (isset($_GET['status'])) {
     }
 }
 
-// Fetch all patients from the database
+// Fetch all patients from database
  $sql = "SELECT PATIENT_ID, FIRST_NAME, LAST_NAME, DOB, PHONE FROM patient_tbl ORDER BY LAST_NAME, FIRST_NAME";
  $result = $conn->query($sql);
 
@@ -26,7 +57,7 @@ if ($result && $result->num_rows > 0) {
         $patients[] = $row;
     }
 }
- $conn->close(); // Close the connection when done
+ $conn->close(); // Close connection when done
 ?>
 
 <!DOCTYPE html>
@@ -309,18 +340,18 @@ if ($result && $result->num_rows > 0) {
     <div class="container">
         <!-- Sidebar -->
         <div class="sidebar">
-    <img src="uploads/logo.JPG" alt="QuickCare Logo" class="logo-img" style="display:block; margin: 0 auto 10px auto; width:80px; height:80px; border-radius:50%;">  
-    <h2>QuickCare</h2>
+            <img src="uploads/logo.JPG" alt="QuickCare Logo" class="logo-img" style="display:block; margin: 0 auto 10px auto; width:80px; height:80px; border-radius:50%;">  
+            <h2>QuickCare</h2>
 
-    <a href="doctor_dashboard.php" >Dashboard</a>
-    <a href="d_profile.php">My Profile</a>
-    <a href="mangae_schedule_doctor.php">Manage Schedule</a>
-    <a href="appointment_doctor.php">Manage Appointments</a>
-    <a href="manage_prescriptions.php">Manage Prescription</a>
-    <a href="#">View Medicine</a>
-    <a href="doctor_feedback.php">View Feedback</a>
-     <button class="logout-btn">Logout</button>
-</div>
+            <a href="doctor_dashboard.php" >Dashboard</a>
+            <a href="d_profile.php">My Profile</a>
+            <a href="mangae_schedule_doctor.php">Manage Schedule</a>
+            <a href="appointment_doctor.php">Manage Appointments</a>
+            <a href="manage_prescriptions.php" class="active">Manage Prescription</a>
+            <a href="#">View Medicine</a>
+            <a href="doctor_feedback.php">View Feedback</a>
+            <a href="logout.php" class="logout-btn">Logout</a>
+        </div>
         
         <!-- Main Content -->
         <div class="main-content">
@@ -333,8 +364,8 @@ if ($result && $result->num_rows > 0) {
                         <span class="notification-badge">5</span>
                     </button>
                     <div class="user-dropdown">
-                        <div class="user-avatar">AS</div>
-                        <span>Dr. Amar Kumar</span>
+                        <div class="user-avatar"><?php echo substr($doctor_name, 0, 1); ?></div>
+                        <span>Dr. <?php echo $doctor_name; ?></span>
                         <i class="fas fa-chevron-down" style="margin-left: 8px;"></i>
                     </div>
                 </div>
@@ -389,10 +420,10 @@ if ($result && $result->num_rows > 0) {
         </div>
     </div>
 
-    <!-- JavaScript to show the pop-up alert -->
+    <!-- JavaScript to show pop-up alert -->
     <?php if (!empty($alert_message)): ?>
         <script>
-            // Wait for the page to fully load before showing the alert
+            // Wait for page to fully load before showing alert
             window.onload = function() {
                 alert('<?php echo addslashes($alert_message); ?>');
             }
