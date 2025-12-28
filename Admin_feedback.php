@@ -272,7 +272,7 @@
         </tr>
         <?php
         // PHP code to fetch feedback from database
-        include 'db_connection.php';
+        include 'config.php';
         
         // Build query based on filters
         $query = "SELECT f.FEEDBACK_ID, f.APPOINTMENT_ID, f.RATING, f.COMMENTS,

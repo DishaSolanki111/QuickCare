@@ -265,7 +265,7 @@
         </tr>
         <?php
         // PHP code to fetch doctors from database
-        include 'db_connection.php';
+        include 'config.php';
         
         // Build query based on filters
         $query = "SELECT d.DOCTOR_ID, d.FIRST_NAME, d.LAST_NAME, d.PROFILE_IMAGE, 

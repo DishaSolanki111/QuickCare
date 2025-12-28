@@ -277,7 +277,7 @@
         </tr>
         <?php
         // PHP code to fetch appointments from database
-        include 'db_connection.php';
+        include 'config.php';
         
         // Build query based on filters
         $query = "SELECT a.APPOINTMENT_ID, p.FIRST_NAME as p_first, p.LAST_NAME as p_last, 
