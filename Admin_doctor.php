@@ -231,7 +231,7 @@
     </div>
 
     <!-- Add New Doctor Button -->
-    <a href="add_doctor.php" class="add-btn">+ Add New Doctor</a>
+    <a href="doctorform.php" class="add-btn">+ Add New Doctor</a>
 
     <!-- Filter Section -->
     <div class="filter-container">

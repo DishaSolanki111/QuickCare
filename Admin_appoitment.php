@@ -235,9 +235,7 @@
         <p>Welcome, Admin</p>
     </div>
 
-    <!-- Add New Appointment Button -->
-    <a href="add_appointment.php" class="add-btn">+ Add New Appointment</a>
-
+  
     <!-- Filter Section -->
     <div class="filter-container">
         <form method="GET" action="view_appointments.php">
@@ -328,8 +326,7 @@
                     <td><span class='status-badge $status_class'>".$row['STATUS']."</span></td>
                     <td>
                         <button class='action-btn view-btn' onclick='viewAppointment(".$row['APPOINTMENT_ID'].")'>View</button>
-                        <button class='action-btn edit-btn' onclick='editAppointment(".$row['APPOINTMENT_ID'].")'>Edit</button>
-                        <button class='action-btn delete-btn' onclick='deleteAppointment(".$row['APPOINTMENT_ID'].")'>Delete</button>
+                     
                     </td>
                 </tr>";
             }

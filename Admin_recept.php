@@ -219,7 +219,7 @@
     </div>
 
     <!-- Add New Receptionist Button -->
-    <a href="add_receptionist.php" class="add-btn">+ Add New Receptionist</a>
+    <a href="recpt_regis.php" class="add-btn">+ Add New Receptionist</a>
 
     <!-- Filter Section -->
     <div class="filter-container">
