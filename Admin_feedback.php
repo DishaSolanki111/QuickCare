@@ -200,14 +200,14 @@
   <img src="uploads/logo.JPG" alt="QuickCare Logo" class="logo-img" style="display:block; margin: 0 auto 10px auto; width:80px; height:80px; border-radius:50%;">  
         <h2>QuickCare</h2>
 
-    <a href="admin.php" class="active">Dashboard</a>
+    <a href="admin.php" >Dashboard</a>
     <a href="Admin_appoitment.php" >View Appointments</a>
     <a href="Admin_doctor.php">Manage Doctors</a>
     <a href="Admin_recept.php">Manage Receptionist</a>
     <a href="Admin_patient.php">Manage Patients</a>
     <a href="Admin_medicine.php">View Medicine</a>
     <a href="Admin_payment.php">View Payments</a>
-    <a href="Admin_feedback.php">View Feedback</a>
+    <a href="Admin_feedback.php" class="active">View Feedback</a>
     <a href="Admin_report.php">Reports</a>
     <button class="logout-btn">logout</button>
 </div>

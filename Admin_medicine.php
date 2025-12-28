@@ -217,8 +217,7 @@
         <p>Welcome, Admin</p>
     </div>
 
-    <!-- Add New Medicine Button -->
-    <a href="add_medicine.php" class="add-btn">+ Add New Medicine</a>
+    
 
     <!-- Filter Section -->
     <div class="filter-container">
@@ -267,8 +266,7 @@
                     <td>".$row['receptionist_name']."</td>
                     <td>
                         <button class='action-btn view-btn' onclick='viewMedicine(".$row['MEDICINE_ID'].")'>View</button>
-                        <button class='action-btn edit-btn' onclick='editMedicine(".$row['MEDICINE_ID'].")'>Edit</button>
-                        <button class='action-btn delete-btn' onclick='deleteMedicine(".$row['MEDICINE_ID'].")'>Delete</button>
+                    
                     </td>
                 </tr>";
             }

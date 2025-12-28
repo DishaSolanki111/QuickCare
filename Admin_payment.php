@@ -222,7 +222,7 @@
     <a href="Admin_recept.php">Manage Receptionist</a>
     <a href="Admin_patient.php">Manage Patients</a>
     <a href="Admin_medicine.php">View Medicine</a>
-    <a href="Admin_payment.php">View Payments</a>
+    <a href="Admin_payment.php" class="active">View Payments</a>
     <a href="Admin_feedback.php">View Feedback</a>
     <a href="Admin_report.php">Reports</a>
     <button class="logout-btn">logout</button>
