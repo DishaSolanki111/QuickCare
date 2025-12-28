@@ -216,7 +216,7 @@
         <h2>QuickCare</h2>
 
    <a href="admin.php" class="active">Dashboard</a>
-    <a href="Admin_appoitment.php" >View Appointments</a>
+    <a href="Admin_appoitment.php">View Appointments</a>
     <a href="Admin_doctor.php">Manage Doctors</a>
     <a href="Admin_recept.php">Manage Receptionist</a>
     <a href="Admin_patient.php">Manage Patients</a>
@@ -252,7 +252,7 @@
                 <option value="">All Doctors</option>
                 <?php
                 // PHP code to populate doctors from database
-                include 'db_connection.php';
+                include 'config.php';
                 $doctor_query = "SELECT DOCTOR_ID, FIRST_NAME, LAST_NAME FROM doctor_tbl ORDER BY FIRST_NAME";
                 $doctor_result = mysqli_query($conn, $doctor_query);
                 while($doctor_row = mysqli_fetch_assoc($doctor_result)) {

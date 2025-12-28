@@ -210,7 +210,7 @@
   <img src="uploads/logo.JPG" alt="QuickCare Logo" class="logo-img" style="display:block; margin: 0 auto 10px auto; width:80px; height:80px; border-radius:50%;">  
         <h2>QuickCare</h2>
 
-    <a href="admin.php" class="active">Dashboard</a>
+   <a href="admin.php" class="active">Dashboard</a>
     <a href="Admin_appoitment.php" >View Appointments</a>
     <a href="Admin_doctor.php">Manage Doctors</a>
     <a href="Admin_recept.php">Manage Receptionist</a>
@@ -241,7 +241,7 @@
                 <option value="">All Specializations</option>
                 <?php
                 // PHP code to populate specializations from database
-                include 'db_connection.php';
+                include 'config.php';
                 $spec_query = "SELECT SPECIALISATION_ID, SPECIALISATION_NAME FROM specialisation_tbl ORDER BY SPECIALISATION_NAME";
                 $spec_result = mysqli_query($conn, $spec_query);
                 while($spec_row = mysqli_fetch_assoc($spec_result)) {
