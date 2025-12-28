@@ -197,8 +197,9 @@
   <img src="uploads/logo.JPG" alt="QuickCare Logo" class="logo-img" style="display:block; margin: 0 auto 10px auto; width:80px; height:80px; border-radius:50%;">  
         <h2>QuickCare</h2>
 
-    <a href="admin.php">Dashboard</a>
-    <a href="Admin_appoitment.php" class="active">View Appointments</a>
+   
+    <a href="admin.php" class="active">Dashboard</a>
+    <a href="Admin_appoitment.php" >View Appointments</a>
     <a href="Admin_doctor.php">Manage Doctors</a>
     <a href="Admin_recept.php">Manage Receptionist</a>
     <a href="Admin_patient.php">Manage Patients</a>
@@ -242,7 +243,7 @@
         </tr>
         <?php
         // PHP code to fetch receptionists from database
-        include 'db_connection.php';
+        include 'config.php';
         
         // Build query based on filters
         $query = "SELECT * FROM receptionist_tbl WHERE 1=1";
