@@ -103,7 +103,7 @@
   <h2>QuickCare</h2>
 
   <a href="admin.php">Dashboard</a>
-    <a href="Admin_appoitment.php" class="active">View Appointments</a>
+    <a href="Admin_appoitment.php">View Appointments</a>
     <a href="Admin_doctor.php">Manage Doctors</a>
     <a href="Admin_recept.php">Manage Receptionist</a>
     <a href="Admin_patient.php">Manage Patients</a>
