@@ -76,6 +76,7 @@ if (session_status() == PHP_SESSION_NONE) {
         background: rgba(255, 255, 255, 0.95);
         backdrop-filter: blur(10px);
         border-bottom: 1px solid rgba(0, 102, 204, 0.1);
+        margin-bottom: 100px;
     }
 
     .navbar {
