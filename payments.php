@@ -1,729 +1,362 @@
 <?php
 session_start();
 
-// Check if user is logged in as a patient
 if (!isset($_SESSION['PATIENT_ID'])) {
-    header("Location: login_for_all.php");
+    header("Location: login.php");
     exit;
 }
 
-include 'config.php';
- $patient_id = $_SESSION['PATIENT_ID'];
-
-// Fetch patient data from database
- $patient_query = mysqli_query($conn, "SELECT * FROM patient_tbl WHERE PATIENT_ID = '$patient_id'");
- $patient = mysqli_fetch_assoc($patient_query);
-
-// Fetch payments data
- $payments_query = mysqli_query($conn, "
-    SELECT p.*, a.APPOINTMENT_DATE, a.APPOINTMENT_TIME, d.FIRST_NAME as DOC_FNAME, d.LAST_NAME as DOC_LNAME, s.SPECIALISATION_NAME
-    FROM payment_tbl p
-    JOIN appointment_tbl a ON p.APPOINTMENT_ID = a.APPOINTMENT_ID
-    JOIN doctor_tbl d ON a.DOCTOR_ID = d.DOCTOR_ID
-    JOIN specialisation_tbl s ON d.SPECIALISATION_ID = s.SPECIALISATION_ID
-    WHERE a.PATIENT_ID = '$patient_id'
-    ORDER BY p.PAYMENT_DATE DESC
-");
-
-// Fetch unpaid appointments
- $unpaid_query = mysqli_query($conn, "
-    SELECT a.*, d.FIRST_NAME as DOC_FNAME, d.LAST_NAME as DOC_LNAME, s.SPECIALISATION_NAME
-    FROM appointment_tbl a
-    JOIN doctor_tbl d ON a.DOCTOR_ID = d.DOCTOR_ID
-    JOIN specialisation_tbl s ON d.SPECIALISATION_ID = s.SPECIALISATION_ID
-    WHERE a.PATIENT_ID = '$patient_id'
-    AND a.APPOINTMENT_ID NOT IN (SELECT APPOINTMENT_ID FROM payment_tbl)
-    AND a.STATUS = 'COMPLETED'
-    ORDER BY a.APPOINTMENT_DATE DESC
-");
-
-// Handle payment processing
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['process_payment'])) {
-    $appointment_id = mysqli_real_escape_string($conn, $_POST['appointment_id']);
-    $amount = mysqli_real_escape_string($conn, $_POST['amount']);
-    $payment_mode = mysqli_real_escape_string($conn, $_POST['payment_mode']);
-    
-    // Generate a transaction ID
-    $transaction_id = uniqid('txn_');
-    
-    $payment_query = "INSERT INTO payment_tbl (APPOINTMENT_ID, AMOUNT, PAYMENT_DATE, PAYMENT_MODE, STATUS, TRANSACTION_ID) 
-                     VALUES ('$appointment_id', '$amount', CURDATE(), '$payment_mode', 'COMPLETED', '$transaction_id')";
-    
-    if (mysqli_query($conn, $payment_query)) {
-        $success_message = "Payment processed successfully!";
-        // Refresh the payments query
-        $payments_query = mysqli_query($conn, "
-            SELECT p.*, a.APPOINTMENT_DATE, a.APPOINTMENT_TIME, d.FIRST_NAME as DOC_FNAME, d.LAST_NAME as DOC_LNAME, s.SPECIALISATION_NAME
-            FROM payment_tbl p
-            JOIN appointment_tbl a ON p.APPOINTMENT_ID = a.APPOINTMENT_ID
-            JOIN doctor_tbl d ON a.DOCTOR_ID = d.DOCTOR_ID
-            JOIN specialisation_tbl s ON d.SPECIALISATION_ID = s.SPECIALISATION_ID
-            WHERE a.PATIENT_ID = '$patient_id'
-            ORDER BY p.PAYMENT_DATE DESC
-        ");
-        
-        // Refresh unpaid appointments query
-        $unpaid_query = mysqli_query($conn, "
-            SELECT a.*, d.FIRST_NAME as DOC_FNAME, d.LAST_NAME as DOC_LNAME, s.SPECIALISATION_NAME
-            FROM appointment_tbl a
-            JOIN doctor_tbl d ON a.DOCTOR_ID = d.DOCTOR_ID
-            JOIN specialisation_tbl s ON d.SPECIALISATION_ID = s.SPECIALISATION_ID
-            WHERE a.PATIENT_ID = '$patient_id'
-            AND a.APPOINTMENT_ID NOT IN (SELECT APPOINTMENT_ID FROM payment_tbl)
-            AND a.STATUS = 'COMPLETED'
-            ORDER BY a.APPOINTMENT_DATE DESC
-        ");
-    } else {
-        $error_message = "Error processing payment: " . mysqli_error($conn);
-    }
+// Check if there's a pending appointment in session
+if (!isset($_SESSION['PENDING_APPOINTMENT'])) {
+    header("Location: patient.php");
+    exit;
 }
-?>
 
+ $appointment = $_SESSION['PENDING_APPOINTMENT'];
+ $doctor_id = $appointment['doctor_id'];
+ $date = $appointment['date'];
+ $time = $appointment['time'];
+ $schedule_id = $appointment['schedule_id'];
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Payments - QuickCare</title>
+    <title>Confirm Appointment</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #1a3a5f;
-            --secondary-color: #3498db;
-            --accent-color: #2ecc71;
-            --light-color: #f8f9fa;
-            --dark-color: #343a40;
-            --danger-color: #e74c3c;
-            --warning-color: #f39c12;
-            --info-color: #17a2b8;
-            --dark-blue: #072D44;
-            --mid-blue: #064469;
-            --soft-blue: #5790AB;
-            --light-blue: #9CCDD8;
-            --gray-blue: #D0D7E1;
-            --white: #ffffff;
-            --card-bg: #F6F9FB;
+            /* Blue color scheme */
+            --primary-blue: #1a73e8;
+            --secondary-blue: #4285f4;
+            --light-blue: #e8f0fe;
+            --medium-blue: #8ab4f8;
+            --dark-blue: #174ea6;
+            --accent-blue: #0b57d0;
+            --text-dark: #202124;
+            --text-light: #ffffff;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --shadow-hover: 0 10px 20px rgba(0, 0, 0, 0.15);
+            --success-color: #28a745;
         }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
+
         body {
-            background-color: #f5f7fa;
-            color: #333;
-            line-height: 1.6;
-        }
-        
-        .container {
-            display: flex;
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f5f8ff 0%, #e6f0ff 100%);
             min-height: 100vh;
-        }
-        
-        /* Sidebar Styles */
-        .sidebar {
-            width: 250px;
-            background: #072D44;
-            min-height: 100vh;
-            color: white;
-            padding-top: 30px;
-            position: fixed;
-        }
-
-        .sidebar h2 {
-            text-align: center;
-            margin-bottom: 40px;
-            color: #9CCDD8;
-        }
-
-        .sidebar a {
-            display: block;
-            padding: 15px 25px;
-            color: #D0D7E1;
-            text-decoration: none;
-            font-size: 17px;
-            border-left: 4px solid transparent;
-        }
-
-        .sidebar a:hover, .sidebar a.active {
-            background: #064469;
-            border-left: 4px solid #9CCDD8;
-            color: white;
-        }
-
-        .logout-btn:hover{
-            background-color: var(--light-blue);
-        }
-        .logout-btn {
-            display: block;
-            width: 80%;
-            margin: 20px auto 0 auto;
-            padding: 10px;
-            background-color: var(--soft-blue);
-            color: var(--white);    
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            text-align: center;
-            transition: background-color 0.3s;
-        }
-        
-        /* Main Content */
-        .main-content {
-            flex: 1;
-            margin-left: 250px;
-            padding: 20px;
-        }
-        
-        .header {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 20px;
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            margin-bottom: 25px;
-        }
-        
-        .welcome-msg {
-            font-size: 24px;
-            font-weight: 600;
-            color: var(--primary-color);
-        }
-        
-        .user-actions {
-            display: flex;
-            align-items: center;
-        }
-        
-        .user-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background-color: var(--secondary-color);
-            color: white;
-            display: flex;
-            align-items: center;
             justify-content: center;
-            margin-right: 10px;
-            font-weight: bold;
+            align-items: center;
+            padding: 20px;
         }
         
-        .payment-card {
-            background-color: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            padding: 20px;
-            margin-bottom: 20px;
+        .payment-container {
+            width: 100%;
+            max-width: 500px;
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
         }
         
         .payment-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #eee;
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+            color: white;
+            padding: 25px 20px;
+            text-align: center;
+            position: relative;
         }
         
-        .payment-header h3 {
-            color: var(--primary-color);
-        }
-        
-        .payment-details {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 15px;
-        }
-        
-        .payment-item {
-            display: flex;
-            align-items: center;
-            color: #666;
-        }
-        
-        .payment-item i {
-            margin-right: 10px;
-            color: var(--secondary-color);
-            font-size: 18px;
-        }
-        
-        .status-badge {
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 14px;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-        
-        .status-completed {
-            background-color: rgba(46, 204, 113, 0.2);
-            color: var(--accent-color);
-        }
-        
-        .status-failed {
-            background-color: rgba(231, 76, 60, 0.2);
-            color: var(--danger-color);
-        }
-        
-        .btn {
-            padding: 10px 20px;
+        .back-button {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.2);
             border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            display: inline-flex;
+            color: white;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
             align-items: center;
             justify-content: center;
-        }
-        
-        .btn-primary {
-            background-color: var(--secondary-color);
-            color: white;
-        }
-        
-        .btn-primary:hover {
-            background-color: #2980b9;
-        }
-        
-        .btn-success {
-            background-color: var(--accent-color);
-            color: white;
-        }
-        
-        .btn-success:hover {
-            background-color: #27ae60;
-        }
-        
-        .btn-danger {
-            background-color: var(--danger-color);
-            color: white;
-        }
-        
-        .btn-danger:hover {
-            background-color: #c0392b;
-        }
-        
-        .btn-group {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
-        }
-        
-        .tabs {
-            display: flex;
-            border-bottom: 1px solid #ddd;
-            margin-bottom: 20px;
-        }
-        
-        .tab {
-            padding: 12px 20px;
             cursor: pointer;
-            border-bottom: 3px solid transparent;
-            font-weight: 600;
-            color: #777;
             transition: all 0.3s ease;
         }
         
-        .tab.active {
-            color: var(--primary-color);
-            border-bottom: 3px solid var(--secondary-color);
+        .back-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-50%) scale(1.1);
         }
         
-        .tab:hover {
-            color: var(--primary-color);
-        }
-        
-        .tab-content {
-            display: none;
-        }
-        
-        .tab-content.active {
-            display: block;
-        }
-        
-        .empty-state {
-            text-align: center;
-            padding: 40px;
-            color: #777;
-        }
-        
-        .empty-state i {
-            font-size: 48px;
-            margin-bottom: 15px;
-            color: #ddd;
-        }
-        
-        .alert {
-            padding: 15px;
-            margin-bottom: 20px;
-            border-radius: 5px;
-        }
-        
-        .alert-success {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-        
-        .alert-danger {
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-        
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0,0,0,0.4);
-        }
-        
-        .modal-content {
-            background-color: #fefefe;
-            margin: 10% auto;
-            padding: 20px;
-            border: none;
-            width: 80%;
-            max-width: 600px;
-            border-radius: 10px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-        }
-        
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-        }
-        
-        .close:hover,
-        .close:focus {
-            color: black;
-            text-decoration: none;
-            cursor: pointer;
-        }
-        
-        .form-group {
-            margin-bottom: 20px;
-        }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: var(--dark-color);
-        }
-        
-        .form-control {
-            width: 100%;
-            padding: 10px 15px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 16px;
-            transition: border-color 0.3s;
-        }
-        
-        .form-control:focus {
-            border-color: var(--secondary-color);
-            outline: none;
-            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
-        }
-        
-        .payment-summary {
-            background-color: var(--light-color);
-            border-radius: 8px;
-            padding: 15px;
-            margin-top: 20px;
-        }
-        
-        .summary-item {
-            display: flex;
-            justify-content: space-between;
+        .payment-header h2 {
+            font-size: 1.8rem;
             margin-bottom: 10px;
         }
         
-        .summary-item:last-child {
-            margin-bottom: 0;
-            padding-top: 10px;
-            border-top: 1px solid #ddd;
-            font-weight: bold;
+        .payment-content {
+            padding: 30px;
         }
         
-        @media (max-width: 992px) {
-            .sidebar {
-                width: 70px;
-            }
-            
-            .logo h1 span, .nav-item span {
-                display: none;
-            }
-            
-            .main-content {
-                margin-left: 70px;
-            }
+        .appointment-details {
+            background: var(--light-blue);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 25px;
         }
         
-        @media (max-width: 768px) {
-            .payment-details {
+        .appointment-details h3 {
+            color: var(--dark-blue);
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .appointment-details p {
+            margin: 10px 0;
+            color: var(--text-dark);
+            font-size: 1rem;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .appointment-details strong {
+            color: var(--primary-blue);
+        }
+        
+        .amount-container {
+            text-align: center;
+            margin: 25px 0;
+        }
+        
+        .amount-label {
+            font-size: 1rem;
+            color: var(--text-dark);
+            margin-bottom: 5px;
+        }
+        
+        .amount {
+            font-size: 2.5rem;
+            color: var(--success-color);
+            font-weight: 700;
+        }
+        
+        .payment-methods {
+            margin-bottom: 25px;
+        }
+        
+        .payment-methods h3 {
+            color: var(--dark-blue);
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+        
+        .payment-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+        
+        .payment-option {
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .payment-option:hover, .payment-option.selected {
+            border-color: var(--primary-blue);
+            background: var(--light-blue);
+        }
+        
+        .payment-option i {
+            font-size: 1.5rem;
+            color: var(--primary-blue);
+            margin-bottom: 5px;
+        }
+        
+        .payment-option span {
+            display: block;
+            font-size: 0.9rem;
+            color: var(--text-dark);
+        }
+        
+        .confirm-btn {
+            width: 100%;
+            padding: 15px;
+            background: var(--success-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .confirm-btn:hover {
+            background: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .confirm-btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .spinner {
+            display: none;
+            margin-right: 10px;
+        }
+        
+        .note {
+            color: #666;
+            font-size: 0.9rem;
+            margin-top: 15px;
+            text-align: center;
+            font-style: italic;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 500px) {
+            .payment-container {
+                max-width: 100%;
+            }
+            
+            .payment-content {
+                padding: 20px;
+            }
+            
+            .payment-options {
                 grid-template-columns: 1fr;
+            }
+            
+            .amount {
+                font-size: 2rem;
             }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Sidebar -->
-        <div class="sidebar">
-            <img src="./uploads/logo.JPG" alt="QuickCare Logo" class="logo-img" style="display:block; margin: 0 auto 10px auto; width:80px; height:80px; border-radius:50%;">
-            <h2>QuickCare</h2>
-            <div class="nav">
-                <a href="patient.php">Dashboard</a>
-                <a href="patient_profile.php">My Profile</a>
-                <a href="manage_appointments.php">Manage Appointments</a>
-                <a href="doctor_schedule.php">View Doctor Schedule</a>
-                <a href="prescriptions.php">My Prescriptions</a>
-                <a href="medicine_reminder.php">Medicine Reminder</a>
-                <a class="active">Payments</a>
-                <a href="feedback.php">Feedback</a>
-                <a href="doctor_profiles.php">View Doctor Profile</a>
-                <button class="logout-btn">logout</button>
-            </div>
+    <div class="payment-container">
+        <div class="payment-header">
+            <button class="back-button" onclick="goBack()">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <h2>Confirm Appointment</h2>
+            <p>Complete your booking by making the payment</p>
         </div>
         
-        <!-- Main Content -->
-        <div class="main-content">
-            <!-- Header -->
-            <div class="header">
-                <div class="welcome-msg">Payments</div>
-                <div class="user-actions">
-                    <div class="user-dropdown">
-                        <div class="user-avatar"><?php echo strtoupper(substr($patient['FIRST_NAME'], 0, 1) . substr($patient['LAST_NAME'], 0, 1)); ?></div>
-                        <span><?php echo htmlspecialchars($patient['FIRST_NAME'] . ' ' . $patient['LAST_NAME']); ?></span>
-                        <i class="fas fa-chevron-down" style="margin-left: 8px;"></i>
+        <div class="payment-content">
+            <div class="appointment-details">
+                <h3><i class="fas fa-calendar-check"></i> Appointment Details</h3>
+                <p>
+                    <span>Date:</span>
+                    <strong><?php echo date('F d, Y', strtotime($date)); ?></strong>
+                </p>
+                <p>
+                    <span>Time:</span>
+                    <strong><?php echo date('h:i A', strtotime($time)); ?></strong>
+                </p>
+                <p>
+                    <span>Consultation Fee:</span>
+                    <strong>₹300</strong>
+                </p>
+            </div>
+            
+            <div class="amount-container">
+                <div class="amount-label">Total Amount</div>
+                <div class="amount">₹300</div>
+            </div>
+            
+            <div class="payment-methods">
+                <h3>Select Payment Method</h3>
+                <div class="payment-options">
+                    <div class="payment-option selected" onclick="selectPayment(this)">
+                        <i class="fas fa-credit-card"></i>
+                        <span>Credit Card</span>
+                    </div>
+                    <div class="payment-option" onclick="selectPayment(this)">
+                        <i class="fab fa-google-pay"></i>
+                        <span>Google Pay</span>
+                    </div>
+                    <div class="payment-option" onclick="selectPayment(this)">
+                        <i class="fas fa-mobile-alt"></i>
+                        <span>UPI</span>
+                    </div>
+                    <div class="payment-option" onclick="selectPayment(this)">
+                        <i class="fas fa-university"></i>
+                        <span>Net Banking</span>
                     </div>
                 </div>
             </div>
             
-            <!-- Success/Error Messages -->
-            <?php if (isset($success_message)): ?>
-                <div class="alert alert-success">
-                    <?php echo $success_message; ?>
-                </div>
-            <?php endif; ?>
-            
-            <?php if (isset($error_message)): ?>
-                <div class="alert alert-danger">
-                    <?php echo $error_message; ?>
-                </div>
-            <?php endif; ?>
-            
-            <!-- Tabs Section -->
-            <div class="tabs">
-                <div class="tab active" data-tab="pending">Pending Payments</div>
-                <div class="tab" data-tab="history">Payment History</div>
-            </div>
-            
-            <!-- Tab Content -->
-            <div class="tab-content active" id="pending">
-                <?php
-                if (mysqli_num_rows($unpaid_query) > 0) {
-                    while ($appointment = mysqli_fetch_assoc($unpaid_query)) {
-                        ?>
-                        <div class="payment-card">
-                            <div class="payment-header">
-                                <h3>Dr. <?php echo htmlspecialchars($appointment['DOC_FNAME'] . ' ' . $appointment['DOC_LNAME']); ?></h3>
-                                <span><?php echo htmlspecialchars($appointment['SPECIALISATION_NAME']); ?></span>
-                            </div>
-                            
-                            <div class="payment-details">
-                                <div class="payment-item">
-                                    <i class="far fa-calendar"></i>
-                                    <span><?php echo date('F d, Y', strtotime($appointment['APPOINTMENT_DATE'])); ?></span>
-                                </div>
-                                <div class="payment-item">
-                                    <i class="far fa-clock"></i>
-                                    <span><?php echo date('h:i A', strtotime($appointment['APPOINTMENT_TIME'])); ?></span>
-                                </div>
-                                <div class="payment-item">
-                                    <i class="fas fa-rupee-sign"></i>
-                                    <span>Consultation Fee: ₹500</span>
-                                </div>
-                            </div>
-                            
-                            <div class="btn-group">
-                                <button class="btn btn-success" onclick="openPaymentModal(<?php echo $appointment['APPOINTMENT_ID']; ?>)">
-                                    <i class="fas fa-credit-card"></i> Pay Now
-                                </button>
-                            </div>
-                        </div>
-                        <?php
-                    }
-                } else {
-                    echo '<div class="empty-state">
-                        <i class="fas fa-check-circle"></i>
-                        <p>No pending payments</p>
-                    </div>';
-                }
-                ?>
-            </div>
-            
-            <div class="tab-content" id="history">
-                <?php
-                if (mysqli_num_rows($payments_query) > 0) {
-                    while ($payment = mysqli_fetch_assoc($payments_query)) {
-                        $status_class = ($payment['STATUS'] == 'COMPLETED') ? 'status-completed' : 'status-failed';
-                        ?>
-                        <div class="payment-card">
-                            <div class="payment-header">
-                                <h3>Dr. <?php echo htmlspecialchars($payment['DOC_FNAME'] . ' ' . $payment['DOC_LNAME']); ?></h3>
-                                <span class="status-badge <?php echo $status_class; ?>"><?php echo $payment['STATUS']; ?></span>
-                            </div>
-                            
-                            <div class="payment-details">
-                                <div class="payment-item">
-                                    <i class="far fa-calendar"></i>
-                                    <span><?php echo date('F d, Y', strtotime($payment['APPOINTMENT_DATE'])); ?></span>
-                                </div>
-                                <div class="payment-item">
-                                    <i class="far fa-clock"></i>
-                                    <span><?php echo date('h:i A', strtotime($payment['APPOINTMENT_TIME'])); ?></span>
-                                </div>
-                                <div class="payment-item">
-                                    <i class="fas fa-rupee-sign"></i>
-                                    <span>Amount: ₹<?php echo $payment['AMOUNT']; ?></span>
-                                </div>
-                                <div class="payment-item">
-                                    <i class="fas fa-credit-card"></i>
-                                    <span>Mode: <?php echo $payment['PAYMENT_MODE']; ?></span>
-                                </div>
-                                <div class="payment-item">
-                                    <i class="far fa-calendar-alt"></i>
-                                    <span>Payment Date: <?php echo date('F d, Y', strtotime($payment['PAYMENT_DATE'])); ?></span>
-                                </div>
-                                <div class="payment-item">
-                                    <i class="fas fa-receipt"></i>
-                                    <span>Transaction ID: <?php echo $payment['TRANSACTION_ID']; ?></span>
-                                </div>
-                            </div>
-                            
-                            <div class="btn-group">
-                                <button class="btn btn-primary">
-                                    <i class="fas fa-download"></i> Download Receipt
-                                </button>
-                            </div>
-                        </div>
-                        <?php
-                    }
-                } else {
-                    echo '<div class="empty-state">
-                        <i class="fas fa-history"></i>
-                        <p>No payment history found</p>
-                    </div>';
-                }
-                ?>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Payment Modal -->
-    <div id="paymentModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closePaymentModal()">&times;</span>
-            <h2>Process Payment</h2>
-            <form method="POST" action="payments.php">
-                <input type="hidden" id="payment_appointment_id" name="appointment_id">
+            <form action="payment_success.php" method="post" id="confirmForm">
+                <input type="hidden" name="doctor_id" value="<?= $doctor_id ?>">
+                <input type="hidden" name="date" value="<?= $date ?>">
+                <input type="hidden" name="time" value="<?= $time ?>">
+                <input type="hidden" name="schedule_id" value="<?= $schedule_id ?>">
+                <input type="hidden" name="payment_method" id="paymentMethod" value="CREDIT CARD">
                 
-                <div class="form-group">
-                    <label for="amount">Amount</label>
-                    <input type="text" class="form-control" id="amount" name="amount" value="500" readonly>
-                </div>
-                
-                <div class="form-group">
-                    <label for="payment_mode">Payment Mode</label>
-                    <select class="form-control" id="payment_mode" name="payment_mode" required>
-                        <option value="">-- Select Payment Mode --</option>
-                        <option value="CREDIT CARD">Credit Card</option>
-                        <option value="GOOGLE PAY">Google Pay</option>
-                        <option value="UPI">UPI</option>
-                        <option value="NET BANKING">Net Banking</option>
-                    </select>
-                </div>
-                
-                <div class="payment-summary">
-                    <div class="summary-item">
-                        <span>Consultation Fee:</span>
-                        <span>₹500</span>
-                    </div>
-                    <div class="summary-item">
-                        <span>Tax:</span>
-                        <span>₹0</span>
-                    </div>
-                    <div class="summary-item">
-                        <span>Total Amount:</span>
-                        <span>₹500</span>
-                    </div>
-                </div>
-                
-                <div class="btn-group">
-                    <button type="submit" name="process_payment" class="btn btn-success">
-                        <i class="fas fa-check"></i> Process Payment
-                    </button>
-                    <button type="button" class="btn btn-danger" onclick="closePaymentModal()">
-                        <i class="fas fa-times"></i> Cancel
-                    </button>
-                </div>
+                <button type="submit" class="confirm-btn" id="confirmBtn">
+                    <i class="fas fa-spinner fa-spin spinner" id="spinner"></i>
+                    <span id="btnText">Confirm and Pay</span>
+                </button>
             </form>
+            
+            <p class="note">Your appointment will be confirmed after successful payment</p>
         </div>
     </div>
-    
+
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Tab functionality
-            const tabs = document.querySelectorAll('.tab');
-            const tabContents = document.querySelectorAll('.tab-content');
-            
-            tabs.forEach(tab => {
-                tab.addEventListener('click', () => {
-                    const tabId = tab.getAttribute('data-tab');
-                    
-                    // Remove active class from all tabs and contents
-                    tabs.forEach(t => t.classList.remove('active'));
-                    tabContents.forEach(content => content.classList.remove('active'));
-                    
-                    // Add active class to clicked tab and corresponding content
-                    tab.classList.add('active');
-                    document.getElementById(tabId).classList.add('active');
-                });
+        function selectPayment(element) {
+            // Remove selected class from all options
+            document.querySelectorAll('.payment-option').forEach(option => {
+                option.classList.remove('selected');
             });
+            
+            // Add selected class to clicked option
+            element.classList.add('selected');
+            
+            // Update hidden input value
+            const paymentMethod = element.querySelector('span').textContent;
+            document.getElementById('paymentMethod').value = paymentMethod;
+        }
+        
+        document.getElementById('confirmForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const button = document.getElementById('confirmBtn');
+            const spinner = document.getElementById('spinner');
+            const btnText = document.getElementById('btnText');
+            
+            // Show loading state
+            button.disabled = true;
+            spinner.style.display = 'inline-block';
+            btnText.textContent = 'Processing...';
+            
+            // Simulate processing
+            setTimeout(() => {
+                this.submit();
+            }, 1500);
         });
         
-        function openPaymentModal(appointmentId) {
-            document.getElementById('payment_appointment_id').value = appointmentId;
-            document.getElementById('paymentModal').style.display = 'block';
-        }
-        
-        function closePaymentModal() {
-            document.getElementById('paymentModal').style.display = 'none';
-        }
-        
-        // Close modal when clicking outside of it
-        window.onclick = function(event) {
-            const modal = document.getElementById('paymentModal');
-            if (event.target == modal) {
-                modal.style.display = 'none';
-            }
+        function goBack() {
+            // Go back to the previous page
+            window.history.back();
         }
     </script>
 </body>

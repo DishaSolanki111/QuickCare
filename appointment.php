@@ -79,7 +79,7 @@ include "header.php";
             text-align: center;
             position: relative;
             overflow: hidden;
-            margin-top: 50px;
+           
         }
 
         .page-header::before {
@@ -447,13 +447,7 @@ include "header.php";
             <div class="footer-column">
                 <h3>QuickCare</h3>
                 <p>Your trusted partner in healthcare. Book appointments with verified specialists quickly and easily.</p>
-                <!-- Added Social Links -->
-                <div class="social-links">
-                    <a href="#"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#"><i class="fab fa-twitter"></i></a>
-                    <a href="#"><i class="fab fa-instagram"></i></a>
-                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
-                </div>
+              
             </div>
             <div class="footer-column">
                 <h3>Quick Links</h3>

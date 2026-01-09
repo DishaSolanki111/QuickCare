@@ -33,13 +33,15 @@ if(mysqli_num_rows($q)==0){
 
 <style>
     :root {
-        /* Blue color scheme */
-        --primary-blue: #1a73e8;
-        --secondary-blue: #4285f4;
-        --light-blue: #e8f0fe;
-        --medium-blue: #8ab4f8;
-        --dark-blue: #174ea6;
-        --accent-blue: #0b57d0;
+        /* Green color scheme */
+        --primary-green: #2e7d32;
+        --secondary-green: #4caf50;
+        --light-green: #e8f5e9;
+        --date-light-green: #c8e6c9;
+        --medium-green: #81c784;
+        --dark-green: #1b5e20;
+        --accent-green: #388e3c;
+        --selected-dark-green: #0d3d0f;
         --text-dark: #202124;
         --text-light: #ffffff;
         --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -47,41 +49,45 @@ if(mysqli_num_rows($q)==0){
     }
 
     .slots-container {
-        padding: 20px;
+        padding: 24px;
         background-color: white;
         border-radius: 12px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        background: linear-gradient(to bottom, #ffffff, #f9fafb);
     }
 
     .slots-container h4 {
         margin-top: 0;
         margin-bottom: 20px;
         font-family: 'Inter', sans-serif;
-        color: var(--dark-blue);
-        font-size: 1.2rem;
+        color: var(--dark-green);
+        font-size: 1.3rem;
         font-weight: 600;
         text-align: center;
-        padding-bottom: 10px;
-        border-bottom: 2px solid var(--primary-blue);
+        padding-bottom: 12px;
+        border-bottom: 2px solid var(--primary-green);
     }
 
     .date-info {
         text-align: center;
-        margin-bottom: 15px;
+        margin-bottom: 20px;
         font-size: 1rem;
         color: var(--text-dark);
         font-weight: 500;
+        padding: 10px;
+        background-color: var(--date-light-green);
+        border-radius: 8px;
     }
 
     .slots-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-        gap: 12px;
+        grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+        gap: 14px;
     }
 
     .slot {
-        padding: 12px;
-        background-color: var(--primary-blue);
+        padding: 14px;
+        background-color: var(--primary-green);
         color: white;
         border: none;
         border-radius: 8px;
@@ -90,37 +96,42 @@ if(mysqli_num_rows($q)==0){
         font-size: 16px;
         text-align: center;
         transition: all 0.3s ease;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
 
     .slot:hover {
-        background-color: var(--accent-blue);
+        background-color: var(--selected-dark-green);
         transform: translateY(-3px);
-        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
     }
 
     .slot:active {
         transform: translateY(-1px);
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
 
     .no-slots-container {
-        padding: 20px;
+        padding: 24px;
         background-color: white;
         border-radius: 12px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
         text-align: center;
+        background: linear-gradient(to bottom, #ffffff, #f9fafb);
     }
 
     .no-slots-container p {
-        color: #666;
+        color: #6b7280;
         font-style: italic;
+        padding: 10px;
+        background-color: #f9fafb;
+        border-radius: 8px;
+        border: 1px dashed #d1d5db;
     }
 
     /* Responsive adjustments */
     @media (max-width: 600px) {
         .slots-container {
-            padding: 15px;
+            padding: 18px;
         }
         
         .slots-container h4 {
@@ -128,12 +139,12 @@ if(mysqli_num_rows($q)==0){
         }
         
         .slots-grid {
-            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-            gap: 8px;
+            grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+            gap: 10px;
         }
         
         .slot {
-            padding: 10px;
+            padding: 12px;
             font-size: 14px;
         }
     }

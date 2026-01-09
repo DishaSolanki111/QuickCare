@@ -69,7 +69,35 @@ if (!$standalone) {
 
         .login-form { padding: 40px; }
 
-        .form-header { margin-bottom: 30px; text-align: center; }
+        .form-header { 
+            margin-bottom: 30px; 
+            text-align: center;
+            position: relative;
+        }
+
+        .back-button {
+            position: absolute;
+            left: 0;
+            top: 0;
+            background: none;
+            border: none;
+            color: var(--primary);
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            padding: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .back-button:hover {
+            color: var(--primary-dark);
+            transform: translateX(-3px);
+        }
+
+        .back-button i {
+            margin-right: 5px;
+        }
 
         .form-group { margin-bottom: 20px; position: relative; }
 
@@ -127,6 +155,11 @@ if (!$standalone) {
 <div class="login-container">
     <div class="login-form">
         <div class="form-header">
+            <?php if (!$standalone && $doctor_id && $date && $time && $schedule_id): ?>
+            <button class="back-button" onclick="goBack()">
+                <i class="fas fa-arrow-left"></i> Back
+            </button>
+            <?php endif; ?>
             <h2>Patient Login</h2>
             <p>Access your account to book appointments</p>
         </div>
@@ -167,6 +200,13 @@ if (!$standalone) {
         </div>
     </div>
 </div>
+
+<script>
+function goBack() {
+    // Go back to the previous page
+    window.history.back();
+}
+</script>
 
 </body>
 </html>

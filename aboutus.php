@@ -408,12 +408,7 @@
             <div class="footer-column">
                 <h3>QuickCare</h3>
                 <p>Your trusted partner in healthcare. Book appointments with verified specialists quickly and easily.</p>
-                <div class="social-links">
-                    <a href="#"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#"><i class="fab fa-twitter"></i></a>
-                    <a href="#"><i class="fab fa-instagram"></i></a>
-                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
-                </div>
+             
             </div>
             <div class="footer-column">
                 <h3>Quick Links</h3>
@@ -421,7 +416,7 @@
                     <li><a href="index.php">Home</a></li>
                     <li><a href="doctors.php">Find Doctors</a></li>
                     <li><a href="appointment.php">Book Appointment</a></li>
-                    <li><a href="aboutus.php">About Us</a></li>
+                  
                 </ul>
             </div>
             <div class="footer-column">

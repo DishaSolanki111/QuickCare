@@ -2,8 +2,8 @@
 session_start();
 include 'config.php';   // 🔴 REQUIRED — FIXES YOUR ERROR
 include 'header.php';
-$success = false;
-$error = "";
+ $success = false;
+ $error = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
@@ -56,24 +56,38 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 body{
     font-family:Arial;
     background:linear-gradient(135deg,#0a4d68,#0582ca);
-    display:flex;
-    justify-content:center;
-    align-items:center;
+    margin:0;
+    padding:0;
     min-height:100vh;
+    padding-top:100px; /* Adjust based on your header height */
 }
 .container{
     background:#fff;
     width:800px;
+    max-width:90%;
+    margin:20px auto;
     padding:30px;
     border-radius:15px;
+    box-shadow:0 5px 15px rgba(0,0,0,0.2);
 }
-h1{text-align:center;color:#03045e;}
+h1{text-align:center;color:#03045e;margin-bottom:25px;}
 .row{display:flex;gap:20px;margin-bottom:15px;}
+.form-group{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+}
+label{
+    margin-bottom:5px;
+    font-weight:bold;
+    color:#03045e;
+}
 input,select,textarea{
     width:100%;
     padding:10px;
     border-radius:6px;
     border:1px solid #ccc;
+    box-sizing:border-box;
 }
 textarea{height:80px;}
 button{
@@ -83,9 +97,26 @@ button{
     padding:12px 30px;
     border-radius:25px;
     cursor:pointer;
+    font-size:16px;
+    transition:background 0.3s;
 }
-.success{color:green;text-align:center;margin-bottom:15px;}
-.error{color:red;text-align:center;margin-bottom:15px;}
+button:hover{
+    background:#0a4d68;
+}
+.success{color:green;text-align:center;margin-bottom:15px;padding:10px;background:#e8f5e9;border-radius:5px;}
+.error{color:red;text-align:center;margin-bottom:15px;padding:10px;background:#ffebee;border-radius:5px;}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .row {
+        flex-direction: column;
+        gap: 10px;
+    }
+    .container {
+        width:95%;
+        padding:20px;
+    }
+}
 </style>
 </head>
 
@@ -105,42 +136,71 @@ button{
 <form method="POST">
 
 <div class="row">
-    <input type="text" name="first_name" placeholder="First Name" required>
-    <input type="text" name="last_name" placeholder="Last Name">
+    <div class="form-group">
+        <label for="first_name">First Name</label>
+        <input type="text" id="first_name" name="first_name" placeholder="Enter your first name" required>
+    </div>
+    <div class="form-group">
+        <label for="last_name">Last Name</label>
+        <input type="text" id="last_name" name="last_name" placeholder="Enter your last name">
+    </div>
 </div>
 
 <div class="row">
-    <input type="text" name="username" placeholder="Username" required>
-    <input type="password" name="password" placeholder="Password" required>
+    <div class="form-group">
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username" placeholder="Choose a username" required>
+    </div>
+    <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" placeholder="Create a password" required>
+    </div>
 </div>
 
 <div class="row">
-    <input type="date" name="dob">
+    <div class="form-group">
+        <label for="dob">Date of Birth</label>
+        <input type="date" id="dob" name="dob">
+    </div>
 </div>
 
 <div class="row">
-    <select name="gender">
-        <option value="">Gender</option>
-        <option value="MALE">Male</option>
-        <option value="FEMALE">Female</option>
-        <option value="OTHER">Other</option>
-    </select>
-
-    <select name="blood_group">
-        <option value="">Blood Group</option>
-        <option>A+</option><option>A-</option>
-        <option>B+</option><option>B-</option>
-        <option>O+</option><option>O-</option>
-        <option>AB+</option><option>AB-</option>
-    </select>
+    <div class="form-group">
+        <label for="gender">Gender</label>
+        <select id="gender" name="gender">
+            <option value="">Select Gender</option>
+            <option value="MALE">Male</option>
+            <option value="FEMALE">Female</option>
+            <option value="OTHER">Other</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="blood_group">Blood Group</label>
+        <select id="blood_group" name="blood_group">
+            <option value="">Select Blood Group</option>
+            <option>A+</option><option>A-</option>
+            <option>B+</option><option>B-</option>
+            <option>O+</option><option>O-</option>
+            <option>AB+</option><option>AB-</option>
+        </select>
+    </div>
 </div>
 
 <div class="row">
-    <input type="number" name="phone" placeholder="Phone Number" required>
-    <input type="email" name="email" placeholder="Email" required>
+    <div class="form-group">
+        <label for="phone">Phone Number</label>
+        <input type="tel" id="phone" name="phone" placeholder="Enter your phone number" required>
+    </div>
+    <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" placeholder="Enter your email address" required>
+    </div>
 </div>
 
-<textarea name="address" placeholder="Address"></textarea>
+<div class="form-group">
+    <label for="address">Address</label>
+    <textarea id="address" name="address" placeholder="Enter your address"></textarea>
+</div>
 
 <div style="text-align:center;margin-top:20px;">
     <button type="submit">Register</button>

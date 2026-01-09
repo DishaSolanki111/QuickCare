@@ -1,6 +1,4 @@
-
-
-```php
+php
 <?php
 include "config.php";
 include "header.php";
@@ -57,8 +55,7 @@ include "header.php";
         .page-header {
             background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
             color: white;
-            margin-top: 80px; /* Added margin to prevent content from hiding behind the fixed header */
-            padding: 4rem 0;
+            padding: 7rem 0;
             text-align: center;
             position: relative;
             overflow: hidden;
@@ -487,12 +484,7 @@ include "header.php";
             <div class="footer-column">
                 <h3>QuickCare</h3>
                 <p>Your trusted partner in healthcare. Book appointments with verified specialists quickly and easily.</p>
-                <div class="social-links">
-                    <a href="#"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#"><i class="fab fa-twitter"></i></a>
-                    <a href="#"><i class="fab fa-instagram"></i></a>
-                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
-                </div>
+               
             </div>
             <div class="footer-column">
                 <h3>Quick Links</h3>

@@ -27,13 +27,15 @@ if (mysqli_num_rows($q) > 0) {
 <!-- CSS for Styling the Slots -->
 <style>
     :root {
-        /* Blue color scheme */
-        --primary-blue: #1a73e8;
-        --secondary-blue: #4285f4;
-        --light-blue: #e8f0fe;
-        --medium-blue: #8ab4f8;
-        --dark-blue: #174ea6;
-        --accent-blue: #0b57d0;
+        /* Green color scheme */
+        --primary-green: #2e7d32;
+        --secondary-green: #4caf50;
+        --light-green: #e8f5e9;
+        --date-light-green: #c8e6c9;
+        --medium-green: #81c784;
+        --dark-green: #1b5e20;
+        --accent-green: #388e3c;
+        --selected-dark-green: #0d3d0f;
         --text-dark: #202124;
         --text-light: #ffffff;
         --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -42,79 +44,86 @@ if (mysqli_num_rows($q) > 0) {
 
     /* Main container for the slot selection area */
     .slot-selection-container {
-        padding: 20px;
-        border-top: 1px solid #e0e0e0;
+        padding: 24px;
+        border-top: 1px solid #e5e7eb;
+        background: linear-gradient(to bottom, #ffffff, #f9fafb);
     }
 
     .slot-selection-container h3 {
         margin-top: 0;
         margin-bottom: 20px;
         font-family: 'Inter', sans-serif;
-        color: var(--dark-blue);
-        font-size: 1.2rem;
+        color: var(--dark-green);
+        font-size: 1.3rem;
         font-weight: 600;
         text-align: center;
-        padding-bottom: 10px;
-        border-bottom: 2px solid var(--primary-blue);
+        padding-bottom: 12px;
+        border-bottom: 2px solid var(--primary-green);
     }
 
     .date-info {
         text-align: center;
-        margin-bottom: 15px;
+        margin-bottom: 20px;
         font-size: 1rem;
         color: var(--text-dark);
         font-weight: 500;
+        padding: 10px;
+        background-color: var(--date-light-green);
+        border-radius: 8px;
     }
 
     /* Flex container for the buttons to align them nicely */
     .slots-container {
         display: flex;
         flex-wrap: wrap; /* Allows buttons to wrap to the next line */
-        gap: 12px; /* The space between the buttons */
+        gap: 14px; /* The space between the buttons */
         justify-content: center;
     }
 
     /* Styling for each individual slot button */
     .slot {
-        padding: 12px 20px; /* Makes the button bigger and more clickable */
+        padding: 14px 22px; /* Makes the button bigger and more clickable */
         font-size: 16px;
         font-weight: 600;
         color: white;
-        background-color: var(--primary-blue); /* A pleasant blue color */
+        background-color: var(--primary-green); /* A pleasant green color */
         border: none;
         border-radius: 8px; /* Rounded corners */
         cursor: pointer;
         transition: all 0.3s ease; /* Smooth animation for hover effects */
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
         position: relative;
         overflow: hidden;
     }
 
     /* Hover effect for the slot button */
     .slot:hover {
-        background-color: var(--accent-blue); /* A darker blue on hover */
+        background-color: var(--selected-dark-green); /* A darker green on hover */
         transform: translateY(-3px); /* Slightly lifts the button up */
-        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); /* Enhances the shadow on hover */
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* Enhances the shadow on hover */
     }
 
     .slot:active {
         transform: translateY(-1px);
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
 
     /* Message for when no slots are available */
     .no-slots-message {
         font-family: 'Inter', sans-serif;
-        color: #666;
+        color: #6b7280;
         font-style: italic;
         text-align: center;
-        padding: 20px;
+        padding: 24px;
+        background-color: #f9fafb;
+        border-radius: 8px;
+        border: 1px dashed #d1d5db;
     }
 
     /* Responsive adjustments */
     @media (max-width: 600px) {
         .slot-selection-container {
-            padding: 15px;
+            padding: 18px;
         }
         
         .slot-selection-container h3 {
@@ -122,12 +131,12 @@ if (mysqli_num_rows($q) > 0) {
         }
         
         .slot {
-            padding: 10px 16px;
+            padding: 12px 18px;
             font-size: 14px;
         }
         
         .slots-container {
-            gap: 8px;
+            gap: 10px;
         }
     }
 </style>
