@@ -857,7 +857,7 @@ include 'header.php';
                     </div>
                     <div class="stat-item">
                         <span class="stat-number">3+</span>
-                        <span class="stat-label">Years Experience</span>
+                        <span class="stat-label">appointments</span>
                     </div>
                 </div>
             </div>
