@@ -389,6 +389,12 @@ include 'header.php';
     </div>
 </div>
 
+<!-- Hidden form for POST error handling -->
+<form id="errorForm" action="login_for_all.php" method="POST" style="display: none;">
+    <input type="hidden" id="errorUserType" name="user_type" value="">
+    <input type="hidden" id="errorMessage" name="error" value="">
+</form>
+
 <script>
     // --- MODIFIED JAVASCRIPT FOR TAB SWITCHING ---
     document.addEventListener('DOMContentLoaded', () => {
@@ -462,24 +468,20 @@ include 'header.php';
             });
         });
         
-        // Show error messages from URL parameters
-        const urlParams = new URLSearchParams(window.location.search);
-        const error = urlParams.get('error');
-        const userType = urlParams.get('user_type');
-        
-        if (error && userType) {
-            const errorElement = document.getElementById(`${userType}-error`);
+        // Show error messages from POST data
+        <?php if (isset($_POST['error']) && isset($_POST['user_type'])): ?>
+            const errorElement = document.getElementById('<?php echo $_POST['user_type']; ?>-error');
             if (errorElement) {
-                errorElement.textContent = error;
+                errorElement.textContent = '<?php echo $_POST['error']; ?>';
                 errorElement.style.display = 'block';
                 
                 // Find and click the correct tab to show the form with the error
-                const tabWithError = document.querySelector(`.tab[data-target="${userType}"]`);
+                const tabWithError = document.querySelector(`.tab[data-target="<?php echo $_POST['user_type']; ?>"]`);
                 if (tabWithError) {
                     tabWithError.click(); // Programmatically click the tab to trigger the switch
                 }
             }
-        }
+        <?php endif; ?>
     });
 </script>
 

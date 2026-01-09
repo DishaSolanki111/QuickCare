@@ -1,35 +1,15 @@
 <?php
 session_start();
-
-// Check if this is a standalone login (not from appointment booking)
- $standalone = $_POST['standalone'] ?? $_GET['standalone'] ?? false;
-
-// Only require these parameters if not standalone
-if (!$standalone) {
-    // Check both POST and GET for parameters
-    $doctor_id   = $_POST['doctor_id']   ?? $_GET['doctor_id']   ?? null;
-    $date        = $_POST['date']        ?? $_GET['date']        ?? null;
-    $time        = $_POST['time']        ?? $_GET['time']        ?? null;
-    $schedule_id = $_POST['schedule_id'] ?? $_GET['schedule_id'] ?? null;
-
-    // Only check for appointment data if at least one parameter is provided
-    // This allows the login page to work both with and without appointment data
-    if ($doctor_id || $date || $time || $schedule_id) {
-        if (!$doctor_id || !$date || !$time || !$schedule_id) {
-            die("Invalid access - incomplete appointment data");
-        }
-    }
-}
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Patient Login</title>
+    <title>Forgot Password</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* 🔴 EXACT SAME CSS — NOT TOUCHED */
+        /* Reusing the same styles as login.php for consistency */
         :root {
             --primary: #1a73e8;
             --primary-dark: #0b57d0;
@@ -43,6 +23,8 @@ if (!$standalone) {
             --text-light: #ffffff;
             --shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
             --shadow-hover: 0 8px 25px rgba(0, 0, 0, 0.15);
+            --success: #28a745;
+            --error: #dc3545;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
@@ -97,28 +79,19 @@ if (!$standalone) {
             cursor: pointer;
         }
         
-        .signup-link {
+        .back-link {
             text-align: center;
             margin-top: 20px;
             color: #666;
         }
         
-        .signup-link a {
+        .back-link a {
             color: var(--primary);
             text-decoration: none;
         }
         
-        .signup-link a:hover {
+        .back-link a:hover {
             text-decoration: underline;
-        }
-        
-        .appointment-info {
-            background-color: #e8f0fe;
-            padding: 10px 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            font-size: 14px;
-            color: #174ea6;
         }
     </style>
 </head>
@@ -127,43 +100,20 @@ if (!$standalone) {
 <div class="login-container">
     <div class="login-form">
         <div class="form-header">
-            <h2>Patient Login</h2>
-            <p>Access your account to book appointments</p>
+            <h2>Forgot Password</h2>
+            <p>Enter your username to reset your password</p>
         </div>
 
-        <?php if (!$standalone && $doctor_id && $date && $time && $schedule_id): ?>
-        <div class="appointment-info">
-            <strong>Appointment Details:</strong><br>
-            Date: <?= date("l, F j, Y", strtotime($date)) ?><br>
-            Time: <?= $time ?>
-        </div>
-        <?php endif; ?>
-
-        <form action="login_process.php" method="post">
-
-            <!-- 🔴 INVISIBLE BUT CRITICAL -->
-            <?php if (!$standalone && $doctor_id && $date && $time && $schedule_id): ?>
-            <input type="hidden" name="doctor_id" value="<?= $doctor_id ?>">
-            <input type="hidden" name="date" value="<?= $date ?>">
-            <input type="hidden" name="time" value="<?= $time ?>">
-            <input type="hidden" name="schedule_id" value="<?= $schedule_id ?>">
-            <?php endif; ?>
-
+        <form action="forgot_password_process.php" method="post">
             <div class="form-group">
                 <i class="fas fa-user"></i>
-                <input type="text" name="username" placeholder="Username" required>
+                <input type="text" name="username" placeholder="Enter your username" required>
             </div>
-
-            <div class="form-group">
-                <i class="fas fa-lock"></i>
-                <input type="password" name="password" placeholder="Password" required>
-            </div>
-
-            <button type="submit" class="login-btn">Login</button>
+            <button type="submit" class="login-btn">Reset My Password</button>
         </form>
 
-        <div class="signup-link">
-            Don't have an account? <a href="register.php">Register Yourself</a>
+        <div class="back-link">
+            <a href="login.php">Back to Login</a>
         </div>
     </div>
 </div>

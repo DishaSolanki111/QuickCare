@@ -104,6 +104,8 @@
         padding: 20px;
         /* Kept margin-top for header alignment */
         margin-top: 40px;
+        margin-top: 30px;
+
     }
     .hero h1 {
         font-size: 3.8rem;

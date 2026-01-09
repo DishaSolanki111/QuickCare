@@ -79,6 +79,7 @@ include "header.php";
             text-align: center;
             position: relative;
             overflow: hidden;
+            margin-top: 50px;
         }
 
         .page-header::before {

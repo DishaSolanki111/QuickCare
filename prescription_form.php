@@ -436,11 +436,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_prescription_i
         }
 
         .footer-content {
+            color:black;
             max-width: 1200px;
             margin: 0 auto;
         }
 
         .social-links {
+            color:black;
             display: flex;
             justify-content: center;
             gap: 1rem;
@@ -448,6 +450,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_prescription_i
         }
 
         .social-link {
+            color:black;
             width: 40px;
             height: 40px;
             border-radius: 50%;
@@ -461,6 +464,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_prescription_i
         }
 
         .social-link:hover {
+            color:black;
             background: var(--primary);
             transform: translateY(-3px);
         }
@@ -643,11 +647,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_prescription_i
                 <div class="footer-content">
                     <p>&copy; <span id="year"></span> QuickCare — Revolutionizing Healthcare Access</p>
                     <div class="social-links">
-                        <a href="#" class="social-link"><span>f</span></a>
-                        <a href="#" class="social-link"><span>𝕏</span></a>
-                        <a href="#" class="social-link"><span>in</span></a>
-                        <a href="#" class="social-link"><span>📷</span></a>
-                    </div>
+                    <a href="#" class="social-link"><span>f</span></a>
+                    <a href="#" class="social-link"><span>𝕏</span></a>
+                    <a href="#" class="social-link"><span>in</span></a>
+                    <a href="#" class="social-link"><span>📷</span></a>
                 </div>
             </footer>
         </div>
