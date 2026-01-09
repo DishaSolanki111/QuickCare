@@ -525,7 +525,7 @@ if (!empty($selected_day)) {
     <script>
         function bookAppointment(doctorId, day) {
             // Redirect to appointment booking page with pre-selected doctor and day
-            window.location.href = 'manage_appointments.php?doctor=' + doctorId + '&day=' + day;
+            window.location.href = 'payment.php?doctor=' + doctorId + '&day=' + day;
         }
     </script>
 </body>
