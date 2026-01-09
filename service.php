@@ -21,12 +21,9 @@
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1800px;
             margin: 0 auto;
             padding: 20px;
-        }
-
-        header {
             text-align: center;
             padding: 40px 0;
             background-color: #ffffff;
@@ -539,12 +536,13 @@
     </style>
 </head>
 <body>
-    <header>
+    <?php
+    include 'header.php';?>
         <div class="container">
             <h1>Our Services</h1>
             <p class="subtitle">Comprehensive healthcare management at your fingertips</p>
         </div>
-    </header>
+    
 
     <main class="container">
         <section class="services-section" id="servicesSection">

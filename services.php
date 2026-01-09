@@ -20,18 +20,16 @@
         }
 
         .container {
-            max-width: 1200px;
-            margin-botto:  15px;
+            max-width: 1800px;
+            margin: 0 auto;
             padding: 20px;
-        }
-
-        header {
             text-align: center;
             padding: 40px 0;
             background-color: #ffffff;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
             margin-bottom: 40px;
         }
+
 
         h1 {
             color: #2c6ecb;
@@ -477,18 +475,15 @@
     </style>
 </head>
 <body>
-     
-    <header>
-       <div>
-        <?php
-        include 'header.php';
-        ?>
-       </div>
+     <?php
+     include 'header.php';?>
+   
+    
         <div class="container">
             <h1>Our Services</h1>
             <p class="subtitle">Comprehensive healthcare management at your fingertips</p>
         </div>
-    </header>
+    
 
     <main class="container">
         <section class="services-grid" id="servicesGrid">
