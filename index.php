@@ -848,15 +848,15 @@ include 'header.php';
                 </div>
                 <div class="stats">
                     <div class="stat-item">
-                        <span class="stat-number">550+</span>
+                        <span class="stat-number">15+</span>
                         <span class="stat-label">Doctors</span>
                     </div>
                     <div class="stat-item">
-                        <span class="stat-number">750+</span>
+                        <span class="stat-number">250+</span>
                         <span class="stat-label">Patients</span>
                     </div>
                     <div class="stat-item">
-                        <span class="stat-number">25+</span>
+                        <span class="stat-number">3+</span>
                         <span class="stat-label">Years Experience</span>
                     </div>
                 </div>
@@ -880,32 +880,32 @@ include 'header.php';
                     <div class="specialist-icon">
                         <i class="fas fa-heartbeat"></i>
                     </div>
-                    <h3 class="specialist-title">Cardiologist</h3>
-                    <p class="specialist-subtitle">Heart Specialist</p>
+                    <h3 class="specialist-title">Pediatrician</h3>
+                    <p class="specialist-subtitle">Child Specialist</p>
                     <a href="#" class="specialist-link">Book Now <i class="fas fa-arrow-right"></i></a>
                 </div>
                 <div class="specialist-card fade-in">
                     <div class="specialist-icon">
                         <i class="fas fa-brain"></i>
                     </div>
-                    <h3 class="specialist-title">Neurologist</h3>
-                    <p class="specialist-subtitle">Brain & Nerves</p>
+                    <h3 class="specialist-title">Cardiologist</h3>
+                    <p class="specialist-subtitle">Heart Specialist</p>
                     <a href="#" class="specialist-link">Book Now <i class="fas fa-arrow-right"></i></a>
                 </div>
                 <div class="specialist-card fade-in">
                     <div class="specialist-icon">
                         <i class="fas fa-hand-holding-medical"></i>
                     </div>
-                    <h3 class="specialist-title">Dermatologist</h3>
-                    <p class="specialist-subtitle">Skin Care</p>
+                    <h3 class="specialist-title">Orthopedics</h3>
+                    <p class="specialist-subtitle">Joint and bones Specialist</p>
                     <a href="#" class="specialist-link">Book Now <i class="fas fa-arrow-right"></i></a>
                 </div>
                 <div class="specialist-card fade-in">
                     <div class="specialist-icon">
                         <i class="fas fa-bone"></i>
                     </div>
-                    <h3 class="specialist-title">Orthopedic</h3>
-                    <p class="specialist-subtitle">Bones & Joints</p>
+                    <h3 class="specialist-title">Neurologist</h3>
+                    <p class="specialist-subtitle">Brain & Nerves</p>
                     <a href="#" class="specialist-link">Book Now <i class="fas fa-arrow-right"></i></a>
                 </div>
             </div>
@@ -949,21 +949,16 @@ include 'header.php';
             <div class="footer-column">
                 <h3>QuickCare</h3>
                 <p>Your trusted partner in healthcare. Book appointments with verified specialists quickly and easily.</p>
-                <div class="social-links">
-                    <a href="#"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#"><i class="fab fa-twitter"></i></a>
-                    <a href="#"><i class="fab fa-instagram"></i></a>
-                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
-                </div>
+               
             </div>
             <div class="footer-column">
                 <h3>Quick Links</h3>
                 <ul>
-                    <li><a href="#">Home</a></li>
-                    <li><a href="#">Find Doctors</a></li>
-                    <li><a href="#">Book Appointment</a></li>
-                    <li><a href="#">Health Blog</a></li>
-                    <li><a href="#">FAQs</a></li>
+                    <li><a href="index.php">Home</a></li>
+                    <li><a href="appointment.php">Find Doctors</a></li>
+                    <li><a href="appointment.php">Book Appointment</a></li>
+                    <!-- <li><a href="#">Health Blog</a></li> -->
+                    <!-- <li><a href="#">FAQs</a></li> -->
                 </ul>
             </div>
             <!-- <div class="footer-column">
@@ -980,8 +975,8 @@ include 'header.php';
                 <h3>Contact Us</h3>
                 <ul>
                     <li><a href="#"><i class="fas fa-map-marker-alt"></i> 123 Healthcare Ave, Medical City</a></li>
-                    <li><a href="#"><i class="fas fa-phone"></i> +1 (555) 123-4567</a></li>
-                    <li><a href="#"><i class="fas fa-envelope"></i> info@quickcare.com</a></li>
+                    <li><a href="#"><i class="fas fa-phone"></i> 91+ 9632587418</a></li>
+                
                 </ul>
             </div>
         </div>

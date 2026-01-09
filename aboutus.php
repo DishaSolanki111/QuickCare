@@ -1,10 +1,11 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>About Us | Quick Care Hospital</title>
+<!-- Added FontAwesome because the new footer format uses icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
     :root {
         --primary: #0066cc;
@@ -26,6 +27,9 @@
         --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
         --shadow-xl: 0 20px 25px rgba(0,0,0,0.1);
         --shadow-2xl: 0 25px 50px rgba(0,0,0,0.25);
+        
+        /* Variable from index.php needed for the new footer format */
+        --medium-blue: #8ab4f8; 
     }
 
     /* GLOBAL STYLES */
@@ -88,7 +92,6 @@
         100% { transform: rotate(360deg); }
     }
 
-
     /* ================= HERO SECTION ================= */
     .hero {
         height: 200px;
@@ -99,7 +102,10 @@
         text-align: center;
         color: white;
         padding: 20px;
+        /* Kept margin-top for header alignment */
+        margin-top: 40px;
         margin-top: 30px;
+
     }
     .hero h1 {
         font-size: 3.8rem;
@@ -123,7 +129,8 @@
 
     /* ================= GLASS CARDS SECTION ================= */
     .intro-section {
-        padding: 60px 20px;
+        /* Reduced top padding from 60px to 20px to remove space */
+        padding: 20px 20px 60px 20px;
         text-align: center;
         max-width: 1200px;
         margin: 0 auto;
@@ -182,7 +189,6 @@
         line-height: 1.5;
     }
 
-    /* ICONS */
     .icon {
         font-size: 3rem;
         color: var(--primary);
@@ -211,50 +217,107 @@
         text-align: center;
     }
 
-    /* ================= FOOTER ================= */
+    /* ================= FOOTER (NEW FORMAT FROM INDEX.PHP) ================= */
     footer {
-        background: var(--gradient-1);
+        /* ORIGINAL COLOR KEPT AS REQUESTED */
+        background: var(--gradient-1); 
         color: white;
-        padding: 50px 20px;
+        padding: 3rem 5%;
         margin-top: 50px;
+        position: relative;
     }
 
-    .footer-grid {
-        display: flex;
-        justify-content: space-between;
-        flex-wrap: wrap;
-        gap: 30px;
+    /* Wave effect from index.php format */
+    footer::before {
+        content: "";
+        position: absolute;
+        top: -100px;
+        left: 0;
+        width: 100%;
+        height: 100px;
+        background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%23ffffff' fill-opacity='1' d='M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,138.7C960,139,1056,117,1152,112C1248,107,1344,117,1392,122.7L1440,128L1440,0L1392,0C1344,0,1248,0,1152,0C1056,0,960,0,864,0C768,0,672,0,576,0C480,0,384,0,288,0C192,0,96,0,48,0L0,0Z'%3E%3C/path%3E%3C/svg%3E") no-repeat bottom;
+        background-size: cover;
+    }
+
+    .footer-content {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 2rem;
         max-width: 1200px;
         margin: 0 auto;
+        position: relative;
+        z-index: 2;
     }
 
-    .footer-grid div {
-        width: 22%;
-        min-width: 200px;
-    }
-
-    footer h3, footer h4 {
-        margin-bottom: 10px;
+    .footer-column h3 {
         font-size: 1.3rem;
-        font-weight: 600;
+        margin-bottom: 1.5rem;
+        position: relative;
+        padding-bottom: 0.5rem;
     }
 
-    footer ul {
+    /* Underline style from index.php */
+    .footer-column h3::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 50px;
+        height: 3px;
+        background-color: var(--medium-blue);
+    }
+
+    .footer-column ul {
         list-style: none;
     }
 
-    footer ul li {
-        margin-bottom: 8px;
-        font-size: 0.95rem;
-        opacity: 0.9;
+    .footer-column ul li {
+        margin-bottom: 0.8rem;
     }
 
-    .copyright {
+    .footer-column ul li a {
+        color: rgba(255, 255, 255, 0.8);
+        text-decoration: none;
+        transition: all 0.3s ease;
+        display: inline-block;
+    }
+
+    /* Hover effect from index.php */
+    .footer-column ul li a:hover {
+        color: white;
+        transform: translateX(5px);
+    }
+
+    .social-links {
+        display: flex;
+        gap: 1rem;
+        margin-top: 1.5rem;
+    }
+
+    .social-links a {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        background-color: rgba(255, 255, 255, 0.1);
+        color: white;
+        border-radius: 50%;
+        transition: all 0.3s ease;
+        text-decoration: none;
+    }
+
+    .social-links a:hover {
+        background-color: var(--primary);
+        transform: translateY(-3px);
+    }
+
+    .footer-bottom {
         text-align: center;
-        margin-top: 20px;
-        opacity: 0.9;
-        border-top: 1px solid rgba(255,255,255,0.3);
-        padding-top: 15px;
+        margin-top: 2rem;
+        padding-top: 2rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        color: rgba(255, 255, 255, 0.7);
         max-width: 1200px;
         margin-left: auto;
         margin-right: auto;
@@ -262,12 +325,8 @@
 
     /* RESPONSIVE */
     @media(max-width: 992px) {
-
         .intro-section p, .info-section p {
             width: 95%;
-        }
-        .footer-grid div {
-            width: 100%;
         }
     }
 
@@ -275,8 +334,6 @@
         .hero h1 {
             font-size: 2.8rem;
         }
-
-        
     }
 </style>
 </head>
@@ -340,48 +397,44 @@
         <p>
             Our hospital features modern ICUs, advanced diagnostic equipment, 
             specialized operation theaters, and comfortable patient rooms. 
-            We maintain the highest standards of hygiene and safety to ensure 
+            We maintain highest standards of hygiene and safety to ensure 
             well-being of our patients and staff.
         </p>
     </section>
 
-    <!-- ================= FOOTER ================= -->
-    <footer>
-        <div class="footer-grid">
-            <div>
-                <h3>QuickCare Hospital</h3>
-                <p>Providing quality healthcare with compassion and excellence.</p>
+    <!-- ================= FOOTER (NEW FORMAT STARTS HERE) ================= -->
+    <footer id="footer-section">
+        <div class="footer-content">
+            <div class="footer-column">
+                <h3>QuickCare</h3>
+                <p>Your trusted partner in healthcare. Book appointments with verified specialists quickly and easily.</p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                </div>
             </div>
-            <div>
-                <h4>Quick Links</h4>
+            <div class="footer-column">
+                <h3>Quick Links</h3>
                 <ul>
-                    <li><a href="index.html" style="color: white; text-decoration: none;">Home</a></li>
-                    <li><a href="#" style="color: white; text-decoration: none;">Our Services</a></li>
-                    <li><a href="#" style="color: white; text-decoration: none;">Find a Doctor</a></li>
-                    <li><a href="#" style="color: white; text-decoration: none;">Patient Portal</a></li>
+                    <li><a href="index.php">Home</a></li>
+                    <li><a href="doctors.php">Find Doctors</a></li>
+                    <li><a href="appointment.php">Book Appointment</a></li>
+                    <li><a href="aboutus.php">About Us</a></li>
                 </ul>
             </div>
-            <div>
-                <h4>Contact Info</h4>
+            <div class="footer-column">
+                <h3>Contact Us</h3>
                 <ul>
-                    <li>123 Healthcare Avenue</li>
-                    <li>City, State 12345</li>
-                    <li>Phone: (123) 456-7890</li>
-                    <li>Email: info@quickcare.com</li>
-                </ul>
-            </div>
-            <div>
-                <h4>Follow Us</h4>
-                <ul>
-                    <li><a href="#" style="color: white; text-decoration: none;">Facebook</a></li>
-                    <li><a href="#" style="color: white; text-decoration: none;">Twitter</a></li>
-                    <li><a href="#" style="color: white; text-decoration: none;">Instagram</a></li>
-                    <li><a href="#" style="color: white; text-decoration: none;">LinkedIn</a></li>
+                    <li><a href="#"><i class="fas fa-map-marker-alt"></i> 123 Healthcare Ave, Medical City</a></li>
+                    <li><a href="#"><i class="fas fa-phone"></i> 91+ 9632587418</a></li>
+                    <li><a href="#"><i class="fas fa-envelope"></i> info@quickcare.com</a></li>
                 </ul>
             </div>
         </div>
-        <div class="copyright">
-            <p>&copy; <span id="year"></span> QuickCare Hospital. All Rights Reserved.</p>
+        <div class="footer-bottom">
+            <p>&copy; <span id="year"></span> QuickCare. All Rights Reserved. | <a href="#" style="color: rgba(255, 255, 255, 0.7);">Privacy Policy</a> | <a href="#" style="color: rgba(255, 255, 255, 0.7);">Terms of Service</a></p>
         </div>
     </footer>
 

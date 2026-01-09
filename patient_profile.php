@@ -624,7 +624,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_profile'])) {
                         <div class="profile-avatar"><?php echo strtoupper(substr($patient['FIRST_NAME'], 0, 1) . substr($patient['LAST_NAME'], 0, 1)); ?></div>
                         <div class="profile-title">
                             <h2><?php echo htmlspecialchars($patient['FIRST_NAME'] . ' ' . $patient['LAST_NAME']); ?></h2>
-                            <p>Patient ID: <?php echo htmlspecialchars($patient['PATIENT_ID']); ?></p>
+                    
                         </div>
                     </div>
                     
