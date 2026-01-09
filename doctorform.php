@@ -286,6 +286,7 @@
                 $phone = mysqli_real_escape_string($conn, $_POST['phone']);
                 $email = mysqli_real_escape_string($conn, $_POST['email']);
                 $specialisation_id = mysqli_real_escape_string($conn, $_POST['specialisation_id']);
+                $education = mysqli_real_escape_string($conn, $_POST['education']);
                 $username = mysqli_real_escape_string($conn, $_POST['username']);
                 $password = mysqli_real_escape_string($conn, $_POST['password']);
                 
@@ -293,8 +294,8 @@
                 $hashed_password = password_hash($password, PASSWORD_DEFAULT);
                 
                 // SQL to insert data
-                $sql = "INSERT INTO doctor_tbl (SPECIALISATION_ID, PROFILE_IMAGE, FIRST_NAME, LAST_NAME, DOB, DOJ, USERNAME, PSWD, PHONE, EMAIL, GENDER) 
-                        VALUES ('$specialisation_id', '$profile_image_path', '$first_name', '$last_name', '$dob', '$doj', '$username', '$hashed_password', '$phone', '$email', '$gender')";
+                $sql = "INSERT INTO doctor_tbl (SPECIALISATION_ID, PROFILE_IMAGE, FIRST_NAME, LAST_NAME, DOB, DOJ, USERNAME, PSWD, PHONE, EMAIL, GENDER,EDUCATION) 
+                        VALUES ('$specialisation_id', '$profile_image_path', '$first_name', '$last_name', '$dob', '$doj', '$username', '$hashed_password', '$phone', '$email', '$gender','$education')";
                 
                 if ($conn->query($sql) === TRUE) {
                     $success = true;
@@ -382,7 +383,13 @@
                         <div class="error-message" id="email_error"></div>
                     </div>
                 </div>
-                
+                <div class="form-row">
+                    <div class="form-group" style="flex: 1;">
+                        <label for="education">Education</label>
+                        <textarea id="education" name="education" rows="3"></textarea>
+                        <div class="error-message" id="education_error"></div>
+                        
+
                 <!-- Specialisation and Profile Image -->
                 <div class="form-row">
                     <div class="form-group">
