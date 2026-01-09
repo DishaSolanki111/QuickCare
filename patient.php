@@ -532,7 +532,7 @@ include 'config.php';
                 <h3><?php echo htmlspecialchars($patient['FIRST_NAME'] . ' ' . $patient['LAST_NAME']); ?></h3>
                 <p><i class="fas fa-envelope"></i> <?php echo htmlspecialchars($patient['EMAIL']); ?></p>
                 <p><i class="fas fa-phone"></i> <?php echo htmlspecialchars($patient['PHONE']); ?></p>
-                <p><i class="fas fa-id-card"></i> Patient ID: <?php echo htmlspecialchars($patient['PATIENT_ID']); ?></p>
+
             </div>
         </div>
         
