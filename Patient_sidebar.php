@@ -280,58 +280,22 @@
 <body>
     <div class="container">
         <!-- SIDEBAR -->
-        <div class="sidebar" id="sidebar">
-            <img src="./uploads/logo.JPG" alt="QuickCare Logo" class="logo-img">
-            <h2>QuickCare</h2>
-            <div class="nav">
-                <a href="#dashboard" class="active">
-                     Dashboard
-                </a>
-                <a href="#profile">
-                     My Profile
-                </a>
-                <a href="#appointments">
-                     Manage Appointments
-                </a>
-                <a href="#schedule">
-                   View Doctor Schedule
-                </a>
-                <a href="#prescriptions">
-                 My Prescriptions
-                </a>
-                <a href="#medicine">
-                    Medicine Reminder
-                </a>
-                <a href="#payments">
-                 Payments
-                </a>
-                <a href="#feedback">
-                  Feedback
-                </a>
-                <a href="#doctors">
-                   View Doctor Profile
-                </a>
-                <a href="#settings">
-                 Settings
-                </a>
-                <a href="#help">
-                    Help & Support
-                </a>
-                <a href="#notifications">
-                  Notifications
-                </a>
-                <a href="#reports">
-                 Reports
-                </a>
-                <a href="#security">
-                 Security
-                </a>
-                <button class="logout-btn" onclick="handleLogout()">
-                 Logout
-                </button>
-            </div>
+        <div class="sidebar">
+        <img src="./uploads/logo.JPG" alt="QuickCare Logo" class="logo-img" style="display:block; margin: 0 auto 10px auto; width:80px; height:80px; border-radius:50%;">
+        <h2>QuickCare</h2>
+        <div class="nav">
+            <a href="patient.php">Dashboard</a>
+            <a href="patient_profile.php"> My Profile</a>
+            <a href="manage_appointments.php">Manage Appointments</a>
+            <a href="doctor_schedule.php">View Doctor Schedule</a>
+            <a href="patinet_prescriptions.php">My Prescriptions</a>
+            <a href="medicine_reminder.php">Medicine Reminder</a>
+            <a href="patient_payments.php">Payments</a>
+            <a href="patient_feedback.php">Feedback</a>
+            <a href="view_doctor_patient.php">View Doctor Profile</a>
+            <a href="logout.php" class="logout-btn">logout</a>
         </div>
-
+    </div>
    
     </script>
 </body>

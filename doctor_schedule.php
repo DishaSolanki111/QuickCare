@@ -103,55 +103,6 @@ if (!empty($selected_day)) {
             min-height: 100vh;
         }
         
-        /* Sidebar Styles */
-        .sidebar {
-            width: 250px;
-            background: #072D44;
-            min-height: 100vh;
-            color: white;
-            padding-top: 30px;
-            position: fixed;
-        }
-
-        .sidebar h2 {
-            text-align: center;
-            margin-bottom: 40px;
-            color: #9CCDD8;
-        }
-
-        .sidebar a {
-            display: block;
-            padding: 15px 25px;
-            color: #D0D7E1;
-            text-decoration: none;
-            font-size: 17px;
-            border-left: 4px solid transparent;
-        }
-
-        .sidebar a:hover, .sidebar a.active {
-            background: #064469;
-            border-left: 4px solid #9CCDD8;
-            color: white;
-        }
-
-        .logout-btn:hover{
-            background-color: var(--light-blue);
-        }
-        .logout-btn {
-            display: block;
-            width: 80%;
-            margin: 20px auto 0 auto;
-            padding: 10px;
-            background-color: var(--soft-blue);
-            color: var(--white);    
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            text-align: center;
-            transition: background-color 0.3s;
-        }
-        
         /* Main Content */
         .main-content {
             flex: 1;
@@ -327,16 +278,8 @@ if (!empty($selected_day)) {
         }
         
         @media (max-width: 992px) {
-            .sidebar {
-                width: 70px;
-            }
-            
-            .logo h1 span, .nav-item span {
-                display: none;
-            }
-            
             .main-content {
-                margin-left: 70px;
+                margin-left: 200px;
             }
             
             .filter-form {
@@ -357,23 +300,8 @@ if (!empty($selected_day)) {
 </head>
 <body>
     <div class="container">
-        <!-- Sidebar -->
-        <div class="sidebar">
-            <img src="./uploads/logo.JPG" alt="QuickCare Logo" class="logo-img" style="display:block; margin: 0 auto 10px auto; width:80px; height:80px; border-radius:50%;">
-            <h2>QuickCare</h2>
-            <div class="nav">
-                <a href="patient.php">Dashboard</a>
-                <a href="patient_profile.php">My Profile</a>
-                <a href="manage_appointments.php">Manage Appointments</a>
-                <a class="active">View Doctor Schedule</a>
-                <a href="prescriptions.php">My Prescriptions</a>
-                <a href="medicine_reminder.php">Medicine Reminder</a>
-                <a href="payments.php">Payments</a>
-                <a href="feedback.php">Feedback</a>
-                <a href="doctor_profiles.php">View Doctor Profile</a>
-                <button class="logout-btn">logout</button>
-            </div>
-        </div>
+        <!-- Import Sidebar -->
+        <?php include 'patient_sidebar.php'; ?>
         
         <!-- Main Content -->
         <div class="main-content">
