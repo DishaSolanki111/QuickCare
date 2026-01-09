@@ -111,7 +111,7 @@
     <a href="Admin_payment.php">View Payments</a>
     <a href="Admin_feedback.php">View Feedback</a>
     <a href="Admin_report.php">Reports</a>
-    <button class="logout-btn">logout</button>
+   
 </div>
 
 <script>
