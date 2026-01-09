@@ -5,10 +5,11 @@ include 'config.php';
  $user = $_POST['username'] ?? '';
  $pass = $_POST['password'] ?? '';
 
- $doctor_id   = $_POST['doctor_id']   ?? null;
- $date        = $_POST['date']        ?? null;
- $time        = $_POST['time']        ?? null;
- $schedule_id = $_POST['schedule_id'] ?? null;
+// Check both POST and GET for appointment parameters
+ $doctor_id   = $_POST['doctor_id']   ?? $_GET['doctor_id']   ?? null;
+ $date        = $_POST['date']        ?? $_GET['date']        ?? null;
+ $time        = $_POST['time']        ?? $_GET['time']        ?? null;
+ $schedule_id = $_POST['schedule_id'] ?? $_GET['schedule_id'] ?? null;
 
 if ($user === '' || $pass === '') {
     die("Invalid request");
@@ -49,15 +50,18 @@ if ($doctor_id && $date && $time && $schedule_id) {
         'time' => $time,
         'schedule_id' => $schedule_id
     ];
-    // Redirect to payment if appointment data exists
-    header("Location: payment.php?" . http_build_query([
-        'doctor_id'   => $doctor_id,
-        'date'        => $date,
-        'time'        => $time,
-        'schedule_id' => $schedule_id
-    ]));
+    
+    // Create a form to redirect with POST method
+    echo '<form id="redirectForm" action="payment.php" method="post">
+            <input type="hidden" name="doctor_id" value="' . $doctor_id . '">
+            <input type="hidden" name="date" value="' . $date . '">
+            <input type="hidden" name="time" value="' . $time . '">
+            <input type="hidden" name="schedule_id" value="' . $schedule_id . '">
+          </form>
+          <script>document.getElementById("redirectForm").submit();</script>';
 } else {
-    // Redirect to dashboard if no appointment data
-    header("Location: payment.php");
+    // Create a form to redirect with POST method
+    echo '<form id="redirectForm" action="payment.php" method="post"></form>
+          <script>document.getElementById("redirectForm").submit();</script>';
 }
 exit;

@@ -2,17 +2,22 @@
 session_start();
 
 // Check if this is a standalone login (not from appointment booking)
- $standalone = $_GET['standalone'] ?? false;
+ $standalone = $_POST['standalone'] ?? $_GET['standalone'] ?? false;
 
 // Only require these parameters if not standalone
 if (!$standalone) {
-    $doctor_id   = $_GET['doctor_id']   ?? null;
-    $date        = $_GET['date']        ?? null;
-    $time        = $_GET['time']        ?? null;
-    $schedule_id = $_GET['schedule_id'] ?? null;
+    // Check both POST and GET for parameters
+    $doctor_id   = $_POST['doctor_id']   ?? $_GET['doctor_id']   ?? null;
+    $date        = $_POST['date']        ?? $_GET['date']        ?? null;
+    $time        = $_POST['time']        ?? $_GET['time']        ?? null;
+    $schedule_id = $_POST['schedule_id'] ?? $_GET['schedule_id'] ?? null;
 
-    if (!$doctor_id || !$date || !$time || !$schedule_id) {
-        die("Invalid access");
+    // Only check for appointment data if at least one parameter is provided
+    // This allows the login page to work both with and without appointment data
+    if ($doctor_id || $date || $time || $schedule_id) {
+        if (!$doctor_id || !$date || !$time || !$schedule_id) {
+            die("Invalid access - incomplete appointment data");
+        }
     }
 }
 ?>
@@ -106,6 +111,15 @@ if (!$standalone) {
         .signup-link a:hover {
             text-decoration: underline;
         }
+        
+        .appointment-info {
+            background-color: #e8f0fe;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: #174ea6;
+        }
     </style>
 </head>
 <body>
@@ -117,10 +131,18 @@ if (!$standalone) {
             <p>Access your account to book appointments</p>
         </div>
 
+        <?php if (!$standalone && $doctor_id && $date && $time && $schedule_id): ?>
+        <div class="appointment-info">
+            <strong>Appointment Details:</strong><br>
+            Date: <?= date("l, F j, Y", strtotime($date)) ?><br>
+            Time: <?= $time ?>
+        </div>
+        <?php endif; ?>
+
         <form action="login_process.php" method="post">
 
             <!-- 🔴 INVISIBLE BUT CRITICAL -->
-            <?php if (!$standalone): ?>
+            <?php if (!$standalone && $doctor_id && $date && $time && $schedule_id): ?>
             <input type="hidden" name="doctor_id" value="<?= $doctor_id ?>">
             <input type="hidden" name="date" value="<?= $date ?>">
             <input type="hidden" name="time" value="<?= $time ?>">

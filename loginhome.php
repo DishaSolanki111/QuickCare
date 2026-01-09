@@ -9,7 +9,12 @@ include 'config.php';
 
 // Validate input
 if (empty($username) || empty($password) || empty($user_type)) {
-    header("Location: login_for_all.php?error=Please fill all fields&user_type=$user_type");
+    // Use POST to redirect with error
+    echo '<form id="errorForm" action="login_for_all.php" method="post">
+            <input type="hidden" name="error" value="Please fill all fields">
+            <input type="hidden" name="user_type" value="' . $user_type . '">
+          </form>
+          <script>document.getElementById("errorForm").submit();</script>';
     exit;
 }
 
@@ -40,7 +45,12 @@ switch ($user_type) {
         break;
         
     default:
-        header("Location: login_for_all.php?error=Invalid user type&user_type=$user_type");
+        // Use POST to redirect with error
+        echo '<form id="errorForm" action="login_for_all.php" method="post">
+                <input type="hidden" name="error" value="Invalid user type">
+                <input type="hidden" name="user_type" value="' . $user_type . '">
+              </form>
+              <script>document.getElementById("errorForm").submit();</script>';
         exit;
 }
 
@@ -49,7 +59,12 @@ switch ($user_type) {
 
 // Check if user exists
 if (!$result || mysqli_num_rows($result) !== 1) {
-    header("Location: login_for_all.php?error=Invalid username or password&user_type=$user_type");
+    // Use POST to redirect with error
+    echo '<form id="errorForm" action="login_for_all.php" method="post">
+            <input type="hidden" name="error" value="Invalid username or password">
+            <input type="hidden" name="user_type" value="' . $user_type . '">
+          </form>
+          <script>document.getElementById("errorForm").submit();</script>';
     exit;
 }
 
@@ -58,7 +73,12 @@ if (!$result || mysqli_num_rows($result) !== 1) {
 
 // Verify password
 if (!password_verify($password, $user['PSWD'])) {
-    header("Location: login_for_all.php?error=Invalid username or password&user_type=$user_type");
+    // Use POST to redirect with error
+    echo '<form id="errorForm" action="login_for_all.php" method="post">
+            <input type="hidden" name="error" value="Invalid username or password">
+            <input type="hidden" name="user_type" value="' . $user_type . '">
+          </form>
+          <script>document.getElementById("errorForm").submit();</script>';
     exit;
 }
 
@@ -69,7 +89,8 @@ if (!password_verify($password, $user['PSWD'])) {
  $_SESSION['EMAIL'] = $user['EMAIL'];
  $_SESSION['LOGGED_IN'] = true;
 
-// Redirect to appropriate dashboard
-header("Location: $redirect_page");
+// Use POST to redirect to appropriate dashboard
+echo '<form id="redirectForm" action="' . $redirect_page . '" method="post"></form>
+      <script>document.getElementById("redirectForm").submit();</script>';
 exit;
 ?>
