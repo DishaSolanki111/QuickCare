@@ -453,10 +453,10 @@ if (session_status() == PHP_SESSION_NONE) {
             <div class="nav-right-container">
                 <div class="nav-links">
                     <a href="index.php">Home</a>
+                    <a href="">Our services</a>
                     <a href="schedule.php">Schedule</a>
                     <a href="appointment.php">Doctors</a>
-                    <a href="aboutus.php" >About</a>
-                    <a href="contactus.php">Contact</a>
+                    <a href="aboutus.php">About us</a>
                 </div>
                 
                 <?php if (isset($_SESSION['PATIENT_ID']) || isset($_SESSION['DOCTOR_ID']) || isset($_SESSION['RECEPTIONIST_ID'])): ?>

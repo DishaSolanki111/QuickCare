@@ -12,40 +12,68 @@ include "header.php";
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Select Specialization</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #0066cc;
-            --primary-dark: #004a99;
-            --primary-light: #e6f0ff;
-            --secondary: #0099ff;
-            --accent: #0052cc;
-            --light-blue: #f0f7ff;
-            --medium-blue: #d4e6ff;
-            --dark-blue: #003366;
-            --text-dark: #1a3a5f;
+            /* Using same color variables as index.php */
+            --primary-blue: #1a73e8;
+            --secondary-blue: #4285f4;
+            --light-blue: #e8f0fe;
+            --medium-blue: #8ab4f8;
+            --dark-blue: #174ea6;
+            --accent-blue: #0b57d0;
+            --text-dark: #202124;
             --text-light: #ffffff;
-            --shadow: 0 4px 15px rgba(0, 102, 204, 0.1);
-            --shadow-hover: 0 10px 25px rgba(0, 102, 204, 0.2);
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --shadow-hover: 0 10px 20px rgba(0, 0, 0, 0.15);
+            --primary: #0B5ED7;
+            --accent: #00C2CB;
+            --dark: #0f172a;
+            --text: #334155;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            
+            /* Header specific variables from index.php */
+            --header-primary: #0066cc;
+            --header-primary-dark: #0052a3;
+            --header-primary-light: #e6f2ff;
+            --header-secondary: #00a8cc;
+            --header-accent: #00a86b;
+            --header-warning: #ff6b6b;
+            --header-dark: #1a3a5f;
+            --header-light: #f8fafc;
+            --header-white: #ffffff;
+            --header-text: #2c5282;
+            --header-text-light: #4a6fa5;
+            --header-gradient-1: linear-gradient(135deg, #0066cc 0%, #00a8cc 100%);
+            --header-gradient-2: linear-gradient(135deg, #00a8cc 0%, #00a86b 100%);
+            --header-gradient-3: linear-gradient(135deg, #0066cc 0%, #0052a3 100%);
+            --header-shadow-sm: 0 2px 4px rgba(0,0,0,0.06);
+            --header-shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+            --header-shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
+            --header-shadow-xl: 0 20px 25px rgba(0,0,0,0.1);
+            --header-shadow-2xl: 0 25px 50px rgba(0,0,0,0.25);
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Inter', sans-serif;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Inter', sans-serif;
             background: linear-gradient(135deg, #f5f8ff 0%, #e6f0ff 100%);
             color: var(--text-dark);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            padding-top: 80px; /* Account for fixed header */
         }
 
         .page-header {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
             color: white;
             padding: 4rem 0;
             text-align: center;
@@ -89,13 +117,12 @@ include "header.php";
         .specializations {
             padding: 4rem 0;
             flex-grow: 1;
+            background-color: white;
         }
 
         .grid-container {
-            display: flex;
-            justify-content: center;
-            align-items: stretch;
-            flex-wrap: wrap;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 30px;
             width: 100%;
             max-width: 1200px;
@@ -103,9 +130,6 @@ include "header.php";
         }
 
         .card {
-            flex: 1 1 calc(25% - 30px);
-            min-width: 250px;
-            max-width: 280px;
             background: white;
             border-radius: 15px;
             box-shadow: var(--shadow);
@@ -128,7 +152,7 @@ include "header.php";
             left: 0;
             width: 100%;
             height: 5px;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            background: linear-gradient(90deg, var(--primary-blue), var(--secondary-blue));
         }
 
         .card:hover {
@@ -147,7 +171,7 @@ include "header.php";
             width: 80px;
             height: 80px;
             margin: 0 auto 1.5rem;
-            background: var(--primary-light);
+            background: var(--light-blue);
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -157,11 +181,11 @@ include "header.php";
 
         .card-icon i {
             font-size: 2rem;
-            color: var(--primary);
+            color: var(--primary-blue);
         }
 
         .card:hover .card-icon {
-            background: var(--primary);
+            background: var(--primary-blue);
         }
 
         .card:hover .card-icon i {
@@ -176,13 +200,13 @@ include "header.php";
         }
 
         .card:hover h2 {
-            color: var(--primary);
+            color: var(--primary-blue);
         }
 
         .card button {
             margin-top: 15px;
             padding: 12px 24px;
-            background: var(--primary);
+            background: var(--primary-blue);
             color: white;
             border: none;
             border-radius: 50px;
@@ -195,84 +219,151 @@ include "header.php";
         }
 
         .card button:hover {
-            background: var(--primary-dark);
+            background: var(--accent-blue);
             transform: translateY(-3px);
             box-shadow: 0 6px 15px rgba(0, 102, 204, 0.3);
         }
 
+        /* Footer with Wave Effect - Updated to match aboutus.php color */
         footer {
-            background: linear-gradient(135deg, var(--dark-blue) 0%, var(--primary) 100%);
+            background: var(--header-gradient-1); /* Changed from var(--dark-blue) */
             color: white;
-            padding: 3rem 0;
-            text-align: center;
+            padding: 3rem 5%;
             position: relative;
         }
 
         footer::before {
             content: "";
             position: absolute;
-            top: -50px;
+            top: -100px;
             left: 0;
             width: 100%;
-            height: 50px;
-            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%23f5f8ff' fill-opacity='1' d='M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,138.7C960,139,1056,117,1152,112C1248,107,1344,117,1392,122.7L1440,128L1440,0L1392,0C1344,0,1248,0,1152,0C1056,0,960,0,864,0C768,0,672,0,576,0C480,0,384,0,288,0C192,0,96,0,48,0L0,0Z'%3E%3C/path%3E%3C/svg%3E") no-repeat top;
+            height: 100px;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%23ffffff' fill-opacity='1' d='M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,138.7C960,139,1056,117,1152,112C1248,107,1344,117,1392,122.7L1440,128L1440,0L1392,0C1344,0,1248,0,1152,0C1056,0,960,0,864,0C768,0,672,0,576,0C480,0,384,0,288,0C192,0,96,0,48,0L0,0Z'%3E%3C/path%3E%3C/svg%3E") no-repeat bottom;
             background-size: cover;
         }
 
         .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
             max-width: 1200px;
             margin: 0 auto;
             position: relative;
             z-index: 2;
         }
 
-        .footer-content p {
-            font-size: 1.1rem;
+        .footer-column h3 {
+            font-size: 1.3rem;
             margin-bottom: 1.5rem;
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+
+        .footer-column h3::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background-color: var(--medium-blue);
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column ul li {
+            margin-bottom: 0.8rem;
+        }
+
+        .footer-column ul li a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+
+        .footer-column ul li a:hover {
+            color: white;
+            transform: translateX(5px);
         }
 
         .social-links {
             display: flex;
-            justify-content: center;
             gap: 1rem;
             margin-top: 1.5rem;
         }
 
-        .social-link {
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.1);
+        .social-links a {
             display: flex;
             align-items: center;
             justify-content: center;
+            width: 40px;
+            height: 40px;
+            background-color: rgba(255, 255, 255, 0.1);
             color: white;
+            border-radius: 50%;
             transition: all 0.3s ease;
             text-decoration: none;
-            font-size: 1.2rem;
         }
 
-        .social-link:hover {
-            background: var(--secondary);
-            transform: translateY(-5px);
+        .social-links a:hover {
+            background-color: var(--primary-blue);
+            transform: translateY(-3px);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.7);
         }
 
         /* Responsive Design */
         @media (max-width: 1200px) {
-            .card {
-                flex: 1 1 calc(33.333% - 30px);
+            .grid-container {
+                grid-template-columns: repeat(3, 1fr);
             }
         }
 
-        @media (max-width: 900px) {
-            .card {
-                flex: 1 1 calc(50% - 30px);
+        @media (max-width: 992px) {
+            .page-header h1 {
+                font-size: 2.4rem;
+            }
+            
+            .page-header p {
+                font-size: 1.1rem;
             }
         }
 
-        @media (max-width: 600px) {
+        @media (max-width: 768px) {
+            .grid-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .page-header {
+                padding: 3rem 0;
+            }
+            
             .page-header h1 {
                 font-size: 2.2rem;
+            }
+            
+            .specializations {
+                padding: 3rem 0;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .grid-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .page-header h1 {
+                font-size: 2rem;
             }
             
             .page-header p {
@@ -280,8 +371,11 @@ include "header.php";
             }
             
             .card {
-                flex: 1 1 100%;
-                max-width: 100%;
+                padding: 2rem 1rem;
+            }
+            
+            .footer-content {
+                grid-template-columns: 1fr;
             }
         }
 
@@ -313,7 +407,7 @@ include "header.php";
     <div class="page-header">
         <div class="container">
             <h1>Choose Specialization</h1>
-            <p>Select from our wide range of medical specializations to find the right doctor for your needs</p>
+            <p>Choose from our trusted specialists to find the right doctor for your needs</p>
         </div>
     </div>
 
@@ -346,19 +440,43 @@ include "header.php";
         </div>
     </section>
 
+    <!-- Footer with Wave Effect - Updated to match aboutus.php -->
     <footer>
         <div class="footer-content">
-            <p>&copy; <span id="year"></span> QuickCare — Revolutionizing Healthcare Access</p>
-            <div class="social-links">
-                <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
-                <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
-                <a href="#" class="social-link"><i class="fab fa-linkedin-in"></i></a>
-                <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+            <div class="footer-column">
+                <h3>QuickCare</h3>
+                <p>Your trusted partner in healthcare. Book appointments with verified specialists quickly and easily.</p>
+                <!-- Added Social Links -->
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                </div>
             </div>
+            <div class="footer-column">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="index.php">Home</a></li>
+                    <li><a href="appointment.php">Find Doctors</a></li>
+                    <li><a href="appointment.php">Book Appointment</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Contact Us</h3>
+                <ul>
+                    <li><a href="#"><i class="fas fa-map-marker-alt"></i> 123 Healthcare Ave, Medical City</a></li>
+                    <li><a href="#"><i class="fas fa-phone"></i> 91+ 9632587418</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; <span id="year"></span> QuickCare. All Rights Reserved. | <a href="#" style="color: rgba(255, 255, 255, 0.7);">Privacy Policy</a> | <a href="#" style="color: rgba(255, 255, 255, 0.7);">Terms of Service</a></p>
         </div>
     </footer>
 
     <script>
+        // Set current year
         document.getElementById('year').textContent = new Date().getFullYear();
     </script>
 </body>
