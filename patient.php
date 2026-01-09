@@ -81,21 +81,59 @@ include 'config.php';
                 --warning-color: #f39c12;
                 --info-color: #17a2b8;
         }
-        body {
+        
+        * {
             margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
             font-family: Arial, sans-serif;
             background: #D0D7E1;
             display: flex;
+            height: 100vh;
+            overflow: hidden;
         }
 
-        /* Sidebar */
-           .sidebar {
+        /* Container for the entire layout */
+        .container {
+            display: flex;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Sidebar with scrolling */
+        .sidebar {
             width: 250px;
             background: #072D44;
-            min-height: 100vh;
+            height: 100vh;
             color: white;
             padding-top: 30px;
             position: fixed;
+            left: 0;
+            top: 0;
+            overflow-y: auto;
+            z-index: 1000;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+        }
+
+        /* Custom scrollbar for sidebar */
+        .sidebar::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .sidebar::-webkit-scrollbar-track {
+            background: #064469;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb {
+            background: #9CCDD8;
+            border-radius: 4px;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb:hover {
+            background: #D0D7E1;
         }
 
         .sidebar h2 {
@@ -111,6 +149,7 @@ include 'config.php';
             text-decoration: none;
             font-size: 17px;
             border-left: 4px solid transparent;
+            transition: all 0.3s ease;
         }
 
         .sidebar a:hover, .sidebar a.active {
@@ -119,14 +158,10 @@ include 'config.php';
             color: white;
         }
 
-        .logout-btn:hover{
-            background-color: var(--light-blue);
-        }
         .logout-btn {
-            
             display: block;
             width: 80%;
-            margin: 20px auto 0 auto;
+            margin: 20px auto 30px auto;
             padding: 10px;
             background-color: var(--soft-blue);
             color: var(--white);    
@@ -137,61 +172,36 @@ include 'config.php';
             text-align: center;
             transition: background-color 0.3s;
         }
-              .sidebar {
-            width: 250px;
-            background: #072D44;
-            min-height: 100vh;
-            color: white;
-            padding-top: 30px;
-            position: fixed;
-        }
 
-        .sidebar h2 {
-            text-align: center;
-            margin-bottom: 40px;
-            color: #9CCDD8;
-        }
-
-        .sidebar a {
-            display: block;
-            padding: 15px 25px;
-            color: #D0D7E1;
-            text-decoration: none;
-            font-size: 17px;
-            border-left: 4px solid transparent;
-        }
-
-        .sidebar a:hover, .sidebar a.active {
-            background: #064469;
-            border-left: 4px solid #9CCDD8;
-            color: white;
-        }
-
-        .logout-btn:hover{
+        .logout-btn:hover {
             background-color: var(--light-blue);
         }
-        .logout-btn {
-            
-            display: block;
-            width: 80%;
-            margin: 20px auto 0 auto;
-            padding: 10px;
-            background-color: var(--soft-blue);
-            color: var(--white);    
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            text-align: center;
-            transition: background-color 0.3s;
-        }
-        
 
         /* Main content */
         .main {
             margin-left: 250px;
             padding: 20px;
             width: calc(100% - 250px);
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        /* Custom scrollbar for main content */
+        .main::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .main::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        .main::-webkit-scrollbar-thumb {
+            background: #5790AB;
+            border-radius: 4px;
+        }
+
+        .main::-webkit-scrollbar-thumb:hover {
+            background: #064469;
         }
 
         /* Top bar */
@@ -467,6 +477,26 @@ include 'config.php';
         .notification-popup-close:hover {
             color: #333;
         }
+        
+        /* Mobile responsiveness */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 200px;
+            }
+            
+            .main {
+                margin-left: 200px;
+                width: calc(100% - 200px);
+            }
+            
+            .grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .actions {
+                flex-direction: column;
+            }
+        }
     </style>
 </head>
 <body>
@@ -487,7 +517,6 @@ include 'config.php';
             <a href="view_doctor_patient.php">View Doctor Profile</a>
             <a href="logout.php" class="logout-btn">logout</a>
         </div>
-      
     </div>
 
     <!-- MAIN -->
