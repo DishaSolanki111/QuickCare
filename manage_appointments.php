@@ -37,6 +37,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cancel_appointment'])
     ORDER BY a.APPOINTMENT_DATE DESC
 ");
 
+// Fetch specializations for filter
+ $specializations_query = mysqli_query($conn, "
+    SELECT * FROM specialisation_tbl
+    ORDER BY SPECIALISATION_NAME
+");
+
 // Fetch doctors for booking new appointment
  $doctors_query = mysqli_query($conn, "
     SELECT d.*, s.SPECIALISATION_NAME 
@@ -358,13 +364,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cancel_appointment'])
         
         .modal-content {
             background-color: #fefefe;
-            margin: 10% auto;
+            margin: 3% auto;
             padding: 20px;
             border: none;
-            width: 80%;
-            max-width: 600px;
+            width: 90%;
+            max-width: 800px;
             border-radius: 10px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            max-height: 90vh;
+            overflow-y: auto;
         }
         
         .close {
@@ -413,6 +421,235 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cancel_appointment'])
             gap: 20px;
         }
         
+        .doctor-filter {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            align-items: center;
+        }
+        
+        .doctor-info {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .doctor-info:hover {
+            background-color: #f8f9fa;
+            border-color: var(--secondary-color);
+        }
+        
+        .doctor-info.selected {
+            background-color: rgba(52, 152, 219, 0.1);
+            border-color: var(--secondary-color);
+        }
+        
+        .doctor-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: var(--secondary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        
+        .doctor-details {
+            flex: 1;
+        }
+        
+        .doctor-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: var(--primary-color);
+        }
+        
+        .doctor-specialization {
+            font-size: 14px;
+            color: #666;
+        }
+        
+        /* Calendar Styles */
+        .calendar-container {
+            margin-top: 10px;
+            position: relative;
+        }
+        
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .calendar-nav {
+            background: var(--secondary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        
+        .calendar-nav:hover {
+            background: var(--primary-color);
+        }
+        
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+        }
+        
+        .calendar-day-header {
+            text-align: center;
+            font-weight: bold;
+            padding: 5px;
+            color: var(--dark-color);
+        }
+        
+        .calendar-day {
+            text-align: center;
+            padding: 10px 5px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .calendar-day.available {
+            background-color: rgba(46, 204, 113, 0.1);
+            color: var(--accent-color);
+            font-weight: 500;
+        }
+        
+        .calendar-day.available:hover {
+            background-color: var(--accent-color);
+            color: white;
+        }
+        
+        .calendar-day.selected {
+            background-color: var(--secondary-color);
+            color: white;
+            font-weight: bold;
+        }
+        
+        .calendar-day.disabled {
+            color: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .calendar-day.other-month {
+            color: #eee;
+        }
+        
+        /* Time Slots Styles */
+        .time-slots-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .time-slot {
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .time-slot.available {
+            background-color: rgba(46, 204, 113, 0.1);
+            border-color: var(--accent-color);
+            color: var(--accent-color);
+        }
+        
+        .time-slot.available:hover {
+            background-color: var(--accent-color);
+            color: white;
+        }
+        
+        .time-slot.selected {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+            color: white;
+            font-weight: bold;
+        }
+        
+        .time-slot.disabled {
+            background-color: #f8f9fa;
+            color: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+        
+        .loading i {
+            font-size: 24px;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        
+        .step {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: #ddd;
+            margin: 0 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        
+        .step.active {
+            background-color: var(--secondary-color);
+        }
+        
+        .step.completed {
+            background-color: var(--accent-color);
+        }
+        
+        .step-content {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .step-content.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
         @media (max-width: 992px) {
             .sidebar {
                 width: 70px;
@@ -429,6 +666,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cancel_appointment'])
             .form-row {
                 grid-template-columns: 1fr;
             }
+            
+            .doctor-filter {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .time-slots-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
         }
         
         @media (max-width: 768px) {
@@ -440,6 +686,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cancel_appointment'])
             .appointment-details {
                 flex-direction: column;
                 gap: 10px;
+            }
+            
+            .doctor-info {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .doctor-avatar {
+                margin-right: 0;
+                margin-bottom: 10px;
+            }
+            
+            .time-slots-container {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -641,48 +901,116 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cancel_appointment'])
         <div class="modal-content">
             <span class="close" onclick="closeBookingModal()">&times;</span>
             <h2>Book New Appointment</h2>
-            <form method="POST" action="book_appointment.php">
-                <div class="form-group">
-                    <label for="doctor">Select Doctor</label>
-                    <select class="form-control" id="doctor" name="doctor_id" required>
-                        <option value="">-- Select Doctor --</option>
-                        <?php
-                        if (mysqli_num_rows($doctors_query) > 0) {
-                            while ($doctor = mysqli_fetch_assoc($doctors_query)) {
-                                echo '<option value="' . $doctor['DOCTOR_ID'] . '">' . 
-                                     'Dr. ' . htmlspecialchars($doctor['FIRST_NAME'] . ' ' . $doctor['LAST_NAME']) . 
-                                     ' (' . htmlspecialchars($doctor['SPECIALISATION_NAME']) . ')</option>';
+            
+            <!-- Step Indicator -->
+            <div class="step-indicator">
+                <div class="step active" id="step1">1</div>
+                <div class="step" id="step2">2</div>
+                <div class="step" id="step3">3</div>
+            </div>
+            
+            <form method="POST" action="payment.php">
+                <!-- Step 1: Select Doctor -->
+                <div class="step-content active" id="step1Content">
+                    <div class="form-group">
+                        <label>Filter by Specialization</label>
+                        <select class="form-control" id="specialization_filter" onchange="filterDoctors()">
+                            <option value="">All Specializations</option>
+                            <?php
+                            if (mysqli_num_rows($specializations_query) > 0) {
+                                while ($specialization = mysqli_fetch_assoc($specializations_query)) {
+                                    echo '<option value="' . $specialization['SPECIALISATION_ID'] . '">' . 
+                                         htmlspecialchars($specialization['SPECIALISATION_NAME']) . '</option>';
+                                }
+                                // Reset the result pointer
+                                mysqli_data_seek($specializations_query, 0);
                             }
-                            // Reset the result pointer
-                            mysqli_data_seek($doctors_query, 0);
-                        }
-                        ?>
-                    </select>
-                </div>
-                
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="appointment_date">Appointment Date</label>
-                        <input type="date" class="form-control" id="appointment_date" name="appointment_date" required>
+                            ?>
+                        </select>
                     </div>
+                    
                     <div class="form-group">
-                        <label for="appointment_time">Preferred Time</label>
-                        <input type="time" class="form-control" id="appointment_time" name="appointment_time" required>
+                        <label>Select Doctor</label>
+                        <div id="doctors_list">
+                            <?php
+                            if (mysqli_num_rows($doctors_query) > 0) {
+                                while ($doctor = mysqli_fetch_assoc($doctors_query)) {
+                                    echo '<div class="doctor-info" data-specialization="' . $doctor['SPECIALISATION_ID'] . '" onclick="selectDoctor(this, ' . $doctor['DOCTOR_ID'] . ')">
+                                                <div class="doctor-avatar">' . strtoupper(substr($doctor['FIRST_NAME'], 0, 1) . substr($doctor['LAST_NAME'], 0, 1)) . '</div>
+                                                <div class="doctor-details">
+                                                    <div class="doctor-name">Dr. ' . htmlspecialchars($doctor['FIRST_NAME'] . ' ' . $doctor['LAST_NAME']) . '</div>
+                                                    <div class="doctor-specialization">' . htmlspecialchars($doctor['SPECIALISATION_NAME']) . '</div>
+                                                </div>
+                                            </div>';
+                                }
+                                // Reset the result pointer
+                                mysqli_data_seek($doctors_query, 0);
+                            }
+                            ?>
+                        </div>
+                        <input type="hidden" id="selected_doctor_id" name="doctor_id" required>
+                    </div>
+                    
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-primary" onclick="nextStep(2)" id="nextToStep2" disabled>
+                            Next: Select Date <i class="fas fa-arrow-right" style="margin-left: 5px;"></i>
+                        </button>
                     </div>
                 </div>
                 
-                <div class="form-group">
-                    <label for="reason">Reason for Visit</label>
-                    <textarea class="form-control" id="reason" name="reason" rows="3" placeholder="Please describe your symptoms or reason for the appointment"></textarea>
+                <!-- Step 2: Select Date -->
+                <div class="step-content" id="step2Content">
+                    <div class="form-group">
+                        <label>Select Appointment Date</label>
+                        <div class="calendar-container">
+                            <div class="calendar-header">
+                                <button type="button" class="calendar-nav" id="prevMonth">&lt;</button>
+                                <span id="currentMonth">Month Year</span>
+                                <button type="button" class="calendar-nav" id="nextMonth">&gt;</button>
+                            </div>
+                            <div class="calendar-grid" id="calendarGrid">
+                                <!-- Calendar will be generated here -->
+                            </div>
+                        </div>
+                        <input type="hidden" id="selected_date" name="appointment_date" required>
+                    </div>
+                    
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-danger" onclick="prevStep(1)">
+                            <i class="fas fa-arrow-left" style="margin-right: 5px;"></i> Back
+                        </button>
+                        <button type="button" class="btn btn-primary" onclick="nextStep(3)" id="nextToStep3" disabled>
+                            Next: Select Time <i class="fas fa-arrow-right" style="margin-left: 5px;"></i>
+                        </button>
+                    </div>
                 </div>
                 
-                <div class="btn-group">
-                    <button type="submit" class="btn btn-success">
-                        <i class="fas fa-check"></i> Book Appointment
-                    </button>
-                    <button type="button" class="btn btn-danger" onclick="closeBookingModal()">
-                        <i class="fas fa-times"></i> Cancel
-                    </button>
+                <!-- Step 3: Select Time -->
+                <div class="step-content" id="step3Content">
+                    <div class="form-group">
+                        <label>Select Time Slot</label>
+                        <div id="timeSlotsContainer" class="time-slots-container">
+                            <div class="loading">
+                                <i class="fas fa-spinner"></i>
+                                <p>Loading available time slots...</p>
+                            </div>
+                        </div>
+                        <input type="hidden" id="selected_time" name="appointment_time" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="reason">Reason for Visit</label>
+                        <textarea class="form-control" id="reason" name="reason" rows="3" placeholder="Please describe your symptoms or reason for the appointment"></textarea>
+                    </div>
+                    
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-danger" onclick="prevStep(2)">
+                            <i class="fas fa-arrow-left" style="margin-right: 5px;"></i> Back
+                        </button>
+                        <button type="submit" class="btn btn-success" id="submitBtn" disabled>
+                            <i class="fas fa-check"></i> Book Appointment
+                        </button>
+                    </div>
                 </div>
             </form>
         </div>
@@ -744,15 +1072,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cancel_appointment'])
                 });
             });
             
-            // Set minimum date for appointment booking to today
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('appointment_date').setAttribute('min', today);
-            document.getElementById('new_date').setAttribute('min', today);
+            // Initialize calendar
+            initCalendar();
         });
         
         // Modal functions
         function openBookingModal() {
             document.getElementById('bookingModal').style.display = 'block';
+            resetBookingModal();
         }
         
         function closeBookingModal() {
@@ -779,6 +1106,314 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cancel_appointment'])
             if (event.target == rescheduleModal) {
                 rescheduleModal.style.display = 'none';
             }
+        }
+        
+        // Step navigation functions
+        function nextStep(stepNumber) {
+            // Hide current step
+            document.querySelectorAll('.step-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Show next step
+            document.getElementById('step' + stepNumber + 'Content').classList.add('active');
+            
+            // Update step indicators
+            for (let i = 1; i < stepNumber; i++) {
+                document.getElementById('step' + i).classList.add('completed');
+                document.getElementById('step' + i).classList.remove('active');
+            }
+            document.getElementById('step' + stepNumber).classList.add('active');
+        }
+        
+        function prevStep(stepNumber) {
+            // Hide current step
+            document.querySelectorAll('.step-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Show previous step
+            document.getElementById('step' + stepNumber + 'Content').classList.add('active');
+            
+            // Update step indicators
+            for (let i = stepNumber + 1; i <= 3; i++) {
+                document.getElementById('step' + i).classList.remove('active');
+                document.getElementById('step' + i).classList.remove('completed');
+            }
+            document.getElementById('step' + stepNumber).classList.add('active');
+        }
+        
+        function resetBookingModal() {
+            // Reset all steps
+            document.querySelectorAll('.step-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.getElementById('step1Content').classList.add('active');
+            
+            // Reset step indicators
+            for (let i = 2; i <= 3; i++) {
+                document.getElementById('step' + i).classList.remove('active');
+                document.getElementById('step' + i).classList.remove('completed');
+            }
+            
+            // Reset form values
+            document.getElementById('selected_doctor_id').value = '';
+            document.getElementById('selected_date').value = '';
+            document.getElementById('selected_time').value = '';
+            document.getElementById('nextToStep2').disabled = true;
+            document.getElementById('nextToStep3').disabled = true;
+            document.getElementById('submitBtn').disabled = true;
+            
+            // Clear selections
+            document.querySelectorAll('.doctor-info').forEach(doc => {
+                doc.classList.remove('selected');
+            });
+        }
+        
+        // Doctor selection and filtering
+        function selectDoctor(element, doctorId) {
+            // Remove selected class from all doctors
+            document.querySelectorAll('.doctor-info').forEach(doc => {
+                doc.classList.remove('selected');
+            });
+            
+            // Add selected class to clicked doctor
+            element.classList.add('selected');
+            
+            // Set the hidden input value
+            document.getElementById('selected_doctor_id').value = doctorId;
+            
+            // Enable next button
+            document.getElementById('nextToStep2').disabled = false;
+            
+            // Load doctor's schedule
+            loadDoctorSchedule(doctorId);
+        }
+        
+        function filterDoctors() {
+            const specializationId = document.getElementById('specialization_filter').value;
+            const doctors = document.querySelectorAll('.doctor-info');
+            
+            doctors.forEach(doctor => {
+                if (specializationId === '' || doctor.getAttribute('data-specialization') === specializationId) {
+                    doctor.style.display = 'flex';
+                } else {
+                    doctor.style.display = 'none';
+                }
+            });
+        }
+        
+        // Calendar functionality
+        let currentMonth = new Date().getMonth();
+        let currentYear = new Date().getFullYear();
+        let selectedDoctorId = null;
+        let doctorSchedule = [];
+        
+        function initCalendar() {
+            renderCalendar(currentMonth, currentYear);
+            
+            document.getElementById('prevMonth').addEventListener('click', () => {
+                currentMonth--;
+                if (currentMonth < 0) {
+                    currentMonth = 11;
+                    currentYear--;
+                }
+                renderCalendar(currentMonth, currentYear);
+            });
+            
+            document.getElementById('nextMonth').addEventListener('click', () => {
+                currentMonth++;
+                if (currentMonth > 11) {
+                    currentMonth = 0;
+                    currentYear++;
+                }
+                renderCalendar(currentMonth, currentYear);
+            });
+        }
+        
+        function renderCalendar(month, year) {
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 
+                               'July', 'August', 'September', 'October', 'November', 'December'];
+            const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            
+            // Update month and year display
+            document.getElementById('currentMonth').textContent = `${monthNames[month]} ${year}`;
+            
+            // Clear calendar grid
+            const calendarGrid = document.getElementById('calendarGrid');
+            calendarGrid.innerHTML = '';
+            
+            // Add day headers
+            dayNames.forEach(day => {
+                const dayHeader = document.createElement('div');
+                dayHeader.className = 'calendar-day-header';
+                dayHeader.textContent = day;
+                calendarGrid.appendChild(dayHeader);
+            });
+            
+            // Add empty cells for days before month starts
+            for (let i = 0; i < firstDay; i++) {
+                const emptyDay = document.createElement('div');
+                emptyDay.className = 'calendar-day other-month';
+                calendarGrid.appendChild(emptyDay);
+            }
+            
+            // Add days of the month
+            const today = new Date();
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dayElement = document.createElement('div');
+                dayElement.className = 'calendar-day';
+                dayElement.textContent = day;
+                
+                // Check if this day is in the past
+                const currentDate = new Date(year, month, day);
+                if (currentDate < today.setHours(0, 0, 0, 0)) {
+                    dayElement.classList.add('disabled');
+                }
+                
+                // Check if this day is available for the selected doctor
+                if (selectedDoctorId && !dayElement.classList.contains('disabled')) {
+                    const dayOfWeek = currentDate.getDay();
+                    const dayMap = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+                    
+                    if (doctorSchedule.includes(dayMap[dayOfWeek])) {
+                        dayElement.classList.add('available');
+                        dayElement.addEventListener('click', () => selectDate(year, month, day));
+                    } else {
+                        dayElement.classList.add('disabled');
+                    }
+                }
+                
+                calendarGrid.appendChild(dayElement);
+            }
+        }
+        
+        function loadDoctorSchedule(doctorId) {
+            selectedDoctorId = doctorId;
+            
+            // Show loading indicator
+            document.getElementById('timeSlotsContainer').innerHTML = `
+                <div class="loading">
+                    <i class="fas fa-spinner"></i>
+                    <p>Loading doctor's schedule...</p>
+                </div>
+            `;
+            
+            // Fetch doctor's schedule from database
+            fetch(`get_doctor_schedule.php?doctor_id=${doctorId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        doctorSchedule = data.available_days;
+                        renderCalendar(currentMonth, currentYear);
+                        
+                        // Clear time slots
+                        document.getElementById('timeSlotsContainer').innerHTML = `
+                            <div class="loading">
+                                <i class="fas fa-spinner"></i>
+                                <p>Please select a date first</p>
+                            </div>
+                        `;
+                    } else {
+                        document.getElementById('timeSlotsContainer').innerHTML = `
+                            <div class="alert alert-danger">
+                                Error loading doctor's schedule: ${data.message}
+                            </div>
+                        `;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading doctor schedule:', error);
+                    document.getElementById('timeSlotsContainer').innerHTML = `
+                        <div class="alert alert-danger">
+                            Error loading doctor's schedule. Please try again later.
+                        </div>
+                    `;
+                });
+        }
+        
+        function selectDate(year, month, day) {
+            // Format date as YYYY-MM-DD
+            const date = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+            document.getElementById('selected_date').value = date;
+            
+            // Update calendar to show selected date
+            document.querySelectorAll('.calendar-day').forEach(el => {
+                el.classList.remove('selected');
+            });
+            event.target.classList.add('selected');
+            
+            // Load time slots for the selected date
+            loadTimeSlots(selectedDoctorId, date);
+        }
+        
+        function loadTimeSlots(doctorId, date) {
+            // Show loading indicator
+            document.getElementById('timeSlotsContainer').innerHTML = `
+                <div class="loading">
+                    <i class="fas fa-spinner"></i>
+                    <p>Loading available time slots...</p>
+                </div>
+            `;
+            
+            // Fetch time slots from database
+            fetch(`get_time_slots.php?doctor_id=${doctorId}&date=${date}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        const timeSlotsContainer = document.getElementById('timeSlotsContainer');
+                        timeSlotsContainer.innerHTML = '';
+                        
+                        if (data.time_slots.length > 0) {
+                            data.time_slots.forEach(timeSlot => {
+                                const timeSlotElement = document.createElement('div');
+                                timeSlotElement.className = 'time-slot available';
+                                timeSlotElement.textContent = timeSlot;
+                                timeSlotElement.addEventListener('click', () => selectTimeSlot(timeSlot));
+                                timeSlotsContainer.appendChild(timeSlotElement);
+                            });
+                            
+                            // Enable next button
+                            document.getElementById('nextToStep3').disabled = false;
+                        } else {
+                            timeSlotsContainer.innerHTML = `
+                                <div class="alert alert-warning">
+                                    No available time slots for this date.
+                                </div>
+                            `;
+                        }
+                    } else {
+                        document.getElementById('timeSlotsContainer').innerHTML = `
+                            <div class="alert alert-danger">
+                                Error loading time slots: ${data.message}
+                            </div>
+                        `;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading time slots:', error);
+                    document.getElementById('timeSlotsContainer').innerHTML = `
+                        <div class="alert alert-danger">
+                            Error loading time slots. Please try again later.
+                        </div>
+                    `;
+                });
+        }
+        
+        function selectTimeSlot(time) {
+            // Update hidden input
+            document.getElementById('selected_time').value = time;
+            
+            // Update UI to show selected time slot
+            document.querySelectorAll('.time-slot').forEach(slot => {
+                slot.classList.remove('selected');
+            });
+            event.target.classList.add('selected');
+            
+            // Enable submit button
+            document.getElementById('submitBtn').disabled = false;
         }
     </script>
 </body>
