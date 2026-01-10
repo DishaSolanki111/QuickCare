@@ -526,16 +526,16 @@ body {
             <i class="fas fa-bars"></i>
         </button>
         
-        <h1>Doctor Dashboard</h1>
+        
+            <h2>Welcome back, Dr. <?php echo $doctor_name; ?></h2>
+   
+    
         
         <div class="topbar-right">
-            <div class="notification-icon">
-                <i class="far fa-bell"></i>
-                <span class="notification-badge">3</span>
-            </div>
+            
             
             <div class="user-info">
-                <img src="https://picsum.photos/seed/doctor/40/40.jpg" alt="Doctor" class="user-avatar">
+                <img src="<?php echo htmlspecialchars($doctor['PROFILE_IMAGE']); ?>" alt="Profile" class="user-avatar">
                 <div class="user-details">
                     <h3>Dr. <?php echo $doctor_name; ?></h3>
                     <p><?php echo date("F j, Y"); ?></p>
@@ -546,10 +546,7 @@ body {
     
     <!-- Dashboard Content -->
     <div class="dashboard-content">
-        <div class="welcome-section">
-            <h2>Welcome back, Dr. <?php echo $doctor_name; ?></h2>
-            <p>Here's what's happening with your practice today.</p>
-        </div>
+       
         
         <div class="cards-container">
             <div class="card">

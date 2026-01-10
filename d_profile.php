@@ -590,13 +590,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
             <h1>My Profile</h1>
             
             <div class="topbar-right">
-                <div class="notification-icon">
-                    <i class="far fa-bell"></i>
-                    <span class="notification-badge">3</span>
-                </div>
+                
                 
                 <div class="user-info">
-                    <img src="https://picsum.photos/seed/doctor/40/40.jpg" alt="Doctor" class="user-avatar">
+                    <?php if (!empty($doctor['PROFILE_IMAGE'])): ?>
+                    <img src="<?php echo htmlspecialchars($doctor['PROFILE_IMAGE']); ?>" alt="Profile" class="user-avatar">
+                <?php else: ?>
+                    <div class="profile-avatar" style="background-color: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-size: 36px; font-weight: bold;">
+                        <?php echo strtoupper(substr($doctor['FIRST_NAME'], 0, 1) . substr($doctor['LAST_NAME'], 0, 1)); ?>
+                    </div>
+                <?php endif; ?>
                     <div class="user-details">
                         <h3>Dr. <?php echo htmlspecialchars($doctor['FIRST_NAME'] . ' ' . $doctor['LAST_NAME']); ?></h3>
                         <p><?php echo date("F j, Y"); ?></p>
@@ -610,7 +613,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
             <!-- Profile Header -->
             <div class="profile-header">
                 <?php if (!empty($doctor['PROFILE_IMAGE'])): ?>
-                    <img src="uploads/<?php echo htmlspecialchars($doctor['PROFILE_IMAGE']); ?>" alt="Profile" class="profile-avatar">
+                    <img src="<?php echo htmlspecialchars($doctor['PROFILE_IMAGE']); ?>" alt="Profile" class="profile-avatar">
                 <?php else: ?>
                     <div class="profile-avatar" style="background-color: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-size: 36px; font-weight: bold;">
                         <?php echo strtoupper(substr($doctor['FIRST_NAME'], 0, 1) . substr($doctor['LAST_NAME'], 0, 1)); ?>
@@ -703,10 +706,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
                         <span class="info-value"><?php echo date('F d, Y', strtotime($doctor['DOJ'])); ?></span>
                     </div>
                     
-                    <div class="info-item">
+                    <!-- <div class="info-item">
                         <span class="info-label">Years of Experience</span>
                         <span class="info-value"><?php echo date('Y') - date('Y', strtotime($doctor['DOJ'])); ?> years</span>
-                    </div>
+                    </div> -->
                 </div>
             </div>
             

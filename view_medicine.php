@@ -696,9 +696,9 @@ if (!empty($search)) {
             <!-- Medicine Header -->
             <div class="medicine-header">
                 <h2>Medicine Inventory</h2>
-                <button class="btn btn-primary" onclick="openAddModal()">
+                <!-- <button class="btn btn-primary" onclick="openAddModal()">
                     <i class="fas fa-plus"></i> Add Medicine
-                </button>
+                </button> -->
             </div>
             
             <!-- Search Bar -->
@@ -718,14 +718,14 @@ if (!empty($search)) {
                         <div class="medicine-card">
                             <div class="medicine-card-header">
                                 <h3><?php echo htmlspecialchars($medicine['MED_NAME']); ?></h3>
-                                <span class="medicine-id">ID: #<?php echo $medicine['MEDICINE_ID']; ?></span>
+                                <!-- <span class="medicine-id">ID: #<?php echo $medicine['MEDICINE_ID']; ?></span> -->
                             </div>
                             
                             <div class="medicine-description">
                                 <?php echo htmlspecialchars($medicine['DESCRIPTION']); ?>
                             </div>
                             
-                            <div class="medicine-actions">
+                            <!-- <div class="medicine-actions">
                                 <button class="btn btn-warning" onclick="openEditModal(<?php echo $medicine['MEDICINE_ID']; ?>, '<?php echo htmlspecialchars($medicine['MED_NAME']); ?>', '<?php echo htmlspecialchars($medicine['DESCRIPTION']); ?>')">
                                     <i class="fas fa-edit"></i> Edit
                                 </button>
@@ -735,7 +735,7 @@ if (!empty($search)) {
                                         <i class="fas fa-trash"></i> Delete
                                     </button>
                                 </form>
-                            </div>
+                            </div> -->
                         </div>
                     <?php endwhile; ?>
                 </div>
