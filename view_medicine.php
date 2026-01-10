@@ -649,7 +649,7 @@ if (!empty($search)) {
         <a href="manage_prescriptions.php">Manage Prescription</a>
         <a href="view_medicine.php" class="active">View Medicine</a>
         <a href="doctor_feedback.php">View Feedback</a>
-        <button class="logout-btn">Logout</button>
+        <a href="logout.php" class="logout-btn">Logout</a>
     </div>
 
     <!-- Main Content -->
