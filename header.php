@@ -454,7 +454,7 @@ if (session_status() == PHP_SESSION_NONE) {
             <div class="nav-right-container">
                 <div class="nav-links">
                     <a href="index.php">Home</a>
-                    <a href="services.php">Our services</a>
+                    <a href="service.php">Our services</a>
                     <a href="schedule.php">Schedule</a>
                     <a href="appointment.php">Doctors</a>
                     <a href="aboutus.php">About us</a>

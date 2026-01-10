@@ -484,23 +484,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['process_payment'])) {
 </head>
 <body>
     <div class="container">
-        <!-- Sidebar -->
-        <div class="sidebar">
-            <img src="./uploads/logo.JPG" alt="QuickCare Logo" class="logo-img" style="display:block; margin: 0 auto 10px auto; width:80px; height:80px; border-radius:50%;">
-            <h2>QuickCare</h2>
-            <div class="nav">
-                <a href="patient.php">Dashboard</a>
-                <a href="patient_profile.php">My Profile</a>
-                <a href="manage_appointments.php">Manage Appointments</a>
-                <a href="doctor_schedule.php">View Doctor Schedule</a>
-                <a href="prescriptions.php">My Prescriptions</a>
-                <a href="medicine_reminder.php">Medicine Reminder</a>
-                <a class="active">Payments</a>
-                <a href="feedback.php">Feedback</a>
-                <a href="doctor_profiles.php">View Doctor Profile</a>
-                <button class="logout-btn">logout</button>
-            </div>
-        </div>
+        <?php include 'patient_sidebar.php'; ?>
         
         <!-- Main Content -->
         <div class="main-content">
