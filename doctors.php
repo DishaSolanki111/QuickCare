@@ -1,15 +1,15 @@
-php
 <?php
+session_start(); // Start session to check login status
 include "config.php";
 include "header.php";
 
- $spec_id = intval($_GET['spec_id']);
+$spec_id = intval($_GET['spec_id']);
 
- $q = "SELECT DOCTOR_ID, FIRST_NAME, LAST_NAME, PROFILE_IMAGE 
+$q = "SELECT DOCTOR_ID, FIRST_NAME, LAST_NAME, PROFILE_IMAGE 
       FROM doctor_tbl 
       WHERE SPECIALISATION_ID = $spec_id";
 
- $res = mysqli_query($conn, $q);
+$res = mysqli_query($conn, $q);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -468,7 +468,7 @@ include "header.php";
                             <a href="doctor_profile.php?id=<?php echo $row['DOCTOR_ID']; ?>" class="btn-secondary">
                                 <i class="fas fa-user"></i> View Profile
                             </a>
-                            <button class="btn-primary" onclick="openCalendar(<?php echo $row['DOCTOR_ID']; ?>)">
+                            <button class="btn-primary" onclick="handleBooking(<?php echo $row['DOCTOR_ID']; ?>)">
                                 <i class="fas fa-calendar-check"></i> Book Now
                             </button>
                         </div>
@@ -521,6 +521,19 @@ include "header.php";
     </div>
 
     <script>
+        // Check if user is logged in (passed from PHP)
+        const isLoggedIn = <?php echo isset($_SESSION['LOGGED_IN']) && $_SESSION['LOGGED_IN'] ? 'true' : 'false'; ?>;
+        
+        function handleBooking(doctorId) {
+            if (isLoggedIn) {
+                // User is logged in, open calendar directly
+                openCalendar(doctorId);
+            } else {
+                // User is not logged in, redirect to login with standalone parameter
+                window.location.href = 'login.php?standalone=true';
+            }
+        }
+        
         function openCalendar(id){
             document.getElementById("calendarFrame").src = "calendar.php?doctor_id=" + id;
             document.getElementById("calendarModal").style.display = "flex";

@@ -1,16 +1,17 @@
 <?php
+session_start(); // Start session to check login status
 include 'config.php';
 include 'header.php';
 if (!isset($_GET['id'])) {
     die("Doctor ID missing.");
 }
 
- $doctor_id = intval($_GET['id']);
+$doctor_id = intval($_GET['id']);
 
 /* =========================
    FETCH DOCTOR DETAILS
 ========================= */
- $doctor_sql = "
+$doctor_sql = "
     SELECT 
         d.DOCTOR_ID,
         d.FIRST_NAME,
@@ -29,8 +30,8 @@ if (!isset($_GET['id'])) {
     WHERE d.DOCTOR_ID = $doctor_id
 ";
 
- $doctor_res = mysqli_query($conn, $doctor_sql);
- $doctor = mysqli_fetch_assoc($doctor_res);
+$doctor_res = mysqli_query($conn, $doctor_sql);
+$doctor = mysqli_fetch_assoc($doctor_res);
 
 if (!$doctor) {
     die("Doctor not found.");
@@ -39,19 +40,19 @@ if (!$doctor) {
 /* =========================
    FETCH DOCTOR SCHEDULE
 ========================= */
- $schedule_sql = "
+$schedule_sql = "
     SELECT AVAILABLE_DAY, START_TIME, END_TIME
     FROM doctor_schedule_tbl
     WHERE DOCTOR_ID = $doctor_id
     ORDER BY FIELD(AVAILABLE_DAY,'MON','TUE','WED','THU','FRI','SAT','SUN')
 ";
 
- $schedule_res = mysqli_query($conn, $schedule_sql);
+$schedule_res = mysqli_query($conn, $schedule_sql);
 
 /* =========================
    PROFILE IMAGE PATH
 ========================= */
- $image_path = !empty($doctor['PROFILE_IMAGE']) 
+$image_path = !empty($doctor['PROFILE_IMAGE']) 
     ? $doctor['PROFILE_IMAGE'] 
     : 'imgs/default.jpg';
 ?>
@@ -152,6 +153,34 @@ if (!$doctor) {
             font-size: 1rem;
         }
 
+        /* Book Now Button */
+        .book-now-btn {
+            margin-top: 25px;
+            padding: 14px 40px;
+            background: var(--primary-blue);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 10px rgba(26, 115, 232, 0.3);
+        }
+
+        .book-now-btn:hover {
+            background: var(--dark-blue);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(26, 115, 232, 0.4);
+        }
+
+        .book-now-btn i {
+            font-size: 1.2rem;
+        }
+
         .right {
             width: 65%;
             padding: 30px;
@@ -232,6 +261,77 @@ if (!$doctor) {
             font-weight: 500;
         }
 
+        /* CALENDAR POPUP STYLES */
+        #calendarModal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+        }
+
+        #calendarBox {
+            background: white;
+            width: 90%;
+            max-width: 500px;
+            height: 80vh;
+            max-height: 600px;
+            border-radius: 12px;
+            position: relative;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .calendar-header {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+            color: white;
+            padding: 1rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .calendar-header h3 {
+            margin: 0;
+            font-size: 1.3rem;
+        }
+
+        .calendar-header span {
+            font-size: 1.5rem;
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.2);
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .calendar-header span:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+
+        .calendar-content {
+            flex-grow: 1;
+            overflow: hidden;
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
         /* Responsive Design */
         @media (max-width: 992px) {
             .profile-card {
@@ -274,6 +374,11 @@ if (!$doctor) {
                 flex-direction: column;
                 gap: 10px;
             }
+
+            .book-now-btn {
+                padding: 12px 30px;
+                font-size: 1rem;
+            }
         }
 
         @media (max-width: 576px) {
@@ -312,6 +417,11 @@ if (!$doctor) {
                 <img src="<?php echo htmlspecialchars($image_path); ?>" alt="Doctor">
                 <h2>Dr. <?php echo htmlspecialchars($doctor['FIRST_NAME'].' '.$doctor['LAST_NAME']); ?></h2>
                 <span class="badge"><?php echo htmlspecialchars($doctor['SPECIALISATION_NAME']); ?></span>
+                
+                <!-- Book Now Button -->
+                <button class="book-now-btn" onclick="handleBooking(<?php echo $doctor_id; ?>)">
+                    <i class="fas fa-calendar-check"></i> Book Appointment
+                </button>
             </div>
 
             <!-- RIGHT -->
@@ -374,5 +484,53 @@ if (!$doctor) {
             </div>
         </div>
     </div>
+
+    <!-- CALENDAR POPUP -->
+    <div id="calendarModal">
+        <div id="calendarBox">
+            <div class="calendar-header">
+                <h3>Select Appointment Date</h3>
+                <span onclick="closeCalendar()">&times;</span>
+            </div>
+            <div class="calendar-content">
+                <iframe id="calendarFrame"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Check if user is logged in (passed from PHP)
+        const isLoggedIn = <?php echo isset($_SESSION['LOGGED_IN']) && $_SESSION['LOGGED_IN'] ? 'true' : 'false'; ?>;
+        
+        function handleBooking(doctorId) {
+            if (isLoggedIn) {
+                // User is logged in, open calendar directly
+                openCalendar(doctorId);
+            } else {
+                // User is not logged in, redirect to login with standalone parameter
+                window.location.href = 'login.php?standalone=true';
+            }
+        }
+        
+        function openCalendar(id){
+            document.getElementById("calendarFrame").src = "calendar.php?doctor_id=" + id;
+            document.getElementById("calendarModal").style.display = "flex";
+            document.body.style.overflow = 'hidden'; // Prevent scrolling when modal is open
+        }
+        
+        function closeCalendar(){
+            document.getElementById("calendarModal").style.display = "none";
+            document.getElementById("calendarFrame").src = "";
+            document.body.style.overflow = 'auto'; // Enable scrolling back
+        }
+        
+        // Close modal when clicking outside of it
+        window.onclick = function(event) {
+            const modal = document.getElementById("calendarModal");
+            if (event.target == modal) {
+                closeCalendar();
+            }
+        }
+    </script>
 </body>
 </html>
