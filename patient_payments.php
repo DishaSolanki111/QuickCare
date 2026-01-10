@@ -113,47 +113,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['process_payment'])) {
         }
         
         body {
-            background-color: #f5f7fa;
-            color: #333;
-            line-height: 1.6;
-        }
+    background-color: #f5f7fa;
+    color: #333;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    overflow-y: scroll;
+}
+
+html {
+    height: 100%;
+    overflow-y: scroll;
+}
+
+.container {
+    display: flex;
+    min-height: 100vh;
+    height: 100%;
+}
+
+.main-content {
+    flex: 1;
+    margin-left: 250px;
+    padding: 20px;
+    height: 100%;
+    overflow-y: auto;
+}
         
-        .container {
-            display: flex;
-            min-height: 100vh;
-        }
         
-        /* Sidebar Styles */
-        .sidebar {
-            width: 250px;
-            background: #072D44;
-            min-height: 100vh;
-            color: white;
-            padding-top: 30px;
-            position: fixed;
-        }
-
-        .sidebar h2 {
-            text-align: center;
-            margin-bottom: 40px;
-            color: #9CCDD8;
-        }
-
-        .sidebar a {
-            display: block;
-            padding: 15px 25px;
-            color: #D0D7E1;
-            text-decoration: none;
-            font-size: 17px;
-            border-left: 4px solid transparent;
-        }
-
-        .sidebar a:hover, .sidebar a.active {
-            background: #064469;
-            border-left: 4px solid #9CCDD8;
-            color: white;
-        }
-
+        
+       
         .logout-btn:hover{
             background-color: var(--light-blue);
         }
@@ -173,11 +163,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['process_payment'])) {
         }
         
         /* Main Content */
-        .main-content {
-            flex: 1;
-            margin-left: 250px;
-            padding: 20px;
-        }
+        
         
         .header {
             display: flex;
