@@ -293,9 +293,9 @@
     <a href="mangae_schedule_doctor.php">Manage Schedule</a>
     <a href="appointment_doctor.php">Manage Appointments</a>
     <a href="manage_prescriptions.php">Manage Prescription</a>
-    <a href="#">View Medicine</a>
+    <a href="view_medicine.php ">View Medicine</a>
     <a href="doctor_feedback.php">View Feedback</a>
-     <button class="logout-btn">Logout</button>
+    <a href="logout.php" class="logout-btn">Logout</a>
 </div>
         
         <!-- Main Content -->
