@@ -516,9 +516,9 @@ include 'config.php';
         <!-- BUTTONS -->
         <div class="actions">
             <a href="appointment.php" class="btn">Book Appointment</a>
-            <a href="prescriptions.php" class="btn">View Prescription</a>
-            <a href="feedback.php" class="btn">Give Feedback</a>
-            <a href="payments.php" class="btn">Make Payment</a>
+            <a href="patinet_prescriptions.php" class="btn">View Prescription</a>
+            <a href="patient_feedback.php" class="btn">Give Feedback</a>
+            <a href="patient_payments.php" class="btn">Make Payment</a>
         </div>
     </div>
 </div>

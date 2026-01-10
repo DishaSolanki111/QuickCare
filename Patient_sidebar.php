@@ -286,13 +286,13 @@
         <div class="nav">
             <a href="patient.php">Dashboard</a>
             <a href="patient_profile.php"> My Profile</a>
+            <a href="view_doctor_patient.php">View Doctor Profile</a>
             <a href="manage_appointments.php">Manage Appointments</a>
             <a href="doctor_schedule.php">View Doctor Schedule</a>
             <a href="patinet_prescriptions.php">My Prescriptions</a>
             <a href="medicine_reminder.php">Medicine Reminder</a>
             <a href="patient_payments.php">Payments</a>
             <a href="patient_feedback.php">Feedback</a>
-            <a href="view_doctor_patient.php">View Doctor Profile</a>
             <a href="logout.php" class="logout-btn">logout</a>
         </div>
     </div>
