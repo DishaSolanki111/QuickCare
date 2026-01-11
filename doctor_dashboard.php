@@ -111,6 +111,7 @@ if ($row = $week_result->fetch_assoc()) {
     --danger-color: #e74c3c;
     --warning-color: #f39c12;
     --info-color: #17a2b8;
+    
         }
 
 * {
@@ -126,7 +127,20 @@ body {
     line-height: 1.6;
     overflow-x: hidden;
 }
-
+.sidebar a {
+    display: block;
+    padding: 15px 25px;
+    color: var(--gray-blue);
+    text-decoration: none;
+    font-size: 17px;
+    border-left: 4px solid transparent;
+    transition: all 0.3s ease;
+}
+.sidebar a.active {
+    background: var(--mid-blue);
+    border-left: 4px solid var(--light-blue);
+    color: var(--white);
+}
 .container {
     display: flex;
     min-height: 100vh;

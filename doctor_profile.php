@@ -430,7 +430,6 @@ if (!$doctor) {
 </head>
 <body>
     <div class="main-container">
-        <?php include 'doctor_sidebar.php'; ?>
         
         <div class="content-wrapper">
             <div class="container">

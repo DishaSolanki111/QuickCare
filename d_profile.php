@@ -565,19 +565,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
 </head>
 <body>
     <!-- Sidebar -->
-    <div class="sidebar" id="sidebar">
-        <img src="uploads/logo.JPG" alt="QuickCare Logo" class="logo-img" style="display:block; margin: 0 auto 10px auto; width:80px; height:80px; border-radius:50%;">  
-        <h2>QuickCare</h2>
-
-        <a href="doctor_dashboard.php" >Dashboard</a>
-        <a href="d_profile.php" class="active">My Profile</a>
-        <a href="mangae_schedule_doctor.php">Manage Schedule</a>
-        <a href="appointment_doctor.php">Manage Appointments</a>
-        <a href="manage_prescriptions.php">Manage Prescription</a>
-        <a href="view_medicine.php">View Medicine</a>
-        <a href="doctor_feedback.php">View Feedback</a>
-        <a href="logout.php" class="logout-btn">Logout</a>
-    </div>
+   <?php include 'doctor_sidebar.php'; ?>
 
     <!-- Main Content -->
     <div class="main-content">
