@@ -57,7 +57,7 @@ body{
     font-family:Arial;
     background:linear-gradient(135deg,#0a4d68,#0582ca);
     margin:0;
-    padding:0;
+    padding:80px;
     min-height:100vh;
     padding-top:100px; /* Adjust based on your header height */
 }

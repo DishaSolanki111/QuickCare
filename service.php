@@ -100,9 +100,9 @@
             }
         }
 
-        .service-image svg {
-            width: 120px;
-            height: 120px;
+        .service-image img {
+            width: 100%;
+            height: 100%;
             fill: #2c6ecb;
             position: relative;
             z-index: 1;
@@ -665,9 +665,7 @@
             <!-- Service Card 1: Appointment Booking & Management -->
             <article class="service-card" data-service="appointment">
                 <div class="service-image">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                        <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/>
-                    </svg>
+                     <img src="uploads/appointment booking.png">
                 </div>
                 <div class="service-content">
                     <h2 class="service-title">Appointment Booking & Management</h2>
@@ -684,9 +682,7 @@
             <!-- Service Card 2: Digital Prescription & Medical Records -->
             <article class="service-card reverse" data-service="prescription">
                 <div class="service-image">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                        <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
-                    </svg>
+                   <img src="uploads/digital prescription.png">
                 </div>
                 <div class="service-content">
                     <h2 class="service-title">Digital Prescription & Medical Records</h2>
@@ -703,9 +699,7 @@
             <!-- Service Card 3: Medicine & Appointment Reminders -->
             <article class="service-card" data-service="reminders">
                 <div class="service-image">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                        <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/>
-                    </svg>
+                    <img src="uploads/medicine and appointment reminder.png">
                 </div>
                 <div class="service-content">
                     <h2 class="service-title">Medicine & Appointment Reminders</h2>
@@ -722,9 +716,7 @@
             <!-- Service Card 4: Feedback & Support -->
             <article class="service-card reverse" data-service="feedback">
                 <div class="service-image">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                        <path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z"/>
-                    </svg>
+                    <img src="uploads/feedback and support.png">
                 </div>
                 <div class="service-content">
                     <h2 class="service-title">Feedback & Support</h2>

@@ -1,9 +1,5 @@
 <?php
-// Database connection
- $conn = new mysqli("localhost", "root", "", "quick_care");
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
+include 'config.php';
 
 // Get today's date in YYYY-MM-DD format
  $today = date('Y-m-d');
