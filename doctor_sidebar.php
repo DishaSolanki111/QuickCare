@@ -139,12 +139,6 @@ body {
     .sidebar.active {
         transform: translateX(0); /* Show sidebar when active class is added */
     }
-    
-  
-
-
-
-
 </style>
 </head>
 <body>
@@ -152,36 +146,19 @@ body {
 
 
     <!-- ================== SIDEBAR HTML ================== -->
-    <div class="sidebar" id="sidebar"> 
-        <img src="uploads/logo.JPG" alt="QuickCare Logo" class="logo-img">  
+  <div class="sidebar" id="sidebar">
+        <img src="uploads/logo.JPG" alt="QuickCare Logo" class="logo-img" style="display:block; margin: 0 auto 10px auto; width:80px; height:80px; border-radius:50%;">  
         <h2>QuickCare</h2>
 
-        <a href="doctor_dashboard.php" class="active">
-         <span>Dashboard</span>
-        </a>
-        <a href="d_profile.php">
-            <span>My Profile</span>
-        </a>
-        <a href="mangae_schedule_doctor.php">
-          <span>Manage Schedule</span>
-        </a>
-        <a href="appointment_doctor.php">
-          <span>Manage Appointments</span>
-        </a>
-        <a href="manage_prescriptions.php">
-            <span>Manage Prescription</span>
-        </a>
-        <a href="view_medicine.php">
-       <span>View Medicine</span>
-        </a>
-        <a href="doctor_feedback.php">
-          <span>View Feedback</span>
-        </a>
-        <button class="logout-btn">
-         Logout
-        </button>
+        <a href="doctor_dashboard.php" >Dashboard</a>
+        <a href="d_profile.php">My Profile</a>
+        <a href="mangae_schedule_doctor.php">Manage Schedule</a>
+        <a href="appointment_doctor.php">Manage Appointments</a>
+        <a href="manage_prescriptions.php">Manage Prescription</a>
+        <a href="view_medicine.php" >View Medicine</a>
+        <a href="doctor_feedback.php">View Feedback</a>
+        <a href="logout.php" class="logout-btn">Logout</a>
     </div>
-
 </script>
 
 </body>
