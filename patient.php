@@ -252,6 +252,7 @@ include 'config.php';
             grid-template-columns: 2fr 1fr 1fr;
             gap: 35px;
             margin-bottom: 30px;
+            flex-wrap: wrap;
         }
 
         /* Upcoming Appointment */
@@ -304,6 +305,8 @@ include 'config.php';
             gap: 15px;
             margin-top: 25px;
             width:95%;
+            justify-content: space-between;
+            flex-wrap: wrap;
         }
 
         .btn {

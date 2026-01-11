@@ -99,24 +99,52 @@ box-sizing: border-box;
 font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-body {
-background-color: #f5f7fa;
-color: #333;
-line-height: 1.6;
-}
+        body {
+            font-family: Arial, sans-serif;
+            background: #D0D7E1;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Container for the entire layout */
+        .container {
+            display: flex;
+            width: 100%;
+            height: 100%;
+        }
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 250px;
+            padding: 20px;
+            width: calc(100% - 250px);
+            height: 100vh;
+            overflow-y: auto;
+        }
+        /* Custom scrollbar for main content */
+        .main-content::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .main-content::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        .main-content::-webkit-scrollbar-thumb {
+            background: #5790AB;
+            border-radius: 4px;
+        }
+
+        .main-content::-webkit-scrollbar-thumb:hover {
+            background: #064469;
+        }
+
 
 /* Page Layout */
 .page-wrapper {
 display: flex;
 min-height: 100vh;
-width: 100%;
-}
-
-/* Main Content */
-.main-content {
-flex: 1;
-padding: 20px;
-padding-left: calc(var(--sidebar-width) + 20px);
 width: 100%;
 }
 
@@ -228,7 +256,7 @@ background-color: #27ae60;
 
 .doctors-container {
 max-height: 70vh;
-overflow-y: auto;
+
 padding-right: 10px;
 }
 
