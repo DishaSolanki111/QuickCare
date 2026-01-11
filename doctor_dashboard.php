@@ -20,7 +20,7 @@ include 'config.php';
  $doctor_id = $_SESSION['DOCTOR_ID'];
  $doctor_name = "Doctor";
 
- $doc_sql = "SELECT FIRST_NAME, LAST_NAME FROM doctor_tbl WHERE DOCTOR_ID = ?";
+ $doc_sql = "SELECT FIRST_NAME, LAST_NAME, PROFILE_IMAGE FROM doctor_tbl WHERE DOCTOR_ID = ?";
  $doc_stmt = $conn->prepare($doc_sql);
  $doc_stmt->bind_param("i", $doctor_id);
  $doc_stmt->execute();
@@ -113,8 +113,6 @@ if ($row = $week_result->fetch_assoc()) {
     --info-color: #17a2b8;
         }
 
-
-
 * {
     margin: 0;
     padding: 0;
@@ -129,76 +127,17 @@ body {
     overflow-x: hidden;
 }
 
-/* Sidebar Styles */
-.logo-img {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    margin-bottom: 15px;
-    object-fit: cover;
-    border: 3px solid var(--primary-light);
-}
-
 .container {
-            display: flex;
-            min-height: 100vh;
-        }
-        
-        /* Sidebar Styles - Replaced with patient.php sidebar styles */
-        .sidebar {
-            width: 250px;
-            background: #072D44;
-            min-height: 100vh;
-            color: white;
-            padding-top: 30px;
-            position: fixed;
-        }
-
-        .sidebar h2 {
-            text-align: center;
-            margin-bottom: 40px;
-            color: #9CCDD8;
-        }
-
-        .sidebar a {
-            display: block;
-            padding: 15px 25px;
-            color: #D0D7E1;
-            text-decoration: none;
-            font-size: 17px;
-            border-left: 4px solid transparent;
-        }
-
-        .sidebar a:hover, .sidebar a.active {
-            background: #064469;
-            border-left: 4px solid #9CCDD8;
-            color: white;
-        }
-
-        .logout-btn:hover{
-            background-color: var(--light-blue);
-        }
-        .logout-btn {
-            
-            display: block;
-            width: 80%;
-            margin: 20px auto 0 auto;
-            padding: 10px;
-            background-color: var(--soft-blue);
-            color: var(--white);    
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            text-align: center;
-            transition: background-color 0.3s;
-        }
+    display: flex;
+    min-height: 100vh;
+}
 
 /* Main Content */
 .main-content {
     margin-left: 260px;
     padding: 0;
     min-height: 100vh;
+    width: calc(100% - 260px);
 }
 
 /* Header */
@@ -212,6 +151,7 @@ body {
     position: sticky;
     top: 0;
     z-index: 50;
+    width: 100%;
 }
 
 .topbar h1 {
@@ -278,10 +218,13 @@ body {
 /* Dashboard Content */
 .dashboard-content {
     padding: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
 .welcome-section {
     margin-bottom: 30px;
+    text-align: left;
 }
 
 .welcome-section h2 {
@@ -299,9 +242,9 @@ body {
 /* Cards */
 .cards-container {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    grid-template-columns: repeat(3, 1fr);
     gap: 25px;
-    margin-bottom: 30px;
+    margin-bottom: 40px;
 }
 
 .card {
@@ -312,6 +255,9 @@ body {
     transition: all 0.3s ease;
     position: relative;
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 }
 
 .card::before {
@@ -377,6 +323,7 @@ body {
 .card-change {
     font-size: 14px;
     color: var(--text-light);
+    margin-top: auto;
 }
 
 /* Schedule Card */
@@ -404,67 +351,57 @@ body {
 
 .schedule-info-item {
     flex: 1;
+    text-align: center;
+    padding: 0 15px;
 }
 
 .schedule-info-item h4 {
     font-size: 14px;
     color: var(--text-light);
-    margin-bottom: 5px;
+    margin-bottom: 10px;
+    font-weight: 500;
 }
 
 .schedule-info-item p {
-    font-size: 18px;
+    font-size: 20px;
     font-weight: 600;
     color: var(--dark);
     margin: 0;
 }
 
 /* Responsive Design */
+@media (max-width: 1200px) {
+    .cards-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
 @media (max-width: 992px) {
-    .sidebar {
-        width: 70px;
-    }
-    
-    .sidebar-header h2 {
-        display: none;
-    }
-    
-    .sidebar-nav a span {
-        display: none;
-    }
-    
-    .sidebar-nav a {
-        justify-content: center;
-    }
-    
-    .sidebar-nav a i {
-        margin: 0;
-    }
-    
     .main-content {
         margin-left: 70px;
+        width: calc(100% - 70px);
     }
     
     .cards-container {
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        grid-template-columns: repeat(2, 1fr);
     }
 }
 
 @media (max-width: 768px) {
-    .sidebar {
-        transform: translateX(-100%);
-    }
-    
-    .sidebar.active {
-        transform: translateX(0);
-    }
-    
     .main-content {
         margin-left: 0;
+        width: 100%;
     }
     
     .topbar {
         padding: 15px 20px;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .topbar-right {
+        margin-top: 15px;
+        align-self: flex-end;
     }
     
     .dashboard-content {
@@ -481,151 +418,105 @@ body {
     
     .schedule-info-item {
         margin-bottom: 15px;
+        padding: 10px 0;
+        border-bottom: 1px solid #eee;
     }
-}
-
-/* Mobile Menu Toggle */
-.menu-toggle {
-    display: none;
-    background: none;
-    border: none;
-    font-size: 24px;
-    color: var(--dark);
-    cursor: pointer;
-}
-
-@media (max-width: 768px) {
-    .menu-toggle {
-        display: block;
+    
+    .schedule-info-item:last-child {
+        border-bottom: none;
     }
 }
 </style>
 </head>
 <body>
 
-<!-- Sidebar -->
-<div class="sidebar"> 
-    <img src="uploads/logo.JPG" alt="QuickCare Logo" class="logo-img" style="display:block; margin: 0 auto 10px auto; width:80px; height:80px; border-radius:50%;">  
-    <h2>QuickCare</h2>
+<div class="container">
+    <?php include 'doctor_sidebar.php'; ?>
 
-    <a href="doctor_dashboard.php" >Dashboard</a>
-    <a href="d_profile.php">My Profile</a>
-    <a href="mangae_schedule_doctor.php">Manage Schedule</a>
-    <a href="appointment_doctor.php">Manage Appointments</a>
-    <a href="manage_prescriptions.php">Manage Prescription</a>
-    <a href="view_medicine.php">View Medicine</a>
-    <a href="doctor_feedback.php">View Feedback</a>
-    <a href="logout.php" class="logout-btn">Logout</a>
-</div>
-
-<!-- Main Content -->
-<div class="main-content">
-    <!-- Header -->
-    <header class="topbar">
-        <button class="menu-toggle" id="menuToggle">
-            <i class="fas fa-bars"></i>
-        </button>
-        
-        
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Header -->
+        <header class="topbar">
             <h2>Welcome back, Dr. <?php echo $doctor_name; ?></h2>
-   
-    
         
-        <div class="topbar-right">
-            
-            
-            <div class="user-info">
-                <img src="<?php echo htmlspecialchars($doctor['PROFILE_IMAGE']); ?>" alt="Profile" class="user-avatar">
-                <div class="user-details">
-                    <h3>Dr. <?php echo $doctor_name; ?></h3>
-                    <p><?php echo date("F j, Y"); ?></p>
-                </div>
-            </div>
-        </div>
-    </header>
-    
-    <!-- Dashboard Content -->
-    <div class="dashboard-content">
-       
-        
-        <div class="cards-container">
-            <div class="card">
-                <div class="card-header">
-                    <h3>Today's Appointments</h3>
-                    <div class="card-icon appointments-icon">
-                        <i class="fas fa-calendar-check"></i>
+            <div class="topbar-right">
+                <div class="user-info">
+                    <img src="<?php echo htmlspecialchars($doc['PROFILE_IMAGE']); ?>" alt="Profile" class="user-avatar">
+                    <div class="user-details">
+                        <h3>Dr. <?php echo $doctor_name; ?></h3>
+                        <p><?php echo date("F j, Y"); ?></p>
                     </div>
                 </div>
-                <div class="card-value"><?php echo $today_appointments; ?></div>
-                <div class="card-change">
-                    <i class="fas fa-arrow-up"></i> 12% from last week
-                </div>
             </div>
-            
-            <div class="card">
-                <div class="card-header">
-                    <h3>Feedback Summary</h3>
-                    <div class="card-icon feedback-icon">
-                        <i class="fas fa-star"></i>
-                    </div>
-                </div>
-                <div class="card-value">⭐ 4.8</div>
-                <div class="card-change">
-                    <i class="fas fa-arrow-up"></i> 0.3 from last month
-                </div>
-            </div>
-            
-            <div class="card">
-                <div class="card-header">
-                    <h3>Patients This Week</h3>
-                    <div class="card-icon patients-icon">
-                        <i class="fas fa-users"></i>
-                    </div>
-                </div>
-                <div class="card-value"><?php echo $patients_this_week; ?></div>
-                <div class="card-change">
-                    <i class="fas fa-arrow-up"></i> 5% from last week
-                </div>
-            </div>
-        </div>
+        </header>
         
-        <div class="schedule-card">
-            <h3>Schedule Summary</h3>
-            <div class="schedule-info">
-                <div class="schedule-info-item">
-                    <h4>Next Available Slot</h4>
-                    <p>10:00 AM</p>
+        <!-- Dashboard Content -->
+        <div class="dashboard-content">
+            <div class="welcome-section">
+                <h2>Dashboard Overview</h2>
+                <p>Here's what's happening with your practice today.</p>
+            </div>
+            
+            <div class="cards-container">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Today's Appointments</h3>
+                        <div class="card-icon appointments-icon">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+                    </div>
+                    <div class="card-value"><?php echo $today_appointments; ?></div>
+                    <div class="card-change">
+                        <i class="fas fa-arrow-up"></i> 12% from last week
+                    </div>
                 </div>
-                <div class="schedule-info-item">
-                    <h4>Total Patients This Week</h4>
-                    <p><?php echo $patients_this_week; ?></p>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Feedback Summary</h3>
+                        <div class="card-icon feedback-icon">
+                            <i class="fas fa-star"></i>
+                        </div>
+                    </div>
+                    <div class="card-value">⭐ 4.8</div>
+                    <div class="card-change">
+                        <i class="fas fa-arrow-up"></i> 0.3 from last month
+                    </div>
                 </div>
-                <div class="schedule-info-item">
-                    <h4>Available Slots Today</h4>
-                    <p>5</p>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Patients This Week</h3>
+                        <div class="card-icon patients-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                    </div>
+                    <div class="card-value"><?php echo $patients_this_week; ?></div>
+                    <div class="card-change">
+                        <i class="fas fa-arrow-up"></i> 5% from last week
+                    </div>
+                </div>
+            </div>
+            
+            <div class="schedule-card">
+                <h3>Schedule Summary</h3>
+                <div class="schedule-info">
+                    <div class="schedule-info-item">
+                        <h4>Next Available Slot</h4>
+                        <p>10:00 AM</p>
+                    </div>
+                    <div class="schedule-info-item">
+                        <h4>Total Patients This Week</h4>
+                        <p><?php echo $patients_this_week; ?></p>
+                    </div>
+                    <div class="schedule-info-item">
+                        <h4>Available Slots Today</h4>
+                        <p>5</p>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
-<script>
-// Mobile menu toggle
-const menuToggle = document.getElementById('menuToggle');
-const sidebar = document.getElementById('sidebar');
-
-menuToggle.addEventListener('click', () => {
-    sidebar.classList.toggle('active');
-});
-
-// Close sidebar when clicking outside on mobile
-document.addEventListener('click', (e) => {
-    if (window.innerWidth <= 768) {
-        if (!sidebar.contains(e.target) && !menuToggle.contains(e.target)) {
-            sidebar.classList.remove('active');
-        }
-    }
-});
-</script>
 </body>
 </html>

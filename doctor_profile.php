@@ -6,12 +6,12 @@ if (!isset($_GET['id'])) {
     die("Doctor ID missing.");
 }
 
-$doctor_id = intval($_GET['id']);
+ $doctor_id = intval($_GET['id']);
 
 /* =========================
    FETCH DOCTOR DETAILS
 ========================= */
-$doctor_sql = "
+ $doctor_sql = "
     SELECT 
         d.DOCTOR_ID,
         d.FIRST_NAME,
@@ -30,8 +30,8 @@ $doctor_sql = "
     WHERE d.DOCTOR_ID = $doctor_id
 ";
 
-$doctor_res = mysqli_query($conn, $doctor_sql);
-$doctor = mysqli_fetch_assoc($doctor_res);
+ $doctor_res = mysqli_query($conn, $doctor_sql);
+ $doctor = mysqli_fetch_assoc($doctor_res);
 
 if (!$doctor) {
     die("Doctor not found.");
@@ -40,19 +40,19 @@ if (!$doctor) {
 /* =========================
    FETCH DOCTOR SCHEDULE
 ========================= */
-$schedule_sql = "
+ $schedule_sql = "
     SELECT AVAILABLE_DAY, START_TIME, END_TIME
     FROM doctor_schedule_tbl
     WHERE DOCTOR_ID = $doctor_id
     ORDER BY FIELD(AVAILABLE_DAY,'MON','TUE','WED','THU','FRI','SAT','SUN')
 ";
 
-$schedule_res = mysqli_query($conn, $schedule_sql);
+ $schedule_res = mysqli_query($conn, $schedule_sql);
 
 /* =========================
    PROFILE IMAGE PATH
 ========================= */
-$image_path = !empty($doctor['PROFILE_IMAGE']) 
+ $image_path = !empty($doctor['PROFILE_IMAGE']) 
     ? $doctor['PROFILE_IMAGE'] 
     : 'imgs/default.jpg';
 ?>
@@ -93,6 +93,17 @@ $image_path = !empty($doctor['PROFILE_IMAGE'])
             color: var(--text-dark);
             min-height: 100vh;
             padding-top: 80px; /* Account for fixed header */
+        }
+
+        .main-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .content-wrapper {
+            flex: 1;
+            margin-left: 250px; /* Width of the sidebar */
+            padding: 20px;
         }
 
         .container {
@@ -334,6 +345,10 @@ $image_path = !empty($doctor['PROFILE_IMAGE'])
 
         /* Responsive Design */
         @media (max-width: 992px) {
+            .content-wrapper {
+                margin-left: 70px; /* Adjusted for collapsed sidebar */
+            }
+            
             .profile-card {
                 flex-direction: column;
             }
@@ -353,6 +368,10 @@ $image_path = !empty($doctor['PROFILE_IMAGE'])
         }
 
         @media (max-width: 768px) {
+            .content-wrapper {
+                margin-left: 0; /* No sidebar on mobile */
+            }
+            
             .container {
                 padding: 20px 15px;
             }
@@ -410,76 +429,82 @@ $image_path = !empty($doctor['PROFILE_IMAGE'])
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="profile-card">
-            <!-- LEFT -->
-            <div class="left">
-                <img src="<?php echo htmlspecialchars($image_path); ?>" alt="Doctor">
-                <h2>Dr. <?php echo htmlspecialchars($doctor['FIRST_NAME'].' '.$doctor['LAST_NAME']); ?></h2>
-                <span class="badge"><?php echo htmlspecialchars($doctor['SPECIALISATION_NAME']); ?></span>
-                
-                <!-- Book Now Button -->
-                <button class="book-now-btn" onclick="handleBooking(<?php echo $doctor_id; ?>)">
-                    <i class="fas fa-calendar-check"></i> Book Appointment
-                </button>
-            </div>
+    <div class="main-container">
+        <?php include 'doctor_sidebar.php'; ?>
+        
+        <div class="content-wrapper">
+            <div class="container">
+                <div class="profile-card">
+                    <!-- LEFT -->
+                    <div class="left">
+                        <img src="<?php echo htmlspecialchars($image_path); ?>" alt="Doctor">
+                        <h2>Dr. <?php echo htmlspecialchars($doctor['FIRST_NAME'].' '.$doctor['LAST_NAME']); ?></h2>
+                        <span class="badge"><?php echo htmlspecialchars($doctor['SPECIALISATION_NAME']); ?></span>
+                        
+                        <!-- Book Now Button -->
+                        <button class="book-now-btn" onclick="handleBooking(<?php echo $doctor_id; ?>)">
+                            <i class="fas fa-calendar-check"></i> Book Appointment
+                        </button>
+                    </div>
 
-            <!-- RIGHT -->
-            <div class="right">
-                <div class="section-title">
-                    <i class="fas fa-user"></i> CONTACT
-                </div>
-                <div class="contact-info">
-                    <div class="contact-item">
-                        <i class="fas fa-phone"></i>
-                        <span><?php echo htmlspecialchars($doctor['PHONE']); ?></span>
-                    </div>
-                    <div class="contact-item">
-                        <i class="fas fa-envelope"></i>
-                        <span><?php echo htmlspecialchars($doctor['EMAIL']); ?></span>
-                    </div>
-                </div>
+                    <!-- RIGHT -->
+                    <div class="right">
+                        <div class="section-title">
+                            <i class="fas fa-user"></i> CONTACT
+                        </div>
+                        <div class="contact-info">
+                            <div class="contact-item">
+                                <i class="fas fa-phone"></i>
+                                <span><?php echo htmlspecialchars($doctor['PHONE']); ?></span>
+                            </div>
+                            <div class="contact-item">
+                                <i class="fas fa-envelope"></i>
+                                <span><?php echo htmlspecialchars($doctor['EMAIL']); ?></span>
+                            </div>
+                        </div>
 
-                <div class="section-title">
-                    <i class="fas fa-info-circle"></i> PERSONAL INFORMATION
-                </div>
-                <div class="contact-info">
-                    <div class="contact-item">
-                        <i class="fas fa-venus-mars"></i>
-                        <span><?php echo htmlspecialchars($doctor['GENDER']); ?></span>
-                    </div>
-                    <div class="contact-item">
-                        <i class="fas fa-birthday-cake"></i>
-                        <span><?php echo date('d M Y', strtotime($doctor['DOB'])); ?></span>
-                    </div>
-                </div>
+                        <div class="section-title">
+                            <i class="fas fa-info-circle"></i> PERSONAL INFORMATION
+                        </div>
+                        <div class="contact-info">
+                            <div class="contact-item">
+                                <i class="fas fa-venus-mars"></i>
+                                <span><?php echo htmlspecialchars($doctor['GENDER']); ?></span>
+                            </div>
+                            <div class="contact-item">
+                                <i class="fas fa-birthday-cake"></i>
+                                <span><?php echo date('d M Y', strtotime($doctor['DOB'])); ?></span>
+                            </div>
+                        </div>
 
-                <div class="section-title">
-                    <i class="fas fa-graduation-cap"></i> EDUCATION
-                </div>
-                <div class="contact-info">
-                    <div class="contact-item">
-                        <i class="fas fa-user-graduate"></i>
-                        <span><?php echo htmlspecialchars($doctor['EDUCATION']); ?></span>
-                    </div>
-                </div>
+                        <div class="section-title">
+                            <i class="fas fa-graduation-cap"></i> EDUCATION
+                        </div>
+                        <div class="contact-info">
+                            <div class="contact-item">
+                                <i class="fas fa-user-graduate"></i>
+                                <span><?php echo htmlspecialchars($doctor['EDUCATION']); ?></span>
+                            </div>
+                        </div>
 
-                <div class="section-title">
-                    <i class="fas fa-calendar-alt"></i> AVAILABLE SCHEDULE
-                </div>
-                <div class="schedule-container">
-                    <?php
-                    if (mysqli_num_rows($schedule_res) > 0) {
-                        while ($row = mysqli_fetch_assoc($schedule_res)) {
-                            echo "<div class='schedule-item'>
-                                    <span class='schedule-day'>{$row['AVAILABLE_DAY']}</span>
-                                    <span class='schedule-time'>" . substr($row['START_TIME'],0,5) . " - " . substr($row['END_TIME'],0,5) . "</span>
-                                  </div>";
-                        }
-                    } else {
-                        echo "<p>No schedule available</p>";
-                    }
-                    ?>
+                        <div class="section-title">
+                            <i class="fas fa-calendar-alt"></i> AVAILABLE SCHEDULE
+                        </div>
+                        <div class="schedule-container">
+                            <?php
+                            if (mysqli_num_rows($schedule_res) > 0) {
+                                while ($row = mysqli_fetch_assoc($schedule_res)) {
+                                    echo "<div class='schedule-item'>
+                                            <span class='schedule-day'>{$row['AVAILABLE_DAY']}</span>
+                                            <span class='schedule-time'>" . substr($row['START_TIME'],0,5) . " - " . substr($row['END_TIME'],0,5) . "</span>
+                                          </div>";
+                                }
+                            } else {
+                                echo "<p>No schedule available</p>";
+                            }
+                            ?>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
