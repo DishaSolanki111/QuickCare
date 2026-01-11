@@ -1,11 +1,45 @@
+<?php
+// Database connection
+ $conn = new mysqli("localhost", "root", "", "quick_care");
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+// Get today's date in YYYY-MM-DD format
+ $today = date('Y-m-d');
+ $formattedToday = date('d-m-Y', strtotime($today));
+
+// Fetch specializations for the dropdown
+ $specializations = [];
+ $sql = "SELECT SPECIALISATION_ID, SPECIALISATION_NAME FROM specialisation_tbl ORDER BY SPECIALISATION_NAME";
+ $result = $conn->query($sql);
+if ($result->num_rows > 0) {
+    while($row = $result->fetch_assoc()) {
+        $specializations[] = $row;
+    }
+}
+ $conn->close();
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Doctor Schedule - Hospital Patient Appointment Booking System</title>
+    <title>Quick Care - Doctor Appointment Booking</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        /* Base Styles */
+        :root {
+            --primary-color: #4a6fdc;
+            --secondary-color: #f8f9fa;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --light-color: #e9ecef;
+            --dark-color: #343a40;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --shadow-hover: 0 8px 15px rgba(0, 0, 0, 0.1);
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -14,131 +48,107 @@
         }
 
         body {
-            background-color: #f5f9ff;
-            color: #333;
+            background-color: #f5f7fb;
+            color: var(--dark-color);
             line-height: 1.6;
+        }
+
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1rem 0;
+            box-shadow: var(--shadow);
         }
 
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 0 20px;
         }
 
-        header {
-            text-align: center;
-            padding: 40px 0;
-            background-color: #ffffff;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            margin-bottom: 40px;
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        h1 {
-            color: #2c6ecb;
-            font-size: 2.5rem;
-            margin-bottom: 10px;
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 1.5rem;
+            font-weight: bold;
         }
 
-        .subtitle {
-            color: #6c757d;
-            font-size: 1.1rem;
-        }
-
-        /* Doctor Schedule Section */
-        .doctor-schedule-section {
-            padding: 40px 0;
-        }
-
-        .section-header {
-            text-align: center;
-            margin-bottom: 40px;
-        }
-
-        .section-title {
-            color: #2c6ecb;
+        .logo i {
+            margin-right: 10px;
             font-size: 2rem;
-            margin-bottom: 10px;
         }
 
-        .section-subtitle {
-            color: #6c757d;
-            font-size: 1.1rem;
-        }
-
-        /* Filters */
-        .filters-container {
-            background-color: #ffffff;
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 30px;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+        .filters {
+            background-color: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            margin: 2rem 0;
             display: flex;
             flex-wrap: wrap;
-            gap: 20px;
+            gap: 1rem;
             align-items: center;
         }
 
         .filter-group {
+            display: flex;
+            flex-direction: column;
             flex: 1;
             min-width: 200px;
         }
 
-        .filter-label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-            color: #333;
+        .filter-group label {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--dark-color);
         }
 
-        .filter-input {
-            width: 100%;
-            padding: 10px;
+        .filter-group input,
+        .filter-group select {
+            padding: 0.75rem;
             border: 1px solid #ddd;
             border-radius: 5px;
             font-size: 1rem;
+            transition: border-color 0.3s;
         }
 
-        .filter-button {
-            background-color: #2c6ecb;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 1rem;
-            transition: background-color 0.3s ease;
-            margin-top: 24px;
+        .filter-group input:focus,
+        .filter-group select:focus {
+            border-color: var(--primary-color);
+            outline: none;
         }
 
-        .filter-button:hover {
-            background-color: #1e4d8f;
+        .date-display {
+            background-color: var(--secondary-color);
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            font-weight: 600;
+            color: var(--primary-color);
+            font-size: 40px;
         }
 
-        /* Doctor Cards Grid */
-        .doctor-cards-container {
+        .doctors-container {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 30px;
-            margin-bottom: 40px;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
         }
 
-        /* Doctor Card */
         .doctor-card {
-            background-color: #ffffff;
-            border-radius: 12px;
+            background-color: white;
+            border-radius: 10px;
             overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            opacity: 0;
-        }
-
-        .doctor-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
-        }
-
-        .doctor-card.fade-in {
-            animation: fadeIn 0.5s ease-out forwards;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s, box-shadow 0.3s;
+            animation: fadeIn 0.5s ease-in-out;
         }
 
         @keyframes fadeIn {
@@ -152,42 +162,31 @@
             }
         }
 
-        /* Doctor Info */
-        .doctor-info {
-            padding: 20px;
+        .doctor-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .doctor-header {
             display: flex;
-            align-items: center;
-            border-bottom: 1px solid #f0f0f0;
+            padding: 1.5rem;
+            background-color: var(--secondary-color);
+            border-bottom: 1px solid #eee;
         }
 
         .doctor-image {
             width: 80px;
             height: 80px;
             border-radius: 50%;
-            background-color: #e6f0ff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 15px;
-            overflow: hidden;
-        }
-
-        .doctor-image img {
-            width: 100%;
-            height: 100%;
             object-fit: cover;
+            margin-right: 1rem;
+            border: 3px solid white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
 
-        .doctor-image svg {
-            width: 40px;
-            height: 40px;
-            fill: #2c6ecb;
-        }
-
-        .doctor-details h3 {
-            color: #2c6ecb;
-            font-size: 1.3rem;
-            margin-bottom: 5px;
+        .doctor-info h3 {
+            margin-bottom: 0.5rem;
+            color: var(--primary-color);
         }
 
         .doctor-specialization {
@@ -195,224 +194,98 @@
             font-size: 0.9rem;
         }
 
-        .doctor-education {
-            color: #888;
-            font-size: 0.8rem;
-            margin-top: 3px;
+        .doctor-schedule {
+            padding: 1.5rem;
         }
 
-        /* Schedule Section */
-        .schedule-section {
-            padding: 20px;
-        }
-
-        /* Date Selection */
-        .date-selection {
-            margin-bottom: 20px;
-        }
-
-        .date-label {
-            display: block;
-            margin-bottom: 10px;
-            font-weight: 500;
-            color: #333;
-        }
-
-        .date-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-
-        .date-option {
-            padding: 8px 12px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            background-color: #fff;
-        }
-
-        .date-option:hover {
-            border-color: #2c6ecb;
-            background-color: #f0f7ff;
-        }
-
-        .date-option.selected {
-            border-color: #2c6ecb;
-            background-color: #2c6ecb;
-            color: white;
-        }
-
-        .date-option.disabled {
-            cursor: not-allowed;
-            opacity: 0.5;
-            background-color: #f5f5f5;
-        }
-
-        /* Days Container */
-        .days-container {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 15px;
-            overflow-x: auto;
-        }
-
-        .day {
-            text-align: center;
-            min-width: 40px;
+        .schedule-title {
             font-weight: 600;
-            color: #333;
+            margin-bottom: 1rem;
+            color: var(--dark-color);
         }
 
-        /* Time Slots Container */
-        .time-slots-container {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
-            overflow-x: auto;
+        .time-slots {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 0.5rem;
         }
 
         .time-slot {
-            min-width: 40px;
-            height: 40px;
+            padding: 0.5rem;
+            text-align: center;
             border-radius: 5px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.8rem;
-            font-weight: 500;
+            font-size: 0.85rem;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: transform 0.2s, box-shadow 0.2s;
             position: relative;
         }
 
-        .time-slot.available {
-            background-color: #d4edda;
-            color: #155724;
-        }
-
-        .time-slot.available:hover {
-            background-color: #c3e6cb;
+        .time-slot:hover {
             transform: scale(1.05);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
 
-        .time-slot.fully-booked {
-            background-color: #fff3cd;
-            color: #856404;
+        .available {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .booked {
+            background-color: var(--danger-color);
+            color: white;
             cursor: not-allowed;
         }
 
-        .time-slot.not-available {
-            background-color: #e2e3e5;
+        .unavailable {
+            background-color: var(--light-color);
             color: #6c757d;
             cursor: not-allowed;
         }
 
-        .time-slot.selected {
-            border: 2px solid #2c6ecb;
-            box-shadow: 0 0 5px rgba(44, 110, 203, 0.3);
-        }
-
-        /* Tooltip */
         .tooltip {
             position: absolute;
             bottom: 100%;
             left: 50%;
             transform: translateX(-50%);
-            background-color: #333;
+            background-color: var(--dark-color);
             color: white;
-            padding: 5px 10px;
+            padding: 0.25rem 0.5rem;
             border-radius: 4px;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             white-space: nowrap;
             opacity: 0;
             pointer-events: none;
-            transition: opacity 0.3s ease;
+            transition: opacity 0.3s;
             z-index: 10;
-        }
-
-        .tooltip::after {
-            content: '';
-            position: absolute;
-            top: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            border-width: 5px;
-            border-style: solid;
-            border-color: #333 transparent transparent transparent;
         }
 
         .time-slot:hover .tooltip {
             opacity: 1;
         }
 
-        /* Book Button */
-        .book-button-container {
-            padding: 0 20px 20px;
-        }
-
-        .book-button {
-            width: 100%;
-            background-color: #2c6ecb;
-            color: white;
-            border: none;
-            padding: 12px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 1rem;
-            font-weight: 500;
-            transition: background-color 0.3s ease;
-        }
-
-        .book-button:hover {
-            background-color: #1e4d8f;
-        }
-
-        .book-button:disabled {
-            background-color: #6c757d;
-            cursor: not-allowed;
-        }
-
-        /* Empty State */
-        .empty-state {
+        .no-doctors {
             text-align: center;
-            padding: 40px;
-            background-color: #ffffff;
-            border-radius: 12px;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+            padding: 2rem;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            margin: 2rem 0;
         }
 
-        .empty-state svg {
-            width: 60px;
-            height: 60px;
-            fill: #6c757d;
-            margin-bottom: 15px;
-        }
-
-        .empty-state h3 {
-            color: #6c757d;
-            margin-bottom: 10px;
-        }
-
-        /* Loading State */
-        .loading-state {
-            text-align: center;
-            padding: 40px;
-            background-color: #ffffff;
-            border-radius: 12px;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 200px;
         }
 
         .spinner {
-            border: 4px solid rgba(44, 110, 203, 0.1);
+            width: 50px;
+            height: 50px;
+            border: 5px solid var(--light-color);
+            border-top: 5px solid var(--primary-color);
             border-radius: 50%;
-            border-top: 4px solid #2c6ecb;
-            width: 40px;
-            height: 40px;
             animation: spin 1s linear infinite;
-            margin: 0 auto 15px;
         }
 
         @keyframes spin {
@@ -420,811 +293,334 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* Appointment Confirmation Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
+        .btn-book {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background-color 0.3s;
+            margin-top: 1rem;
+            display: block;
             width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            overflow: auto;
         }
 
-        .modal-content {
-            background-color: #ffffff;
-            margin: 10% auto;
-            padding: 30px;
-            border-radius: 12px;
-            width: 90%;
-            max-width: 500px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-            animation: modalFadeIn 0.3s ease-out;
+        .btn-book:hover {
+            background-color: #3a5bc9;
         }
 
-        @keyframes modalFadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-50px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        .btn-book:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
         }
 
-        .modal-header {
+        footer {
+            background-color: var(--dark-color);
+            color: white;
+            padding: 2rem 0;
+            margin-top: 3rem;
+        }
+
+        .footer-content {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            border-bottom: 1px solid #f0f0f0;
-            padding-bottom: 15px;
+            flex-wrap: wrap;
         }
 
-        .modal-title {
-            color: #2c6ecb;
-            font-size: 1.5rem;
+        .footer-section {
+            flex: 1;
+            min-width: 200px;
+            margin-bottom: 1rem;
         }
 
-        .close-button {
-            color: #aaa;
-            font-size: 28px;
-            font-weight: bold;
-            cursor: pointer;
-            background: none;
-            border: none;
+        .footer-section h3 {
+            margin-bottom: 1rem;
+            color: var(--primary-color);
         }
 
-        .close-button:hover {
-            color: #333;
+        .footer-section ul {
+            list-style: none;
         }
 
-        .modal-body {
-            margin-bottom: 20px;
+        .footer-section ul li {
+            margin-bottom: 0.5rem;
         }
 
-        .appointment-details {
-            margin-bottom: 20px;
+        .footer-section a {
+            color: #ddd;
+            text-decoration: none;
+            transition: color 0.3s;
         }
 
-        .detail-row {
-            display: flex;
-            margin-bottom: 10px;
+        .footer-section a:hover {
+            color: var(--primary-color);
         }
 
-        .detail-label {
-            font-weight: 600;
-            width: 120px;
-            color: #333;
+        .copyright {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid #444;
+            font-size: 0.9rem;
         }
 
-        .detail-value {
-            color: #555;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        .form-label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: 500;
-            color: #333;
-        }
-
-        .form-input {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 1rem;
-        }
-
-        .form-textarea {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 1rem;
-            resize: vertical;
-            min-height: 100px;
-        }
-
-        .modal-footer {
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-        }
-
-        .btn {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 1rem;
-            transition: background-color 0.3s ease;
-        }
-
-        .btn-primary {
-            background-color: #2c6ecb;
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background-color: #1e4d8f;
-        }
-
-        .btn-secondary {
-            background-color: #6c757d;
-            color: white;
-        }
-
-        .btn-secondary:hover {
-            background-color: #5a6268;
-        }
-
-        /* Success Message */
-        .success-message {
-            background-color: #d4edda;
-            color: #155724;
-            padding: 15px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-            display: none;
-        }
-
-        .error-message {
-            background-color: #f8d7da;
-            color: #721c24;
-            padding: 15px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-            display: none;
-        }
-
-        /* Responsive Design */
         @media (max-width: 768px) {
-            h1 {
-                font-size: 2rem;
-            }
-
-            .doctor-cards-container {
+            .doctors-container {
                 grid-template-columns: 1fr;
             }
-
-            .filters-container {
+            
+            .filters {
                 flex-direction: column;
             }
-
+            
             .filter-group {
                 width: 100%;
-            }
-
-            .days-container {
-                padding-bottom: 10px;
-            }
-
-            .time-slots-container {
-                padding-bottom: 10px;
-            }
-
-            .modal-content {
-                margin: 20% auto;
-                width: 95%;
             }
         }
     </style>
 </head>
 <body>
     <header>
-        <div class="container">
-            <h1>Quick Care Hospital</h1>
-            <p class="subtitle">Your Health, Our Priority</p>
-        </div>
+        <?php include 'header.php'; ?>
     </header>
 
     <main class="container">
-        <section class="doctor-schedule-section">
-            <div class="section-header">
-                <h2 class="section-title">Doctor Availability & Schedule</h2>
-                <p class="section-subtitle">View doctor schedules and book appointments based on availability.</p>
+        <div class="filters">
+            <div class="filter-group">
+                <label for="date-picker">Select Date</label>
+                <input type="date" id="date-picker" value="<?php echo $today; ?>" min="<?php echo $today; ?>">
             </div>
-
-            <!-- Filters -->
-            <div class="filters-container">
-                <div class="filter-group">
-                    <label class="filter-label" for="specialization-filter">Specialization</label>
-                    <select id="specialization-filter" class="filter-input">
-                        <option value="">All Specializations</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label class="filter-label" for="date-filter">Date</label>
-                    <input type="date" id="date-filter" class="filter-input">
-                </div>
-                <div class="filter-group">
-                    <label class="filter-label" for="availability-filter">Availability</label>
-                    <select id="availability-filter" class="filter-input">
-                        <option value="">All</option>
-                        <option value="available">Available</option>
-                        <option value="fully-booked">Fully Booked</option>
-                        <option value="not-available">Not Available</option>
-                    </select>
-                </div>
-                <button id="apply-filters" class="filter-button">Apply Filters</button>
+            <div class="filter-group">
+                <label for="specialization">Specialization</label>
+                <select id="specialization">
+                    <option value="0">All Specializations</option>
+                    <?php foreach ($specializations as $spec): ?>
+                        <option value="<?php echo $spec['SPECIALISATION_ID']; ?>"><?php echo $spec['SPECIALISATION_NAME']; ?></option>
+                    <?php endforeach; ?>
+                </select>
             </div>
-
-            <!-- Doctor Cards Container -->
-            <div id="doctor-cards-container" class="doctor-cards-container">
-                <!-- Loading State -->
-                <div id="loading-state" class="loading-state">
-                    <div class="spinner"></div>
-                    <p>Loading doctor schedules...</p>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <!-- Appointment Confirmation Modal -->
-    <div id="appointment-modal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title">Confirm Appointment</h3>
-                <button class="close-button" id="close-modal">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div class="success-message" id="success-message">
-                    Your appointment has been booked successfully!
-                </div>
-                <div class="error-message" id="error-message">
-                    Error booking appointment. Please try again.
-                </div>
-                
-                <div class="appointment-details" id="appointment-details">
-                    <div class="detail-row">
-                        <div class="detail-label">Doctor:</div>
-                        <div class="detail-value" id="modal-doctor-name"></div>
-                    </div>
-                    <div class="detail-row">
-                        <div class="detail-label">Specialization:</div>
-                        <div class="detail-value" id="modal-specialization"></div>
-                    </div>
-                    <div class="detail-row">
-                        <div class="detail-label">Date:</div>
-                        <div class="detail-value" id="modal-date"></div>
-                    </div>
-                    <div class="detail-row">
-                        <div class="detail-label">Time:</div>
-                        <div class="detail-value" id="modal-time"></div>
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label" for="patient-name">Your Name *</label>
-                    <input type="text" id="patient-name" class="form-input" placeholder="Enter your full name" required>
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label" for="patient-phone">Phone Number *</label>
-                    <input type="tel" id="patient-phone" class="form-input" placeholder="Enter your phone number" required>
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label" for="patient-email">Email Address *</label>
-                    <input type="email" id="patient-email" class="form-input" placeholder="Enter your email address" required>
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label" for="reason">Reason for Visit</label>
-                    <textarea id="reason" class="form-textarea" placeholder="Describe your symptoms or reason for visit"></textarea>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" id="cancel-appointment">Cancel</button>
-                <button class="btn btn-primary" id="confirm-appointment">Confirm Booking</button>
+            <div class="filter-group">
+                <label>&nbsp;</label>
+                <button id="filter-btn" class="btn-book">Search</button>
             </div>
         </div>
-    </div>
+
+        <div class="date-display" id="date-display">
+            Schedule for: <?php echo $formattedToday; ?>
+        </div>
+
+        <div id="doctors-container" class="doctors-container">
+            <div class="loading">
+                <div class="spinner"></div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Quick Care</h3>
+                    <p>Your trusted healthcare partner for quality medical services.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="#">Home</a></li>
+                        <li><a href="#">Doctors</a></li>
+                        <li><a href="#">Services</a></li>
+                        <li><a href="#">About Us</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Contact Info</h3>
+                    <ul>
+                        <li><i class="fas fa-map-marker-alt"></i> 123 Hospital Road, City</li>
+                        <li><i class="fas fa-phone"></i> +1 234 567 890</li>
+                        <li><i class="fas fa-envelope"></i> info@quickcare.com</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                &copy; <?php echo date('Y'); ?> Quick Care Hospital. All Rights Reserved.
+            </div>
+        </div>
+    </footer>
 
     <script>
-        // Wait for DOM to be fully loaded
         document.addEventListener('DOMContentLoaded', function() {
-            // Initialize the application
-            init();
-        });
-
-        // Initialize function
-        function init() {
-            // Set today's date as default in date filter
-            const dateFilter = document.getElementById('date-filter');
-            const today = new Date().toISOString().split('T')[0];
-            dateFilter.value = today;
-
-            // Load specializations
-            loadSpecializations();
-
-            // Load doctor schedules
+            // Initial load of doctor schedules
             loadDoctorSchedules();
 
-            // Add event listeners
-            document.getElementById('apply-filters').addEventListener('click', applyFilters);
-            
-            // Modal event listeners
-            document.getElementById('close-modal').addEventListener('click', closeModal);
-            document.getElementById('cancel-appointment').addEventListener('click', closeModal);
-            document.getElementById('confirm-appointment').addEventListener('click', confirmAppointment);
-            
-            // Close modal when clicking outside
-            window.addEventListener('click', function(event) {
-                const modal = document.getElementById('appointment-modal');
-                if (event.target === modal) {
-                    closeModal();
-                }
+            // Event listeners for filters
+            document.getElementById('date-picker').addEventListener('change', function() {
+                updateDateDisplay();
+                loadDoctorSchedules();
             });
-        }
 
-        // Load specializations from database
-        async function loadSpecializations() {
-            try {
-                const response = await fetch('get_specializations.php');
-                const result = await response.json();
+            document.getElementById('specialization').addEventListener('change', loadDoctorSchedules);
+            document.getElementById('filter-btn').addEventListener('click', loadDoctorSchedules);
+
+            // Function to update the date display
+            function updateDateDisplay() {
+                const datePicker = document.getElementById('date-picker');
+                const dateDisplay = document.getElementById('date-display');
+                const selectedDate = new Date(datePicker.value);
+                const formattedDate = selectedDate.toLocaleDateString('en-GB', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric'
+                });
+                dateDisplay.textContent = `Schedule for: ${formattedDate}`;
+            }
+
+            // Function to load doctor schedules via AJAX
+            function loadDoctorSchedules() {
+                const date = document.getElementById('date-picker').value;
+                const specialization = document.getElementById('specialization').value;
+                const container = document.getElementById('doctors-container');
                 
-                if (result.success) {
-                    const specializationFilter = document.getElementById('specialization-filter');
-                    result.data.forEach(spec => {
-                        const option = document.createElement('option');
-                        option.value = spec.SPECIALISATION_ID;
-                        option.textContent = spec.SPECIALISATION_NAME;
-                        specializationFilter.appendChild(option);
-                    });
-                }
-            } catch (error) {
-                console.error('Error loading specializations:', error);
-            }
-        }
-
-        // Load doctor schedules from database
-        async function loadDoctorSchedules() {
-            // Show loading state
-            const container = document.getElementById('doctor-cards-container');
-            container.innerHTML = `
-                <div id="loading-state" class="loading-state">
-                    <div class="spinner"></div>
-                    <p>Loading doctor schedules...</p>
-                </div>
-            `;
-
-            try {
-                // Get filter values
-                const specialization = document.getElementById('specialization-filter').value;
-                const date = document.getElementById('date-filter').value;
-                const availability = document.getElementById('availability-filter').value;
-
-                // Build query string
-                const params = new URLSearchParams();
-                if (specialization) params.append('specialization', specialization);
-                if (date) params.append('date', date);
-                if (availability) params.append('availability', availability);
-
-                // Fetch data from backend
-                const response = await fetch(`get_doctors.php?${params}`);
-                const result = await response.json();
+                // Show loading spinner
+                container.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
                 
-                if (result.success) {
-                    renderDoctorCards(result.data);
-                } else {
-                    showError('Failed to load doctor schedules');
-                }
-            } catch (error) {
-                console.error('Error loading doctor schedules:', error);
-                showError('Error loading data. Please try again.');
-            }
-        }
-
-        // Render doctor cards
-        function renderDoctorCards(doctors) {
-            const container = document.getElementById('doctor-cards-container');
-            
-            // Clear container
-            container.innerHTML = '';
-
-            // Check if there are doctors
-            if (doctors.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-                        </svg>
-                        <h3>No doctors available for selected criteria.</h3>
-                        <p>Please try different filters.</p>
-                    </div>
-                `;
-                return;
-            }
-
-            // Create and append doctor cards
-            doctors.forEach((doctor, index) => {
-                const card = createDoctorCard(doctor);
-                container.appendChild(card);
-
-                // Add fade-in animation with delay
-                setTimeout(() => {
-                    card.classList.add('fade-in');
-                }, index * 100);
-            });
-        }
-
-        // Create a doctor card element
-        function createDoctorCard(doctor) {
-            const card = document.createElement('div');
-            card.className = 'doctor-card';
-            card.dataset.doctorId = doctor.id;
-            card.dataset.specialization = doctor.specialization;
-
-            // Create doctor info section
-            const doctorInfo = document.createElement('div');
-            doctorInfo.className = 'doctor-info';
-
-            // Create doctor image
-            const doctorImage = document.createElement('div');
-            doctorImage.className = 'doctor-image';
-            
-            // If image is available, use it, otherwise use a placeholder
-            if (doctor.image) {
-                const img = document.createElement('img');
-                img.src = `uploads/${doctor.image}`;
-                img.alt = doctor.name;
-                img.onerror = function() {
-                    this.style.display = 'none';
-                    this.parentElement.innerHTML = createDoctorPlaceholder();
-                };
-                doctorImage.appendChild(img);
-            } else {
-                doctorImage.innerHTML = createDoctorPlaceholder();
-            }
-
-            // Create doctor details
-            const doctorDetails = document.createElement('div');
-            doctorDetails.className = 'doctor-details';
-            
-            const doctorName = document.createElement('h3');
-            doctorName.textContent = doctor.name;
-            
-            const doctorSpecialization = document.createElement('div');
-            doctorSpecialization.className = 'doctor-specialization';
-            doctorSpecialization.textContent = doctor.specialization;
-            
-            const doctorEducation = document.createElement('div');
-            doctorEducation.className = 'doctor-education';
-            doctorEducation.textContent = doctor.education || '';
-            
-            doctorDetails.appendChild(doctorName);
-            doctorDetails.appendChild(doctorSpecialization);
-            if (doctor.education) {
-                doctorDetails.appendChild(doctorEducation);
-            }
-
-            doctorInfo.appendChild(doctorImage);
-            doctorInfo.appendChild(doctorDetails);
-
-            // Create schedule section
-            const scheduleSection = document.createElement('div');
-            scheduleSection.className = 'schedule-section';
-
-            // Create date selection
-            const dateSelection = document.createElement('div');
-            dateSelection.className = 'date-selection';
-            
-            const dateLabel = document.createElement('div');
-            dateLabel.className = 'date-label';
-            dateLabel.textContent = 'Select Available Date:';
-            
-            const dateContainer = document.createElement('div');
-            dateContainer.className = 'date-container';
-            
-            // Add available dates
-            if (doctor.availableDates && doctor.availableDates.length > 0) {
-                doctor.availableDates.forEach(date => {
-                    const dateOption = document.createElement('div');
-                    dateOption.className = 'date-option';
-                    dateOption.textContent = formatDate(date);
-                    dateOption.dataset.date = date;
-                    
-                    // Check if date is in the past
-                    const today = new Date();
-                    today.setHours(0, 0, 0, 0);
-                    const selectedDate = new Date(date);
-                    
-                    if (selectedDate < today) {
-                        dateOption.classList.add('disabled');
+                // Fetch data from the backend
+                fetch('fetch_doctor_schedule.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `date=${date}&specialization=${specialization}`
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        displayDoctors(data.doctors);
                     } else {
-                        dateOption.addEventListener('click', function() {
-                            selectDate(this, doctor);
-                        });
+                        container.innerHTML = `<div class="no-doctors">${data.message}</div>`;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    container.innerHTML = '<div class="no-doctors">Error loading doctor schedules. Please try again later.</div>';
+                });
+            }
+
+            // Function to display doctors and their schedules
+            function displayDoctors(doctors) {
+                const container = document.getElementById('doctors-container');
+                
+                if (doctors.length === 0) {
+                    container.innerHTML = '<div class="no-doctors">No doctors available for the selected date and specialization.</div>';
+                    return;
+                }
+                
+                let html = '';
+                doctors.forEach(doctor => {
+                    html += `
+                        <div class="doctor-card">
+                            <div class="doctor-header">
+                                <img src="${doctor.profile_image || 'https://picsum.photos/seed/doctor' + doctor.doctor_id + '/80/80.jpg'}" alt="${doctor.first_name} ${doctor.last_name}" class="doctor-image">
+                                <div class="doctor-info">
+                                    <h3>Dr. ${doctor.first_name} ${doctor.last_name}</h3>
+                                    <div class="doctor-specialization">${doctor.specialization_name}</div>
+                                </div>
+                            </div>
+                            <div class="doctor-schedule">
+                                <div class="schedule-title">Available Time Slots</div>
+                                <div class="time-slots">
+                                    ${generateTimeSlots(doctor)}
+                                </div>
+                                <button class="btn-book" id="book-btn-${doctor.doctor_id}" disabled>Select a time slot to book</button>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                container.innerHTML = html;
+                
+                // Add event listeners to time slots
+                document.querySelectorAll('.time-slot.available').forEach(slot => {
+                    slot.addEventListener('click', function() {
+                        // Remove previous selection
+                        document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
+                        
+                        // Add selection to clicked slot
+                        this.classList.add('selected');
+                        
+                        // Enable the book button
+                        const doctorId = this.getAttribute('data-doctor-id');
+                        const bookBtn = document.getElementById(`book-btn-${doctorId}`);
+                        bookBtn.disabled = false;
+                        bookBtn.textContent = 'Book Appointment';
+                        
+                        // Set up the book button click event
+                        bookBtn.onclick = function() {
+                            const time = slot.getAttribute('data-time');
+                            const date = document.getElementById('date-picker').value;
+                            // Redirect to booking page with parameters
+                            window.location.href = `book_appointment.php?doctor_id=${doctorId}&date=${date}&time=${time}`;
+                        };
+                    });
+                });
+            }
+
+            // Function to generate time slots for a doctor
+            function generateTimeSlots(doctor) {
+                if (!doctor.schedule || doctor.schedule.length === 0) {
+                    return '<div class="time-slot unavailable">No schedule</div>';
+                }
+                
+                let slotsHtml = '';
+                const schedule = doctor.schedule[0]; // Assuming one schedule per day for simplicity
+                
+                // Generate time slots based on start_time, end_time and slot_duration (default 30 minutes)
+                const startTime = new Date(`2000-01-01T${schedule.start_time}`);
+                const endTime = new Date(`2000-01-01T${schedule.end_time}`);
+                const slotDuration = 30; // Default slot duration in minutes
+                
+                const currentTime = new Date(startTime);
+                
+                while (currentTime < endTime) {
+                    const timeString = currentTime.toLocaleTimeString('en-US', {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        hour12: false
+                    });
+                    
+                    // Check if this slot is booked
+                    const isBooked = doctor.booked_slots && doctor.booked_slots.includes(timeString);
+                    
+                    // Determine slot class
+                    let slotClass = 'available';
+                    let tooltipText = 'Available';
+                    
+                    if (isBooked) {
+                        slotClass = 'booked';
+                        tooltipText = 'Booked';
+                    } else if (!schedule.is_available) {
+                        slotClass = 'unavailable';
+                        tooltipText = 'Not Available';
                     }
                     
-                    dateContainer.appendChild(dateOption);
-                });
-            } else {
-                dateContainer.innerHTML = '<p style="color: #999;">No available dates</p>';
-            }
-            
-            dateSelection.appendChild(dateLabel);
-            dateSelection.appendChild(dateContainer);
-
-            // Create days container
-            const daysContainer = document.createElement('div');
-            daysContainer.className = 'days-container';
-
-            // Create time slots container
-            const timeSlotsContainer = document.createElement('div');
-            timeSlotsContainer.className = 'time-slots-container';
-
-            // Add days and time slots
-            doctor.schedule.forEach(daySchedule => {
-                // Add day
-                const day = document.createElement('div');
-                day.className = 'day';
-                day.textContent = daySchedule.day;
-                daysContainer.appendChild(day);
-
-                // Add time slot
-                const timeSlot = document.createElement('div');
-                timeSlot.className = `time-slot ${daySchedule.status}`;
-                timeSlot.dataset.day = daySchedule.day;
-                timeSlot.dataset.status = daySchedule.status;
-                
-                // Add time range if available
-                if (daySchedule.timeRange) {
-                    timeSlot.textContent = daySchedule.timeRange;
+                    slotsHtml += `
+                        <div class="time-slot ${slotClass}" 
+                             data-doctor-id="${doctor.doctor_id}" 
+                             data-time="${timeString}"
+                             ${slotClass === 'available' ? '' : 'style="cursor: not-allowed;"'}>
+                            ${timeString}
+                            <div class="tooltip">${tooltipText}</div>
+                        </div>
+                    `;
                     
-                    // Add tooltip with exact time
-                    const tooltip = document.createElement('div');
-                    tooltip.className = 'tooltip';
-                    tooltip.textContent = `Available: ${daySchedule.timeRange}`;
-                    timeSlot.appendChild(tooltip);
-                } else {
-                    timeSlot.textContent = '❌';
+                    // Move to next slot
+                    currentTime.setMinutes(currentTime.getMinutes() + slotDuration);
                 }
-
-                // Add click event for available slots
-                if (daySchedule.status === 'available') {
-                    timeSlot.addEventListener('click', function() {
-                        selectTimeSlot(this, doctor);
-                    });
-                }
-
-                timeSlotsContainer.appendChild(timeSlot);
-            });
-
-            scheduleSection.appendChild(dateSelection);
-            scheduleSection.appendChild(daysContainer);
-            scheduleSection.appendChild(timeSlotsContainer);
-
-            // Create book button
-            const bookButtonContainer = document.createElement('div');
-            bookButtonContainer.className = 'book-button-container';
-
-            const bookButton = document.createElement('button');
-            bookButton.className = 'book-button';
-            bookButton.textContent = 'Book Appointment';
-            bookButton.disabled = true;
-            bookButton.dataset.doctorId = doctor.id;
-
-            bookButton.addEventListener('click', function() {
-                openAppointmentModal(doctor);
-            });
-
-            bookButtonContainer.appendChild(bookButton);
-
-            // Assemble the card
-            card.appendChild(doctorInfo);
-            card.appendChild(scheduleSection);
-            card.appendChild(bookButtonContainer);
-
-            return card;
-        }
-
-        // Create doctor placeholder SVG
-        function createDoctorPlaceholder() {
-            return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="40" height="40">
-                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-            </svg>`;
-        }
-
-        // Format date to a more readable format
-        function formatDate(dateString) {
-            const date = new Date(dateString);
-            const options = { month: 'short', day: 'numeric' };
-            return date.toLocaleDateString('en-US', options);
-        }
-
-        // Select a date
-        function selectDate(dateOption, doctor) {
-            // Remove selected class from all date options in this card
-            const card = dateOption.closest('.doctor-card');
-            const allDateOptions = card.querySelectorAll('.date-option');
-            allDateOptions.forEach(d => d.classList.remove('selected'));
-
-            // Add selected class to clicked date
-            dateOption.classList.add('selected');
-
-            // Store selected date
-            const bookButton = card.querySelector('.book-button');
-            bookButton.dataset.date = dateOption.dataset.date;
-
-            // Check if a time slot is already selected
-            const selectedSlot = card.querySelector('.time-slot.selected');
-            if (selectedSlot) {
-                bookButton.disabled = false;
-            }
-        }
-
-        // Select a time slot
-        function selectTimeSlot(slot, doctor) {
-            // Remove selected class from all slots in this card
-            const card = slot.closest('.doctor-card');
-            const allSlots = card.querySelectorAll('.time-slot');
-            allSlots.forEach(s => s.classList.remove('selected'));
-
-            // Add selected class to clicked slot
-            slot.classList.add('selected');
-
-            // Store selected slot data
-            const bookButton = card.querySelector('.book-button');
-            bookButton.dataset.day = slot.dataset.day;
-            bookButton.dataset.time = slot.textContent;
-
-            // Check if a date is already selected
-            const selectedDate = card.querySelector('.date-option.selected');
-            if (selectedDate) {
-                bookButton.disabled = false;
-            }
-        }
-
-        // Open appointment modal
-        function openAppointmentModal(doctor) {
-            const bookButton = document.querySelector(`.book-button[data-doctor-id="${doctor.id}"]`);
-            const date = bookButton.dataset.date;
-            const day = bookButton.dataset.day;
-            const time = bookButton.dataset.time;
-            
-            // Set modal content
-            document.getElementById('modal-doctor-name').textContent = doctor.name;
-            document.getElementById('modal-specialization').textContent = doctor.specialization;
-            document.getElementById('modal-date').textContent = formatDate(date);
-            document.getElementById('modal-time').textContent = time;
-            
-            // Reset form
-            document.getElementById('patient-name').value = '';
-            document.getElementById('patient-phone').value = '';
-            document.getElementById('patient-email').value = '';
-            document.getElementById('reason').value = '';
-            
-            // Hide messages
-            document.getElementById('success-message').style.display = 'none';
-            document.getElementById('error-message').style.display = 'none';
-            document.getElementById('appointment-details').style.display = 'block';
-            document.querySelectorAll('.form-group').forEach(el => el.style.display = 'block');
-            document.getElementById('modal-footer').style.display = 'flex';
-            
-            // Show modal
-            document.getElementById('appointment-modal').style.display = 'block';
-            
-            // Store appointment data
-            document.getElementById('confirm-appointment').dataset.doctorId = doctor.id;
-            document.getElementById('confirm-appointment').dataset.date = date;
-            document.getElementById('confirm-appointment').dataset.day = day;
-            document.getElementById('confirm-appointment').dataset.time = time;
-        }
-
-        // Close modal
-        function closeModal() {
-            document.getElementById('appointment-modal').style.display = 'none';
-        }
-
-        // Confirm appointment
-        async function confirmAppointment() {
-            const doctorId = document.getElementById('confirm-appointment').dataset.doctorId;
-            const date = document.getElementById('confirm-appointment').dataset.date;
-            const day = document.getElementById('confirm-appointment').dataset.day;
-            const time = document.getElementById('confirm-appointment').dataset.time;
-            
-            const patientName = document.getElementById('patient-name').value;
-            const patientPhone = document.getElementById('patient-phone').value;
-            const patientEmail = document.getElementById('patient-email').value;
-            const reason = document.getElementById('reason').value;
-            
-            // Validate form
-            if (!patientName || !patientPhone || !patientEmail) {
-                showError('Please fill in all required fields.');
-                return;
-            }
-            
-            // Validate email
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(patientEmail)) {
-                showError('Please enter a valid email address.');
-                return;
-            }
-            
-            // Validate phone
-            const phoneRegex = /^[0-9]{10}$/;
-            if (!phoneRegex.test(patientPhone.replace(/\D/g, ''))) {
-                showError('Please enter a valid 10-digit phone number.');
-                return;
-            }
-            
-            try {
-                // Create form data
-                const formData = new FormData();
-                formData.append('doctor_id', doctorId);
-                formData.append('date', date);
-                formData.append('day', day);
-                formData.append('time', time);
-                formData.append('patient_name', patientName);
-                formData.append('patient_phone', patientPhone);
-                formData.append('patient_email', patientEmail);
-                formData.append('reason', reason);
                 
-                // Send booking request
-                const response = await fetch('book_appointment.php', {
-                    method: 'POST',
-                    body: formData
-                });
-                
-                const result = await response.json();
-                
-                if (result.success) {
-                    // Show success message
-                    document.getElementById('success-message').style.display = 'block';
-                    document.getElementById('error-message').style.display = 'none';
-                    
-                    // Hide form
-                    document.getElementById('appointment-details').style.display = 'none';
-                    document.querySelectorAll('.form-group').forEach(el => el.style.display = 'none');
-                    document.getElementById('modal-footer').style.display = 'none';
-                    
-                    // Close modal after 3 seconds
-                    setTimeout(() => {
-                        closeModal();
-                        // Reset modal for next use
-                        document.getElementById('appointment-details').style.display = 'block';
-                        document.querySelectorAll('.form-group').forEach(el => el.style.display = 'block');
-                        document.getElementById('modal-footer').style.display = 'flex';
-                        
-                        // Reload doctor schedules to update availability
-                        loadDoctorSchedules();
-                    }, 3000);
-                } else {
-                    showError(result.message || 'Failed to book appointment');
-                }
-            } catch (error) {
-                console.error('Error booking appointment:', error);
-                showError('Error booking appointment. Please try again.');
+                return slotsHtml;
             }
-        }
-
-        // Show error message
-        function showError(message) {
-            const errorElement = document.getElementById('error-message');
-            errorElement.textContent = message;
-            errorElement.style.display = 'block';
-            
-            // Hide after 5 seconds
-            setTimeout(() => {
-                errorElement.style.display = 'none';
-            }, 5000);
-        }
-
-        // Apply filters
-        function applyFilters() {
-            loadDoctorSchedules();
-        }
+        });
     </script>
 </body>
 </html>
