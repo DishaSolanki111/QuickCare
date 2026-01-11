@@ -40,57 +40,6 @@
             min-height: 100vh;
         }
         
-        /* Sidebar Styles */
-        .sidebar {
-            width: 250px;
-            background: #072D44;
-            min-height: 100vh;
-            color: white;
-            padding-top: 30px;
-            position: fixed;
-        }
-
-        .sidebar h2 {
-            text-align: center;
-            margin-bottom: 40px;
-            color: #9CCDD8;
-            border-bottom: none !important;
-            padding-bottom: 0 !important;
-        }
-
-        .sidebar a {
-            display: block;
-            padding: 15px 25px;
-            color: #D0D7E1;
-            text-decoration: none;
-            font-size: 17px;
-            border-left: 4px solid transparent;
-        }
-
-        .sidebar a:hover, .sidebar a.active {
-            background: #064469;
-            border-left: 4px solid #9CCDD8;
-            color: white;
-        }
-
-        .logout-btn:hover{
-            background-color: var(--light-blue);
-        }
-        .logout-btn {
-            display: block;
-            width: 80%;
-            margin: 20px auto 0 auto;
-            padding: 10px;
-            background-color: var(--soft-blue);
-            color: var(--white);    
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            text-align: center;
-            transition: background-color 0.3s;
-        }
-        
         /* Main Content */
         .main-content {
             flex: 1;
@@ -181,6 +130,12 @@
             margin-bottom: 20px;
         }
         
+        /* Remove white line from sidebar h2 */
+        .sidebar h2 {
+            border-bottom: none !important;
+            padding-bottom: 0 !important;
+        }
+        
         /* Feedback Card Styles */
         .feedback-card {
             background: #fafafa;
@@ -267,14 +222,6 @@
         }
         
         @media (max-width: 992px) {
-            .sidebar {
-                width: 70px;
-            }
-            
-            .sidebar h2 span, .sidebar a span {
-                display: none;
-            }
-            
             .main-content {
                 margin-left: 70px;
             }
@@ -284,19 +231,7 @@
 <body>
     <div class="container">
         <!-- Sidebar -->
-       <div class="sidebar">
-    <img src="uploads/logo.JPG" alt="QuickCare Logo" class="logo-img" style="display:block; margin: 0 auto 10px auto; width:80px; height:80px; border-radius:50%;">  
-    <h2>QuickCare</h2>
-
-    <a href="doctor_dashboard.php" >Dashboard</a>
-    <a href="d_profile.php">My Profile</a>
-    <a href="mangae_schedule_doctor.php">Manage Schedule</a>
-    <a href="appointment_doctor.php">Manage Appointments</a>
-    <a href="manage_prescriptions.php">Manage Prescription</a>
-    <a href="view_medicine.php ">View Medicine</a>
-    <a href="doctor_feedback.php">View Feedback</a>
-    <a href="logout.php" class="logout-btn">Logout</a>
-</div>
+        <?php include 'doctor_sidebar.php'; ?>
         
         <!-- Main Content -->
         <div class="main-content">
