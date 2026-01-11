@@ -1,3 +1,5 @@
+<?php
+    include 'header.php';?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -537,8 +539,7 @@
     </style>
 </head>
 <body>
-    <?php
-    include 'header.php';?>
+    
         <div class="container">
             <h1>Our Services</h1>
             <p class="subtitle">Comprehensive healthcare management at your fingertips</p>
