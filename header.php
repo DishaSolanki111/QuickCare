@@ -83,9 +83,9 @@ if (session_status() == PHP_SESSION_NONE) {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 1rem 5%;
-        max-width: 1400px;
-        margin: 0 auto;
+        width: 100%;
+        padding: 1rem 2rem;   /* small left spacing */
+        margin: 0;            /* REMOVE auto centering */
     }
 
     /* Logo Area - Left Side */

@@ -18,6 +18,7 @@
             color: #333;
             line-height: 1.6;
             overflow-x: hidden;
+            padding-top: 80px;
         }
 
         .container {

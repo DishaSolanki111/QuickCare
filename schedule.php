@@ -51,6 +51,7 @@ if ($result->num_rows > 0) {
             background-color: #f5f7fb;
             color: var(--dark-color);
             line-height: 1.6;
+            padding-top: 90px;
         }
 
         header {
@@ -66,11 +67,11 @@ if ($result->num_rows > 0) {
             padding: 0 20px;
         }
 
-        .header-content {
+        /* .header-content {
             display: flex;
             justify-content: space-between;
             align-items: center;
-        }
+        } */
 
         .logo {
             display: flex;
