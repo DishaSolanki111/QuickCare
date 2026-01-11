@@ -2,75 +2,32 @@
 include "config.php";
 include "header.php";
 
- $spec_id = intval($_GET['spec_id']);
+$spec_id = intval($_GET['spec_id']);
 
- $q = "SELECT DOCTOR_ID, FIRST_NAME, LAST_NAME, PROFILE_IMAGE, SPECIALISATION_ID 
+$q = "SELECT DOCTOR_ID, FIRST_NAME, LAST_NAME, PROFILE_IMAGE, SPECIALISATION_ID 
      FROM doctor_tbl 
      WHERE SPECIALISATION_ID = $spec_id";
 
- $res = mysqli_query($conn, $q);
+$res = mysqli_query($conn, $q);
 
 // Fetch specializations for the modal
- $specializations_query = mysqli_query($conn, "
+$specializations_query = mysqli_query($conn, "
     SELECT * FROM specialisation_tbl
     ORDER BY SPECIALISATION_NAME
 ");
 
-// Initialize doctor schedules array
- $doctor_schedules = [];
+// Fetch specialization name
+$spec_query = mysqli_query($conn, "SELECT SPECIALISATION_NAME FROM specialisation_tbl WHERE SPECIALISATION_ID = $spec_id");
+$spec_data = mysqli_fetch_assoc($spec_query);
+$specialization_name = $spec_data['SPECIALISATION_NAME'] ?? 'Specialist';
 
-// Fetch all doctors' schedules
- $doctors_schedule_query = "SELECT DOCTOR_ID, AVAILABLE_DAY, START_TIME, END_TIME FROM doctor_schedule_tbl";
- $schedule_result = mysqli_query($conn, $doctors_schedule_query);
-
-if ($schedule_result && mysqli_num_rows($schedule_result) > 0) {
-    while ($schedule_row = mysqli_fetch_assoc($schedule_result)) {
-        $doctor_id = $schedule_row['DOCTOR_ID'];
-        if (!isset($doctor_schedules[$doctor_id])) {
-            $doctor_schedules[$doctor_id] = [
-                'available_days' => [],
-                'time_slots' => []
-            ];
-        }
-        
-        // Add available day
-        if (!in_array($schedule_row['AVAILABLE_DAY'], $doctor_schedules[$doctor_id]['available_days'])) {
-            $doctor_schedules[$doctor_id]['available_days'][] = $schedule_row['AVAILABLE_DAY'];
-        }
-        
-        // Add time slot for this day
-        $day = $schedule_row['AVAILABLE_DAY'];
-        if (!isset($doctor_schedules[$doctor_id]['time_slots'][$day])) {
-            $doctor_schedules[$doctor_id]['time_slots'][$day] = [];
-        }
-        
-        // Generate time slots between start and end time
-        $start_time = new DateTime($schedule_row['START_TIME']);
-        $end_time = new DateTime($schedule_row['END_TIME']);
-        $interval = new DateInterval('PT30M'); // 30-minute intervals
-        
-        while ($start_time < $end_time) {
-            $time_slot = $start_time->format('h:i A');
-            if (!in_array($time_slot, $doctor_schedules[$doctor_id]['time_slots'][$day])) {
-                $doctor_schedules[$doctor_id]['time_slots'][$day][] = $time_slot;
-            }
-            $start_time->add($interval);
-        }
-    }
-}
-
-// Fetch doctor details for all doctors
- $doctor_details = [];
- $doctors_query = "SELECT d.DOCTOR_ID, d.FIRST_NAME, d.LAST_NAME, s.SPECIALISATION_NAME as specialization 
-                  FROM doctor_tbl d 
-                  JOIN specialisation_tbl s ON d.SPECIALISATION_ID = s.SPECIALISATION_ID";
- $details_result = mysqli_query($conn, $doctors_query);
-
-if ($details_result && mysqli_num_rows($details_result) > 0) {
-    while ($details_row = mysqli_fetch_assoc($details_result)) {
-        $doctor_details[$details_row['DOCTOR_ID']] = $details_row;
-    }
-}
+// Fetch doctors for booking modal
+$doctors_query = mysqli_query($conn, "
+    SELECT d.*, s.SPECIALISATION_NAME 
+    FROM doctor_tbl d
+    JOIN specialisation_tbl s ON d.SPECIALISATION_ID = s.SPECIALISATION_ID
+    ORDER BY s.SPECIALISATION_NAME, d.FIRST_NAME
+");
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -376,15 +333,6 @@ if ($details_result && mysqli_num_rows($details_result) > 0) {
             justify-content: center;
         }
 
-        .btn-primary {
-            background-color: var(--secondary-color);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background-color: #2980b9;
-        }
-
         .btn-success {
             background-color: var(--accent-color);
             color: white;
@@ -449,6 +397,56 @@ if ($details_result && mysqli_num_rows($details_result) > 0) {
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
+        }
+
+        .doctor-info {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .doctor-info:hover {
+            background-color: #f8f9fa;
+            border-color: var(--secondary-color);
+        }
+
+        .doctor-info.selected {
+            background-color: rgba(52, 152, 219, 0.1);
+            border-color: var(--secondary-color);
+        }
+
+        .doctor-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: var(--secondary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .doctor-details {
+            flex: 1;
+        }
+
+        .doctor-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: var(--primary-color);
+        }
+
+        .doctor-specialization {
+            font-size: 14px;
+            color: #666;
         }
 
         /* Calendar Styles */
@@ -565,61 +563,6 @@ if ($details_result && mysqli_num_rows($details_result) > 0) {
             cursor: not-allowed;
         }
 
-        /* Payment Styles */
-        .payment-methods {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .payment-method {
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 15px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-        }
-
-        .payment-method:hover {
-            border-color: var(--secondary-color);
-            background-color: rgba(52, 152, 219, 0.05);
-        }
-
-        .payment-method.selected {
-            border-color: var(--secondary-color);
-            background-color: rgba(52, 152, 219, 0.1);
-        }
-
-        .payment-method i {
-            font-size: 24px;
-            margin-right: 10px;
-            color: var(--secondary-color);
-        }
-
-        .appointment-summary {
-            background-color: #f8f9fa;
-            border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 20px;
-        }
-
-        .summary-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-        }
-
-        .summary-row:last-child {
-            margin-bottom: 0;
-            font-weight: bold;
-            font-size: 18px;
-            border-top: 1px solid #ddd;
-            padding-top: 10px;
-        }
-
         .loading {
             text-align: center;
             padding: 20px;
@@ -642,12 +585,6 @@ if ($details_result && mysqli_num_rows($details_result) > 0) {
             border-radius: 5px;
         }
 
-        .alert-success {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-
         .alert-danger {
             background-color: #f8d7da;
             color: #721c24;
@@ -660,25 +597,7 @@ if ($details_result && mysqli_num_rows($details_result) > 0) {
             border: 1px solid #ffeeba;
         }
 
-        /* Success Animation */
-        .success-animation {
-            text-align: center;
-            padding: 40px 0;
-        }
-
-        .success-animation i {
-            font-size: 60px;
-            color: var(--accent-color);
-            margin-bottom: 20px;
-            animation: scaleIn 0.5s ease;
-        }
-
-        @keyframes scaleIn {
-            from { transform: scale(0); }
-            to { transform: scale(1); }
-        }
-
-        /* Footer with Wave Effect - Color changed to match aboutus.php */
+        /* Footer with Wave Effect */
         footer {
             background: var(--gradient-1);
             color: white;
@@ -742,30 +661,6 @@ if ($details_result && mysqli_num_rows($details_result) > 0) {
         .footer-column ul li a:hover {
             color: white;
             transform: translateX(5px);
-        }
-
-        .social-links {
-            display: flex;
-            gap: 1rem;
-            margin-top: 1.5rem;
-        }
-
-        .social-links a {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 40px;
-            height: 40px;
-            background-color: rgba(255, 255, 255, 0.1);
-            color: white;
-            border-radius: 50%;
-            transition: all 0.3s ease;
-            text-decoration: none;
-        }
-
-        .social-links a:hover {
-            background-color: var(--primary);
-            transform: translateY(-3px);
         }
 
         .footer-bottom {
@@ -910,47 +805,67 @@ if ($details_result && mysqli_num_rows($details_result) > 0) {
         </div>
     </footer>
 
-    <!-- Booking Modal -->
+    <!-- Booking Modal (Same as manage_appointment.php) -->
     <div id="bookingModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeBookingModal()">&times;</span>
-            <h2>Book Appointment</h2>
-            
-            <!-- Doctor Info Display -->
-            <div class="form-group" id="doctorInfo">
-                <div class="doctor-info selected" style="padding: 10px; border: 1px solid #eee; border-radius: 8px; margin-bottom: 20px;">
-                    <div class="doctor-avatar" style="width: 50px; height: 50px; border-radius: 50%; background-color: var(--secondary-color); color: white; display: flex; align-items: center; justify-content: center; margin-right: 15px; font-weight: bold; font-size: 18px; float: left;">
-                        <span id="doctorInitials"></span>
-                    </div>
-                    <div style="overflow: hidden;">
-                        <div class="doctor-name" id="doctorName" style="font-weight: 600; margin-bottom: 5px; color: var(--primary-color);"></div>
-                        <div class="doctor-specialization" id="doctorSpecialization" style="font-size: 14px; color: #666;"></div>
-                    </div>
-                    <div style="clear: both;"></div>
-                </div>
-            </div>
+            <h2>Book New Appointment</h2>
             
             <!-- Step Indicator -->
             <div class="step-indicator">
-                <div class="step completed" id="step1">1</div>
-                <div class="step active" id="step2">2</div>
+                <div class="step active" id="step1">1</div>
+                <div class="step" id="step2">2</div>
                 <div class="step" id="step3">3</div>
-                <div class="step" id="step4">4</div>
-                <div class="step" id="step5">5</div>
             </div>
             
-            <form method="POST" action="payment.php" id="bookingForm">
-                <input type="hidden" id="selected_doctor_id" name="doctor_id" required>
-                <input type="hidden" id="selected_date" name="appointment_date" required>
-                <input type="hidden" id="selected_time" name="appointment_time" required>
-                
-                <!-- Step 1: Select Doctor (Hidden) -->
-                <div class="step-content" id="step1Content">
-                    <!-- This step is skipped but kept for compatibility -->
+            <form method="POST" action="payment.php">
+                <!-- Step 1: Select Doctor -->
+                <div class="step-content active" id="step1Content">
+                    <div class="form-group">
+                        <label>Filter by Specialization</label>
+                        <select class="form-control" id="specialization_filter" onchange="filterDoctors()">
+                            <option value="">All Specializations</option>
+                            <?php
+                            if (mysqli_num_rows($specializations_query) > 0) {
+                                while ($specialization = mysqli_fetch_assoc($specializations_query)) {
+                                    echo '<option value="' . $specialization['SPECIALISATION_ID'] . '">' . 
+                                         htmlspecialchars($specialization['SPECIALISATION_NAME']) . '</option>';
+                                }
+                                mysqli_data_seek($specializations_query, 0);
+                            }
+                            ?>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Select Doctor</label>
+                        <div id="doctors_list" style="max-height: 300px; overflow-y: auto;">
+                            <?php
+                            if (mysqli_num_rows($doctors_query) > 0) {
+                                while ($doctor = mysqli_fetch_assoc($doctors_query)) {
+                                    echo '<div class="doctor-info" data-specialization="' . $doctor['SPECIALISATION_ID'] . '" onclick="selectDoctor(this, ' . $doctor['DOCTOR_ID'] . ')">
+                                                <div class="doctor-avatar">' . strtoupper(substr($doctor['FIRST_NAME'], 0, 1) . substr($doctor['LAST_NAME'], 0, 1)) . '</div>
+                                                <div class="doctor-details">
+                                                    <div class="doctor-name">Dr. ' . htmlspecialchars($doctor['FIRST_NAME'] . ' ' . $doctor['LAST_NAME']) . '</div>
+                                                    <div class="doctor-specialization">' . htmlspecialchars($doctor['SPECIALISATION_NAME']) . '</div>
+                                                </div>
+                                            </div>';
+                                }
+                            }
+                            ?>
+                        </div>
+                        <input type="hidden" id="selected_doctor_id" name="doctor_id" required>
+                    </div>
+                    
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-primary" onclick="nextStep(2)" id="nextToStep2" disabled>
+                            Next: Select Date <i class="fas fa-arrow-right" style="margin-left: 5px;"></i>
+                        </button>
+                    </div>
                 </div>
                 
                 <!-- Step 2: Select Date -->
-                <div class="step-content active" id="step2Content">
+                <div class="step-content" id="step2Content">
                     <div class="form-group">
                         <label>Select Appointment Date</label>
                         <div class="calendar-container">
@@ -963,9 +878,13 @@ if ($details_result && mysqli_num_rows($details_result) > 0) {
                                 <!-- Calendar will be generated here -->
                             </div>
                         </div>
+                        <input type="hidden" id="selected_date" name="appointment_date" required>
                     </div>
                     
                     <div class="btn-group">
+                        <button type="button" class="btn btn-danger" onclick="prevStep(1)">
+                            <i class="fas fa-arrow-left" style="margin-right: 5px;"></i> Back
+                        </button>
                         <button type="button" class="btn btn-primary" onclick="nextStep(3)" id="nextToStep3" disabled>
                             Next: Select Time <i class="fas fa-arrow-right" style="margin-left: 5px;"></i>
                         </button>
@@ -982,6 +901,7 @@ if ($details_result && mysqli_num_rows($details_result) > 0) {
                                 <p>Loading available time slots...</p>
                             </div>
                         </div>
+                        <input type="hidden" id="selected_time" name="appointment_time" required>
                     </div>
                     
                     <div class="form-group">
@@ -993,131 +913,9 @@ if ($details_result && mysqli_num_rows($details_result) > 0) {
                         <button type="button" class="btn btn-danger" onclick="prevStep(2)">
                             <i class="fas fa-arrow-left" style="margin-right: 5px;"></i> Back
                         </button>
-                        <button type="button" class="btn btn-primary" onclick="nextStep(4)" id="nextToStep4" disabled>
-                            Next: Payment <i class="fas fa-arrow-right" style="margin-left: 5px;"></i>
+                        <button type="submit" class="btn btn-success" id="submitBtn" disabled>
+                            <i class="fas fa-check"></i> Book Appointment
                         </button>
-                    </div>
-                </div>
-                
-                <!-- Step 4: Payment -->
-                <div class="step-content" id="step4Content">
-                    <div class="appointment-summary">
-                        <h3>Appointment Summary</h3>
-                        <div class="summary-row">
-                            <span>Doctor:</span>
-                            <span id="summaryDoctor"></span>
-                        </div>
-                        <div class="summary-row">
-                            <span>Date:</span>
-                            <span id="summaryDate"></span>
-                        </div>
-                        <div class="summary-row">
-                            <span>Time:</span>
-                            <span id="summaryTime"></span>
-                        </div>
-                        <div class="summary-row">
-                            <span>Consultation Fee:</span>
-                            <span id="summaryFee">$50</span>
-                        </div>
-                        <div class="summary-row">
-                            <span>Total:</span>
-                            <span id="summaryTotal">$50</span>
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Select Payment Method</label>
-                        <div class="payment-methods">
-                            <div class="payment-method" onclick="selectPaymentMethod(this, 'credit-card')">
-                                <i class="fas fa-credit-card"></i>
-                                <span>Credit Card</span>
-                            </div>
-                            <div class="payment-method" onclick="selectPaymentMethod(this, 'debit-card')">
-                                <i class="fas fa-credit-card"></i>
-                                <span>Debit Card</span>
-                            </div>
-                            <div class="payment-method" onclick="selectPaymentMethod(this, 'paypal')">
-                                <i class="fab fa-paypal"></i>
-                                <span>PayPal</span>
-                            </div>
-                            <div class="payment-method" onclick="selectPaymentMethod(this, 'cash')">
-                                <i class="fas fa-money-bill-wave"></i>
-                                <span>Cash on Visit</span>
-                            </div>
-                        </div>
-                        <input type="hidden" id="payment_method" name="payment_method" required>
-                    </div>
-                    
-                    <div class="form-group" id="cardDetails" style="display: none;">
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="card_number">Card Number</label>
-                                <input type="text" class="form-control" id="card_number" placeholder="1234 5678 9012 3456">
-                            </div>
-                            <div class="form-group">
-                                <label for="card_name">Cardholder Name</label>
-                                <input type="text" class="form-control" id="card_name" placeholder="John Doe">
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="expiry_date">Expiry Date</label>
-                                <input type="text" class="form-control" id="expiry_date" placeholder="MM/YY">
-                            </div>
-                            <div class="form-group">
-                                <label for="cvv">CVV</label>
-                                <input type="text" class="form-control" id="cvv" placeholder="123">
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="btn-group">
-                        <button type="button" class="btn btn-danger" onclick="prevStep(3)">
-                            <i class="fas fa-arrow-left" style="margin-right: 5px;"></i> Back
-                        </button>
-                        <button type="button" class="btn btn-primary" onclick="processPayment()" id="processPaymentBtn" disabled>
-                            Process Payment <i class="fas fa-arrow-right" style="margin-left: 5px;"></i>
-                        </button>
-                    </div>
-                </div>
-                
-                <!-- Step 5: Payment Success -->
-                <div class="step-content" id="step5Content">
-                    <div class="success-animation">
-                        <i class="fas fa-check-circle"></i>
-                        <h2>Payment Successful!</h2>
-                        <p>Your appointment has been confirmed.</p>
-                        <p>An email with the appointment details has been sent to your registered email address.</p>
-                        
-                        <div class="appointment-summary" style="margin-top: 30px;">
-                            <h3>Appointment Details</h3>
-                            <div class="summary-row">
-                                <span>Appointment ID:</span>
-                                <span id="appointmentId">APT-2023-<?php echo rand(1000, 9999); ?></span>
-                            </div>
-                            <div class="summary-row">
-                                <span>Doctor:</span>
-                                <span id="finalDoctor"></span>
-                            </div>
-                            <div class="summary-row">
-                                <span>Date:</span>
-                                <span id="finalDate"></span>
-                            </div>
-                            <div class="summary-row">
-                                <span>Time:</span>
-                                <span id="finalTime"></span>
-                            </div>
-                            <div class="summary-row">
-                                <span>Payment Method:</span>
-                                <span id="finalPaymentMethod"></span>
-                            </div>
-                        </div>
-                        
-                        <div class="btn-group" style="justify-content: center; margin-top: 30px;">
-                            <button type="button" class="btn btn-primary" onclick="closeBookingModal()">
-                                Done
-                            </button>
-                        </div>
                     </div>
                 </div>
             </form>
@@ -1125,96 +923,59 @@ if ($details_result && mysqli_num_rows($details_result) > 0) {
     </div>
 
     <script>
-        // Pass PHP data to JavaScript
-        const doctorSchedules = <?php echo json_encode($doctor_schedules); ?>;
-        const doctorDetails = <?php echo json_encode($doctor_details); ?>;
-        
-        // Calendar functionality
-        let currentMonth = new Date().getMonth();
-        let currentYear = new Date().getFullYear();
-        let selectedDoctorId = null;
-        let doctorSchedule = [];
-        let selectedDoctorData = null;
-        let selectedPaymentMethod = null;
-
-        document.addEventListener('DOMContentLoaded', function() {
-            // Initialize calendar
-            initCalendar();
-        });
-
         // Modal functions
         function openBookingModal(doctorId, doctorName) {
-            document.getElementById('bookingModal').style.display = 'block';
-            
-            // Set the selected doctor
-            selectedDoctorId = doctorId;
-            document.getElementById('selected_doctor_id').value = doctorId;
-            
-            // Update doctor info display
-            document.getElementById('doctorName').textContent = 'Dr. ' + doctorName;
-            document.getElementById('doctorInitials').textContent = doctorName.split(' ').map(n => n[0]).join('').toUpperCase();
-            
-            // Set doctor details from the preloaded data
-            if (doctorDetails[doctorId]) {
-                selectedDoctorData = doctorDetails[doctorId];
-                document.getElementById('doctorSpecialization').textContent = selectedDoctorData.specialization;
+            if (doctorId) {
+                // Pre-select the doctor if doctorId is provided
+                selectedDoctorId = doctorId;
+                document.getElementById('selected_doctor_id').value = doctorId;
+                
+                // Auto-advance to step 2
+                loadDoctorSchedule(doctorId);
+                nextStep(2);
+            } else {
+                // Start from step 1
+                resetBookingModal();
             }
             
-            // Load doctor's schedule from preloaded data
-            loadDoctorSchedule(doctorId);
-            
-            // Reset modal to step 2
-            resetBookingModal();
+            document.getElementById('bookingModal').style.display = 'block';
         }
         
         function closeBookingModal() {
             document.getElementById('bookingModal').style.display = 'none';
-            // Reload page to refresh any data
-            window.location.reload();
         }
         
         // Close modal when clicking outside of it
         window.onclick = function(event) {
             const bookingModal = document.getElementById('bookingModal');
             if (event.target == bookingModal) {
-                closeBookingModal();
+                bookingModal.style.display = 'none';
             }
         }
         
         // Step navigation functions
         function nextStep(stepNumber) {
-            // Hide current step
             document.querySelectorAll('.step-content').forEach(content => {
                 content.classList.remove('active');
             });
             
-            // Show next step
             document.getElementById('step' + stepNumber + 'Content').classList.add('active');
             
-            // Update step indicators
             for (let i = 1; i < stepNumber; i++) {
                 document.getElementById('step' + i).classList.add('completed');
                 document.getElementById('step' + i).classList.remove('active');
             }
             document.getElementById('step' + stepNumber).classList.add('active');
-            
-            // If moving to payment step, update summary
-            if (stepNumber === 4) {
-                updatePaymentSummary();
-            }
         }
         
         function prevStep(stepNumber) {
-            // Hide current step
             document.querySelectorAll('.step-content').forEach(content => {
                 content.classList.remove('active');
             });
             
-            // Show previous step
             document.getElementById('step' + stepNumber + 'Content').classList.add('active');
             
-            // Update step indicators
-            for (let i = stepNumber + 1; i <= 5; i++) {
+            for (let i = stepNumber + 1; i <= 3; i++) {
                 document.getElementById('step' + i).classList.remove('active');
                 document.getElementById('step' + i).classList.remove('completed');
             }
@@ -1222,53 +983,64 @@ if ($details_result && mysqli_num_rows($details_result) > 0) {
         }
         
         function resetBookingModal() {
-            // Reset to step 2
             document.querySelectorAll('.step-content').forEach(content => {
                 content.classList.remove('active');
             });
-            document.getElementById('step2Content').classList.add('active');
+            document.getElementById('step1Content').classList.add('active');
             
-            // Reset step indicators
-            document.getElementById('step1').classList.add('completed');
-            document.getElementById('step1').classList.remove('active');
-            document.getElementById('step2').classList.add('active');
-            document.getElementById('step3').classList.remove('active');
-            document.getElementById('step3').classList.remove('completed');
-            document.getElementById('step4').classList.remove('active');
-            document.getElementById('step4').classList.remove('completed');
-            document.getElementById('step5').classList.remove('active');
-            document.getElementById('step5').classList.remove('completed');
+            for (let i = 2; i <= 3; i++) {
+                document.getElementById('step' + i).classList.remove('active');
+                document.getElementById('step' + i).classList.remove('completed');
+            }
             
-            // Reset form values
+            document.getElementById('selected_doctor_id').value = '';
             document.getElementById('selected_date').value = '';
             document.getElementById('selected_time').value = '';
-            document.getElementById('reason').value = '';
-            document.getElementById('payment_method').value = '';
+            document.getElementById('nextToStep2').disabled = true;
             document.getElementById('nextToStep3').disabled = true;
-            document.getElementById('nextToStep4').disabled = true;
-            document.getElementById('processPaymentBtn').disabled = true;
+            document.getElementById('submitBtn').disabled = true;
             
-            // Reset payment method selection
-            document.querySelectorAll('.payment-method').forEach(method => {
-                method.classList.remove('selected');
+            document.querySelectorAll('.doctor-info').forEach(doc => {
+                doc.classList.remove('selected');
             });
-            document.getElementById('cardDetails').style.display = 'none';
-            
-            // Clear calendar selection
-            document.querySelectorAll('.calendar-day').forEach(el => {
-                el.classList.remove('selected');
+        }
+        
+        // Doctor selection and filtering
+        function selectDoctor(element, doctorId) {
+            document.querySelectorAll('.doctor-info').forEach(doc => {
+                doc.classList.remove('selected');
             });
             
-            // Clear time slots
-            document.getElementById('timeSlotsContainer').innerHTML = `
-                <div class="loading">
-                    <i class="fas fa-spinner"></i>
-                    <p>Please select a date first</p>
-                </div>
-            `;
+            element.classList.add('selected');
+            document.getElementById('selected_doctor_id').value = doctorId;
+            document.getElementById('nextToStep2').disabled = false;
+            
+            loadDoctorSchedule(doctorId);
+        }
+        
+        function filterDoctors() {
+            const specializationId = document.getElementById('specialization_filter').value;
+            const doctors = document.querySelectorAll('.doctor-info');
+            
+            doctors.forEach(doctor => {
+                if (specializationId === '' || doctor.getAttribute('data-specialization') === specializationId) {
+                    doctor.style.display = 'flex';
+                } else {
+                    doctor.style.display = 'none';
+                }
+            });
         }
         
         // Calendar functionality
+        let currentMonth = new Date().getMonth();
+        let currentYear = new Date().getFullYear();
+        let selectedDoctorId = null;
+        let doctorSchedule = [];
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            initCalendar();
+        });
+        
         function initCalendar() {
             renderCalendar(currentMonth, currentYear);
             
@@ -1298,14 +1070,11 @@ if ($details_result && mysqli_num_rows($details_result) > 0) {
                                'July', 'August', 'September', 'October', 'November', 'December'];
             const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
             
-            // Update month and year display
             document.getElementById('currentMonth').textContent = `${monthNames[month]} ${year}`;
             
-            // Clear calendar grid
             const calendarGrid = document.getElementById('calendarGrid');
             calendarGrid.innerHTML = '';
             
-            // Add day headers
             dayNames.forEach(day => {
                 const dayHeader = document.createElement('div');
                 dayHeader.className = 'calendar-day-header';
@@ -1313,27 +1082,23 @@ if ($details_result && mysqli_num_rows($details_result) > 0) {
                 calendarGrid.appendChild(dayHeader);
             });
             
-            // Add empty cells for days before month starts
             for (let i = 0; i < firstDay; i++) {
                 const emptyDay = document.createElement('div');
                 emptyDay.className = 'calendar-day other-month';
                 calendarGrid.appendChild(emptyDay);
             }
             
-            // Add days of the month
             const today = new Date();
             for (let day = 1; day <= daysInMonth; day++) {
                 const dayElement = document.createElement('div');
                 dayElement.className = 'calendar-day';
                 dayElement.textContent = day;
                 
-                // Check if this day is in the past
                 const currentDate = new Date(year, month, day);
                 if (currentDate < today.setHours(0, 0, 0, 0)) {
                     dayElement.classList.add('disabled');
                 }
                 
-                // Check if this day is available for the selected doctor
                 if (selectedDoctorId && !dayElement.classList.contains('disabled')) {
                     const dayOfWeek = currentDate.getDay();
                     const dayMap = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
@@ -1353,46 +1118,58 @@ if ($details_result && mysqli_num_rows($details_result) > 0) {
         function loadDoctorSchedule(doctorId) {
             selectedDoctorId = doctorId;
             
-            // Get doctor schedule from preloaded data
-            if (doctorSchedules[doctorId]) {
-                doctorSchedule = doctorSchedules[doctorId].available_days;
-                console.log('Available days:', doctorSchedule); // Debug log
-                renderCalendar(currentMonth, currentYear);
-                
-                // Clear time slots
-                document.getElementById('timeSlotsContainer').innerHTML = `
-                    <div class="loading">
-                        <i class="fas fa-spinner"></i>
-                        <p>Please select a date first</p>
-                    </div>
-                `;
-            } else {
-                console.error('No schedule found for doctor:', doctorId);
-                document.getElementById('timeSlotsContainer').innerHTML = `
-                    <div class="alert alert-warning">
-                        No schedule available for this doctor.
-                    </div>
-                `;
-            }
+            document.getElementById('timeSlotsContainer').innerHTML = `
+                <div class="loading">
+                    <i class="fas fa-spinner"></i>
+                    <p>Loading doctor's schedule...</p>
+                </div>
+            `;
+            
+            fetch(`get_doctor_schedule.php?doctor_id=${doctorId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        doctorSchedule = data.available_days;
+                        renderCalendar(currentMonth, currentYear);
+                        
+                        document.getElementById('timeSlotsContainer').innerHTML = `
+                            <div class="loading">
+                                <i class="fas fa-spinner"></i>
+                                <p>Please select a date first</p>
+                            </div>
+                        `;
+                    } else {
+                        document.getElementById('timeSlotsContainer').innerHTML = `
+                            <div class="alert alert-danger">
+                                Error loading doctor's schedule: ${data.message}
+                            </div>
+                        `;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading doctor schedule:', error);
+                    document.getElementById('timeSlotsContainer').innerHTML = `
+                        <div class="alert alert-danger">
+                            Error loading doctor's schedule. Please try again later.
+                        </div>
+                    `;
+                });
         }
         
         function selectDate(year, month, day) {
-            // Format date as YYYY-MM-DD
             const date = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
             document.getElementById('selected_date').value = date;
             
-            // Update calendar to show selected date
             document.querySelectorAll('.calendar-day').forEach(el => {
                 el.classList.remove('selected');
             });
             event.target.classList.add('selected');
             
-            // Load time slots for the selected date
+            document.getElementById('nextToStep3').disabled = false;
             loadTimeSlots(selectedDoctorId, date);
         }
         
         function loadTimeSlots(doctorId, date) {
-            // Show loading indicator
             document.getElementById('timeSlotsContainer').innerHTML = `
                 <div class="loading">
                     <i class="fas fa-spinner"></i>
@@ -1400,147 +1177,55 @@ if ($details_result && mysqli_num_rows($details_result) > 0) {
                 </div>
             `;
             
-            // Get day of week from date
-            const dayOfWeek = new Date(date).toLocaleDateString('en-US', { weekday: 'short' }).toUpperCase();
-            
-            // Get time slots from preloaded data
-            if (doctorSchedules[doctorId] && doctorSchedules[doctorId].time_slots[dayOfWeek]) {
-                const timeSlots = doctorSchedules[doctorId].time_slots[dayOfWeek];
-                const timeSlotsContainer = document.getElementById('timeSlotsContainer');
-                timeSlotsContainer.innerHTML = '';
-                
-                if (timeSlots.length > 0) {
-                    timeSlots.forEach(timeSlot => {
-                        const timeSlotElement = document.createElement('div');
-                        timeSlotElement.className = 'time-slot available';
-                        timeSlotElement.textContent = timeSlot;
-                        timeSlotElement.addEventListener('click', () => selectTimeSlot(timeSlot));
-                        timeSlotsContainer.appendChild(timeSlotElement);
-                    });
-                } else {
-                    timeSlotsContainer.innerHTML = `
-                        <div class="alert alert-warning">
-                            No available time slots for this date.
+            fetch(`get_time_slots.php?doctor_id=${doctorId}&date=${date}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        const timeSlotsContainer = document.getElementById('timeSlotsContainer');
+                        timeSlotsContainer.innerHTML = '';
+                        
+                        if (data.time_slots.length > 0) {
+                            data.time_slots.forEach(timeSlot => {
+                                const timeSlotElement = document.createElement('div');
+                                timeSlotElement.className = 'time-slot available';
+                                timeSlotElement.textContent = timeSlot;
+                                timeSlotElement.addEventListener('click', () => selectTimeSlot(timeSlot));
+                                timeSlotsContainer.appendChild(timeSlotElement);
+                            });
+                        } else {
+                            timeSlotsContainer.innerHTML = `
+                                <div class="alert alert-warning">
+                                    No available time slots for this date.
+                                </div>
+                            `;
+                        }
+                    } else {
+                        document.getElementById('timeSlotsContainer').innerHTML = `
+                            <div class="alert alert-danger">
+                                Error loading time slots: ${data.message}
+                            </div>
+                        `;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading time slots:', error);
+                    document.getElementById('timeSlotsContainer').innerHTML = `
+                        <div class="alert alert-danger">
+                            Error loading time slots. Please try again later.
                         </div>
                     `;
-                }
-            } else {
-                document.getElementById('timeSlotsContainer').innerHTML = `
-                    <div class="alert alert-warning">
-                        No available time slots for this date.
-                    </div>
-                `;
-            }
+                });
         }
         
         function selectTimeSlot(time) {
-            // Update hidden input
             document.getElementById('selected_time').value = time;
             
-            // Update UI to show selected time slot
             document.querySelectorAll('.time-slot').forEach(slot => {
                 slot.classList.remove('selected');
             });
             event.target.classList.add('selected');
             
-            // Enable next button
-            document.getElementById('nextToStep4').disabled = false;
-        }
-        
-        // Payment functions
-        function selectPaymentMethod(element, method) {
-            // Remove selected class from all payment methods
-            document.querySelectorAll('.payment-method').forEach(el => {
-                el.classList.remove('selected');
-            });
-            
-            // Add selected class to clicked payment method
-            element.classList.add('selected');
-            
-            // Set the hidden input value
-            document.getElementById('payment_method').value = method;
-            selectedPaymentMethod = method;
-            
-            // Show/hide card details based on payment method
-            if (method === 'credit-card' || method === 'debit-card') {
-                document.getElementById('cardDetails').style.display = 'block';
-            } else {
-                document.getElementById('cardDetails').style.display = 'none';
-            }
-            
-            // Enable process payment button
-            document.getElementById('processPaymentBtn').disabled = false;
-        }
-        
-        function updatePaymentSummary() {
-            // Update summary with appointment details
-            document.getElementById('summaryDoctor').textContent = document.getElementById('doctorName').textContent;
-            
-            const dateValue = document.getElementById('selected_date').value;
-            if (dateValue) {
-                const date = new Date(dateValue);
-                const formattedDate = date.toLocaleDateString('en-US', { 
-                    weekday: 'long', 
-                    year: 'numeric', 
-                    month: 'long', 
-                    day: 'numeric' 
-                });
-                document.getElementById('summaryDate').textContent = formattedDate;
-            }
-            
-            document.getElementById('summaryTime').textContent = document.getElementById('selected_time').value;
-        }
-        
-        function processPayment() {
-            // Show loading state
-            document.getElementById('processPaymentBtn').disabled = true;
-            document.getElementById('processPaymentBtn').innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
-            
-            // Simulate payment processing
-            setTimeout(() => {
-                // Update final appointment details
-                document.getElementById('finalDoctor').textContent = document.getElementById('doctorName').textContent;
-                
-                const dateValue = document.getElementById('selected_date').value;
-                if (dateValue) {
-                    const date = new Date(dateValue);
-                    const formattedDate = date.toLocaleDateString('en-US', { 
-                        weekday: 'long', 
-                        year: 'numeric', 
-                        month: 'long', 
-                        day: 'numeric' 
-                    });
-                    document.getElementById('finalDate').textContent = formattedDate;
-                }
-                
-                document.getElementById('finalTime').textContent = document.getElementById('selected_time').value;
-                
-                // Format payment method for display
-                let paymentMethodText = '';
-                switch (selectedPaymentMethod) {
-                    case 'credit-card':
-                        paymentMethodText = 'Credit Card';
-                        break;
-                    case 'debit-card':
-                        paymentMethodText = 'Debit Card';
-                        break;
-                    case 'paypal':
-                        paymentMethodText = 'PayPal';
-                        break;
-                    case 'cash':
-                        paymentMethodText = 'Cash on Visit';
-                        break;
-                    default:
-                        paymentMethodText = 'Unknown';
-                }
-                document.getElementById('finalPaymentMethod').textContent = paymentMethodText;
-                
-                // Move to success step
-                nextStep(5);
-                
-                // Submit the form to save the appointment in the database
-                document.getElementById('bookingForm').submit();
-            }, 2000); // Simulate 2 seconds processing time
+            document.getElementById('submitBtn').disabled = false;
         }
     </script>
 </body>
