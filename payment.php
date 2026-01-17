@@ -14,31 +14,17 @@ if (!isset($_SESSION['PENDING_APPOINTMENT'])) {
 
  $appointment = $_SESSION['PENDING_APPOINTMENT'];
  $doctor_id = $appointment['doctor_id'];
+ $doctor_name = $appointment['doctor_name'];
+ $specialization = $appointment['specialization'];
  $date = $appointment['date'];
  $time = $appointment['time'];
- $schedule_id = $appointment['schedule_id'];
-
-// If appointment data is coming from POST (from the doctors.php form)
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['doctor_id'])) {
-    $doctor_id = $_POST['doctor_id'];
-    $date = $_POST['appointment_date'];
-    $time = $_POST['appointment_time'];
-    $reason = $_POST['reason'];
-    
-    // Store in session for payment processing
-    $_SESSION['PENDING_APPOINTMENT'] = array(
-        'doctor_id' => $doctor_id,
-        'date' => $date,
-        'time' => $time,
-        'reason' => $reason
-    );
-}
+ $reason = $appointment['reason'];
 
 // Fetch doctor details for display
 include "config.php";
  $doctor_query = mysqli_query($conn, "SELECT FIRST_NAME, LAST_NAME FROM doctor_tbl WHERE DOCTOR_ID = $doctor_id");
  $doctor = mysqli_fetch_assoc($doctor_query);
- $doctor_name = $doctor['FIRST_NAME'] . ' ' . $doctor['LAST_NAME'];
+ $doctor_full_name = $doctor['FIRST_NAME'] . ' ' . $doctor['LAST_NAME'];
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -260,7 +246,11 @@ include "config.php";
                 <h3><i class="fas fa-calendar-check"></i> Appointment Details</h3>
                 <p>
                     <span>Doctor:</span>
-                    <strong>Dr. <?php echo htmlspecialchars($doctor_name); ?></strong>
+                    <strong>Dr. <?php echo htmlspecialchars($doctor_full_name); ?></strong>
+                </p>
+                <p>
+                    <span>Specialization:</span>
+                    <strong><?php echo htmlspecialchars($specialization); ?></strong>
                 </p>
                 <p>
                     <span>Date:</span>
@@ -272,7 +262,7 @@ include "config.php";
                 </p>
                 <p>
                     <span>Reason:</span>
-                    <strong><?php echo htmlspecialchars($appointment['reason'] ?? 'Not specified'); ?></strong>
+                    <strong><?php echo htmlspecialchars($reason); ?></strong>
                 </p>
                 <p>
                     <span>Consultation Fee:</span>
@@ -311,8 +301,7 @@ include "config.php";
                 <input type="hidden" name="doctor_id" value="<?= $doctor_id ?>">
                 <input type="hidden" name="date" value="<?= $date ?>">
                 <input type="hidden" name="time" value="<?= $time ?>">
-                <input type="hidden" name="schedule_id" value="<?= $schedule_id ?>">
-                <input type="hidden" name="reason" value="<?= $appointment['reason'] ?? '' ?>">
+                <input type="hidden" name="reason" value="<?= $reason ?>">
                 <input type="hidden" name="payment_method" id="paymentMethod" value="CREDIT CARD">
                 
                 <button type="submit" class="confirm-btn" id="confirmBtn">

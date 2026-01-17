@@ -1,67 +1,38 @@
 <?php
 session_start();
-include 'config.php';
+include "config.php";
 
- $user = $_POST['username'] ?? '';
- $pass = $_POST['password'] ?? '';
-
-// Check both POST and GET for appointment parameters
- $doctor_id   = $_POST['doctor_id']   ?? $_GET['doctor_id']   ?? null;
- $date        = $_POST['date']        ?? $_GET['date']        ?? null;
- $time        = $_POST['time']        ?? $_GET['time']        ?? null;
- $schedule_id = $_POST['schedule_id'] ?? $_GET['schedule_id'] ?? null;
-
-if ($user === '' || $pass === '') {
-    die("Invalid request");
-}
-
- $user = mysqli_real_escape_string($conn, $user);
-
-// fetch patient
- $q = mysqli_query($conn,"
-    SELECT PATIENT_ID, PSWD, FIRST_NAME, LAST_NAME, EMAIL, PHONE
-    FROM patient_tbl
-    WHERE USERNAME='$user'
-");
-
-if (!$q || mysqli_num_rows($q) !== 1) {
-    die("Invalid username or password");
-}
-
- $row = mysqli_fetch_assoc($q);
-
-// verify password
-if (!password_verify($pass, $row['PSWD'])) {
-    die("Invalid username or password");
-}
-
-// login success - store patient data in session
- $_SESSION['PATIENT_ID'] = $row['PATIENT_ID'];
- $_SESSION['PATIENT_NAME'] = $row['FIRST_NAME'] . ' ' . $row['LAST_NAME'];
- $_SESSION['PATIENT_EMAIL'] = $row['EMAIL'];
- $_SESSION['PATIENT_PHONE'] = $row['PHONE'];
- $_SESSION['LOGGED_IN'] = true;
-
-// Store appointment data if available
-if ($doctor_id && $date && $time && $schedule_id) {
-    $_SESSION['PENDING_APPOINTMENT'] = [
-        'doctor_id' => $doctor_id,
-        'date' => $date,
-        'time' => $time,
-        'schedule_id' => $schedule_id
-    ];
+// Check if form is submitted
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $username = mysqli_real_escape_string($conn, $_POST['username']);
+    $password = $_POST['password']; // Don't escape the password before verification
     
-    // Create a form to redirect with POST method
-    echo '<form id="redirectForm" action="payment.php" method="post">
-            <input type="hidden" name="doctor_id" value="' . $doctor_id . '">
-            <input type="hidden" name="date" value="' . $date . '">
-            <input type="hidden" name="time" value="' . $time . '">
-            <input type="hidden" name="schedule_id" value="' . $schedule_id . '">
-          </form>
-          <script>document.getElementById("redirectForm").submit();</script>';
-} else {
-    // Create a form to redirect with POST method
-    echo '<form id="redirectForm" action="payment.php" method="post"></form>
-          <script>document.getElementById("redirectForm").submit();</script>';
+    // Query to check user credentials in patient table
+    $query = "SELECT * FROM patient_tbl WHERE USERNAME = '$username'";
+    $result = mysqli_query($conn, $query);
+    
+    if (mysqli_num_rows($result) == 1) {
+        $user = mysqli_fetch_assoc($result);
+        
+        // Verify password using bcrypt
+        if (password_verify($password, $user['PSWD'])) { // Changed from PASSWORD to PSWD
+            // Set session variables
+            $_SESSION['PATIENT_ID'] = $user['PATIENT_ID'];
+            $_SESSION['PATIENT_NAME'] = $user['FIRST_NAME'] . ' ' . $user['LAST_NAME'];
+            $_SESSION['PATIENT_USERNAME'] = $user['USERNAME'];
+            
+            // Return success response
+            echo json_encode(['status' => 'success', 'message' => 'Login successful']);
+            exit;
+        } else {
+            // Return error response
+            echo json_encode(['status' => 'error', 'message' => 'Invalid username or password']);
+            exit;
+        }
+    } else {
+        // Return error response
+        echo json_encode(['status' => 'error', 'message' => 'Invalid username or password']);
+        exit;
+    }
 }
-exit;
+?>

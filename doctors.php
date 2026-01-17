@@ -597,6 +597,12 @@ include "header.php";
             border: 1px solid #ffeeba;
         }
 
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
         /* Login Form Styles */
         .login-form {
             max-width: 400px;
@@ -642,6 +648,132 @@ include "header.php";
         .login-form a:hover {
             text-decoration: underline;
         }
+
+        /* Appointment Confirmation Styles */
+        .confirmation-container {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .confirmation-icon {
+            font-size: 4rem;
+            color: var(--accent-color);
+            margin-bottom: 20px;
+        }
+
+        .confirmation-title {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+
+        .confirmation-message {
+            color: var(--text-dark);
+            margin-bottom: 20px;
+        }
+
+        .appointment-details {
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .appointment-details h4 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+
+        .detail-value {
+            color: var(--primary-color);
+        }
+
+        /* Payment Processing Styles */
+.payment-processing-container {
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 20px;
+    text-align: center;
+}
+
+.payment-icon {
+    font-size: 3rem;
+    color: var(--primary-color);
+    margin-bottom: 20px;
+}
+
+.payment-title {
+    font-size: 1.5rem;
+    color: var(--primary-color);
+    margin-bottom: 15px;
+}
+
+.payment-message {
+    color: var(--text-dark);
+    margin-bottom: 25px;
+}
+
+.payment-form {
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.appointment-summary {
+    background-color: var(--light-blue);
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+
+.appointment-summary h4 {
+    color: var(--dark-blue);
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #eee;
+}
+
+.summary-row:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.summary-row.total {
+    font-weight: bold;
+    color: var(--success-color);
+    font-size: 1.1rem;
+}
 
         /* Footer with Wave Effect */
         footer {
@@ -863,6 +995,8 @@ include "header.php";
                 <div class="step" id="step2">2</div>
                 <div class="step" id="step3">3</div>
                 <div class="step" id="step4">4</div>
+                <div class="step" id="step5">5</div>
+                <div class="step" id="step6">6</div>
             </div>
             
             <form method="POST" action="payment.php" id="appointmentForm">
@@ -975,8 +1109,8 @@ include "header.php";
                         <div class="alert alert-danger" id="loginError" style="display: none;"></div>
                         
                         <div class="form-group">
-                            <label for="login_email">Email</label>
-                            <input type="email" class="form-control" id="login_email" placeholder="Enter your email" required>
+                            <label for="login_username">Username</label>
+                            <input type="text" class="form-control" id="login_username" placeholder="Enter your Username" required>
                         </div>
                         
                         <div class="form-group">
@@ -998,402 +1132,665 @@ include "header.php";
                         <button type="button" class="btn btn-danger" onclick="prevStep(3)">
                             <i class="fas fa-arrow-left" style="margin-right: 5px;"></i> Back
                         </button>
-                        <button type="submit" class="btn btn-success" id="submitBtn" disabled>
-                            <i class="fas fa-check"></i> Book Appointment
+                        <button type="button" class="btn btn-success" onclick="nextStep(5)" id="nextToStep5" disabled>
+                            Next: Confirm <i class="fas fa-arrow-right" style="margin-left: 5px;"></i>
                         </button>
                     </div>
                 </div>
+                
+                <!-- Step 5: Appointment Confirmation -->
+                <div class="step-content" id="step5Content">
+                    <div class="confirmation-container">
+                        <i class="fas fa-check-circle confirmation-icon"></i>
+                        <h3 class="confirmation-title">Appointment Confirmed!</h3>
+                        <p class="confirmation-message">Your appointment has been successfully booked. Please make the payment to confirm your booking.</p>
+                        
+                        <div class="appointment-details">
+                            <h4>Appointment Details</h4>
+                            <div class="detail-row">
+                                <span class="detail-label">Doctor:</span>
+                                <span class="detail-value" id="confirmDoctor"></span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Specialization:</span>
+                                <span class="detail-value" id="confirmSpecialization"></span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Date:</span>
+                                <span class="detail-value" id="confirmDate"></span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Time:</span>
+                                <span class="detail-value" id="confirmTime"></span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Reason:</span>
+                                <span class="detail-value" id="confirmReason"></span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Consultation Fee:</span>
+                                <span class="detail-value">₹300</span>
+                            </div>
+                        </div>
+                        
+                        <div class="btn-group" style="justify-content: center;">
+                            <button type="button" class="btn btn-danger" onclick="prevStep(4)">
+                                <i class="fas fa-arrow-left" style="margin-right: 5px;"></i> Back
+                            </button>
+                            <button type="button" class="btn btn-success" id="submitBtn" onclick="submitAppointment()">
+                            <i class="fas fa-credit-card"></i> Proceed to Payment
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 6: Payment Processing -->
+<div class="step-content" id="step6Content">
+    <div class="payment-processing-container">
+        <i class="fas fa-lock payment-icon"></i>
+        <h3 class="payment-title">Secure Payment</h3>
+        <p class="payment-message">Enter your payment details to complete the booking</p>
+        
+        <div class="payment-form">
+            <div class="form-group">
+                <label for="cardNumber">Card Number</label>
+                <input type="text" class="form-control" id="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19" required>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="expiryMonth">Expiry Month</label>
+                    <select class="form-control" id="expiryMonth" required>
+                        <option value="">MM</option>
+                        <?php for ($i = 1; $i <= 12; $i++): ?>
+                            <option value="<?php echo str_pad($i, 2, '0', STR_PAD_LEFT); ?>"><?php echo str_pad($i, 2, '0', STR_PAD_LEFT); ?></option>
+                        <?php endfor; ?>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="expiryYear">Expiry Year</label>
+                    <select class="form-control" id="expiryYear" required>
+                        <option value="">YYYY</option>
+                        <?php 
+                        $currentYear = date('Y');
+                        for ($i = $currentYear; $i <= $currentYear + 10; $i++): ?>
+                            <option value="<?php echo $i; ?>"><?php echo $i; ?></option>
+                        <?php endfor; ?>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="cvv">CVV</label>
+                <input type="text" class="form-control" id="cvv" placeholder="123" maxlength="4" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="cardName">Cardholder Name</label>
+                <input type="text" class="form-control" id="cardName" placeholder="John Doe" required>
+            </div>
+        </div>
+        
+        <div class="appointment-summary">
+            <h4>Order Summary</h4>
+            <div class="summary-row">
+                <span>Doctor:</span>
+                <span id="summaryDoctor"></span>
+            </div>
+            <div class="summary-row">
+                <span>Date & Time:</span>
+                <span id="summaryDateTime"></span>
+            </div>
+            <div class="summary-row">
+                <span>Consultation Fee:</span>
+                <span>₹300</span>
+            </div>
+            <div class="summary-row total">
+                <span>Total Amount:</span>
+                <span>₹300</span>
+            </div>
+        </div>
+        
+        <div class="btn-group" style="justify-content: center;">
+            <button type="button" class="btn btn-danger" onclick="prevStep(5)">
+                <i class="fas fa-arrow-left" style="margin-right: 5px;"></i> Back
+            </button>
+            <button type="button" class="btn btn-success" id="processPaymentBtn" onclick="processPayment()">
+                <i class="fas fa-lock"></i> Process Payment
+            </button>
+        </div>
+    </div>
+</div>
             </form>
         </div>
     </div>
 
     <script>
-        // Modal functions
-        function openBookingModal(doctorId, doctorName) {
-            if (doctorId) {
-                // Pre-select the doctor if doctorId is provided
-                selectedDoctorId = doctorId;
-                document.getElementById('selected_doctor_id').value = doctorId;
-                
-                // Auto-advance to step 2
-                loadDoctorSchedule(doctorId);
-                nextStep(2);
-            } else {
-                // Start from step 1
-                resetBookingModal();
-            }
+    // Modal functions
+    function openBookingModal(doctorId, doctorName) {
+        if (doctorId) {
+            // Pre-select the doctor if doctorId is provided
+            selectedDoctorId = doctorId;
+            document.getElementById('selected_doctor_id').value = doctorId;
             
-            document.getElementById('bookingModal').style.display = 'block';
-        }
-        
-        function closeBookingModal() {
-            document.getElementById('bookingModal').style.display = 'none';
+            // Auto-advance to step 2
+            loadDoctorSchedule(doctorId);
+            nextStep(2);
+        } else {
+            // Start from step 1
             resetBookingModal();
         }
         
-        // Close modal when clicking outside of it
-        window.onclick = function(event) {
-            const bookingModal = document.getElementById('bookingModal');
-            if (event.target == bookingModal) {
-                bookingModal.style.display = 'none';
-            }
+        document.getElementById('bookingModal').style.display = 'block';
+    }
+    
+    function closeBookingModal() {
+        document.getElementById('bookingModal').style.display = 'none';
+        resetBookingModal();
+    }
+    
+    // Close modal when clicking outside of it
+    window.onclick = function(event) {
+        const bookingModal = document.getElementById('bookingModal');
+        if (event.target == bookingModal) {
+            bookingModal.style.display = 'none';
         }
-        
-        // Step navigation functions
-        function nextStep(stepNumber) {
-            document.querySelectorAll('.step-content').forEach(content => {
-                content.classList.remove('active');
-            });
-            
-            document.getElementById('step' + stepNumber + 'Content').classList.add('active');
-            
-            for (let i = 1; i < stepNumber; i++) {
-                document.getElementById('step' + i).classList.add('completed');
-                document.getElementById('step' + i).classList.remove('active');
-            }
-            document.getElementById('step' + stepNumber).classList.add('active');
-        }
-        
-        function prevStep(stepNumber) {
-            document.querySelectorAll('.step-content').forEach(content => {
-                content.classList.remove('active');
-            });
-            
-            document.getElementById('step' + stepNumber + 'Content').classList.add('active');
-            
-            for (let i = stepNumber + 1; i <= 4; i++) {
-                document.getElementById('step' + i).classList.remove('active');
-                document.getElementById('step' + i).classList.remove('completed');
-            }
-            document.getElementById('step' + stepNumber).classList.add('active');
-        }
-        
-        function resetBookingModal() {
-            document.querySelectorAll('.step-content').forEach(content => {
-                content.classList.remove('active');
-            });
-            document.getElementById('step1Content').classList.add('active');
-            
-            for (let i = 2; i <= 4; i++) {
-                document.getElementById('step' + i).classList.remove('active');
-                document.getElementById('step' + i).classList.remove('completed');
-            }
-            
-            // Reset form fields
-            document.getElementById('appointmentForm').reset();
-            document.getElementById('selected_doctor_id').value = '';
-            document.getElementById('selected_doctor_name').value = '';
-            document.getElementById('selected_specialization').value = '';
-            document.getElementById('selected_date').value = '';
-            document.getElementById('selected_time').value = '';
-            
-            // Reset button states
-            document.getElementById('nextToStep2').disabled = true;
-            document.getElementById('nextToStep3').disabled = true;
-            document.getElementById('nextToStep4').disabled = true;
-            document.getElementById('submitBtn').disabled = true;
-            
-            // Reset selections
-            document.querySelectorAll('.doctor-info').forEach(doc => {
-                doc.classList.remove('selected');
-            });
-            document.querySelectorAll('.calendar-day').forEach(day => {
-                day.classList.remove('selected');
-            });
-            document.querySelectorAll('.time-slot').forEach(slot => {
-                slot.classList.remove('selected');
-            });
-            
-            // Reset login form
-            document.getElementById('loginError').style.display = 'none';
-            document.getElementById('login_email').value = '';
-            document.getElementById('login_password').value = '';
-        }
-        
-        // Doctor selection and filtering
-        function selectDoctor(element, doctorId, doctorName, specialization) {
-            document.querySelectorAll('.doctor-info').forEach(doc => {
-                doc.classList.remove('selected');
-            });
-            
-            element.classList.add('selected');
-            document.getElementById('selected_doctor_id').value = doctorId;
-            document.getElementById('selected_doctor_name').value = doctorName;
-            document.getElementById('selected_specialization').value = specialization;
-            document.getElementById('nextToStep2').disabled = false;
-            
-            loadDoctorSchedule(doctorId);
-        }
-        
-        function filterDoctors() {
-            const specializationId = document.getElementById('specialization_filter').value;
-            const doctors = document.querySelectorAll('.doctor-info');
-            
-            doctors.forEach(doctor => {
-                if (specializationId === '' || doctor.getAttribute('data-specialization') === specializationId) {
-                    doctor.style.display = 'flex';
-                } else {
-                    doctor.style.display = 'none';
-                }
-            });
-        }
-        
-        // Calendar functionality
-        let currentMonth = new Date().getMonth();
-        let currentYear = new Date().getFullYear();
-        let selectedDoctorId = null;
-        let doctorSchedule = [];
-        
-        document.addEventListener('DOMContentLoaded', function() {
-            initCalendar();
+    }
+    
+    // Step navigation functions
+    function nextStep(stepNumber) {
+        document.querySelectorAll('.step-content').forEach(content => {
+            content.classList.remove('active');
         });
         
-        function initCalendar() {
-            renderCalendar(currentMonth, currentYear);
-            
-            document.getElementById('prevMonth').addEventListener('click', () => {
-                currentMonth--;
-                if (currentMonth < 0) {
-                    currentMonth = 11;
-                    currentYear--;
-                }
-                renderCalendar(currentMonth, currentYear);
-            });
-            
-            document.getElementById('nextMonth').addEventListener('click', () => {
-                currentMonth++;
-                if (currentMonth > 11) {
-                    currentMonth = 0;
-                    currentYear++;
-                }
-                renderCalendar(currentMonth, currentYear);
-            });
+        document.getElementById('step' + stepNumber + 'Content').classList.add('active');
+        
+        for (let i = 1; i < stepNumber; i++) {
+            document.getElementById('step' + i).classList.add('completed');
+            document.getElementById('step' + i).classList.remove('active');
+        }
+        document.getElementById('step' + stepNumber).classList.add('active');
+        
+        // If moving to step 5, populate the confirmation details
+        if (stepNumber === 5) {
+            populateConfirmationDetails();
+        }
+    }
+    
+    function prevStep(stepNumber) {
+        document.querySelectorAll('.step-content').forEach(content => {
+            content.classList.remove('active');
+        });
+        
+        document.getElementById('step' + stepNumber + 'Content').classList.add('active');
+        
+        for (let i = stepNumber + 1; i <= 5; i++) {
+            document.getElementById('step' + i).classList.remove('active');
+            document.getElementById('step' + i).classList.remove('completed');
+        }
+        document.getElementById('step' + stepNumber).classList.add('active');
+    }
+    
+    function resetBookingModal() {
+        document.querySelectorAll('.step-content').forEach(content => {
+            content.classList.remove('active');
+        });
+        document.getElementById('step1Content').classList.add('active');
+        
+        for (let i = 2; i <= 5; i++) {
+            document.getElementById('step' + i).classList.remove('active');
+            document.getElementById('step' + i).classList.remove('completed');
         }
         
-        function renderCalendar(month, year) {
-            const firstDay = new Date(year, month, 1).getDay();
-            const daysInMonth = new Date(year, month + 1, 0).getDate();
-            const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 
-                               'July', 'August', 'September', 'October', 'November', 'December'];
-            const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+        // Reset form fields
+        document.getElementById('appointmentForm').reset();
+        document.getElementById('selected_doctor_id').value = '';
+        document.getElementById('selected_doctor_name').value = '';
+        document.getElementById('selected_specialization').value = '';
+        document.getElementById('selected_date').value = '';
+        document.getElementById('selected_time').value = '';
+        
+        // Reset button states
+        document.getElementById('nextToStep2').disabled = true;
+        document.getElementById('nextToStep3').disabled = true;
+        document.getElementById('nextToStep4').disabled = true;
+        document.getElementById('nextToStep5').disabled = true;
+        
+        // Reset selections
+        document.querySelectorAll('.doctor-info').forEach(doc => {
+            doc.classList.remove('selected');
+        });
+        document.querySelectorAll('.calendar-day').forEach(day => {
+            day.classList.remove('selected');
+        });
+        document.querySelectorAll('.time-slot').forEach(slot => {
+            slot.classList.remove('selected');
+        });
+        
+        // Reset login form
+        document.getElementById('loginError').style.display = 'none';
+        document.getElementById('login_username').value = '';
+        document.getElementById('login_password').value = '';
+        document.getElementById('login_username').disabled = false;
+        document.getElementById('login_password').disabled = false;
+        document.querySelector('.login-form .btn-primary').style.display = 'block';
+        
+        // Remove success message if exists
+        const successMessage = document.querySelector('.login-form .alert-success');
+        if (successMessage) {
+            successMessage.remove();
+        }
+    }
+    
+    // Doctor selection and filtering
+    function selectDoctor(element, doctorId, doctorName, specialization) {
+        document.querySelectorAll('.doctor-info').forEach(doc => {
+            doc.classList.remove('selected');
+        });
+        
+        element.classList.add('selected');
+        document.getElementById('selected_doctor_id').value = doctorId;
+        document.getElementById('selected_doctor_name').value = doctorName;
+        document.getElementById('selected_specialization').value = specialization;
+        document.getElementById('nextToStep2').disabled = false;
+        
+        loadDoctorSchedule(doctorId);
+    }
+    
+    function filterDoctors() {
+        const specializationId = document.getElementById('specialization_filter').value;
+        const doctors = document.querySelectorAll('.doctor-info');
+        
+        doctors.forEach(doctor => {
+            if (specializationId === '' || doctor.getAttribute('data-specialization') === specializationId) {
+                doctor.style.display = 'flex';
+            } else {
+                doctor.style.display = 'none';
+            }
+        });
+    }
+    
+    // Calendar functionality
+    let currentMonth = new Date().getMonth();
+    let currentYear = new Date().getFullYear();
+    let selectedDoctorId = null;
+    let doctorSchedule = [];
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        initCalendar();
+    });
+    
+    function initCalendar() {
+        renderCalendar(currentMonth, currentYear);
+        
+        document.getElementById('prevMonth').addEventListener('click', () => {
+            currentMonth--;
+            if (currentMonth < 0) {
+                currentMonth = 11;
+                currentYear--;
+            }
+            renderCalendar(currentMonth, currentYear);
+        });
+        
+        document.getElementById('nextMonth').addEventListener('click', () => {
+            currentMonth++;
+            if (currentMonth > 11) {
+                currentMonth = 0;
+                currentYear++;
+            }
+            renderCalendar(currentMonth, currentYear);
+        });
+    }
+    
+    function renderCalendar(month, year) {
+        const firstDay = new Date(year, month, 1).getDay();
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 
+                           'July', 'August', 'September', 'October', 'November', 'December'];
+        const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+        
+        document.getElementById('currentMonth').textContent = `${monthNames[month]} ${year}`;
+        
+        const calendarGrid = document.getElementById('calendarGrid');
+        calendarGrid.innerHTML = '';
+        
+        dayNames.forEach(day => {
+            const dayHeader = document.createElement('div');
+            dayHeader.className = 'calendar-day-header';
+            dayHeader.textContent = day;
+            calendarGrid.appendChild(dayHeader);
+        });
+        
+        for (let i = 0; i < firstDay; i++) {
+            const emptyDay = document.createElement('div');
+            emptyDay.className = 'calendar-day other-month';
+            calendarGrid.appendChild(emptyDay);
+        }
+        
+        const today = new Date();
+        for (let day = 1; day <= daysInMonth; day++) {
+            const dayElement = document.createElement('div');
+            dayElement.className = 'calendar-day';
+            dayElement.textContent = day;
             
-            document.getElementById('currentMonth').textContent = `${monthNames[month]} ${year}`;
-            
-            const calendarGrid = document.getElementById('calendarGrid');
-            calendarGrid.innerHTML = '';
-            
-            dayNames.forEach(day => {
-                const dayHeader = document.createElement('div');
-                dayHeader.className = 'calendar-day-header';
-                dayHeader.textContent = day;
-                calendarGrid.appendChild(dayHeader);
-            });
-            
-            for (let i = 0; i < firstDay; i++) {
-                const emptyDay = document.createElement('div');
-                emptyDay.className = 'calendar-day other-month';
-                calendarGrid.appendChild(emptyDay);
+            const currentDate = new Date(year, month, day);
+            if (currentDate < today.setHours(0, 0, 0, 0)) {
+                dayElement.classList.add('disabled');
             }
             
-            const today = new Date();
-            for (let day = 1; day <= daysInMonth; day++) {
-                const dayElement = document.createElement('div');
-                dayElement.className = 'calendar-day';
-                dayElement.textContent = day;
+            if (selectedDoctorId && !dayElement.classList.contains('disabled')) {
+                const dayOfWeek = currentDate.getDay();
+                const dayMap = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
                 
-                const currentDate = new Date(year, month, day);
-                if (currentDate < today.setHours(0, 0, 0, 0)) {
+                if (doctorSchedule.includes(dayMap[dayOfWeek])) {
+                    dayElement.classList.add('available');
+                    dayElement.addEventListener('click', () => selectDate(year, month, day));
+                } else {
                     dayElement.classList.add('disabled');
                 }
-                
-                if (selectedDoctorId && !dayElement.classList.contains('disabled')) {
-                    const dayOfWeek = currentDate.getDay();
-                    const dayMap = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
-                    
-                    if (doctorSchedule.includes(dayMap[dayOfWeek])) {
-                        dayElement.classList.add('available');
-                        dayElement.addEventListener('click', () => selectDate(year, month, day));
-                    } else {
-                        dayElement.classList.add('disabled');
-                    }
-                }
-                
-                calendarGrid.appendChild(dayElement);
-            }
-        }
-        
-        function loadDoctorSchedule(doctorId) {
-            selectedDoctorId = doctorId;
-            
-            document.getElementById('timeSlotsContainer').innerHTML = `
-                <div class="loading">
-                    <i class="fas fa-spinner"></i>
-                    <p>Loading doctor's schedule...</p>
-                </div>
-            `;
-            
-            fetch(`get_doctor_schedule.php?doctor_id=${doctorId}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === 'success') {
-                        doctorSchedule = data.available_days;
-                        renderCalendar(currentMonth, currentYear);
-                        
-                        document.getElementById('timeSlotsContainer').innerHTML = `
-                            <div class="loading">
-                                <i class="fas fa-spinner"></i>
-                                <p>Please select a date first</p>
-                            </div>
-                        `;
-                    } else {
-                        document.getElementById('timeSlotsContainer').innerHTML = `
-                            <div class="alert alert-danger">
-                                Error loading doctor's schedule: ${data.message}
-                            </div>
-                        `;
-                    }
-                })
-                .catch(error => {
-                    console.error('Error loading doctor schedule:', error);
-                    document.getElementById('timeSlotsContainer').innerHTML = `
-                        <div class="alert alert-danger">
-                            Error loading doctor's schedule. Please try again later.
-                        </div>
-                    `;
-                });
-        }
-        
-        function selectDate(year, month, day) {
-            const date = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-            document.getElementById('selected_date').value = date;
-            
-            document.querySelectorAll('.calendar-day').forEach(el => {
-                el.classList.remove('selected');
-            });
-            event.target.classList.add('selected');
-            
-            document.getElementById('nextToStep3').disabled = false;
-            loadTimeSlots(selectedDoctorId, date);
-        }
-        
-        function loadTimeSlots(doctorId, date) {
-            document.getElementById('timeSlotsContainer').innerHTML = `
-                <div class="loading">
-                    <i class="fas fa-spinner"></i>
-                    <p>Loading available time slots...</p>
-                </div>
-            `;
-            
-            fetch(`get_time_slots.php?doctor_id=${doctorId}&date=${date}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === 'success') {
-                        const timeSlotsContainer = document.getElementById('timeSlotsContainer');
-                        timeSlotsContainer.innerHTML = '';
-                        
-                        if (data.time_slots.length > 0) {
-                            data.time_slots.forEach(timeSlot => {
-                                const timeSlotElement = document.createElement('div');
-                                timeSlotElement.className = 'time-slot available';
-                                timeSlotElement.textContent = timeSlot;
-                                timeSlotElement.addEventListener('click', () => selectTimeSlot(timeSlot));
-                                timeSlotsContainer.appendChild(timeSlotElement);
-                            });
-                        } else {
-                            timeSlotsContainer.innerHTML = `
-                                <div class="alert alert-warning">
-                                    No available time slots for this date.
-                                </div>
-                            `;
-                        }
-                    } else {
-                        document.getElementById('timeSlotsContainer').innerHTML = `
-                            <div class="alert alert-danger">
-                                Error loading time slots: ${data.message}
-                            </div>
-                        `;
-                    }
-                })
-                .catch(error => {
-                    console.error('Error loading time slots:', error);
-                    document.getElementById('timeSlotsContainer').innerHTML = `
-                        <div class="alert alert-danger">
-                            Error loading time slots. Please try again later.
-                        </div>
-                    `;
-                });
-        }
-        
-        function selectTimeSlot(time) {
-            document.getElementById('selected_time').value = time;
-            
-            document.querySelectorAll('.time-slot').forEach(slot => {
-                slot.classList.remove('selected');
-            });
-            event.target.classList.add('selected');
-            
-            document.getElementById('nextToStep4').disabled = false;
-        }
-        
-        // Login function
-        function loginUser() {
-            const email = document.getElementById('login_email').value;
-            const password = document.getElementById('login_password').value;
-            
-            if (!email || !password) {
-                document.getElementById('loginError').textContent = 'Please enter both email and password';
-                document.getElementById('loginError').style.display = 'block';
-                return;
             }
             
-            // Show loading state
-            const loginButton = event.target;
-            const originalText = loginButton.innerHTML;
-            loginButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging in...';
-            loginButton.disabled = true;
-            
-            fetch('login_modal.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: `email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`
-            })
+            calendarGrid.appendChild(dayElement);
+        }
+    }
+    
+    function loadDoctorSchedule(doctorId) {
+        selectedDoctorId = doctorId;
+        
+        document.getElementById('timeSlotsContainer').innerHTML = `
+            <div class="loading">
+                <i class="fas fa-spinner"></i>
+                <p>Loading doctor's schedule...</p>
+            </div>
+        `;
+        
+        fetch(`get_doctor_schedule.php?doctor_id=${doctorId}`)
             .then(response => response.json())
             .then(data => {
                 if (data.status === 'success') {
-                    // Login successful, enable submit button
-                    document.getElementById('submitBtn').disabled = false;
-                    document.getElementById('loginError').style.display = 'none';
+                    doctorSchedule = data.available_days;
+                    renderCalendar(currentMonth, currentYear);
                     
-                    // Show success message
-                    const loginForm = document.querySelector('.login-form');
-                    const successMessage = document.createElement('div');
-                    successMessage.className = 'alert alert-success';
-                    successMessage.textContent = 'Login successful! You can now proceed with booking.';
-                    loginForm.insertBefore(successMessage, loginForm.firstChild);
-                    
-                    // Disable login form
-                    document.getElementById('login_email').disabled = true;
-                    document.getElementById('login_password').disabled = true;
-                    loginButton.style.display = 'none';
+                    document.getElementById('timeSlotsContainer').innerHTML = `
+                        <div class="loading">
+                            <i class="fas fa-spinner"></i>
+                            <p>Please select a date first</p>
+                        </div>
+                    `;
                 } else {
-                    // Login failed
-                    document.getElementById('loginError').textContent = data.message || 'Login failed. Please try again.';
-                    document.getElementById('loginError').style.display = 'block';
+                    document.getElementById('timeSlotsContainer').innerHTML = `
+                        <div class="alert alert-danger">
+                            Error loading doctor's schedule: ${data.message}
+                        </div>
+                    `;
                 }
             })
             .catch(error => {
-                console.error('Error during login:', error);
-                document.getElementById('loginError').textContent = 'An error occurred. Please try again.';
-                document.getElementById('loginError').style.display = 'block';
-            })
-            .finally(() => {
-                // Restore button state
-                loginButton.innerHTML = originalText;
-                loginButton.disabled = false;
+                console.error('Error loading doctor schedule:', error);
+                document.getElementById('timeSlotsContainer').innerHTML = `
+                    <div class="alert alert-danger">
+                        Error loading doctor's schedule. Please try again later.
+                    </div>
+                `;
             });
+    }
+    
+    function selectDate(year, month, day) {
+        const date = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        document.getElementById('selected_date').value = date;
+        
+        document.querySelectorAll('.calendar-day').forEach(el => {
+            el.classList.remove('selected');
+        });
+        event.target.classList.add('selected');
+        
+        document.getElementById('nextToStep3').disabled = false;
+        loadTimeSlots(selectedDoctorId, date);
+    }
+    
+    function loadTimeSlots(doctorId, date) {
+        document.getElementById('timeSlotsContainer').innerHTML = `
+            <div class="loading">
+                <i class="fas fa-spinner"></i>
+                <p>Loading available time slots...</p>
+            </div>
+        `;
+        
+        fetch(`get_time_slots.php?doctor_id=${doctorId}&date=${date}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    const timeSlotsContainer = document.getElementById('timeSlotsContainer');
+                    timeSlotsContainer.innerHTML = '';
+                    
+                    if (data.time_slots.length > 0) {
+                        data.time_slots.forEach(timeSlot => {
+                            const timeSlotElement = document.createElement('div');
+                            timeSlotElement.className = 'time-slot available';
+                            timeSlotElement.textContent = timeSlot;
+                            timeSlotElement.addEventListener('click', () => selectTimeSlot(timeSlot));
+                            timeSlotsContainer.appendChild(timeSlotElement);
+                        });
+                    } else {
+                        timeSlotsContainer.innerHTML = `
+                            <div class="alert alert-warning">
+                                No available time slots for this date.
+                            </div>
+                        `;
+                    }
+                } else {
+                    document.getElementById('timeSlotsContainer').innerHTML = `
+                        <div class="alert alert-danger">
+                            Error loading time slots: ${data.message}
+                        </div>
+                    `;
+                }
+            })
+            .catch(error => {
+                console.error('Error loading time slots:', error);
+                document.getElementById('timeSlotsContainer').innerHTML = `
+                    <div class="alert alert-danger">
+                        Error loading time slots. Please try again later.
+                    </div>
+                `;
+            });
+    }
+    
+    function selectTimeSlot(time) {
+        document.getElementById('selected_time').value = time;
+        
+        document.querySelectorAll('.time-slot').forEach(slot => {
+            slot.classList.remove('selected');
+        });
+        event.target.classList.add('selected');
+        
+        document.getElementById('nextToStep4').disabled = false;
+    }
+    
+    // Login function
+    function loginUser() {
+        const username = document.getElementById('login_username').value;
+        const password = document.getElementById('login_password').value;
+        
+        if (!username || !password) {
+            document.getElementById('loginError').textContent = 'Please enter both username and password';
+            document.getElementById('loginError').style.display = 'block';
+            return;
         }
-    </script>
+        
+        // Show loading state
+        const loginButton = event.target;
+        const originalText = loginButton.innerHTML;
+        loginButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging in...';
+        loginButton.disabled = true;
+        
+        // Create FormData object to properly send the login data
+        const formData = new FormData();
+        formData.append('username', username);
+        formData.append('password', password);
+        
+        fetch('login_process.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                // Login successful, enable next button
+                document.getElementById('nextToStep5').disabled = false;
+                document.getElementById('loginError').style.display = 'none';
+                
+                // Show success message
+                const loginForm = document.querySelector('.login-form');
+                const successMessage = document.createElement('div');
+                successMessage.className = 'alert alert-success';
+                successMessage.textContent = 'Login successful! You can now proceed with booking.';
+                loginForm.insertBefore(successMessage, loginForm.firstChild);
+                
+                // Disable login form
+                document.getElementById('login_username').disabled = true;
+                document.getElementById('login_password').disabled = true;
+                loginButton.style.display = 'none';
+            } else {
+                // Login failed
+                document.getElementById('loginError').textContent = data.message || 'Login failed. Please try again.';
+                document.getElementById('loginError').style.display = 'block';
+            }
+        })
+        .catch(error => {
+            console.error('Error during login:', error);
+            document.getElementById('loginError').textContent = 'An error occurred. Please try again.';
+            document.getElementById('loginError').style.display = 'block';
+        })
+        .finally(() => {
+            // Restore button state
+            loginButton.innerHTML = originalText;
+            loginButton.disabled = false;
+        });
+    }
+    
+    // Update the submitAppointment function to go to step 6 instead of redirecting
+function submitAppointment() {
+    // Prevent default form submission
+    event.preventDefault();
+    
+    // Get form data
+    const doctorId = document.getElementById('selected_doctor_id').value;
+    const doctorName = document.getElementById('selected_doctor_name').value;
+    const specialization = document.getElementById('selected_specialization').value;
+    const date = document.getElementById('selected_date').value;
+    const time = document.getElementById('selected_time').value;
+    const reason = document.getElementById('reason').value;
+    
+    // Show loading state
+    const submitButton = document.getElementById('submitBtn');
+    const originalText = submitButton.innerHTML;
+    submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+    submitButton.disabled = true;
+    
+    // Store appointment data in session via AJAX
+    fetch('store_appointment_session.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: `doctor_id=${doctorId}&doctor_name=${encodeURIComponent(doctorName)}&specialization=${encodeURIComponent(specialization)}&appointment_date=${date}&appointment_time=${time}&reason=${encodeURIComponent(reason)}`
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            // Move to step 6 instead of redirecting
+            nextStep(6);
+        } else {
+            alert('Error preparing payment: ' + data.message);
+            // Restore button state
+            submitButton.innerHTML = originalText;
+            submitButton.disabled = false;
+        }
+    })
+    .catch(error => {
+        console.error('Error storing appointment data:', error);
+        alert('An error occurred. Please try again.');
+        // Restore button state
+        submitButton.innerHTML = originalText;
+        submitButton.disabled = false;
+    });
+}
+
+// NEW FUNCTION: Process payment
+function processPayment() {
+    // Get form data
+    const cardNumber = document.getElementById('cardNumber').value;
+    const expiryMonth = document.getElementById('expiryMonth').value;
+    const expiryYear = document.getElementById('expiryYear').value;
+    const cvv = document.getElementById('cvv').value;
+    const cardName = document.getElementById('cardName').value;
+    
+    // Validate form
+    if (!cardNumber || !expiryMonth || !expiryYear || !cvv || !cardName) {
+        alert('Please fill all payment details');
+        return;
+    }
+    
+    // Show loading state
+    const processButton = document.getElementById('processPaymentBtn');
+    const originalText = processButton.innerHTML;
+    processButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+    processButton.disabled = true;
+    
+    // Simulate payment processing
+    setTimeout(() => {
+        // Show success message
+        const paymentContainer = document.querySelector('.payment-processing-container');
+        paymentContainer.innerHTML = `
+            <div class="payment-success-container">
+                <i class="fas fa-check-circle payment-icon" style="color: var(--success-color);"></i>
+                <h3 class="payment-title" style="color: var(--success-color);">Payment Successful!</h3>
+                <p class="payment-message">Your appointment has been confirmed and payment has been processed successfully.</p>
+                <div class="btn-group" style="justify-content: center; margin-top: 20px;">
+                    <button type="button" class="btn btn-primary" onclick="window.location.href='patient.php'">
+                        <i class="fas fa-home"></i> Go to Dashboard
+                    </button>
+                </div>
+            </div>
+        `;
+        
+        // Mark step 6 as completed
+        document.getElementById('step6').classList.add('completed');
+    }, 2000);
+}
+
+// Update the resetBookingModal function to handle 6 steps
+function resetBookingModal() {
+    document.querySelectorAll('.step-content').forEach(content => {
+        content.classList.remove('active');
+    });
+    document.getElementById('step1Content').classList.add('active');
+    
+    for (let i = 2; i <= 6; i++) {
+        document.getElementById('step' + i).classList.remove('active');
+        document.getElementById('step' + i).classList.remove('completed');
+    }
+    
+    // ... rest of the existing reset code ...
+}
+
+// Update the prevStep function to handle 6 steps
+function prevStep(stepNumber) {
+    document.querySelectorAll('.step-content').forEach(content => {
+        content.classList.remove('active');
+    });
+    
+    document.getElementById('step' + stepNumber + 'Content').classList.add('active');
+    
+    for (let i = stepNumber + 1; i <= 6; i++) {
+        document.getElementById('step' + i).classList.remove('active');
+        document.getElementById('step' + i).classList.remove('completed');
+    }
+    document.getElementById('step' + stepNumber).classList.add('active');
+}
+</script>
+    
 </body>
 </html>
