@@ -2,27 +2,27 @@
 include "config.php";
 include "header.php";
 
-$spec_id = intval($_GET['spec_id']);
+ $spec_id = intval($_GET['spec_id']);
 
-$q = "SELECT DOCTOR_ID, FIRST_NAME, LAST_NAME, PROFILE_IMAGE, SPECIALISATION_ID 
+ $q = "SELECT DOCTOR_ID, FIRST_NAME, LAST_NAME, PROFILE_IMAGE, SPECIALISATION_ID 
      FROM doctor_tbl 
      WHERE SPECIALISATION_ID = $spec_id";
 
-$res = mysqli_query($conn, $q);
+ $res = mysqli_query($conn, $q);
 
 // Fetch specializations for the modal
-$specializations_query = mysqli_query($conn, "
+ $specializations_query = mysqli_query($conn, "
     SELECT * FROM specialisation_tbl
     ORDER BY SPECIALISATION_NAME
 ");
 
 // Fetch specialization name
-$spec_query = mysqli_query($conn, "SELECT SPECIALISATION_NAME FROM specialisation_tbl WHERE SPECIALISATION_ID = $spec_id");
-$spec_data = mysqli_fetch_assoc($spec_query);
-$specialization_name = $spec_data['SPECIALISATION_NAME'] ?? 'Specialist';
+ $spec_query = mysqli_query($conn, "SELECT SPECIALISATION_NAME FROM specialisation_tbl WHERE SPECIALISATION_ID = $spec_id");
+ $spec_data = mysqli_fetch_assoc($spec_query);
+ $specialization_name = $spec_data['SPECIALISATION_NAME'] ?? 'Specialist';
 
 // Fetch doctors for booking modal
-$doctors_query = mysqli_query($conn, "
+ $doctors_query = mysqli_query($conn, "
     SELECT d.*, s.SPECIALISATION_NAME 
     FROM doctor_tbl d
     JOIN specialisation_tbl s ON d.SPECIALISATION_ID = s.SPECIALISATION_ID
@@ -597,6 +597,52 @@ $doctors_query = mysqli_query($conn, "
             border: 1px solid #ffeeba;
         }
 
+        /* Login Form Styles */
+        .login-form {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+        }
+
+        .login-form h3 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+        }
+
+        .login-form .form-group {
+            margin-bottom: 15px;
+        }
+
+        .login-form .form-control {
+            padding: 12px;
+        }
+
+        .login-form .btn {
+            width: 100%;
+            padding: 12px;
+        }
+
+        .login-form .alert {
+            margin-bottom: 15px;
+        }
+
+        .login-form p {
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .login-form a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .login-form a:hover {
+            text-decoration: underline;
+        }
+
         /* Footer with Wave Effect */
         footer {
             background: var(--gradient-1);
@@ -805,7 +851,7 @@ $doctors_query = mysqli_query($conn, "
         </div>
     </footer>
 
-    <!-- Booking Modal (Same as manage_appointment.php) -->
+    <!-- Booking Modal -->
     <div id="bookingModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeBookingModal()">&times;</span>
@@ -816,9 +862,10 @@ $doctors_query = mysqli_query($conn, "
                 <div class="step active" id="step1">1</div>
                 <div class="step" id="step2">2</div>
                 <div class="step" id="step3">3</div>
+                <div class="step" id="step4">4</div>
             </div>
             
-            <form method="POST" action="payment.php">
+            <form method="POST" action="payment.php" id="appointmentForm">
                 <!-- Step 1: Select Doctor -->
                 <div class="step-content active" id="step1Content">
                     <div class="form-group">
@@ -843,7 +890,7 @@ $doctors_query = mysqli_query($conn, "
                             <?php
                             if (mysqli_num_rows($doctors_query) > 0) {
                                 while ($doctor = mysqli_fetch_assoc($doctors_query)) {
-                                    echo '<div class="doctor-info" data-specialization="' . $doctor['SPECIALISATION_ID'] . '" onclick="selectDoctor(this, ' . $doctor['DOCTOR_ID'] . ')">
+                                    echo '<div class="doctor-info" data-specialization="' . $doctor['SPECIALISATION_ID'] . '" onclick="selectDoctor(this, ' . $doctor['DOCTOR_ID'] . ', \'' . htmlspecialchars($doctor['FIRST_NAME'] . ' ' . $doctor['LAST_NAME']) . '\', \'' . htmlspecialchars($doctor['SPECIALISATION_NAME']) . '\')">
                                                 <div class="doctor-avatar">' . strtoupper(substr($doctor['FIRST_NAME'], 0, 1) . substr($doctor['LAST_NAME'], 0, 1)) . '</div>
                                                 <div class="doctor-details">
                                                     <div class="doctor-name">Dr. ' . htmlspecialchars($doctor['FIRST_NAME'] . ' ' . $doctor['LAST_NAME']) . '</div>
@@ -855,6 +902,8 @@ $doctors_query = mysqli_query($conn, "
                             ?>
                         </div>
                         <input type="hidden" id="selected_doctor_id" name="doctor_id" required>
+                        <input type="hidden" id="selected_doctor_name" name="doctor_name">
+                        <input type="hidden" id="selected_specialization" name="specialization">
                     </div>
                     
                     <div class="btn-group">
@@ -913,6 +962,42 @@ $doctors_query = mysqli_query($conn, "
                         <button type="button" class="btn btn-danger" onclick="prevStep(2)">
                             <i class="fas fa-arrow-left" style="margin-right: 5px;"></i> Back
                         </button>
+                        <button type="button" class="btn btn-primary" onclick="nextStep(4)" id="nextToStep4" disabled>
+                            Next: Login <i class="fas fa-arrow-right" style="margin-left: 5px;"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Step 4: Login -->
+                <div class="step-content" id="step4Content">
+                    <div class="login-form">
+                        <h3>Login to Continue</h3>
+                        <div class="alert alert-danger" id="loginError" style="display: none;"></div>
+                        
+                        <div class="form-group">
+                            <label for="login_email">Email</label>
+                            <input type="email" class="form-control" id="login_email" placeholder="Enter your email" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="login_password">Password</label>
+                            <input type="password" class="form-control" id="login_password" placeholder="Enter your password" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <button type="button" class="btn btn-primary" onclick="loginUser()">
+                                Login <i class="fas fa-sign-in-alt" style="margin-left: 5px;"></i>
+                            </button>
+                        </div>
+                        
+                        <p>Don't have an account? <a href="register.php">Register here</a></p>
+                        <p><a href="forgot_password.php">Forgot password?</a></p>
+                    </div>
+                    
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-danger" onclick="prevStep(3)">
+                            <i class="fas fa-arrow-left" style="margin-right: 5px;"></i> Back
+                        </button>
                         <button type="submit" class="btn btn-success" id="submitBtn" disabled>
                             <i class="fas fa-check"></i> Book Appointment
                         </button>
@@ -943,6 +1028,7 @@ $doctors_query = mysqli_query($conn, "
         
         function closeBookingModal() {
             document.getElementById('bookingModal').style.display = 'none';
+            resetBookingModal();
         }
         
         // Close modal when clicking outside of it
@@ -975,7 +1061,7 @@ $doctors_query = mysqli_query($conn, "
             
             document.getElementById('step' + stepNumber + 'Content').classList.add('active');
             
-            for (let i = stepNumber + 1; i <= 3; i++) {
+            for (let i = stepNumber + 1; i <= 4; i++) {
                 document.getElementById('step' + i).classList.remove('active');
                 document.getElementById('step' + i).classList.remove('completed');
             }
@@ -988,31 +1074,52 @@ $doctors_query = mysqli_query($conn, "
             });
             document.getElementById('step1Content').classList.add('active');
             
-            for (let i = 2; i <= 3; i++) {
+            for (let i = 2; i <= 4; i++) {
                 document.getElementById('step' + i).classList.remove('active');
                 document.getElementById('step' + i).classList.remove('completed');
             }
             
+            // Reset form fields
+            document.getElementById('appointmentForm').reset();
             document.getElementById('selected_doctor_id').value = '';
+            document.getElementById('selected_doctor_name').value = '';
+            document.getElementById('selected_specialization').value = '';
             document.getElementById('selected_date').value = '';
             document.getElementById('selected_time').value = '';
+            
+            // Reset button states
             document.getElementById('nextToStep2').disabled = true;
             document.getElementById('nextToStep3').disabled = true;
+            document.getElementById('nextToStep4').disabled = true;
             document.getElementById('submitBtn').disabled = true;
             
+            // Reset selections
             document.querySelectorAll('.doctor-info').forEach(doc => {
                 doc.classList.remove('selected');
             });
+            document.querySelectorAll('.calendar-day').forEach(day => {
+                day.classList.remove('selected');
+            });
+            document.querySelectorAll('.time-slot').forEach(slot => {
+                slot.classList.remove('selected');
+            });
+            
+            // Reset login form
+            document.getElementById('loginError').style.display = 'none';
+            document.getElementById('login_email').value = '';
+            document.getElementById('login_password').value = '';
         }
         
         // Doctor selection and filtering
-        function selectDoctor(element, doctorId) {
+        function selectDoctor(element, doctorId, doctorName, specialization) {
             document.querySelectorAll('.doctor-info').forEach(doc => {
                 doc.classList.remove('selected');
             });
             
             element.classList.add('selected');
             document.getElementById('selected_doctor_id').value = doctorId;
+            document.getElementById('selected_doctor_name').value = doctorName;
+            document.getElementById('selected_specialization').value = specialization;
             document.getElementById('nextToStep2').disabled = false;
             
             loadDoctorSchedule(doctorId);
@@ -1225,7 +1332,67 @@ $doctors_query = mysqli_query($conn, "
             });
             event.target.classList.add('selected');
             
-            document.getElementById('submitBtn').disabled = false;
+            document.getElementById('nextToStep4').disabled = false;
+        }
+        
+        // Login function
+        function loginUser() {
+            const email = document.getElementById('login_email').value;
+            const password = document.getElementById('login_password').value;
+            
+            if (!email || !password) {
+                document.getElementById('loginError').textContent = 'Please enter both email and password';
+                document.getElementById('loginError').style.display = 'block';
+                return;
+            }
+            
+            // Show loading state
+            const loginButton = event.target;
+            const originalText = loginButton.innerHTML;
+            loginButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging in...';
+            loginButton.disabled = true;
+            
+            fetch('login_modal.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    // Login successful, enable submit button
+                    document.getElementById('submitBtn').disabled = false;
+                    document.getElementById('loginError').style.display = 'none';
+                    
+                    // Show success message
+                    const loginForm = document.querySelector('.login-form');
+                    const successMessage = document.createElement('div');
+                    successMessage.className = 'alert alert-success';
+                    successMessage.textContent = 'Login successful! You can now proceed with booking.';
+                    loginForm.insertBefore(successMessage, loginForm.firstChild);
+                    
+                    // Disable login form
+                    document.getElementById('login_email').disabled = true;
+                    document.getElementById('login_password').disabled = true;
+                    loginButton.style.display = 'none';
+                } else {
+                    // Login failed
+                    document.getElementById('loginError').textContent = data.message || 'Login failed. Please try again.';
+                    document.getElementById('loginError').style.display = 'block';
+                }
+            })
+            .catch(error => {
+                console.error('Error during login:', error);
+                document.getElementById('loginError').textContent = 'An error occurred. Please try again.';
+                document.getElementById('loginError').style.display = 'block';
+            })
+            .finally(() => {
+                // Restore button state
+                loginButton.innerHTML = originalText;
+                loginButton.disabled = false;
+            });
         }
     </script>
 </body>
