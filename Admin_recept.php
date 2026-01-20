@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Manage Receptionists - QuickCare</title>
+ <?php include 'admin_sidebar.php'; ?>
 <style>
     body {
         margin: 0;
@@ -26,55 +27,6 @@
     --info-color: #17a2b8;
         }
 
-    /* Sidebar */
-    .sidebar {
-            width: 250px;
-            background: #072D44;
-            min-height: 100vh;
-            color: white;
-            padding-top: 30px;
-            position: fixed;
-        }
-
-        .sidebar h2 {
-            text-align: center;
-            margin-bottom: 40px;
-            color: #9CCDD8;
-        }
-
-        .sidebar a {
-            display: block;
-            padding: 15px 25px;
-            color: #D0D7E1;
-            text-decoration: none;
-            font-size: 17px;
-            border-left: 4px solid transparent;
-        }
-
-        .sidebar a:hover, .sidebar a.active {
-            background: #064469;
-            border-left: 4px solid #9CCDD8;
-            color: white;
-        }
-
-        .logout-btn:hover{
-            background-color: var(--light-blue);
-        }
-        .logout-btn {
-            
-            display: block;
-            width: 80%;
-            margin: 20px auto 0 auto;
-            padding: 10px;
-            background-color: var(--soft-blue);
-            color: var(--white);    
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            text-align: center;
-            transition: background-color 0.3s;
-        }
     /* Main content */
     .main {
         margin-left: 250px;
@@ -191,24 +143,6 @@
 </style>
 </head>
 <body>
-
-<!-- Sidebar -->
-<div class="sidebar">
-  <img src="uploads/logo.JPG" alt="QuickCare Logo" class="logo-img" style="display:block; margin: 0 auto 10px auto; width:80px; height:80px; border-radius:50%;">  
-        <h2>QuickCare</h2>
-
-   
-    <a href="admin.php">Dashboard</a>
-    <a href="Admin_appoitment.php" >View Appointments</a>
-    <a href="Admin_doctor.php">Manage Doctors</a>
-    <a href="Admin_recept.php" class="active">Manage Receptionist</a>
-    <a href="Admin_patient.php">Manage Patients</a>
-    <a href="Admin_medicine.php">View Medicine</a>
-    <a href="Admin_payment.php">View Payments</a>
-    <a href="Admin_feedback.php">View Feedback</a>
-    <a href="Admin_report.php">Reports</a>
-    <button class="logout-btn">logout</button>
-</div>
 
 <!-- Main Content -->
 <div class="main">
