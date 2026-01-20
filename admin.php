@@ -107,6 +107,43 @@
             margin-right: 12px;
             border-radius: 5px;
         }
+    .reg-btn {
+        background: linear-gradient(135deg, #5790AB 0%, #064469 100%);
+        color: white;
+        padding: 12px 20px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 8px rgba(6, 68, 105, 0.2);
+        position: relative;
+        overflow: hidden;
+    }
+    .reg-btn:before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+        transition: 0.5s;
+    }
+    .reg-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(6, 68, 105, 0.3);
+    }
+    .reg-btn:hover:before {
+        left: 100%;
+    }
+    .reg-btn:active {
+        transform: translateY(1px);
+        box-shadow: 0 2px 4px rgba(6, 68, 105, 0.2);
+    }
 
 </style>
 </head>
@@ -154,10 +191,10 @@
     <!-- Registration Links -->
     <div class="cards">
         <div class="card">
-            <a href="doctorform.php">Doctor New Registrations</a>
+            <a href="doctorform.php" class="reg-btn">Doctor New Registrations</a>
         </div>
         <div class="card">
-            <a href="recpt_regis.php">Receptionist New Registrations</a>       
+            <a href="recpt_regis.php" class="reg-btn">Receptionist New Registrations</a>       
         </div>
     </div>  
 
