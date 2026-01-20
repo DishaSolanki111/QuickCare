@@ -1,46 +1,110 @@
 <?php
 session_start();
-include 'config.php';   // 🔴 REQUIRED — FIXES YOUR ERROR
+include 'config.php';
 include 'header.php';
- $success = false;
- $error = "";
+
+$success = false;
+$error = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-    // 🔹 SANITIZE INPUTS
+    // 🔹 RAW INPUTS
     $first_name  = mysqli_real_escape_string($conn, $_POST['first_name']);
     $last_name   = mysqli_real_escape_string($conn, $_POST['last_name']);
-    $username    = mysqli_real_escape_string($conn, $_POST['username']);
+    $username    = trim($_POST['username']);
     $password    = $_POST['password'];
     $dob         = $_POST['dob'];
     $gender      = $_POST['gender'] ?? '';
     $blood_group = $_POST['blood_group'] ?? '';
-    $phone       = $_POST['phone'];
-    $email       = $_POST['email'];
+    $phone       = trim($_POST['phone']);
+    $email       = trim($_POST['email']);
     $address     = mysqli_real_escape_string($conn, $_POST['address']);
 
-    // 🔹 HASH PASSWORD
-    $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+    /* =========================
+       USERNAME VALIDATION
+       ========================= */
+    if (empty($username)) {
+        $error = "Username is required.";
+    }
+    elseif (strlen($username) > 20) {
+        $error = "Username must not exceed 20 characters.";
+    }
+    elseif (!preg_match('/^[A-Z][A-Za-z0-9_]*$/', $username)) {
+        $error = "Username must start with a capital letter and contain only letters, digits, or underscore.";
+    }
+    elseif (strpos($username, '__') !== false) {
+        $error = "Username must not contain consecutive underscores.";
+    }
+    elseif (substr($username, -1) === '_') {
+        $error = "Username must not end with an underscore.";
+    }
 
-    // 🔹 CHECK USERNAME ALREADY EXISTS
-    $check = mysqli_query($conn, "SELECT PATIENT_ID FROM patient_tbl WHERE USERNAME='$username'");
-    if(mysqli_num_rows($check) > 0){
-        $error = "Username already exists!";
-    } else {
+    /* =========================
+       PASSWORD VALIDATION
+       ========================= */
+    elseif (empty($password)) {
+        $error = "Password is required.";
+    }
+    elseif (strlen($password) < 8) {
+        $error = "Password must be at least 8 characters long.";
+    }
+    elseif (!preg_match('/[A-Z]/', $password)) {
+        $error = "Password must contain at least one uppercase letter.";
+    }
+    elseif (!preg_match('/[0-9]/', $password)) {
+        $error = "Password must contain at least one digit.";
+    }
+    elseif (!preg_match('/[\W_]/', $password)) {
+        $error = "Password must contain at least one special character.";
+    }
 
-        // 🔹 INSERT PATIENT
-        $sql = "
-        INSERT INTO patient_tbl
-        (FIRST_NAME, LAST_NAME, USERNAME, PSWD, DOB, GENDER, BLOOD_GROUP, PHONE, EMAIL, ADDRESS)
-        VALUES
-        ('$first_name','$last_name','$username','$hashed_password','$dob','$gender',
-         '$blood_group','$phone','$email','$address')
-        ";
+    /* =========================
+       PHONE VALIDATION
+       ========================= */
+    elseif (empty($phone)) {
+        $error = "Phone number is required.";
+    }
+    elseif (!preg_match('/^[0-9]{10}$/', $phone)) {
+        $error = "Phone number must contain exactly 10 digits.";
+    }
 
-        if(mysqli_query($conn, $sql)){
-            $success = true;
+    /* =========================
+       EMAIL VALIDATION
+       ========================= */
+    elseif (empty($email)) {
+        $error = "Email is required.";
+    }
+    elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $error = "Invalid email format.";
+    }
+
+    else {
+
+        // 🔹 CHECK USERNAME UNIQUENESS
+        $username_safe = mysqli_real_escape_string($conn, $username);
+        $check = mysqli_query($conn, "SELECT PATIENT_ID FROM patient_tbl WHERE USERNAME='$username_safe'");
+
+        if (mysqli_num_rows($check) > 0) {
+            $error = "Username already exists!";
         } else {
-            $error = mysqli_error($conn);
+
+            // 🔹 HASH PASSWORD ONLY AFTER ALL VALIDATION
+            $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+
+            // 🔹 INSERT PATIENT
+            $sql = "
+                INSERT INTO patient_tbl
+                (FIRST_NAME, LAST_NAME, USERNAME, PSWD, DOB, GENDER, BLOOD_GROUP, PHONE, EMAIL, ADDRESS)
+                VALUES
+                ('$first_name','$last_name','$username_safe','$hashed_password','$dob','$gender',
+                 '$blood_group','$phone','$email','$address')
+            ";
+
+            if (mysqli_query($conn, $sql)) {
+                $success = true;
+            } else {
+                $error = mysqli_error($conn);
+            }
         }
     }
 }
@@ -59,7 +123,7 @@ body{
     margin:0;
     padding:80px;
     min-height:100vh;
-    padding-top:100px; /* Adjust based on your header height */
+    padding-top:100px;
 }
 .container{
     background:#fff;
@@ -106,7 +170,6 @@ button:hover{
 .success{color:green;text-align:center;margin-bottom:15px;padding:10px;background:#e8f5e9;border-radius:5px;}
 .error{color:red;text-align:center;margin-bottom:15px;padding:10px;background:#ffebee;border-radius:5px;}
 
-/* Responsive adjustments */
 @media (max-width: 768px) {
     .row {
         flex-direction: column;
@@ -137,37 +200,37 @@ button:hover{
 
 <div class="row">
     <div class="form-group">
-        <label for="first_name">First Name</label>
-        <input type="text" id="first_name" name="first_name" placeholder="Enter your first name" required>
+        <label>First Name</label>
+        <input type="text" name="first_name" required>
     </div>
     <div class="form-group">
-        <label for="last_name">Last Name</label>
-        <input type="text" id="last_name" name="last_name" placeholder="Enter your last name">
-    </div>
-</div>
-
-<div class="row">
-    <div class="form-group">
-        <label for="username">Username</label>
-        <input type="text" id="username" name="username" placeholder="Choose a username" required>
-    </div>
-    <div class="form-group">
-        <label for="password">Password</label>
-        <input type="password" id="password" name="password" placeholder="Create a password" required>
+        <label>Last Name</label>
+        <input type="text" name="last_name">
     </div>
 </div>
 
 <div class="row">
     <div class="form-group">
-        <label for="dob">Date of Birth</label>
-        <input type="date" id="dob" name="dob">
+        <label>Username</label>
+        <input type="text" name="username" required>
+    </div>
+    <div class="form-group">
+        <label>Password</label>
+        <input type="password" name="password" required>
     </div>
 </div>
 
 <div class="row">
     <div class="form-group">
-        <label for="gender">Gender</label>
-        <select id="gender" name="gender">
+        <label>Date of Birth</label>
+        <input type="date" name="dob">
+    </div>
+</div>
+
+<div class="row">
+    <div class="form-group">
+        <label>Gender</label>
+        <select name="gender">
             <option value="">Select Gender</option>
             <option value="MALE">Male</option>
             <option value="FEMALE">Female</option>
@@ -175,8 +238,8 @@ button:hover{
         </select>
     </div>
     <div class="form-group">
-        <label for="blood_group">Blood Group</label>
-        <select id="blood_group" name="blood_group">
+        <label>Blood Group</label>
+        <select name="blood_group">
             <option value="">Select Blood Group</option>
             <option>A+</option><option>A-</option>
             <option>B+</option><option>B-</option>
@@ -188,18 +251,18 @@ button:hover{
 
 <div class="row">
     <div class="form-group">
-        <label for="phone">Phone Number</label>
-        <input type="tel" id="phone" name="phone" placeholder="Enter your phone number" required>
+        <label>Phone Number</label>
+        <input type="tel" name="phone" required>
     </div>
     <div class="form-group">
-        <label for="email">Email</label>
-        <input type="email" id="email" name="email" placeholder="Enter your email address" required>
+        <label>Email</label>
+        <input type="email" name="email" required>
     </div>
 </div>
 
 <div class="form-group">
-    <label for="address">Address</label>
-    <textarea id="address" name="address" placeholder="Enter your address"></textarea>
+    <label>Address</label>
+    <textarea name="address"></textarea>
 </div>
 
 <div style="text-align:center;margin-top:20px;">
