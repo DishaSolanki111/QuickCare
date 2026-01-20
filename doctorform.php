@@ -260,51 +260,90 @@
             $error = "";
             $profile_image_path = "";
             
-            // Check if form is submitted
             if ($_SERVER["REQUEST_METHOD"] == "POST") {
-                // Handle profile image upload
-                if (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] == 0) {
-                    $upload_dir = "uploads/";
-                    if (!file_exists($upload_dir)) {
-                        mkdir($upload_dir, 0777, true);
-                    }
-                    
-                    $file_name = time() . '_' . basename($_FILES['profile_image']['name']);
-                    $target_file = $upload_dir . $file_name;
-                    
-                    if (move_uploaded_file($_FILES['profile_image']['tmp_name'], $target_file)) {
-                        $profile_image_path = $target_file;
-                    }
-                }
-                
-                // Sanitize and validate inputs
-                $first_name = mysqli_real_escape_string($conn, $_POST['first_name']);
-                $last_name = mysqli_real_escape_string($conn, $_POST['last_name']);
-                $dob = mysqli_real_escape_string($conn, $_POST['dob']);
-                $doj = mysqli_real_escape_string($conn, $_POST['doj']);
-                $gender = mysqli_real_escape_string($conn, $_POST['gender']);
-                $phone = mysqli_real_escape_string($conn, $_POST['phone']);
-                $email = mysqli_real_escape_string($conn, $_POST['email']);
-                $specialisation_id = mysqli_real_escape_string($conn, $_POST['specialisation_id']);
-                $education = mysqli_real_escape_string($conn, $_POST['education']);
-                $username = mysqli_real_escape_string($conn, $_POST['username']);
-                $password = mysqli_real_escape_string($conn, $_POST['password']);
-                
-                // Hash password
-                $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-                
-                // SQL to insert data
-                $sql = "INSERT INTO doctor_tbl (SPECIALISATION_ID, PROFILE_IMAGE, FIRST_NAME, LAST_NAME, DOB, DOJ, USERNAME, PSWD, PHONE, EMAIL, GENDER,EDUCATION) 
-                        VALUES ('$specialisation_id', '$profile_image_path', '$first_name', '$last_name', '$dob', '$doj', '$username', '$hashed_password', '$phone', '$email', '$gender','$education')";
-                
-                if ($conn->query($sql) === TRUE) {
-                    $success = true;
-                } else {
-                    $error = "Error: " . $sql . "<br>" . $conn->error;
-                }
-                
-                $conn->close();
-            }
+
+    $errors = [];
+
+    // ---------------- PROFILE IMAGE (JPG ONLY) ----------------
+    if (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] == 0) {
+        $upload_dir = "uploads/";
+        if (!file_exists($upload_dir)) {
+            mkdir($upload_dir, 0777, true);
+        }
+
+        $ext = strtolower(pathinfo($_FILES['profile_image']['name'], PATHINFO_EXTENSION));
+        if ($ext !== 'jpg' && $ext !== 'jpeg') {
+            $errors[] = "Profile image must be in JPG format only.";
+        } else {
+            $file_name = time() . '_' . basename($_FILES['profile_image']['name']);
+            $target_file = $upload_dir . $file_name;
+            move_uploaded_file($_FILES['profile_image']['tmp_name'], $target_file);
+            $profile_image_path = $target_file;
+        }
+    }
+
+    // ---------------- SANITIZE ----------------
+    $first_name = mysqli_real_escape_string($conn, $_POST['first_name']);
+    $last_name  = mysqli_real_escape_string($conn, $_POST['last_name']);
+    $dob        = $_POST['dob'];
+    $doj        = $_POST['doj'];
+    $gender     = $_POST['gender'] ?? '';
+    $phone      = $_POST['phone'];
+    $email      = $_POST['email'];
+    $education  = mysqli_real_escape_string($conn, $_POST['education']);
+    $username   = $_POST['username'];
+    $password   = $_POST['password'];
+    $specialisation_id = $_POST['specialisation_id'];
+
+    // ---------------- USERNAME VALIDATION ----------------
+    if (
+        !preg_match('/^[A-Z][A-Za-z0-9]*(_[A-Za-z0-9]+)*$/', $username) ||
+        strlen($username) > 20
+    ) {
+        $errors[] = "Username must start with a capital letter, max 20 chars, no spaces, no consecutive underscores, and not end with underscore.";
+    }
+
+    // ---------------- PASSWORD VALIDATION ----------------
+    if (
+        strlen($password) < 8 ||
+        !preg_match('/[A-Z]/', $password) ||
+        !preg_match('/[0-9]/', $password) ||
+        !preg_match('/[\W]/', $password)
+    ) {
+        $errors[] = "Password must be at least 8 characters and include 1 uppercase letter, 1 digit, and 1 special character.";
+    }
+
+    // ---------------- PHONE VALIDATION ----------------
+    if (!preg_match('/^[0-9]{10}$/', $phone)) {
+        $errors[] = "Phone number must be exactly 10 digits.";
+    }
+
+    // ---------------- EMAIL VALIDATION ----------------
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $errors[] = "Invalid email format.";
+    }
+
+    // ---------------- FINAL INSERT ----------------
+    if (empty($errors)) {
+        $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+
+        $sql = "INSERT INTO doctor_tbl 
+        (SPECIALISATION_ID, PROFILE_IMAGE, FIRST_NAME, LAST_NAME, DOB, DOJ, USERNAME, PSWD, PHONE, EMAIL, GENDER, EDUCATION)
+        VALUES 
+        ('$specialisation_id','$profile_image_path','$first_name','$last_name','$dob','$doj','$username','$hashed_password','$phone','$email','$gender','$education')";
+
+        if ($conn->query($sql) === TRUE) {
+            $success = true;
+        } else {
+            $error = "Database error.";
+        }
+    } else {
+        $error = implode("<br>", $errors);
+    }
+
+    $conn->close();
+}
+
             ?>
             
             <?php if ($success): ?>
@@ -437,66 +476,71 @@
     </div>
 
     <script>
-        // Handle file upload label update
-        document.getElementById('profile_image').addEventListener('change', function() {
-            const fileName = this.files[0]?.name || 'Choose Profile Image';
-            document.getElementById('file-label').textContent = fileName;
-        });
-        
-        document.getElementById('doctorForm').addEventListener('submit', function(event) {
-            let isValid = true;
-            
-            // Validate required fields
-            const requiredFields = ['first_name', 'last_name', 'phone', 'email', 'specialisation_id', 'username', 'password'];
-            
-            requiredFields.forEach(fieldId => {
-                const field = document.getElementById(fieldId);
-                const errorElement = document.getElementById(fieldId + '_error');
-                
-                if (!field.value.trim()) {
-                    errorElement.textContent = 'This field is required';
-                    errorElement.style.display = 'block';
-                    isValid = false;
-                } else {
-                    errorElement.style.display = 'none';
-                }
-            });
-            
-            // Validate email format
-            const emailField = document.getElementById('email');
-            const emailError = document.getElementById('email_error');
-            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            
-            if (emailField.value && !emailPattern.test(emailField.value)) {
-                emailError.textContent = 'Invalid email format';
-                emailError.style.display = 'block';
-                isValid = false;
-            }
-            
-            // Validate phone number
-            const phoneField = document.getElementById('phone');
-            const phoneError = document.getElementById('phone_error');
-            
-            if (phoneField.value && (phoneField.value.length < 10 || phoneField.value.length > 15)) {
-                phoneError.textContent = 'Invalid phone number';
-                phoneError.style.display = 'block';
-                isValid = false;
-            }
-            
-            // Validate password length
-            const passwordField = document.getElementById('password');
-            const passwordError = document.getElementById('password_error');
-            
-            if (passwordField.value && passwordField.value.length < 6) {
-                passwordError.textContent = 'Password must be at least 6 characters';
-                passwordError.style.display = 'block';
-                isValid = false;
-            }
-            
-            if (!isValid) {
-                event.preventDefault();
-            }
-        });
-    </script>
+    document.getElementById('profile_image').addEventListener('change', function () {
+    const file = this.files[0];
+    const label = document.getElementById('file-label');
+    if (file) {
+        const ext = file.name.split('.').pop().toLowerCase();
+        if (ext !== 'jpg' && ext !== 'jpeg' && ext !== 'png' && ext !== 'PNG') {
+            alert('Profile image must be JPG format only');
+            this.value = '';
+            label.textContent = 'Choose Profile Image';
+        } else {
+            label.textContent = file.name;
+        }
+    }
+});
+
+document.getElementById('doctorForm').addEventListener('submit', function (e) {
+    let valid = true;
+
+    const username = document.getElementById('username');
+    const password = document.getElementById('password');
+    const phone = document.getElementById('phone');
+    const email = document.getElementById('email');
+
+    // USERNAME
+    const usernamePattern = /^[A-Z][A-Za-z0-9]*(_[A-Za-z0-9]+)*$/;
+    if (!usernamePattern.test(username.value) || username.value.length > 20) {
+        alert("Invalid username format.");
+        valid = false;
+    }
+
+    /* =========================
+       PASSWORD VALIDATION
+       ========================= */
+    elseif (empty($password)) {
+        $error = "Password is required.";
+    }
+    elseif (strlen($password) < 8) {
+        $error = "Password must be at least 8 characters long.";
+    }
+    elseif (!preg_match('/[A-Z]/', $password)) {
+        $error = "Password must contain at least one uppercase letter.";
+    }
+    elseif (!preg_match('/[0-9]/', $password)) {
+        $error = "Password must contain at least one digit.";
+    }
+    elseif (!preg_match('/[\W_]/', $password)) {
+        $error = "Password must contain at least one special character.";
+    }
+    }
+
+    // PHONE
+    if (!/^[0-9]{10}$/.test(phone.value)) {
+        alert("Phone must be exactly 10 digits.");
+        valid = false;
+    }
+
+    // EMAIL
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value)) {
+        alert("Invalid email format.");
+        valid = false;
+    }
+
+    if (!valid) e.preventDefault();
+});
+</script>
+
 </body>
 </html>
