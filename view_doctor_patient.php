@@ -291,7 +291,7 @@ overflow: hidden;
 .doctor-image img {
 width: 100%;
 height: 100%;
-object-fit: cover;
+object-fit: contain;
 }
 
 .doctor-avatar-placeholder {
@@ -588,7 +588,7 @@ margin-bottom: 15px;
 <div class="doctor-detail-header">
 <div class="doctor-detail-avatar">
 <?php if (!empty($doctor_details['PROFILE_IMAGE'])): ?>
-<img src="uploads/<?php echo htmlspecialchars($doctor_details['PROFILE_IMAGE']); ?>" alt="Doctor Image">
+<img src="<?php echo htmlspecialchars($doctor['PROFILE_IMAGE']); ?>">
 <?php else: ?>
 <?php echo strtoupper(substr($doctor_details['FIRST_NAME'], 0, 1) . substr($doctor_details['LAST_NAME'], 0, 1)); ?>
 <?php endif; ?>
@@ -730,8 +730,8 @@ while ($doctor = mysqli_fetch_assoc($doctors_result)) {
 ?>
 <div class="doctor-card">
 <div class="doctor-image">
-<?php if (!empty($doctor['PROFILE_IMAGE'])): ?>
-<img src="uploads/<?php echo htmlspecialchars($doctor['PROFILE_IMAGE']); ?>" alt="Doctor Image">
+<?php if (!empty(trim($doctor['PROFILE_IMAGE']))): ?>
+<img src="<?php echo htmlspecialchars($doctor['PROFILE_IMAGE']); ?>">
 <?php else: ?>
 <div class="doctor-avatar-placeholder">
 <?php echo strtoupper(substr($doctor['FIRST_NAME'], 0, 1) . substr($doctor['LAST_NAME'], 0, 1)); ?>
