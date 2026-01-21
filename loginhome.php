@@ -1,5 +1,7 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 include 'config.php';
 
 /* ===============================
@@ -79,7 +81,7 @@ if ($user_type === 'patient') {
             $_SESSION['USER_TYPE'] = 'patient';
             $_SESSION['PATIENT_ID'] = $row['PATIENT_ID'];
 
-            header("Location: patient_dashboard.php");
+            header("Location: patient.php");
             exit();
         }
     }
@@ -115,7 +117,7 @@ if ($user_type === 'receptionist') {
             $_SESSION['USER_TYPE'] = 'receptionist';
             $_SESSION['RECEPTIONIST_ID'] = $row['RECEPTIONIST_ID'];
 
-            header("Location: receptionist_dashboard.php");
+            header("Location: receptionist.php");
             exit();
         }
     }
