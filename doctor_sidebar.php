@@ -168,7 +168,7 @@ body {
         <h2>QuickCare</h2>
         <a href="index.php">Home</a>
         <a href="doctor_dashboard.php" >Dashboard</a>
-        <a href="d_profile.php">My Profile</a>
+        <a href="doctor_profile.php">My Profile</a>
         <a href="mangae_schedule_doctor.php">Manage Schedule</a>
         <a href="appointment_doctor.php">Manage Appointments</a>
         <a href="manage_prescriptions.php">Manage Prescription</a>
