@@ -78,7 +78,7 @@ if ($today_result->num_rows > 0) {
     SELECT a.*, p.FIRST_NAME as PAT_FNAME, p.LAST_NAME as PAT_LNAME, p.PHONE as PAT_PHONE, p.EMAIL as PAT_EMAIL
     FROM appointment_tbl a
     JOIN patient_tbl p ON a.PATIENT_ID = p.PATIENT_ID
-    WHERE a.DOCTOR_ID = ? AND a.APPOINTMENT_DATE > ?
+    WHERE a.DOCTOR_ID = ? AND a.APPOINTMENT_DATE < ?
     ORDER BY a.APPOINTMENT_DATE, a.APPOINTMENT_TIME
 ";
  $upcoming_stmt = $conn->prepare($upcoming_sql);
@@ -246,80 +246,7 @@ if ($past_result->num_rows > 0) {
             min-height: 100vh;
         }
 
-        /* Header */
-        .topbar {
-            background: var(--white);
-            padding: 20px 30px;
-            box-shadow: var(--shadow-md);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 50;
-        }
-
-        .topbar h1 {
-            color: var(--dark);
-            font-size: 24px;
-            font-weight: 700;
-        }
-
-        .topbar-right {
-            display: flex;
-            align-items: center;
-        }
-
-        .notification-icon {
-            position: relative;
-            margin-right: 20px;
-            color: var(--text);
-            font-size: 20px;
-            cursor: pointer;
-        }
-
-        .notification-badge {
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            background: var(--warning);
-            color: var(--white);
-            font-size: 10px;
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .user-info {
-            display: flex;
-            align-items: center;
-        }
-
-        .user-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin-right: 12px;
-            border: 2px solid var(--primary-light);
-        }
-
-        .user-details h3 {
-            font-size: 16px;
-            font-weight: 600;
-            color: var(--dark);
-            margin: 0;
-        }
-
-        .user-details p {
-            font-size: 13px;
-            color: var(--text-light);
-            margin: 0;
-        }
-
+        
         /* Appointment Content */
         .appointment-content {
             padding: 30px;
@@ -605,32 +532,12 @@ if ($past_result->num_rows > 0) {
         <a href="doctor_feedback.php">View Feedback</a>
         <a href="logout.php" class="logout-btn">Logout</a>
     </div>
-
+<!-- Sidebar -->
+ <?php include 'doctor_sidebar.php'; ?>
+ <?php include 'doctor_header.php'; ?>
     <!-- Main Content -->
     <div class="main-content">
-        <!-- Header -->
-        <header class="topbar">
-            <button class="menu-toggle" id="menuToggle">
-                <i class="fas fa-bars"></i>
-            </button>
-            
-            <h1>Manage Appointments</h1>
-            
-            <div class="topbar-right">
-                <div class="notification-icon">
-                    <i class="far fa-bell"></i>
-                    <span class="notification-badge">3</span>
-                </div>
-                
-                <div class="user-info">
-                    <img src="https://picsum.photos/seed/doctor/40/40.jpg" alt="Doctor" class="user-avatar">
-                    <div class="user-details">
-                        <h3>Dr. <?php echo $doctor_name; ?></h3>
-                        <p><?php echo date("F j, Y"); ?></p>
-                    </div>
-                </div>
-            </div>
-        </header>
+        
         
         <!-- Appointment Content -->
         <div class="appointment-content">
@@ -679,10 +586,7 @@ if ($past_result->num_rows > 0) {
                                     <i class="far fa-clock"></i>
                                     <span><?php echo date('h:i A', strtotime($appointment['APPOINTMENT_TIME'])); ?></span>
                                 </div>
-                                <div class="appointment-detail">
-                                    <i class="fas fa-id-card"></i>
-                                    <span>ID: #<?php echo $appointment['APPOINTMENT_ID']; ?></span>
-                                </div>
+                                
                             </div>
                             
                             <div class="appointment-actions">
@@ -743,10 +647,7 @@ if ($past_result->num_rows > 0) {
                                     <i class="far fa-clock"></i>
                                     <span><?php echo date('h:i A', strtotime($appointment['APPOINTMENT_TIME'])); ?></span>
                                 </div>
-                                <div class="appointment-detail">
-                                    <i class="fas fa-id-card"></i>
-                                    <span>ID: <?php echo $appointment['APPOINTMENT_ID']; ?></span>
-                                </div>
+                               
                             </div>
                             
                             <div class="appointment-actions">
@@ -795,10 +696,7 @@ if ($past_result->num_rows > 0) {
                                     <i class="far fa-clock"></i>
                                     <span><?php echo date('h:i A', strtotime($appointment['APPOINTMENT_TIME'])); ?></span>
                                 </div>
-                                <div class="appointment-detail">
-                                    <i class="fas fa-id-card"></i>
-                                    <span>ID: #<?php echo $appointment['APPOINTMENT_ID']; ?></span>
-                                </div>
+                                
                             </div>
                             
                             <div class="appointment-actions">

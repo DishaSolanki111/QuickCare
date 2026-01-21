@@ -2,95 +2,135 @@
 session_start();
 include 'config.php';
 
-// Get form data
- $username = $_POST['username'] ?? '';
- $password = $_POST['pswd'] ?? '';
+/* ===============================
+   GET FORM DATA
+================================ */
  $user_type = $_POST['user_type'] ?? '';
+ $username  = $_POST['username'] ?? '';
+ $pswd  = $_POST['pswd'] ?? '';
 
-// Validate input
-if (empty($username) || empty($password) || empty($user_type)) {
-    // Use POST to redirect with error
-    echo '<form id="errorForm" action="login_for_all.php" method="post">
-            <input type="hidden" name="error" value="Please fill all fields">
-            <input type="hidden" name="user_type" value="' . $user_type . '">
-          </form>
-          <script>document.getElementById("errorForm").submit();</script>';
-    exit;
+/* ===============================
+   BASIC VALIDATION
+================================ */
+if (empty($user_type) || empty($username) || empty($pswd)) {
+    $_POST['error'] = 'All fields are required';
+    $_POST['user_type'] = $user_type;
+    include 'login_for_all.php';
+    exit();
 }
 
-// Sanitize input
- $username = mysqli_real_escape_string($conn, $username);
+/* ===============================
+   DOCTOR LOGIN
+================================ */
+if ($user_type === 'doctor') {
 
-// Check user type and query appropriate table
-switch ($user_type) {
-    case 'patient':
-        $query = "SELECT PATIENT_ID, FIRST_NAME, LAST_NAME, EMAIL, PSWD FROM patient_tbl WHERE USERNAME='$username'";
-        $redirect_page = 'patient.php';
-        $session_id_key = 'PATIENT_ID';
-        $session_name_key = 'PATIENT_NAME';
-        break;
-        
-    case 'doctor':
-        $query = "SELECT DOCTOR_ID, FIRST_NAME, LAST_NAME, EMAIL, PSWD FROM doctor_tbl WHERE USERNAME='$username'";
-        $redirect_page = 'doctor_dashboard.php';
-        $session_id_key = 'DOCTOR_ID';
-        $session_name_key = 'DOCTOR_NAME';
-        break;
-        
-    case 'receptionist':
-        $query = "SELECT RECEPTIONIST_ID, FIRST_NAME, LAST_NAME, EMAIL, PSWD FROM receptionist_tbl WHERE USERNAME='$username'";
-        $redirect_page = 'receptionist.php';
-        $session_id_key = 'RECEPTIONIST_ID';
-        $session_name_key = 'RECEPTIONIST_NAME';
-        break;
-        
-    default:
-        // Use POST to redirect with error
-        echo '<form id="errorForm" action="login_for_all.php" method="post">
-                <input type="hidden" name="error" value="Invalid user type">
-                <input type="hidden" name="user_type" value="' . $user_type . '">
-              </form>
-              <script>document.getElementById("errorForm").submit();</script>';
-        exit;
+    $stmt = $conn->prepare(
+        "SELECT DOCTOR_ID, PSWD 
+         FROM doctor_tbl 
+         WHERE USERNAME = ?"
+    );
+    $stmt->bind_param("s", $username);
+    $stmt->execute();
+    $res = $stmt->get_result();
+
+    if ($res && $res->num_rows === 1) {
+        $row = $res->fetch_assoc();
+
+        // 🔐 Verify bcrypt password
+        if (password_verify($pswd, $row['PSWD'])) {
+
+            $_SESSION['LOGGED_IN'] = true;
+            $_SESSION['USER_TYPE'] = 'doctor';
+            $_SESSION['DOCTOR_ID'] = $row['DOCTOR_ID'];
+
+            header("Location: doctor_dashboard.php");
+            exit();
+        }
+    }
+
+    // ❌ Doctor login failed
+    $_POST['error'] = 'Invalid doctor username or password';
+    $_POST['user_type'] = 'doctor';
+    include 'login_for_all.php';
+    exit();
 }
 
-// Execute query
- $result = mysqli_query($conn, $query);
+/* ===============================
+   PATIENT LOGIN
+================================ */
+if ($user_type === 'patient') {
 
-// Check if user exists
-if (!$result || mysqli_num_rows($result) !== 1) {
-    // Use POST to redirect with error
-    echo '<form id="errorForm" action="login_for_all.php" method="post">
-            <input type="hidden" name="error" value="Invalid username or password">
-            <input type="hidden" name="user_type" value="' . $user_type . '">
-          </form>
-          <script>document.getElementById("errorForm").submit();</script>';
-    exit;
+    $stmt = $conn->prepare(
+        "SELECT PATIENT_ID, PSWD 
+         FROM patient_tbl 
+         WHERE USERNAME = ?"
+    );
+    $stmt->bind_param("s", $username);
+    $stmt->execute();
+    $res = $stmt->get_result();
+
+    if ($res && $res->num_rows === 1) {
+        $row = $res->fetch_assoc();
+
+        // 🔐 Verify bcrypt password
+        if (password_verify($pswd, $row['PSWD'])) {
+
+            $_SESSION['LOGGED_IN'] = true;
+            $_SESSION['USER_TYPE'] = 'patient';
+            $_SESSION['PATIENT_ID'] = $row['PATIENT_ID'];
+
+            header("Location: patient_dashboard.php");
+            exit();
+        }
+    }
+
+    // ❌ Patient login failed
+    $_POST['error'] = 'Invalid patient username or password';
+    $_POST['user_type'] = 'patient';
+    include 'login_for_all.php';
+    exit();
 }
 
-// Get user data
- $user = mysqli_fetch_assoc($result);
+/* ===============================
+   RECEPTIONIST LOGIN
+================================ */
+if ($user_type === 'receptionist') {
 
-// Verify password
-if (!password_verify($password, $user['PSWD'])) {
-    // Use POST to redirect with error
-    echo '<form id="errorForm" action="login_for_all.php" method="post">
-            <input type="hidden" name="error" value="Invalid username or password">
-            <input type="hidden" name="user_type" value="' . $user_type . '">
-          </form>
-          <script>document.getElementById("errorForm").submit();</script>';
-    exit;
+    $stmt = $conn->prepare(
+        "SELECT RECEPTIONIST_ID, PSWD 
+         FROM receptionist_tbl 
+         WHERE USERNAME = ?"
+    );
+    $stmt->bind_param("s", $username);
+    $stmt->execute();
+    $res = $stmt->get_result();
+
+    if ($res && $res->num_rows === 1) {
+        $row = $res->fetch_assoc();
+
+        // 🔐 Verify bcrypt password
+        if (password_verify($pswd, $row['PSWD'])) {
+
+            $_SESSION['LOGGED_IN'] = true;
+            $_SESSION['USER_TYPE'] = 'receptionist';
+            $_SESSION['RECEPTIONIST_ID'] = $row['RECEPTIONIST_ID'];
+
+            header("Location: receptionist_dashboard.php");
+            exit();
+        }
+    }
+
+    // ❌ Receptionist login failed
+    $_POST['error'] = 'Invalid receptionist username or password';
+    $_POST['user_type'] = 'receptionist';
+    include 'login_for_all.php';
+    exit();
 }
 
-// Set session variables
- $_SESSION[$session_id_key] = $user[$session_id_key];
- $_SESSION[$session_name_key] = $user['FIRST_NAME'] . ' ' . $user['LAST_NAME'];
- $_SESSION['USER_TYPE'] = $user_type;
- $_SESSION['EMAIL'] = $user['EMAIL'];
- $_SESSION['LOGGED_IN'] = true;
-
-// Use POST to redirect to appropriate dashboard
-echo '<form id="redirectForm" action="' . $redirect_page . '" method="post"></form>
-      <script>document.getElementById("redirectForm").submit();</script>';
-exit;
+/* ===============================
+   UNKNOWN USER TYPE
+================================ */
+ $_POST['error'] = 'Invalid login attempt';
+include 'login_for_all.php';
+exit();
 ?>

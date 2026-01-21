@@ -1,7 +1,7 @@
 <?php
 // ================== SESSION & ACCESS CONTROL ==================
 session_start();
-include "doctor_sidebar.php";
+
 if (
     !isset($_SESSION['LOGGED_IN']) ||
     $_SESSION['LOGGED_IN'] !== true ||
@@ -576,34 +576,12 @@ if (!empty($search)) {
 </head>
 <body>
     <!-- Sidebar -->
-    
+    <?php include 'doctor_sidebar.php'; ?>
 
     <!-- Main Content -->
     <div class="main-content">
-        <!-- Header -->
-        <header class="topbar">
-            <button class="menu-toggle" id="menuToggle">
-                <i class="fas fa-bars"></i>
-            </button>
-            
-            <h1>View Medicine</h1>
-            
-            <div class="topbar-right">
-                <div class="notification-icon">
-                    <i class="far fa-bell"></i>
-                    <span class="notification-badge">3</span>
-                </div>
-                
-                <div class="user-info">
-                    <img src="https://picsum.photos/seed/doctor/40/40.jpg" alt="Doctor" class="user-avatar">
-                    <div class="user-details">
-                        <h3>Dr. <?php echo $doctor_name; ?></h3>
-                        <p><?php echo date("F j, Y"); ?></p>
-                    </div>
-                </div>
-            </div>
-        </header>
         
+        <?php include 'doctor_header.php'; ?>
         <!-- Medicine Content -->
         <div class="medicine-content">
             <!-- Success/Error Messages -->

@@ -1,9 +1,3 @@
-<?php
-// Start session only if it hasn't been started already
-if (session_status() == PHP_SESSION_NONE) {
-    session_start();
-}
-?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
