@@ -89,6 +89,7 @@ include 'config.php';
 
         .form-group {
             margin-bottom: 20px;
+            position: relative;
         }
 
         .form-row {
@@ -129,6 +130,10 @@ include 'config.php';
             outline: none;
             border-color: var(--accent-blue);
             box-shadow: 0 0 0 2px rgba(0, 180, 216, 0.2);
+        }
+        
+        input.error, select.error, textarea.error {
+            border-color: var(--error);
         }
 
         textarea {
@@ -193,6 +198,42 @@ include 'config.php';
         .required {
             color: var(--error);
         }
+        
+        /* Toast notification styles */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #fff;
+            color: #333;
+            padding: 15px 25px;
+            border-radius: 5px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            display: none;
+            z-index: 1000;
+            max-width: 300px;
+            border-left: 4px solid var(--error);
+        }
+        
+        .toast.success {
+            border-left: 4px solid var(--accent-blue);
+        }
+        
+        .toast.show {
+            display: block;
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
 
         /* Responsive styles */
         @media (max-width: 768px) {
@@ -217,39 +258,122 @@ include 'config.php';
         <div class="container">
             <h1>Receptionist Registration</h1>
             
+            <!-- Toast notification for errors -->
+            <div id="toast" class="toast"></div>
+            
             <?php
             // Initialize variables
             $success = false;
             $error = "";
             
+            // Store submitted values to repopulate form if needed
+            $form_data = [
+                'first_name' => '',
+                'last_name' => '',
+                'dob' => '',
+                'doj' => '',
+                'gender' => '',
+                'phone' => '',
+                'email' => '',
+                'username' => '',
+                'password' => '',
+                'address' => ''
+            ];
+            
             // Check if form is submitted
             if ($_SERVER["REQUEST_METHOD"] == "POST") {
-                // Sanitize and validate inputs
-                $first_name = mysqli_real_escape_string($conn, $_POST['first_name']);
-                $last_name = mysqli_real_escape_string($conn, $_POST['last_name']);
-                $dob = mysqli_real_escape_string($conn, $_POST['dob']);
-                $doj = mysqli_real_escape_string($conn, $_POST['doj']);
-                $gender = mysqli_real_escape_string($conn, $_POST['gender']);
-                $phone = mysqli_real_escape_string($conn, $_POST['phone']);
-                $email = mysqli_real_escape_string($conn, $_POST['email']);
-                $username = mysqli_real_escape_string($conn, $_POST['username']);
-                $password = mysqli_real_escape_string($conn, $_POST['password']);
-                $address = mysqli_real_escape_string($conn, $_POST['address']);
+                // Store form data
+                $form_data = [
+                    'first_name' => $_POST['first_name'] ?? '',
+                    'last_name' => $_POST['last_name'] ?? '',
+                    'dob' => $_POST['dob'] ?? '',
+                    'doj' => $_POST['doj'] ?? '',
+                    'gender' => $_POST['gender'] ?? '',
+                    'phone' => $_POST['phone'] ?? '',
+                    'email' => $_POST['email'] ?? '',
+                    'username' => $_POST['username'] ?? '',
+                    'password' => $_POST['password'] ?? '',
+                    'address' => $_POST['address'] ?? ''
+                ];
                 
-                // Hash password
-                $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+                // Validation
+                $errors = [];
                 
-                // SQL to insert data
-                $sql = "INSERT INTO receptionist_tbl (FIRST_NAME, LAST_NAME, DOB, DOJ, GENDER, PHONE, EMAIL, USERNAME, PSWD, ADDRESS) 
-                        VALUES ('$first_name', '$last_name', '$dob', '$doj', '$gender', '$phone', '$email', '$username', '$hashed_password', '$address')";
-                
-                if ($conn->query($sql) === TRUE) {
-                    $success = true;
-                } else {
-                    $error = "Error: " . $sql . "<br>" . $conn->error;
+                // Validate required fields
+                if (empty($form_data['first_name'])) {
+                    $errors['first_name'] = 'First name is required';
                 }
                 
-                $conn->close();
+                if (empty($form_data['last_name'])) {
+                    $errors['last_name'] = 'Last name is required';
+                }
+                
+                if (empty($form_data['username'])) {
+                    $errors['username'] = 'Username is required';
+                }
+                
+                if (empty($form_data['password'])) {
+                    $errors['password'] = 'Password is required';
+                } elseif (strlen($form_data['password']) < 6) {
+                    $errors['password'] = 'Password must be at least 6 characters';
+                }
+                
+                // Validate email format if provided
+                if (!empty($form_data['email'])) {
+                    if (!filter_var($form_data['email'], FILTER_VALIDATE_EMAIL)) {
+                        $errors['email'] = 'Invalid email format';
+                    }
+                }
+                
+                // Validate phone number if provided
+                if (!empty($form_data['phone'])) {
+                    if (strlen($form_data['phone']) < 10 || strlen($form_data['phone']) > 15) {
+                        $errors['phone'] = 'Invalid phone number';
+                    }
+                }
+                
+                // If no errors, proceed with database insertion
+                if (empty($errors)) {
+                    // Sanitize inputs
+                    $first_name = mysqli_real_escape_string($conn, $form_data['first_name']);
+                    $last_name = mysqli_real_escape_string($conn, $form_data['last_name']);
+                    $dob = mysqli_real_escape_string($conn, $form_data['dob']);
+                    $doj = mysqli_real_escape_string($conn, $form_data['doj']);
+                    $gender = mysqli_real_escape_string($conn, $form_data['gender']);
+                    $phone = mysqli_real_escape_string($conn, $form_data['phone']);
+                    $email = mysqli_real_escape_string($conn, $form_data['email']);
+                    $username = mysqli_real_escape_string($conn, $form_data['username']);
+                    $password = $form_data['password'];
+                    $address = mysqli_real_escape_string($conn, $form_data['address']);
+                    
+                    // Hash password
+                    $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+                    
+                    // SQL to insert data
+                    $sql = "INSERT INTO receptionist_tbl (FIRST_NAME, LAST_NAME, DOB, DOJ, GENDER, PHONE, EMAIL, USERNAME, PSWD, ADDRESS) 
+                            VALUES ('$first_name', '$last_name', '$dob', '$doj', '$gender', '$phone', '$email', '$username', '$hashed_password', '$address')";
+                    
+                    if ($conn->query($sql) === TRUE) {
+                        $success = true;
+                        // Reset form data on successful submission
+                        $form_data = [
+                            'first_name' => '',
+                            'last_name' => '',
+                            'dob' => '',
+                            'doj' => '',
+                            'gender' => '',
+                            'phone' => '',
+                            'email' => '',
+                            'username' => '',
+                            'password' => '',
+                            'address' => ''
+                        ];
+                    } else {
+                        $error = "Error: " . $sql . "<br>" . $conn->error;
+                    }
+                    
+                    $conn->close();
+                }
             }
             ?>
             
@@ -269,27 +393,27 @@ include 'config.php';
                 <div class="form-row">
                     <div class="form-group">
                         <label for="first_name">First Name <span class="required">*</span></label>
-                        <input type="text" id="first_name" name="first_name" required>
-                        <div class="error-message" id="first_name_error"></div>
+                        <input type="text" id="first_name" name="first_name" value="<?php echo htmlspecialchars($form_data['first_name']); ?>" required>
+                        <div class="error-message" id="first_name_error"><?php echo $errors['first_name'] ?? ''; ?></div>
                     </div>
                     
                     <div class="form-group">
                         <label for="last_name">Last Name <span class="required">*</span></label>
-                        <input type="text" id="last_name" name="last_name" required>
-                        <div class="error-message" id="last_name_error"></div>
+                        <input type="text" id="last_name" name="last_name" value="<?php echo htmlspecialchars($form_data['last_name']); ?>" required>
+                        <div class="error-message" id="last_name_error"><?php echo $errors['last_name'] ?? ''; ?></div>
                     </div>
                 </div>
                 
                 <div class="form-row">
                     <div class="form-group">
                         <label for="dob">Date of Birth</label>
-                        <input type="date" id="dob" name="dob">
+                        <input type="date" id="dob" name="dob" value="<?php echo htmlspecialchars($form_data['dob']); ?>">
                         <div class="error-message" id="dob_error"></div>
                     </div>
                     
                     <div class="form-group">
                         <label for="doj">Date of Joining</label>
-                        <input type="date" id="doj" name="doj">
+                        <input type="date" id="doj" name="doj" value="<?php echo htmlspecialchars($form_data['doj']); ?>">
                         <div class="error-message" id="doj_error"></div>
                     </div>
                 </div>
@@ -298,15 +422,15 @@ include 'config.php';
                     <label>Gender</label>
                     <div class="radio-group">
                         <div class="radio-option">
-                            <input type="radio" id="male" name="gender" value="MALE">
+                            <input type="radio" id="male" name="gender" value="MALE" <?php echo ($form_data['gender'] == 'MALE') ? 'checked' : ''; ?>>
                             <label for="male">Male</label>
                         </div>
                         <div class="radio-option">
-                            <input type="radio" id="female" name="gender" value="FEMALE">
+                            <input type="radio" id="female" name="gender" value="FEMALE" <?php echo ($form_data['gender'] == 'FEMALE') ? 'checked' : ''; ?>>
                             <label for="female">Female</label>
                         </div>
                         <div class="radio-option">
-                            <input type="radio" id="other" name="gender" value="OTHER">
+                            <input type="radio" id="other" name="gender" value="OTHER" <?php echo ($form_data['gender'] == 'OTHER') ? 'checked' : ''; ?>>
                             <label for="other">Other</label>
                         </div>
                     </div>
@@ -315,34 +439,34 @@ include 'config.php';
                 <div class="form-row">
                     <div class="form-group">
                         <label for="phone">Phone Number</label>
-                        <input type="number" id="phone" name="phone">
-                        <div class="error-message" id="phone_error"></div>
+                        <input type="text" id="phone" name="phone" value="<?php echo htmlspecialchars($form_data['phone']); ?>">
+                        <div class="error-message" id="phone_error"><?php echo $errors['phone'] ?? ''; ?></div>
                     </div>
                     
                     <div class="form-group">
                         <label for="email">Email</label>
-                        <input type="email" id="email" name="email">
-                        <div class="error-message" id="email_error"></div>
+                        <input type="email" id="email" name="email" value="<?php echo htmlspecialchars($form_data['email']); ?>">
+                        <div class="error-message" id="email_error"><?php echo $errors['email'] ?? ''; ?></div>
                     </div>
                 </div>
                 
                 <div class="form-row">
                     <div class="form-group">
                         <label for="username">Username <span class="required">*</span></label>
-                        <input type="text" id="username" name="username" required>
-                        <div class="error-message" id="username_error"></div>
+                        <input type="text" id="username" name="username" value="<?php echo htmlspecialchars($form_data['username']); ?>" required>
+                        <div class="error-message" id="username_error"><?php echo $errors['username'] ?? ''; ?></div>
                     </div>
                     
                     <div class="form-group">
                         <label for="password">Password <span class="required">*</span></label>
-                        <input type="password" id="password" name="password" required>
-                        <div class="error-message" id="password_error"></div>
+                        <input type="password" id="password" name="password" value="<?php echo htmlspecialchars($form_data['password']); ?>" required>
+                        <div class="error-message" id="password_error"><?php echo $errors['password'] ?? ''; ?></div>
                     </div>
                 </div>
                 
                 <div class="form-group">
                     <label for="address">Address</label>
-                    <textarea id="address" name="address"></textarea>
+                    <textarea id="address" name="address"><?php echo htmlspecialchars($form_data['address']); ?></textarea>
                     <div class="error-message" id="address_error"></div>
                 </div>
                 
@@ -354,8 +478,31 @@ include 'config.php';
     </div>
 
     <script>
+        // Toast notification function
+        function showToast(message, isSuccess = false) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = isSuccess ? 'toast success show' : 'toast show';
+            
+            setTimeout(() => {
+                toast.className = toast.className.replace('show', '');
+            }, 5000);
+        }
+        
+        // Form validation and submission
         document.getElementById('receptionistForm').addEventListener('submit', function(event) {
             let isValid = true;
+            
+            // Reset all error messages and input styles
+            const errorElements = document.querySelectorAll('.error-message');
+            errorElements.forEach(element => {
+                element.style.display = 'none';
+            });
+            
+            const inputElements = document.querySelectorAll('input, select, textarea');
+            inputElements.forEach(element => {
+                element.classList.remove('error');
+            });
             
             // Validate required fields
             const requiredFields = ['first_name', 'last_name', 'username', 'password'];
@@ -367,9 +514,8 @@ include 'config.php';
                 if (!field.value.trim()) {
                     errorElement.textContent = 'This field is required';
                     errorElement.style.display = 'block';
+                    field.classList.add('error');
                     isValid = false;
-                } else {
-                    errorElement.style.display = 'none';
                 }
             });
             
@@ -381,9 +527,8 @@ include 'config.php';
             if (emailField.value && !emailPattern.test(emailField.value)) {
                 emailError.textContent = 'Invalid email format';
                 emailError.style.display = 'block';
+                emailField.classList.add('error');
                 isValid = false;
-            } else {
-                emailError.style.display = 'none';
             }
             
             // Validate phone number if provided
@@ -393,9 +538,8 @@ include 'config.php';
             if (phoneField.value && (phoneField.value.length < 10 || phoneField.value.length > 15)) {
                 phoneError.textContent = 'Invalid phone number';
                 phoneError.style.display = 'block';
+                phoneField.classList.add('error');
                 isValid = false;
-            } else {
-                phoneError.style.display = 'none';
             }
             
             // Validate password length
@@ -405,13 +549,13 @@ include 'config.php';
             if (passwordField.value && passwordField.value.length < 6) {
                 passwordError.textContent = 'Password must be at least 6 characters';
                 passwordError.style.display = 'block';
+                passwordField.classList.add('error');
                 isValid = false;
-            } else {
-                passwordError.style.display = 'none';
             }
             
             if (!isValid) {
                 event.preventDefault();
+                showToast('Please correct the errors in the form.');
             }
         });
     </script>
