@@ -110,10 +110,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_profile'])) {
     overflow-y: scroll;
 }
 
-html {
-    height: 100%;
-    overflow-y: scroll;
-}
 
 .container {
     display: flex;
@@ -128,6 +124,11 @@ html {
     height: 100%;
     overflow-y: auto;
 }
+html {
+    height: 100%;
+    
+}
+
         
         .header {
             display: flex;

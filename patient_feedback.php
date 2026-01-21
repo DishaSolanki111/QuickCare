@@ -131,7 +131,7 @@ if (!empty($appointment_id)) {
 
 html {
     height: 100%;
-    overflow-y: scroll;
+   
 }
 
 .container {
