@@ -114,7 +114,7 @@ body {
         <h2>QuickCare</h2>
     
 
-    <a href="receptionist.php" class="active">Dashboard</a>
+    <a href="receptionist.php">Dashboard</a>
     <a href="recep_profile.php">View My Profile</a>
     <a href="appointment_recep.php">Manage Appointments</a>
     <a href="doctor_schedule_recep.php">Manage Doctor Schedule</a>
