@@ -39,24 +39,25 @@ include "header.php";
     <style>
         :root {
            
-            --card-bg: #F6F9FB;
-            --primary: #0066cc;
-            --primary-dark: #004a99;
-            --primary-light: #e6f0ff;
-            --secondary: #0099ff;
-            --accent: #0052cc;
-            --light-blue: #f0f7ff;
-            --medium-blue: #d4e6ff;
-            --dark-blue: #003366;
-            --text-dark: #1a3a5f;
-            --text-light: #ffffff;
-            --shadow: 0 4px 15px rgba(0, 102, 204, 0.1);
-            --shadow-hover: 0 10px 25px rgba(0, 102, 204, 0.2);
-            --gradient-1: linear-gradient(135deg, #0066cc 0%, #00a8cc 100%);
+              --primary-color: #1a3a5f;
+            --secondary-color: #3498db;
+            --accent-color: #2ecc71;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+            --danger-color: #e74c3c;
+            --warning-color: #f39c12;
+            --info-color: #17a2b8;
+            --dark-blue: #072D44;
+            --mid-blue: #064469;
+            --soft-blue: #5790AB;
+            --light-blue: #9CCDD8;
+            --gray-blue: #D0D7E1;
+            --white: #ffffff;
         }
 
         * {
-         
+            margin: 0;
+            padding: 0;
             box-sizing: border-box;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
@@ -65,7 +66,7 @@ include "header.php";
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #f5f8ff 0%, #e6f0ff 100%);
             color: var(--text-dark);
-            min-height: 50vh;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
         }
@@ -84,15 +85,15 @@ include "header.php";
             position: absolute;
             top: 0;
             left: 0;
-            width: 50%;
-            height: 50%;
+            width: 100%;
+            height: 100%;
             background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%23ffffff' fill-opacity='0.1' d='M0,224L48,213.3C96,203,192,181,288,181.3C384,181,480,203,576,224C672,245,768,267,864,261.3C960,256,1056,224,1152,213.3C1248,203,1344,213,1392,218.7L1440,224L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z'%3E%3C/path%3E%3C/svg%3E") no-repeat bottom;
             background-size: cover;
         }
 
         .page-header h1 {
             font-size: 2.8rem;
-            margin-bottom: 10px;
+            margin-bottom: 1rem;
             position: relative;
             z-index: 2;
         }
@@ -159,8 +160,8 @@ include "header.php";
         }
 
         .doctor-image {
-            width: 100px; /* Reduced from 140px */
-            height: 100px; /* Reduced from 140px */
+             width: 140px;
+            height: 140px;
             border-radius: 8px;
             object-fit: cover;
             border: 4px solid var(--light-blue);
@@ -173,22 +174,22 @@ include "header.php";
         }
 
         .card h3 {
-            font-size: 1.2rem; /* Reduced from 1.5rem */
+            font-size: 1.5rem;
             margin-bottom: 0.5rem;
             color: var(--text-dark);
         }
 
         .card-title {
             color: var(--primary);
-            font-size: 0.9rem; /* Reduced from 1rem */
-            margin-bottom: 1rem; /* Reduced from 1.5rem */
+           font-size: 1rem;
+            margin-bottom: 1.5rem;
             font-weight: 600;
         }
 
         .card-rating {
             display: flex;
             justify-content: center;
-            margin-bottom: 1rem; /* Reduced from 1.5rem */
+            margin-bottom: 1.5rem;
             color: #ffc107;
         }
 
@@ -201,7 +202,7 @@ include "header.php";
 
         .card-actions button, .card-actions a {
             flex: 1;
-            padding: 8px 0; /* Reduced from 12px 0 */
+            padding: 12px 0;
             border: none;
             border-radius: 8px;
             font-weight: 600;
@@ -209,7 +210,7 @@ include "header.php";
             transition: all 0.3s ease;
             text-align: center;
             text-decoration: none;
-            font-size: 0.8rem; /* Reduced from 0.9rem */
+            font-size: 0.9rem;
         }
 
         .btn-primary {
