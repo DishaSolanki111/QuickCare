@@ -23,13 +23,48 @@
             overflow-x: hidden;
             padding-top: 80px;
         }
+.page-header {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+        
+            padding: 4rem 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+           
+        }
 
+        .page-header::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%23ffffff' fill-opacity='0.1' d='M0,224L48,213.3C96,203,192,181,288,181.3C384,181,480,203,576,224C672,245,768,267,864,261.3C960,256,1056,224,1152,213.3C1248,203,1344,213,1392,218.7L1440,224L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z'%3E%3C/path%3E%3C/svg%3E") no-repeat bottom;
+            background-size: cover;
+        }
+
+        .page-header h1 {
+            font-size: 2.8rem;
+            color: white;
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .page-header p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto;
+            color: white;
+            position: relative;
+            z-index: 2;
+        }
         .container {
             max-width: 1800px;
-            margin: 0 auto;
-            padding: 20px;
+            margin: 20px auto;
             text-align: center;
-            padding: 40px 0;
+            padding: 40px;
             background-color: #ffffff;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
             margin-bottom: 40px;
@@ -59,7 +94,8 @@
             margin-bottom: 60px;
             overflow: hidden;
             display: flex;
-            min-height: 400px;
+            max-height: 400px;
+            min-height: 200px;
             cursor: pointer;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             opacity: 0;
@@ -540,6 +576,8 @@
 
         /* Footer with Wave Effect - Color changed to match aboutus.php */
         :root {
+             --primary-blue: #1a73e8;
+            --secondary-blue: #4285f4;
             --primary: #0066cc;
             --primary-dark: #004a99;
             --primary-light: #e6f0ff;
@@ -655,7 +693,7 @@
 </head>
 <body>
     
-        <div class="container">
+        <div class="page-header">
             <h1>Our Services</h1>
             <p class="subtitle">Comprehensive healthcare management at your fingertips</p>
         </div>
