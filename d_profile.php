@@ -242,80 +242,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
             min-height: 100vh;
         }
 
-        /* Header */
-        .topbar {
-            background: var(--white);
-            padding: 20px 30px;
-            box-shadow: var(--shadow-md);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 50;
-        }
-
-        .topbar h1 {
-            color: var(--dark);
-            font-size: 24px;
-            font-weight: 700;
-        }
-
-        .topbar-right {
-            display: flex;
-            align-items: center;
-        }
-
-        .notification-icon {
-            position: relative;
-            margin-right: 20px;
-            color: var(--text);
-            font-size: 20px;
-            cursor: pointer;
-        }
-
-        .notification-badge {
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            background: var(--warning);
-            color: var(--white);
-            font-size: 10px;
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .user-info {
-            display: flex;
-            align-items: center;
-        }
-
-        .user-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin-right: 12px;
-            border: 2px solid var(--primary-light);
-        }
-
-        .user-details h3 {
-            font-size: 16px;
-            font-weight: 600;
-            color: var(--dark);
-            margin: 0;
-        }
-
-        .user-details p {
-            font-size: 13px;
-            color: var(--text-light);
-            margin: 0;
-        }
-
         /* Profile Content */
         .profile-content {
             padding: 30px;
@@ -566,35 +492,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
 <body>
     <!-- Sidebar -->
    <?php include 'doctor_sidebar.php'; ?>
-
+   $page_title = "Manage Schedule";
+    <?php include 'doctor_header.php'; ?>
     <!-- Main Content -->
     <div class="main-content">
-        <!-- Header -->
-        <header class="topbar">
-            <button class="menu-toggle" id="menuToggle">
-                <i class="fas fa-bars"></i>
-            </button>
-            
-            <h1>My Profile</h1>
-            
-            <div class="topbar-right">
-                
-                
-                <div class="user-info">
-                    <?php if (!empty($doctor['PROFILE_IMAGE'])): ?>
-                    <img src="<?php echo htmlspecialchars($doctor['PROFILE_IMAGE']); ?>" alt="Profile" class="user-avatar">
-                <?php else: ?>
-                    <div class="profile-avatar" style="background-color: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-size: 36px; font-weight: bold;">
-                        <?php echo strtoupper(substr($doctor['FIRST_NAME'], 0, 1) . substr($doctor['LAST_NAME'], 0, 1)); ?>
-                    </div>
-                <?php endif; ?>
-                    <div class="user-details">
-                        <h3>Dr. <?php echo htmlspecialchars($doctor['FIRST_NAME'] . ' ' . $doctor['LAST_NAME']); ?></h3>
-                        <p><?php echo date("F j, Y"); ?></p>
-                    </div>
-                </div>
-            </div>
-        </header>
         
         <!-- Profile Content -->
         <div class="profile-content">

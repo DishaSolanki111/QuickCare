@@ -1,6 +1,5 @@
 <?php
 session_start();
-include "doctor_sidebar.php";
 // Check if user is logged in and is a doctor
 if (
     !isset($_SESSION['LOGGED_IN']) ||
@@ -110,16 +109,6 @@ if ($result && $result->num_rows > 0) {
             padding: 20px;
         }
         
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 20px;
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            margin-bottom: 25px;
-        }
         
         .welcome-msg {
             font-size: 24px;
@@ -291,24 +280,11 @@ if ($result && $result->num_rows > 0) {
 <body>
     <div class="container">
         <!-- Sidebar -->
-      
+        
+        <?php include 'doctor_sidebar.php'; ?>
         <!-- Main Content -->
         <div class="main-content">
-            <!-- Header -->
-            <div class="header">
-                <div class="welcome-msg">Manage Patient Prescriptions</div>
-                <div class="user-actions">
-                    <button class="notification-btn">
-                        <i class="far fa-bell"></i>
-                        <span class="notification-badge">5</span>
-                    </button>
-                    <div class="user-dropdown">
-                        <div class="user-avatar"><?php echo substr($doctor_name, 0, 1); ?></div>
-                        <span>Dr. <?php echo $doctor_name; ?></span>
-                        <i class="fas fa-chevron-down" style="margin-left: 8px;"></i>
-                    </div>
-                </div>
-            </div>
+        <?php include 'doctor_header.php'; ?>    
             
             <!-- Content Card -->
             <div class="content-card">

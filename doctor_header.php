@@ -5,7 +5,8 @@ if (session_status() === PHP_SESSION_NONE) {
 
 include 'config.php';
 
- $doctor_id = $_SESSION['DOCTOR_ID'] ?? null;  // Changed to match your login session variable
+// Use the same session variable name as in your login
+ $doctor_id = $_SESSION['DOCTOR_ID'] ?? null;
  $doctor_name = 'Doctor';
  $profile_image = 'uploads/default_doctor.png';
 

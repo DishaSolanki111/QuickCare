@@ -1,10 +1,15 @@
 <?php
-if (!isset($_SESSION)) session_start();
+// Use the same session handling as doctor_header.php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 include 'config.php';
 
-$doctor_id = $_SESSION['doctor_id'] ?? 0;
+// Use the same session variable name as in doctor_header.php
+ $doctor_id = $_SESSION['DOCTOR_ID'] ?? 0;
 
-$sql = "
+ $sql = "
 SELECT 
     a.APPOINTMENT_ID,
     p.FIRST_NAME AS patient_name,
@@ -18,13 +23,13 @@ AND TIMESTAMP(a.APPOINTMENT_DATE, a.APPOINTMENT_TIME)
 ORDER BY appointment_datetime ASC
 ";
 
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("i", $doctor_id);
-$stmt->execute();
-$result = $stmt->get_result();
+ $stmt = $conn->prepare($sql);
+ $stmt->bind_param("i", $doctor_id);
+ $stmt->execute();
+ $result = $stmt->get_result();
 
-$appointments = $result->fetch_all(MYSQLI_ASSOC);
-$reminderCount = count($appointments);
+ $appointments = $result->fetch_all(MYSQLI_ASSOC);
+ $reminderCount = count($appointments);
 ?>
 
 <div class="qc-notification">

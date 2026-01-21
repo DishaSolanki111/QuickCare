@@ -47,73 +47,6 @@
             padding: 20px;
         }
         
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 20px;
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            margin-bottom: 25px;
-        }
-        
-        .welcome-msg {
-            font-size: 24px;
-            font-weight: 600;
-            color: var(--primary-color);
-        }
-        
-        .user-actions {
-            display: flex;
-            align-items: center;
-        }
-        
-        .notification-btn {
-            position: relative;
-            background: none;
-            border: none;
-            font-size: 20px;
-            color: var(--dark-color);
-            margin-right: 20px;
-            cursor: pointer;
-        }
-        
-        .notification-badge {
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            background-color: var(--danger-color);
-            color: white;
-            border-radius: 50%;
-            width: 18px;
-            height: 18px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 11px;
-            font-weight: bold;
-        }
-        
-        .user-dropdown {
-            display: flex;
-            align-items: center;
-            cursor: pointer;
-        }
-        
-        .user-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background-color: var(--secondary-color);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 10px;
-            font-weight: bold;
-        }
-        
         /* Content Card Styles */
         .content-card {
             background: #fff;
@@ -235,21 +168,8 @@
         
         <!-- Main Content -->
         <div class="main-content">
-            <!-- Header -->
-            <div class="header">
-                <div class="welcome-msg">Patient Feedback</div>
-                <div class="user-actions">
-                    <button class="notification-btn">
-                        <i class="far fa-bell"></i>
-                        <span class="notification-badge">5</span>
-                    </button>
-                    <div class="user-dropdown">
-                        <div class="user-avatar">AS</div>
-                        <span>Dr. Amar Kumar</span>
-                        <i class="fas fa-chevron-down" style="margin-left: 8px;"></i>
-                    </div>
-                </div>
-            </div>
+            <?php include 'doctor_header.php'; ?>
+            
             
             <!-- Content Card -->
             <div class="content-card">
