@@ -417,7 +417,7 @@ include "header.php";
             <div class="grid-container">
                 <?php 
                 $icons = array(
-                    'fa-heartbeat', 'fa-brain', 'fa-user-md', 'fa-bone', 
+                    'fa-user-md','fa-heartbeat',   'fa-bone', 'fa-brain',
                     'fa-eye', 'fa-tooth', 'fa-baby', 'fa-lungs'
                 );
                 $iconIndex = 0;
