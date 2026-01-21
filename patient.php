@@ -112,24 +112,7 @@ include 'config.php';
             overflow-y: auto;
         }
 
-        /* Custom scrollbar for main content */
-        .main::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        .main::-webkit-scrollbar-track {
-            background: #f1f1f1;
-        }
-
-        .main::-webkit-scrollbar-thumb {
-            background: #5790AB;
-            border-radius: 4px;
-        }
-
-        .main::-webkit-scrollbar-thumb:hover {
-            background: #064469;
-        }
-
+      
         /* Top bar */
         .header {
             background: white;
