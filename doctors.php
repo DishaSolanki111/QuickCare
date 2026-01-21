@@ -926,7 +926,7 @@ include "header.php";
                             <i class="fas fa-star-half-alt"></i>
                         </div>
                         <div class="card-actions">
-                            <a href="doctor_profile.php?id=<?php echo $row['DOCTOR_ID']; ?>" class="btn-secondary">
+                            <a href="d_profile.php?id=<?php echo $row['DOCTOR_ID']; ?>" class="btn-secondary">
                                 <i class="fas fa-user"></i> View Profile
                             </a>
                             <button class="btn-primary" onclick="openBookingModal(<?php echo $row['DOCTOR_ID']; ?>, '<?php echo $row['FIRST_NAME'] . ' ' . $row['LAST_NAME']; ?>')">

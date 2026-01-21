@@ -1,117 +1,60 @@
 <?php
-// ================== SESSION & ACCESS CONTROL ==================
-session_start();
-
-if (
-    !isset($_SESSION['LOGGED_IN']) ||
-    $_SESSION['LOGGED_IN'] !== true ||
-    !isset($_SESSION['USER_TYPE']) ||
-    $_SESSION['USER_TYPE'] !== 'doctor'
-) {
-    header("Location: login.php");
-    exit();
-}
-
-// ================== DATABASE CONNECTION ==================
+session_start(); // Start session to check login status
 include 'config.php';
-
-// ================== DOCTOR INFO ==================
- $doctor_id = $_SESSION['DOCTOR_ID'];
- $doctor = [];
-
- $doc_sql = "SELECT d.*, s.SPECIALISATION_NAME FROM doctor_tbl d 
-            JOIN specialisation_tbl s ON d.SPECIALISATION_ID = s.SPECIALISATION_ID 
-            WHERE d.DOCTOR_ID = ?";
- $doc_stmt = $conn->prepare($doc_sql);
- $doc_stmt->bind_param("i", $doctor_id);
- $doc_stmt->execute();
- $doc_result = $doc_stmt->get_result();
-
-if ($doc_result->num_rows === 1) {
-    $doctor = $doc_result->fetch_assoc();
-}
- $doc_stmt->close();
-
-// ================== HANDLE PROFILE UPDATE ==================
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_profile'])) {
-    $first_name = mysqli_real_escape_string($conn, $_POST['first_name']);
-    $last_name = mysqli_real_escape_string($conn, $_POST['last_name']);
-    $phone = mysqli_real_escape_string($conn, $_POST['phone']);
-    $email = mysqli_real_escape_string($conn, $_POST['email']);
-    
-    $update_sql = "UPDATE doctor_tbl SET 
-                   FIRST_NAME = ?, 
-                   LAST_NAME = ?, 
-                   PHONE = ?, 
-                   EMAIL = ? 
-                   WHERE DOCTOR_ID = ?";
-    
-    $update_stmt = $conn->prepare($update_sql);
-    $update_stmt->bind_param("ssssi", $first_name, $last_name, $phone, $email, $doctor_id);
-    
-    if ($update_stmt->execute()) {
-        $success_message = "Profile updated successfully!";
-        
-        // Refresh doctor data
-        $doc_sql = "SELECT d.*, s.SPECIALISATION_NAME FROM doctor_tbl d 
-                    JOIN specialisation_tbl s ON d.SPECIALISATION_ID = s.SPECIALISATION_ID 
-                    WHERE d.DOCTOR_ID = ?";
-        $doc_stmt = $conn->prepare($doc_sql);
-        $doc_stmt->bind_param("i", $doctor_id);
-        $doc_stmt->execute();
-        $doc_result = $doc_stmt->get_result();
-        
-        if ($doc_result->num_rows === 1) {
-            $doctor = $doc_result->fetch_assoc();
-        }
-        $doc_stmt->close();
-    } else {
-        $error_message = "Error updating profile: " . $conn->error;
-    }
-    $update_stmt->close();
+include 'header.php';
+if (!isset($_GET['id'])) {
+    die("Doctor ID missing.");
 }
 
-// ================== HANDLE PASSWORD CHANGE ==================
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
-    $current_password = $_POST['current_password'];
-    $new_password = $_POST['new_password'];
-    $confirm_password = $_POST['confirm_password'];
-    
-    // Verify current password
-    $password_sql = "SELECT PSWD FROM doctor_tbl WHERE DOCTOR_ID = ?";
-    $password_stmt = $conn->prepare($password_sql);
-    $password_stmt->bind_param("i", $doctor_id);
-    $password_stmt->execute();
-    $password_result = $password_stmt->get_result();
-    
-    if ($password_result->num_rows === 1) {
-        $password_data = $password_result->fetch_assoc();
-        
-        if (password_verify($current_password, $password_data['PSWD'])) {
-            if ($new_password === $confirm_password) {
-                $hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
-                
-                $update_password_sql = "UPDATE doctor_tbl SET PSWD = ? WHERE DOCTOR_ID = ?";
-                $update_password_stmt = $conn->prepare($update_password_sql);
-                $update_password_stmt->bind_param("si", $hashed_password, $doctor_id);
-                
-                if ($update_password_stmt->execute()) {
-                    $password_success = "Password changed successfully!";
-                } else {
-                    $password_error = "Error changing password: " . $conn->error;
-                }
-                $update_password_stmt->close();
-            } else {
-                $password_error = "New passwords do not match!";
-            }
-        } else {
-            $password_error = "Current password is incorrect!";
-        }
-    }
-    $password_stmt->close();
+ $doctor_id = intval($_GET['id']);
+
+/* =========================
+   FETCH DOCTOR DETAILS
+========================= */
+ $doctor_sql = "
+    SELECT 
+        d.DOCTOR_ID,
+        d.FIRST_NAME,
+        d.LAST_NAME,
+        d.PHONE,
+        d.EMAIL,
+        d.PROFILE_IMAGE,
+        d.DOB,
+        d.DOJ,
+        d.GENDER,
+        d.EDUCATION,
+        s.SPECIALISATION_NAME
+    FROM doctor_tbl d
+    JOIN specialisation_tbl s 
+        ON d.SPECIALISATION_ID = s.SPECIALISATION_ID
+    WHERE d.DOCTOR_ID = $doctor_id
+";
+
+ $doctor_res = mysqli_query($conn, $doctor_sql);
+ $doctor = mysqli_fetch_assoc($doctor_res);
+
+if (!$doctor) {
+    die("Doctor not found.");
 }
 
- $conn->close();
+/* =========================
+   FETCH DOCTOR SCHEDULE
+========================= */
+ $schedule_sql = "
+    SELECT AVAILABLE_DAY, START_TIME, END_TIME
+    FROM doctor_schedule_tbl
+    WHERE DOCTOR_ID = $doctor_id
+    ORDER BY FIELD(AVAILABLE_DAY,'MON','TUE','WED','THU','FRI','SAT','SUN')
+";
+
+ $schedule_res = mysqli_query($conn, $schedule_sql);
+
+/* =========================
+   PROFILE IMAGE PATH
+========================= */
+ $image_path = !empty($doctor['PROFILE_IMAGE']) 
+    ? $doctor['PROFILE_IMAGE'] 
+    : 'imgs/default.jpg';
 ?>
 
 <!DOCTYPE html>
@@ -119,565 +62,499 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Profile - QuickCare</title>
+    <title>Doctor Profile</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #0066cc;
-            --primary-dark: #0052a3;
-            --primary-light: #e6f2ff;
-            --secondary: #00a8cc;
-            --accent: #00a86b;
-            --warning: #ff6b6b;
-            --dark: #1a3a5f;
-            --light: #f8fafc;
-            --white: #ffffff;
-            --text: #2c5282;
-            --text-light: #4a6fa5;
-            --gradient-1: linear-gradient(135deg, #0066cc 0%, #00a8cc 100%);
-            --gradient-2: linear-gradient(135deg, #00a8cc 0%, #00a86b 100%);
-            --gradient-3: linear-gradient(135deg, #0066cc 0%, #0052a3 100%);
-            --shadow-sm: 0 2px 4px rgba(0,0,0,0.06);
-            --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
-            --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
-            --shadow-xl: 0 20px 25px rgba(0,0,0,0.1);
-            --shadow-2xl: 0 25px 50px rgba(0,0,0,0.25);
-            --dark-blue: #072D44;
-            --mid-blue: #064469;
-            --soft-blue: #5790AB;
-            --light-blue: #9CCDD8;
-            --gray-blue: #D0D7E1;
-            --white: #ffffff;
-            --card-bg: #F6F9FB;
-            --primary-color: #1a3a5f;
-            --secondary-color: #3498db;
-            --accent-color: #2ecc71;
-            --danger-color: #e74c3c;
-            --warning-color: #f39c12;
-            --info-color: #17a2b8;
+            /* Blue color scheme */
+            --primary-blue: #1a73e8;
+            --secondary-blue: #4285f4;
+            --light-blue: #e8f0fe;
+            --medium-blue: #8ab4f8;
+            --dark-blue: #174ea6;
+            --accent-blue: #0b57d0;
+            --text-dark: #202124;
+            --text-light: #ffffff;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --shadow-hover: 0 10px 20px rgba(0, 0, 0, 0.15);
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            font-family: 'Inter', sans-serif;
         }
 
         body {
-            background-color: #f5f8fa;
-            color: var(--text);
-            line-height: 1.6;
-            overflow-x: hidden;
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f5f8ff 0%, #e6f0ff 100%);
+            color: var(--text-dark);
+            min-height: 100vh;
+            padding-top: 80px; /* Account for fixed header */
         }
 
-        /* Sidebar Styles */
-        .logo-img {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            margin-bottom: 15px;
-            object-fit: cover;
-            border: 3px solid var(--primary-light);
+        .main-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .content-wrapper {
+            flex: 1;
+            margin-left: 250px; /* Width of the sidebar */
+            padding: 20px;
         }
 
         .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .profile-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
             display: flex;
-            min-height: 100vh;
-        }
-        
-        /* Sidebar Styles */
-        .sidebar {
-            width: 250px;
-            background: #072D44;
-            min-height: 100vh;
-            color: white;
-            padding-top: 30px;
-            position: fixed;
+            flex-wrap: wrap;
         }
 
-        .sidebar h2 {
+        .left {
+            width: 35%;
+            background: linear-gradient(135deg, var(--light-blue) 0%, #d4e6ff 100%);
             text-align: center;
-            margin-bottom: 40px;
-            color: #9CCDD8;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
-        .sidebar a {
-            display: block;
-            padding: 15px 25px;
-            color: #D0D7E1;
-            text-decoration: none;
-            font-size: 17px;
-            border-left: 4px solid transparent;
+        .left img {
+            width: 220px;
+            height: 220px;
+            object-fit: cover;
+            border-radius: 12px;
+            border: 5px solid white;
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+            transition: transform 0.3s ease;
         }
 
-        .sidebar a:hover, .sidebar a.active {
-            background: #064469;
-            border-left: 4px solid #9CCDD8;
+        .left img:hover {
+            transform: scale(1.05);
+        }
+
+        .left h2 {
+            margin-top: 15px;
+            color: var(--dark-blue);
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .badge {
+            display: inline-block;
+            background: var(--primary-blue);
             color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            margin-top: 15px;
+            font-weight: 500;
+            font-size: 1rem;
         }
 
-        .logout-btn:hover{
-            background-color: var(--light-blue);
-        }
-        .logout-btn {
-            display: block;
-            width: 80%;
-            margin: 20px auto 0 auto;
-            padding: 10px;
-            background-color: var(--soft-blue);
-            color: var(--white);    
+        /* Book Now Button */
+        .book-now-btn {
+            margin-top: 25px;
+            padding: 14px 40px;
+            background: var(--primary-blue);
+            color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1.1rem;
             cursor: pointer;
-            font-size: 16px;
-            text-align: center;
-            transition: background-color 0.3s;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 10px rgba(26, 115, 232, 0.3);
         }
 
-        /* Main Content */
-        .main-content {
-            margin-left: 260px;
-            padding: 0;
-            min-height: 100vh;
+        .book-now-btn:hover {
+            background: var(--dark-blue);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(26, 115, 232, 0.4);
         }
 
-        /* Profile Content */
-        .profile-content {
+        .book-now-btn i {
+            font-size: 1.2rem;
+        }
+
+        .right {
+            width: 65%;
             padding: 30px;
         }
 
-        .profile-header {
+        .section-title {
+            margin-top: 20px;
+            font-weight: 700;
+            color: var(--dark-blue);
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--light-blue);
             display: flex;
             align-items: center;
-            margin-bottom: 30px;
-            padding: 25px;
-            background: var(--white);
-            border-radius: 12px;
-            box-shadow: var(--shadow-md);
+            gap: 10px;
         }
 
-        .profile-avatar {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin-right: 25px;
-            border: 4px solid var(--primary-light);
+        .section-title i {
+            color: var(--primary-blue);
         }
 
-        .profile-info h2 {
-            font-size: 28px;
-            color: var(--dark);
-            margin-bottom: 5px;
-        }
-
-        .profile-info p {
-            color: var(--text-light);
-            margin-bottom: 10px;
-        }
-
-        .profile-tabs {
+        .contact-info {
             display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
             margin-bottom: 25px;
-            background: var(--white);
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: var(--shadow-md);
         }
 
-        .tab {
-            flex: 1;
-            padding: 15px 20px;
-            text-align: center;
-            cursor: pointer;
-            background: var(--white);
-            color: var(--text-light);
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-
-        .tab.active {
-            background: var(--primary);
-            color: var(--white);
-        }
-
-        .tab-content {
-            display: none;
-            background: var(--white);
-            border-radius: 12px;
-            padding: 25px;
-            box-shadow: var(--shadow-md);
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: var(--dark);
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 12px 15px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            font-size: 16px;
-            transition: border-color 0.3s;
-        }
-
-        .form-control:focus {
-            border-color: var(--primary);
-            outline: none;
-            box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.2);
-        }
-
-        .btn {
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--light-blue);
             padding: 12px 20px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
+            border-radius: 10px;
             transition: all 0.3s ease;
-            display: inline-flex;
+        }
+
+        .contact-item:hover {
+            background: #d4e6ff;
+            transform: translateY(-3px);
+        }
+
+        .contact-item i {
+            color: var(--primary-blue);
+            font-size: 1.2rem;
+        }
+
+        .schedule-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .schedule-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--light-blue);
+            padding: 12px 20px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .schedule-item:hover {
+            background: #d4e6ff;
+            transform: translateX(5px);
+        }
+
+        .schedule-day {
+            font-weight: 600;
+            color: var(--dark-blue);
+        }
+
+        .schedule-time {
+            color: var(--primary-blue);
+            font-weight: 500;
+        }
+
+        /* CALENDAR POPUP STYLES */
+        #calendarModal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+        }
+
+        #calendarBox {
+            background: white;
+            width: 90%;
+            max-width: 500px;
+            height: 80vh;
+            max-height: 600px;
+            border-radius: 12px;
+            position: relative;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .calendar-header {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+            color: white;
+            padding: 1rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .calendar-header h3 {
+            margin: 0;
+            font-size: 1.3rem;
+        }
+
+        .calendar-header span {
+            font-size: 1.5rem;
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.2);
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
             align-items: center;
             justify-content: center;
+            transition: all 0.3s ease;
         }
 
-        .btn-primary {
-            background-color: var(--primary);
-            color: white;
+        .calendar-header span:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
         }
 
-        .btn-primary:hover {
-            background-color: var(--primary-dark);
+        .calendar-content {
+            flex-grow: 1;
+            overflow: hidden;
         }
 
-        .btn-danger {
-            background-color: var(--danger-color);
-            color: white;
-        }
-
-        .btn-danger:hover {
-            background-color: #c0392b;
-        }
-
-        .alert {
-            padding: 15px;
-            margin-bottom: 20px;
-            border-radius: 6px;
-        }
-
-        .alert-success {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-
-        .alert-danger {
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-
-        .info-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
-        }
-
-        .info-item {
-            margin-bottom: 15px;
-        }
-
-        .info-label {
-            font-weight: 600;
-            color: var(--dark);
-            margin-bottom: 5px;
-            display: block;
-        }
-
-        .info-value {
-            color: #555;
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
         }
 
         /* Responsive Design */
         @media (max-width: 992px) {
-            .sidebar {
-                width: 70px;
+            .content-wrapper {
+                margin-left: 70px; /* Adjusted for collapsed sidebar */
             }
             
-            .sidebar-header h2 {
-                display: none;
+            .profile-card {
+                flex-direction: column;
             }
             
-            .sidebar-nav a span {
-                display: none;
+            .left, .right {
+                width: 100%;
             }
             
-            .sidebar-nav a {
-                justify-content: center;
-            }
-            
-            .sidebar-nav a i {
-                margin: 0;
-            }
-            
-            .main-content {
-                margin-left: 70px;
-            }
-            
-            .info-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-            }
-            
-            .sidebar.active {
-                transform: translateX(0);
-            }
-            
-            .main-content {
-                margin-left: 0;
-            }
-            
-            .topbar {
-                padding: 15px 20px;
-            }
-            
-            .profile-content {
+            .left {
                 padding: 20px;
             }
             
-            .profile-header {
-                flex-direction: column;
-                text-align: center;
+            .left img {
+                width: 180px;
+                height: 180px;
             }
-            
-            .profile-avatar {
-                margin-right: 0;
-                margin-bottom: 20px;
-            }
-        }
-
-        /* Mobile Menu Toggle */
-        .menu-toggle {
-            display: none;
-            background: none;
-            border: none;
-            font-size: 24px;
-            color: var(--dark);
-            cursor: pointer;
         }
 
         @media (max-width: 768px) {
-            .menu-toggle {
-                display: block;
+            .content-wrapper {
+                margin-left: 0; /* No sidebar on mobile */
             }
+            
+            .container {
+                padding: 20px 15px;
+            }
+            
+            .left, .right {
+                padding: 20px;
+            }
+            
+            .left img {
+                width: 150px;
+                height: 150px;
+            }
+            
+            .left h2 {
+                font-size: 1.5rem;
+            }
+            
+            .contact-info {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .book-now-btn {
+                padding: 12px 30px;
+                font-size: 1rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .left img {
+                width: 120px;
+                height: 120px;
+            }
+            
+            .section-title {
+                font-size: 1.1rem;
+            }
+        }
+
+        /* Animation for elements */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .profile-card {
+            animation: fadeInUp 0.6s ease forwards;
         }
     </style>
 </head>
 <body>
-    <!-- Sidebar -->
-   <?php include 'doctor_sidebar.php'; ?>
-   $page_title = "Manage Schedule";
-    <?php include 'doctor_header.php'; ?>
-    <!-- Main Content -->
-    <div class="main-content">
+    <div class="main-container">
         
-        <!-- Profile Content -->
-        <div class="profile-content">
-            <!-- Profile Header -->
-            <div class="profile-header">
-                <?php if (!empty($doctor['PROFILE_IMAGE'])): ?>
-                    <img src="<?php echo htmlspecialchars($doctor['PROFILE_IMAGE']); ?>" alt="Profile" class="profile-avatar">
-                <?php else: ?>
-                    <div class="profile-avatar" style="background-color: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-size: 36px; font-weight: bold;">
-                        <?php echo strtoupper(substr($doctor['FIRST_NAME'], 0, 1) . substr($doctor['LAST_NAME'], 0, 1)); ?>
+        <div class="content-wrapper">
+            <div class="container">
+                <div class="profile-card">
+                    <!-- LEFT -->
+                    <div class="left">
+                        <img src="<?php echo htmlspecialchars($image_path); ?>" alt="Doctor">
+                        <h2>Dr. <?php echo htmlspecialchars($doctor['FIRST_NAME'].' '.$doctor['LAST_NAME']); ?></h2>
+                        <span class="badge"><?php echo htmlspecialchars($doctor['SPECIALISATION_NAME']); ?></span>
+                        
+                        <!-- Book Now Button -->
+                        <button class="book-now-btn" onclick="handleBooking(<?php echo $doctor_id; ?>)">
+                            <i class="fas fa-calendar-check"></i> Book Appointment
+                        </button>
                     </div>
-                <?php endif; ?>
-                
-                <div class="profile-info">
-                    <h2>Dr. <?php echo htmlspecialchars($doctor['FIRST_NAME'] . ' ' . $doctor['LAST_NAME']); ?></h2>
-                    <p><?php echo htmlspecialchars($doctor['SPECIALISATION_NAME']); ?></p>
-                    <p><?php echo htmlspecialchars($doctor['EDUCATION']); ?></p>
+
+                    <!-- RIGHT -->
+                    <div class="right">
+                        <div class="section-title">
+                            <i class="fas fa-user"></i> CONTACT
+                        </div>
+                        <div class="contact-info">
+                            <div class="contact-item">
+                                <i class="fas fa-phone"></i>
+                                <span><?php echo htmlspecialchars($doctor['PHONE']); ?></span>
+                            </div>
+                            <div class="contact-item">
+                                <i class="fas fa-envelope"></i>
+                                <span><?php echo htmlspecialchars($doctor['EMAIL']); ?></span>
+                            </div>
+                        </div>
+
+                        <div class="section-title">
+                            <i class="fas fa-info-circle"></i> PERSONAL INFORMATION
+                        </div>
+                        <div class="contact-info">
+                            <div class="contact-item">
+                                <i class="fas fa-venus-mars"></i>
+                                <span><?php echo htmlspecialchars($doctor['GENDER']); ?></span>
+                            </div>
+                            <div class="contact-item">
+                                <i class="fas fa-birthday-cake"></i>
+                                <span><?php echo date('d M Y', strtotime($doctor['DOB'])); ?></span>
+                            </div>
+                        </div>
+
+                        <div class="section-title">
+                            <i class="fas fa-graduation-cap"></i> EDUCATION
+                        </div>
+                        <div class="contact-info">
+                            <div class="contact-item">
+                                <i class="fas fa-user-graduate"></i>
+                                <span><?php echo htmlspecialchars($doctor['EDUCATION']); ?></span>
+                            </div>
+                        </div>
+
+                        <div class="section-title">
+                            <i class="fas fa-calendar-alt"></i> AVAILABLE SCHEDULE
+                        </div>
+                        <div class="schedule-container">
+                            <?php
+                            if (mysqli_num_rows($schedule_res) > 0) {
+                                while ($row = mysqli_fetch_assoc($schedule_res)) {
+                                    echo "<div class='schedule-item'>
+                                            <span class='schedule-day'>{$row['AVAILABLE_DAY']}</span>
+                                            <span class='schedule-time'>" . substr($row['START_TIME'],0,5) . " - " . substr($row['END_TIME'],0,5) . "</span>
+                                          </div>";
+                                }
+                            } else {
+                                echo "<p>No schedule available</p>";
+                            }
+                            ?>
+                        </div>
+                    </div>
                 </div>
             </div>
-            
-            <!-- Profile Tabs -->
-            <div class="profile-tabs">
-                <div class="tab active" data-tab="personal-info">Personal Information</div>
-                <div class="tab" data-tab="professional-info">Professional Information</div>
-                <div class="tab" data-tab="security">Security</div>
+        </div>
+    </div>
+
+    <!-- CALENDAR POPUP -->
+    <div id="calendarModal">
+        <div id="calendarBox">
+            <div class="calendar-header">
+                <h3>Select Appointment Date</h3>
+                <span onclick="closeCalendar()">&times;</span>
             </div>
-            
-            <!-- Tab Content -->
-            <div class="tab-content active" id="personal-info">
-                <?php if (isset($success_message)): ?>
-                    <div class="alert alert-success">
-                        <?php echo $success_message; ?>
-                    </div>
-                <?php endif; ?>
-                
-                <?php if (isset($error_message)): ?>
-                    <div class="alert alert-danger">
-                        <?php echo $error_message; ?>
-                    </div>
-                <?php endif; ?>
-                
-                <form method="POST" action="d_profile.php">
-                    <input type="hidden" name="update_profile" value="1">
-                    
-                    <div class="info-grid">
-                        <div class="form-group">
-                            <label for="first_name">First Name</label>
-                            <input type="text" class="form-control" id="first_name" name="first_name" value="<?php echo htmlspecialchars($doctor['FIRST_NAME']); ?>" disabled>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="last_name">Last Name</label>
-                            <input type="text" class="form-control" id="last_name" name="last_name" value="<?php echo htmlspecialchars($doctor['LAST_NAME']); ?>" disabled>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="dob">Date of Birth</label>
-                            <input type="date" class="form-control" id="dob" name="dob" value="<?php echo htmlspecialchars($doctor['DOB']); ?>" disabled>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="gender">Gender</label>
-                            <input type="text" class="form-control" id="gender" name="gender" value="<?php echo htmlspecialchars($doctor['GENDER']); ?>" disabled>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="phone">Phone Number</label>
-                            <input type="tel" class="form-control" id="phone" name="phone" value="<?php echo htmlspecialchars($doctor['PHONE']); ?>" required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="email">Email Address</label>
-                            <input type="email" class="form-control" id="email" name="email" value="<?php echo htmlspecialchars($doctor['EMAIL']); ?>" required>
-                        </div>
-                    </div>
-                    
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-save"></i> Save Changes
-                    </button>
-                </form>
-            </div>
-            
-            <div class="tab-content" id="professional-info">
-                <div class="info-grid">
-                    <div class="info-item">
-                        <span class="info-label">Specialization</span>
-                        <span class="info-value"><?php echo htmlspecialchars($doctor['SPECIALISATION_NAME']); ?></span>
-                    </div>
-                    
-                    <div class="info-item">
-                        <span class="info-label">Education</span>
-                        <span class="info-value"><?php echo htmlspecialchars($doctor['EDUCATION']); ?></span>
-                    </div>
-                    
-                    <div class="info-item">
-                        <span class="info-label">Date of Joining</span>
-                        <span class="info-value"><?php echo date('F d, Y', strtotime($doctor['DOJ'])); ?></span>
-                    </div>
-                    
-                    <!-- <div class="info-item">
-                        <span class="info-label">Years of Experience</span>
-                        <span class="info-value"><?php echo date('Y') - date('Y', strtotime($doctor['DOJ'])); ?> years</span>
-                    </div> -->
-                </div>
-            </div>
-            
-            <div class="tab-content" id="security">
-                <?php if (isset($password_success)): ?>
-                    <div class="alert alert-success">
-                        <?php echo $password_success; ?>
-                    </div>
-                <?php endif; ?>
-                
-                <?php if (isset($password_error)): ?>
-                    <div class="alert alert-danger">
-                        <?php echo $password_error; ?>
-                    </div>
-                <?php endif; ?>
-                
-                <form method="POST" action="d_profile.php">
-                    <input type="hidden" name="change_password" value="1">
-                    
-                    <div class="form-group">
-                        <label for="current_password">Current Password</label>
-                        <input type="password" class="form-control" id="current_password" name="current_password" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="new_password">New Password</label>
-                        <input type="password" class="form-control" id="new_password" name="new_password" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="confirm_password">Confirm New Password</label>
-                        <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
-                    </div>
-                    
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-key"></i> Change Password
-                    </button>
-                </form>
+            <div class="calendar-content">
+                <iframe id="calendarFrame"></iframe>
             </div>
         </div>
     </div>
 
     <script>
-        // Tab functionality
-        document.addEventListener('DOMContentLoaded', function() {
-            const tabs = document.querySelectorAll('.tab');
-            const tabContents = document.querySelectorAll('.tab-content');
-            
-            tabs.forEach(tab => {
-                tab.addEventListener('click', () => {
-                    const tabId = tab.getAttribute('data-tab');
-                    
-                    // Remove active class from all tabs and contents
-                    tabs.forEach(t => t.classList.remove('active'));
-                    tabContents.forEach(content => content.classList.remove('active'));
-                    
-                    // Add active class to clicked tab and corresponding content
-                    tab.classList.add('active');
-                    document.getElementById(tabId).classList.add('active');
-                });
-            });
-            
-            // Mobile menu toggle
-            const menuToggle = document.getElementById('menuToggle');
-            const sidebar = document.getElementById('sidebar');
-            
-            menuToggle.addEventListener('click', () => {
-                sidebar.classList.toggle('active');
-            });
-            
-            // Close sidebar when clicking outside on mobile
-            document.addEventListener('click', (e) => {
-                if (window.innerWidth <= 768) {
-                    if (!sidebar.contains(e.target) && !menuToggle.contains(e.target)) {
-                        sidebar.classList.remove('active');
-                    }
-                }
-            });
-        });
+        // Check if user is logged in (passed from PHP)
+        const isLoggedIn = <?php echo isset($_SESSION['LOGGED_IN']) && $_SESSION['LOGGED_IN'] ? 'true' : 'false'; ?>;
+        
+        function handleBooking(doctorId) {
+            if (isLoggedIn) {
+                // User is logged in, open calendar directly
+                openCalendar(doctorId);
+            } else {
+                // User is not logged in, redirect to login with standalone parameter
+                window.location.href = 'login.php?standalone=true';
+            }
+        }
+        
+        function openCalendar(id){
+            document.getElementById("calendarFrame").src = "calendar.php?doctor_id=" + id;
+            document.getElementById("calendarModal").style.display = "flex";
+            document.body.style.overflow = 'hidden'; // Prevent scrolling when modal is open
+        }
+        
+        function closeCalendar(){
+            document.getElementById("calendarModal").style.display = "none";
+            document.getElementById("calendarFrame").src = "";
+            document.body.style.overflow = 'auto'; // Enable scrolling back
+        }
+        
+        // Close modal when clicking outside of it
+        window.onclick = function(event) {
+            const modal = document.getElementById("calendarModal");
+            if (event.target == modal) {
+                closeCalendar();
+            }
+        }
     </script>
 </body>
 </html>
