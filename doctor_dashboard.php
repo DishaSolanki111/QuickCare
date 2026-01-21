@@ -15,7 +15,6 @@ if (
 // ================== DATABASE CONNECTION ==================
 
 include 'config.php';
-
 // ================== DOCTOR BASIC INFO ==================
  $doctor_id = $_SESSION['DOCTOR_ID'];
  $doctor_name = "Doctor";
@@ -152,81 +151,6 @@ body {
     padding: 0;
     min-height: 100vh;
     width: calc(100% - 260px);
-}
-
-/* Header */
-.topbar {
-    background: var(--white);
-    padding: 20px 30px;
-    box-shadow: var(--shadow-md);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    position: sticky;
-    top: 0;
-    z-index: 50;
-    width: 100%;
-}
-
-.topbar h1 {
-    color: var(--dark);
-    font-size: 24px;
-    font-weight: 700;
-}
-
-.topbar-right {
-    display: flex;
-    align-items: center;
-}
-
-.notification-icon {
-    position: relative;
-    margin-right: 20px;
-    color: var(--text);
-    font-size: 20px;
-    cursor: pointer;
-}
-
-.notification-badge {
-    position: absolute;
-    top: -5px;
-    right: -5px;
-    background: var(--warning);
-    color: var(--white);
-    font-size: 10px;
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.user-info {
-    display: flex;
-    align-items: center;
-}
-
-.user-avatar {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    object-fit: cover;
-    margin-right: 12px;
-    border: 2px solid var(--primary-light);
-}
-
-.user-details h3 {
-    font-size: 16px;
-    font-weight: 600;
-    color: var(--dark);
-    margin: 0;
-}
-
-.user-details p {
-    font-size: 13px;
-    color: var(--text-light);
-    margin: 0;
 }
 
 /* Dashboard Content */
@@ -445,25 +369,11 @@ body {
 <body>
 
 <div class="container">
+
     <?php include 'doctor_sidebar.php'; ?>
 
-    <!-- Main Content -->
     <div class="main-content">
-        <!-- Header -->
-        <header class="topbar">
-            <h2>Welcome back, Dr. <?php echo $doctor_name; ?></h2>
-        
-            <div class="topbar-right">
-                <div class="user-info">
-                    <img src="<?php echo htmlspecialchars($doc['PROFILE_IMAGE']); ?>" alt="Profile" class="user-avatar">
-                    <div class="user-details">
-                        <h3>Dr. <?php echo $doctor_name; ?></h3>
-                        <p><?php echo date("F j, Y"); ?></p>
-                    </div>
-                </div>
-            </div>
-        </header>
-        
+        <?php include 'doctor_header.php'; ?>
         <!-- Dashboard Content -->
         <div class="dashboard-content">
             <div class="welcome-section">
