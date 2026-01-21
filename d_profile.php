@@ -642,22 +642,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
                     <div class="info-grid">
                         <div class="form-group">
                             <label for="first_name">First Name</label>
-                            <input type="text" class="form-control" id="first_name" name="first_name" value="<?php echo htmlspecialchars($doctor['FIRST_NAME']); ?>" required>
+                            <input type="text" class="form-control" id="first_name" name="first_name" value="<?php echo htmlspecialchars($doctor['FIRST_NAME']); ?>" disabled>
                         </div>
                         
                         <div class="form-group">
                             <label for="last_name">Last Name</label>
-                            <input type="text" class="form-control" id="last_name" name="last_name" value="<?php echo htmlspecialchars($doctor['LAST_NAME']); ?>" required>
+                            <input type="text" class="form-control" id="last_name" name="last_name" value="<?php echo htmlspecialchars($doctor['LAST_NAME']); ?>" disabled>
                         </div>
                         
                         <div class="form-group">
                             <label for="dob">Date of Birth</label>
-                            <input type="date" class="form-control" id="dob" name="dob" value="<?php echo htmlspecialchars($doctor['DOB']); ?>" readonly>
+                            <input type="date" class="form-control" id="dob" name="dob" value="<?php echo htmlspecialchars($doctor['DOB']); ?>" disabled>
                         </div>
                         
                         <div class="form-group">
                             <label for="gender">Gender</label>
-                            <input type="text" class="form-control" id="gender" name="gender" value="<?php echo htmlspecialchars($doctor['GENDER']); ?>" readonly>
+                            <input type="text" class="form-control" id="gender" name="gender" value="<?php echo htmlspecialchars($doctor['GENDER']); ?>" disabled>
                         </div>
                         
                         <div class="form-group">
