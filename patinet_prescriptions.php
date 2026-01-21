@@ -204,7 +204,7 @@ if (isset($_GET['download']) && !empty($_GET['download'])) {
 
 html {
     height: 100%;
-    overflow-y: scroll;
+  
 }
 
 .container {

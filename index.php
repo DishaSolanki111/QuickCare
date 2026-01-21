@@ -631,35 +631,35 @@ include 'header.php';
             <div class="specialist-cards">
                 <div class="specialist-card fade-in">
                     <div class="specialist-icon">
-                        <i class="fas fa-heartbeat"></i>
+                        <i class="fas fa-user-md"></i>
                     </div>
                     <h3 class="specialist-title">Pediatrician</h3>
                     <p class="specialist-subtitle">Child Specialist</p>
-                    <a href="#" class="specialist-link">Book Now <i class="fas fa-arrow-right"></i></a>
+                    
                 </div>
                 <div class="specialist-card fade-in">
                     <div class="specialist-icon">
-                        <i class="fas fa-brain"></i>
+                        <i class="fas fa-heartbeat"></i>
                     </div>
                     <h3 class="specialist-title">Cardiologist</h3>
                     <p class="specialist-subtitle">Heart Specialist</p>
-                    <a href="#" class="specialist-link">Book Now <i class="fas fa-arrow-right"></i></a>
-                </div>
-                <div class="specialist-card fade-in">
-                    <div class="specialist-icon">
-                        <i class="fas fa-hand-holding-medical"></i>
-                    </div>
-                    <h3 class="specialist-title">Orthopedics</h3>
-                    <p class="specialist-subtitle">Joint and bones Specialist</p>
-                    <a href="#" class="specialist-link">Book Now <i class="fas fa-arrow-right"></i></a>
+                   
                 </div>
                 <div class="specialist-card fade-in">
                     <div class="specialist-icon">
                         <i class="fas fa-bone"></i>
                     </div>
+                    <h3 class="specialist-title">Orthopedics</h3>
+                    <p class="specialist-subtitle">Joint and bones Specialist</p>
+                  
+                </div>
+                <div class="specialist-card fade-in">
+                    <div class="specialist-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
                     <h3 class="specialist-title">Neurologist</h3>
                     <p class="specialist-subtitle">Brain & Nerves</p>
-                    <a href="#" class="specialist-link">Book Now <i class="fas fa-arrow-right"></i></a>
+                   
                 </div>
             </div>
         </div>

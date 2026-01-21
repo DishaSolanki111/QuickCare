@@ -78,7 +78,7 @@ if ($today_result->num_rows > 0) {
     SELECT a.*, p.FIRST_NAME as PAT_FNAME, p.LAST_NAME as PAT_LNAME, p.PHONE as PAT_PHONE, p.EMAIL as PAT_EMAIL
     FROM appointment_tbl a
     JOIN patient_tbl p ON a.PATIENT_ID = p.PATIENT_ID
-    WHERE a.DOCTOR_ID = ? AND a.APPOINTMENT_DATE > ?
+    WHERE a.DOCTOR_ID = ? AND a.APPOINTMENT_DATE < ?
     ORDER BY a.APPOINTMENT_DATE, a.APPOINTMENT_TIME
 ";
  $upcoming_stmt = $conn->prepare($upcoming_sql);
@@ -679,10 +679,7 @@ if ($past_result->num_rows > 0) {
                                     <i class="far fa-clock"></i>
                                     <span><?php echo date('h:i A', strtotime($appointment['APPOINTMENT_TIME'])); ?></span>
                                 </div>
-                                <div class="appointment-detail">
-                                    <i class="fas fa-id-card"></i>
-                                    <span>ID: #<?php echo $appointment['APPOINTMENT_ID']; ?></span>
-                                </div>
+                                
                             </div>
                             
                             <div class="appointment-actions">
@@ -743,10 +740,7 @@ if ($past_result->num_rows > 0) {
                                     <i class="far fa-clock"></i>
                                     <span><?php echo date('h:i A', strtotime($appointment['APPOINTMENT_TIME'])); ?></span>
                                 </div>
-                                <div class="appointment-detail">
-                                    <i class="fas fa-id-card"></i>
-                                    <span>ID: <?php echo $appointment['APPOINTMENT_ID']; ?></span>
-                                </div>
+                               
                             </div>
                             
                             <div class="appointment-actions">
@@ -795,10 +789,7 @@ if ($past_result->num_rows > 0) {
                                     <i class="far fa-clock"></i>
                                     <span><?php echo date('h:i A', strtotime($appointment['APPOINTMENT_TIME'])); ?></span>
                                 </div>
-                                <div class="appointment-detail">
-                                    <i class="fas fa-id-card"></i>
-                                    <span>ID: #<?php echo $appointment['APPOINTMENT_ID']; ?></span>
-                                </div>
+                                
                             </div>
                             
                             <div class="appointment-actions">
