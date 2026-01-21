@@ -37,16 +37,33 @@ body {
 }
 
 /* ================== SIDEBAR STYLES ================== */
-.sidebar {
-    width: 250px;
-    background: var(--dark-blue);
-    min-height: 100vh;
-    color: white;
-    padding-top: 30px;
-    position: fixed; /* Keeps sidebar in place while scrolling */
-    z-index: 100;    /* Ensures sidebar is on top of other content */
-    transition: transform 0.3s ease; /* Smooth slide-in/out for mobile */
-}
+ .sidebar { 
+            width: 250px; 
+            background: var(--dark-blue);
+             height: 100vh; 
+             color: white; 
+              padding-top: 30px;
+               position: fixed; 
+               left: 0; 
+               top: 0; 
+               overflow-y: auto; 
+               z-index: 1000;
+               box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+                transition: transform 0.3s ease;
+         } 
+         .sidebar::-webkit-scrollbar { 
+            width: 8px; 
+            } 
+            .sidebar::-webkit-scrollbar-track {
+                 background: var(--mid-blue); 
+                } 
+                 .sidebar::-webkit-scrollbar-thumb {
+                 background: var(--light-blue); 
+                 border-radius: 4px; 
+                } 
+            .sidebar::-webkit-scrollbar-thumb:hover { 
+                background: var(--gray-blue); 
+            }
 
 .logo-img {
     width: 80px;
@@ -149,7 +166,7 @@ body {
   <div class="sidebar" id="sidebar">
         <img src="uploads/logo.JPG" alt="QuickCare Logo" class="logo-img" style="display:block; margin: 0 auto 10px auto; width:80px; height:80px; border-radius:50%;">  
         <h2>QuickCare</h2>
-
+        <a href="index.php">Home</a>
         <a href="doctor_dashboard.php" >Dashboard</a>
         <a href="d_profile.php">My Profile</a>
         <a href="mangae_schedule_doctor.php">Manage Schedule</a>

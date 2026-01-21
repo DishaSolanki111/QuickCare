@@ -130,12 +130,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_medicine_remin
             --gray-blue: #D0D7E1;
             --white: #ffffff;
             --card-bg: #F6F9FB;
-            --primary-color: #1a3a5f;
-            --secondary-color: #3498db;
-            --accent-color: #2ecc71;
-            --danger-color: #e74c3c;
-            --warning-color: #f39c12;
-            --info-color: #17a2b8;
+           
         }
         
         body {
@@ -155,44 +150,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_medicine_remin
             position: fixed;
         }
 
-        .sidebar h2 {
-            text-align: center;
-            margin-bottom: 40px;
-            color: #9CCDD8;
-        }
-
-        .sidebar a {
-            display: block;
-            padding: 15px 25px;
-            color: #D0D7E1;
-            text-decoration: none;
-            font-size: 17px;
-            border-left: 4px solid transparent;
-        }
-
-        .sidebar a:hover, .sidebar a.active {
-            background: #064469;
-            border-left: 4px solid #9CCDD8;
-            color: white;
-        }
-
-        .logout-btn:hover{
-            background-color: var(--light-blue);
-        }
-        .logout-btn {
-            display: block;
-            width: 80%;
-            margin: 20px auto 0 auto;
-            padding: 10px;
-            background-color: var(--soft-blue);
-            color: var(--white);    
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            text-align: center;
-            transition: background-color 0.3s;
-        }
+       
         
         .main-content {
             margin-left: 240px;
@@ -494,20 +452,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_medicine_remin
     </style>
 </head>
 <body>
-    <!-- Sidebar -->
-    <div class="sidebar">
-        <img src="uploads/logo.JPG" alt="QuickCare Logo" style="display:block; margin: 0 auto 10px auto; width:80px; height:80px; border-radius:50%;">  
-        <h2>QuickCare</h2>
-        <a href="receptionist.php">Dashboard</a>
-        <a href="recep_profile.php">View My Profile</a>
-        <a href="manage_appointments.php">Manage Appointments</a>
-        <a href="manage_doctor_schedule.php">Manage Doctor Schedule</a>
-        <a href="manage_medicine.php">Manage Medicine</a>
-        <a href="set_reminder.php" class="active">Set Reminder</a>
-        <a href="manage_user_profile.php">Manage User Profile</a>
-        <a href="view_prescription.php">View Prescription</a>
-        <button class="logout-btn">Logout</button>
-    </div>
+  <?php include 'recept_sidebar.php'; ?>
 
     <!-- Main Content -->
     <div class="main-content">

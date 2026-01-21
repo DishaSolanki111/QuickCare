@@ -27,20 +27,39 @@
         }
 
     /* Sidebar */
-    .sidebar {
-            width: 250px;
-            background: #072D44;
-            min-height: 100vh;
-            color: white;
-            padding-top: 30px;
-            position: fixed;
-        }
-
+   .sidebar { 
+            width: 250px; 
+            background: var(--dark-blue);
+             height: 100vh; 
+             color: white; 
+              padding-top: 30px;
+               position: fixed; 
+               left: 0; 
+               top: 0; 
+               overflow-y: auto; 
+               z-index: 1000;
+               box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+                transition: transform 0.3s ease;
+         } 
+         /* Custom scrollbar for sidebar */ 
+         .sidebar::-webkit-scrollbar { 
+            width: 8px; 
+            } 
+            
+                  
+                } 
         .sidebar h2 {
             text-align: center;
             margin-bottom: 40px;
             color: #9CCDD8;
         }
+         .sidebar::-webkit-scrollbar-thumb {
+                 background: var(--light-blue); 
+                 border-radius: 4px; 
+                } 
+            .sidebar::-webkit-scrollbar-thumb:hover { 
+                background: var(--gray-blue); 
+            }
 
         .sidebar a {
             display: block;
@@ -128,8 +147,8 @@
 <div class="sidebar">
   <img src="uploads/logo.JPG" alt="QuickCare Logo" class="logo-img" style="display:block; margin: 0 auto 10px auto; width:80px; height:80px; border-radius:50%;">  
   <h2>QuickCare</h2>
-
-  <a href="admin.php">Dashboard</a>
+    <a href="index.php">Home</a>
+    <a href="admin.php">Dashboard</a>  
     <a href="Admin_appoitment.php">View Appointments</a>
     <a href="Admin_doctor.php">Manage Doctors</a>
     <a href="Admin_recept.php">Manage Receptionist</a>

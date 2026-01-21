@@ -104,11 +104,7 @@ if (!empty($prescription_id)) {
             --primary-color: #1a3a5f;
             --secondary-color: #3498db;
             --accent-color: #2ecc71;
-            --light-color: #f8f9fa;
-            --dark-color: #343a40;
-            --danger-color: #e74c3c;
-            --warning-color: #f39c12;
-            --info-color: #17a2b8;
+           
             --dark-blue: #072D44;
             --mid-blue: #064469;
             --soft-blue: #5790AB;

@@ -7,7 +7,7 @@
     }
 
     include 'config.php';
-
+    include 'recept_sidebar.php';
     $receptionist_id = $_SESSION['RECEPTIONIST_ID'];
 
     // ================= FETCH PRESCRIPTIONS =================

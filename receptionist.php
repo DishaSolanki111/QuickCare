@@ -1,5 +1,6 @@
 <?php
 session_start();
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -24,13 +25,7 @@ session_start();
     --light-blue: #9CCDD8;
     --gray-blue: #D0D7E1;
     --white: #ffffff;
-    --card-bg: #F6F9FB;
-    --primary-color: #1a3a5f;
-    --secondary-color: #3498db;
-    --accent-color: #2ecc71;
-    --danger-color: #e74c3c;
-    --warning-color: #f39c12;
-    --info-color: #17a2b8;
+    
 }
 
 /* ---------------- GLOBAL STYLES ---------------- */
@@ -43,55 +38,7 @@ body {
 }
 
 /* ---------------- SIDEBAR ---------------- */
-.sidebar {
-            width: 250px;
-            background: #072D44;
-            min-height: 100vh;
-            color: white;
-            padding-top: 30px;
-            position: fixed;
-        }
 
-        .sidebar h2 {
-            text-align: center;
-            margin-bottom: 40px;
-            color: #9CCDD8;
-        }
-
-        .sidebar a {
-            display: block;
-            padding: 15px 25px;
-            color: #D0D7E1;
-            text-decoration: none;
-            font-size: 17px;
-            border-left: 4px solid transparent;
-        }
-
-        .sidebar a:hover, .sidebar a.active {
-            background: #064469;
-            border-left: 4px solid #9CCDD8;
-            color: white;
-        }
-
-        .logout-btn:hover{
-            background-color: var(--light-blue);
-        }
-        .logout-btn {
-            
-            display: block;
-            width: 80%;
-            margin: 20px auto 0 auto;
-            padding: 10px;
-            background-color: var(--soft-blue);
-            color: var(--white);    
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            text-align: center;
-            transition: background-color 0.3s;
-        }
-        
 
     /* Top bar */
     .topbar {
@@ -212,30 +159,7 @@ body {
 </style>
 
 </head>
-<body>
-
-<!-- ---------------- SIDEBAR ---------------- -->
-<div class="sidebar">
-    <img src="uploads/logo.JPG" alt="QuickCare Logo" class="logo-img" style="display:block; margin: 0 auto 10px auto; width:80px; height:80px; border-radius:50%;">  
-        <h2>QuickCare</h2>
-    
-
-    <a href="receptionist.php" class="active">Dashboard</a>
-    <a href="recep_profile.php">View My Profile</a>
-    <a href="appointment_recep.php">Manage Appointments</a>
-    <a href="doctor_schedule_recep.php">Manage Doctor Schedule</a>
-    <a href="manage_medicine.php">Manage Medicine</a>
-    <a href="st_reminder.php">Set Reminder</a>
-    <a href="manage_user_profile.php">Manage User Profile</a>
-    <a href="view_prescription.php">View Prescription</a>
-    <a href="logout.php" class="logout-btn">logout</a>
-   
-</div>
-
-
-
-
-
+<?php include 'recept_sidebar.php'; ?>
 <!-- ---------------- MAIN CONTENT ---------------- -->
 <div class="main-content">
  <div class="topbar">
