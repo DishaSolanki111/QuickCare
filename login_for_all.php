@@ -1,4 +1,6 @@
-
+<?php
+include 'header.php';
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -47,6 +49,30 @@
             min-height: 100vh;
             padding: 20px;
         }
+
+.login-footer {
+    margin-bottom: 12px;
+    display: flex;
+    justify-content: space-between; /* ✅ left & right edges */
+    align-items: center;
+
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0 4px; /* slight breathing space */
+}
+
+.login-footer a {
+    font-size: 14px;
+    color: #1a73e8;
+    text-decoration: none;
+    font-weight: 500;
+    white-space: nowrap; /* ✅ text cut nahi hoga */
+}
+
+.login-footer a:hover {
+    text-decoration: underline;
+}
+
 
         /* Custom Scrollbar */
         ::-webkit-scrollbar {
@@ -360,7 +386,10 @@ include 'header.php';
                 <input type="text" name="username" placeholder="Username" required>
                 <input type="password" name="pswd" placeholder="Password" required>
                 <button type="submit">Login</button>
-                <a href="patientform.php" class="small">Not registered yet? Create an account</a>
+  <div class="login-footer">
+    <a href="register.php" class="left-link">Create account</a>
+    <a href="forgot_password.php" class="right-link">Forgot password?</a>
+</div>
             </form>
 
             <!-- Doctor Login Form -->
@@ -371,7 +400,9 @@ include 'header.php';
                 <input type="text" name="username" placeholder="Username" required>
                 <input type="password" name="pswd" placeholder="Password" required>
                 <button type="submit">Login</button>
-                <div class="small">Ask Receptionist to register you.</div>
+                <div class="login-footer">
+    <a href="forgot_password.php" class="right-link">Forgot password?</a>
+</div>
             </form>
 
             <!-- Receptionist Login Form -->
@@ -382,6 +413,9 @@ include 'header.php';
                 <input type="text" name="username" placeholder="Username" required>
                 <input type="password" name="pswd" placeholder="Password" required>
                 <button type="submit">Login</button>
+                <div class="login-footer">
+    <a href="forgot_password.php" class="right-link">Forgot password?</a>
+</div>
             </form>
         </div>
     </div>

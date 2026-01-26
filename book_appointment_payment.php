@@ -39,6 +39,8 @@ if (isset($_POST['razorpay_payment_id'])) {
     $payment_id = $_POST['razorpay_payment_id'];
     $signature = isset($_POST['razorpay_signature']) ? $_POST['razorpay_signature'] : '';
     
+    // Database insertion is commented out to skip saving to database
+    /*
     // Insert appointment into database
     $insert_query = "INSERT INTO appointment_tbl (PATIENT_ID, DOCTOR_ID, APPOINTMENT_DATE, APPOINTMENT_TIME, REASON, STATUS) 
                    VALUES ($patient_id, $doctor_id, '$selected_date', '$selected_time', '$reason', 'COMPLETED')";
@@ -54,21 +56,25 @@ if (isset($_POST['razorpay_payment_id'])) {
                                 VALUES ($appointment_id, $amount, NOW(), 'RAZORPAY', 'COMPLETED', '$payment_id')";
         
         $payment_result = mysqli_query($conn, $payment_insert_query);
-        
-        // Clear booking session data
-        unset($_SESSION['booking_doctor_id']);
-        unset($_SESSION['booking_doctor_name']);
-        unset($_SESSION['booking_specialization']);
-        unset($_SESSION['booking_date']);
-        unset($_SESSION['booking_time']);
-        unset($_SESSION['booking_reason']);
-        
-        // Redirect to success page
-        header("Location: payment_success.php");
-        exit;
+    */
+    
+    // Since we're not inserting into database, we'll proceed directly to clearing session and redirecting
+    // Clear booking session data
+    unset($_SESSION['booking_doctor_id']);
+    unset($_SESSION['booking_doctor_name']);
+    unset($_SESSION['booking_specialization']);
+    unset($_SESSION['booking_date']);
+    unset($_SESSION['booking_time']);
+    unset($_SESSION['booking_reason']);
+    
+    // Redirect to success page
+    header("Location: payment_success.php");
+    exit;
+    /*
     } else {
         $error_message = "Failed to book appointment. Please try again. Error: " . mysqli_error($conn);
     }
+    */
 }
 ?>
 <!DOCTYPE html>
