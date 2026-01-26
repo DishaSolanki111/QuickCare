@@ -365,7 +365,7 @@ body {
     </style>
 </head>
 <body>
-<?php include 'recept_sidebar.php'; ?>
+
 <div class="container">
 
     <!-- LEFT SIDEBAR -->
