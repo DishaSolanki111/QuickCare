@@ -31,10 +31,7 @@ WHERE ds.RECEPTIONIST_ID = '$receptionist_id' AND a.APPOINTMENT_DATE = CURDATE()
 
 // Handle form submission for profile update
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_profile'])) {
-    $first_name = mysqli_real_escape_string($conn, $_POST['first_name']);
-    $last_name = mysqli_real_escape_string($conn, $_POST['last_name']);
-    $dob = mysqli_real_escape_string($conn, $_POST['dob']);
-    $gender = mysqli_real_escape_string($conn, $_POST['gender']);
+    // Only update phone, email, and address
     $phone = mysqli_real_escape_string($conn, $_POST['phone']);
     $email = mysqli_real_escape_string($conn, $_POST['email']);
     $address = mysqli_real_escape_string($conn, $_POST['address']);
@@ -60,11 +57,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_profile'])) {
         }
     }
     
+    // Only update phone, email, and address
     $update_query = "UPDATE receptionist_tbl SET 
-                   FIRST_NAME = '$first_name',
-                   LAST_NAME = '$last_name',
-                   DOB = '$dob',
-                   GENDER = '$gender',
                    PHONE = '$phone',
                    EMAIL = '$email',
                    ADDRESS = '$address'
@@ -111,7 +105,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
     }
 }
 
+// Handle 2FA toggle
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['toggle_2fa'])) {
+    $enable_2fa = isset($_POST['enable_2fa']) ? 1 : 0;
+    
+    // In a real application, you would save this to the database
+    // For now, we'll just set a session variable
+    $_SESSION['2FA_ENABLED'] = $enable_2fa;
+    
+    $security_success = "Two-factor authentication " . ($enable_2fa ? "enabled" : "disabled") . " successfully!";
+}
 
+// Check if 2FA is enabled (in a real app, this would come from the database)
+ $two_fa_enabled = isset($_SESSION['2FA_ENABLED']) ? $_SESSION['2FA_ENABLED'] : 0;
 ?>
 
 <!DOCTYPE html>
@@ -721,26 +727,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
                             <input type="hidden" name="update_profile" value="1">
                             
                             <div class="info-grid">
-                                <div class="form-group">
-                                    <label for="first_name">First Name</label>
-                                    <input type="text" class="form-control" id="first_name" name="first_name" value="<?php echo htmlspecialchars($receptionist['FIRST_NAME']); ?>" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="last_name">Last Name</label>
-                                    <input type="text" class="form-control" id="last_name" name="last_name" value="<?php echo htmlspecialchars($receptionist['LAST_NAME']); ?>" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="dob">Date of Birth</label>
-                                    <input type="date" class="form-control" id="dob" name="dob" value="<?php echo htmlspecialchars($receptionist['DOB']); ?>" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="gender">Gender</label>
-                                    <select class="form-control" id="gender" name="gender" required>
-                                        <option value="MALE" <?php echo $receptionist['GENDER'] == 'MALE' ? 'selected' : ''; ?>>Male</option>
-                                        <option value="FEMALE" <?php echo $receptionist['GENDER'] == 'FEMALE' ? 'selected' : ''; ?>>Female</option>
-                                        <option value="OTHER" <?php echo $receptionist['GENDER'] == 'OTHER' ? 'selected' : ''; ?>>Other</option>
-                                    </select>
-                                </div>
                                 <div class="form-group">
                                     <label for="phone">Phone Number</label>
                                     <input type="tel" class="form-control" id="phone" name="phone" value="<?php echo htmlspecialchars($receptionist['PHONE']); ?>" required>
