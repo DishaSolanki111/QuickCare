@@ -1,14 +1,10 @@
 <?php
-// Start session to get booking data
 session_start();
-
 include "config.php";
 include "header.php";
-
-// Check if doctor is selected
-if (!isset($_SESSION['booking_doctor_id'])) {
-    header("Location: doctors.php");
-    exit();
+if (!isset($_SESSION['PATIENT_ID'])) {
+    header("Location: book_appointment_login.php");
+    exit;
 }
 
 // Get doctor details
