@@ -307,31 +307,66 @@ include 'config.php';
                 if (empty($form_data['last_name'])) {
                     $errors['last_name'] = 'Last name is required';
                 }
-                
-                if (empty($form_data['username'])) {
-                    $errors['username'] = 'Username is required';
-                }
-                
-                if (empty($form_data['password'])) {
-                    $errors['password'] = 'Password is required';
-                } elseif (strlen($form_data['password']) < 6) {
-                    $errors['password'] = 'Password must be at least 6 characters';
-                }
-                
-                // Validate email format if provided
-                if (!empty($form_data['email'])) {
-                    if (!filter_var($form_data['email'], FILTER_VALIDATE_EMAIL)) {
-                        $errors['email'] = 'Invalid email format';
+                // ---------------- DATE VALIDATION ----------------
+                // Validate DOB is not empty and not in the future
+                if (empty($dob)) {
+                    $errors[] = "Date of Birth is required.";
+                } else {
+                    $dob_date = new DateTime($dob);
+                    $today = new DateTime();
+                    if ($dob_date > $today) {
+                        $errors[] = "Date of Birth cannot be in the future.";
                     }
                 }
                 
-                // Validate phone number if provided
-                if (!empty($form_data['phone'])) {
-                    if (strlen($form_data['phone']) < 10 || strlen($form_data['phone']) > 15) {
-                        $errors['phone'] = 'Invalid phone number';
+                // Validate DOJ is not empty and not in the future
+                if (empty($doj)) {
+                    $errors[] = "Date of Joining is required.";
+                } else {
+                    $doj_date = new DateTime($doj);
+                    $today = new DateTime();
+                    if ($doj_date > $today) {
+                        $errors[] = "Date of Joining cannot be in the future.";
                     }
                 }
                 
+                // Validate DOJ is after DOB
+                if (!empty($dob) && !empty($doj)) {
+                    $dob_date = new DateTime($dob);
+                    $doj_date = new DateTime($doj);
+                    if ($doj_date <= $dob_date) {
+                        $errors[] = "Date of Joining must be after Date of Birth.";
+                    }
+                }
+
+                // ---------------- USERNAME VALIDATION ----------------
+                if (
+                    !preg_match('/^[A-Z][A-Za-z0-9]*(_[A-Za-z0-9]+)*$/', $username) ||
+                    strlen($username) > 20
+                ) {
+                    $errors[] = "Username must start with a capital letter, max 20 chars, no spaces, no consecutive underscores, and not end with underscore.";
+                }
+
+                // ---------------- PASSWORD VALIDATION ----------------
+                if (
+                    strlen($password) < 8 ||
+                    !preg_match('/[A-Z]/', $password) ||
+                    !preg_match('/[0-9]/', $password) ||
+                    !preg_match('/[\W]/', $password)
+                ) {
+                    $errors[] = "Password must be at least 8 characters and include 1 uppercase letter, 1 digit, and 1 special character.";
+                }
+
+                // ---------------- PHONE VALIDATION ----------------
+                if (!preg_match('/^[0-9]{10}$/', $phone)) {
+                    $errors[] = "Phone number must be exactly 10 digits.";
+                }
+
+                // ---------------- EMAIL VALIDATION ----------------
+                if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                    $errors[] = "Invalid email format.";
+                }
+
                 // If no errors, proceed with database insertion
                 if (empty($errors)) {
                     // Sanitize inputs
@@ -406,13 +441,13 @@ include 'config.php';
                 
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="dob">Date of Birth</label>
+                        <label for="dob">Date of Birth <span class="required">*</span></label>
                         <input type="date" id="dob" name="dob" value="<?php echo htmlspecialchars($form_data['dob']); ?>">
                         <div class="error-message" id="dob_error"></div>
                     </div>
                     
                     <div class="form-group">
-                        <label for="doj">Date of Joining</label>
+                        <label for="doj">Date of Joining <span class="required">*</span></label>
                         <input type="date" id="doj" name="doj" value="<?php echo htmlspecialchars($form_data['doj']); ?>">
                         <div class="error-message" id="doj_error"></div>
                     </div>
@@ -438,13 +473,13 @@ include 'config.php';
                 
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="phone">Phone Number</label>
-                        <input type="text" id="phone" name="phone" value="<?php echo htmlspecialchars($form_data['phone']); ?>">
+                        <label for="phone">Phone Number<span class="required">*</span></label>
+                        <input type="text" id="phone" name="phone" max=10 value="<?php echo htmlspecialchars($form_data['phone']); ?>">
                         <div class="error-message" id="phone_error"><?php echo $errors['phone'] ?? ''; ?></div>
                     </div>
                     
                     <div class="form-group">
-                        <label for="email">Email</label>
+                        <label for="email">Email<span class="required">*</span></label>
                         <input type="email" id="email" name="email" value="<?php echo htmlspecialchars($form_data['email']); ?>">
                         <div class="error-message" id="email_error"><?php echo $errors['email'] ?? ''; ?></div>
                     </div>
@@ -495,9 +530,10 @@ include 'config.php';
             
             // Reset all error messages and input styles
             const errorElements = document.querySelectorAll('.error-message');
-            errorElements.forEach(element => {
-                element.style.display = 'none';
-            });
+        errorElements.forEach(element => {
+            element.style.display = "none";
+            element.textContent = "";
+        });
             
             const inputElements = document.querySelectorAll('input, select, textarea');
             inputElements.forEach(element => {
@@ -518,40 +554,116 @@ include 'config.php';
                     isValid = false;
                 }
             });
-            
-            // Validate email format if provided
-            const emailField = document.getElementById('email');
-            const emailError = document.getElementById('email_error');
-            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            
-            if (emailField.value && !emailPattern.test(emailField.value)) {
-                emailError.textContent = 'Invalid email format';
-                emailError.style.display = 'block';
-                emailField.classList.add('error');
+            // Validate Date of Birth
+        const dob = document.getElementById('dob');
+        const dobValue = dob.value;
+        if (dobValue === '') {
+            const errorElement = document.getElementById('dob_error');
+            errorElement.textContent = "Date of Birth is required.";
+            errorElement.style.display = "block";
+            isValid = false;
+        } else {
+            const dobDate = new Date(dobValue);
+            const today = new Date();
+            if (dobDate > today) {
+                const errorElement = document.getElementById('dob_error');
+                errorElement.textContent = "Date of Birth cannot be in the future.";
+                errorElement.style.display = "block";
                 isValid = false;
             }
-            
-            // Validate phone number if provided
-            const phoneField = document.getElementById('phone');
-            const phoneError = document.getElementById('phone_error');
-            
-            if (phoneField.value && (phoneField.value.length < 10 || phoneField.value.length > 15)) {
-                phoneError.textContent = 'Invalid phone number';
-                phoneError.style.display = 'block';
-                phoneField.classList.add('error');
+        }
+
+        // Validate Date of Joining
+        const doj = document.getElementById('doj');
+        const dojValue = doj.value;
+        if (dojValue === '') {
+            const errorElement = document.getElementById('doj_error');
+            errorElement.textContent = "Date of Joining is required.";
+            errorElement.style.display = "block";
+            isValid = false;
+        } else {
+            const dojDate = new Date(dojValue);
+            const today = new Date();
+            if (dojDate > today) {
+                const errorElement = document.getElementById('doj_error');
+                errorElement.textContent = "Date of Joining cannot be in the future.";
+                errorElement.style.display = "block";
                 isValid = false;
             }
-            
-            // Validate password length
-            const passwordField = document.getElementById('password');
-            const passwordError = document.getElementById('password_error');
-            
-            if (passwordField.value && passwordField.value.length < 6) {
-                passwordError.textContent = 'Password must be at least 6 characters';
-                passwordError.style.display = 'block';
-                passwordField.classList.add('error');
+        }
+
+        // Validate that DOJ is after DOB
+        if (dobValue !== '' && dojValue !== '') {
+            const dobDate = new Date(dobValue);
+            const dojDate = new Date(dojValue);
+            if (dojDate <= dobDate) {
+                const errorElement = document.getElementById('doj_error');
+                errorElement.textContent = "Date of Joining must be after Date of Birth.";
+                errorElement.style.display = "block";
                 isValid = false;
             }
+        }
+            // Validate Email
+        const email = document.getElementById('email');
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim())) {
+            const errorElement = document.getElementById('email_error');
+            errorElement.textContent = "Invalid email format.";
+            errorElement.style.display = "block";
+            isValid = false;
+        }
+            
+            // Validate Phone Number
+        const phone = document.getElementById('phone');
+        if (!/^\d{10}$/.test(phone.value.trim())) {
+            const errorElement = document.getElementById('phone_error');
+            errorElement.textContent = "Phone number must be exactly 10 digits.";
+            errorElement.style.display = "block";
+            isValid = false;
+            }
+            
+           // Validate Username
+        const username = document.getElementById('username');
+        const usernameRegex = /^[A-Z][A-Za-z0-9]*(_[A-Za-z0-9]+)*$/;
+        if (username.value.trim() === '') {
+            const errorElement = document.getElementById('username_error');
+            errorElement.textContent = "Username is required.";
+            errorElement.style.display = "block";
+            isValid = false;
+        } else if (username.value.length > 20) {
+            const errorElement = document.getElementById('username_error');
+            errorElement.textContent = "Username must be at most 20 characters.";
+            errorElement.style.display = "block";
+            isValid = false;
+        } else if (!usernameRegex.test(username.value)) {
+            const errorElement = document.getElementById('username_error');
+            errorElement.textContent = "Username must start with a capital letter, no spaces, no consecutive underscores, and not end with underscore.";
+            errorElement.style.display = "block";
+            isValid = false;
+        }
+
+        // Validate Password
+        const password = document.getElementById('password');
+        if (password.value.length < 8) {
+            const errorElement = document.getElementById('password_error');
+            errorElement.textContent = "Password must be at least 8 characters long.";
+            errorElement.style.display = "block";
+            isValid = false;
+        } else if (!/[A-Z]/.test(password.value)) {
+            const errorElement = document.getElementById('password_error');
+            errorElement.textContent = "Password must contain at least one uppercase letter.";
+            errorElement.style.display = "block";
+            isValid = false;
+        } else if (!/[0-9]/.test(password.value)) {
+            const errorElement = document.getElementById('password_error');
+            errorElement.textContent = "Password must contain at least one digit.";
+            errorElement.style.display = "block";
+            isValid = false;
+        } else if (!/[\W_]/.test(password.value)) {
+            const errorElement = document.getElementById('password_error');
+            errorElement.textContent = "Password must contain at least one special character.";
+            errorElement.style.display = "block";
+            isValid = false;
+        }
             
             if (!isValid) {
                 event.preventDefault();
