@@ -1,14 +1,14 @@
 <?php
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
+//if (session_status() === PHP_SESSION_NONE) {
+  //  session_start();
+//}
 
 include 'config.php';
 
 // Use the same session variable name as in your login
  $doctor_id = $_SESSION['DOCTOR_ID'] ?? null;
  $doctor_name = 'Doctor';
- $profile_image = 'uploads/default_doctor.png';
+ $profile_image = 'uploads/.png';
 
 if ($doctor_id) {
     $stmt = $conn->prepare("SELECT FIRST_NAME, LAST_NAME, PROFILE_IMAGE FROM doctor_tbl WHERE DOCTOR_ID = ?");

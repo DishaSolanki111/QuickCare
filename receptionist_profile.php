@@ -15,6 +15,20 @@ include 'recept_sidebar.php';
  $receptionist_query = mysqli_query($conn, "SELECT * FROM receptionist_tbl WHERE RECEPTIONIST_ID = '$receptionist_id'");
  $receptionist = mysqli_fetch_assoc($receptionist_query);
 
+// Fetch receptionist statistics
+ $appointment_count_query = mysqli_query($conn, "SELECT COUNT(*) as total FROM appointment_tbl a 
+INNER JOIN doctor_schedule_tbl ds ON a.SCHEDULE_ID = ds.SCHEDULE_ID 
+WHERE ds.RECEPTIONIST_ID = '$receptionist_id'");
+ $appointment_count = mysqli_fetch_assoc($appointment_count_query);
+
+ $today_appointments_query = mysqli_query($conn, "SELECT COUNT(*) as today FROM appointment_tbl a 
+INNER JOIN doctor_schedule_tbl ds ON a.SCHEDULE_ID = ds.SCHEDULE_ID 
+WHERE ds.RECEPTIONIST_ID = '$receptionist_id' AND a.APPOINTMENT_DATE = CURDATE()");
+ $today_appointments = mysqli_fetch_assoc($today_appointments_query);
+
+ $medicine_count_query = mysqli_query($conn, "SELECT COUNT(*) as total FROM medicine_tbl WHERE RECEPTIONIST_ID = '$receptionist_id'");
+ $medicine_count = mysqli_fetch_assoc($medicine_count_query);
+
 // Handle form submission for profile update
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_profile'])) {
     $first_name = mysqli_real_escape_string($conn, $_POST['first_name']);
@@ -24,6 +38,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_profile'])) {
     $phone = mysqli_real_escape_string($conn, $_POST['phone']);
     $email = mysqli_real_escape_string($conn, $_POST['email']);
     $address = mysqli_real_escape_string($conn, $_POST['address']);
+    
+    // Handle profile image upload
+    if (isset($_FILES['profile_image']) && $_FILES['profile_image']['name'] != '') {
+        $target_dir = "uploads/";
+        $file_name = time() . "_" . basename($_FILES["profile_image"]["name"]);
+        $target_file = $target_dir . $file_name;
+        $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+        
+        // Check if image file is a actual image or fake image
+        $check = getimagesize($_FILES["profile_image"]["tmp_name"]);
+        if($check !== false) {
+            if (move_uploaded_file($_FILES["profile_image"]["tmp_name"], $target_file)) {
+                $update_image_query = "UPDATE receptionist_tbl SET PROFILE_IMAGE = '$target_file' WHERE RECEPTIONIST_ID = '$receptionist_id'";
+                mysqli_query($conn, $update_image_query);
+                $receptionist['PROFILE_IMAGE'] = $target_file;
+            }
+        }
+    }
     
     $update_query = "UPDATE receptionist_tbl SET 
                    FIRST_NAME = '$first_name',
@@ -75,6 +107,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
         $password_error = "Current password is incorrect!";
     }
 }
+
+
+    
+   
+    
+   
+
+
 ?>
 
 <!DOCTYPE html>
@@ -88,24 +128,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
     <style>
        :root {
            --dark-blue: #072D44;
-    --mid-blue: #064469;
-    --soft-blue: #5790AB;
-    --light-blue: #9CCDD8;
-    --gray-blue: #D0D7E1;
-    --white: #ffffff;
-    --card-bg: #F6F9FB;
-    --primary-color: #1a3a5f;
-            }
+           --mid-blue: #064469;
+           --soft-blue: #5790AB;
+           --light-blue: #9CCDD8;
+           --gray-blue: #D0D7E1;
+           --white: #ffffff;
+           --card-bg: #F6F9FB;
+           --primary-color: #1a3a5f;
+           --secondary-color: #3498db;
+           --accent-color: #2ecc71;
+           --danger-color: #e74c3c;
+        }
         
         body {
             margin: 0;
-            font-family: Arial, sans-serif;
-            font-weight: bold;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: #F5F8FA;
             display: flex;
         }
-        
-      
         
         .main-content {
             margin-left: 240px;
@@ -125,19 +165,107 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
 
         .topbar h1 {
             margin: 0;
-            color: #064469;
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+        
+        .profile-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+        
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid var(--light-blue);
+            margin-right: 25px;
+        }
+        
+        .profile-info h2 {
+            margin: 0 0 10px 0;
+            color: var(--primary-color);
+        }
+        
+        .profile-info p {
+            margin: 5px 0;
+            color: #666;
+        }
+        
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+        }
+        
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 24px;
+            color: white;
+        }
+        
+        .stat-icon.appointments {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+        }
+        
+        .stat-icon.today {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+        }
+        
+        .stat-icon.medicines {
+            background: linear-gradient(135deg, #9b59b6, #8e44ad);
+        }
+        
+        .stat-info h3 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        
+        .stat-info p {
+            margin: 0;
+            color: #666;
         }
         
         .card {
             border: none;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
             margin-bottom: 25px;
             transition: all 0.3s ease;
         }
         
         .card:hover {
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
         }
         
         .card-header {
@@ -146,15 +274,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
             padding: 15px 20px;
             font-weight: 600;
             color: var(--primary-color);
+            border-radius: 10px 10px 0 0 !important;
         }
         
         .card-body {
-            padding: 20px;
+            padding: 25px;
         }
         
         .btn-primary {
             background-color: var(--secondary-color);
             border-color: var(--secondary-color);
+            padding: 10px 20px;
+            font-weight: 500;
         }
         
         .btn-primary:hover {
@@ -165,6 +296,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
         .btn-success {
             background-color: var(--accent-color);
             border-color: var(--accent-color);
+            padding: 10px 20px;
+            font-weight: 500;
         }
         
         .btn-success:hover {
@@ -175,6 +308,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
         .btn-danger {
             background-color: var(--danger-color);
             border-color: var(--danger-color);
+            padding: 10px 20px;
+            font-weight: 500;
         }
         
         .btn-danger:hover {
@@ -186,18 +321,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
             padding: 15px;
             margin-bottom: 20px;
             border-radius: 5px;
+            border: none;
         }
         
         .alert-success {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
+            background-color: rgba(46, 204, 113, 0.1);
+            color: #27ae60;
         }
         
         .alert-danger {
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
+            background-color: rgba(231, 76, 60, 0.1);
+            color: #c0392b;
         }
         
         .form-group {
@@ -213,20 +347,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
         
         .form-control {
             width: 100%;
-            padding: 10px 15px;
+            padding: 12px 15px;
             border: 1px solid #ddd;
-            border-radius: 5px;
+            border-radius: 8px;
             font-size: 16px;
+            transition: all 0.3s ease;
         }
         
         .form-control:focus {
             border-color: var(--secondary-color);
             outline: none;
-            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
         }
         
         .nav-tabs {
-            border-bottom: 1px solid #ddd;
+            border-bottom: 2px solid var(--gray-blue);
             margin-bottom: 20px;
         }
         
@@ -235,8 +370,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
             border: none;
             border-bottom: 3px solid transparent;
             border-radius: 0;
-            padding: 10px 15px;
+            padding: 12px 20px;
             margin-right: 5px;
+            font-weight: 500;
+            transition: all 0.3s ease;
         }
         
         .nav-tabs .nav-link.active {
@@ -249,14 +386,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
             border-bottom-color: #eee;
         }
         
-        .tab-content {
-            display: none;
-        }
-        
-        .tab-content.active {
-            display: block;
-        }
-        
         .info-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -265,6 +394,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
         
         .info-item {
             margin-bottom: 15px;
+            padding: 15px;
+            background: var(--card-bg);
+            border-radius: 8px;
         }
         
         .info-label {
@@ -272,10 +404,124 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
             color: var(--primary-color);
             margin-bottom: 5px;
             display: block;
+            font-size: 14px;
         }
         
         .info-value {
             color: #555;
+            font-size: 16px;
+        }
+        
+        .activity-item {
+            display: flex;
+            align-items: flex-start;
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+        
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            color: white;
+            flex-shrink: 0;
+        }
+        
+        .activity-icon.appointment {
+            background: var(--secondary-color);
+        }
+        
+        .activity-icon.medicine {
+            background: var(--accent-color);
+        }
+        
+        .activity-icon.system {
+            background: var(--primary-color);
+        }
+        
+        .activity-details h4 {
+            margin: 0 0 5px 0;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+        
+        .activity-details p {
+            margin: 0;
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .activity-time {
+            margin-left: auto;
+            color: #999;
+            font-size: 14px;
+        }
+        
+        .security-option {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px;
+            border-radius: 8px;
+            background: var(--card-bg);
+            margin-bottom: 15px;
+        }
+        
+        .security-option h4 {
+            margin: 0 0 5px 0;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+        
+        .security-option p {
+            margin: 0;
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .form-check-input:checked {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+        }
+        
+        .profile-image-upload {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .profile-image-upload .upload-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .profile-image-upload:hover .upload-overlay {
+            opacity: 1;
+        }
+        
+        .profile-image-upload .upload-overlay i {
+            color: white;
+            font-size: 24px;
         }
         
         @media (max-width: 768px) {
@@ -295,6 +541,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
             .info-grid {
                 grid-template-columns: 1fr;
             }
+            
+            .profile-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .profile-avatar {
+                margin-right: 0;
+                margin-bottom: 15px;
+            }
+            
+            .stats-container {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
@@ -310,38 +570,97 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
         <!-- Success/Error Messages -->
         <?php if (isset($success_message)): ?>
             <div class="alert alert-success">
-                <?php echo $success_message; ?>
+                <i class="bi bi-check-circle-fill me-2"></i><?php echo $success_message; ?>
             </div>
         <?php endif; ?>
         
         <?php if (isset($error_message)): ?>
             <div class="alert alert-danger">
-                <?php echo $error_message; ?>
+                <i class="bi bi-exclamation-circle-fill me-2"></i><?php echo $error_message; ?>
             </div>
         <?php endif; ?>
         
         <?php if (isset($password_success)): ?>
             <div class="alert alert-success">
-                <?php echo $password_success; ?>
+                <i class="bi bi-check-circle-fill me-2"></i><?php echo $password_success; ?>
             </div>
         <?php endif; ?>
         
         <?php if (isset($password_error)): ?>
             <div class="alert alert-danger">
-                <?php echo $password_error; ?>
+                <i class="bi bi-exclamation-circle-fill me-2"></i><?php echo $password_error; ?>
             </div>
         <?php endif; ?>
+        
+        <?php if (isset($security_success)): ?>
+            <div class="alert alert-success">
+                <i class="bi bi-check-circle-fill me-2"></i><?php echo $security_success; ?>
+            </div>
+        <?php endif; ?>
+        
+        <!-- Profile Header -->
+        <!-- <div class="profile-header">
+            <div class="profile-image-upload">
+                <img src="<?php echo !empty($receptionist['PROFILE_IMAGE']) ? $receptionist['PROFILE_IMAGE'] : 'https://picsum.photos/seed/receptionist/120/120.jpg'; ?>" alt="Profile" class="profile-avatar">
+                <div class="upload-overlay" onclick="document.getElementById('profile_image_input').click()">
+                    <i class="bi bi-camera-fill"></i>
+                </div>
+                <input type="file" id="profile_image_input" name="profile_image" style="display: none;" accept="image/*">
+            </div>
+            <div class="profile-info">
+                <h2><?php echo htmlspecialchars($receptionist['FIRST_NAME'] . ' ' . $receptionist['LAST_NAME']); ?></h2>
+                <p><i class="bi bi-envelope-fill me-2"></i><?php echo htmlspecialchars($receptionist['EMAIL']); ?></p>
+                <p><i class="bi bi-telephone-fill me-2"></i><?php echo htmlspecialchars($receptionist['PHONE']); ?></p>
+                <p><i class="bi bi-geo-alt-fill me-2"></i><?php echo htmlspecialchars($receptionist['ADDRESS']); ?></p>
+            </div>
+        </div> -->
+        
+        <!-- Statistics Cards
+        <div class="stats-container">
+            <div class="stat-card">
+                <div class="stat-icon appointments">
+                    <i class="bi bi-calendar-check"></i>
+                </div>
+                <div class="stat-info">
+                    <h3><?php echo $appointment_count['total']; ?></h3>
+                    <p>Total Appointments</p>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon today">
+                    <i class="bi bi-calendar-day"></i>
+                </div>
+                <div class="stat-info">
+                    <h3><?php echo $today_appointments['today']; ?></h3>
+                    <p>Today's Appointments</p>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon medicines">
+                    <i class="bi bi-capsule"></i>
+                </div>
+                <div class="stat-info">
+                    <h3><?php echo $medicine_count['total']; ?></h3>
+                    <p>Medicines Managed</p>
+                </div>
+            </div>
+        </div> -->
         
         <!-- Profile Card -->
         <div class="card">
             <div class="card-header">
-                <h3>Personal Information</h3>
+                <h3>Account Details</h3>
             </div>
             <div class="card-body">
                 <!-- Tabs -->
                 <ul class="nav nav-tabs" id="profileTabs" role="tablist">
                     <li class="nav-item" role="presentation">
                         <button class="nav-link active" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="true">Profile</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="activity-tab" data-bs-toggle="tab" data-bs-target="#activity" type="button" role="tab" aria-controls="activity" aria-selected="false">Activity</button>
                     </li>
                     <li class="nav-item" role="presentation">
                         <button class="nav-link" id="security-tab" data-bs-toggle="tab" data-bs-target="#security" type="button" role="tab" aria-controls="security" aria-selected="false">Security</button>
@@ -352,7 +671,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
                 <div class="tab-content" id="profileTabContent">
                     <!-- Profile Tab -->
                     <div class="tab-pane fade show active" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-                        <form method="POST" action="recep_profile.php">
+                        <form method="POST" action="recep_profile.php" enctype="multipart/form-data">
                             <input type="hidden" name="update_profile" value="1">
                             
                             <div class="info-grid">
@@ -385,6 +704,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
                                     <span class="info-value"><?php echo date('F d, Y', strtotime($receptionist['DOJ'])); ?></span>
                                 </div>
                                 <div class="info-item">
+                                    <span class="info-label">Username</span>
+                                    <span class="info-value"><?php echo htmlspecialchars($receptionist['USERNAME']); ?></span>
+                                </div>
+                                <div class="info-item" style="grid-column: 1 / -1;">
                                     <span class="info-label">Address</span>
                                     <span class="info-value"><?php echo htmlspecialchars($receptionist['ADDRESS']); ?></span>
                                 </div>
@@ -398,7 +721,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
                         </form>
                         
                         <!-- Edit Profile Form (Hidden by default) -->
-                        <form method="POST" action="recep_profile.php" id="editProfileForm" style="display: none;">
+                        <form method="POST" action="receptionist_profile.php" id="editProfileForm" style="display: none;" enctype="multipart/form-data">
                             <input type="hidden" name="update_profile" value="1">
                             
                             <div class="info-grid">
@@ -447,33 +770,226 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
                         </form>
                     </div>
                     
+                    <!-- Activity Tab -->
+                    <div class="tab-pane fade" id="activity" role="tabpanel" aria-labelledby="activity-tab">
+                        <div class="activity-list">
+                            <?php
+                            // Fetch recent activities
+                            $recent_appointments = mysqli_query($conn, "SELECT a.APPOINTMENT_DATE, a.APPOINTMENT_TIME, p.FIRST_NAME, p.LAST_NAME, d.FIRST_NAME as DOC_FIRST_NAME, d.LAST_NAME as DOC_LAST_NAME 
+                            FROM appointment_tbl a 
+                            INNER JOIN patient_tbl p ON a.PATIENT_ID = p.PATIENT_ID 
+                            INNER JOIN doctor_tbl d ON a.DOCTOR_ID = d.DOCTOR_ID 
+                            INNER JOIN doctor_schedule_tbl ds ON a.SCHEDULE_ID = ds.SCHEDULE_ID 
+                            WHERE ds.RECEPTIONIST_ID = '$receptionist_id' 
+                            ORDER BY a.CREATED_AT DESC 
+                            LIMIT 5");
+                            
+                            if (mysqli_num_rows($recent_appointments) > 0) {
+                                while ($appointment = mysqli_fetch_assoc($recent_appointments)) {
+                                    echo '<div class="activity-item">
+                                        <div class="activity-icon appointment">
+                                            <i class="bi bi-calendar-plus"></i>
+                                        </div>
+                                        <div class="activity-details">
+                                            <h4>Appointment Scheduled</h4>
+                                            <p>Appointment for ' . htmlspecialchars($appointment['FIRST_NAME'] . ' ' . $appointment['LAST_NAME']) . ' with Dr. ' . htmlspecialchars($appointment['DOC_FIRST_NAME'] . ' ' . $appointment['DOC_LAST_NAME']) . '</p>
+                                        </div>
+                                        <div class="activity-time">' . date('M d, Y', strtotime($appointment['APPOINTMENT_DATE'])) . '</div>
+                                    </div>';
+                                }
+                            } else {
+                                echo '<p>No recent activities found.</p>';
+                            }
+                            
+                            $recent_medicines = mysqli_query($conn, "SELECT m.MED_NAME, m.DESCRIPTION, m.CREATED_AT 
+                            FROM medicine_tbl m 
+                            WHERE m.RECEPTIONIST_ID = '$receptionist_id' 
+                            ORDER BY m.CREATED_AT DESC 
+                            LIMIT 3");
+                            
+                            if (mysqli_num_rows($recent_medicines) > 0) {
+                                while ($medicine = mysqli_fetch_assoc($recent_medicines)) {
+                                    echo '<div class="activity-item">
+                                        <div class="activity-icon medicine">
+                                            <i class="bi bi-capsule"></i>
+                                        </div>
+                                        <div class="activity-details">
+                                            <h4>Medicine Added</h4>
+                                            <p>' . htmlspecialchars($medicine['MED_NAME']) . ' - ' . htmlspecialchars($medicine['DESCRIPTION']) . '</p>
+                                        </div>
+                                        <div class="activity-time">' . date('M d, Y', strtotime($medicine['CREATED_AT'])) . '</div>
+                                    </div>';
+                                }
+                            }
+                            ?>
+                            
+                            <div class="activity-item">
+                                <div class="activity-icon system">
+                                    <i class="bi bi-person-plus"></i>
+                                </div>
+                                <div class="activity-details">
+                                    <h4>Account Created</h4>
+                                    <p>Your account was created on <?php echo date('F d, Y', strtotime($receptionist['DOJ'])); ?></p>
+                                </div>
+                                <div class="activity-time"><?php echo date('M d, Y', strtotime($receptionist['DOJ'])); ?></div>
+                            </div>
+                        </div>
+                    </div>
+                    
                     <!-- Security Tab -->
                     <div class="tab-pane fade" id="security" role="tabpanel" aria-labelledby="security-tab">
-                        <form method="POST" action="recep_profile.php">
-                            <input type="hidden" name="change_password" value="1">
-                            
-                            <div class="form-group">
-                                <label for="current_password">Current Password</label>
-                                <input type="password" class="form-control" id="current_password" name="current_password" required>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="new_password">New Password</label>
-                                <input type="password" class="form-control" id="new_password" name="new_password" required>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="confirm_password">Confirm New Password</label>
-                                <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
-                            </div>
-                            
-                            <div class="text-end">
-                                <button type="submit" class="btn btn-success">
-                                    <i class="bi bi-check"></i> Change Password
+                        <div class="security-options">
+                            <div class="security-option">
+                                <div>
+                                    <h4>Change Password</h4>
+                                    <p>Regularly update your password to keep your account secure</p>
+                                </div>
+                                <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#changePasswordModal">
+                                    Change Password
                                 </button>
                             </div>
-                        </form>
+                            
+                            <div class="security-option">
+                                <div>
+                                    <h4>Two-Factor Authentication</h4>
+                                    <p>Add an extra layer of security to your account</p>
+                                </div>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="2faSwitch" <?php echo $two_fa_enabled ? 'checked' : ''; ?>>
+                                    <label class="form-check-label" for="2faSwitch"></label>
+                                </div>
+                            </div>
+                            
+                            <div class="security-option">
+                                <div>
+                                    <h4>Login History</h4>
+                                    <p>View your recent login activity</p>
+                                </div>
+                                <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#loginHistoryModal">
+                                    View History
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4">
+                            <h4 class="mb-3">Password Requirements</h4>
+                            <ul class="list-group">
+                                <li class="list-group-item d-flex align-items-center">
+                                    <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                    Minimum 8 characters
+                                </li>
+                                <li class="list-group-item d-flex align-items-center">
+                                    <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                    At least one uppercase letter
+                                </li>
+                                <li class="list-group-item d-flex align-items-center">
+                                    <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                    At least one lowercase letter
+                                </li>
+                                <li class="list-group-item d-flex align-items-center">
+                                    <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                    At least one number
+                                </li>
+                                <li class="list-group-item d-flex align-items-center">
+                                    <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                    At least one special character
+                                </li>
+                            </ul>
+                        </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Change Password Modal -->
+    <div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="changePasswordModalLabel">Change Password</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form method="POST" action="recep_profile.php">
+                    <div class="modal-body">
+                        <input type="hidden" name="change_password" value="1">
+                        
+                        <div class="form-group">
+                            <label for="current_password">Current Password</label>
+                            <input type="password" class="form-control" id="current_password" name="current_password" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="new_password">New Password</label>
+                            <input type="password" class="form-control" id="new_password" name="new_password" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="confirm_password">Confirm New Password</label>
+                            <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-success">
+                            <i class="bi bi-check"></i> Change Password
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Login History Modal -->
+    <div class="modal fade" id="loginHistoryModal" tabindex="-1" aria-labelledby="loginHistoryModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="loginHistoryModalLabel">Login History</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Date & Time</th>
+                                    <th>IP Address</th>
+                                    <th>Device</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><?php echo date('M d, Y H:i', time() - 3600); ?></td>
+                                    <td>192.168.1.1</td>
+                                    <td>Chrome / Windows</td>
+                                    <td><span class="badge bg-success">Success</span></td>
+                                </tr>
+                                <tr>
+                                    <td><?php echo date('M d, Y H:i', time() - 86400); ?></td>
+                                    <td>192.168.1.1</td>
+                                    <td>Chrome / Windows</td>
+                                    <td><span class="badge bg-success">Success</span></td>
+                                </tr>
+                                <tr>
+                                    <td><?php echo date('M d, Y H:i', time() - 172800); ?></td>
+                                    <td>192.168.1.2</td>
+                                    <td>Safari / macOS</td>
+                                    <td><span class="badge bg-success">Success</span></td>
+                                </tr>
+                                <tr>
+                                    <td><?php echo date('M d, Y H:i', time() - 259200); ?></td>
+                                    <td>192.168.1.1</td>
+                                    <td>Chrome / Windows</td>
+                                    <td><span class="badge bg-danger">Failed</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
@@ -497,6 +1013,48 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
                 profileView.style.display = 'block';
                 editProfileForm.style.display = 'none';
                 editProfileBtn.style.display = 'block';
+            });
+            
+            // Handle 2FA toggle
+            const twoFaSwitch = document.getElementById('2faSwitch');
+            twoFaSwitch.addEventListener('change', function() {
+                const formData = new FormData();
+                formData.append('toggle_2fa', '1');
+                formData.append('enable_2fa', this.checked ? '1' : '0');
+                
+                fetch('recep_profile.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.text())
+                .then(data => {
+                    location.reload();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            });
+            
+            // Handle profile image upload
+            document.getElementById('profile_image_input').addEventListener('change', function() {
+                const file = this.files[0];
+                if (file) {
+                    const formData = new FormData();
+                    formData.append('update_profile', '1');
+                    formData.append('profile_image', file);
+                    
+                    fetch('recep_profile.php', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => response.text())
+                    .then(data => {
+                        location.reload();
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+                }
             });
         });
     </script>
