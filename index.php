@@ -600,7 +600,7 @@ include 'header.php';
                 <p>Choose verified specialists, pick your slot, and get treated faster with QuickCare.</p>
                 <div class="hero-buttons">
                     <a href="appointment.php" class="btn-primary">Book Appointment</a>
-                    <a href="#" class="btn-secondary">Watch Demo</a>
+                    
                 </div>
                 <div class="stats">
                     <div class="stat-item">

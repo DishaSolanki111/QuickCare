@@ -1,13 +1,13 @@
 <?php
-// Use the same session handling as doctor_header.php
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
+// // Use the same session handling as doctor_header.php
+// if (session_status() === PHP_SESSION_NONE) {
+//     session_start();
+//}
 
 include 'config.php';
 
-// Use the same session variable name as in doctor_header.php
- $doctor_id = $_SESSION['DOCTOR_ID'] ?? 0;
+// // Use the same session variable name as in doctor_header.php
+//  $doctor_id = $_SESSION['DOCTOR_ID'] ?? 0;
 
  $sql = "
 SELECT 

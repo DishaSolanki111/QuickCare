@@ -115,7 +115,7 @@ body {
     
 
     <a href="receptionist.php">Dashboard</a>
-    <a href="recep_profile.php">View My Profile</a>
+    <a href="receptionist_profile.php">View My Profile</a>
     <a href="appointment_recep.php">Manage Appointments</a>
     <a href="doctor_schedule_recep.php">Manage Doctor Schedule</a>
     <a href="manage_medicine.php">Manage Medicine</a>
