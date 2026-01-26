@@ -1,12 +1,11 @@
-<?php
-include 'config.php';
-?>
+<?php include 'config.php'; 
+include 'header.php';?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Receptionist Registration | QuickCare</title>
+    <title>Patient Registration | QuickCare</title>
     <style>
         :root {
             --primary-blue: #0a4d68;
@@ -17,9 +16,19 @@ include 'config.php';
             --white: #ffffff;
             --light-gray: #f5f5f5;
             --error: #ff5252;
-            --sidebar-bg: #072D44;
-            --sidebar-hover: #064469;
-            --sidebar-active: #9CCDD8;
+            --dark-blue: #072D44;
+            --mid-blue: #064469;
+            --soft-blue: #5790AB;
+            --light-blue: #9CCDD8;
+            --gray-blue: #D0D7E1;
+            --white: #ffffff;
+            --card-bg: #F6F9FB;
+            --primary-color: #1a3a5f;
+            --secondary-color: #3498db;
+            --accent-color: #2ecc71;
+            --danger-color: #e74c3c;
+            --warning-color: #f39c12;
+            --info-color: #17a2b8;
         }
 
         * {
@@ -33,12 +42,12 @@ include 'config.php';
             background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
             min-height: 100vh;
             display: flex;
-            padding: 0;
+            padding-top: 80px;
         }
 
         /* Main Content */
         .main-content {
-            margin-left: 250px;
+            margin-left: 150px;
             width: calc(100% - 250px);
             padding: 30px;
             display: flex;
@@ -89,7 +98,6 @@ include 'config.php';
 
         .form-group {
             margin-bottom: 20px;
-            position: relative;
         }
 
         .form-row {
@@ -114,6 +122,7 @@ include 'config.php';
         input[type="email"],
         input[type="password"],
         input[type="date"],
+        input[type="file"],
         select,
         textarea {
             width: 100%;
@@ -130,10 +139,6 @@ include 'config.php';
             outline: none;
             border-color: var(--accent-blue);
             box-shadow: 0 0 0 2px rgba(0, 180, 216, 0.2);
-        }
-        
-        input.error, select.error, textarea.error {
-            border-color: var(--error);
         }
 
         textarea {
@@ -198,6 +203,48 @@ include 'config.php';
         .required {
             color: var(--error);
         }
+
+        .file-upload {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .file-upload input[type=file] {
+            position: absolute;
+            left: -9999px;
+        }
+
+        .file-upload-label {
+            display: block;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: var(--white);
+            color: #666;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .file-upload-label:hover {
+            border-color: var(--accent-blue);
+            color: var(--primary-blue);
+        }
+
+        /* Responsive styles */
+        @media (max-width: 768px) {
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+                padding: 20px;
+            }
+
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+        }
         
         /* Toast notification styles */
         .toast {
@@ -216,7 +263,7 @@ include 'config.php';
         }
         
         .toast.success {
-            border-left: 4px solid var(--accent-blue);
+            border-left: 4px solid var(--accent-color);
         }
         
         .toast.show {
@@ -234,29 +281,15 @@ include 'config.php';
                 opacity: 1;
             }
         }
-
-        /* Responsive styles */
-        @media (max-width: 768px) {
-            .main-content {
-                margin-left: 0;
-                width: 100%;
-                padding: 20px;
-            }
-
-            .form-row {
-                flex-direction: column;
-                gap: 0;
-            }
-        }
     </style>
 </head>
 <body>
-    <?php include 'admin_sidebar.php'; ?>
+    
     
     <!-- Main Content -->
     <div class="main-content">
         <div class="container">
-            <h1>Receptionist Registration</h1>
+            <h1>Patient Registration</h1>
             
             <!-- Toast notification for errors -->
             <div id="toast" class="toast"></div>
@@ -265,48 +298,56 @@ include 'config.php';
             // Initialize variables
             $success = false;
             $error = "";
+           
+
             
             // Store submitted values to repopulate form if needed
             $form_data = [
                 'first_name' => '',
                 'last_name' => '',
                 'dob' => '',
-                'doj' => '',
+               'blood_group' => '',
                 'gender' => '',
                 'phone' => '',
                 'email' => '',
+               'address' => '',
                 'username' => '',
-                'password' => '',
-                'address' => ''
+               
             ];
             
-            // Check if form is submitted
             if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 // Store form data
                 $form_data = [
                     'first_name' => $_POST['first_name'] ?? '',
                     'last_name' => $_POST['last_name'] ?? '',
                     'dob' => $_POST['dob'] ?? '',
-                    'doj' => $_POST['doj'] ?? '',
+               'blood_group' => $_POST['blood_group'] ?? '',
                     'gender' => $_POST['gender'] ?? '',
                     'phone' => $_POST['phone'] ?? '',
                     'email' => $_POST['email'] ?? '',
+                  'address' => $_POST['address'] ?? '',
                     'username' => $_POST['username'] ?? '',
-                    'password' => $_POST['password'] ?? '',
-                    'address' => $_POST['address'] ?? ''
+                    
                 ];
-                
-                // Validation
+
                 $errors = [];
+
                 
-                // Validate required fields
-                if (empty($form_data['first_name'])) {
-                    $errors['first_name'] = 'First name is required';
-                }
-                
-                if (empty($form_data['last_name'])) {
-                    $errors['last_name'] = 'Last name is required';
-                }
+
+                // ---------------- SANITIZE ----------------
+                $first_name = mysqli_real_escape_string($conn, $_POST['first_name']);
+                $last_name  = mysqli_real_escape_string($conn, $_POST['last_name']);
+                $dob        = $_POST['dob'];
+                $blood_group = $_POST['blood_group'] ?? '';
+                $address    = mysqli_real_escape_string($conn, $_POST['address']);
+                $gender     = $_POST['gender'] ?? '';
+                $phone      = $_POST['phone'];
+                $email      = $_POST['email'];
+               
+                $username   = $_POST['username'];
+                $password   = $_POST['password'];
+              
+
                 // ---------------- DATE VALIDATION ----------------
                 // Validate DOB is not empty and not in the future
                 if (empty($dob)) {
@@ -319,26 +360,9 @@ include 'config.php';
                     }
                 }
                 
-                // Validate DOJ is not empty and not in the future
-                if (empty($doj)) {
-                    $errors[] = "Date of Joining is required.";
-                } else {
-                    $doj_date = new DateTime($doj);
-                    $today = new DateTime();
-                    if ($doj_date > $today) {
-                        $errors[] = "Date of Joining cannot be in the future.";
-                    }
-                }
                 
-                // Validate DOJ is after DOB
-                if (!empty($dob) && !empty($doj)) {
-                    $dob_date = new DateTime($dob);
-                    $doj_date = new DateTime($doj);
-                    if ($doj_date <= $dob_date) {
-                        $errors[] = "Date of Joining must be after Date of Birth.";
-                    }
-                }
-
+                
+                
                 // ---------------- USERNAME VALIDATION ----------------
                 if (
                     !preg_match('/^[A-Z][A-Za-z0-9]*(_[A-Za-z0-9]+)*$/', $username) ||
@@ -367,27 +391,17 @@ include 'config.php';
                     $errors[] = "Invalid email format.";
                 }
 
-                // If no errors, proceed with database insertion
+                // ---------------- FINAL INSERT ----------------
                 if (empty($errors)) {
-                    // Sanitize inputs
-                    $first_name = mysqli_real_escape_string($conn, $form_data['first_name']);
-                    $last_name = mysqli_real_escape_string($conn, $form_data['last_name']);
-                    $dob = mysqli_real_escape_string($conn, $form_data['dob']);
-                    $doj = mysqli_real_escape_string($conn, $form_data['doj']);
-                    $gender = mysqli_real_escape_string($conn, $form_data['gender']);
-                    $phone = mysqli_real_escape_string($conn, $form_data['phone']);
-                    $email = mysqli_real_escape_string($conn, $form_data['email']);
-                    $username = mysqli_real_escape_string($conn, $form_data['username']);
-                    $password = $form_data['password'];
-                    $address = mysqli_real_escape_string($conn, $form_data['address']);
-                    
-                    // Hash password
                     $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-                    
-                    // SQL to insert data
-                    $sql = "INSERT INTO receptionist_tbl (FIRST_NAME, LAST_NAME, DOB, DOJ, GENDER, PHONE, EMAIL, USERNAME, PSWD, ADDRESS) 
-                            VALUES ('$first_name', '$last_name', '$dob', '$doj', '$gender', '$phone', '$email', '$username', '$hashed_password', '$address')";
-                    
+
+                   $sql = "
+                INSERT INTO patient_tbl
+                (FIRST_NAME, LAST_NAME, USERNAME, PSWD, DOB, GENDER, BLOOD_GROUP, PHONE, EMAIL, ADDRESS)
+                VALUES
+                ('$first_name','$last_name','$username_safe','$hashed_password','$dob','$gender',
+                 '$blood_group','$phone','$email','$address')
+            ";
                     if ($conn->query($sql) === TRUE) {
                         $success = true;
                         // Reset form data on successful submission
@@ -395,20 +409,24 @@ include 'config.php';
                             'first_name' => '',
                             'last_name' => '',
                             'dob' => '',
-                            'doj' => '',
+                   
                             'gender' => '',
                             'phone' => '',
                             'email' => '',
+                           
+
                             'username' => '',
-                            'password' => '',
-                            'address' => ''
+                         
+
                         ];
                     } else {
-                        $error = "Error: " . $sql . "<br>" . $conn->error;
+                        $error = "Database error.";
                     }
-                    
-                    $conn->close();
+                } else {
+                    $error = implode("<br>", $errors);
                 }
+
+                $conn->close();
             }
             ?>
             
@@ -424,35 +442,49 @@ include 'config.php';
                 </div>
             <?php endif; ?>
             
-            <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post" id="receptionistForm">
+            <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post" id="PatientForm" enctype="multipart/form-data">
+                <!-- First Name and Last Name -->
                 <div class="form-row">
                     <div class="form-group">
                         <label for="first_name">First Name <span class="required">*</span></label>
                         <input type="text" id="first_name" name="first_name" value="<?php echo htmlspecialchars($form_data['first_name']); ?>" required>
-                        <div class="error-message" id="first_name_error"><?php echo $errors['first_name'] ?? ''; ?></div>
+                        <div class="error-message" id="first_name_error"></div>
                     </div>
                     
                     <div class="form-group">
                         <label for="last_name">Last Name <span class="required">*</span></label>
                         <input type="text" id="last_name" name="last_name" value="<?php echo htmlspecialchars($form_data['last_name']); ?>" required>
-                        <div class="error-message" id="last_name_error"><?php echo $errors['last_name'] ?? ''; ?></div>
+                        <div class="error-message" id="last_name_error"></div>
                     </div>
                 </div>
                 
+                <!-- Date of Birth and Date of Joining -->
                 <div class="form-row">
                     <div class="form-group">
                         <label for="dob">Date of Birth <span class="required">*</span></label>
-                        <input type="date" id="dob" name="dob" value="<?php echo htmlspecialchars($form_data['dob']); ?>">
+                        <input type="date" id="dob" name="dob" value="<?php echo htmlspecialchars($form_data['dob']); ?>" required>
                         <div class="error-message" id="dob_error"></div>
                     </div>
-                    
-                    <div class="form-group">
-                        <label for="doj">Date of Joining <span class="required">*</span></label>
-                        <input type="date" id="doj" name="doj" value="<?php echo htmlspecialchars($form_data['doj']); ?>">
-                        <div class="error-message" id="doj_error"></div>
-                    </div>
+                     <div class="form-group">
+        <label>Blood Group</label>
+        <select name="blood_group">
+            <option value="">Select Blood Group</option>
+            <option value="A+" <?php echo ($form_data['blood_group'] == 'A+') ? 'selected' : ''; ?>>A+</option>
+            <option value="A-" <?php echo ($form_data['blood_group'] == 'A-') ? 'selected' : ''; ?>>A-</option>
+            <option value="B+" <?php echo ($form_data['blood_group'] == 'B+') ? 'selected' : ''; ?>>B+</option>
+            <option value="B-" <?php echo ($form_data['blood_group'] == 'B-') ? 'selected' : ''; ?>>B-</option>
+            <option value="O+" <?php echo ($form_data['blood_group'] == 'O+') ? 'selected' : ''; ?>>O+</option>
+            <option value="O-" <?php echo ($form_data['blood_group'] == 'O-') ? 'selected' : ''; ?>>O-</option>
+            <option value="AB+" <?php echo ($form_data['blood_group'] == 'AB+') ? 'selected' : ''; ?>>AB+</option>
+            <option value="AB-" <?php echo ($form_data['blood_group'] == 'AB-') ? 'selected' : ''; ?>>AB-</option>
+        </select>
+        <div class="field-error" id="blood_group_error"></div>
+    </div>
+                   
+
                 </div>
                 
+                <!-- Gender -->
                 <div class="form-group">
                     <label>Gender</label>
                     <div class="radio-group">
@@ -469,42 +501,47 @@ include 'config.php';
                             <label for="other">Other</label>
                         </div>
                     </div>
+
                 </div>
                 
+                <!-- Phone Number and Email ID -->
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="phone">Phone Number<span class="required">*</span></label>
-                        <input type="text" id="phone" name="phone" max=10 value="<?php echo htmlspecialchars($form_data['phone']); ?>">
-                        <div class="error-message" id="phone_error"><?php echo $errors['phone'] ?? ''; ?></div>
+                        <label for="phone">Phone Number <span class="required">*</span></label>
+                        <input type="text" id="phone" name="phone" maxlength="10" value="<?php echo htmlspecialchars($form_data['phone']); ?>" required>
+                        <div class="error-message" id="phone_error"></div>
                     </div>
                     
                     <div class="form-group">
-                        <label for="email">Email<span class="required">*</span></label>
-                        <input type="email" id="email" name="email" value="<?php echo htmlspecialchars($form_data['email']); ?>">
-                        <div class="error-message" id="email_error"><?php echo $errors['email'] ?? ''; ?></div>
+                        <label for="email">Email <span class="required">*</span></label>
+                        <input type="email" id="email" name="email" value="<?php echo htmlspecialchars($form_data['email']); ?>" required>
+                        <div class="error-message" id="email_error"></div>
                     </div>
                 </div>
                 
+               
+                
+               
+                
+                <!-- Username and Password -->
                 <div class="form-row">
                     <div class="form-group">
                         <label for="username">Username <span class="required">*</span></label>
                         <input type="text" id="username" name="username" value="<?php echo htmlspecialchars($form_data['username']); ?>" required>
-                        <div class="error-message" id="username_error"><?php echo $errors['username'] ?? ''; ?></div>
+                        <div class="error-message" id="username_error"></div>
                     </div>
                     
                     <div class="form-group">
                         <label for="password">Password <span class="required">*</span></label>
-                        <input type="password" id="password" name="password" value="<?php echo htmlspecialchars($form_data['password']); ?>" required>
-                        <div class="error-message" id="password_error"><?php echo $errors['password'] ?? ''; ?></div>
+                        <input type="password" id="password" name="password" required>
+                        <div class="error-message" id="password_error"></div>
                     </div>
                 </div>
-                
                 <div class="form-group">
-                    <label for="address">Address</label>
-                    <textarea id="address" name="address"><?php echo htmlspecialchars($form_data['address']); ?></textarea>
-                    <div class="error-message" id="address_error"></div>
-                </div>
-                
+    <label>Address</label>
+    <textarea name="address"><?php echo htmlspecialchars($form_data['address']); ?></textarea>
+    <div class="field-error" id="address_error"></div>
+</div>
                 <div class="btn-container">
                     <button type="submit" class="btn">Register</button>
                 </div>
@@ -513,48 +550,49 @@ include 'config.php';
     </div>
 
     <script>
-        // Toast notification function
-        function showToast(message, isSuccess = false) {
-            const toast = document.getElementById('toast');
-            toast.textContent = message;
-            toast.className = isSuccess ? 'toast success show' : 'toast show';
-            
-            setTimeout(() => {
-                toast.className = toast.className.replace('show', '');
-            }, 5000);
-        }
+    // Toast notification function
+    function showToast(message, isSuccess = false) {
+        const toast = document.getElementById('toast');
+        toast.textContent = message;
+        toast.className = isSuccess ? 'toast success show' : 'toast show';
         
-        // Form validation and submission
-        document.getElementById('receptionistForm').addEventListener('submit', function(event) {
-            let isValid = true;
-            
-            // Reset all error messages and input styles
-            const errorElements = document.querySelectorAll('.error-message');
+        setTimeout(() => {
+            toast.className = toast.className.replace('show', '');
+        }, 5000);
+    }
+
+   
+
+    // Form validation and submission
+    document.getElementById('PatientForm').addEventListener('submit', function (e) {
+        let isValid = true;
+        
+        // Reset all error messages
+        const errorElements = document.querySelectorAll('.error-message');
         errorElements.forEach(element => {
             element.style.display = "none";
             element.textContent = "";
         });
-            
-            const inputElements = document.querySelectorAll('input, select, textarea');
-            inputElements.forEach(element => {
-                element.classList.remove('error');
-            });
-            
-            // Validate required fields
-            const requiredFields = ['first_name', 'last_name', 'username', 'password'];
-            
-            requiredFields.forEach(fieldId => {
-                const field = document.getElementById(fieldId);
-                const errorElement = document.getElementById(fieldId + '_error');
-                
-                if (!field.value.trim()) {
-                    errorElement.textContent = 'This field is required';
-                    errorElement.style.display = 'block';
-                    field.classList.add('error');
-                    isValid = false;
-                }
-            });
-            // Validate Date of Birth
+
+        // Validate First Name
+        const firstName = document.getElementById('first_name');
+        if (firstName.value.trim() === '') {
+            const errorElement = document.getElementById('first_name_error');
+            errorElement.textContent = "First name is required.";
+            errorElement.style.display = "block";
+            isValid = false;
+        }
+
+        // Validate Last Name
+        const lastName = document.getElementById('last_name');
+        if (lastName.value.trim() === '') {
+            const errorElement = document.getElementById('last_name_error');
+            errorElement.textContent = "Last name is required.";
+            errorElement.style.display = "block";
+            isValid = false;
+        }
+
+        // Validate Date of Birth
         const dob = document.getElementById('dob');
         const dobValue = dob.value;
         if (dobValue === '') {
@@ -573,37 +611,21 @@ include 'config.php';
             }
         }
 
-        // Validate Date of Joining
-        const doj = document.getElementById('doj');
-        const dojValue = doj.value;
-        if (dojValue === '') {
-            const errorElement = document.getElementById('doj_error');
-            errorElement.textContent = "Date of Joining is required.";
-            errorElement.style.display = "block";
-            isValid = false;
-        } else {
-            const dojDate = new Date(dojValue);
-            const today = new Date();
-            if (dojDate > today) {
-                const errorElement = document.getElementById('doj_error');
-                errorElement.textContent = "Date of Joining cannot be in the future.";
-                errorElement.style.display = "block";
-                isValid = false;
-            }
+        
         }
 
-        // Validate that DOJ is after DOB
-        if (dobValue !== '' && dojValue !== '') {
-            const dobDate = new Date(dobValue);
-            const dojDate = new Date(dojValue);
-            if (dojDate <= dobDate) {
-                const errorElement = document.getElementById('doj_error');
-                errorElement.textContent = "Date of Joining must be after Date of Birth.";
-                errorElement.style.display = "block";
-                isValid = false;
-            }
+        
+
+        // Validate Phone Number
+        const phone = document.getElementById('phone');
+        if (!/^\d{10}$/.test(phone.value.trim())) {
+            const errorElement = document.getElementById('phone_error');
+            errorElement.textContent = "Phone number must be exactly 10 digits.";
+            errorElement.style.display = "block";
+            isValid = false;
         }
-            // Validate Email
+
+        // Validate Email
         const email = document.getElementById('email');
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim())) {
             const errorElement = document.getElementById('email_error');
@@ -611,17 +633,10 @@ include 'config.php';
             errorElement.style.display = "block";
             isValid = false;
         }
-            
-            // Validate Phone Number
-        const phone = document.getElementById('phone');
-        if (!/^\d{10}$/.test(phone.value.trim())) {
-            const errorElement = document.getElementById('phone_error');
-            errorElement.textContent = "Phone number must be exactly 10 digits.";
-            errorElement.style.display = "block";
-            isValid = false;
-            }
-            
-           // Validate Username
+
+       
+
+        // Validate Username
         const username = document.getElementById('username');
         const usernameRegex = /^[A-Z][A-Za-z0-9]*(_[A-Za-z0-9]+)*$/;
         if (username.value.trim() === '') {
@@ -664,12 +679,14 @@ include 'config.php';
             errorElement.style.display = "block";
             isValid = false;
         }
-            
-            if (!isValid) {
-                event.preventDefault();
-                showToast('Please correct the errors in the form.');
-            }
-        });
+
+        // Prevent form submission if validation fails
+        if (!isValid) {
+            e.preventDefault();
+            // Show a toast notification for general validation error
+            showToast("Please correct the errors in the form.");
+        }
+    });
     </script>
 </body>
 </html>
