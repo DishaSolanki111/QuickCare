@@ -4,8 +4,6 @@ session_start();
 include "config.php";
 include "header.php";
 
-
-
 // Check if doctor is selected
 if (!isset($_SESSION['booking_doctor_id'])) {
     header("Location: doctors.php");
