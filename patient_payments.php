@@ -308,12 +308,13 @@ html {
         }
         
         .tab {
-            padding: 12px 20px;
-            cursor: pointer;
-            border-bottom: 3px solid transparent;
-            font-weight: 600;
-            color: #777;
-            transition: all 0.3s ease;
+            padding: 15px 30px;
+            font-weight: 12px;
+            border-bottom: 3px solid var(--secondary-color);
+            background-color: var(--primary-color);
+            color: var(--white);
+            border: 1px solid #c3e6cb;
+            border-radius: 5px 5px 0 0;
         }
         
         .tab.active {
@@ -475,7 +476,7 @@ html {
         <div class="main-content">
             <!-- Header -->
             <div class="header">
-                <div class="welcome-msg">Payments</div>
+                <div class="welcome-msg">Payments History</div>
                 <div class="user-actions">
                     <div class="user-dropdown">
                         <div class="user-avatar"><?php echo strtoupper(substr($patient['FIRST_NAME'], 0, 1) . substr($patient['LAST_NAME'], 0, 1)); ?></div>
@@ -497,58 +498,12 @@ html {
                     <?php echo $error_message; ?>
                 </div>
             <?php endif; ?>
+        
+            <!-- <button class="tab" >Payment History</button> -->
             
-            <!-- Tabs Section -->
-            <div class="tabs">
-                <div class="tab active" data-tab="pending">Pending Payments</div>
-                <div class="tab" data-tab="history">Payment History</div>
-            </div>
             
-            <!-- Tab Content -->
-            <div class="tab-content active" id="pending">
-                <?php
-                if (mysqli_num_rows($unpaid_query) > 0) {
-                    while ($appointment = mysqli_fetch_assoc($unpaid_query)) {
-                        ?>
-                        <div class="payment-card">
-                            <div class="payment-header">
-                                <h3>Dr. <?php echo htmlspecialchars($appointment['DOC_FNAME'] . ' ' . $appointment['DOC_LNAME']); ?></h3>
-                                <span><?php echo htmlspecialchars($appointment['SPECIALISATION_NAME']); ?></span>
-                            </div>
-                            
-                            <div class="payment-details">
-                                <div class="payment-item">
-                                    <i class="far fa-calendar"></i>
-                                    <span><?php echo date('F d, Y', strtotime($appointment['APPOINTMENT_DATE'])); ?></span>
-                                </div>
-                                <div class="payment-item">
-                                    <i class="far fa-clock"></i>
-                                    <span><?php echo date('h:i A', strtotime($appointment['APPOINTMENT_TIME'])); ?></span>
-                                </div>
-                                <div class="payment-item">
-                                    <i class="fas fa-rupee-sign"></i>
-                                    <span>Consultation Fee: ₹500</span>
-                                </div>
-                            </div>
-                            
-                            <div class="btn-group">
-                                <button class="btn btn-success" onclick="openPaymentModal(<?php echo $appointment['APPOINTMENT_ID']; ?>)">
-                                    <i class="fas fa-credit-card"></i> Pay Now
-                                </button>
-                            </div>
-                        </div>
-                        <?php
-                    }
-                } else {
-                    echo '<div class="empty-state">
-                        <i class="fas fa-check-circle"></i>
-                        <p>No pending payments</p>
-                    </div>';
-                }
-                ?>
-            </div>
             
-            <div class="tab-content" id="history">
+            <div>
                 <?php
                 if (mysqli_num_rows($payments_query) > 0) {
                     while ($payment = mysqli_fetch_assoc($payments_query)) {

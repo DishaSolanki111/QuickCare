@@ -729,7 +729,7 @@
                     <ul class="service-features">
                         <li>Digital prescriptions</li>
                         <li>Complete medical history</li>
-                        <li>Lab reports storage</li>
+                        
                         <li>Easy sharing with doctors</li>
                     </ul>
                 </div>
@@ -745,9 +745,9 @@
                     <p class="service-description">Never miss your medication or appointments with timely notifications through multiple channels.</p>
                     <ul class="service-features">
                         <li>Smart reminders</li>
-                        <li>SMS & email alerts</li>
-                        <li>Mobile push notifications</li>
-                        <li>Customizable schedules</li>
+                        <li>SMS  alerts</li>
+                       
+                        <li>Customizable reminders</li>
                     </ul>
                 </div>
             </article>
@@ -762,9 +762,7 @@
                     <p class="service-description">Share your experience and get assistance from our dedicated support team 24/7.</p>
                     <ul class="service-features">
                         <li>Rate your experience</li>
-                        <li>Submit feedback</li>
-                        <li>24/7 customer support</li>
-                        <li>Quick resolution</li>
+                        
                     </ul>
                 </div>
             </article>
@@ -844,16 +842,28 @@
                         </div>
                         <div class="timeline-arrow"></div>
                     </div>
-                    
                     <div class="timeline-item" data-step="5">
+                        <div class="timeline-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/>
+                            </svg>
+                        </div>
+                        <div class="timeline-content">
+                            <h3 class="timeline-title">Appointment Payment</h3>
+                            <p class="timeline-description">Your appointment has been successfully scheduled after payment get successfully completed</p>
+                        </div>
+                        <div class="timeline-arrow"></div>
+                    </div>
+                    
+                    <div class="timeline-item" data-step="6">
                         <div class="timeline-icon">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                                 <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
                             </svg>
                         </div>
                         <div class="timeline-content">
-                            <h3 class="timeline-title">Appointment Scheduled</h3>
-                            <p class="timeline-description">Your appointment has been successfully scheduled. You'll receive a confirmation notification.</p>
+                            <h3 class="timeline-title">Appointment Booked</h3>
+                            <p class="timeline-description">Your appointment has been successfully booked. You'll receive a confirmation notification.</p>
                         </div>
                     </div>
                 </div>
@@ -960,7 +970,7 @@
                             <h3 class="notification-title">Appointment / Prescription</h3>
                             <p class="notification-description">Your appointment or prescription details are recorded in the system.</p>
                         </div>
-                        <div class="notification-arrow">→</div>
+                       
                     </div>
                     
                     <div class="notification-item" data-step="2">
@@ -970,10 +980,10 @@
                             </svg>
                         </div>
                         <div class="notification-content">
-                            <h3 class="notification-title">Reminder Generated</h3>
-                            <p class="notification-description">System automatically generates reminders based on your schedule.</p>
+                            <h3 class="notification-title">Inbuild Reminder Generated / set reminder</h3>
+                            <p class="notification-description">System automatically generates reminders based on your schedule./if you want to set reminder go to your dashboard and set reminder according your requirement.</p>
                         </div>
-                        <div class="notification-arrow">→</div>
+                       
                     </div>
                     
                     <div class="notification-item" data-step="3">
@@ -984,9 +994,9 @@
                         </div>
                         <div class="notification-content">
                             <h3 class="notification-title">Notification Sent</h3>
-                            <p class="notification-description">You receive timely notifications via SMS, email, or app alerts.</p>
+                            <p class="notification-description">You receive timely notifications via SMS, or system alerts.</p>
                         </div>
-                        <div class="notification-arrow">→</div>
+                    
                     </div>
                     
                     <div class="notification-item" data-step="4">
@@ -1064,7 +1074,7 @@
                             <h3 class="rating-title">Write Comment</h3>
                         </div>
                         <div class="rating-content">
-                            <textarea class="comment-box" rows="4" placeholder="Share your experience..."></textarea>
+                            <textarea disabled class="comment-box" rows="4" placeholder="Share your experience..."></textarea>
                         </div>
                     </div>
                     
