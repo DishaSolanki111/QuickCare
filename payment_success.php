@@ -1,5 +1,6 @@
 <?php
 session_start();
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -40,14 +41,15 @@ session_start();
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            padding-top:100px;  
         }
 
         .page-header {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-            color: white;
-            padding: 5rem 0;
+         
+            color: darkblue;
+           
             text-align: center;
-            position: relative;
+            position: relative; 
             overflow: hidden;
         }
 
@@ -56,8 +58,8 @@ session_start();
             position: absolute;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
+            width: 500%;
+            height: 50%;
             background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%23ffffff' fill-opacity='0.1' d='M0,224L48,213.3C96,203,192,181,288,181.3C384,181,480,203,576,224C672,245,768,267,864,261.3C960,256,1056,224,1152,213.3C1248,203,1344,213,1392,218.7L1440,224L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z'%3E%3C/path%3E%3C/svg%3E") no-repeat bottom;
             background-size: cover;
         }
@@ -79,7 +81,7 @@ session_start();
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 600px;
             margin: 0 auto;
             padding: 0 20px;
         }
@@ -372,6 +374,7 @@ session_start();
     </style>
 </head>
 <body>
+   <?php include 'header.php'; ?>
     <div class="page-header">
         <div class="container">
             <h1>Payment Status</h1>

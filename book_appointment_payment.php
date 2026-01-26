@@ -117,12 +117,12 @@ if (isset($_POST['razorpay_payment_id'])) {
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            padding-top:100px;
+            padding-top:90px;
         }
 
        
         .container {
-            max-width: 500px;
+            max-width: 1200px;
             margin: 0 auto;
             padding: 0 20px;
         }
@@ -133,7 +133,7 @@ if (isset($_POST['razorpay_payment_id'])) {
         }
 
         .booking-container {
-            max-width: 500px;
+            max-width: 600px;
             margin: 0 auto;
             background: white;
             border-radius: 15px;
@@ -546,7 +546,7 @@ if (isset($_POST['razorpay_payment_id'])) {
 </head>
 <body>
    
-
+<?php include 'header.php'; ?>  
     <section class="booking-section">
         <div class="container">
             <div class="booking-container">

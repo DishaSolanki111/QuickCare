@@ -68,7 +68,7 @@ if (mysqli_num_rows($doctor_query) == 0) {
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-          
+            padding-top:100px;
         }
 
        
