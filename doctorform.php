@@ -361,6 +361,38 @@
                 $password   = $_POST['password'];
                 $specialisation_id = $_POST['specialisation_id'];
 
+                // ---------------- DATE VALIDATION ----------------
+                // Validate DOB is not empty and not in the future
+                if (empty($dob)) {
+                    $errors[] = "Date of Birth is required.";
+                } else {
+                    $dob_date = new DateTime($dob);
+                    $today = new DateTime();
+                    if ($dob_date > $today) {
+                        $errors[] = "Date of Birth cannot be in the future.";
+                    }
+                }
+                
+                // Validate DOJ is not empty and not in the future
+                if (empty($doj)) {
+                    $errors[] = "Date of Joining is required.";
+                } else {
+                    $doj_date = new DateTime($doj);
+                    $today = new DateTime();
+                    if ($doj_date > $today) {
+                        $errors[] = "Date of Joining cannot be in the future.";
+                    }
+                }
+                
+                // Validate DOJ is after DOB
+                if (!empty($dob) && !empty($doj)) {
+                    $dob_date = new DateTime($dob);
+                    $doj_date = new DateTime($doj);
+                    if ($doj_date <= $dob_date) {
+                        $errors[] = "Date of Joining must be after Date of Birth.";
+                    }
+                }
+
                 // ---------------- USERNAME VALIDATION ----------------
                 if (
                     !preg_match('/^[A-Z][A-Za-z0-9]*(_[A-Za-z0-9]+)*$/', $username) ||
@@ -455,14 +487,14 @@
                 <!-- Date of Birth and Date of Joining -->
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="dob">Date of Birth</label>
-                        <input type="date" id="dob" name="dob" value="<?php echo htmlspecialchars($form_data['dob']); ?>">
+                        <label for="dob">Date of Birth <span class="required">*</span></label>
+                        <input type="date" id="dob" name="dob" value="<?php echo htmlspecialchars($form_data['dob']); ?>" required>
                         <div class="error-message" id="dob_error"></div>
                     </div>
                     
                     <div class="form-group">
-                        <label for="doj">Date of Joining</label>
-                        <input type="date" id="doj" name="doj" value="<?php echo htmlspecialchars($form_data['doj']); ?>">
+                        <label for="doj">Date of Joining <span class="required">*</span></label>
+                        <input type="date" id="doj" name="doj" value="<?php echo htmlspecialchars($form_data['doj']); ?>" required>
                         <div class="error-message" id="doj_error"></div>
                     </div>
                 </div>
@@ -616,6 +648,56 @@
             errorElement.textContent = "Last name is required.";
             errorElement.style.display = "block";
             isValid = false;
+        }
+
+        // Validate Date of Birth
+        const dob = document.getElementById('dob');
+        const dobValue = dob.value;
+        if (dobValue === '') {
+            const errorElement = document.getElementById('dob_error');
+            errorElement.textContent = "Date of Birth is required.";
+            errorElement.style.display = "block";
+            isValid = false;
+        } else {
+            const dobDate = new Date(dobValue);
+            const today = new Date();
+            if (dobDate > today) {
+                const errorElement = document.getElementById('dob_error');
+                errorElement.textContent = "Date of Birth cannot be in the future.";
+                errorElement.style.display = "block";
+                isValid = false;
+            }
+        }
+
+        // Validate Date of Joining
+        const doj = document.getElementById('doj');
+        const dojValue = doj.value;
+        if (dojValue === '') {
+            const errorElement = document.getElementById('doj_error');
+            errorElement.textContent = "Date of Joining is required.";
+            errorElement.style.display = "block";
+            isValid = false;
+        } else {
+            const dojDate = new Date(dojValue);
+            const today = new Date();
+            if (dojDate > today) {
+                const errorElement = document.getElementById('doj_error');
+                errorElement.textContent = "Date of Joining cannot be in the future.";
+                errorElement.style.display = "block";
+                isValid = false;
+            }
+        }
+
+        // Validate that DOJ is after DOB
+        if (dobValue !== '' && dojValue !== '') {
+            const dobDate = new Date(dobValue);
+            const dojDate = new Date(dojValue);
+            if (dojDate <= dobDate) {
+                const errorElement = document.getElementById('doj_error');
+                errorElement.textContent = "Date of Joining must be after Date of Birth.";
+                errorElement.style.display = "block";
+                isValid = false;
+            }
         }
 
         // Validate Phone Number

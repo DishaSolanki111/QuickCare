@@ -20,10 +20,7 @@
     --card-bg: #F6F9FB;
     --primary-color: #1a3a5f;
     --secondary-color: #3498db;
-    --accent-color: #2ecc71;
-    --danger-color: #e74c3c;
-    --warning-color: #f39c12;
-    --info-color: #17a2b8;
+    
         }
 
     /* Sidebar */
@@ -146,7 +143,7 @@
 <!-- Sidebar -->
 <div class="sidebar">
   <img src="uploads/logo.JPG" alt="QuickCare Logo" class="logo-img" style="display:block; margin: 0 auto 10px auto; width:80px; height:80px; border-radius:50%;">  
-  <h2>QuickCare</h2>
+  <h2 align="center">QuickCare</h2>
     <a href="index.php">Home</a>
     <a href="admin.php">Dashboard</a>  
     <a href="Admin_appoitment.php">View Appointments</a>
