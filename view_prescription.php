@@ -1,13 +1,11 @@
     <?php
-    include 'recept_sidebar.php';
     session_start();
-
+    include 'config.php';
+    include 'recept_sidebar.php';
     if (!isset($_SESSION['RECEPTIONIST_ID'])) {
         header("Location: login.php");
         exit;
     }
-
-    include 'config.php';
   
     $receptionist_id = $_SESSION['RECEPTIONIST_ID'];
 
