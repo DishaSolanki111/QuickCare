@@ -85,34 +85,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cancel_appointment'])
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         
-          body {
-    background-color: #f5f7fa;
-    color: #333;
-    line-height: 1.6;
-    margin: 0;
-    padding: 0;
-    height: 100vh;
-    overflow-y: scroll;
-}
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            overflow-y: scroll;
+        }
 
-html {
-    height: 100%;
-   
-}
+        html {
+            height: 100%;
+        }
 
-.container {
-    display: flex;
-    min-height: 100vh;
-    height: 100%;
-}
+        .container {
+            display: flex;
+            min-height: 100vh;
+            height: 100%;
+        }
 
-.main-content {
-    flex: 1;
-    margin-left: 250px;
-    padding: 20px;
-    height: 100%;
-    overflow-y: auto;
-}
+        .main-content {
+            flex: 1;
+            margin-left: 250px;
+            padding: 20px;
+            height: 100%;
+            overflow-y: auto;
+        }
         
         .header {
             display: flex;
@@ -706,21 +705,49 @@ html {
             <!-- Tab Content -->
             <div class="tab-content active" id="upcoming">
                 <?php
-                $upcoming_appointments = [];
+                // Dummy static data for upcoming appointments
+                $dummy_upcoming_appointments = [
+                    [
+                        'APPOINTMENT_ID' => 101,
+                        'DOC_FNAME' => 'Kavita',
+                        'DOC_LNAME' => 'Nair',
+                        'SPECIALIZATION' => 'Neurology',
+                        'APPOINTMENT_DATE' => date('Y-m-d', strtotime('+2 days')),
+                        'APPOINTMENT_TIME' => '10:30:00',
+                        'STATUS' => 'SCHEDULED'
+                    ],
+                    [
+                        'APPOINTMENT_ID' => 102,
+                        'DOC_FNAME' => 'Sanjay',
+                        'DOC_LNAME' => 'Malhotra',
+                        'SPECIALIZATION' => 'Cardiology',
+                        'APPOINTMENT_DATE' => date('Y-m-d', strtotime('+5 days')),
+                        'APPOINTMENT_TIME' => '14:00:00',
+                        'STATUS' => 'SCHEDULED'
+                    ],
+                    [
+                        'APPOINTMENT_ID' => 103,
+                        'DOC_FNAME' => 'Priya',
+                        'DOC_LNAME' => 'Sharma',
+                        'SPECIALIZATION' => 'Dermatology',
+                        'APPOINTMENT_DATE' => date('Y-m-d', strtotime('+1 week')),
+                        'APPOINTMENT_TIME' => '11:15:00',
+                        'STATUS' => 'SCHEDULED'
+                    ],
+                    [
+                        'APPOINTMENT_ID' => 104,
+                        'DOC_FNAME' => 'Rajesh',
+                        'DOC_LNAME' => 'Kumar',
+                        'SPECIALIZATION' => 'Orthopedics',
+                        'APPOINTMENT_DATE' => date('Y-m-d', strtotime('+10 days')),
+                        'APPOINTMENT_TIME' => '09:00:00',
+                        'STATUS' => 'SCHEDULED'
+                    ]
+                ];
                 
-                if (mysqli_num_rows($appointments_query) > 0) {
-                    // Reset the result pointer to beginning
-                    mysqli_data_seek($appointments_query, 0);
-                    while ($appointment = mysqli_fetch_assoc($appointments_query)) {
-                        if ($appointment['APPOINTMENT_DATE'] >= date('Y-m-d')) {
-                            $upcoming_appointments[] = $appointment;
-                        }
-                    }
-                }
-                
-                // Display upcoming appointments
-                if (count($upcoming_appointments) > 0) {
-                    foreach ($upcoming_appointments as $appointment) {
+                // Display dummy upcoming appointments
+                if (count($dummy_upcoming_appointments) > 0) {
+                    foreach ($dummy_upcoming_appointments as $appointment) {
                         $status_class = '';
                         if ($appointment['STATUS'] == 'SCHEDULED') {
                             $status_class = 'status-scheduled';
@@ -785,7 +812,12 @@ html {
                     // Reset the result pointer to beginning
                     mysqli_data_seek($appointments_query, 0);
                     while ($appointment = mysqli_fetch_assoc($appointments_query)) {
-                        if ($appointment['APPOINTMENT_DATE'] < date('Y-m-d')) {
+                        // Convert appointment date to timestamp for accurate comparison
+                        $appointment_date = strtotime($appointment['APPOINTMENT_DATE']);
+                        $today = strtotime(date('Y-m-d'));
+                        
+                        // Check if appointment is in the past
+                        if ($appointment_date < $today) {
                             $past_appointments[] = $appointment;
                         }
                     }
