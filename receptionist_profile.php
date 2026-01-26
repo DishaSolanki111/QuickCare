@@ -42,6 +42,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_profile'])) {
     // Handle profile image upload
     if (isset($_FILES['profile_image']) && $_FILES['profile_image']['name'] != '') {
         $target_dir = "uploads/";
+        if (!file_exists($target_dir)) {
+            mkdir($target_dir, 0777, true);
+        }
         $file_name = time() . "_" . basename($_FILES["profile_image"]["name"]);
         $target_file = $target_dir . $file_name;
         $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
@@ -107,12 +110,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
         $password_error = "Current password is incorrect!";
     }
 }
-
-
-    
-   
-    
-   
 
 
 ?>
@@ -497,6 +494,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
         .profile-image-upload {
             position: relative;
             display: inline-block;
+            cursor: pointer;
         }
         
         .profile-image-upload .upload-overlay {
@@ -512,7 +510,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
             justify-content: center;
             opacity: 0;
             transition: opacity 0.3s ease;
-            cursor: pointer;
         }
         
         .profile-image-upload:hover .upload-overlay {
@@ -599,13 +596,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
         <?php endif; ?>
         
         <!-- Profile Header -->
-        <!-- <div class="profile-header">
-            <div class="profile-image-upload">
+        <div class="profile-header">
+            <div class="profile-image-upload" onclick="document.getElementById('profile_image_input').click()">
                 <img src="<?php echo !empty($receptionist['PROFILE_IMAGE']) ? $receptionist['PROFILE_IMAGE'] : 'https://picsum.photos/seed/receptionist/120/120.jpg'; ?>" alt="Profile" class="profile-avatar">
-                <div class="upload-overlay" onclick="document.getElementById('profile_image_input').click()">
+                <div class="upload-overlay">
                     <i class="bi bi-camera-fill"></i>
                 </div>
-                <input type="file" id="profile_image_input" name="profile_image" style="display: none;" accept="image/*">
+                <input type="file" id="profile_image_input" name="profile_image" style="display: none;" accept="image/*" onchange="handleImageUpload(this)">
             </div>
             <div class="profile-info">
                 <h2><?php echo htmlspecialchars($receptionist['FIRST_NAME'] . ' ' . $receptionist['LAST_NAME']); ?></h2>
@@ -613,9 +610,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
                 <p><i class="bi bi-telephone-fill me-2"></i><?php echo htmlspecialchars($receptionist['PHONE']); ?></p>
                 <p><i class="bi bi-geo-alt-fill me-2"></i><?php echo htmlspecialchars($receptionist['ADDRESS']); ?></p>
             </div>
-        </div> -->
+        </div>
         
-        <!-- Statistics Cards
+        <!-- Statistics Cards -->
         <div class="stats-container">
             <div class="stat-card">
                 <div class="stat-icon appointments">
@@ -646,7 +643,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
                     <p>Medicines Managed</p>
                 </div>
             </div>
-        </div> -->
+        </div>
         
         <!-- Profile Card -->
         <div class="card">
@@ -657,23 +654,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
                 <!-- Tabs -->
                 <ul class="nav nav-tabs" id="profileTabs" role="tablist">
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link active" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="true">Profile</button>
+                        <button class="nav-link active" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile-pane" type="button" role="tab" aria-controls="profile-pane" aria-selected="true">Profile</button>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="activity-tab" data-bs-toggle="tab" data-bs-target="#activity" type="button" role="tab" aria-controls="activity" aria-selected="false">Activity</button>
+                        <button class="nav-link" id="activity-tab" data-bs-toggle="tab" data-bs-target="#activity-pane" type="button" role="tab" aria-controls="activity-pane" aria-selected="false">Activity</button>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="security-tab" data-bs-toggle="tab" data-bs-target="#security" type="button" role="tab" aria-controls="security" aria-selected="false">Security</button>
+                        <button class="nav-link" id="security-tab" data-bs-toggle="tab" data-bs-target="#security-pane" type="button" role="tab" aria-controls="security-pane" aria-selected="false">Security</button>
                     </li>
                 </ul>
                 
                 <!-- Tab Content -->
                 <div class="tab-content" id="profileTabContent">
                     <!-- Profile Tab -->
-                    <div class="tab-pane fade show active" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-                        <form method="POST" action="recep_profile.php" enctype="multipart/form-data">
-                            <input type="hidden" name="update_profile" value="1">
-                            
+                    <div class="tab-pane fade show active" id="profile-pane" role="tabpanel" aria-labelledby="profile-tab">
+                        <!-- Profile View Form -->
+                        <div id="profileViewForm">
                             <div class="info-grid">
                                 <div class="info-item">
                                     <span class="info-label">First Name</span>
@@ -718,10 +714,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
                                     <i class="bi bi-pencil"></i> Edit Profile
                                 </button>
                             </div>
-                        </form>
+                        </div>
                         
                         <!-- Edit Profile Form (Hidden by default) -->
-                        <form method="POST" action="receptionist_profile.php" id="editProfileForm" style="display: none;" enctype="multipart/form-data">
+                        <form method="POST" action="recep_profile.php" id="editProfileForm" style="display: none;" enctype="multipart/form-data">
                             <input type="hidden" name="update_profile" value="1">
                             
                             <div class="info-grid">
@@ -771,7 +767,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
                     </div>
                     
                     <!-- Activity Tab -->
-                    <div class="tab-pane fade" id="activity" role="tabpanel" aria-labelledby="activity-tab">
+                    <div class="tab-pane fade" id="activity-pane" role="tabpanel" aria-labelledby="activity-tab">
                         <div class="activity-list">
                             <?php
                             // Fetch recent activities
@@ -837,7 +833,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
                     </div>
                     
                     <!-- Security Tab -->
-                    <div class="tab-pane fade" id="security" role="tabpanel" aria-labelledby="security-tab">
+                    <div class="tab-pane fade" id="security-pane" role="tabpanel" aria-labelledby="security-tab">
                         <div class="security-options">
                             <div class="security-option">
                                 <div>
@@ -855,7 +851,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
                                     <p>Add an extra layer of security to your account</p>
                                 </div>
                                 <div class="form-check form-switch">
-                                    <input class="form-check-input" type="checkbox" id="2faSwitch" <?php echo $two_fa_enabled ? 'checked' : ''; ?>>
+                                    <input class="form-check-input" type="checkbox" id="2faSwitch" <?php echo $two_fa_enabled ? 'checked' : ''; ?> onchange="toggle2FA(this)">
                                     <label class="form-check-label" for="2faSwitch"></label>
                                 </div>
                             </div>
@@ -998,29 +994,61 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Initialize tooltips
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl)
+            });
+            
+            // Edit Profile Button Handler
             const editProfileBtn = document.getElementById('editProfileBtn');
             const cancelEditBtn = document.getElementById('cancelEditBtn');
-            const profileView = document.querySelector('#profile form:first-of-type');
+            const profileViewForm = document.getElementById('profileViewForm');
             const editProfileForm = document.getElementById('editProfileForm');
             
-            editProfileBtn.addEventListener('click', function() {
-                profileView.style.display = 'none';
-                editProfileForm.style.display = 'block';
-                editProfileBtn.style.display = 'none';
-            });
+            if (editProfileBtn) {
+                editProfileBtn.addEventListener('click', function() {
+                    profileViewForm.style.display = 'none';
+                    editProfileForm.style.display = 'block';
+                    editProfileBtn.style.display = 'none';
+                });
+            }
             
-            cancelEditBtn.addEventListener('click', function() {
-                profileView.style.display = 'block';
-                editProfileForm.style.display = 'none';
-                editProfileBtn.style.display = 'block';
-            });
+            if (cancelEditBtn) {
+                cancelEditBtn.addEventListener('click', function() {
+                    profileViewForm.style.display = 'block';
+                    editProfileForm.style.display = 'none';
+                    editProfileBtn.style.display = 'block';
+                });
+            }
+        });
+        
+        // Handle 2FA toggle
+        function toggle2FA(checkbox) {
+            const formData = new FormData();
+            formData.append('toggle_2fa', '1');
+            formData.append('enable_2fa', checkbox.checked ? '1' : '0');
             
-            // Handle 2FA toggle
-            const twoFaSwitch = document.getElementById('2faSwitch');
-            twoFaSwitch.addEventListener('change', function() {
+            fetch('recep_profile.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.text())
+            .then(data => {
+                location.reload();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+        
+        // Handle profile image upload
+        function handleImageUpload(input) {
+            const file = input.files[0];
+            if (file) {
                 const formData = new FormData();
-                formData.append('toggle_2fa', '1');
-                formData.append('enable_2fa', this.checked ? '1' : '0');
+                formData.append('update_profile', '1');
+                formData.append('profile_image', file);
                 
                 fetch('recep_profile.php', {
                     method: 'POST',
@@ -1033,30 +1061,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
                 .catch(error => {
                     console.error('Error:', error);
                 });
-            });
-            
-            // Handle profile image upload
-            document.getElementById('profile_image_input').addEventListener('change', function() {
-                const file = this.files[0];
-                if (file) {
-                    const formData = new FormData();
-                    formData.append('update_profile', '1');
-                    formData.append('profile_image', file);
-                    
-                    fetch('recep_profile.php', {
-                        method: 'POST',
-                        body: formData
-                    })
-                    .then(response => response.text())
-                    .then(data => {
-                        location.reload();
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                    });
-                }
-            });
-        });
+            }
+        }
     </script>
 </body>
 </html>

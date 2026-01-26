@@ -14,21 +14,7 @@ include 'config.php';
  $receptionist_query = mysqli_query($conn, "SELECT * FROM receptionist_tbl WHERE RECEPTIONIST_ID = '$receptionist_id'");
  $receptionist = mysqli_fetch_assoc($receptionist_query);
 
-// Handle appointment reminder creation
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create_appointment_reminder'])) {
-    $appointment_id = mysqli_real_escape_string($conn, $_POST['appointment_id']);
-    $reminder_time = mysqli_real_escape_string($conn, $_POST['reminder_time']);
-    $remarks = mysqli_real_escape_string($conn, $_POST['remarks']);
-    
-    $create_query = "INSERT INTO appointment_reminder_tbl (RECEPTIONIST_ID, APPOINTMENT_ID, REMINDER_TIME, REMARKS) 
-                     VALUES ('$receptionist_id', '$appointment_id', '$reminder_time', '$remarks')";
-    
-    if (mysqli_query($conn, $create_query)) {
-        $success_message = "Appointment reminder created successfully!";
-    } else {
-        $error_message = "Error creating appointment reminder: " . mysqli_error($conn);
-    }
-}
+
 
 // Handle medicine reminder creation
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create_medicine_reminder'])) {
@@ -47,18 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create_medicine_remin
     }
 }
 
-// Handle appointment reminder deletion
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_appointment_reminder'])) {
-    $reminder_id = mysqli_real_escape_string($conn, $_POST['reminder_id']);
-    
-    $delete_query = "DELETE FROM appointment_reminder_tbl WHERE APPOINTMENT_REMINDER_ID = '$reminder_id'";
-    
-    if (mysqli_query($conn, $delete_query)) {
-        $success_message = "Appointment reminder deleted successfully!";
-    } else {
-        $error_message = "Error deleting appointment reminder: " . mysqli_error($conn);
-    }
-}
+
 
 // Handle medicine reminder deletion
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_medicine_reminder'])) {
@@ -73,17 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_medicine_remin
     }
 }
 
-// Fetch appointment reminders
- $appointment_reminders_query = mysqli_query($conn, "
-    SELECT ar.*, a.APPOINTMENT_DATE, a.APPOINTMENT_TIME, 
-           p.FIRST_NAME as PAT_FNAME, p.LAST_NAME as PAT_LNAME,
-           d.FIRST_NAME as DOC_FNAME, d.LAST_NAME as DOC_LNAME
-    FROM appointment_reminder_tbl ar
-    JOIN appointment_tbl a ON ar.APPOINTMENT_ID = a.APPOINTMENT_ID
-    JOIN patient_tbl p ON a.PATIENT_ID = p.PATIENT_ID
-    JOIN doctor_tbl d ON a.DOCTOR_ID = d.DOCTOR_ID
-    ORDER BY ar.REMINDER_TIME
-");
+
 
 // Fetch medicine reminders
  $medicine_reminders_query = mysqli_query($conn, "
@@ -94,17 +59,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_medicine_remin
     ORDER BY mr.REMINDER_TIME
 ");
 
-// Fetch appointments for dropdown
- $appointments_query = mysqli_query($conn, "
-    SELECT a.*, p.FIRST_NAME as PAT_FNAME, p.LAST_NAME as PAT_LNAME,
-           d.FIRST_NAME as DOC_FNAME, d.LAST_NAME as DOC_LNAME, s.SPECIALISATION_NAME
-    FROM appointment_tbl a
-    JOIN patient_tbl p ON a.PATIENT_ID = p.PATIENT_ID
-    JOIN doctor_tbl d ON a.DOCTOR_ID = d.DOCTOR_ID
-    JOIN specialisation_tbl s ON d.SPECIALISATION_ID = s.SPECIALISATION_ID
-    WHERE a.STATUS = 'SCHEDULED'
-    ORDER BY a.APPOINTMENT_DATE, a.APPOINTMENT_TIME
-");
 
 // Fetch medicines for dropdown
  $medicines_query = mysqli_query($conn, "SELECT * FROM medicine_tbl ORDER BY MED_NAME");
