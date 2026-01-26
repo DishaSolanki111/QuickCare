@@ -611,6 +611,152 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cancel_appointment'])
             to { opacity: 1; transform: translateY(0); }
         }
         
+        /* Booking Summary Styles */
+        .booking-summary {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .booking-summary h4 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .summary-row:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        
+        .summary-row.total {
+            font-weight: bold;
+            color: var(--accent-color);
+            font-size: 1.1rem;
+        }
+        
+        .payment-method {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .payment-method:hover {
+            background-color: #f8f9fa;
+            border-color: var(--secondary-color);
+        }
+        
+        .payment-method.selected {
+            background-color: rgba(52, 152, 219, 0.1);
+            border-color: var(--secondary-color);
+        }
+        
+        .payment-method i {
+            margin-right: 10px;
+            color: var(--secondary-color);
+        }
+        
+        /* Payment Processing Styles */
+        .payment-processing {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        
+        .payment-icon {
+            font-size: 4rem;
+            color: var(--secondary-color);
+            margin-bottom: 20px;
+        }
+        
+        .payment-title {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+        
+        .payment-message {
+            color: #666;
+            margin-bottom: 30px;
+        }
+        
+        .razorpay-button {
+            background: #3399cc;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .razorpay-button:hover {
+            background: #2277bb;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        /* Success Page Styles */
+        .success-container {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        
+        .success-icon {
+            font-size: 5rem;
+            color: var(--accent-color);
+            margin-bottom: 20px;
+            animation: successPulse 1s ease-in-out;
+        }
+        
+        @keyframes successPulse {
+            0% { transform: scale(0); opacity: 0; }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
+        .success-title {
+            font-size: 2rem;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+        
+        .success-message {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+        }
+        
+        .appointment-details-card {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px auto;
+            max-width: 500px;
+            text-align: left;
+        }
+        
+        .appointment-details-card h4 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
         @media (max-width: 992px) {
             .main-content {
                 margin-left: 200px;
@@ -878,9 +1024,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cancel_appointment'])
                 <div class="step active" id="step1">1</div>
                 <div class="step" id="step2">2</div>
                 <div class="step" id="step3">3</div>
+                <div class="step" id="step4">4</div>
+                <div class="step" id="step5">5</div>
+                <div class="step" id="step6">6</div>
+                <div class="step" id="step7">7</div>
             </div>
             
-            <form method="POST" action="payment.php">
+            <form method="POST" action="book_appointment_payment.php">
                 <!-- Step 1: Select Doctor -->
                 <div class="step-content active" id="step1Content">
                     <div class="form-group">
@@ -906,7 +1056,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cancel_appointment'])
                             <?php
                             if (mysqli_num_rows($doctors_query) > 0) {
                                 while ($doctor = mysqli_fetch_assoc($doctors_query)) {
-                                    echo '<div class="doctor-info" data-specialization="' . $doctor['SPECIALISATION_ID'] . '" onclick="selectDoctor(this, ' . $doctor['DOCTOR_ID'] . ')">
+                                    echo '<div class="doctor-info" data-specialization="' . $doctor['SPECIALISATION_ID'] . '" onclick="selectDoctor(this, ' . $doctor['DOCTOR_ID'] . ', \'' . htmlspecialchars($doctor['FIRST_NAME'] . ' ' . $doctor['LAST_NAME']) . '\', \'' . htmlspecialchars($doctor['SPECIALISATION_NAME']) . '\')">
                                                 <div class="doctor-avatar">' . strtoupper(substr($doctor['FIRST_NAME'], 0, 1) . substr($doctor['LAST_NAME'], 0, 1)) . '</div>
                                                 <div class="doctor-details">
                                                     <div class="doctor-name">Dr. ' . htmlspecialchars($doctor['FIRST_NAME'] . ' ' . $doctor['LAST_NAME']) . '</div>
@@ -920,6 +1070,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cancel_appointment'])
                             ?>
                         </div>
                         <input type="hidden" id="selected_doctor_id" name="doctor_id" required>
+                        <input type="hidden" id="selected_doctor_name" name="doctor_name">
+                        <input type="hidden" id="selected_specialization" name="specialization">
                     </div>
                     
                     <div class="btn-group">
@@ -969,18 +1121,186 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cancel_appointment'])
                         <input type="hidden" id="selected_time" name="appointment_time" required>
                     </div>
                     
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-danger" onclick="prevStep(2)">
+                            <i class="fas fa-arrow-left" style="margin-right: 5px;"></i> Back
+                        </button>
+                        <button type="button" class="btn btn-primary" onclick="nextStep(4)" id="nextToStep4" disabled>
+                            Next: Provide Details <i class="fas fa-arrow-right" style="margin-left: 5px;"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Step 4: Provide Details -->
+                <div class="step-content" id="step4Content">
                     <div class="form-group">
                         <label for="reason">Reason for Visit</label>
                         <textarea class="form-control" id="reason" name="reason" rows="3" placeholder="Please describe your symptoms or reason for the appointment"></textarea>
                     </div>
                     
+                    <div class="booking-summary">
+                        <h4>Appointment Summary</h4>
+                        <div class="summary-row">
+                            <span>Doctor:</span>
+                            <span id="summary_doctor">-</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Specialization:</span>
+                            <span id="summary_specialization">-</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Date:</span>
+                            <span id="summary_date">-</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Time:</span>
+                            <span id="summary_time">-</span>
+                        </div>
+                        <div class="summary-row total">
+                            <span>Consultation Fee:</span>
+                            <span>₹300</span>
+                        </div>
+                    </div>
+                    
                     <div class="btn-group">
-                        <button type="button" class="btn btn-danger" onclick="prevStep(2)">
+                        <button type="button" class="btn btn-danger" onclick="prevStep(3)">
                             <i class="fas fa-arrow-left" style="margin-right: 5px;"></i> Back
                         </button>
-                        <button type="submit" class="btn btn-success" id="submitBtn" disabled>
-                            <i class="fas fa-check"></i> Book Appointment
+                        <button type="button" class="btn btn-primary" onclick="nextStep(5)" id="nextToStep5">
+                            Next: Payment <i class="fas fa-arrow-right" style="margin-left: 5px;"></i>
                         </button>
+                    </div>
+                </div>
+                
+                <!-- Step 5: Payment Method -->
+                <div class="step-content" id="step5Content">
+                    <div class="form-group">
+                        <label>Select Payment Method</label>
+                        <div class="payment-method" onclick="selectPaymentMethod(this, 'razorpay')">
+                            <i class="fas fa-credit-card"></i>
+                            <span>Pay with Razorpay (Online Payment)</span>
+                        </div>
+                        <div class="payment-method" onclick="selectPaymentMethod(this, 'offline')">
+                            <i class="fas fa-money-bill-wave"></i>
+                            <span>Pay at Hospital (Offline Payment)</span>
+                        </div>
+                        <input type="hidden" id="selected_payment_method" name="payment_method" required>
+                    </div>
+                    
+                    <div class="booking-summary">
+                        <h4>Appointment Summary</h4>
+                        <div class="summary-row">
+                            <span>Doctor:</span>
+                            <span id="summary_doctor_payment">-</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Specialization:</span>
+                            <span id="summary_specialization_payment">-</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Date:</span>
+                            <span id="summary_date_payment">-</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Time:</span>
+                            <span id="summary_time_payment">-</span>
+                        </div>
+                        <div class="summary-row total">
+                            <span>Consultation Fee:</span>
+                            <span>₹300</span>
+                        </div>
+                    </div>
+                    
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-danger" onclick="prevStep(4)">
+                            <i class="fas fa-arrow-left" style="margin-right: 5px;"></i> Back
+                        </button>
+                        <button type="button" class="btn btn-primary" onclick="proceedToPayment()" id="proceedToPaymentBtn" disabled>
+                            Proceed to Payment <i class="fas fa-arrow-right" style="margin-left: 5px;"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Step 6: Payment Processing -->
+                <div class="step-content" id="step6Content">
+                    <div class="payment-processing">
+                        <i class="fas fa-lock payment-icon"></i>
+                        <h3 class="payment-title">Secure Payment</h3>
+                        <p class="payment-message">Complete your payment to confirm the appointment</p>
+                        
+                        <div class="booking-summary">
+                            <h4>Appointment Summary</h4>
+                            <div class="summary-row">
+                                <span>Doctor:</span>
+                                <span id="summary_doctor_payment_final">-</span>
+                            </div>
+                            <div class="summary-row">
+                                <span>Specialization:</span>
+                                <span id="summary_specialization_payment_final">-</span>
+                            </div>
+                            <div class="summary-row">
+                                <span>Date:</span>
+                                <span id="summary_date_payment_final">-</span>
+                            </div>
+                            <div class="summary-row">
+                                <span>Time:</span>
+                                <span id="summary_time_payment_final">-</span>
+                            </div>
+                            <div class="summary-row total">
+                                <span>Total Amount:</span>
+                                <span>₹300</span>
+                            </div>
+                        </div>
+                        
+                        <button class="razorpay-button" id="rzp-button">
+                            <i class="fas fa-credit-card"></i> Pay with Razorpay
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Step 7: Payment Success -->
+                <div class="step-content" id="step7Content">
+                    <div class="success-container">
+                        <i class="fas fa-check-circle success-icon"></i>
+                        <h2 class="success-title">Payment Successful!</h2>
+                        <p class="success-message">Your appointment has been booked successfully</p>
+                        
+                        <div class="appointment-details-card">
+                            <h4>Appointment Details</h4>
+                            <div class="summary-row">
+                                <span>Appointment ID:</span>
+                                <span id="appointment_id_display">-</span>
+                            </div>
+                            <div class="summary-row">
+                                <span>Doctor:</span>
+                                <span id="summary_doctor_success">-</span>
+                            </div>
+                            <div class="summary-row">
+                                <span>Specialization:</span>
+                                <span id="summary_specialization_success">-</span>
+                            </div>
+                            <div class="summary-row">
+                                <span>Date:</span>
+                                <span id="summary_date_success">-</span>
+                            </div>
+                            <div class="summary-row">
+                                <span>Time:</span>
+                                <span id="summary_time_success">-</span>
+                            </div>
+                            <div class="summary-row">
+                                <span>Payment Status:</span>
+                                <span style="color: var(--accent-color); font-weight: bold;">Paid</span>
+                            </div>
+                        </div>
+                        
+                        <div class="btn-group" style="justify-content: center;">
+                            <button type="button" class="btn btn-primary" onclick="downloadReceipt()">
+                                <i class="fas fa-download"></i> Download Receipt
+                            </button>
+                            <button type="button" class="btn btn-success" onclick="closeBookingModal()">
+                                <i class="fas fa-home"></i> Go to Dashboard
+                            </button>
+                        </div>
                     </div>
                 </div>
             </form>
@@ -1023,6 +1343,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cancel_appointment'])
         </div>
     </div>
     
+    <!-- Razorpay Script -->
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Tab functionality
@@ -1055,6 +1378,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cancel_appointment'])
         
         function closeBookingModal() {
             document.getElementById('bookingModal').style.display = 'none';
+            // Refresh the page to show updated appointments
+            location.reload();
         }
         
         function openRescheduleModal(appointmentId) {
@@ -1081,6 +1406,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cancel_appointment'])
         
         // Step navigation functions
         function nextStep(stepNumber) {
+            // Update summary if moving to step 4, 5, 6, or 7
+            if (stepNumber >= 4) {
+                updateSummary();
+            }
+            
             // Hide current step
             document.querySelectorAll('.step-content').forEach(content => {
                 content.classList.remove('active');
@@ -1107,7 +1437,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cancel_appointment'])
             document.getElementById('step' + stepNumber + 'Content').classList.add('active');
             
             // Update step indicators
-            for (let i = stepNumber + 1; i <= 3; i++) {
+            for (let i = stepNumber + 1; i <= 7; i++) {
                 document.getElementById('step' + i).classList.remove('active');
                 document.getElementById('step' + i).classList.remove('completed');
             }
@@ -1122,27 +1452,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cancel_appointment'])
             document.getElementById('step1Content').classList.add('active');
             
             // Reset step indicators
-            for (let i = 2; i <= 3; i++) {
+            for (let i = 2; i <= 7; i++) {
                 document.getElementById('step' + i).classList.remove('active');
                 document.getElementById('step' + i).classList.remove('completed');
             }
             
             // Reset form values
             document.getElementById('selected_doctor_id').value = '';
+            document.getElementById('selected_doctor_name').value = '';
+            document.getElementById('selected_specialization').value = '';
             document.getElementById('selected_date').value = '';
             document.getElementById('selected_time').value = '';
+            document.getElementById('reason').value = '';
+            document.getElementById('selected_payment_method').value = '';
+            
+            // Reset buttons
             document.getElementById('nextToStep2').disabled = true;
             document.getElementById('nextToStep3').disabled = true;
-            document.getElementById('submitBtn').disabled = true;
+            document.getElementById('nextToStep4').disabled = true;
+            document.getElementById('nextToStep5').disabled = false;
+            document.getElementById('proceedToPaymentBtn').disabled = true;
             
             // Clear selections
             document.querySelectorAll('.doctor-info').forEach(doc => {
                 doc.classList.remove('selected');
             });
+            
+            document.querySelectorAll('.payment-method').forEach(method => {
+                method.classList.remove('selected');
+            });
         }
         
         // Doctor selection and filtering
-        function selectDoctor(element, doctorId) {
+        function selectDoctor(element, doctorId, doctorName, specialization) {
             // Remove selected class from all doctors
             document.querySelectorAll('.doctor-info').forEach(doc => {
                 doc.classList.remove('selected');
@@ -1151,8 +1493,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cancel_appointment'])
             // Add selected class to clicked doctor
             element.classList.add('selected');
             
-            // Set the hidden input value
+            // Set the hidden input values
             document.getElementById('selected_doctor_id').value = doctorId;
+            document.getElementById('selected_doctor_name').value = doctorName;
+            document.getElementById('selected_specialization').value = specialization;
             
             // Enable next button
             document.getElementById('nextToStep2').disabled = false;
@@ -1383,8 +1727,185 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cancel_appointment'])
             });
             event.target.classList.add('selected');
             
-            // Enable submit button
-            document.getElementById('submitBtn').disabled = false;
+            // Enable next button
+            document.getElementById('nextToStep4').disabled = false;
+        }
+        
+        // Payment method selection
+        function selectPaymentMethod(element, method) {
+            // Remove selected class from all payment methods
+            document.querySelectorAll('.payment-method').forEach(m => {
+                m.classList.remove('selected');
+            });
+            
+            // Add selected class to clicked payment method
+            element.classList.add('selected');
+            
+            // Set the hidden input value
+            document.getElementById('selected_payment_method').value = method;
+            
+            // Enable proceed button
+            document.getElementById('proceedToPaymentBtn').disabled = false;
+        }
+        
+        // Proceed to payment
+        function proceedToPayment() {
+            const paymentMethod = document.getElementById('selected_payment_method').value;
+            
+            if (paymentMethod === 'razorpay') {
+                nextStep(6);
+            } else if (paymentMethod === 'offline') {
+                // For offline payment, directly submit the form
+                document.querySelector('form').submit();
+            }
+        }
+        
+        // Update summary
+        function updateSummary() {
+            const doctorName = document.getElementById('selected_doctor_name').value;
+            const specialization = document.getElementById('selected_specialization').value;
+            const date = document.getElementById('selected_date').value;
+            const time = document.getElementById('selected_time').value;
+            
+            // Format date for display
+            let formattedDate = '-';
+            if (date) {
+                const dateObj = new Date(date);
+                formattedDate = dateObj.toLocaleDateString('en-US', { 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                });
+            }
+            
+            // Format time for display
+            let formattedTime = '-';
+            if (time) {
+                const [hours, minutes] = time.split(':');
+                const timeObj = new Date();
+                timeObj.setHours(hours, minutes);
+                formattedTime = timeObj.toLocaleTimeString('en-US', { 
+                    hour: 'numeric', 
+                    minute: '2-digit',
+                    hour12: true 
+                });
+            }
+            
+            // Update summary in all steps
+            const summaryElements = [
+                { doctor: 'summary_doctor', specialization: 'summary_specialization', date: 'summary_date', time: 'summary_time' },
+                { doctor: 'summary_doctor_payment', specialization: 'summary_specialization_payment', date: 'summary_date_payment', time: 'summary_time_payment' },
+                { doctor: 'summary_doctor_payment_final', specialization: 'summary_specialization_payment_final', date: 'summary_date_payment_final', time: 'summary_time_payment_final' },
+                { doctor: 'summary_doctor_success', specialization: 'summary_specialization_success', date: 'summary_date_success', time: 'summary_time_success' }
+            ];
+            
+            summaryElements.forEach(elements => {
+                document.getElementById(elements.doctor).textContent = doctorName || '-';
+                document.getElementById(elements.specialization).textContent = specialization || '-';
+                document.getElementById(elements.date).textContent = formattedDate;
+                document.getElementById(elements.time).textContent = formattedTime;
+            });
+        }
+        
+        // Razorpay payment
+        document.getElementById('rzp-button').onclick = function(e) {
+            e.preventDefault();
+            
+            const doctorName = document.getElementById('selected_doctor_name').value;
+            const date = document.getElementById('selected_date').value;
+            const time = document.getElementById('selected_time').value;
+            
+            var options = {
+                "key": "rzp_test_S8YWQLeAKtofm8", // Enter your Test Key ID here
+                "amount": "30000", // Amount is in currency subunits. Default currency is INR. Hence, 30000 refers to 30000 paise or ₹300
+                "currency": "INR",
+                "name": "QuickCare",
+                "description": "Appointment Booking",
+                "image": "https://example.com/your_logo.png", // Your company logo
+                "handler": function (response) {
+                    // Create a form to submit the payment details
+                    var form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = '';
+                    
+                    // Add the payment details to the form
+                    var razorpay_payment_id = document.createElement('input');
+                    razorpay_payment_id.type = 'hidden';
+                    razorpay_payment_id.name = 'razorpay_payment_id';
+                    razorpay_payment_id.value = response.razorpay_payment_id;
+                    form.appendChild(razorpay_payment_id);
+                    
+                    if (response.razorpay_signature) {
+                        var razorpay_signature = document.createElement('input');
+                        razorpay_signature.type = 'hidden';
+                        razorpay_signature.name = 'razorpay_signature';
+                        razorpay_signature.value = response.razorpay_signature;
+                        form.appendChild(razorpay_signature);
+                    }
+                    
+                    // Submit the form
+                    document.body.appendChild(form);
+                    form.submit();
+                    
+                    // Simulate successful payment and move to success step
+                    setTimeout(() => {
+                        // Generate a random appointment ID
+                        const appointmentId = 'APT' + Math.floor(Math.random() * 100000);
+                        document.getElementById('appointment_id_display').textContent = appointmentId;
+                        nextStep(7);
+                    }, 1000);
+                },
+                "prefill": {
+                    "name": "<?php echo htmlspecialchars($patient['FIRST_NAME'] . ' ' . $patient['LAST_NAME']); ?>",
+                    "email": "<?php echo isset($patient['EMAIL']) ? htmlspecialchars($patient['EMAIL']) : ''; ?>",
+                    "contact": "<?php echo isset($patient['PHONE']) ? htmlspecialchars($patient['PHONE']) : ''; ?>"
+                },
+                "notes": {
+                    "address": "QuickCare Appointment",
+                    "doctor": doctorName,
+                    "appointment_date": date,
+                    "appointment_time": time
+                },
+                "theme": {
+                    "color": "#3399cc"
+                }
+            };
+            
+            var rzp1 = new Razorpay(options);
+            rzp1.open();
+        }
+        
+        // Download receipt
+        function downloadReceipt() {
+            const appointmentId = document.getElementById('appointment_id_display').textContent;
+            const doctorName = document.getElementById('summary_doctor_success').textContent;
+            const date = document.getElementById('summary_date_success').textContent;
+            const time = document.getElementById('summary_time_success').textContent;
+            
+            // Create receipt content
+            const receiptContent = `
+                QUICKCARE MEDICAL CENTER
+                Payment Receipt
+                
+                Appointment ID: ${appointmentId}
+                Doctor: ${doctorName}
+                Date: ${date}
+                Time: ${time}
+                Amount Paid: ₹300
+                Payment Method: Razorpay
+                Payment Date: ${new Date().toLocaleDateString()}
+                
+                This is a digitally generated receipt.
+            `;
+            
+            // Create a blob and download
+            const blob = new Blob([receiptContent], { type: 'text/plain' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `receipt_${appointmentId}.txt`;
+            a.click();
+            window.URL.revokeObjectURL(url);
         }
     </script>
 </body>
