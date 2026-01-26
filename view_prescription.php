@@ -1,4 +1,5 @@
     <?php
+    include 'recept_sidebar.php';
     session_start();
 
     if (!isset($_SESSION['RECEPTIONIST_ID'])) {

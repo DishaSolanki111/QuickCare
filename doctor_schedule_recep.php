@@ -452,20 +452,7 @@ if (isset($_GET['doctor_id']) && isset($_GET['ajax'])) {
     </style>
 </head>
 <body>
-    <!-- Sidebar -->
-    <div class="sidebar">
-        <img src="uploads/logo.JPG" alt="QuickCare Logo" style="display:block; margin: 0 auto 10px auto; width:80px; height:80px; border-radius:50%;">  
-        <h2>QuickCare</h2>
-        <a href="receptionist.php">Dashboard</a>
-        <a href="recep_profile.php">View My Profile</a>
-        <a href="manage_appointments.php">Manage Appointments</a>
-        <a href="manage_doctor_schedule.php" class="active">Manage Doctor Schedule</a>
-        <a href="manage_medicine.php">Manage Medicine</a>
-        <a href="set_reminder.php">Set Reminder</a>
-        <a href="manage_user_profile.php">Manage User Profile</a>
-        <a href="view_prescription.php">View Prescription</a>
-        <button class="logout-btn">Logout</button>
-    </div>
+    <?php include 'recept_sidebar.php'; ?>
 
     <!-- Main Content -->
     <div class="main-content">
