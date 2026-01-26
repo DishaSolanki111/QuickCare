@@ -1,50 +1,85 @@
 <?php
 session_start();
-
-if (!isset($_SESSION['PATIENT_ID'])) {
-    echo "<script>alert('Please login first'); window.location.href='book_appointment_login.php';</script>";
-    exit;
-}
-
 include "config.php";
-include "header.php";
-
-// Check if doctor is selected
-if (!isset($_SESSION['booking_doctor_id'])) {
-    header("Location: doctors.php");
-    exit();
+if (!isset($_SESSION['PATIENT_ID'])) {
+    die("Patient not logged in");
 }
 
-// Get doctor details
- $doctor_id = $_SESSION['booking_doctor_id'];
- $doctor_query = mysqli_query($conn, "
-    SELECT d.*, s.SPECIALISATION_NAME 
-    FROM doctor_tbl d
-    JOIN specialisation_tbl s ON d.SPECIALISATION_ID = s.SPECIALISATION_ID
-    WHERE d.DOCTOR_ID = $doctor_id
-");
+// dummy amount
+ $amount = 300;
 
-if (mysqli_num_rows($doctor_query) == 0) {
-    header("Location: doctors.php");
-    exit();
-}
+// Get patient information
+ $patient_id = $_SESSION['PATIENT_ID'];
+ $patient_query = mysqli_query($conn, "SELECT * FROM patient_tbl WHERE PATIENT_ID = $patient_id");
+ $patient = mysqli_fetch_assoc($patient_query);
 
- $doctor = mysqli_fetch_assoc($doctor_query);
-
-// Get selected date, time, and reason from session
+// Get booking information from session
+ $doctor_id = isset($_SESSION['booking_doctor_id']) ? $_SESSION['booking_doctor_id'] : 0;
  $selected_date = isset($_SESSION['booking_date']) ? $_SESSION['booking_date'] : '';
  $selected_time = isset($_SESSION['booking_time']) ? $_SESSION['booking_time'] : '';
  $reason = isset($_SESSION['booking_reason']) ? $_SESSION['booking_reason'] : '';
+
+// Get doctor details if available
+ $doctor = null;
+if ($doctor_id > 0) {
+    $doctor_query = mysqli_query($conn, "
+        SELECT d.*, s.SPECIALISATION_NAME 
+        FROM doctor_tbl d
+        JOIN specialisation_tbl s ON d.SPECIALISATION_ID = s.SPECIALISATION_ID
+        WHERE d.DOCTOR_ID = $doctor_id
+    ");
+    if (mysqli_num_rows($doctor_query) > 0) {
+        $doctor = mysqli_fetch_assoc($doctor_query);
+    }
+}
+
+// Handle Razorpay payment success
+if (isset($_POST['razorpay_payment_id'])) {
+    // Get the payment details
+    $payment_id = $_POST['razorpay_payment_id'];
+    $signature = isset($_POST['razorpay_signature']) ? $_POST['razorpay_signature'] : '';
+    
+    // Insert appointment into database
+    $insert_query = "INSERT INTO appointment_tbl (PATIENT_ID, DOCTOR_ID, APPOINTMENT_DATE, APPOINTMENT_TIME, REASON, STATUS) 
+                   VALUES ($patient_id, $doctor_id, '$selected_date', '$selected_time', '$reason', 'COMPLETED')";
+    
+    $result = mysqli_query($conn, $insert_query);
+    
+    if ($result) {
+        // Get the appointment ID that was just inserted
+        $appointment_id = mysqli_insert_id($conn);
+        
+        // Insert payment record
+        $payment_insert_query = "INSERT INTO payment_tbl (APPOINTMENT_ID, AMOUNT, PAYMENT_DATE, PAYMENT_MODE, STATUS, TRANSACTION_ID) 
+                                VALUES ($appointment_id, $amount, NOW(), 'RAZORPAY', 'COMPLETED', '$payment_id')";
+        
+        $payment_result = mysqli_query($conn, $payment_insert_query);
+        
+        // Clear booking session data
+        unset($_SESSION['booking_doctor_id']);
+        unset($_SESSION['booking_doctor_name']);
+        unset($_SESSION['booking_specialization']);
+        unset($_SESSION['booking_date']);
+        unset($_SESSION['booking_time']);
+        unset($_SESSION['booking_reason']);
+        
+        // Redirect to success page
+        header("Location: payment_success.php");
+        exit;
+    } else {
+        $error_message = "Failed to book appointment. Please try again. Error: " . mysqli_error($conn);
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Payment - Dr. <?php echo htmlspecialchars($doctor['FIRST_NAME'] . ' ' . $doctor['LAST_NAME']); ?></title>
+    <title>Payment</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* Copy all the CSS styles from book_appointment.php here */
+        /* Copy all the CSS styles from your original payment page here */
         :root {
             --primary-color: #1a3a5f;
             --secondary-color: #3498db;
@@ -213,12 +248,6 @@ if (mysqli_num_rows($doctor_query) == 0) {
             box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
         }
 
-        .form-row {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
-        }
-
         .btn {
             padding: 10px 20px;
             border: none;
@@ -242,19 +271,16 @@ if (mysqli_num_rows($doctor_query) == 0) {
             box-shadow: 0 6px 15px rgba(0, 102, 204, 0.3);
         }
 
-        .btn-secondary {
-            background: var(--light-blue);
-            color: var(--primary);
-        }
-
-        .btn-secondary:hover {
-            background: var(--medium-blue);
-            transform: translateY(-3px);
-        }
-
         .btn-success {
             background-color: var(--accent-color);
             color: white;
+            font-size: 16px;
+            padding: 12px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            border: none;
+            width: 100%;
+            margin-top: 20px;
         }
 
         .btn-success:hover {
@@ -304,7 +330,6 @@ if (mysqli_num_rows($doctor_query) == 0) {
             background-color: var(--accent-color);
         }
 
-        /* Payment Processing Styles */
         .payment-processing-container {
             max-width: 500px;
             margin: 0 auto;
@@ -368,6 +393,89 @@ if (mysqli_num_rows($doctor_query) == 0) {
             font-weight: bold;
             color: var(--accent-color);
             font-size: 1.1rem;
+        }
+
+        .patient-info {
+            background-color: #f0f8ff;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .patient-info h4 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+
+        .detail-value {
+            color: var(--primary-color);
+        }
+
+        .box {
+            width: 100%;
+            padding: 25px;
+            background: white;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .box h2 {
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+
+        .box p {
+            margin-bottom: 20px;
+            font-size: 18px;
+        }
+
+        .razorpay-payment-button {
+            background: #3399cc;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .razorpay-payment-button:hover {
+            background: #2277bb;
+        }
+
+        .error-message {
+            color: var(--danger-color);
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            text-align: center;
         }
 
         /* Footer with Wave Effect */
@@ -445,12 +553,6 @@ if (mysqli_num_rows($doctor_query) == 0) {
         }
 
         /* Responsive Design */
-        @media (max-width: 992px) {
-            .form-row {
-                grid-template-columns: 1fr;
-            }
-        }
-
         @media (max-width: 768px) {
             .page-header h1 {
                 font-size: 2.2rem;
@@ -470,15 +572,16 @@ if (mysqli_num_rows($doctor_query) == 0) {
 <body>
     <div class="page-header">
         <div class="container">
-            <h1>Book Appointment</h1>
-            <p>Schedule your appointment with our experienced doctors</p>
+            <h1>Payment</h1>
+            <p>Complete your payment to confirm your appointment</p>
         </div>
     </div>
 
     <section class="booking-section">
         <div class="container">
             <div class="booking-container">
-                <!-- Doctor Summary -->
+                <!-- Doctor Summary (if doctor info is available) -->
+                <?php if ($doctor): ?>
                 <div class="doctor-summary">
                     <div class="doctor-avatar">
                         <?php echo strtoupper(substr($doctor['FIRST_NAME'], 0, 1) . substr($doctor['LAST_NAME'], 0, 1)); ?>
@@ -488,9 +591,9 @@ if (mysqli_num_rows($doctor_query) == 0) {
                         <p><?php echo htmlspecialchars($doctor['SPECIALISATION_NAME']); ?></p>
                     </div>
                 </div>
+                <?php endif; ?>
 
                 <div class="modal-content">
-                    <a href="book_appointment_confirm.php" class="close">&times;</a>
                     <h2>Secure Payment</h2>
                     
                     <!-- Step Indicator -->
@@ -502,80 +605,71 @@ if (mysqli_num_rows($doctor_query) == 0) {
                         <div class="step active" id="step5">5</div>
                     </div>
                     
+                    <!-- Patient Information -->
+                    <div class="patient-info">
+                        <h4>Patient Information</h4>
+                        <div class="detail-row">
+                            <span class="detail-label">Name:</span>
+                            <span class="detail-value"><?php echo htmlspecialchars($patient['FIRST_NAME'] . ' ' . $patient['LAST_NAME']); ?></span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Username:</span>
+                            <span class="detail-value"><?php echo htmlspecialchars($patient['USERNAME']); ?></span>
+                        </div>
+                    </div>
+                    
+                    <?php if (isset($error_message)): ?>
+                    <div class="error-message"><?php echo $error_message; ?></div>
+                    <?php endif; ?>
+                    
                     <div class="payment-processing-container">
                         <i class="fas fa-lock payment-icon"></i>
                         <h3 class="payment-title">Secure Payment</h3>
-                        <p class="payment-message">Enter your payment details to complete the booking</p>
+                        <p class="payment-message">Complete your payment to confirm the appointment</p>
                         
-                        <div class="payment-form">
-                            <div class="form-group">
-                                <label for="cardNumber">Card Number</label>
-                                <input type="text" class="form-control" id="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19" required>
-                            </div>
-                            
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="expiryMonth">Expiry Month</label>
-                                    <select class="form-control" id="expiryMonth" required>
-                                        <option value="">MM</option>
-                                        <?php for ($i = 1; $i <= 12; $i++): ?>
-                                            <option value="<?php echo str_pad($i, 2, '0', STR_PAD_LEFT); ?>"><?php echo str_pad($i, 2, '0', STR_PAD_LEFT); ?></option>
-                                        <?php endfor; ?>
-                                    </select>
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="expiryYear">Expiry Year</label>
-                                    <select class="form-control" id="expiryYear" required>
-                                        <option value="">YYYY</option>
-                                        <?php 
-                                        $currentYear = date('Y');
-                                        for ($i = $currentYear; $i <= $currentYear + 10; $i++): ?>
-                                            <option value="<?php echo $i; ?>"><?php echo $i; ?></option>
-                                        <?php endfor; ?>
-                                    </select>
-                                </div>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="cvv">CVV</label>
-                                <input type="text" class="form-control" id="cvv" placeholder="123" maxlength="4" required>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="cardName">Cardholder Name</label>
-                                <input type="text" class="form-control" id="cardName" placeholder="John Doe" required>
-                            </div>
+                        <div class="box">
+                            <h2>Payment</h2>
+                            <p>Total Amount: <b>₹<?php echo $amount; ?></b></p>
+
+                            <!-- Razorpay Payment Button -->
+                            <button class="razorpay-payment-button" id="rzp-button">Pay with Razorpay</button>
                         </div>
                         
+                        <?php if ($doctor): ?>
                         <div class="appointment-summary">
-                            <h4>Order Summary</h4>
+                            <h4>Appointment Summary</h4>
                             <div class="summary-row">
                                 <span>Doctor:</span>
                                 <span>Dr. <?php echo htmlspecialchars($doctor['FIRST_NAME'] . ' ' . $doctor['LAST_NAME']); ?></span>
                             </div>
+                            <?php if ($selected_date): ?>
                             <div class="summary-row">
-                                <span>Date & Time:</span>
-                                <span><?php echo htmlspecialchars($selected_date); ?> at <?php echo htmlspecialchars($selected_time); ?></span>
+                                <span>Date:</span>
+                                <span><?php echo htmlspecialchars($selected_date); ?></span>
                             </div>
+                            <?php endif; ?>
+                            <?php if ($selected_time): ?>
+                            <div class="summary-row">
+                                <span>Time:</span>
+                                <span><?php echo htmlspecialchars($selected_time); ?></span>
+                            </div>
+                            <?php endif; ?>
+                            <?php if ($reason): ?>
+                            <div class="summary-row">
+                                <span>Reason:</span>
+                                <span><?php echo htmlspecialchars($reason); ?></span>
+                            </div>
+                            <?php endif; ?>
                             <div class="summary-row">
                                 <span>Consultation Fee:</span>
-                                <span>₹300</span>
+                                <span>₹<?php echo $amount; ?></span>
                             </div>
                             <div class="summary-row total">
                                 <span>Total Amount:</span>
-                                <span>₹300</span>
+                                <span>₹<?php echo $amount; ?></span>
                             </div>
                         </div>
-                        
-                        <div class="btn-group" style="justify-content: center;">
-                            <button type="button" class="btn btn-danger" onclick="goBack()">
-                                <i class="fas fa-arrow-left" style="margin-right: 5px;"></i> Back
-                            </button>
-                            <button type="button" class="btn btn-success" id="processPaymentBtn" onclick="processPayment()">
-                                <i class="fas fa-lock"></i> Process Payment
-                            </button>
-                        </div>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
@@ -610,82 +704,63 @@ if (mysqli_num_rows($doctor_query) == 0) {
         </div>
     </footer>
 
+    <!-- Razorpay Script -->
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <script>
-    function goBack() {
-        window.location.href = 'book_appointment_confirm.php';
-    }
-    
-    // Format card number input
-    document.getElementById('cardNumber').addEventListener('input', function(e) {
-        let value = e.target.value.replace(/\s/g, '');
-        let formattedValue = value.match(/.{1,4}/g)?.join(' ') || value;
-        e.target.value = formattedValue;
-    });
-    
-    // Process payment
-    function processPayment() {
-        // Get form data
-        const cardNumber = document.getElementById('cardNumber').value;
-        const expiryMonth = document.getElementById('expiryMonth').value;
-        const expiryYear = document.getElementById('expiryYear').value;
-        const cvv = document.getElementById('cvv').value;
-        const cardName = document.getElementById('cardName').value;
-        
-        // Validate form
-        if (!cardNumber || !expiryMonth || !expiryYear || !cvv || !cardName) {
-            alert('Please fill all payment details');
-            return;
+        document.getElementById('rzp-button').onclick = function(e) {
+            e.preventDefault();
+            
+            var options = {
+                "key": "rzp_test_S8YWQLeAKtofm8", // Enter your Test Key ID here
+                "amount": "<?php echo $amount * 100; ?>", // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+                "currency": "INR",
+                "name": "QuickCare",
+                "description": "Appointment Booking",
+                "image": "https://example.com/your_logo.png", // Your company logo
+                "handler": function (response) {
+                    // Create a form to submit the payment details
+                    var form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = '';
+                    
+                    // Add the payment details to the form
+                    var razorpay_payment_id = document.createElement('input');
+                    razorpay_payment_id.type = 'hidden';
+                    razorpay_payment_id.name = 'razorpay_payment_id';
+                    razorpay_payment_id.value = response.razorpay_payment_id;
+                    form.appendChild(razorpay_payment_id);
+                    
+                    if (response.razorpay_signature) {
+                        var razorpay_signature = document.createElement('input');
+                        razorpay_signature.type = 'hidden';
+                        razorpay_signature.name = 'razorpay_signature';
+                        razorpay_signature.value = response.razorpay_signature;
+                        form.appendChild(razorpay_signature);
+                    }
+                    
+                    // Submit the form
+                    document.body.appendChild(form);
+                    form.submit();
+                },
+                "prefill": {
+                    "name": "<?php echo htmlspecialchars($patient['FIRST_NAME'] . ' ' . $patient['LAST_NAME']); ?>",
+                    "email": "<?php echo isset($patient['EMAIL']) ? htmlspecialchars($patient['EMAIL']) : ''; ?>",
+                    "contact": "<?php echo isset($patient['PHONE']) ? htmlspecialchars($patient['PHONE']) : ''; ?>"
+                },
+                "notes": {
+                    "address": "QuickCare Appointment",
+                    "doctor_id": "<?php echo $doctor_id; ?>",
+                    "appointment_date": "<?php echo $selected_date; ?>",
+                    "appointment_time": "<?php echo $selected_time; ?>"
+                },
+                "theme": {
+                    "color": "#3399cc"
+                }
+            };
+            
+            var rzp1 = new Razorpay(options);
+            rzp1.open();
         }
-        
-        // Show loading state
-        const processButton = document.getElementById('processPaymentBtn');
-        const originalText = processButton.innerHTML;
-        processButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
-        processButton.disabled = true;
-        
-        // Store payment details in session
-        fetch('store_booking_session.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: `step=payment&card_number=${cardNumber.replace(/\s/g, '')}&expiry_month=${expiryMonth}&expiry_year=${expiryYear}&cvv=${cvv}&card_name=${encodeURIComponent(cardName)}`
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === 'success') {
-                // Show success message
-                const paymentContainer = document.querySelector('.payment-processing-container');
-                paymentContainer.innerHTML = `
-                    <div class="payment-success-container">
-                        <i class="fas fa-check-circle payment-icon" style="color: var(--accent-color);"></i>
-                        <h3 class="payment-title" style="color: var(--accent-color);">Payment Successful!</h3>
-                        <p class="payment-message">Your appointment has been confirmed and payment has been processed successfully.</p>
-                        <div class="btn-group" style="justify-content: center; margin-top: 20px;">
-                            <button type="button" class="btn btn-primary" onclick="window.location.href='patient.php'">
-                                <i class="fas fa-home"></i> Go to Dashboard
-                            </button>
-                        </div>
-                    </div>
-                `;
-                
-                // Mark step 5 as completed
-                document.getElementById('step5').classList.add('completed');
-            } else {
-                alert('Error processing payment: ' + data.message);
-                // Restore button state
-                processButton.innerHTML = originalText;
-                processButton.disabled = false;
-            }
-        })
-        .catch(error => {
-            console.error('Error processing payment:', error);
-            alert('An error occurred. Please try again.');
-            // Restore button state
-            processButton.innerHTML = originalText;
-            processButton.disabled = false;
-        });
-    }
     </script>
 </body>
 </html>
