@@ -29,6 +29,28 @@ WHERE ds.RECEPTIONIST_ID = '$receptionist_id' AND a.APPOINTMENT_DATE = CURDATE()
  $medicine_count_query = mysqli_query($conn, "SELECT COUNT(*) as total FROM medicine_tbl WHERE RECEPTIONIST_ID = '$receptionist_id'");
  $medicine_count = mysqli_fetch_assoc($medicine_count_query);
 
+// Check if 2fa table exists, if not create it
+ $check_table = mysqli_query($conn, "SHOW TABLES LIKE 'receptionist_2fa'");
+if (mysqli_num_rows($check_table) == 0) {
+    $create_table = "CREATE TABLE receptionist_2fa (
+        ID int(11) NOT NULL AUTO_INCREMENT,
+        RECEPTIONIST_ID int(11) NOT NULL,
+        IS_ENABLED tinyint(1) NOT NULL DEFAULT 0,
+        SECRET_CODE varchar(255) DEFAULT NULL,
+        PRIMARY KEY (ID),
+        FOREIGN KEY (RECEPTIONIST_ID) REFERENCES receptionist_tbl(RECEPTIONIST_ID)
+    )";
+    mysqli_query($conn, $create_table);
+}
+
+// Get 2FA status
+ $check_2fa = mysqli_query($conn, "SELECT IS_ENABLED FROM receptionist_2fa WHERE RECEPTIONIST_ID = '$receptionist_id'");
+ $two_fa_enabled = 0;
+if (mysqli_num_rows($check_2fa) > 0) {
+    $two_fa_data = mysqli_fetch_assoc($check_2fa);
+    $two_fa_enabled = $two_fa_data['IS_ENABLED'];
+}
+
 // Handle form submission for profile update
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_profile'])) {
     $first_name = mysqli_real_escape_string($conn, $_POST['first_name']);
@@ -111,7 +133,51 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
     }
 }
 
+// Handle 2FA toggle
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['toggle_2fa'])) {
+    $enable_2fa = isset($_POST['enable_2fa']) ? 1 : 0;
+    
+    // Check if record exists for this receptionist
+    $check_record = mysqli_query($conn, "SELECT * FROM receptionist_2fa WHERE RECEPTIONIST_ID = '$receptionist_id'");
+    
+    if (mysqli_num_rows($check_record) > 0) {
+        $update_2fa = "UPDATE receptionist_2fa SET IS_ENABLED = '$enable_2fa' WHERE RECEPTIONIST_ID = '$receptionist_id'";
+        mysqli_query($conn, $update_2fa);
+    } else {
+        $insert_2fa = "INSERT INTO receptionist_2fa (RECEPTIONIST_ID, IS_ENABLED) VALUES ('$receptionist_id', '$enable_2fa')";
+        mysqli_query($conn, $insert_2fa);
+    }
+    
+    $security_success = "Two-factor authentication settings updated!";
+    $two_fa_enabled = $enable_2fa;
+}
 
+// Create login history table if it doesn't exist
+ $check_login_table = mysqli_query($conn, "SHOW TABLES LIKE 'receptionist_login_history'");
+if (mysqli_num_rows($check_login_table) == 0) {
+    $create_login_table = "CREATE TABLE receptionist_login_history (
+        ID int(11) NOT NULL AUTO_INCREMENT,
+        RECEPTIONIST_ID int(11) NOT NULL,
+        LOGIN_TIME timestamp DEFAULT CURRENT_TIMESTAMP,
+        IP_ADDRESS varchar(45) DEFAULT NULL,
+        USER_AGENT text DEFAULT NULL,
+        STATUS enum('SUCCESS','FAILED') DEFAULT 'SUCCESS',
+        PRIMARY KEY (ID),
+        FOREIGN KEY (RECEPTIONIST_ID) REFERENCES receptionist_tbl(RECEPTIONIST_ID)
+    )";
+    mysqli_query($conn, $create_login_table);
+    
+    // Insert some sample data
+    $insert_sample = "INSERT INTO receptionist_login_history (RECEPTIONIST_ID, LOGIN_TIME, IP_ADDRESS, USER_AGENT, STATUS) VALUES 
+    ('$receptionist_id', DATE_SUB(NOW(), INTERVAL 1 HOUR), '192.168.1.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36', 'SUCCESS'),
+    ('$receptionist_id', DATE_SUB(NOW(), INTERVAL 1 DAY), '192.168.1.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36', 'SUCCESS'),
+    ('$receptionist_id', DATE_SUB(NOW(), INTERVAL 2 DAY), '192.168.1.2', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36', 'SUCCESS'),
+    ('$receptionist_id', DATE_SUB(NOW(), INTERVAL 3 DAY), '192.168.1.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36', 'FAILED')";
+    mysqli_query($conn, $insert_sample);
+}
+
+// Fetch login history
+ $login_history_query = mysqli_query($conn, "SELECT * FROM receptionist_login_history WHERE RECEPTIONIST_ID = '$receptionist_id' ORDER BY LOGIN_TIME DESC LIMIT 10");
 ?>
 
 <!DOCTYPE html>
@@ -135,6 +201,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
            --secondary-color: #3498db;
            --accent-color: #2ecc71;
            --danger-color: #e74c3c;
+           --warning-color: #f39c12;
         }
         
         body {
@@ -312,6 +379,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
         .btn-danger:hover {
             background-color: #c0392b;
             border-color: #c0392b;
+        }
+        
+        .btn-outline-primary {
+            color: var(--secondary-color);
+            border-color: var(--secondary-color);
+        }
+        
+        .btn-outline-primary:hover {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
         }
         
         .alert {
@@ -521,6 +598,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
             font-size: 24px;
         }
         
+        .badge-success {
+            background-color: var(--accent-color);
+        }
+        
+        .badge-danger {
+            background-color: var(--danger-color);
+        }
+        
         @media (max-width: 768px) {
             .sidebar {
                 width: 70px;
@@ -717,7 +802,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
                         </div>
                         
                         <!-- Edit Profile Form (Hidden by default) -->
-                        <form method="POST" action="recep_profile.php" id="editProfileForm" style="display: none;" enctype="multipart/form-data">
+                        <form method="POST" action="receptionist_profile.php" id="editProfileForm" style="display: none;" enctype="multipart/form-data">
                             <input type="hidden" name="update_profile" value="1">
                             
                             <div class="info-grid">
@@ -850,10 +935,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
                                     <h4>Two-Factor Authentication</h4>
                                     <p>Add an extra layer of security to your account</p>
                                 </div>
-                                <div class="form-check form-switch">
-                                    <input class="form-check-input" type="checkbox" id="2faSwitch" <?php echo $two_fa_enabled ? 'checked' : ''; ?> onchange="toggle2FA(this)">
-                                    <label class="form-check-label" for="2faSwitch"></label>
-                                </div>
+                                <form method="POST" action="receptionist_profile.php" style="display: inline;">
+                                    <input type="hidden" name="toggle_2fa" value="1">
+                                    <input type="hidden" name="enable_2fa" value="<?php echo $two_fa_enabled ? '0' : '1'; ?>">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="2faSwitch" <?php echo $two_fa_enabled ? 'checked' : ''; ?>>
+                                        <label class="form-check-label" for="2faSwitch"></label>
+                                    </div>
+                                </form>
                             </div>
                             
                             <div class="security-option">
@@ -906,7 +995,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
                     <h5 class="modal-title" id="changePasswordModalLabel">Change Password</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form method="POST" action="recep_profile.php">
+                <form method="POST" action="receptionist_profile.php">
                     <div class="modal-body">
                         <input type="hidden" name="change_password" value="1">
                         
@@ -956,30 +1045,44 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td><?php echo date('M d, Y H:i', time() - 3600); ?></td>
-                                    <td>192.168.1.1</td>
-                                    <td>Chrome / Windows</td>
-                                    <td><span class="badge bg-success">Success</span></td>
-                                </tr>
-                                <tr>
-                                    <td><?php echo date('M d, Y H:i', time() - 86400); ?></td>
-                                    <td>192.168.1.1</td>
-                                    <td>Chrome / Windows</td>
-                                    <td><span class="badge bg-success">Success</span></td>
-                                </tr>
-                                <tr>
-                                    <td><?php echo date('M d, Y H:i', time() - 172800); ?></td>
-                                    <td>192.168.1.2</td>
-                                    <td>Safari / macOS</td>
-                                    <td><span class="badge bg-success">Success</span></td>
-                                </tr>
-                                <tr>
-                                    <td><?php echo date('M d, Y H:i', time() - 259200); ?></td>
-                                    <td>192.168.1.1</td>
-                                    <td>Chrome / Windows</td>
-                                    <td><span class="badge bg-danger">Failed</span></td>
-                                </tr>
+                                <?php
+                                if (mysqli_num_rows($login_history_query) > 0) {
+                                    while ($login = mysqli_fetch_assoc($login_history_query)) {
+                                        $device = 'Unknown';
+                                        if (!empty($login['USER_AGENT'])) {
+                                            if (strpos($login['USER_AGENT'], 'Windows') !== false) {
+                                                $device = 'Windows';
+                                            } elseif (strpos($login['USER_AGENT'], 'Mac') !== false) {
+                                                $device = 'macOS';
+                                            } elseif (strpos($login['USER_AGENT'], 'Linux') !== false) {
+                                                $device = 'Linux';
+                                            }
+                                            
+                                            if (strpos($login['USER_AGENT'], 'Chrome') !== false) {
+                                                $device .= ' / Chrome';
+                                            } elseif (strpos($login['USER_AGENT'], 'Safari') !== false) {
+                                                $device .= ' / Safari';
+                                            } elseif (strpos($login['USER_AGENT'], 'Firefox') !== false) {
+                                                $device .= ' / Firefox';
+                                            }
+                                        }
+                                        
+                                        $statusClass = $login['STATUS'] == 'SUCCESS' ? 'bg-success' : 'bg-danger';
+                                        $statusText = $login['STATUS'] == 'SUCCESS' ? 'Success' : 'Failed';
+                                        
+                                        echo '<tr>
+                                            <td>' . date('M d, Y H:i', strtotime($login['LOGIN_TIME'])) . '</td>
+                                            <td>' . htmlspecialchars($login['IP_ADDRESS']) . '</td>
+                                            <td>' . htmlspecialchars($device) . '</td>
+                                            <td><span class="badge ' . $statusClass . '">' . $statusText . '</span></td>
+                                        </tr>';
+                                    }
+                                } else {
+                                    echo '<tr>
+                                        <td colspan="4" class="text-center">No login history found.</td>
+                                    </tr>';
+                                }
+                                ?>
                             </tbody>
                         </table>
                     </div>
@@ -1021,26 +1124,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
                     editProfileBtn.style.display = 'block';
                 });
             }
-        });
-        
-        // Handle 2FA toggle
-        function toggle2FA(checkbox) {
-            const formData = new FormData();
-            formData.append('toggle_2fa', '1');
-            formData.append('enable_2fa', checkbox.checked ? '1' : '0');
             
-            fetch('recep_profile.php', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.text())
-            .then(data => {
-                location.reload();
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
-        }
+            // Handle 2FA toggle
+            const twoFaSwitch = document.getElementById('2faSwitch');
+            if (twoFaSwitch) {
+                twoFaSwitch.addEventListener('change', function() {
+                    const form = this.closest('form');
+                    const hiddenInput = form.querySelector('input[name="enable_2fa"]');
+                    hiddenInput.value = this.checked ? '1' : '0';
+                    form.submit();
+                });
+            }
+        });
         
         // Handle profile image upload
         function handleImageUpload(input) {
@@ -1050,7 +1145,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
                 formData.append('update_profile', '1');
                 formData.append('profile_image', file);
                 
-                fetch('recep_profile.php', {
+                fetch('receptionist_profile.php', {
                     method: 'POST',
                     body: formData
                 })
