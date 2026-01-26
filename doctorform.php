@@ -280,111 +280,6 @@
                 opacity: 1;
             }
         }
-        
-        /* Modal styles for error popup */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0,0,0,0.4);
-        }
-        
-        .modal-content {
-            background-color: #fefefe;
-            margin: 15% auto;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%;
-            max-width: 500px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            animation: modalopen 0.4s;
-        }
-        
-        @keyframes modalopen {
-            from {opacity: 0; transform: translateY(-50px);}
-            to {opacity: 1; transform: translateY(0);}
-        }
-        
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #eee;
-        }
-        
-        .modal-title {
-            color: var(--danger-color);
-            font-size: 20px;
-            font-weight: bold;
-        }
-        
-        .close {
-            color: #aaa;
-            font-size: 28px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        
-        .close:hover,
-        .close:focus {
-            color: var(--danger-color);
-        }
-        
-        .modal-body {
-            margin-bottom: 20px;
-        }
-        
-        .error-list {
-            list-style-type: none;
-            padding: 0;
-        }
-        
-        .error-list li {
-            padding: 8px 0;
-            border-bottom: 1px solid #f0f0f0;
-            display: flex;
-            align-items: center;
-        }
-        
-        .error-list li:last-child {
-            border-bottom: none;
-        }
-        
-        .error-list li:before {
-            content: "•";
-            color: var(--danger-color);
-            font-weight: bold;
-            display: inline-block;
-            width: 1em;
-            margin-right: 10px;
-        }
-        
-        .modal-footer {
-            display: flex;
-            justify-content: flex-end;
-        }
-        
-        .modal-btn {
-            background-color: var(--danger-color);
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-        }
-        
-        .modal-btn:hover {
-            background-color: #c0392b;
-        }
     </style>
 </head>
 <body>
@@ -397,23 +292,6 @@
             
             <!-- Toast notification for errors -->
             <div id="toast" class="toast"></div>
-            
-            <!-- Error Modal -->
-            <div id="errorModal" class="modal">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h3 class="modal-title">Validation Errors</h3>
-                        <span class="close">&times;</span>
-                    </div>
-                    <div class="modal-body">
-                        <p>Please fix the following errors:</p>
-                        <ul id="errorList" class="error-list"></ul>
-                    </div>
-                    <div class="modal-footer">
-                        <button id="modalCloseBtn" class="modal-btn">OK</button>
-                    </div>
-                </div>
-            </div>
             
             <?php
             // Initialize variables
@@ -720,43 +598,6 @@
         }, 5000);
     }
 
-    // Modal popup for errors
-    function showErrorModal(errors) {
-        const modal = document.getElementById('errorModal');
-        const errorList = document.getElementById('errorList');
-        
-        // Clear previous errors
-        errorList.innerHTML = '';
-        
-        // Add new errors
-        errors.forEach(error => {
-            const li = document.createElement('li');
-            li.textContent = error;
-            errorList.appendChild(li);
-        });
-        
-        // Show modal
-        modal.style.display = 'block';
-    }
-
-    // Close modal when clicking on X
-    document.querySelector('.close').onclick = function() {
-        document.getElementById('errorModal').style.display = 'none';
-    }
-
-    // Close modal when clicking on the button
-    document.getElementById('modalCloseBtn').onclick = function() {
-        document.getElementById('errorModal').style.display = 'none';
-    }
-
-    // Close modal when clicking outside of it
-    window.onclick = function(event) {
-        const modal = document.getElementById('errorModal');
-        if (event.target == modal) {
-            modal.style.display = 'none';
-        }
-    }
-
     // File upload handling
     document.getElementById('profile_image').addEventListener('change', function () {
         const file = this.files[0];
@@ -783,7 +624,6 @@
     // Form validation and submission
     document.getElementById('doctorForm').addEventListener('submit', function (e) {
         let isValid = true;
-        let validationErrors = [];
         
         // Reset all error messages
         const errorElements = document.querySelectorAll('.error-message');
@@ -798,7 +638,6 @@
             const errorElement = document.getElementById('first_name_error');
             errorElement.textContent = "First name is required.";
             errorElement.style.display = "block";
-            validationErrors.push("First name is required.");
             isValid = false;
         }
 
@@ -808,7 +647,6 @@
             const errorElement = document.getElementById('last_name_error');
             errorElement.textContent = "Last name is required.";
             errorElement.style.display = "block";
-            validationErrors.push("Last name is required.");
             isValid = false;
         }
 
@@ -819,7 +657,6 @@
             const errorElement = document.getElementById('dob_error');
             errorElement.textContent = "Date of Birth is required.";
             errorElement.style.display = "block";
-            validationErrors.push("Date of Birth is required.");
             isValid = false;
         } else {
             const dobDate = new Date(dobValue);
@@ -828,7 +665,6 @@
                 const errorElement = document.getElementById('dob_error');
                 errorElement.textContent = "Date of Birth cannot be in the future.";
                 errorElement.style.display = "block";
-                validationErrors.push("Date of Birth cannot be in the future.");
                 isValid = false;
             }
         }
@@ -840,7 +676,6 @@
             const errorElement = document.getElementById('doj_error');
             errorElement.textContent = "Date of Joining is required.";
             errorElement.style.display = "block";
-            validationErrors.push("Date of Joining is required.");
             isValid = false;
         } else {
             const dojDate = new Date(dojValue);
@@ -849,7 +684,6 @@
                 const errorElement = document.getElementById('doj_error');
                 errorElement.textContent = "Date of Joining cannot be in the future.";
                 errorElement.style.display = "block";
-                validationErrors.push("Date of Joining cannot be in the future.");
                 isValid = false;
             }
         }
@@ -862,7 +696,6 @@
                 const errorElement = document.getElementById('doj_error');
                 errorElement.textContent = "Date of Joining must be after Date of Birth.";
                 errorElement.style.display = "block";
-                validationErrors.push("Date of Joining must be after Date of Birth.");
                 isValid = false;
             }
         }
@@ -873,7 +706,6 @@
             const errorElement = document.getElementById('phone_error');
             errorElement.textContent = "Phone number must be exactly 10 digits.";
             errorElement.style.display = "block";
-            validationErrors.push("Phone number must be exactly 10 digits.");
             isValid = false;
         }
 
@@ -883,7 +715,6 @@
             const errorElement = document.getElementById('email_error');
             errorElement.textContent = "Invalid email format.";
             errorElement.style.display = "block";
-            validationErrors.push("Invalid email format.");
             isValid = false;
         }
 
@@ -893,7 +724,6 @@
             const errorElement = document.getElementById('specialisation_id_error');
             errorElement.textContent = "Please select a specialisation.";
             errorElement.style.display = "block";
-            validationErrors.push("Please select a specialisation.");
             isValid = false;
         }
 
@@ -904,19 +734,16 @@
             const errorElement = document.getElementById('username_error');
             errorElement.textContent = "Username is required.";
             errorElement.style.display = "block";
-            validationErrors.push("Username is required.");
             isValid = false;
         } else if (username.value.length > 20) {
             const errorElement = document.getElementById('username_error');
             errorElement.textContent = "Username must be at most 20 characters.";
             errorElement.style.display = "block";
-            validationErrors.push("Username must be at most 20 characters.");
             isValid = false;
         } else if (!usernameRegex.test(username.value)) {
             const errorElement = document.getElementById('username_error');
             errorElement.textContent = "Username must start with a capital letter, no spaces, no consecutive underscores, and not end with underscore.";
             errorElement.style.display = "block";
-            validationErrors.push("Username must start with a capital letter, no spaces, no consecutive underscores, and not end with underscore.");
             isValid = false;
         }
 
@@ -926,33 +753,29 @@
             const errorElement = document.getElementById('password_error');
             errorElement.textContent = "Password must be at least 8 characters long.";
             errorElement.style.display = "block";
-            validationErrors.push("Password must be at least 8 characters long.");
             isValid = false;
         } else if (!/[A-Z]/.test(password.value)) {
             const errorElement = document.getElementById('password_error');
             errorElement.textContent = "Password must contain at least one uppercase letter.";
             errorElement.style.display = "block";
-            validationErrors.push("Password must contain at least one uppercase letter.");
             isValid = false;
         } else if (!/[0-9]/.test(password.value)) {
             const errorElement = document.getElementById('password_error');
             errorElement.textContent = "Password must contain at least one digit.";
             errorElement.style.display = "block";
-            validationErrors.push("Password must contain at least one digit.");
             isValid = false;
         } else if (!/[\W_]/.test(password.value)) {
             const errorElement = document.getElementById('password_error');
             errorElement.textContent = "Password must contain at least one special character.";
             errorElement.style.display = "block";
-            validationErrors.push("Password must contain at least one special character.");
             isValid = false;
         }
 
         // Prevent form submission if validation fails
         if (!isValid) {
             e.preventDefault();
-            // Show a modal popup with all validation errors
-            showErrorModal(validationErrors);
+            // Show a toast notification for general validation error
+            showToast("Please correct the errors in the form.");
         }
     });
     </script>
