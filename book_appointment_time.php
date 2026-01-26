@@ -69,6 +69,7 @@ if (mysqli_num_rows($doctor_query) == 0) {
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            padding-top:100px;
         }
 
        
@@ -86,7 +87,7 @@ if (mysqli_num_rows($doctor_query) == 0) {
         }
 
         .booking-container {
-            max-width: 800px;
+            max-width: 500px;
             margin: 0 auto;
             background: white;
             border-radius: 15px;
@@ -399,6 +400,15 @@ if (mysqli_num_rows($doctor_query) == 0) {
         }
 
         /* Responsive Design */
+           @media (max-width: 768px) {
+            .page-header h1 {
+                font-size: 2.2rem;
+            }
+            
+            .page-header p {
+                font-size: 1rem;
+            }
+            
         @media (max-width: 992px) {
             .time-slots-container {
                 grid-template-columns: repeat(2, 1fr);

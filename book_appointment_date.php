@@ -70,22 +70,31 @@ if (mysqli_num_rows($doctor_query) == 0) {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #f5f8ff 0%, #e6f0ff 100%);
             color: var(--text-dark);
-            min-height: 50vh;
-            padding-top:100px 
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding-top:100px;
         }
 
-       
+        .page-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 5rem 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
 
-       
+      
 
         .container {
-            max-width: 500px;
+            max-width: 1200px;
             margin: 0 auto;
-            padding: 0 px;
+            padding: 0 20px;
         }
 
         .booking-section {
-            padding: 1rem ;
+            padding: 4rem 0;
             flex-grow: 1;
         }
 
@@ -101,15 +110,15 @@ if (mysqli_num_rows($doctor_query) == 0) {
         .doctor-summary {
             background: linear-gradient(135deg, var(--dark-blue) 0%, var(--mid-blue) 100%);
             color: white;
-            padding: 0.5rem;
+            padding: 1rem;
             display: flex;
             align-items: center;
             gap: 2rem;
         }
 
         .doctor-avatar {
-            width: 50px;
-            height: 50px;
+            width: 80px;
+            height: 80px;
             border-radius: 50%;
             background: white;
             color: var(--primary-color);
@@ -429,7 +438,14 @@ if (mysqli_num_rows($doctor_query) == 0) {
         }
 
         /* Responsive Design */
-       
+        @media (max-width: 768px) {
+            .page-header h1 {
+                font-size: 2.2rem;
+            }
+            
+            .page-header p {
+                font-size: 1rem;
+            }
             
             .doctor-summary {
                 flex-direction: column;
@@ -439,7 +455,7 @@ if (mysqli_num_rows($doctor_query) == 0) {
     </style>
 </head>
 <body>
-   
+  
 
     <section class="booking-section">
         <div class="container">

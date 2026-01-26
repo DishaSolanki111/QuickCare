@@ -68,7 +68,7 @@ if (mysqli_num_rows($doctor_query) == 0) {
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            padding-top:80px 
+          
         }
 
        
@@ -85,7 +85,7 @@ if (mysqli_num_rows($doctor_query) == 0) {
         }
 
         .booking-container {
-            max-width: 800px;
+            max-width: 500px;
             margin: 0 auto;
             background: white;
             border-radius: 15px;

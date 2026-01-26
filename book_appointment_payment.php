@@ -117,11 +117,12 @@ if (isset($_POST['razorpay_payment_id'])) {
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            padding-top:100px;
         }
 
        
         .container {
-            max-width: 1200px;
+            max-width: 500px;
             margin: 0 auto;
             padding: 0 20px;
         }
@@ -132,7 +133,7 @@ if (isset($_POST['razorpay_payment_id'])) {
         }
 
         .booking-container {
-            max-width: 800px;
+            max-width: 500px;
             margin: 0 auto;
             background: white;
             border-radius: 15px;
@@ -524,6 +525,15 @@ if (isset($_POST['razorpay_payment_id'])) {
         }
 
         /* Responsive Design */
+           @media (max-width: 768px) {
+            .page-header h1 {
+                font-size: 2.2rem;
+            }
+            
+            .page-header p {
+                font-size: 1rem;
+            }
+            
         @media (max-width: 768px) {
          
             
