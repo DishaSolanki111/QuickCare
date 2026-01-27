@@ -20,13 +20,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_reminder'])) {
     $reminder_time = mysqli_real_escape_string($conn, $_POST['reminder_time']);
     $remarks = mysqli_real_escape_string($conn, $_POST['remarks']);
     
-    $add_query = "INSERT INTO medicine_reminder_tbl (MEDICINE_ID, CREATOR_ROLE, CREATOR_ID, PATIENT_ID, REMINDER_TIME, REMARKS) 
-                  VALUES ('$medicine_id', 'PATIENT', '$patient_id', '$patient_id', '$reminder_time', '$remarks')";
+    // Verify that this medicine is prescribed to the patient
+$verify_query = mysqli_query($conn, "
+    SELECT COUNT(*) as count
+    FROM prescription_medicine_tbl pm
+    JOIN prescription_tbl p 
+        ON pm.PRESCRIPTION_ID = p.PRESCRIPTION_ID
+    JOIN appointment_tbl a 
+        ON p.APPOINTMENT_ID = a.APPOINTMENT_ID
+    WHERE pm.MEDICINE_ID = '$medicine_id'
+      AND a.PATIENT_ID = '$patient_id'
+");
+
+
+    $verify_result = mysqli_fetch_assoc($verify_query);
     
-    if (mysqli_query($conn, $add_query)) {
-        $success_message = "Medicine reminder added successfully!";
+    if ($verify_result['count'] > 0) {
+        $add_query = "INSERT INTO medicine_reminder_tbl (MEDICINE_ID, CREATOR_ROLE, CREATOR_ID, PATIENT_ID, REMINDER_TIME, REMARKS) 
+                      VALUES ('$medicine_id', 'PATIENT', '$patient_id', '$patient_id', '$reminder_time', '$remarks')";
+        
+        if (mysqli_query($conn, $add_query)) {
+            $success_message = "Medicine reminder added successfully!";
+        } else {
+            $error_message = "Error adding reminder: " . mysqli_error($conn);
+        }
     } else {
-        $error_message = "Error adding reminder: " . mysqli_error($conn);
+        $error_message = "You can only set reminders for medicines prescribed to you.";
     }
 }
 
@@ -64,8 +83,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_reminder'])) {
 // Get prescription ID from URL if coming from prescriptions page
  $prescription_id = isset($_GET['prescription']) ? mysqli_real_escape_string($conn, $_GET['prescription']) : '';
 
-// Fetch medicines for dropdown
- $medicines_query = mysqli_query($conn, "SELECT * FROM medicine_tbl ORDER BY MED_NAME");
+// Fetch ONLY medicines prescribed to this patient
+$prescribed_medicines_query = mysqli_query($conn, "
+    SELECT DISTINCT m.MEDICINE_ID, m.MED_NAME
+    FROM medicine_tbl m
+    JOIN prescription_medicine_tbl pm 
+        ON m.MEDICINE_ID = pm.MEDICINE_ID
+    JOIN prescription_tbl p 
+        ON pm.PRESCRIPTION_ID = p.PRESCRIPTION_ID
+    JOIN appointment_tbl a 
+        ON p.APPOINTMENT_ID = a.APPOINTMENT_ID
+    WHERE a.PATIENT_ID = '$patient_id'
+    ORDER BY m.MED_NAME
+");
 
 // Fetch medicine reminders
  $reminders_query = mysqli_query($conn, "
@@ -104,7 +134,7 @@ if (!empty($prescription_id)) {
             --primary-color: #1a3a5f;
             --secondary-color: #3498db;
             --accent-color: #2ecc71;
-           
+            --danger-color: #e74c3c;
             --dark-blue: #072D44;
             --mid-blue: #064469;
             --soft-blue: #5790AB;
@@ -135,6 +165,7 @@ if (!empty($prescription_id)) {
             width: 100%;
             height: 100%;
         }
+        
         /* Main Content */
         .main-content {
             flex: 1;
@@ -144,6 +175,7 @@ if (!empty($prescription_id)) {
             height: 100vh;
             overflow-y: auto;
         }
+        
         /* Custom scrollbar for main content */
         .main-content::-webkit-scrollbar {
             width: 8px;
@@ -404,6 +436,14 @@ if (!empty($prescription_id)) {
             background-color: rgba(52, 152, 219, 0.2);
         }
         
+        .info-note {
+            background-color: rgba(52, 152, 219, 0.1);
+            border-left: 4px solid var(--secondary-color);
+            padding: 10px 15px;
+            margin-bottom: 20px;
+            border-radius: 0 5px 5px 0;
+        }
+        
         @media (max-width: 992px) {
             .main-content {
                 margin-left: 200px;
@@ -463,6 +503,10 @@ if (!empty($prescription_id)) {
             <div class="add-reminder-section">
                 <h3 style="margin-bottom: 20px;">Add New Medicine Reminder</h3>
                 
+                <div class="info-note">
+                    <i class="fas fa-info-circle"></i> You can only set reminders for medicines that have been prescribed to you.
+                </div>
+                
                 <?php if (!empty($prescription_medicines)): ?>
                     <div class="prescription-medicines">
                         <p><strong>Medicines from your prescription:</strong></p>
@@ -483,13 +527,13 @@ if (!empty($prescription_id)) {
                             <select class="form-control" id="medicine_id" name="medicine_id" required>
                                 <option value="">-- Select Medicine --</option>
                                 <?php
-                                if (mysqli_num_rows($medicines_query) > 0) {
-                                    while ($medicine = mysqli_fetch_assoc($medicines_query)) {
+                                if (mysqli_num_rows($prescribed_medicines_query) > 0) {
+                                    while ($medicine = mysqli_fetch_assoc($prescribed_medicines_query)) {
                                         echo '<option value="' . $medicine['MEDICINE_ID'] . '">' . 
                                              htmlspecialchars($medicine['MED_NAME']) . '</option>';
                                     }
                                     // Reset the result pointer
-                                    mysqli_data_seek($medicines_query, 0);
+                                    mysqli_data_seek($prescribed_medicines_query, 0);
                                 }
                                 ?>
                             </select>
