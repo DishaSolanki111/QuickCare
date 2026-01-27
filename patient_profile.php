@@ -91,83 +91,73 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_profile'])) {
             --white: #ffffff;
             --card-bg: #F6F9FB;
             --primary-color: #1a3a5f;
-      
         }
         
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-   body {
-    background-color: #f5f7fa;
-    color: #333;
-    line-height: 1.6;
-    margin: 0;
-    padding: 0;
-    height: 100vh;
-    overflow-y: scroll;
-}
-
-
-.container {
-    display: flex;
-    min-height: 100vh;
-    height: 100%;
-}
-
-.main-content {
-    flex: 1;
-    margin-left: 250px;
-    padding: 20px;
-    height: 100%;
-    overflow-y: auto;
-}
-html {
-    height: 100%;
-    
-}
-
         
+        body {
+            font-family: Arial, sans-serif;
+            background: #D0D7E1;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Container for the entire layout */
+        .container {
+            display: flex;
+            width: 100%;
+            min-height: 100vh;
+        }
+
+        /* Main content */
+        .main {
+            margin-left: 250px;
+            padding: 20px;
+            width: calc(100% - 250px);
+            flex: 1;
+        }
+
+      
+        /* Top bar */
         .header {
+            background: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            font-size: 28px;
+            font-weight: 700;
+            color: #064469;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 15px 20px;
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            margin-bottom: 25px;
+            position: relative;
         }
-        
-        .welcome-msg {
-            font-size: 24px;
-            font-weight: 600;
-            color: var(--primary-color);
+
+        .logo-img {
+            height: 40px;
+            margin-right: 12px;
+            border-radius: 5px;
         }
-        
-        .user-actions {
-            display: flex;
-            align-items: center;
-        }
-        
-        /* Notification Bell Styles */
+
+        /* Notification Bell */
         .notification-bell {
             position: relative;
-            background: none;
-            border: none;
-            font-size: 20px;
-            color: var(--dark-color);
-            margin-right: 20px;
             cursor: pointer;
+            color: #072D44;
+            font-size: 24px;
+            z-index: 100;
         }
-        
+
         .notification-badge {
             position: absolute;
-            top: -5px;
-            right: -5px;
-            background-color: var(--danger-color);
+            top: -8px;
+            right: -8px;
+            background-color: #ff4d4d;
             color: white;
             border-radius: 50%;
             width: 18px;
@@ -175,10 +165,10 @@ html {
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 11px;
+            font-size: 10px;
             font-weight: bold;
         }
-        
+
         .notification-dropdown {
             position: absolute;
             top: 100%;
@@ -192,124 +182,55 @@ html {
             z-index: 1000;
             display: none;
         }
-        
+
         .notification-dropdown.show {
             display: block;
         }
-        
+
         .notification-item {
             padding: 15px;
             border-bottom: 1px solid #eee;
             display: flex;
             align-items: flex-start;
         }
-        
+
         .notification-item:last-child {
             border-bottom: none;
         }
-        
+
         .notification-icon {
             color: #28a745;
             margin-right: 10px;
             margin-top: 2px;
         }
-        
+
         .notification-content {
             flex: 1;
         }
-        
+
         .notification-title {
             font-weight: bold;
             margin-bottom: 5px;
             color: #072D44;
         }
-        
+
         .notification-message {
             font-size: 14px;
             color: #666;
         }
-        
+
         .notification-time {
             font-size: 12px;
             color: #999;
             margin-top: 5px;
         }
-        
+
         .no-notifications {
             padding: 20px;
             text-align: center;
             color: #666;
         }
-        
-        /* Notification popup */
-        .notification-popup {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            width: 350px;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            z-index: 1000;
-            transform: translateX(400px);
-            transition: transform 0.3s ease-out;
-        }
-        
-        .notification-popup.show {
-            transform: translateX(0);
-        }
-        
-        .notification-popup-content {
-            display: flex;
-            align-items: center;
-            padding: 15px;
-        }
-        
-        .notification-popup-icon {
-            color: #28a745;
-            font-size: 20px;
-            margin-right: 12px;
-        }
-        
-        .notification-popup-message {
-            flex-grow: 1;
-            font-size: 14px;
-            color: #333;
-        }
-        
-        .notification-popup-close {
-            background: none;
-            border: none;
-            font-size: 18px;
-            color: #999;
-            cursor: pointer;
-            padding: 0;
-            margin-left: 10px;
-        }
-        
-        .notification-popup-close:hover {
-            color: #333;
-        }
-        
-        .user-dropdown {
-            display: flex;
-            align-items: center;
-            cursor: pointer;
-        }
-        
-        .user-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background-color: var(--secondary-color);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 10px;
-            font-weight: bold;
-        }
-        
+
         .profile-section {
             display: flex;
             gap: 25px;
@@ -478,7 +399,7 @@ html {
         }
         
         @media (max-width: 992px) {
-            .main-content {
+            .main {
                 margin-left: 200px;
             }
             
@@ -491,6 +412,11 @@ html {
             .profile-section {
                 flex-direction: column;
             }
+            
+            .main {
+                margin-left: 0;
+                width: 100%;
+            }
         }
     </style>
 </head>
@@ -500,46 +426,8 @@ html {
         <?php include 'patient_sidebar.php'; ?>
         
         <!-- Main Content -->
-        <div class="main-content">
-            <!-- Header -->
-            <div class="header">
-                <div class="welcome-msg">Personal Information</div>
-                <div class="user-actions">
-                    <button class="notification-bell" onclick="toggleNotifications()">
-                        <i class="far fa-bell"></i>
-                        <?php if ($reminder_count > 0): ?>
-                            <span class="notification-badge"><?php echo $reminder_count; ?></span>
-                        <?php endif; ?>
-                        <div class="notification-dropdown" id="notificationDropdown">
-                            <?php if ($reminder_count > 0): ?>
-                                <?php 
-                                // Reset the result pointer to beginning
-                                mysqli_data_seek($reminder_query, 0);
-                                while ($reminder = mysqli_fetch_assoc($reminder_query)): 
-                                ?>
-                                    <div class="notification-item">
-                                        <div class="notification-icon">
-                                            <i class="fas fa-calendar-check"></i>
-                                        </div>
-                                        <div class="notification-content">
-                                            <div class="notification-title">Appointment Reminder</div>
-                                            <div class="notification-message"><?php echo htmlspecialchars($reminder['REMARKS']); ?></div>
-                                            <div class="notification-time"><?php echo date('M d, Y h:i A', strtotime($reminder['APPOINTMENT_DATE'] . ' ' . $reminder['APPOINTMENT_TIME'])); ?></div>
-                                        </div>
-                                    </div>
-                                <?php endwhile; ?>
-                            <?php else: ?>
-                                <div class="no-notifications">No new notifications</div>
-                            <?php endif; ?>
-                        </div>
-                    </button>
-                    <div class="user-dropdown">
-                        <div class="user-avatar"><?php echo strtoupper(substr($patient['FIRST_NAME'], 0, 1) . substr($patient['LAST_NAME'], 0, 1)); ?></div>
-                        <span><?php echo htmlspecialchars($patient['FIRST_NAME'] . ' ' . $patient['LAST_NAME']); ?></span>
-                        <i class="fas fa-chevron-down" style="margin-left: 8px;"></i>
-                    </div>
-                </div>
-            </div>
+        <div class="main">
+            <?php include 'patient_header.php'; ?>
             
             <!-- Success/Error Messages -->
             <?php if (isset($success_message)): ?>
@@ -562,7 +450,6 @@ html {
                         <div class="profile-avatar"><?php echo strtoupper(substr($patient['FIRST_NAME'], 0, 1) . substr($patient['LAST_NAME'], 0, 1)); ?></div>
                         <div class="profile-title">
                             <h2><?php echo htmlspecialchars($patient['FIRST_NAME'] . ' ' . $patient['LAST_NAME']); ?></h2>
-                    
                         </div>
                     </div>
                     
