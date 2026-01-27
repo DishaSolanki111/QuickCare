@@ -53,13 +53,14 @@ if ($doctor_id) {
 
 <style>
 .topbar {
+    margin-top: 10px;
     background: #ffffff;
     padding: 18px 30px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     box-shadow: 0 2px 6px rgba(0,0,0,0.06);
-    margin-bottom: 30px;
+    margin-bottom: 20px;
 }
 
 .topbar-right {
