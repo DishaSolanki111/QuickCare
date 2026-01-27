@@ -1,7 +1,7 @@
 <?php
-//if (session_status() === PHP_SESSION_NONE) {
-  //  session_start();
-//}
+// if (session_status() === PHP_SESSION_NONE) {
+//    session_start();
+// }
 
 include 'config.php';
 
@@ -27,7 +27,7 @@ if ($doctor_id) {
 ?>
 <!-- ✅ HEADER HTML YAHI RAHEGA -->
 <header class="topbar">
-    <h2>Welcome back</h2>
+    <h2><?php echo htmlspecialchars($page_title ?? 'Welcome back'); ?></h2>
 
     <div class="topbar-right">
         <div class="user-info">

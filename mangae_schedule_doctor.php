@@ -149,26 +149,94 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_schedule'])) {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-
+        
         body {
-            background-color: #f5f8fa;
-            color: var(--text);
+            background-color: #f5f7fa;
+            color: #333;
             line-height: 1.6;
-            overflow-x: hidden;
         }
-
+        
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+        
        
-
         /* Main Content */
         .main-content {
-            margin-left: 260px;
-        
-                min-height: 100vh;
+            flex: 1;
+            margin-left: 250px;
+            padding: 20px;
+            margin-top:-15px;
         }
-
         
+        
+        .welcome-msg {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+        
+        .user-actions {
+            display: flex;
+            align-items: center;
+        }
+        
+        .notification-btn {
+            position: relative;
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: var(--dark-color);
+            margin-right: 20px;
+            cursor: pointer;
+        }
+        
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: var(--danger-color);
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: bold;
+        }
+        
+        .user-dropdown {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--secondary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            font-weight: bold;
+        }
+            .profile-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 10px;
+            background: var(--white);
+            border-radius: 12px;
+            box-shadow: var(--shadow-md);
+        }
 
         /* Schedule Content */
         .schedule-content {
@@ -449,10 +517,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_schedule'])) {
 </head>
 <body>
     <?php include 'doctor_sidebar.php'; ?>
-    <?php include 'doctor_header.php'; ?>
+    
     <!-- Main Content -->
     <div class="main-content">
-        
+    <?php include 'doctor_header.php'; ?>    
         <!-- Schedule Content -->
         <div class="schedule-content">
             <!-- Success/Error Messages -->
