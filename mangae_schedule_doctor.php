@@ -164,15 +164,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_schedule'])) {
         /* Main Content */
         .main-content {
             margin-left: 260px;
-            padding: 0;
-            min-height: 100vh;
+        
+                min-height: 100vh;
         }
 
         
 
         /* Schedule Content */
         .schedule-content {
-            padding: 30px;
+            padding: 10px;
         }
 
         .schedule-header {
@@ -294,7 +294,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_schedule'])) {
         .schedule-actions {
             display: flex;
             gap: 10px;
-            margin-top: 15px;
+            margin-top: 5px;
         }
 
         .empty-state {
@@ -396,25 +396,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_schedule'])) {
 
         /* Responsive Design */
         @media (max-width: 992px) {
-            .sidebar {
-                width: 70px;
-            }
-            
-            .sidebar-header h2 {
-                display: none;
-            }
-            
-            .sidebar-nav a span {
-                display: none;
-            }
-            
-            .sidebar-nav a {
-                justify-content: center;
-            }
-            
-            .sidebar-nav a i {
-                margin: 0;
-            }
+         
             
             .main-content {
                 margin-left: 70px;
@@ -426,21 +408,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_schedule'])) {
         }
 
         @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-            }
-            
-            .sidebar.active {
-                transform: translateX(0);
-            }
-            
+    
             .main-content {
                 margin-left: 0;
             }
             
-            .topbar {
-                padding: 15px 20px;
-            }
+        
             
             .schedule-content {
                 padding: 20px;
@@ -475,7 +448,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_schedule'])) {
     </style>
 </head>
 <body>
-    <!-- Sidebar -->
     <?php include 'doctor_sidebar.php'; ?>
     <?php include 'doctor_header.php'; ?>
     <!-- Main Content -->

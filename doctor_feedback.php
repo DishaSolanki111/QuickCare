@@ -42,8 +42,9 @@
         
         /* Main Content */
         .main-content {
+            margin-top:-15px;
             flex: 1;
-            margin-left: 250px;
+            margin-left: 230px;
             padding: 20px;
         }
         
@@ -55,19 +56,10 @@
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
             margin-bottom: 20px;
         }
+       
         
-        h1, h2 {
-            color: #0056b3;
-            border-bottom: 2px solid #eee;
-            padding-bottom: 10px;
-            margin-bottom: 20px;
-        }
-        
-        /* Remove white line from sidebar h2 */
-        .sidebar h2 {
-            border-bottom: none !important;
-            padding-bottom: 0 !important;
-        }
+      
+      
         
         /* Feedback Card Styles */
         .feedback-card {

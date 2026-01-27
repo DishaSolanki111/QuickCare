@@ -177,62 +177,13 @@ if (!empty($search)) {
        
         /* Main Content */
         .main-content {
-            margin-left: 260px;
-            padding: 0;
+           
+            margin-left: 250px;
             min-height: 100vh;
         }
 
-        /* Header */
-        .topbar {
-            background: var(--white);
-            padding: 20px 30px;
-            box-shadow: var(--shadow-md);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 50;
-        }
 
-        .topbar h1 {
-            color: var(--dark);
-            font-size: 24px;
-            font-weight: 700;
-        }
-
-        .topbar-right {
-            display: flex;
-            align-items: center;
-        }
-
-        .notification-icon {
-            position: relative;
-            margin-right: 20px;
-            color: var(--text);
-            font-size: 20px;
-            cursor: pointer;
-        }
-
-        .notification-badge {
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            background: var(--warning);
-            color: var(--white);
-            font-size: 10px;
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .user-info {
-            display: flex;
-            align-items: center;
-        }
+    
 
         .user-avatar {
             width: 40px;
@@ -492,26 +443,7 @@ if (!empty($search)) {
 
         /* Responsive Design */
         @media (max-width: 992px) {
-            .sidebar {
-                width: 70px;
-            }
-            
-            .sidebar-header h2 {
-                display: none;
-            }
-            
-            .sidebar-nav a span {
-                display: none;
-            }
-            
-            .sidebar-nav a {
-                justify-content: center;
-            }
-            
-            .sidebar-nav a i {
-                margin: 0;
-            }
-            
+     
             .main-content {
                 margin-left: 70px;
             }
@@ -522,22 +454,13 @@ if (!empty($search)) {
         }
 
         @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-            }
-            
-            .sidebar.active {
-                transform: translateX(0);
-            }
+          
             
             .main-content {
                 margin-left: 0;
             }
             
-            .topbar {
-                padding: 15px 20px;
-            }
-            
+          
             .medicine-content {
                 padding: 20px;
             }

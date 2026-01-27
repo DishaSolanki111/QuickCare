@@ -154,15 +154,11 @@ if ($past_result->num_rows > 0) {
             --white: #ffffff;
             --card-bg: #F6F9FB;
             --primary-color: #1a3a5f;
-            --secondary-color: #3498db;
-            --accent-color: #2ecc71;
-            --danger-color: #e74c3c;
-            --warning-color: #f39c12;
             --info-color: #17a2b8;
         }
 
         * {
-            margin: 0;
+        ;
             padding: 0;
             box-sizing: border-box;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
@@ -175,73 +171,10 @@ if ($past_result->num_rows > 0) {
             overflow-x: hidden;
         }
 
-        /* Sidebar Styles */
-        .logo-img {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            margin-bottom: 15px;
-            object-fit: cover;
-            border: 3px solid var(--primary-light);
-        }
-
-        .container {
-            display: flex;
-            min-height: 100vh;
-        }
-        
-        /* Sidebar Styles */
-        .sidebar {
-            width: 250px;
-            background: #072D44;
-            min-height: 100vh;
-            color: white;
-            padding-top: 30px;
-            position: fixed;
-        }
-
-        .sidebar h2 {
-            text-align: center;
-            margin-bottom: 40px;
-            color: #9CCDD8;
-        }
-
-        .sidebar a {
-            display: block;
-            padding: 15px 25px;
-            color: #D0D7E1;
-            text-decoration: none;
-            font-size: 17px;
-            border-left: 4px solid transparent;
-        }
-
-        .sidebar a:hover, .sidebar a.active {
-            background: #064469;
-            border-left: 4px solid #9CCDD8;
-            color: white;
-        }
-
-        .logout-btn:hover{
-            background-color: var(--light-blue);
-        }
-        .logout-btn {
-            display: block;
-            width: 80%;
-            margin: 20px auto 0 auto;
-            padding: 10px;
-            background-color: var(--soft-blue);
-            color: var(--white);    
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            text-align: center;
-            transition: background-color 0.3s;
-        }
-
+       
         /* Main Content */
         .main-content {
-            margin-left: 260px;
+            margin-left: 280px;
             padding: 0;
             min-height: 100vh;
         }
@@ -469,22 +402,13 @@ if ($past_result->num_rows > 0) {
         }
 
         @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-            }
-            
-            .sidebar.active {
-                transform: translateX(0);
-            }
+    
             
             .main-content {
                 margin-left: 0;
             }
             
-            .topbar {
-                padding: 15px 20px;
-            }
-            
+          
             .appointment-content {
                 padding: 20px;
             }
@@ -518,21 +442,7 @@ if ($past_result->num_rows > 0) {
     </style>
 </head>
 <body>
-    <!-- Sidebar -->
-    <div class="sidebar" id="sidebar">
-        <img src="uploads/logo.JPG" alt="QuickCare Logo" class="logo-img" style="display:block; margin: 0 auto 10px auto; width:80px; height:80px; border-radius:50%;">  
-        <h2>QuickCare</h2>
-
-        <a href="doctor_dashboard.php" >Dashboard</a>
-        <a href="d_profile.php">My Profile</a>
-        <a href="mangae_schedule_doctor.php">Manage Schedule</a>
-        <a href="appointment_doctor.php" class="active">Manage Appointments</a>
-        <a href="manage_prescriptions.php">Manage Prescription</a>
-        <a href="view_medicine.php">View Medicine</a>
-        <a href="doctor_feedback.php">View Feedback</a>
-        <a href="logout.php" class="logout-btn">Logout</a>
-    </div>
-<!-- Sidebar -->
+ 
  <?php include 'doctor_sidebar.php'; ?>
  <?php include 'doctor_header.php'; ?>
     <!-- Main Content -->

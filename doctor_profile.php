@@ -168,15 +168,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
             line-height: 1.6;
             overflow-x: hidden;
         }
-
-       
-
-        .container {
-            display: flex;
-            min-height: 100vh;
-        }
-        
-   
       
         /* Main Content */
         .main-content {
