@@ -1,9 +1,74 @@
+<?php
+// Include configuration file
+include 'config.php';
+
+// Initialize messages
+ $success_message = "";
+ $error_message = "";
+
+// Handle edit form submission
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['action'] == 'edit_patient') {
+    $patient_id = $_POST['patient_id'];
+    $first_name = mysqli_real_escape_string($conn, $_POST['first_name']);
+    $last_name = mysqli_real_escape_string($conn, $_POST['last_name']);
+    $dob = mysqli_real_escape_string($conn, $_POST['dob']);
+    $gender = mysqli_real_escape_string($conn, $_POST['gender']);
+    $blood_group = mysqli_real_escape_string($conn, $_POST['blood_group']);
+    $phone = mysqli_real_escape_string($conn, $_POST['phone']);
+    $email = mysqli_real_escape_string($conn, $_POST['email']);
+    
+    // Validate required fields
+    if (empty($first_name) || empty($last_name) || empty($dob) || empty($gender) || empty($blood_group) || empty($phone) || empty($email)) {
+        $error_message = "All fields are required.";
+    } else {
+        // Update patient data
+        $query = "UPDATE patient_tbl SET 
+                 FIRST_NAME = ?, 
+                 LAST_NAME = ?, 
+                 DOB = ?, 
+                 GENDER = ?, 
+                 BLOOD_GROUP = ?, 
+                 PHONE = ?, 
+                 EMAIL = ? 
+                 WHERE PATIENT_ID = ?";
+        
+        $stmt = mysqli_prepare($conn, $query);
+        mysqli_stmt_bind_param($stmt, "sssssssi", $first_name, $last_name, $dob, $gender, $blood_group, $phone, $email, $patient_id);
+        
+        if (mysqli_stmt_execute($stmt)) {
+            $success_message = "Patient information updated successfully.";
+        } else {
+            $error_message = "Error updating patient: " . mysqli_error($conn);
+        }
+        mysqli_stmt_close($stmt);
+    }
+}
+
+// Handle delete
+if (isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['id'])) {
+    $patient_id = $_GET['id'];
+    $query = "DELETE FROM patient_tbl WHERE PATIENT_ID = ?";
+    $stmt = mysqli_prepare($conn, $query);
+    mysqli_stmt_bind_param($stmt, "i", $patient_id);
+    
+    if (mysqli_stmt_execute($stmt)) {
+        $success_message = "Patient deleted successfully!";
+    } else {
+        $error_message = "Error deleting patient: " . mysqli_error($conn);
+    }
+    mysqli_stmt_close($stmt);
+    
+    // Redirect to remove delete parameters from URL
+    header("Location: admin_patient.php");
+    exit();
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <title>Manage Patients - QuickCare</title>
-<?php include 'admin_sidebar.php'; ?>
 <style>
     body {
         margin: 0;
@@ -18,6 +83,7 @@
         --light-blue: #9CCDD8;
         --gray-blue: #D0D7E1;
         --white: #ffffff;
+        --danger-color: #e74c3c;
     }
 
     .main {
@@ -92,6 +158,7 @@
         border-radius: 3px;
         cursor: pointer;
         color: white;
+        margin-right: 5px;
     }
 
     .edit-btn { background: #f39c12; }
@@ -105,10 +172,121 @@
         background-color: #e74c3c;
         color: white;
     }
+    
+    /* Modal Styles */
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0.5);
+    }
+    
+    .modal-content {
+        background-color: #fff;
+        margin: 5% auto;
+        padding: 20px;
+        border-radius: 10px;
+        width: 80%;
+        max-width: 600px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    }
+    
+    .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+    
+    .close:hover {
+        color: #000;
+    }
+    
+    .form-group {
+        margin-bottom: 15px;
+    }
+    
+    .form-group label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+        color: var(--dark-blue);
+    }
+    
+    .form-group input, .form-group select {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #D0D7E1;
+        border-radius: 5px;
+        box-sizing: border-box;
+    }
+    
+    .form-row {
+        display: flex;
+        gap: 15px;
+    }
+    
+    .form-row .form-group {
+        flex: 1;
+    }
+    
+    .btn-save {
+        background: var(--soft-blue);
+        color: white;
+        padding: 10px 15px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: bold;
+    }
+    
+    .btn-save:hover {
+        background: var(--mid-blue);
+    }
+    
+    .btn-cancel {
+        background: #6c757d;
+        color: white;
+        padding: 10px 15px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: bold;
+        margin-left: 10px;
+    }
+    
+    .btn-cancel:hover {
+        background: #5a6268;
+    }
+    
+    .alert {
+        padding: 15px;
+        margin-bottom: 20px;
+        border-radius: 5px;
+    }
+    
+    .alert-success {
+        background: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+    }
+    
+    .alert-danger {
+        background: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+    }
 </style>
 </head>
 
 <body>
+
+<?php include 'admin_sidebar.php'; ?>
 
 <div class="main">
 
@@ -116,6 +294,14 @@
         <h1>Manage Patients</h1>
         <p>Welcome, Admin</p>
     </div>
+
+    <?php if (!empty($success_message)): ?>
+        <div class="alert alert-success"><?php echo $success_message; ?></div>
+    <?php endif; ?>
+    
+    <?php if (!empty($error_message)): ?>
+        <div class="alert alert-danger"><?php echo $error_message; ?></div>
+    <?php endif; ?>
 
     <!-- FILTER (UI UNCHANGED, BUG FIXED) -->
     <div class="filter-container">
@@ -158,8 +344,6 @@
         </tr>
 
         <?php
-        include 'config.php';
-
         $query = "SELECT * FROM patient_tbl WHERE 1=1";
 
         if (!empty($_GET['name_filter'])) {
@@ -193,9 +377,9 @@
                     <td>{$row['EMAIL']}</td>
                     <td>
                         <button class='action-btn edit-btn'
-                            onclick=\"window.location.href='edit_patient.php?id={$row['PATIENT_ID']}'\">Edit</button>
+                            onclick=\"openEditModal({$row['PATIENT_ID']}, '" . addslashes($row['FIRST_NAME']) . "', '" . addslashes($row['LAST_NAME']) . "', '{$row['DOB']}', '{$row['GENDER']}', '{$row['BLOOD_GROUP']}', '{$row['PHONE']}', '{$row['EMAIL']}')\">Edit</button>
                         <button class='action-btn delete-btn'
-                            onclick=\"if(confirm('Are you sure?')) window.location.href='delete_patient.php?id={$row['PATIENT_ID']}'\">Delete</button>
+                            onclick=\"deletePatient({$row['PATIENT_ID']})\">Delete</button>
                     </td>
                 </tr>";
             }
@@ -207,6 +391,114 @@
         ?>
     </table>
 </div>
+
+<!-- Edit Modal -->
+<div id="editModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeEditModal()">&times;</span>
+        <h2>Edit Patient</h2>
+        <form id="editForm" method="post" action="admin_patient.php">
+            <input type="hidden" name="action" value="edit_patient">
+            <input type="hidden" id="edit_patient_id" name="patient_id">
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="edit_first_name">First Name</label>
+                    <input type="text" id="edit_first_name" name="first_name" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit_last_name">Last Name</label>
+                    <input type="text" id="edit_last_name" name="last_name" required>
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="edit_dob">Date of Birth</label>
+                    <input type="date" id="edit_dob" name="dob" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit_gender">Gender</label>
+                    <select id="edit_gender" name="gender" required>
+                        <option value="MALE">Male</option>
+                        <option value="FEMALE">Female</option>
+                        <option value="OTHER">Other</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="edit_blood_group">Blood Group</label>
+                    <select id="edit_blood_group" name="blood_group" required>
+                        <option value="A+">A+</option>
+                        <option value="A-">A-</option>
+                        <option value="B+">B+</option>
+                        <option value="B-">B-</option>
+                        <option value="O+">O+</option>
+                        <option value="O-">O-</option>
+                        <option value="AB+">AB+</option>
+                        <option value="AB-">AB-</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="edit_phone">Phone</label>
+                    <input type="tel" id="edit_phone" name="phone" required>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="edit_email">Email</label>
+                <input type="email" id="edit_email" name="email" required>
+            </div>
+            
+            <div style="margin-top: 20px;">
+                <button type="submit" class="btn-save">Save Changes</button>
+                <button type="button" class="btn-cancel" onclick="closeEditModal()">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+// Modal functions
+function openEditModal(id, firstName, lastName, dob, gender, bloodGroup, phone, email) {
+    document.getElementById('edit_patient_id').value = id;
+    document.getElementById('edit_first_name').value = firstName;
+    document.getElementById('edit_last_name').value = lastName;
+    document.getElementById('edit_dob').value = dob;
+    document.getElementById('edit_gender').value = gender;
+    document.getElementById('edit_blood_group').value = bloodGroup;
+    document.getElementById('edit_phone').value = phone;
+    document.getElementById('edit_email').value = email;
+    
+    document.getElementById('editModal').style.display = 'block';
+}
+
+function closeEditModal() {
+    document.getElementById('editModal').style.display = 'none';
+}
+
+// Close modal when clicking outside of it
+window.onclick = function(event) {
+    const modal = document.getElementById('editModal');
+    if (event.target == modal) {
+        closeEditModal();
+    }
+}
+
+function deletePatient(id) {
+    if (confirm("Are you sure you want to delete this patient?")) {
+        window.location.href = "admin_patient.php?action=delete&id=" + id;
+    }
+}
+
+// Handle form submission to close modal after successful update
+document.getElementById('editForm').addEventListener('submit', function() {
+    // The form will submit normally and the page will refresh
+    // showing the updated data and success message
+});
+</script>
 
 </body>
 </html>

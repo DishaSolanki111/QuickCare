@@ -509,7 +509,7 @@ if (session_status() === PHP_SESSION_NONE) {
                                 $dashboard_link = 'patient.php';
                             } else if (isset($_SESSION['DOCTOR_ID'])) {
                                 $profile_link = 'doctor_profile.php';
-                                $dashboard_link = 'doctor.php';
+                                $dashboard_link = 'doctor_dashboard.php';
                             } else if (isset($_SESSION['RECEPTIONIST_ID'])) {
                                 $profile_link = 'receptionist_profile.php';
                                 $dashboard_link = 'receptionist.php';
