@@ -27,7 +27,7 @@ if (empty($user_type) || empty($username) || empty($pswd)) {
 if ($user_type === 'doctor') {
 
     $stmt = $conn->prepare(
-        "SELECT DOCTOR_ID, PSWD 
+        "SELECT DOCTOR_ID, FIRST_NAME, PSWD 
          FROM doctor_tbl 
          WHERE USERNAME = ?"
     );
@@ -44,7 +44,7 @@ if ($user_type === 'doctor') {
             $_SESSION['LOGGED_IN'] = true;
             $_SESSION['USER_TYPE'] = 'doctor';
             $_SESSION['DOCTOR_ID'] = $row['DOCTOR_ID'];
-
+            $_SESSION['USER_NAME'] = $row['FIRST_NAME'];
             header("Location: doctor_dashboard.php");
             exit();
         }
@@ -63,7 +63,7 @@ if ($user_type === 'doctor') {
 if ($user_type === 'patient') {
 
     $stmt = $conn->prepare(
-        "SELECT PATIENT_ID, PSWD 
+        "SELECT PATIENT_ID, FIRST_NAME, PSWD 
          FROM patient_tbl 
          WHERE USERNAME = ?"
     );
@@ -80,6 +80,7 @@ if ($user_type === 'patient') {
             $_SESSION['LOGGED_IN'] = true;
             $_SESSION['USER_TYPE'] = 'patient';
             $_SESSION['PATIENT_ID'] = $row['PATIENT_ID'];
+            $_SESSION['USER_NAME'] = $row['FIRST_NAME']; 
 
             header("Location: patient.php");
             exit();
@@ -99,7 +100,7 @@ if ($user_type === 'patient') {
 if ($user_type === 'receptionist') {
 
     $stmt = $conn->prepare(
-        "SELECT RECEPTIONIST_ID, PSWD 
+        "SELECT RECEPTIONIST_ID, FIRST_NAME, PSWD 
          FROM receptionist_tbl 
          WHERE USERNAME = ?"
     );
@@ -116,7 +117,7 @@ if ($user_type === 'receptionist') {
             $_SESSION['LOGGED_IN'] = true;
             $_SESSION['USER_TYPE'] = 'receptionist';
             $_SESSION['RECEPTIONIST_ID'] = $row['RECEPTIONIST_ID'];
-
+            $_SESSION['USER_NAME'] = $row['FIRST_NAME'];
             header("Location: receptionist.php");
             exit();
         }

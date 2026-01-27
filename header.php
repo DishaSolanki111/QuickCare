@@ -464,7 +464,7 @@ if (session_status() === PHP_SESSION_NONE) {
                         <div class="user-avatar" id="profile-icon">
                             <?php 
                             if (isset($_SESSION['PATIENT_ID'])) {
-                                echo isset($_SESSION['PATIENT_NAME']) ? strtoupper(substr($_SESSION['PATIENT_NAME'], 0, 2)) : 'PA';
+                                echo isset($_SESSION['USER_NAME']) ? strtoupper(substr($_SESSION['USER_NAME'], 0, 2)) : 'PA';
                             } else if (isset($_SESSION['DOCTOR_ID'])) {
                                 echo isset($_SESSION['DOCTOR_NAME']) ? strtoupper(substr($_SESSION['DOCTOR_NAME'], 0, 2)) : 'DR';
                             } else {
@@ -476,11 +476,11 @@ if (session_status() === PHP_SESSION_NONE) {
                             <div class="user-name">
                                 <?php 
                                 if (isset($_SESSION['PATIENT_ID'])) {
-                                    echo isset($_SESSION['PATIENT_NAME']) ? htmlspecialchars($_SESSION['PATIENT_NAME']) : 'Patient';
+                                    echo isset($_SESSION['USER_NAME']) ? htmlspecialchars($_SESSION['USER_NAME']) : 'Patient';
                                 } else if (isset($_SESSION['DOCTOR_ID'])) {
-                                    echo isset($_SESSION['DOCTOR_NAME']) ? 'Dr. ' . htmlspecialchars($_SESSION['DOCTOR_NAME']) : 'Doctor';
+                                    echo isset($_SESSION['USER_NAME']) ? 'Dr. ' . htmlspecialchars($_SESSION['USER_NAME']) : 'Doctor';
                                 } else {
-                                    echo isset($_SESSION['RECEPTIONIST_NAME']) ? htmlspecialchars($_SESSION['RECEPTIONIST_NAME']) : 'Receptionist';
+                                    echo isset($_SESSION['USER_NAME']) ? htmlspecialchars($_SESSION['USER_NAME']) : 'Receptionist';
                                 }
                                 ?>
                             </div>
