@@ -489,9 +489,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
     </style>
 </head>
 <body>
+    <div class="container">
     <!-- Sidebar -->
    <?php include 'doctor_sidebar.php'; ?>
-   $page_title = "Your Profile";
+   <!-- $page_title = "Your Profile"; -->
     
     <!-- Main Content -->
     <div class="main-content">
@@ -500,7 +501,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
         <div class="profile-content">
             <!-- Profile Header -->
            
-            <div class="profile-header">
+            <!-- <div class="profile-header">
                 <?php if (!empty($doctor['PROFILE_IMAGE'])): ?>
                     <img src="<?php echo htmlspecialchars($doctor['PROFILE_IMAGE']); ?>" alt="Profile" class="profile-avatar">
                 <?php else: ?>
@@ -514,7 +515,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
                     <p><?php echo htmlspecialchars($doctor['SPECIALISATION_NAME']); ?></p>
                     <p><?php echo htmlspecialchars($doctor['EDUCATION']); ?></p>
                 </div>
-            </div>
+            </div> -->
             
             <!-- Profile Tabs -->
             <div class="profile-tabs">
