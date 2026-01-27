@@ -221,9 +221,7 @@ if ($row = $week_result->fetch_assoc()) {
         
 /* Dashboard Content */
 .dashboard-content {
-    padding: 30px;
-    max-width: 1200px;
-    margin: 0 auto;
+    padding: 10px;
 }
 
 .welcome-section {

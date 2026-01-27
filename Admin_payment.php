@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>View Payments - QuickCare</title>
- <?php include 'admin_sidebar.php'; ?>
+<?php include 'admin_sidebar.php'; ?>
 <style>
     body {
         margin: 0;
@@ -11,30 +11,21 @@
         background: #D0D7E1;
         display: flex;
     }
-     :root {
-           --dark-blue: #072D44;
-    --mid-blue: #064469;
-    --soft-blue: #5790AB;
-    --light-blue: #9CCDD8;
-    --gray-blue: #D0D7E1;
-    --white: #ffffff;
-    --card-bg: #F6F9FB;
-    --primary-color: #1a3a5f;
-    --secondary-color: #3498db;
-    --accent-color: #2ecc71;
-    --danger-color: #e74c3c;
-    --warning-color: #f39c12;
-    --info-color: #17a2b8;
-        }
+    :root {
+        --dark-blue: #072D44;
+        --mid-blue: #064469;
+        --soft-blue: #5790AB;
+        --light-blue: #9CCDD8;
+        --gray-blue: #D0D7E1;
+        --white: #ffffff;
+    }
 
-    /* Main content */
     .main {
         margin-left: 250px;
         padding: 20px;
         width: calc(100% - 250px);
     }
 
-    /* Top bar */
     .topbar {
         background: white;
         padding: 15px 25px;
@@ -45,12 +36,6 @@
         box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     }
 
-    .topbar h1 {
-        margin: 0;
-        color: #064469;
-    }
-
-    /* Table Section */
     table {
         width: 100%;
         border-collapse: collapse;
@@ -71,14 +56,6 @@
         text-align: left;
     }
 
-    tr:hover {
-        background: #F2F9FB;
-    }
-    .logo-img {
-            height: 40px;
-            margin-right: 12px;
-            border-radius: 5px;
-        }
     .filter-container {
         background: white;
         padding: 20px;
@@ -86,16 +63,20 @@
         margin-bottom: 20px;
         box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     }
+
     .filter-container form {
         display: flex;
         gap: 15px;
         flex-wrap: wrap;
     }
-    .filter-container input, .filter-container select {
+
+    .filter-container input,
+    .filter-container select {
         padding: 10px;
         border: 1px solid #D0D7E1;
         border-radius: 5px;
     }
+
     .filter-container button {
         padding: 10px 15px;
         background: #5790AB;
@@ -104,34 +85,24 @@
         border-radius: 5px;
         cursor: pointer;
     }
-    .filter-container button:hover {
-        background: #064469;
-    }
-    .action-btn {
-        padding: 5px 10px;
-        margin: 0 2px;
-        border: none;
-        border-radius: 3px;
-        cursor: pointer;
-    }
-    .view-btn {
-        background-color: #3498db;
-        color: white;
-    }
+
     .status-badge {
         padding: 5px 10px;
         border-radius: 20px;
         font-size: 12px;
         font-weight: bold;
     }
+
     .status-completed {
         background-color: #2ecc71;
         color: white;
     }
+
     .status-failed {
         background-color: #e74c3c;
         color: white;
     }
+
     .payment-mode-badge {
         padding: 3px 8px;
         border-radius: 15px;
@@ -140,71 +111,65 @@
         background-color: #3498db;
         color: white;
     }
+
     .revenue-card {
         background: white;
-        padding: 20px;
+        padding: 10px;
         border-radius: 12px;
         margin-bottom: 20px;
         box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         border-left: 8px solid #2ecc71;
     }
-    .revenue-card h3 {
-        margin: 0;
-        color: #072D44;
-    }
-    .revenue-card p {
-        margin-top: 10px;
-        font-size: 22px;
-        color: #064469;
-        font-weight: bold;
-    }
 </style>
 </head>
+
 <body>
 
-<!-- Main Content -->
 <div class="main">
-    <!-- Topbar -->
+
     <div class="topbar">
         <h1>View Payments</h1>
         <p>Welcome, Admin</p>
     </div>
 
-    <!-- Revenue Card -->
+    <!-- TOTAL REVENUE -->
     <div class="revenue-card">
         <h3>Total Revenue</h3>
-        <p>₹<?php 
-        // PHP code to calculate total revenue
-        include 'config.php';
-        $revenue_query = "SELECT SUM(AMOUNT) as total FROM payment_tbl WHERE STATUS = 'COMPLETED'";
-        $revenue_result = mysqli_query($conn, $revenue_query);
-        $revenue_row = mysqli_fetch_assoc($revenue_result);
-        echo number_format($revenue_row['total'], 2);
-        mysqli_close($conn);
+        <p>₹<?php
+            include 'config.php';
+            $rev = mysqli_query($conn,
+                "SELECT SUM(AMOUNT) AS total FROM payment_tbl WHERE STATUS='COMPLETED'");
+            $row = mysqli_fetch_assoc($rev);
+            echo number_format($row['total'], 2);
+            mysqli_close($conn);
         ?></p>
     </div>
 
-    <!-- Filter Section -->
+    <!-- FILTER (FIXED) -->
     <div class="filter-container">
-        <form method="GET" action="view_payments.php">
-            <input type="date" name="date_filter" placeholder="Filter by Date">
+        <form method="GET" action="">
+            <input type="date" name="date_filter"
+                value="<?php echo $_GET['date_filter'] ?? ''; ?>">
+
             <select name="status_filter">
                 <option value="">All Status</option>
-                <option value="COMPLETED">Completed</option>
-                <option value="FAILED">Failed</option>
+                <option value="COMPLETED" <?php if(($_GET['status_filter'] ?? '')=='COMPLETED') echo 'selected'; ?>>Completed</option>
+                <option value="FAILED" <?php if(($_GET['status_filter'] ?? '')=='FAILED') echo 'selected'; ?>>Failed</option>
             </select>
+
             <select name="mode_filter">
                 <option value="">All Payment Modes</option>
-                <option value="CREDIT CARD">Credit Card</option>
-                <option value="GOOGLE PAY">Google Pay</option>
-                <option value="UPI">UPI</option>
-                <option value="NET BANKING">Net Banking</option>
+                <option value="CREDIT CARD" <?php if(($_GET['mode_filter'] ?? '')=='CREDIT CARD') echo 'selected'; ?>>Credit Card</option>
+                <option value="GOOGLE PAY" <?php if(($_GET['mode_filter'] ?? '')=='GOOGLE PAY') echo 'selected'; ?>>Google Pay</option>
+                <option value="UPI" <?php if(($_GET['mode_filter'] ?? '')=='UPI') echo 'selected'; ?>>UPI</option>
+                <option value="NET BANKING" <?php if(($_GET['mode_filter'] ?? '')=='NET BANKING') echo 'selected'; ?>>Net Banking</option>
             </select>
+
             <button type="submit">Filter</button>
         </form>
     </div>
 
-    <!-- Payments Table -->
+    <!-- TABLE -->
     <table>
         <tr>
             <th>Payment ID</th>
@@ -214,77 +179,60 @@
             <th>Payment Date</th>
             <th>Payment Mode</th>
             <th>Status</th>
-            <th>Actions</th>
         </tr>
+
         <?php
-        // PHP code to fetch payments from database
         include 'config.php';
-        
-        // Build query based on filters
-        $query = "SELECT p.PAYMENT_ID, p.APPOINTMENT_ID, p.AMOUNT, p.PAYMENT_DATE, 
-                  p.PAYMENT_MODE, p.STATUS, 
-                  pt.FIRST_NAME as p_first, pt.LAST_NAME as p_last
+
+        $query = "SELECT p.*, pt.FIRST_NAME, pt.LAST_NAME
                   FROM payment_tbl p
-                  JOIN appointment_tbl a ON p.APPOINTMENT_ID = a.APPOINTMENT_ID
-                  JOIN patient_tbl pt ON a.PATIENT_ID = pt.PATIENT_ID
+                  JOIN appointment_tbl a ON p.APPOINTMENT_ID=a.APPOINTMENT_ID
+                  JOIN patient_tbl pt ON a.PATIENT_ID=pt.PATIENT_ID
                   WHERE 1=1";
-        
-        // Apply filters if set
-        if(isset($_GET['date_filter']) && !empty($_GET['date_filter'])) {
+
+        if (!empty($_GET['date_filter'])) {
             $date = mysqli_real_escape_string($conn, $_GET['date_filter']);
-            $query .= " AND p.PAYMENT_DATE = '$date'";
+            $query .= " AND DATE(p.PAYMENT_DATE) = '$date'";
         }
-        
-        if(isset($_GET['status_filter']) && !empty($_GET['status_filter'])) {
+
+        if (!empty($_GET['status_filter'])) {
             $status = mysqli_real_escape_string($conn, $_GET['status_filter']);
             $query .= " AND p.STATUS = '$status'";
         }
-        
-        if(isset($_GET['mode_filter']) && !empty($_GET['mode_filter'])) {
+
+        if (!empty($_GET['mode_filter'])) {
             $mode = mysqli_real_escape_string($conn, $_GET['mode_filter']);
             $query .= " AND p.PAYMENT_MODE = '$mode'";
         }
-        
+
         $query .= " ORDER BY p.PAYMENT_DATE DESC";
-        
+
         $result = mysqli_query($conn, $query);
-        
-        if(mysqli_num_rows($result) > 0) {
-            while($row = mysqli_fetch_assoc($result)) {
-                $status_class = "";
-                if($row['STATUS'] == 'COMPLETED') {
-                    $status_class = "status-completed";
-                } else if($row['STATUS'] == 'FAILED') {
-                    $status_class = "status-failed";
-                }
-                
+
+        if ($result && mysqli_num_rows($result) > 0) {
+            while ($row = mysqli_fetch_assoc($result)) {
+
+                $statusClass = $row['STATUS']=='COMPLETED'
+                    ? 'status-completed' : 'status-failed';
+
                 echo "<tr>
-                    <td>".$row['PAYMENT_ID']."</td>
-                    <td>".$row['APPOINTMENT_ID']."</td>
-                    <td>".$row['p_first']." ".$row['p_last']."</td>
-                    <td>$".number_format($row['AMOUNT'], 2)."</td>
-                    <td>".$row['PAYMENT_DATE']."</td>
-                    <td><span class='payment-mode-badge'>".$row['PAYMENT_MODE']."</span></td>
-                    <td><span class='status-badge $status_class'>".$row['STATUS']."</span></td>
-                    <td>
-                        <button class='action-btn view-btn' onclick='viewPayment(".$row['PAYMENT_ID'].")'>View</button>
-                    </td>
+                    <td>{$row['PAYMENT_ID']}</td>
+                    <td>{$row['APPOINTMENT_ID']}</td>
+                    <td>{$row['FIRST_NAME']} {$row['LAST_NAME']}</td>
+                    <td>₹".number_format($row['AMOUNT'],2)."</td>
+                    <td>{$row['PAYMENT_DATE']}</td>
+                    <td><span class='payment-mode-badge'>{$row['PAYMENT_MODE']}</span></td>
+                    <td><span class='status-badge {$statusClass}'>{$row['STATUS']}</span></td>
                 </tr>";
             }
         } else {
-            echo "<tr><td colspan='8'>No payments found</td></tr>";
+            echo "<tr><td colspan='7'>No payments found</td></tr>";
         }
-        
+
         mysqli_close($conn);
         ?>
     </table>
 </div>
-
-<script>
-function viewPayment(id) {
-    window.location.href = "view_payment_details.php?id=" + id;
-}
-</script>
 
 </body>
 </html>

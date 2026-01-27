@@ -251,7 +251,7 @@ if ($past_result->num_rows > 0) {
         }
         /* Appointment Content */
         .appointment-content {
-            padding: 30px;
+            padding: 5px;
         }
 
         .tabs {

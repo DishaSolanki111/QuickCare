@@ -274,7 +274,7 @@ if (!empty($search)) {
 
         /* Medicine Content */
         .medicine-content {
-            padding: 30px;
+            padding: 10px;
         }
 
         .medicine-header {
