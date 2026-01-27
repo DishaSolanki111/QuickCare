@@ -1,3 +1,6 @@
+<?php
+session_start();
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -223,6 +226,7 @@
         <!-- Main Content -->
         <div class="main-content">
             <?php include 'doctor_header.php'; ?>
+            
             
             <!-- Content Card -->
             <div class="content-card">

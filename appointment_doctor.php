@@ -72,13 +72,29 @@ if ($today_result->num_rows > 0) {
 }
  $today_stmt->close();
 
-// Upcoming appointments
+// Add static data for today's appointments
+ $static_appointment = [
+    'APPOINTMENT_ID' => 0,
+    'PATIENT_ID' => 0,
+    'PAT_FNAME' => 'John',
+    'PAT_LNAME' => 'Doe',
+    'PAT_PHONE' => '123-456-7890',
+    'PAT_EMAIL' => 'john.doe@example.com',
+    'APPOINTMENT_DATE' => $today,
+    'APPOINTMENT_TIME' => '10:00:00',
+    'STATUS' => 'SCHEDULED',
+    'REASON' => 'Regular Checkup',
+    'NOTES' => 'Patient reports mild headache'
+];
+array_unshift($today_appointments, $static_appointment);
+
+// Upcoming appointments (only scheduled)
  $upcoming_appointments = [];
  $upcoming_sql = "
     SELECT a.*, p.FIRST_NAME as PAT_FNAME, p.LAST_NAME as PAT_LNAME, p.PHONE as PAT_PHONE, p.EMAIL as PAT_EMAIL
     FROM appointment_tbl a
     JOIN patient_tbl p ON a.PATIENT_ID = p.PATIENT_ID
-    WHERE a.DOCTOR_ID = ? AND a.APPOINTMENT_DATE < ?
+    WHERE a.DOCTOR_ID = ? AND a.APPOINTMENT_DATE > ? AND a.STATUS = 'SCHEDULED'
     ORDER BY a.APPOINTMENT_DATE, a.APPOINTMENT_TIME
 ";
  $upcoming_stmt = $conn->prepare($upcoming_sql);
@@ -93,13 +109,13 @@ if ($upcoming_result->num_rows > 0) {
 }
  $upcoming_stmt->close();
 
-// Past appointments
+// Past appointments (only completed)
  $past_appointments = [];
  $past_sql = "
     SELECT a.*, p.FIRST_NAME as PAT_FNAME, p.LAST_NAME as PAT_LNAME, p.PHONE as PAT_PHONE, p.EMAIL as PAT_EMAIL
     FROM appointment_tbl a
     JOIN patient_tbl p ON a.PATIENT_ID = p.PATIENT_ID
-    WHERE a.DOCTOR_ID = ? AND a.APPOINTMENT_DATE < ?
+    WHERE a.DOCTOR_ID = ? AND a.APPOINTMENT_DATE < ? AND a.STATUS = 'COMPLETED'
     ORDER BY a.APPOINTMENT_DATE DESC, a.APPOINTMENT_TIME DESC
     LIMIT 20
 ";
@@ -544,7 +560,7 @@ if ($past_result->num_rows > 0) {
             <div class="tab-content active" id="today">
                 <?php if (count($today_appointments) > 0): ?>
                     <?php foreach ($today_appointments as $appointment): ?>
-                        <div class="appointment-card">
+                        <div class="appointment-card <?php echo $appointment['APPOINTMENT_ID'] == 0 ? 'static-appointment' : ''; ?>">
                             <div class="appointment-header">
                                 <div class="patient-info">
                                     <h3><?php echo htmlspecialchars($appointment['PAT_FNAME'] . ' ' . $appointment['PAT_LNAME']); ?></h3>
@@ -565,11 +581,23 @@ if ($past_result->num_rows > 0) {
                                     <i class="far fa-clock"></i>
                                     <span><?php echo date('h:i A', strtotime($appointment['APPOINTMENT_TIME'])); ?></span>
                                 </div>
-                                
+                                <?php if (isset($appointment['REASON'])): ?>
+                                <div class="appointment-detail">
+                                    <i class="fas fa-stethoscope"></i>
+                                    <span><?php echo htmlspecialchars($appointment['REASON']); ?></span>
+                                </div>
+                                <?php endif; ?>
+                                <?php if (isset($appointment['NOTES'])): ?>
+                                <div class="appointment-detail">
+                                    <i class="fas fa-notes-medical"></i>
+                                    <span><?php echo htmlspecialchars($appointment['NOTES']); ?></span>
+                                </div>
+                                <?php endif; ?>
                             </div>
                             
                             <div class="appointment-actions">
                                 <?php if ($appointment['STATUS'] === 'SCHEDULED'): ?>
+                                    <?php if ($appointment['APPOINTMENT_ID'] != 0): ?>
                                     <form method="POST" style="display: inline;">
                                         <input type="hidden" name="appointment_id" value="<?php echo $appointment['APPOINTMENT_ID']; ?>">
                                         <input type="hidden" name="status" value="COMPLETED">
@@ -584,6 +612,15 @@ if ($past_result->num_rows > 0) {
                                             <i class="fas fa-times"></i> Cancel
                                         </button>
                                     </form>
+                                    <?php else: ?>
+                                    <!-- For static appointment, show disabled buttons -->
+                                    <button class="btn btn-success" disabled>
+                                        <i class="fas fa-check"></i> Mark as Completed
+                                    </button>
+                                    <button class="btn btn-danger" disabled>
+                                        <i class="fas fa-times"></i> Cancel
+                                    </button>
+                                    <?php endif; ?>
                                 <?php endif; ?>
                                 
                                 <button class="btn btn-primary" onclick="viewPrescription(<?php echo $appointment['APPOINTMENT_ID']; ?>)">
@@ -630,15 +667,13 @@ if ($past_result->num_rows > 0) {
                             </div>
                             
                             <div class="appointment-actions">
-                                <?php if ($appointment['STATUS'] === 'SCHEDULED'): ?>
-                                    <form method="POST" style="display: inline;">
-                                        <input type="hidden" name="appointment_id" value="<?php echo $appointment['APPOINTMENT_ID']; ?>">
-                                        <input type="hidden" name="status" value="CANCELLED">
-                                        <button type="submit" name="update_status" class="btn btn-danger" onclick="return confirm('Are you sure you want to cancel this appointment?')">
-                                            <i class="fas fa-times"></i> Cancel
-                                        </button>
-                                    </form>
-                                <?php endif; ?>
+                                <form method="POST" style="display: inline;">
+                                    <input type="hidden" name="appointment_id" value="<?php echo $appointment['APPOINTMENT_ID']; ?>">
+                                    <input type="hidden" name="status" value="CANCELLED">
+                                    <button type="submit" name="update_status" class="btn btn-danger" onclick="return confirm('Are you sure you want to cancel this appointment?')">
+                                        <i class="fas fa-times"></i> Cancel
+                                    </button>
+                                </form>
                             </div>
                         </div>
                     <?php endforeach; ?>
@@ -683,11 +718,9 @@ if ($past_result->num_rows > 0) {
                                     <i class="fas fa-file-medical"></i> View Prescription
                                 </button>
                                 
-                                <?php if ($appointment['STATUS'] === 'COMPLETED'): ?>
-                                    <button class="btn btn-success" onclick="viewFeedback(<?php echo $appointment['APPOINTMENT_ID']; ?>)">
-                                        <i class="fas fa-star"></i> View Feedback
-                                    </button>
-                                <?php endif; ?>
+                                <button class="btn btn-success" onclick="viewFeedback(<?php echo $appointment['APPOINTMENT_ID']; ?>)">
+                                    <i class="fas fa-star"></i> View Feedback
+                                </button>
                             </div>
                         </div>
                     <?php endforeach; ?>
