@@ -115,11 +115,12 @@ body {
     <a href="index.php">Home</a>
     <a href="receptionist.php">Dashboard</a>
     <a href="receptionist_profile.php">View My Profile</a>
+    <a href="manage_user_profile.php">Manage User Profile</a>
     <a href="appointment_recep.php">Manage Appointments</a>
     <a href="doctor_schedule_recep.php">Manage Doctor Schedule</a>
     <a href="manage_medicine.php">Manage Medicine</a>
     <a href="st_reminder.php">Set Reminder</a>
-    <a href="manage_user_profile.php">Manage User Profile</a>
+    
     <a href="view_prescription.php">View Prescription</a>
     <a href="logout.php" class="logout-btn">logout</a>
    

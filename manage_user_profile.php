@@ -604,7 +604,7 @@ if ($user_type === 'patient') {
             <div class="card-header">
                 <h3>User Management</h3>
                 <div>
-                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createUserModal">
+                    <button class="btn btn-primary" onclick="window.location.href='patientform.php'">
                         <i class="bi bi-person-plus"></i> Create User
                     </button>
                 </div>

@@ -423,9 +423,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_status'])) {
         <div class="card">
             <div class="card-header">
                 <h3>Appointments</h3>
-                <button class="btn btn-primary" onClick="appointment.php" data-bs-toggle="modal" data-bs-target="#createAppointmentModal">
-                    <i class="bi bi-plus-circle"></i> Create Appointment
-                </button>
+              <button class="btn btn-primary" onclick="window.location.href='appointment.php'">
+    <i class="bi bi-plus-circle"></i> Create Appointment
+</button>
+
             </div>
             <div class="card-body">
                 <?php
