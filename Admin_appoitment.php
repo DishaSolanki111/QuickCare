@@ -1,10 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
- <?php include 'admin_sidebar.php'; ?>
 <title>View Appointments - QuickCare</title>
+
 <style>
     body {
         margin: 0;
@@ -12,30 +11,23 @@
         background: #D0D7E1;
         display: flex;
     }
-     :root {
-           --dark-blue: #072D44;
-    --mid-blue: #064469;
-    --soft-blue: #5790AB;
-    --light-blue: #9CCDD8;
-    --gray-blue: #D0D7E1;
-    --white: #ffffff;
-    --card-bg: #F6F9FB;
-    --primary-color: #1a3a5f;
-    --secondary-color: #3498db;
-    --accent-color: #2ecc71;
-    --danger-color: #e74c3c;
-    --warning-color: #f39c12;
-    --info-color: #17a2b8;
-        }
 
-    /* Main content */
+    :root {
+        --dark-blue: #072D44;
+        --mid-blue: #064469;
+        --soft-blue: #5790AB;
+        --light-blue: #9CCDD8;
+        --gray-blue: #D0D7E1;
+        --white: #ffffff;
+        --card-bg: #F6F9FB;
+    }
+
     .main {
         margin-left: 250px;
         padding: 20px;
         width: calc(100% - 250px);
     }
 
-    /* Top bar */
     .topbar {
         background: white;
         padding: 15px 25px;
@@ -51,7 +43,6 @@
         color: #064469;
     }
 
-    /* Table Section */
     table {
         width: 100%;
         border-collapse: collapse;
@@ -75,11 +66,7 @@
     tr:hover {
         background: #F2F9FB;
     }
-    .logo-img {
-            height: 40px;
-            margin-right: 12px;
-            border-radius: 5px;
-        }
+
     .filter-container {
         background: white;
         padding: 20px;
@@ -87,16 +74,20 @@
         margin-bottom: 20px;
         box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     }
+
     .filter-container form {
         display: flex;
         gap: 15px;
         flex-wrap: wrap;
     }
-    .filter-container input, .filter-container select {
+
+    .filter-container input,
+    .filter-container select {
         padding: 10px;
         border: 1px solid #D0D7E1;
         border-radius: 5px;
     }
+
     .filter-container button {
         padding: 10px 15px;
         background: #5790AB;
@@ -105,103 +96,66 @@
         border-radius: 5px;
         cursor: pointer;
     }
+
     .filter-container button:hover {
         background: #064469;
     }
+
     .status-badge {
         padding: 5px 10px;
         border-radius: 20px;
         font-size: 12px;
         font-weight: bold;
-    }
-    .status-completed {
-        background-color: #2ecc71;
         color: white;
     }
-    .status-scheduled {
-        background-color: #3498db;
-        color: white;
-    }
-    .status-cancelled {
-        background-color: #e74c3c;
-        color: white;
-    }
-    .action-btn {
-        padding: 5px 10px;
-        margin: 0 2px;
-        border: none;
-        border-radius: 3px;
-        cursor: pointer;
-    }
-    .view-btn {
-        background-color: #3498db;
-        color: white;
-    }
-    .edit-btn {
-        background-color: #f39c12;
-        color: white;
-    }
-    .delete-btn {
-        background-color: #e74c3c;
-        color: white;
-    }
-    .add-btn {
-        background: #2ecc71;
-        color: white;
-        padding: 10px 15px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        margin-bottom: 20px;
-        text-decoration: none;
-        display: inline-block;
-    }
-    .add-btn:hover {
-        background: #27ae60;
-    }
+
+    .status-completed { background: #2ecc71; }
+    .status-scheduled { background: #3498db; }
+    .status-cancelled { background: #e74c3c; }
+
+  
+
 </style>
 </head>
+
 <body>
 
-<!-- Include Sidebar -->
 <?php include 'admin_sidebar.php'; ?>
 
-<!-- Main Content -->
 <div class="main">
-    <!-- Topbar -->
+
     <div class="topbar">
         <h1>View Appointments</h1>
         <p>Welcome, Admin</p>
     </div>
 
-  
-    <!-- Filter Section -->
     <div class="filter-container">
-        <form method="GET" action="view_appointments.php">
-            <input type="date" name="date_filter" placeholder="Filter by Date">
+        <form method="GET" action="">
+            <input type="date" name="date_filter">
+
             <select name="status_filter">
                 <option value="">All Status</option>
                 <option value="SCHEDULED">Scheduled</option>
                 <option value="COMPLETED">Completed</option>
                 <option value="CANCELLED">Cancelled</option>
             </select>
+
             <select name="doctor_filter">
                 <option value="">All Doctors</option>
                 <?php
-                // PHP code to populate doctors from database
                 include 'config.php';
-                $doctor_query = "SELECT DOCTOR_ID, FIRST_NAME, LAST_NAME FROM doctor_tbl ORDER BY FIRST_NAME";
+                $doctor_query = "SELECT DOCTOR_ID, FIRST_NAME, LAST_NAME FROM doctor_tbl";
                 $doctor_result = mysqli_query($conn, $doctor_query);
-                while($doctor_row = mysqli_fetch_assoc($doctor_result)) {
-                    echo "<option value='".$doctor_row['DOCTOR_ID']."'>".$doctor_row['FIRST_NAME']." ".$doctor_row['LAST_NAME']."</option>";
+                while($row = mysqli_fetch_assoc($doctor_result)) {
+                    echo "<option value='".$row['DOCTOR_ID']."'>".$row['FIRST_NAME']." ".$row['LAST_NAME']."</option>";
                 }
                 ?>
             </select>
+
             <button type="submit">Filter</button>
         </form>
     </div>
 
-    <!-- Appointments Table -->
     <table>
         <tr>
             <th>Appointment ID</th>
@@ -210,89 +164,62 @@
             <th>Date</th>
             <th>Time</th>
             <th>Status</th>
-            <th>Actions</th>
+         
         </tr>
+
         <?php
-        // PHP code to fetch appointments from database
-        include 'config.php';
-        
-        // Build query based on filters
-        $query = "SELECT a.APPOINTMENT_ID, p.FIRST_NAME as p_first, p.LAST_NAME as p_last, 
-                  d.FIRST_NAME as d_first, d.LAST_NAME as d_last, 
-                  a.APPOINTMENT_DATE, a.APPOINTMENT_TIME, a.STATUS 
+        $query = "SELECT a.APPOINTMENT_ID,
+                         p.FIRST_NAME p_first, p.LAST_NAME p_last,
+                         d.FIRST_NAME d_first, d.LAST_NAME d_last,
+                         a.APPOINTMENT_DATE, a.APPOINTMENT_TIME, a.STATUS
                   FROM appointment_tbl a
                   JOIN patient_tbl p ON a.PATIENT_ID = p.PATIENT_ID
                   JOIN doctor_tbl d ON a.DOCTOR_ID = d.DOCTOR_ID
                   WHERE 1=1";
-        
-        // Apply filters if set
-        if(isset($_GET['date_filter']) && !empty($_GET['date_filter'])) {
+
+        if(!empty($_GET['date_filter'])) {
             $date = mysqli_real_escape_string($conn, $_GET['date_filter']);
-            $query .= " AND a.APPOINTMENT_DATE = '$date'";
+            $query .= " AND a.APPOINTMENT_DATE='$date'";
         }
-        
-        if(isset($_GET['status_filter']) && !empty($_GET['status_filter'])) {
+
+        if(!empty($_GET['status_filter'])) {
             $status = mysqli_real_escape_string($conn, $_GET['status_filter']);
-            $query .= " AND a.STATUS = '$status'";
+            $query .= " AND a.STATUS='$status'";
         }
-        
-        if(isset($_GET['doctor_filter']) && !empty($_GET['doctor_filter'])) {
-            $doctor_id = mysqli_real_escape_string($conn, $_GET['doctor_filter']);
-            $query .= " AND a.DOCTOR_ID = $doctor_id";
+
+        if(!empty($_GET['doctor_filter'])) {
+            $doc = mysqli_real_escape_string($conn, $_GET['doctor_filter']);
+            $query .= " AND a.DOCTOR_ID='$doc'";
         }
-        
-        $query .= " ORDER BY a.APPOINTMENT_DATE DESC, a.APPOINTMENT_TIME DESC";
-        
+
         $result = mysqli_query($conn, $query);
-        
+
         if(mysqli_num_rows($result) > 0) {
             while($row = mysqli_fetch_assoc($result)) {
-                $status_class = "";
-                if($row['STATUS'] == 'COMPLETED') {
-                    $status_class = "status-completed";
-                } else if($row['STATUS'] == 'SCHEDULED') {
-                    $status_class = "status-scheduled";
-                } else if($row['STATUS'] == 'CANCELLED') {
-                    $status_class = "status-cancelled";
-                }
-                
+
+                $cls = ($row['STATUS']=="COMPLETED") ? "status-completed" :
+                       (($row['STATUS']=="SCHEDULED") ? "status-scheduled" : "status-cancelled");
+
                 echo "<tr>
-                    <td>".$row['APPOINTMENT_ID']."</td>
-                    <td>".$row['p_first']." ".$row['p_last']."</td>
-                    <td>".$row['d_first']." ".$row['d_last']."</td>
-                    <td>".$row['APPOINTMENT_DATE']."</td>
-                    <td>".$row['APPOINTMENT_TIME']."</td>
-                    <td><span class='status-badge $status_class'>".$row['STATUS']."</span></td>
-                    <td>
-                        <button class='action-btn view-btn' onclick='viewAppointment(".$row['APPOINTMENT_ID'].")'>View</button>
-                     
-                    </td>
+                    <td>{$row['APPOINTMENT_ID']}</td>
+                    <td>{$row['p_first']} {$row['p_last']}</td>
+                    <td>{$row['d_first']} {$row['d_last']}</td>
+                    <td>{$row['APPOINTMENT_DATE']}</td>
+                    <td>{$row['APPOINTMENT_TIME']}</td>
+                    <td><span class='status-badge $cls'>{$row['STATUS']}</span></td>
+                  
                 </tr>";
             }
         } else {
             echo "<tr><td colspan='7'>No appointments found</td></tr>";
         }
-        
+
         mysqli_close($conn);
         ?>
     </table>
+
 </div>
 
-<script>
-function viewAppointment(id) {
-    window.location.href = "view_appointment_details.php?id=" + id;
-}
-
-function editAppointment(id) {
-    window.location.href = "edit_appointment.php?id=" + id;
-}
-
-function deleteAppointment(id) {
-    if(confirm("Are you sure you want to delete this appointment?")) {
-        window.location.href = "delete_appointment.php?id=" + id;
-    }
-}
-</script>
 
 </body>
 </html>

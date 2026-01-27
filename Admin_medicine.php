@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>View Medicine - QuickCare</title>
- <?php include 'admin_sidebar.php'; ?>
+<?php include 'admin_sidebar.php'; ?>
 <style>
     body {
         margin: 0;
@@ -11,30 +11,21 @@
         background: #D0D7E1;
         display: flex;
     }
-     :root {
-           --dark-blue: #072D44;
-    --mid-blue: #064469;
-    --soft-blue: #5790AB;
-    --light-blue: #9CCDD8;
-    --gray-blue: #D0D7E1;
-    --white: #ffffff;
-    --card-bg: #F6F9FB;
-    --primary-color: #1a3a5f;
-    --secondary-color: #3498db;
-    --accent-color: #2ecc71;
-    --danger-color: #e74c3c;
-    --warning-color: #f39c12;
-    --info-color: #17a2b8;
-        }
+    :root {
+        --dark-blue: #072D44;
+        --mid-blue: #064469;
+        --soft-blue: #5790AB;
+        --light-blue: #9CCDD8;
+        --gray-blue: #D0D7E1;
+        --white: #ffffff;
+    }
 
-    /* Main content */
     .main {
         margin-left: 250px;
         padding: 20px;
         width: calc(100% - 250px);
     }
 
-    /* Top bar */
     .topbar {
         background: white;
         padding: 15px 25px;
@@ -45,12 +36,6 @@
         box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     }
 
-    .topbar h1 {
-        margin: 0;
-        color: #064469;
-    }
-
-    /* Table Section */
     table {
         width: 100%;
         border-collapse: collapse;
@@ -71,14 +56,6 @@
         text-align: left;
     }
 
-    tr:hover {
-        background: #F2F9FB;
-    }
-    .logo-img {
-            height: 40px;
-            margin-right: 12px;
-            border-radius: 5px;
-        }
     .filter-container {
         background: white;
         padding: 20px;
@@ -86,16 +63,19 @@
         margin-bottom: 20px;
         box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     }
+
     .filter-container form {
         display: flex;
         gap: 15px;
         flex-wrap: wrap;
     }
+
     .filter-container input {
         padding: 10px;
         border: 1px solid #D0D7E1;
         border-radius: 5px;
     }
+
     .filter-container button {
         padding: 10px 15px;
         background: #5790AB;
@@ -104,60 +84,24 @@
         border-radius: 5px;
         cursor: pointer;
     }
-    .filter-container button:hover {
-        background: #064469;
-    }
-    .action-btn {
-        padding: 5px 10px;
-        margin: 0 2px;
-        border: none;
-        border-radius: 3px;
-        cursor: pointer;
-    }
-    .view-btn {
-        background-color: #3498db;
-        color: white;
-    }
-    .edit-btn {
-        background-color: #f39c12;
-        color: white;
-    }
-    .delete-btn {
-        background-color: #e74c3c;
-        color: white;
-    }
-    .add-btn {
-        background: #2ecc71;
-        color: white;
-        padding: 10px 15px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        margin-bottom: 20px;
-        text-decoration: none;
-        display: inline-block;
-    }
-    .add-btn:hover {
-        background: #27ae60;
-    }
 </style>
 </head>
+
 <body>
 
-<!-- Main Content -->
 <div class="main">
-    <!-- Topbar -->
+
     <div class="topbar">
         <h1>View Medicine</h1>
         <p>Welcome, Admin</p>
     </div>
 
-    
-
-    <!-- Filter Section -->
+    <!-- FILTER (NAME ONLY, FIXED) -->
     <div class="filter-container">
-        <form method="GET" action="view_medicine.php">
-            <input type="text" name="name_filter" placeholder="Filter by Medicine Name">
+        <form method="GET" action="">
+            <input type="text" name="name_filter"
+                   placeholder="Filter by Medicine Name"
+                   value="<?php echo isset($_GET['name_filter']) ? htmlspecialchars($_GET['name_filter']) : ''; ?>">
             <button type="submit">Filter</button>
         </form>
     </div>
@@ -169,66 +113,47 @@
             <th>Medicine Name</th>
             <th>Description</th>
             <th>Added By</th>
-            <th>Actions</th>
         </tr>
+
         <?php
-        // PHP code to fetch medicines from database
         include 'config.php';
-        
-        // Build query based on filters
-        $query = "SELECT m.MEDICINE_ID, m.MED_NAME, m.DESCRIPTION, 
-                  CONCAT(r.FIRST_NAME, ' ', r.LAST_NAME) as receptionist_name
+
+        $query = "SELECT 
+                    m.MEDICINE_ID,
+                    m.MED_NAME,
+                    m.DESCRIPTION,
+                    CONCAT(r.FIRST_NAME, ' ', r.LAST_NAME) AS receptionist_name
                   FROM medicine_tbl m
-                  LEFT JOIN receptionist_tbl r ON m.RECEPTIONIST_ID = r.RECEPTIONIST_ID
+                  LEFT JOIN receptionist_tbl r 
+                    ON m.RECEPTIONIST_ID = r.RECEPTIONIST_ID
                   WHERE 1=1";
-        
-        // Apply filters if set
-        if(isset($_GET['name_filter']) && !empty($_GET['name_filter'])) {
+
+        if (!empty($_GET['name_filter'])) {
             $name = mysqli_real_escape_string($conn, $_GET['name_filter']);
             $query .= " AND m.MED_NAME LIKE '%$name%'";
         }
-        
+
         $query .= " ORDER BY m.MED_NAME";
-        
+
         $result = mysqli_query($conn, $query);
-        
-        if(mysqli_num_rows($result) > 0) {
-            while($row = mysqli_fetch_assoc($result)) {
+
+        if ($result && mysqli_num_rows($result) > 0) {
+            while ($row = mysqli_fetch_assoc($result)) {
                 echo "<tr>
-                    <td>".$row['MEDICINE_ID']."</td>
-                    <td>".$row['MED_NAME']."</td>
-                    <td>".$row['DESCRIPTION']."</td>
-                    <td>".$row['receptionist_name']."</td>
-                    <td>
-                        <button class='action-btn view-btn' onclick='viewMedicine(".$row['MEDICINE_ID'].")'>View</button>
-                    
-                    </td>
+                    <td>{$row['MEDICINE_ID']}</td>
+                    <td>{$row['MED_NAME']}</td>
+                    <td>{$row['DESCRIPTION']}</td>
+                    <td>{$row['receptionist_name']}</td>
                 </tr>";
             }
         } else {
-            echo "<tr><td colspan='5'>No medicines found</td></tr>";
+            echo "<tr><td colspan='4'>No medicines found</td></tr>";
         }
-        
+
         mysqli_close($conn);
         ?>
     </table>
 </div>
-
-<script>
-function viewMedicine(id) {
-    window.location.href = "view_medicine_details.php?id=" + id;
-}
-
-function editMedicine(id) {
-    window.location.href = "edit_medicine.php?id=" + id;
-}
-
-function deleteMedicine(id) {
-    if(confirm("Are you sure you want to delete this medicine?")) {
-        window.location.href = "delete_medicine.php?id=" + id;
-    }
-}
-</script>
 
 </body>
 </html>
