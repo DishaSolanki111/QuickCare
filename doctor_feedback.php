@@ -40,14 +40,76 @@
             min-height: 100vh;
         }
         
+       
         /* Main Content */
         .main-content {
-            margin-top:-15px;
             flex: 1;
-            margin-left: 230px;
+            margin-left: 250px;
             padding: 20px;
+            margin-top:-15px;
         }
         
+        
+        .welcome-msg {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+        
+        .user-actions {
+            display: flex;
+            align-items: center;
+        }
+        
+        .notification-btn {
+            position: relative;
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: var(--dark-color);
+            margin-right: 20px;
+            cursor: pointer;
+        }
+        
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: var(--danger-color);
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: bold;
+        }
+        
+        .user-dropdown {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--secondary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            font-weight: bold;
+        }
+        
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
         /* Content Card Styles */
         .content-card {
             background: #fff;
@@ -161,7 +223,6 @@
         <!-- Main Content -->
         <div class="main-content">
             <?php include 'doctor_header.php'; ?>
-            
             
             <!-- Content Card -->
             <div class="content-card">
