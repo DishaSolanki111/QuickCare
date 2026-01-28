@@ -6,6 +6,7 @@ include 'header.php';?>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Patient Registration | QuickCare</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
             --primary-blue: #0a4d68;
@@ -16,19 +17,10 @@ include 'header.php';?>
             --white: #ffffff;
             --light-gray: #f5f5f5;
             --error: #ff5252;
-            --dark-blue: #072D44;
             --mid-blue: #064469;
             --soft-blue: #5790AB;
-            --light-blue: #9CCDD8;
             --gray-blue: #D0D7E1;
-            --white: #ffffff;
             --card-bg: #F6F9FB;
-            --primary-color: #1a3a5f;
-            --secondary-color: #3498db;
-            --accent-color: #2ecc71;
-            --danger-color: #e74c3c;
-            --warning-color: #f39c12;
-            --info-color: #17a2b8;
         }
 
         * {
@@ -58,11 +50,11 @@ include 'header.php';?>
         /* Form Container */
         .container {
             background-color: var(--white);
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
             width: 100%;
             max-width: 800px;
-            padding: 30px;
+            padding: 40px;
             position: relative;
             overflow: hidden;
         }
@@ -73,31 +65,82 @@ include 'header.php';?>
             top: 0;
             left: 0;
             width: 100%;
-            height: 5px;
-            background: linear-gradient(90deg, var(--accent-blue), var(--secondary-blue));
+            height: 6px;
+            background: linear-gradient(90deg, var(--accent-blue), var(--secondary-blue), var(--primary-blue));
+        }
+
+        .header-section {
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
         }
 
         h1 {
             color: var(--dark-blue);
-            text-align: center;
-            margin-bottom: 25px;
-            font-size: 28px;
+            font-size: 32px;
+            margin-bottom: 10px;
+            font-weight: 700;
             position: relative;
+            display: inline-block;
         }
 
         h1::after {
             content: '';
             position: absolute;
-            bottom: -10px;
+            bottom: -8px;
             left: 50%;
             transform: translateX(-50%);
-            width: 100px;
+            width: 80px;
             height: 3px;
-            background-color: var(--accent-blue);
+            background: linear-gradient(90deg, var(--accent-blue), var(--secondary-blue));
+            border-radius: 2px;
         }
 
-        .form-group {
+        .header-section p {
+            color: var(--soft-blue);
+            font-size: 16px;
+            margin-top: 15px;
+        }
+
+        .progress-container {
+            height: 6px;
+            background-color: var(--gray-blue);
+            border-radius: 3px;
+            margin: 30px 0;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--accent-blue), var(--secondary-blue));
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+
+        .form-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: var(--card-bg);
+            border-radius: 15px;
+            border: 1px solid var(--gray-blue);
+        }
+
+        .section-title {
+            color: var(--primary-blue);
+            font-size: 18px;
+            font-weight: 600;
             margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--gray-blue);
+        }
+
+        .section-title i {
+            margin-right: 12px;
+            font-size: 20px;
+            color: var(--accent-blue);
         }
 
         .form-row {
@@ -110,11 +153,35 @@ include 'header.php';?>
             flex: 1;
         }
 
+        .form-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
         label {
             display: block;
             margin-bottom: 8px;
             color: var(--primary-blue);
             font-weight: 600;
+            font-size: 15px;
+        }
+
+        .required {
+            color: var(--error);
+        }
+
+        .input-with-icon {
+            position: relative;
+        }
+
+        .input-with-icon i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--soft-blue);
+            font-size: 16px;
+            z-index: 1;
         }
 
         input[type="text"],
@@ -126,19 +193,38 @@ include 'header.php';?>
         select,
         textarea {
             width: 100%;
-            padding: 12px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 16px;
-            transition: border-color 0.3s;
+            padding: 12px 15px;
+            border: 2px solid var(--gray-blue);
+            border-radius: 10px;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            background-color: var(--white);
         }
 
-        input:focus,
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        input[type="email"]:focus,
+        input[type="password"]:focus,
+        input[type="date"]:focus,
+        input[type="file"]:focus,
         select:focus,
         textarea:focus {
             outline: none;
             border-color: var(--accent-blue);
-            box-shadow: 0 0 0 2px rgba(0, 180, 216, 0.2);
+            box-shadow: 0 0 0 3px rgba(0, 180, 216, 0.1);
+        }
+
+        .input-with-icon input {
+            padding-left: 45px;
+        }
+
+        select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%230a4d68' d='M10.293 3.293L6 7.586 1.707 3.293A1 1 0 00.293 4.707l5 5a1 1 0 001.414 0l5-5a1 1 0 10-1.414-1.414z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            padding-right: 40px;
         }
 
         textarea {
@@ -148,17 +234,34 @@ include 'header.php';?>
 
         .radio-group {
             display: flex;
-            gap: 20px;
-            margin-top: 8px;
+            gap: 15px;
+            margin-top: 10px;
         }
 
         .radio-option {
             display: flex;
             align-items: center;
+            background-color: var(--white);
+            padding: 12px 18px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid var(--gray-blue);
+        }
+
+        .radio-option:hover {
+            border-color: var(--accent-blue);
+            background-color: rgba(0, 180, 216, 0.05);
         }
 
         .radio-option input {
             margin-right: 8px;
+            cursor: pointer;
+        }
+
+        .radio-option.selected {
+            background-color: rgba(0, 180, 216, 0.1);
+            border-color: var(--accent-blue);
         }
 
         .btn-container {
@@ -171,37 +274,44 @@ include 'header.php';?>
             background: linear-gradient(90deg, var(--primary-blue), var(--secondary-blue));
             color: var(--white);
             border: none;
-            padding: 12px 30px;
+            padding: 14px 40px;
             font-size: 16px;
+            font-weight: 600;
             border-radius: 50px;
             cursor: pointer;
-            transition: transform 0.3s, box-shadow 0.3s;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(10, 77, 104, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         .btn:hover {
             transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 6px 20px rgba(10, 77, 104, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(-1px);
         }
 
         .error-message {
             color: var(--error);
-            font-size: 14px;
+            font-size: 13px;
             margin-top: 5px;
             display: none;
         }
 
         .success-message {
-            background-color: var(--light-blue);
+            background-color: rgba(179, 229, 252, 0.3);
             color: var(--primary-blue);
             padding: 15px;
-            border-radius: 5px;
+            border-radius: 10px;
             margin-bottom: 20px;
             display: none;
             text-align: center;
-        }
-
-        .required {
-            color: var(--error);
+            font-weight: 500;
+            border: 1px solid var(--light-blue);
         }
 
         .file-upload {
@@ -219,10 +329,10 @@ include 'header.php';?>
         .file-upload-label {
             display: block;
             padding: 12px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
+            border: 2px dashed var(--gray-blue);
+            border-radius: 10px;
             background-color: var(--white);
-            color: #666;
+            color: var(--soft-blue);
             text-align: center;
             transition: all 0.3s;
         }
@@ -230,6 +340,43 @@ include 'header.php';?>
         .file-upload-label:hover {
             border-color: var(--accent-blue);
             color: var(--primary-blue);
+            background-color: rgba(0, 180, 216, 0.05);
+        }
+
+        /* Toast notification styles */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: var(--white);
+            color: var(--primary-blue);
+            padding: 15px 20px;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            display: none;
+            z-index: 1000;
+            max-width: 350px;
+            border-left: 4px solid var(--error);
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        .toast.success {
+            border-left: 4px solid var(--accent-blue);
+        }
+        
+        .toast.show {
+            display: block;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
         }
 
         /* Responsive styles */
@@ -244,52 +391,33 @@ include 'header.php';?>
                 flex-direction: column;
                 gap: 0;
             }
-        }
-        
-        /* Toast notification styles */
-        .toast {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background-color: #fff;
-            color: #333;
-            padding: 15px 25px;
-            border-radius: 5px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            display: none;
-            z-index: 1000;
-            max-width: 300px;
-            border-left: 4px solid var(--error);
-        }
-        
-        .toast.success {
-            border-left: 4px solid var(--accent-color);
-        }
-        
-        .toast.show {
-            display: block;
-            animation: slideIn 0.3s ease-out;
-        }
-        
-        @keyframes slideIn {
-            from {
-                transform: translateX(100%);
-                opacity: 0;
+
+            .container {
+                padding: 25px;
             }
-            to {
-                transform: translateX(0);
-                opacity: 1;
+
+            h1 {
+                font-size: 28px;
+            }
+
+            .form-section {
+                padding: 15px;
             }
         }
     </style>
 </head>
 <body>
-    
-    
     <!-- Main Content -->
     <div class="main-content">
         <div class="container">
-            <h1>Patient Registration</h1>
+            <div class="header-section">
+                <h1>Patient Registration</h1>
+                <p>Create your account to access our healthcare services</p>
+            </div>
+            
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
             
             <!-- Toast notification for errors -->
             <div id="toast" class="toast"></div>
@@ -432,118 +560,168 @@ include 'header.php';?>
             
             <?php if ($success): ?>
                 <div class="success-message" style="display: block;">
-                    Registration successful!
+                    <i class="fas fa-check-circle"></i> Registration successful! Your account has been created.
                 </div>
             <?php endif; ?>
             
             <?php if (!empty($error)): ?>
-                <div class="error-message" style="display: block;">
+                <div class="toast" style="display: block;">
                     <?php echo $error; ?>
                 </div>
             <?php endif; ?>
             
             <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post" id="PatientForm" enctype="multipart/form-data">
-                <!-- First Name and Last Name -->
-                <div class="form-row">
+                <!-- Personal Information Section -->
+                <div class="form-section">
+                    <h3 class="section-title">
+                        <i class="fas fa-user"></i>
+                        Personal Information
+                    </h3>
+                    
+                    <!-- First Name and Last Name -->
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="first_name">First Name <span class="required">*</span></label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-user"></i>
+                                <input type="text" id="first_name" name="first_name" value="<?php echo htmlspecialchars($form_data['first_name']); ?>" required>
+                            </div>
+                            <div class="error-message" id="first_name_error"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="last_name">Last Name <span class="required">*</span></label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-user"></i>
+                                <input type="text" id="last_name" name="last_name" value="<?php echo htmlspecialchars($form_data['last_name']); ?>" required>
+                            </div>
+                            <div class="error-message" id="last_name_error"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Date of Birth and Blood Group-->
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="dob">Date of Birth <span class="required">*</span></label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-calendar"></i>
+                                <input type="date" id="dob" name="dob" value="<?php echo htmlspecialchars($form_data['dob']); ?>" required>
+                            </div>
+                            <div class="error-message" id="dob_error"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Blood Group <span class="required">*</span></label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-tint"></i>
+                                <select name="blood_group">
+                                    <option value="">Select Blood Group</option>
+                                    <option value="A+" <?php echo ($form_data['blood_group'] == 'A+') ? 'selected' : ''; ?>>A+</option>
+                                    <option value="A-" <?php echo ($form_data['blood_group'] == 'A-') ? 'selected' : ''; ?>>A-</option>
+                                    <option value="B+" <?php echo ($form_data['blood_group'] == 'B+') ? 'selected' : ''; ?>>B+</option>
+                                    <option value="B-" <?php echo ($form_data['blood_group'] == 'B-') ? 'selected' : ''; ?>>B-</option>
+                                    <option value="O+" <?php echo ($form_data['blood_group'] == 'O+') ? 'selected' : ''; ?>>O+</option>
+                                    <option value="O-" <?php echo ($form_data['blood_group'] == 'O-') ? 'selected' : ''; ?>>O-</option>
+                                    <option value="AB+" <?php echo ($form_data['blood_group'] == 'AB+') ? 'selected' : ''; ?>>AB+</option>
+                                    <option value="AB-" <?php echo ($form_data['blood_group'] == 'AB-') ? 'selected' : ''; ?>>AB-</option>
+                                </select>
+                            </div>
+                            <div class="error-message" id="blood_group_error"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Gender -->
                     <div class="form-group">
-                        <label for="first_name">First Name <span class="required">*</span></label>
-                        <input type="text" id="first_name" name="first_name" value="<?php echo htmlspecialchars($form_data['first_name']); ?>" required>
-                        <div class="error-message" id="first_name_error"></div>
+                        <label>Gender</label>
+                        <div class="radio-group">
+                            <div class="radio-option <?php echo ($form_data['gender'] == 'MALE') ? 'selected' : ''; ?>">
+                                <input type="radio" id="male" name="gender" value="MALE" <?php echo ($form_data['gender'] == 'MALE') ? 'checked' : ''; ?>>
+                                <label for="male">Male</label>
+                            </div>
+                            <div class="radio-option <?php echo ($form_data['gender'] == 'FEMALE') ? 'selected' : ''; ?>">
+                                <input type="radio" id="female" name="gender" value="FEMALE" <?php echo ($form_data['gender'] == 'FEMALE') ? 'checked' : ''; ?>>
+                                <label for="female">Female</label>
+                            </div>
+                            <div class="radio-option <?php echo ($form_data['gender'] == 'OTHER') ? 'selected' : ''; ?>">
+                                <input type="radio" id="other" name="gender" value="OTHER" <?php echo ($form_data['gender'] == 'OTHER') ? 'checked' : ''; ?>>
+                                <label for="other">Other</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Contact Information Section -->
+                <div class="form-section">
+                    <h3 class="section-title">
+                        <i class="fas fa-address-book"></i>
+                        Contact Information
+                    </h3>
+                    
+                    <!-- Phone Number and Email ID -->
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="phone">Phone Number <span class="required">*</span></label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-phone"></i>
+                                <input type="text" id="phone" name="phone" maxlength="10" value="<?php echo htmlspecialchars($form_data['phone']); ?>" required>
+                            </div>
+                            <div class="error-message" id="phone_error"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="email">Email <span class="required">*</span></label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-envelope"></i>
+                                <input type="email" id="email" name="email" value="<?php echo htmlspecialchars($form_data['email']); ?>" required>
+                            </div>
+                            <div class="error-message" id="email_error"></div>
+                        </div>
                     </div>
                     
                     <div class="form-group">
-                        <label for="last_name">Last Name <span class="required">*</span></label>
-                        <input type="text" id="last_name" name="last_name" value="<?php echo htmlspecialchars($form_data['last_name']); ?>" required>
-                        <div class="error-message" id="last_name_error"></div>
+                        <label for="address">Address</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-home"></i>
+                            <textarea name="address" id="address"><?php echo htmlspecialchars($form_data['address']); ?></textarea>
+                        </div>
+                        <div class="error-message" id="address_error"></div>
                     </div>
                 </div>
                 
-                <!-- Date of Birth and Blood Group-->
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="dob">Date of Birth <span class="required">*</span></label>
-                        <input type="date" id="dob" name="dob" value="<?php echo htmlspecialchars($form_data['dob']); ?>" required>
-                        <div class="error-message" id="dob_error"></div>
-                    </div>
-                     <div class="form-group">
-        <label>Blood Group<span class="required">*</span></label>
-        <select name="blood_group">
-            <option value="">Select Blood Group</option>
-            <option value="A+" <?php echo ($form_data['blood_group'] == 'A+') ? 'selected' : ''; ?>>A+</option>
-            <option value="A-" <?php echo ($form_data['blood_group'] == 'A-') ? 'selected' : ''; ?>>A-</option>
-            <option value="B+" <?php echo ($form_data['blood_group'] == 'B+') ? 'selected' : ''; ?>>B+</option>
-            <option value="B-" <?php echo ($form_data['blood_group'] == 'B-') ? 'selected' : ''; ?>>B-</option>
-            <option value="O+" <?php echo ($form_data['blood_group'] == 'O+') ? 'selected' : ''; ?>>O+</option>
-            <option value="O-" <?php echo ($form_data['blood_group'] == 'O-') ? 'selected' : ''; ?>>O-</option>
-            <option value="AB+" <?php echo ($form_data['blood_group'] == 'AB+') ? 'selected' : ''; ?>>AB+</option>
-            <option value="AB-" <?php echo ($form_data['blood_group'] == 'AB-') ? 'selected' : ''; ?>>AB-</option>
-        </select>
-        <div class="field-error" id="blood_group_error"></div>
-    </div>
-                   
-
-                </div>
-                
-                <!-- Gender -->
-                <div class="form-group">
-                    <label>Gender</label>
-                    <div class="radio-group">
-                        <div class="radio-option">
-                            <input type="radio" id="male" name="gender" value="MALE" <?php echo ($form_data['gender'] == 'MALE') ? 'checked' : ''; ?>>
-                            <label for="male">Male</label>
-                        </div>
-                        <div class="radio-option">
-                            <input type="radio" id="female" name="gender" value="FEMALE" <?php echo ($form_data['gender'] == 'FEMALE') ? 'checked' : ''; ?>>
-                            <label for="female">Female</label>
-                        </div>
-                        <div class="radio-option">
-                            <input type="radio" id="other" name="gender" value="OTHER" <?php echo ($form_data['gender'] == 'OTHER') ? 'checked' : ''; ?>>
-                            <label for="other">Other</label>
-                        </div>
-                    </div>
-
-                </div>
-                
-                <!-- Phone Number and Email ID -->
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="phone">Phone Number <span class="required">*</span></label>
-                        <input type="text" id="phone" name="phone" maxlength="10" value="<?php echo htmlspecialchars($form_data['phone']); ?>" required>
-                        <div class="error-message" id="phone_error"></div>
-                    </div>
+                <!-- Account Information Section -->
+                <div class="form-section">
+                    <h3 class="section-title">
+                        <i class="fas fa-lock"></i>
+                        Account Information
+                    </h3>
                     
-                    <div class="form-group">
-                        <label for="email">Email <span class="required">*</span></label>
-                        <input type="email" id="email" name="email" value="<?php echo htmlspecialchars($form_data['email']); ?>" required>
-                        <div class="error-message" id="email_error"></div>
+                    <!-- Username and Password -->
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="username">Username <span class="required">*</span></label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-user-circle"></i>
+                                <input type="text" id="username" name="username" value="<?php echo htmlspecialchars($form_data['username']); ?>" required>
+                            </div>
+                            <div class="error-message" id="username_error"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="password">Password <span class="required">*</span></label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-lock"></i>
+                                <input type="password" id="password" name="password" required>
+                            </div>
+                            <div class="error-message" id="password_error"></div>
+                        </div>
                     </div>
                 </div>
                 
-               
-                
-               
-                
-                <!-- Username and Password -->
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="username">Username <span class="required">*</span></label>
-                        <input type="text" id="username" name="username" value="<?php echo htmlspecialchars($form_data['username']); ?>" required>
-                        <div class="error-message" id="username_error"></div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="password">Password <span class="required">*</span></label>
-                        <input type="password" id="password" name="password" required>
-                        <div class="error-message" id="password_error"></div>
-                    </div>
-                </div>
-                <div class="form-group">
-                     <label>Address</label>
-                     <textarea name="address"><?php echo htmlspecialchars($form_data['address']); ?></textarea>
-                     <div class="field-error" id="address_error"></div>
-</div>
                 <div class="btn-container">
-                    <button type="submit" class="btn">Register</button>
+                    <button type="submit" class="btn">
+                        <i class="fas fa-user-plus"></i>
+                        Register
+                    </button>
                 </div>
             </form>
         </div>
@@ -553,7 +731,9 @@ include 'header.php';?>
     // Toast notification function
     function showToast(message, isSuccess = false) {
         const toast = document.getElementById('toast');
-        toast.textContent = message;
+        toast.innerHTML = isSuccess ? 
+            `<i class="fas fa-check-circle"></i> ${message}` : 
+            `<i class="fas fa-exclamation-circle"></i> ${message}`;
         toast.className = isSuccess ? 'toast success show' : 'toast show';
         
         setTimeout(() => {
@@ -561,7 +741,29 @@ include 'header.php';?>
         }, 5000);
     }
 
-   
+    // Progress bar update
+    function updateProgressBar() {
+        const form = document.getElementById('PatientForm');
+        const inputs = form.querySelectorAll('input[required], select[required], textarea[required]');
+        const filledInputs = Array.from(inputs).filter(input => input.value.trim() !== '');
+        const progress = (filledInputs.length / inputs.length) * 100;
+        document.getElementById('progressBar').style.width = progress + '%';
+    }
+
+    // Radio button styling
+    document.querySelectorAll('.radio-option').forEach(option => {
+        option.addEventListener('click', function() {
+            // Remove selected class from all options in the same group
+            const groupName = this.querySelector('input').name;
+            document.querySelectorAll(`input[name="${groupName}"]`).forEach(input => {
+                input.closest('.radio-option').classList.remove('selected');
+            });
+            
+            // Add selected class to clicked option
+            this.classList.add('selected');
+            this.querySelector('input').checked = true;
+        });
+    });
 
     // Form validation and submission
     document.getElementById('PatientForm').addEventListener('submit', function (e) {
@@ -611,10 +813,14 @@ include 'header.php';?>
             }
         }
 
-        
+        // Validate Blood Group
+        const bloodGroup = document.querySelector('select[name="blood_group"]');
+        if (bloodGroup.value === '') {
+            const errorElement = document.getElementById('blood_group_error');
+            errorElement.textContent = "Please select your blood group.";
+            errorElement.style.display = "block";
+            isValid = false;
         }
-
-        
 
         // Validate Phone Number
         const phone = document.getElementById('phone');
@@ -633,8 +839,6 @@ include 'header.php';?>
             errorElement.style.display = "block";
             isValid = false;
         }
-
-       
 
         // Validate Username
         const username = document.getElementById('username');
@@ -687,6 +891,15 @@ include 'header.php';?>
             showToast("Please correct the errors in the form.");
         }
     });
+
+    // Add event listeners to update progress bar
+    document.querySelectorAll('input, select, textarea').forEach(element => {
+        element.addEventListener('input', updateProgressBar);
+        element.addEventListener('change', updateProgressBar);
+    });
+
+    // Initialize progress bar on page load
+    document.addEventListener('DOMContentLoaded', updateProgressBar);
     </script>
 </body>
 </html>
