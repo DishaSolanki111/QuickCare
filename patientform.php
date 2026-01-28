@@ -50,13 +50,12 @@ include 'header.php';?>
         /* Form Container */
         .container {
             background-color: var(--white);
-            border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
             width: 100%;
             max-width: 800px;
-            padding: 40px;
+            padding: 35px;
             position: relative;
-            overflow: hidden;
         }
 
         .container::before {
@@ -65,81 +64,47 @@ include 'header.php';?>
             top: 0;
             left: 0;
             width: 100%;
-            height: 6px;
-            background: linear-gradient(90deg, var(--accent-blue), var(--secondary-blue), var(--primary-blue));
-        }
-
-        .header-section {
-            text-align: center;
-            margin-bottom: 30px;
-            position: relative;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent-blue), var(--secondary-blue));
         }
 
         h1 {
             color: var(--dark-blue);
-            font-size: 32px;
-            margin-bottom: 10px;
-            font-weight: 700;
+            text-align: center;
+            margin-bottom: 25px;
+            font-size: 28px;
             position: relative;
-            display: inline-block;
         }
 
         h1::after {
             content: '';
             position: absolute;
-            bottom: -8px;
+            bottom: -10px;
             left: 50%;
             transform: translateX(-50%);
             width: 80px;
             height: 3px;
-            background: linear-gradient(90deg, var(--accent-blue), var(--secondary-blue));
-            border-radius: 2px;
-        }
-
-        .header-section p {
-            color: var(--soft-blue);
-            font-size: 16px;
-            margin-top: 15px;
-        }
-
-        .progress-container {
-            height: 6px;
-            background-color: var(--gray-blue);
-            border-radius: 3px;
-            margin: 30px 0;
-            overflow: hidden;
-        }
-
-        .progress-bar {
-            height: 100%;
-            width: 0%;
-            background: linear-gradient(90deg, var(--accent-blue), var(--secondary-blue));
-            border-radius: 3px;
-            transition: width 0.3s ease;
+            background-color: var(--accent-blue);
         }
 
         .form-section {
-            margin-bottom: 30px;
-            padding: 20px;
-            background-color: var(--card-bg);
-            border-radius: 15px;
-            border: 1px solid var(--gray-blue);
+            margin-bottom: 25px;
         }
 
         .section-title {
             color: var(--primary-blue);
             font-size: 18px;
             font-weight: 600;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             display: flex;
             align-items: center;
-            padding-bottom: 10px;
-            border-bottom: 2px solid var(--gray-blue);
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--gray-blue);
         }
 
         .section-title i {
-            margin-right: 12px;
-            font-size: 20px;
+            margin-right: 10px;
+            font-size: 18px;
             color: var(--accent-blue);
         }
 
@@ -176,7 +141,7 @@ include 'header.php';?>
 
         .input-with-icon i {
             position: absolute;
-            left: 15px;
+            left: 12px;
             top: 50%;
             transform: translateY(-50%);
             color: var(--soft-blue);
@@ -194,8 +159,8 @@ include 'header.php';?>
         textarea {
             width: 100%;
             padding: 12px 15px;
-            border: 2px solid var(--gray-blue);
-            border-radius: 10px;
+            border: 1px solid var(--gray-blue);
+            border-radius: 6px;
             font-size: 15px;
             transition: all 0.3s ease;
             background-color: var(--white);
@@ -211,11 +176,11 @@ include 'header.php';?>
         textarea:focus {
             outline: none;
             border-color: var(--accent-blue);
-            box-shadow: 0 0 0 3px rgba(0, 180, 216, 0.1);
+            box-shadow: 0 0 0 2px rgba(0, 180, 216, 0.1);
         }
 
         .input-with-icon input {
-            padding-left: 45px;
+            padding-left: 40px;
         }
 
         select {
@@ -223,45 +188,30 @@ include 'header.php';?>
             appearance: none;
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%230a4d68' d='M10.293 3.293L6 7.586 1.707 3.293A1 1 0 00.293 4.707l5 5a1 1 0 001.414 0l5-5a1 1 0 10-1.414-1.414z'/%3E%3C/svg%3E");
             background-repeat: no-repeat;
-            background-position: right 15px center;
-            padding-right: 40px;
+            background-position: right 12px center;
+            padding-right: 35px;
         }
 
         textarea {
             resize: vertical;
-            min-height: 100px;
+            min-height: 80px;
         }
 
         .radio-group {
             display: flex;
-            gap: 15px;
-            margin-top: 10px;
+            gap: 20px;
+            margin-top: 8px;
         }
 
         .radio-option {
             display: flex;
             align-items: center;
-            background-color: var(--white);
-            padding: 12px 18px;
-            border-radius: 10px;
             cursor: pointer;
-            transition: all 0.3s ease;
-            border: 2px solid var(--gray-blue);
-        }
-
-        .radio-option:hover {
-            border-color: var(--accent-blue);
-            background-color: rgba(0, 180, 216, 0.05);
         }
 
         .radio-option input {
             margin-right: 8px;
             cursor: pointer;
-        }
-
-        .radio-option.selected {
-            background-color: rgba(0, 180, 216, 0.1);
-            border-color: var(--accent-blue);
         }
 
         .btn-container {
@@ -274,25 +224,21 @@ include 'header.php';?>
             background: linear-gradient(90deg, var(--primary-blue), var(--secondary-blue));
             color: var(--white);
             border: none;
-            padding: 14px 40px;
+            padding: 12px 35px;
             font-size: 16px;
             font-weight: 600;
-            border-radius: 50px;
+            border-radius: 6px;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(10, 77, 104, 0.3);
+            box-shadow: 0 4px 8px rgba(10, 77, 104, 0.2);
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
 
         .btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(10, 77, 104, 0.4);
-        }
-
-        .btn:active {
-            transform: translateY(-1px);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(10, 77, 104, 0.3);
         }
 
         .error-message {
@@ -306,7 +252,7 @@ include 'header.php';?>
             background-color: rgba(179, 229, 252, 0.3);
             color: var(--primary-blue);
             padding: 15px;
-            border-radius: 10px;
+            border-radius: 6px;
             margin-bottom: 20px;
             display: none;
             text-align: center;
@@ -329,8 +275,8 @@ include 'header.php';?>
         .file-upload-label {
             display: block;
             padding: 12px;
-            border: 2px dashed var(--gray-blue);
-            border-radius: 10px;
+            border: 1px dashed var(--gray-blue);
+            border-radius: 6px;
             background-color: var(--white);
             color: var(--soft-blue);
             text-align: center;
@@ -351,13 +297,12 @@ include 'header.php';?>
             background-color: var(--white);
             color: var(--primary-blue);
             padding: 15px 20px;
-            border-radius: 10px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
             display: none;
             z-index: 1000;
-            max-width: 350px;
+            max-width: 300px;
             border-left: 4px solid var(--error);
-            animation: slideIn 0.3s ease-out;
         }
         
         .toast.success {
@@ -366,6 +311,7 @@ include 'header.php';?>
         
         .toast.show {
             display: block;
+            animation: slideIn 0.3s ease-out;
         }
         
         @keyframes slideIn {
@@ -397,11 +343,7 @@ include 'header.php';?>
             }
 
             h1 {
-                font-size: 28px;
-            }
-
-            .form-section {
-                padding: 15px;
+                font-size: 24px;
             }
         }
     </style>
@@ -410,14 +352,7 @@ include 'header.php';?>
     <!-- Main Content -->
     <div class="main-content">
         <div class="container">
-            <div class="header-section">
-                <h1>Patient Registration</h1>
-                <p>Create your account to access our healthcare services</p>
-            </div>
-            
-            <div class="progress-container">
-                <div class="progress-bar" id="progressBar"></div>
-            </div>
+            <h1>Patient Registration</h1>
             
             <!-- Toast notification for errors -->
             <div id="toast" class="toast"></div>
@@ -634,15 +569,15 @@ include 'header.php';?>
                     <div class="form-group">
                         <label>Gender</label>
                         <div class="radio-group">
-                            <div class="radio-option <?php echo ($form_data['gender'] == 'MALE') ? 'selected' : ''; ?>">
+                            <div class="radio-option">
                                 <input type="radio" id="male" name="gender" value="MALE" <?php echo ($form_data['gender'] == 'MALE') ? 'checked' : ''; ?>>
                                 <label for="male">Male</label>
                             </div>
-                            <div class="radio-option <?php echo ($form_data['gender'] == 'FEMALE') ? 'selected' : ''; ?>">
+                            <div class="radio-option">
                                 <input type="radio" id="female" name="gender" value="FEMALE" <?php echo ($form_data['gender'] == 'FEMALE') ? 'checked' : ''; ?>>
                                 <label for="female">Female</label>
                             </div>
-                            <div class="radio-option <?php echo ($form_data['gender'] == 'OTHER') ? 'selected' : ''; ?>">
+                            <div class="radio-option">
                                 <input type="radio" id="other" name="gender" value="OTHER" <?php echo ($form_data['gender'] == 'OTHER') ? 'checked' : ''; ?>>
                                 <label for="other">Other</label>
                             </div>
@@ -740,30 +675,6 @@ include 'header.php';?>
             toast.className = toast.className.replace('show', '');
         }, 5000);
     }
-
-    // Progress bar update
-    function updateProgressBar() {
-        const form = document.getElementById('PatientForm');
-        const inputs = form.querySelectorAll('input[required], select[required], textarea[required]');
-        const filledInputs = Array.from(inputs).filter(input => input.value.trim() !== '');
-        const progress = (filledInputs.length / inputs.length) * 100;
-        document.getElementById('progressBar').style.width = progress + '%';
-    }
-
-    // Radio button styling
-    document.querySelectorAll('.radio-option').forEach(option => {
-        option.addEventListener('click', function() {
-            // Remove selected class from all options in the same group
-            const groupName = this.querySelector('input').name;
-            document.querySelectorAll(`input[name="${groupName}"]`).forEach(input => {
-                input.closest('.radio-option').classList.remove('selected');
-            });
-            
-            // Add selected class to clicked option
-            this.classList.add('selected');
-            this.querySelector('input').checked = true;
-        });
-    });
 
     // Form validation and submission
     document.getElementById('PatientForm').addEventListener('submit', function (e) {
@@ -891,15 +802,6 @@ include 'header.php';?>
             showToast("Please correct the errors in the form.");
         }
     });
-
-    // Add event listeners to update progress bar
-    document.querySelectorAll('input, select, textarea').forEach(element => {
-        element.addEventListener('input', updateProgressBar);
-        element.addEventListener('change', updateProgressBar);
-    });
-
-    // Initialize progress bar on page load
-    document.addEventListener('DOMContentLoaded', updateProgressBar);
     </script>
 </body>
 </html>
