@@ -601,11 +601,8 @@ include 'header.php';
                 <h1>Quick Doctor Appointments at Your Convenience</h1>
                 <p>Choose verified specialists, pick your slot, and get treated faster with QuickCare.</p>
               <div class="hero-buttons">
-    <?php// if (!isset($_SESSION['PATIENT_ID'])) { ?>
+
         <a href="appointment.php" class="btn-primary">Book Appointment</a>
-    <?php //} else { ?>
-        <!-- <a href="patient.php" class="btn-primary">My Dashboard</a> -->
-    <?php //} ?>
 </div>
 
 
