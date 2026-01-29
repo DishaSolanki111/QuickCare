@@ -71,7 +71,7 @@ include 'header.php';?>
         h1 {
             color: var(--dark-blue);
             text-align: center;
-            margin-bottom: 25px;
+            margin-bottom: 30px;
             font-size: 28px;
             position: relative;
         }
@@ -87,25 +87,9 @@ include 'header.php';?>
             background-color: var(--accent-blue);
         }
 
+        /* Simplified spacing since headers are removed */
         .form-section {
-            margin-bottom: 25px;
-        }
-
-        .section-title {
-            color: var(--primary-blue);
-            font-size: 18px;
-            font-weight: 600;
             margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            padding-bottom: 8px;
-            border-bottom: 1px solid var(--gray-blue);
-        }
-
-        .section-title i {
-            margin-right: 10px;
-            font-size: 18px;
-            color: var(--accent-blue);
         }
 
         .form-row {
@@ -510,125 +494,102 @@ include 'header.php';?>
             <?php endif; ?>
             
             <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post" id="PatientForm" enctype="multipart/form-data">
-                <!-- Personal Information Section -->
-                <div class="form-section">
-                    <h3 class="section-title">
-                        <i class="fas fa-user"></i>
-                        Personal Information
-                    </h3>
-                    
-                    <!-- First Name and Last Name -->
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="first_name">First Name <span class="required">*</span></label>
-                            <input type="text" id="first_name" name="first_name" placeholder="e.g. John" value="<?php echo htmlspecialchars($form_data['first_name']); ?>" required>
-                            <div class="error-message" id="first_name_error"></div>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="last_name">Last Name <span class="required">*</span></label>
-                            <input type="text" id="last_name" name="last_name" placeholder="e.g.Doe" value="<?php echo htmlspecialchars($form_data['last_name']); ?>" required>
-                            <div class="error-message" id="last_name_error"></div>
-                        </div>
-                    </div>
-                    
-                    <!-- Date of Birth and Blood Group-->
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="dob">Date of Birth <span class="required">*</span></label>
-                            <input type="date" id="dob" name="dob" placeholder="YYYY-MM-DD" value="<?php echo htmlspecialchars($form_data['dob']); ?>" required>
-                            <div class="error-message" id="dob_error"></div>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label>Blood Group <span class="required">*</span></label>
-                            <select name="blood_group">
-                                <option value="">Select Blood Group</option>
-                                <option value="A+" <?php echo ($form_data['blood_group'] == 'A+') ? 'selected' : ''; ?>>A+</option>
-                                <option value="A-" <?php echo ($form_data['blood_group'] == 'A-') ? 'selected' : ''; ?>>A-</option>
-                                <option value="B+" <?php echo ($form_data['blood_group'] == 'B+') ? 'selected' : ''; ?>>B+</option>
-                                <option value="B-" <?php echo ($form_data['blood_group'] == 'B-') ? 'selected' : ''; ?>>B-</option>
-                                <option value="O+" <?php echo ($form_data['blood_group'] == 'O+') ? 'selected' : ''; ?>>O+</option>
-                                <option value="O-" <?php echo ($form_data['blood_group'] == 'O-') ? 'selected' : ''; ?>>O-</option>
-                                <option value="AB+" <?php echo ($form_data['blood_group'] == 'AB+') ? 'selected' : ''; ?>>AB+</option>
-                                <option value="AB-" <?php echo ($form_data['blood_group'] == 'AB-') ? 'selected' : ''; ?>>AB-</option>
-                            </select>
-                            <div class="error-message" id="blood_group_error"></div>
-                        </div>
-                    </div>
-                    
-                    <!-- Gender -->
-                    <div class="form-group">
-                        <label>Gender</label>
-                        <div class="radio-group">
-                            <div class="radio-option">
-                                <input type="radio" id="male" name="gender" value="MALE" <?php echo ($form_data['gender'] == 'MALE') ? 'checked' : ''; ?>>
-                                <label for="male">Male</label>
-                            </div>
-                            <div class="radio-option">
-                                <input type="radio" id="female" name="gender" value="FEMALE" <?php echo ($form_data['gender'] == 'FEMALE') ? 'checked' : ''; ?>>
-                                <label for="female">Female</label>
-                            </div>
-                            <div class="radio-option">
-                                <input type="radio" id="other" name="gender" value="OTHER" <?php echo ($form_data['gender'] == 'OTHER') ? 'checked' : ''; ?>>
-                                <label for="other">Other</label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
                 
-                <!-- Contact Information Section -->
-                <div class="form-section">
-                    <h3 class="section-title">
-                        <i class="fas fa-address-book"></i>
-                        Contact Information
-                    </h3>
-                    
-                    <!-- Phone Number and Email ID -->
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="phone">Phone Number <span class="required">*</span></label>
-                            <input type="text" id="phone" name="phone" maxlength="10" placeholder="e.g 1234567891" value="<?php echo htmlspecialchars($form_data['phone']); ?>" required>
-                            <div class="error-message" id="phone_error"></div>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="email">Email <span class="required">*</span></label>
-                            <input type="email" id="email" name="email" placeholder="e.g. john@example.com" value="<?php echo htmlspecialchars($form_data['email']); ?>" required>
-                            <div class="error-message" id="email_error"></div>
-                        </div>
+                <!-- First Name and Last Name -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="first_name">First Name <span class="required">*</span></label>
+                        <input type="text" id="first_name" name="first_name" placeholder="e.g. John" value="<?php echo htmlspecialchars($form_data['first_name']); ?>" required>
+                        <div class="error-message" id="first_name_error"></div>
                     </div>
                     
                     <div class="form-group">
-                        <label for="address">Address</label>
-                        <textarea name="address" id="address" placeholder="Street, City, Zip Code"><?php echo htmlspecialchars($form_data['address']); ?></textarea>
-                        <div class="error-message" id="address_error"></div>
+                        <label for="last_name">Last Name <span class="required">*</span></label>
+                        <input type="text" id="last_name" name="last_name" placeholder="e.g.Doe" value="<?php echo htmlspecialchars($form_data['last_name']); ?>" required>
+                        <div class="error-message" id="last_name_error"></div>
                     </div>
                 </div>
                 
-                <!-- Account Information Section -->
-                <div class="form-section">
-                    <h3 class="section-title">
-                        <i class="fas fa-lock"></i>
-                        Account Information
-                    </h3>
+                <!-- Date of Birth and Blood Group-->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="dob">Date of Birth <span class="required">*</span></label>
+                        <input type="date" id="dob" name="dob" placeholder="YYYY-MM-DD" value="<?php echo htmlspecialchars($form_data['dob']); ?>" required>
+                        <div class="error-message" id="dob_error"></div>
+                    </div>
                     
-                    <!-- Username and Password -->
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="username">Username <span class="required">*</span></label>
-                            <input type="text" id="username" name="username" placeholder="e.g. John_11" value="<?php echo htmlspecialchars($form_data['username']); ?>" required>
-                            <div class="error-message" id="username_error"></div>
+                    <div class="form-group">
+                        <label>Blood Group <span class="required">*</span></label>
+                        <select name="blood_group">
+                            <option value="">Select Blood Group</option>
+                            <option value="A+" <?php echo ($form_data['blood_group'] == 'A+') ? 'selected' : ''; ?>>A+</option>
+                            <option value="A-" <?php echo ($form_data['blood_group'] == 'A-') ? 'selected' : ''; ?>>A-</option>
+                            <option value="B+" <?php echo ($form_data['blood_group'] == 'B+') ? 'selected' : ''; ?>>B+</option>
+                            <option value="B-" <?php echo ($form_data['blood_group'] == 'B-') ? 'selected' : ''; ?>>B-</option>
+                            <option value="O+" <?php echo ($form_data['blood_group'] == 'O+') ? 'selected' : ''; ?>>O+</option>
+                            <option value="O-" <?php echo ($form_data['blood_group'] == 'O-') ? 'selected' : ''; ?>>O-</option>
+                            <option value="AB+" <?php echo ($form_data['blood_group'] == 'AB+') ? 'selected' : ''; ?>>AB+</option>
+                            <option value="AB-" <?php echo ($form_data['blood_group'] == 'AB-') ? 'selected' : ''; ?>>AB-</option>
+                        </select>
+                        <div class="error-message" id="blood_group_error"></div>
+                    </div>
+                </div>
+                
+                <!-- Gender -->
+                <div class="form-group">
+                    <label>Gender</label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" id="male" name="gender" value="MALE" <?php echo ($form_data['gender'] == 'MALE') ? 'checked' : ''; ?>>
+                            <label for="male">Male</label>
                         </div>
-                        
-                        <div class="form-group">
-                            <label for="password">Password <span class="required">*</span></label>
-                            <div class="password-wrapper">
-                                <input type="password" id="password" name="password" placeholder="John@123" required>
-                                <i class="fas fa-eye toggle-password" id="togglePassword"></i>
-                            </div>
-                            <div class="error-message" id="password_error"></div>
+                        <div class="radio-option">
+                            <input type="radio" id="female" name="gender" value="FEMALE" <?php echo ($form_data['gender'] == 'FEMALE') ? 'checked' : ''; ?>>
+                            <label for="female">Female</label>
                         </div>
+                        <div class="radio-option">
+                            <input type="radio" id="other" name="gender" value="OTHER" <?php echo ($form_data['gender'] == 'OTHER') ? 'checked' : ''; ?>>
+                            <label for="other">Other</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Phone Number and Email ID -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="phone">Phone Number <span class="required">*</span></label>
+                        <input type="text" id="phone" name="phone" maxlength="10" placeholder="e.g 1234567891" value="<?php echo htmlspecialchars($form_data['phone']); ?>" required>
+                        <div class="error-message" id="phone_error"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Email <span class="required">*</span></label>
+                        <input type="email" id="email" name="email" placeholder="e.g. john@example.com" value="<?php echo htmlspecialchars($form_data['email']); ?>" required>
+                        <div class="error-message" id="email_error"></div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="address">Address</label>
+                    <textarea name="address" id="address" placeholder="Street, City, Zip Code"><?php echo htmlspecialchars($form_data['address']); ?></textarea>
+                    <div class="error-message" id="address_error"></div>
+                </div>
+                
+                <!-- Username and Password -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="username">Username <span class="required">*</span></label>
+                        <input type="text" id="username" name="username" placeholder="e.g. John_11" value="<?php echo htmlspecialchars($form_data['username']); ?>" required>
+                        <div class="error-message" id="username_error"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password">Password <span class="required">*</span></label>
+                        <div class="password-wrapper">
+                            <input type="password" id="password" name="password" placeholder="John@123" required>
+                            <i class="fas fa-eye toggle-password" id="togglePassword"></i>
+                        </div>
+                        <div class="error-message" id="password_error"></div>
                     </div>
                 </div>
                 
