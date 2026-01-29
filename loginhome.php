@@ -9,15 +9,15 @@ include 'config.php';
 ================================ */
  $user_type = $_POST['user_type'] ?? '';
  $username  = $_POST['username'] ?? '';
- $pswd  = $_POST['pswd'] ?? '';
+ $pswd      = $_POST['pswd'] ?? '';
 
 /* ===============================
    BASIC VALIDATION
 ================================ */
 if (empty($user_type) || empty($username) || empty($pswd)) {
-    $_POST['error'] = 'All fields are required';
-    $_POST['user_type'] = $user_type;
-    include 'login_for_all.php';
+    // Return JSON Error for AJAX to catch
+    header('Content-Type: application/json');
+    echo json_encode(['status' => 'error', 'message' => 'All fields are required']);
     exit();
 }
 
@@ -45,15 +45,21 @@ if ($user_type === 'doctor') {
             $_SESSION['USER_TYPE'] = 'doctor';
             $_SESSION['DOCTOR_ID'] = $row['DOCTOR_ID'];
             $_SESSION['USER_NAME'] = $row['FIRST_NAME'];
-            header("Location: doctor_dashboard.php");
+
+            // ✅ Return JSON Success
+            header('Content-Type: application/json');
+            echo json_encode([
+                'status' => 'success',
+                'message' => 'Login Successful! Redirecting to Dashboard...',
+                'redirect' => 'doctor_dashboard.php'
+            ]);
             exit();
         }
     }
 
     // ❌ Doctor login failed
-    $_POST['error'] = 'Invalid doctor username or password';
-    $_POST['user_type'] = 'doctor';
-    include 'login_for_all.php';
+    header('Content-Type: application/json');
+    echo json_encode(['status' => 'error', 'message' => 'Invalid doctor username or password']);
     exit();
 }
 
@@ -82,15 +88,20 @@ if ($user_type === 'patient') {
             $_SESSION['PATIENT_ID'] = $row['PATIENT_ID'];
             $_SESSION['USER_NAME'] = $row['FIRST_NAME']; 
 
-            header("Location: patient.php");
+            // ✅ Return JSON Success
+            header('Content-Type: application/json');
+            echo json_encode([
+                'status' => 'success',
+                'message' => 'Login Successful! Redirecting to Portal...',
+                'redirect' => 'patient.php'
+            ]);
             exit();
         }
     }
 
     // ❌ Patient login failed
-    $_POST['error'] = 'Invalid patient username or password';
-    $_POST['user_type'] = 'patient';
-    include 'login_for_all.php';
+    header('Content-Type: application/json');
+    echo json_encode(['status' => 'error', 'message' => 'Invalid patient username or password']);
     exit();
 }
 
@@ -118,22 +129,28 @@ if ($user_type === 'receptionist') {
             $_SESSION['USER_TYPE'] = 'receptionist';
             $_SESSION['RECEPTIONIST_ID'] = $row['RECEPTIONIST_ID'];
             $_SESSION['USER_NAME'] = $row['FIRST_NAME'];
-            header("Location: receptionist.php");
+
+            // ✅ Return JSON Success
+            header('Content-Type: application/json');
+            echo json_encode([
+                'status' => 'success',
+                'message' => 'Login Successful! Redirecting to Dashboard...',
+                'redirect' => 'receptionist.php'
+            ]);
             exit();
         }
     }
 
     // ❌ Receptionist login failed
-    $_POST['error'] = 'Invalid receptionist username or password';
-    $_POST['user_type'] = 'receptionist';
-    include 'login_for_all.php';
+    header('Content-Type: application/json');
+    echo json_encode(['status' => 'error', 'message' => 'Invalid receptionist username or password']);
     exit();
 }
 
 /* ===============================
    UNKNOWN USER TYPE
 ================================ */
- $_POST['error'] = 'Invalid login attempt';
-include 'login_for_all.php';
+header('Content-Type: application/json');
+echo json_encode(['status' => 'error', 'message' => 'Invalid login attempt']);
 exit();
 ?>
