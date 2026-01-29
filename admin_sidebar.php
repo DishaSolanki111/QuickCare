@@ -64,23 +64,24 @@ $currentPage = basename($_SERVER['PHP_SELF']);
         color: white;
     }
 
-    .logout-btn {
-        display: block;
-        width: 80%;
-        margin: 20px auto 0 auto;
-        padding: 10px;
-        background-color: var(--soft-blue);
-        color: white;    
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        font-size: 16px;
-        text-align: center;
-    }
-
-    .logout-btn:hover {
-        background-color: var(--light-blue);
-    }
+        .logout-btn:hover{
+            background-color: var(--light-blue);
+        }
+        .logout-btn {
+            
+            display: block;
+            width: 80%;
+            margin: 20px auto 0 auto;
+            padding: 10px;
+            background-color: var(--soft-blue);
+            color: var(--white);    
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            text-align: center;
+            transition: background-color 0.3s;
+        }
 
     .logo-img {
         display:block; 
@@ -128,20 +129,19 @@ $currentPage = basename($_SERVER['PHP_SELF']);
 
 <!-- Sidebar -->
 <div class="sidebar">
-    <img src="uploads/logo.JPG" alt="QuickCare Logo" class="logo-img">  
-    <h2>QuickCare</h2>
-
-    <a href="index.php" class="<?= ($currentPage == 'index.php') ? 'active' : '' ?>">Home</a>
-    <a href="admin.php" class="<?= ($currentPage == 'admin.php') ? 'active' : '' ?>">Dashboard</a>
-    <a href="Admin_appoitment.php" class="<?= ($currentPage == 'Admin_appoitment.php') ? 'active' : '' ?>">Appointments</a>
-    <a href="Admin_doctor.php" class="<?= ($currentPage == 'Admin_doctor.php') ? 'active' : '' ?>">Doctors</a>
-    <a href="Admin_recept.php" class="<?= ($currentPage == 'Admin_recept.php') ? 'active' : '' ?>">Receptionist</a>
-    <a href="Admin_patient.php" class="<?= ($currentPage == 'Admin_patient.php') ? 'active' : '' ?>">Patients</a>
-    <a href="Admin_medicine.php" class="<?= ($currentPage == 'Admin_medicine.php') ? 'active' : '' ?>">Medicine</a>
-    <a href="Admin_payment.php" class="<?= ($currentPage == 'Admin_payment.php') ? 'active' : '' ?>">Payments</a>
-    <a href="Admin_feedback.php" class="<?= ($currentPage == 'Admin_feedback.php') ? 'active' : '' ?>">Feedback</a>
-
-    <button class="logout-btn">Logout</button>
+  <img src="uploads/logo.JPG" alt="QuickCare Logo" class="logo-img" style="display:block; margin: 0 auto 10px auto; width:80px; height:80px; border-radius:50%;">  
+  <h2 align="center">QuickCare</h2>
+    <a href="index.php">Home</a>
+    <a href="admin.php">Dashboard</a>  
+    <a href="Admin_appoitment.php">Appointments</a>
+    <a href="Admin_doctor.php">Doctors</a>
+    <a href="Admin_recept.php">Receptionist</a>
+    <a href="Admin_patient.php">Patients</a>
+    <a href="Admin_medicine.php">Medicine</a>
+    <a href="Admin_payment.php">Payments</a>
+    <a href="Admin_feedback.php">Feedback</a>
+  
+    <button class="logout-btn">logout</button>
 </div>
 
 <script>
