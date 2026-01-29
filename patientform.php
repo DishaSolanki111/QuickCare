@@ -439,7 +439,7 @@ include 'header.php';?>
 
                 // ---------------- EMAIL VALIDATION ----------------
                 if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                    $errors[] = "Invalid email format.";
+                    $errors[] = "e.g. abc@gmail.com";
                 }
 
                 // ---------------- FINAL INSERT ----------------
@@ -766,7 +766,7 @@ include 'header.php';?>
         // 6. Validate Email
         const email = document.getElementById('email');
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim())) {
-            showError('email', "Invalid email format.");
+            showError('email', "e.g. abc@gmail.com");
             isValid = false;
         } else {
             hideError('email');
