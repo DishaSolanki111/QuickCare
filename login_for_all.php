@@ -474,9 +474,14 @@ include 'header.php';
                         successDiv.style.display = 'block';
                         
                         // Hide inputs (optional, keeps UI clean)
-                        const inputs = this.querySelectorAll('input');
-                        inputs.forEach(input => input.style.display = 'none');
-                        submitBtn.style.display = 'none';
+                       const inputs = this.querySelectorAll('input');
+inputs.forEach(input => input.style.display = 'none');
+
+const toggles = this.querySelectorAll('.password-toggle');
+toggles.forEach(t => t.style.display = 'none');
+
+submitBtn.style.display = 'none';
+
 
                         // Wait 3 seconds then redirect
                         setTimeout(() => {
