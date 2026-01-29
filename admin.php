@@ -1,3 +1,19 @@
+<?php
+// Start session if not already started
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Check if user is logged in and is an admin
+if (!isset($_SESSION['LOGGED_IN']) || $_SESSION['LOGGED_IN'] !== true || $_SESSION['USER_TYPE'] !== 'admin') {
+    // If not logged in or not an admin, redirect to admin login page
+    header("Location: admin_login.php");
+    exit();
+}
+
+// Get admin name for display
+ $adminName = $_SESSION['USER_NAME'] ?? 'Admin';
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -159,7 +175,7 @@
     <!-- Topbar -->
     <div class="topbar">
         <h1>Admin Dashboard</h1>
-        <p>Welcome, Admin</p>
+        <p>Welcome, <?php echo htmlspecialchars($adminName); ?></p>
     </div>
 
     <!-- Cards -->
