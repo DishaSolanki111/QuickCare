@@ -1,5 +1,5 @@
 <?php
-
+session_start();
 // Include your existing config file
 require_once 'config.php';
 
@@ -497,37 +497,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_prescription_i
 <body>
     <div class="container">
         <!-- Sidebar -->
-        <div class="sidebar">
-            <img src="uploads/logo.JPG" alt="QuickCare Logo" class="logo-img" style="display:block; margin: 0 auto 10px auto; width:80px; height:80px; border-radius:50%;">  
-            <h2>QuickCare</h2>  
-            <a href="dashboard_doctor.php" >Dashboard</a>
-            <a href="d_dprofile.php">My Profile</a>
-            <a href="mangae_schedule_doctor.php">Manage Schedule</a>
-            <a href="appointment_doctor.php">Manage Appointments</a>
-            <a href="manage_prescriptions.php" class="active">Manage Prescription</a>
-            <a href="#">View Medicine</a>
-            <a href="#">View Feedback</a>
-            <button class="logout-btn">logout</button>
-        </div>
+        <?php include 'doctor_sidebar.php'; ?>
         
         <!-- Main Content -->
         <div class="main-content">
             <!-- Header -->
-            <div class="header">
-                <div class="welcome-msg">Prescriptions for: <?php echo htmlspecialchars($patient['FIRST_NAME'] . ' ' . $patient['LAST_NAME']); ?></div>
-                <div class="user-actions">
-                    <button class="notification-btn">
-                        <i class="far fa-bell"></i>
-                        <span class="notification-badge">5</span>
-                    </button>
-                    <div class="user-dropdown">
-                        <div class="user-avatar">AS</div>
-                        <span>Dr. Amar Kumar</span>
-                        <i class="fas fa-chevron-down" style="margin-left: 8px;"></i>
-                    </div>
-                </div>
-            </div>
-            
+             <?php include 'doctor_header.php'; ?>
             <!-- Content Card -->
             <div class="content-card">
                 <a href="manage_prescriptions.php" class="back-link">&larr; Back to Patient List</a>
