@@ -542,11 +542,7 @@ html {
                                 </div>
                             </div>
                             
-                            <div class="btn-group">
-                                <button class="btn btn-primary">
-                                    <i class="fas fa-download"></i> Download Receipt
-                                </button>
-                            </div>
+                            
                         </div>
                         <?php
                     }
