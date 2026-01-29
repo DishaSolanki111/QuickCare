@@ -731,7 +731,7 @@ include 'config.php';
                 showError('doj', "Date of Joining cannot be in future.");
                 isValid = false;
             } else if (dobValue !== '') {
-                 const dobDate = new DateTime(dobValue);
+                 const dobDate = new Date(dobValue);
                  if (dojDate <= dobDate) {
                     showError('doj', "Date of Joining must be after Date of Birth.");
                     isValid = false;

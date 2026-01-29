@@ -58,7 +58,7 @@ body {
 
 /* Main content next to sidebar */
 .main {
-    margin-left: 200px;
+    margin-left: 250px;
     padding: 25px;
     width: calc(100% - 250px);
     min-height: 100vh;
