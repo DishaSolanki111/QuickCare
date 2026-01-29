@@ -7,7 +7,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sidebar Component</title>
+<title>Doctor Sidebar - QuickCare</title>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -43,19 +43,25 @@ body {
     position: fixed; 
     left: 0; 
     top: 0; 
-    overflow-y: auto; 
+    overflow-y: auto;   /* ✅ SCROLLBAR ENABLED */
     z-index: 1000;
     box-shadow: 2px 0 5px rgba(0,0,0,0.1);
     transition: transform 0.3s ease;
-} 
+}
 
-.sidebar::-webkit-scrollbar { width: 8px; }
-.sidebar::-webkit-scrollbar-track { background: var(--mid-blue); }
+/* ✅ CUSTOM SCROLLBAR */
+.sidebar::-webkit-scrollbar {
+    width: 8px;
+}
+.sidebar::-webkit-scrollbar-track {
+    background: var(--mid-blue);
+}
 .sidebar::-webkit-scrollbar-thumb {
     background: var(--light-blue);
     border-radius: 4px;
 }
 
+/* Logo */
 .logo-img {
     width: 80px;
     height: 80px;
@@ -71,17 +77,29 @@ body {
     color: var(--light-blue);
 }
 
+/* Links */
 .sidebar a {
     display: block;
     padding: 15px 25px;
     color: var(--gray-blue);
     text-decoration: none;
     font-size: 17px;
+    overflow-y: auto;  /* ✅ SCROLLBAR ENABLED */
     border-left: 4px solid transparent;
     transition: all 0.3s ease;
 }
-
-/* ACTIVE STATE */
+/* ✅ CUSTOM SCROLLBAR (NOT REMOVED) */
+.sidebar::-webkit-scrollbar {
+    width: 8px;
+}
+.sidebar::-webkit-scrollbar-track {
+    background: var(--mid-blue);
+}
+.sidebar::-webkit-scrollbar-thumb {
+    background: var(--light-blue);
+    border-radius: 4px;
+}
+/* Active / Hover */
 .sidebar a:hover,
 .sidebar a.active {
     background: var(--mid-blue);
@@ -89,17 +107,18 @@ body {
     color: var(--white);
 }
 
+/* Logout */
 .logout-btn {
     display: block;
     width: 80%;
-    margin: 20px auto 0 auto;
-    padding: 10px;
+    margin: 25px auto;
+    padding: 12px;
     background-color: var(--soft-blue);
     color: var(--white);
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
+    border-radius: 6px;
+    text-align: center;
     font-size: 16px;
+    text-decoration: none;
 }
 
 .logout-btn:hover {
@@ -111,6 +130,7 @@ body {
     .sidebar { width: 70px; }
     .sidebar h2 { display: none; }
 }
+
 @media (max-width: 768px) {
     .sidebar { transform: translateX(-100%); }
     .sidebar.active { transform: translateX(0); }
@@ -120,7 +140,7 @@ body {
 
 <body>
 
-<!-- SIDEBAR -->
+<!-- DOCTOR SIDEBAR -->
 <div class="sidebar" id="sidebar">
     <img src="uploads/logo.JPG" alt="QuickCare Logo" class="logo-img">
     <h2>QuickCare</h2>

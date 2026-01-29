@@ -1,7 +1,11 @@
 <?php
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
-}?>
+}
+
+$currentPage = basename($_SERVER['PHP_SELF']);
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -451,12 +455,17 @@ if (session_status() === PHP_SESSION_NONE) {
             
             <div class="nav-right-container">
                 <div class="nav-links">
-                    <a href="index.php">Home</a>
-                    <a href="service.php">Our services</a>
-                    <a href="schedule.php">Schedule</a>
-                    <a href="appointment.php">Doctors</a>
-                    <a href="aboutus.php">About us</a>
-                </div>
+    <a href="index.php" class="<?= ($currentPage == 'index.php') ? 'active' : '' ?>">Home</a>
+
+    <a href="service.php" class="<?= ($currentPage == 'service.php') ? 'active' : '' ?>">Our services</a>
+
+    <a href="schedule.php" class="<?= ($currentPage == 'schedule.php') ? 'active' : '' ?>">Schedule</a>
+
+    <a href="appointment.php" class="<?= ($currentPage == 'appointment.php') ? 'active' : '' ?>">Doctors</a>
+
+    <a href="aboutus.php" class="<?= ($currentPage == 'aboutus.php') ? 'active' : '' ?>">About us</a>
+</div>
+
                 
                 <?php if (isset($_SESSION['PATIENT_ID']) || isset($_SESSION['DOCTOR_ID']) || isset($_SESSION['RECEPTIONIST_ID'])): ?>
                     <!-- User Profile Section (when logged in) -->
