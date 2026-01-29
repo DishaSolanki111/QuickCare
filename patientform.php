@@ -135,18 +135,23 @@ include 'header.php';?>
             color: var(--error);
         }
 
-        .input-with-icon {
+        /* Password Toggle Styles */
+        .password-wrapper {
             position: relative;
         }
 
-        .input-with-icon i {
+        .toggle-password {
             position: absolute;
-            left: 12px;
             top: 50%;
+            right: 15px;
             transform: translateY(-50%);
+            cursor: pointer;
             color: var(--soft-blue);
-            font-size: 16px;
-            z-index: 1;
+            transition: color 0.3s;
+        }
+
+        .toggle-password:hover {
+            color: var(--primary-blue);
         }
 
         input[type="text"],
@@ -179,8 +184,9 @@ include 'header.php';?>
             box-shadow: 0 0 0 2px rgba(0, 180, 216, 0.1);
         }
 
-        .input-with-icon input {
-            padding-left: 40px;
+        /* Adjust padding for password field to accommodate icon */
+        input[type="password"] {
+            padding-right: 40px; 
         }
 
         select {
@@ -362,7 +368,7 @@ include 'header.php';?>
             $success = false;
             $error = "";
            
-
+            
             
             // Store submitted values to repopulate form if needed
             $form_data = [
@@ -394,8 +400,6 @@ include 'header.php';?>
                 ];
 
                 $errors = [];
-
-                
 
                 // ---------------- SANITIZE ----------------
                 $first_name = mysqli_real_escape_string($conn, $_POST['first_name']);
@@ -517,19 +521,13 @@ include 'header.php';?>
                     <div class="form-row">
                         <div class="form-group">
                             <label for="first_name">First Name <span class="required">*</span></label>
-                            <div class="input-with-icon">
-                                <i class="fas fa-user"></i>
-                                <input type="text" id="first_name" name="first_name" value="<?php echo htmlspecialchars($form_data['first_name']); ?>" required>
-                            </div>
+                            <input type="text" id="first_name" name="first_name" placeholder="e.g. John" value="<?php echo htmlspecialchars($form_data['first_name']); ?>" required>
                             <div class="error-message" id="first_name_error"></div>
                         </div>
                         
                         <div class="form-group">
                             <label for="last_name">Last Name <span class="required">*</span></label>
-                            <div class="input-with-icon">
-                                <i class="fas fa-user"></i>
-                                <input type="text" id="last_name" name="last_name" value="<?php echo htmlspecialchars($form_data['last_name']); ?>" required>
-                            </div>
+                            <input type="text" id="last_name" name="last_name" placeholder="e.g.Doe" value="<?php echo htmlspecialchars($form_data['last_name']); ?>" required>
                             <div class="error-message" id="last_name_error"></div>
                         </div>
                     </div>
@@ -538,29 +536,23 @@ include 'header.php';?>
                     <div class="form-row">
                         <div class="form-group">
                             <label for="dob">Date of Birth <span class="required">*</span></label>
-                            <div class="input-with-icon">
-                                <i class="fas fa-calendar"></i>
-                                <input type="date" id="dob" name="dob" value="<?php echo htmlspecialchars($form_data['dob']); ?>" required>
-                            </div>
+                            <input type="date" id="dob" name="dob" placeholder="YYYY-MM-DD" value="<?php echo htmlspecialchars($form_data['dob']); ?>" required>
                             <div class="error-message" id="dob_error"></div>
                         </div>
                         
                         <div class="form-group">
                             <label>Blood Group <span class="required">*</span></label>
-                            <div class="input-with-icon">
-                                <i class="fas fa-tint"></i>
-                                <select name="blood_group">
-                                    <option value="">Select Blood Group</option>
-                          l          <option value="A+" <?php echo ($form_data['blood_group'] == 'A+') ? 'selected' : ''; ?>>A+</option>
-                                    <option value="A-" <?php echo ($form_data['blood_group'] == 'A-') ? 'selected' : ''; ?>>A-</option>
-                                    <option value="B+" <?php echo ($form_data['blood_group'] == 'B+') ? 'selected' : ''; ?>>B+</option>
-                                    <option value="B-" <?php echo ($form_data['blood_group'] == 'B-') ? 'selected' : ''; ?>>B-</option>
-                                    <option value="O+" <?php echo ($form_data['blood_group'] == 'O+') ? 'selected' : ''; ?>>O+</option>
-                                    <option value="O-" <?php echo ($form_data['blood_group'] == 'O-') ? 'selected' : ''; ?>>O-</option>
-                                    <option value="AB+" <?php echo ($form_data['blood_group'] == 'AB+') ? 'selected' : ''; ?>>AB+</option>
-                                    <option value="AB-" <?php echo ($form_data['blood_group'] == 'AB-') ? 'selected' : ''; ?>>AB-</option>
-                                </select>
-                            </div>
+                            <select name="blood_group">
+                                <option value="">Select Blood Group</option>
+                                <option value="A+" <?php echo ($form_data['blood_group'] == 'A+') ? 'selected' : ''; ?>>A+</option>
+                                <option value="A-" <?php echo ($form_data['blood_group'] == 'A-') ? 'selected' : ''; ?>>A-</option>
+                                <option value="B+" <?php echo ($form_data['blood_group'] == 'B+') ? 'selected' : ''; ?>>B+</option>
+                                <option value="B-" <?php echo ($form_data['blood_group'] == 'B-') ? 'selected' : ''; ?>>B-</option>
+                                <option value="O+" <?php echo ($form_data['blood_group'] == 'O+') ? 'selected' : ''; ?>>O+</option>
+                                <option value="O-" <?php echo ($form_data['blood_group'] == 'O-') ? 'selected' : ''; ?>>O-</option>
+                                <option value="AB+" <?php echo ($form_data['blood_group'] == 'AB+') ? 'selected' : ''; ?>>AB+</option>
+                                <option value="AB-" <?php echo ($form_data['blood_group'] == 'AB-') ? 'selected' : ''; ?>>AB-</option>
+                            </select>
                             <div class="error-message" id="blood_group_error"></div>
                         </div>
                     </div>
@@ -596,29 +588,20 @@ include 'header.php';?>
                     <div class="form-row">
                         <div class="form-group">
                             <label for="phone">Phone Number <span class="required">*</span></label>
-                            <div class="input-with-icon">
-                                <i class="fas fa-phone"></i>
-                                <input type="text" id="phone" name="phone" maxlength="10" value="<?php echo htmlspecialchars($form_data['phone']); ?>" required>
-                            </div>
+                            <input type="text" id="phone" name="phone" maxlength="10" placeholder="e.g 1234567891" value="<?php echo htmlspecialchars($form_data['phone']); ?>" required>
                             <div class="error-message" id="phone_error"></div>
                         </div>
                         
                         <div class="form-group">
                             <label for="email">Email <span class="required">*</span></label>
-                            <div class="input-with-icon">
-                                <i class="fas fa-envelope"></i>
-                                <input type="email" id="email" name="email" value="<?php echo htmlspecialchars($form_data['email']); ?>" required>
-                            </div>
+                            <input type="email" id="email" name="email" placeholder="e.g. john@example.com" value="<?php echo htmlspecialchars($form_data['email']); ?>" required>
                             <div class="error-message" id="email_error"></div>
                         </div>
                     </div>
                     
                     <div class="form-group">
                         <label for="address">Address</label>
-                        <div class="input-with-icon">
-                            <i class="fas fa-home"></i>
-                            <textarea name="address" id="address"><?php echo htmlspecialchars($form_data['address']); ?></textarea>
-                        </div>
+                        <textarea name="address" id="address" placeholder="Street, City, Zip Code"><?php echo htmlspecialchars($form_data['address']); ?></textarea>
                         <div class="error-message" id="address_error"></div>
                     </div>
                 </div>
@@ -634,18 +617,15 @@ include 'header.php';?>
                     <div class="form-row">
                         <div class="form-group">
                             <label for="username">Username <span class="required">*</span></label>
-                            <div class="input-with-icon">
-                                <i class="fas fa-user-circle"></i>
-                                <input type="text" id="username" name="username" value="<?php echo htmlspecialchars($form_data['username']); ?>" required>
-                            </div>
+                            <input type="text" id="username" name="username" placeholder="e.g. John_11" value="<?php echo htmlspecialchars($form_data['username']); ?>" required>
                             <div class="error-message" id="username_error"></div>
                         </div>
                         
                         <div class="form-group">
                             <label for="password">Password <span class="required">*</span></label>
-                            <div class="input-with-icon">
-                                <i class="fas fa-lock"></i>
-                                <input type="password" id="password" name="password" required>
+                            <div class="password-wrapper">
+                                <input type="password" id="password" name="password" placeholder="John@123" required>
+                                <i class="fas fa-eye toggle-password" id="togglePassword"></i>
                             </div>
                             <div class="error-message" id="password_error"></div>
                         </div>
@@ -663,6 +643,215 @@ include 'header.php';?>
     </div>
 
     <script>
+    // --- Password Toggle Functionality ---
+    const togglePassword = document.querySelector('#togglePassword');
+    const passwordInput = document.querySelector('#password');
+
+    togglePassword.addEventListener('click', function (e) {
+        // Toggle the type attribute
+        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordInput.setAttribute('type', type);
+        
+        // Toggle the eye slash icon
+        this.classList.toggle('fa-eye');
+        this.classList.toggle('fa-eye-slash');
+    });
+
+    // --- Real-time Error Clearing Helper Functions ---
+    
+    function hideError(elementId) {
+        const errorElement = document.getElementById(elementId + '_error');
+        if (errorElement) {
+            errorElement.style.display = "none";
+            errorElement.textContent = "";
+        }
+    }
+
+    function showError(elementId, message) {
+        const errorElement = document.getElementById(elementId + '_error');
+        if (errorElement) {
+            errorElement.textContent = message;
+            errorElement.style.display = "block";
+        }
+    }
+
+    // --- Validation Logic Functions ---
+
+    function validateFirstName(input) {
+        if (input.value.trim() !== '') {
+            hideError('first_name');
+        }
+    }
+
+    function validateLastName(input) {
+        if (input.value.trim() !== '') {
+            hideError('last_name');
+        }
+    }
+
+    function validateDOB(input) {
+        const value = input.value;
+        if (value !== '') {
+            const dobDate = new Date(value);
+            const today = new Date();
+            if (dobDate <= today) {
+                hideError('dob');
+            }
+        }
+    }
+
+    function validateBloodGroup(select) {
+        if (select.value !== '') {
+            hideError('blood_group');
+        }
+    }
+
+    function validatePhone(input) {
+        if (/^\d{10}$/.test(input.value.trim())) {
+            hideError('phone');
+        }
+    }
+
+    function validateEmail(input) {
+        if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.value.trim())) {
+            hideError('email');
+        }
+    }
+
+    function validateUsername(input) {
+        const usernameRegex = /^[A-Z][A-Za-z0-9]*(_[A-Za-z0-9]+)*$/;
+        const val = input.value;
+        if (val.trim() !== '' && val.length <= 20 && usernameRegex.test(val)) {
+            hideError('username');
+        }
+    }
+
+    function validatePassword(input) {
+        const val = input.value;
+        if (val.length >= 8 && /[A-Z]/.test(val) && /[0-9]/.test(val) && /[\W_]/.test(val)) {
+            hideError('password');
+        }
+    }
+
+    // --- Attach Real-time Listeners ---
+    
+    document.getElementById('first_name').addEventListener('input', function() { validateFirstName(this); });
+    document.getElementById('last_name').addEventListener('input', function() { validateLastName(this); });
+    document.getElementById('dob').addEventListener('input', function() { validateDOB(this); });
+    document.querySelector('select[name="blood_group"]').addEventListener('change', function() { validateBloodGroup(this); });
+    document.getElementById('phone').addEventListener('input', function() { validatePhone(this); });
+    document.getElementById('email').addEventListener('input', function() { validateEmail(this); });
+    document.getElementById('username').addEventListener('input', function() { validateUsername(this); });
+    document.getElementById('password').addEventListener('input', function() { validatePassword(this); });
+
+
+    // --- Main Form Submission Validation ---
+
+    document.getElementById('PatientForm').addEventListener('submit', function (e) {
+        let isValid = true;
+        
+        // 1. Validate First Name
+        const firstName = document.getElementById('first_name');
+        if (firstName.value.trim() === '') {
+            showError('first_name', "First name is required.");
+            isValid = false;
+        } else {
+            hideError('first_name');
+        }
+
+        // 2. Validate Last Name
+        const lastName = document.getElementById('last_name');
+        if (lastName.value.trim() === '') {
+            showError('last_name', "Last name is required.");
+            isValid = false;
+        } else {
+            hideError('last_name');
+        }
+
+        // 3. Validate Date of Birth
+        const dob = document.getElementById('dob');
+        if (dob.value === '') {
+            showError('dob', "Date of Birth is required.");
+            isValid = false;
+        } else {
+            const dobDate = new Date(dob.value);
+            const today = new Date();
+            if (dobDate > today) {
+                showError('dob', "Date of Birth cannot be in the future.");
+                isValid = false;
+            } else {
+                hideError('dob');
+            }
+        }
+
+        // 4. Validate Blood Group
+        const bloodGroup = document.querySelector('select[name="blood_group"]');
+        if (bloodGroup.value === '') {
+            showError('blood_group', "Please select your blood group.");
+            isValid = false;
+        } else {
+            hideError('blood_group');
+        }
+
+        // 5. Validate Phone Number
+        const phone = document.getElementById('phone');
+        if (!/^\d{10}$/.test(phone.value.trim())) {
+            showError('phone', "Phone number must be exactly 10 digits.");
+            isValid = false;
+        } else {
+            hideError('phone');
+        }
+
+        // 6. Validate Email
+        const email = document.getElementById('email');
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim())) {
+            showError('email', "Invalid email format.");
+            isValid = false;
+        } else {
+            hideError('email');
+        }
+
+        // 7. Validate Username
+        const username = document.getElementById('username');
+        const usernameRegex = /^[A-Z][A-Za-z0-9]*(_[A-Za-z0-9]+)*$/;
+        if (username.value.trim() === '') {
+            showError('username', "Username is required.");
+            isValid = false;
+        } else if (username.value.length > 20) {
+            showError('username', "Username must be at most 20 characters.");
+            isValid = false;
+        } else if (!usernameRegex.test(username.value)) {
+            showError('username', "Username must start with a capital letter, no spaces, no consecutive underscores, and not end with underscore.");
+            isValid = false;
+        } else {
+            hideError('username');
+        }
+
+        // 8. Validate Password
+        const password = document.getElementById('password');
+        if (password.value.length < 8) {
+            showError('password', "Password must be at least 8 characters long.");
+            isValid = false;
+        } else if (!/[A-Z]/.test(password.value)) {
+            showError('password', "Password must contain at least one uppercase letter.");
+            isValid = false;
+        } else if (!/[0-9]/.test(password.value)) {
+            showError('password', "Password must contain at least one digit.");
+            isValid = false;
+        } else if (!/[\W_]/.test(password.value)) {
+            showError('password', "Password must contain at least one special character.");
+            isValid = false;
+        } else {
+            hideError('password');
+        }
+
+        // Prevent form submission if validation fails
+        if (!isValid) {
+            e.preventDefault();
+            showToast("Please correct the errors in the form.");
+        }
+    });
+
     // Toast notification function
     function showToast(message, isSuccess = false) {
         const toast = document.getElementById('toast');
@@ -675,133 +864,6 @@ include 'header.php';?>
             toast.className = toast.className.replace('show', '');
         }, 5000);
     }
-
-    // Form validation and submission
-    document.getElementById('PatientForm').addEventListener('submit', function (e) {
-        let isValid = true;
-        
-        // Reset all error messages
-        const errorElements = document.querySelectorAll('.error-message');
-        errorElements.forEach(element => {
-            element.style.display = "none";
-            element.textContent = "";
-        });
-
-        // Validate First Name
-        const firstName = document.getElementById('first_name');
-        if (firstName.value.trim() === '') {
-            const errorElement = document.getElementById('first_name_error');
-            errorElement.textContent = "First name is required.";
-            errorElement.style.display = "block";
-            isValid = false;
-        }
-
-        // Validate Last Name
-        const lastName = document.getElementById('last_name');
-        if (lastName.value.trim() === '') {
-            const errorElement = document.getElementById('last_name_error');
-            errorElement.textContent = "Last name is required.";
-            errorElement.style.display = "block";
-            isValid = false;
-        }
-
-        // Validate Date of Birth
-        const dob = document.getElementById('dob');
-        const dobValue = dob.value;
-        if (dobValue === '') {
-            const errorElement = document.getElementById('dob_error');
-            errorElement.textContent = "Date of Birth is required.";
-            errorElement.style.display = "block";
-            isValid = false;
-        } else {
-            const dobDate = new Date(dobValue);
-            const today = new Date();
-            if (dobDate > today) {
-                const errorElement = document.getElementById('dob_error');
-                errorElement.textContent = "Date of Birth cannot be in the future.";
-                errorElement.style.display = "block";
-                isValid = false;
-            }
-        }
-
-        // Validate Blood Group
-        const bloodGroup = document.querySelector('select[name="blood_group"]');
-        if (bloodGroup.value === '') {
-            const errorElement = document.getElementById('blood_group_error');
-            errorElement.textContent = "Please select your blood group.";
-            errorElement.style.display = "block";
-            isValid = false;
-        }
-
-        // Validate Phone Number
-        const phone = document.getElementById('phone');
-        if (!/^\d{10}$/.test(phone.value.trim())) {
-            const errorElement = document.getElementById('phone_error');
-            errorElement.textContent = "Phone number must be exactly 10 digits.";
-            errorElement.style.display = "block";
-            isValid = false;
-        }
-
-        // Validate Email
-        const email = document.getElementById('email');
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim())) {
-            const errorElement = document.getElementById('email_error');
-            errorElement.textContent = "Invalid email format.";
-            errorElement.style.display = "block";
-            isValid = false;
-        }
-
-        // Validate Username
-        const username = document.getElementById('username');
-        const usernameRegex = /^[A-Z][A-Za-z0-9]*(_[A-Za-z0-9]+)*$/;
-        if (username.value.trim() === '') {
-            const errorElement = document.getElementById('username_error');
-            errorElement.textContent = "Username is required.";
-            errorElement.style.display = "block";
-            isValid = false;
-        } else if (username.value.length > 20) {
-            const errorElement = document.getElementById('username_error');
-            errorElement.textContent = "Username must be at most 20 characters.";
-            errorElement.style.display = "block";
-            isValid = false;
-        } else if (!usernameRegex.test(username.value)) {
-            const errorElement = document.getElementById('username_error');
-            errorElement.textContent = "Username must start with a capital letter, no spaces, no consecutive underscores, and not end with underscore.";
-            errorElement.style.display = "block";
-            isValid = false;
-        }
-
-        // Validate Password
-        const password = document.getElementById('password');
-        if (password.value.length < 8) {
-            const errorElement = document.getElementById('password_error');
-            errorElement.textContent = "Password must be at least 8 characters long.";
-            errorElement.style.display = "block";
-            isValid = false;
-        } else if (!/[A-Z]/.test(password.value)) {
-            const errorElement = document.getElementById('password_error');
-            errorElement.textContent = "Password must contain at least one uppercase letter.";
-            errorElement.style.display = "block";
-            isValid = false;
-        } else if (!/[0-9]/.test(password.value)) {
-            const errorElement = document.getElementById('password_error');
-            errorElement.textContent = "Password must contain at least one digit.";
-            errorElement.style.display = "block";
-            isValid = false;
-        } else if (!/[\W_]/.test(password.value)) {
-            const errorElement = document.getElementById('password_error');
-            errorElement.textContent = "Password must contain at least one special character.";
-            errorElement.style.display = "block";
-            isValid = false;
-        }
-
-        // Prevent form submission if validation fails
-        if (!isValid) {
-            e.preventDefault();
-            // Show a toast notification for general validation error
-            showToast("Please correct the errors in the form.");
-        }
-    });
     </script>
 </body>
 </html>
