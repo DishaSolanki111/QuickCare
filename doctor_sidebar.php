@@ -168,12 +168,12 @@ body {
         <h2>QuickCare</h2>
         <a href="index.php">Home</a>
         <a href="doctor_dashboard.php" >Dashboard</a>
-        <a href="doctor_profile.php">My Profile</a>
-        <a href="mangae_schedule_doctor.php">Manage Schedule</a>
-        <a href="appointment_doctor.php">Manage Appointments</a>
-        <a href="manage_prescriptions.php">Manage Prescription</a>
-        <a href="view_medicine.php" >View Medicine</a>
-        <a href="doctor_feedback.php">View Feedback</a>
+        <a href="doctor_profile.php">Profile</a>
+        <a href="mangae_schedule_doctor.php">Schedule</a>
+        <a href="appointment_doctor.php">Appointments</a>
+        <a href="manage_prescriptions.php">Prescription</a>
+        <a href="view_medicine.php" >Medicine</a>
+        <a href="doctor_feedback.php">Feedback</a>
         <a href="logout.php" class="logout-btn">Logout</a>
     </div>
 </script>
