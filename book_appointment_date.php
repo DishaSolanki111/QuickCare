@@ -310,7 +310,8 @@ if (mysqli_num_rows($doctor_query) == 0) {
         }
 
         .calendar-day.available {
-            background-color: rgba(46, 204, 113, 0.1);
+           background-color: rgba(46, 204, 113, 0.1);
+            border-color: var(--accent-color);
             color: var(--accent-color);
             font-weight: 500;
         }
