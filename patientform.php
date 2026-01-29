@@ -30,12 +30,12 @@ include 'header.php';?>
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
-        /* body {
+        body {
             background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
             min-height: 100vh;
             display: flex;
             padding-top: 80px;
-        } */
+        }
 
         /* Main Content */
         .main-content {
@@ -48,25 +48,16 @@ include 'header.php';?>
         }
 
         /* Form Container */
-        body{
-    font-family:Arial;
-    background:linear-gradient(135deg,#0a4d68,#0582ca);
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    min-height:100vh;
-    margin:0;
-    padding:0;
-}
-.container{
-    background:#fff;
-    width:800px;
-    padding:30px;
-    border-radius:15px;
-    box-shadow:0 10px 30px rgba(0,0,0,0.2);
-    max-height:90vh;
-    overflow-y:auto;
-}
+        .container {
+            background-color: var(--white);
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            width: 100%;
+            max-width: 800px;
+            padding: 35px;
+            position: relative;
+        }
+
         .container::before {
             content: '';
             position: absolute;
@@ -349,7 +340,7 @@ include 'header.php';?>
 </head>
 <body>
     <!-- Main Content -->
-
+    <div class="main-content">
         <div class="container">
             <h1>Patient Registration</h1>
             
