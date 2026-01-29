@@ -146,13 +146,13 @@
   <h2 align="center">QuickCare</h2>
     <a href="index.php">Home</a>
     <a href="admin.php">Dashboard</a>  
-    <a href="Admin_appoitment.php">View Appointments</a>
-    <a href="Admin_doctor.php">Manage Doctors</a>
-    <a href="Admin_recept.php">Manage Receptionist</a>
-    <a href="Admin_patient.php">Manage Patients</a>
-    <a href="Admin_medicine.php">View Medicine</a>
-    <a href="Admin_payment.php">View Payments</a>
-    <a href="Admin_feedback.php">View Feedback</a>
+    <a href="Admin_appoitment.php">Appointments</a>
+    <a href="Admin_doctor.php">Doctors</a>
+    <a href="Admin_recept.php">Receptionist</a>
+    <a href="Admin_patient.php">Patients</a>
+    <a href="Admin_medicine.php">Medicine</a>
+    <a href="Admin_payment.php">Payments</a>
+    <a href="Admin_feedback.php">Feedback</a>
   
     <button class="logout-btn">logout</button>
 </div>
