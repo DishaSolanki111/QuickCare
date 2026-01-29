@@ -352,6 +352,7 @@
             $profile_image_path = "";
             
             // Store submitted values to repopulate form if needed
+            // MODIFIED: Added 'license_number' to the array
             $form_data = [
                 'first_name' => '',
                 'last_name' => '',
@@ -361,12 +362,14 @@
                 'phone' => '',
                 'email' => '',
                 'education' => '',
+                'license_number' => '', // NEW
                 'username' => '',
                 'specialisation_id' => ''
             ];
             
             if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 // Store form data
+                // MODIFIED: Added 'license_number'
                 $form_data = [
                     'first_name' => $_POST['first_name'] ?? '',
                     'last_name' => $_POST['last_name'] ?? '',
@@ -376,6 +379,7 @@
                     'phone' => $_POST['phone'] ?? '',
                     'email' => $_POST['email'] ?? '',
                     'education' => $_POST['education'] ?? '',
+                    'license_number' => $_POST['license_number'] ?? '', // NEW
                     'username' => $_POST['username'] ?? '',
                     'specialisation_id' => $_POST['specialisation_id'] ?? ''
                 ];
@@ -409,6 +413,7 @@
                 $phone      = $_POST['phone'];
                 $email      = $_POST['email'];
                 $education  = mysqli_real_escape_string($conn, $_POST['education']);
+                $license_number = mysqli_real_escape_string($conn, $_POST['license_number']); // NEW
                 $username   = $_POST['username'];
                 $password   = $_POST['password'];
                 $specialisation_id = $_POST['specialisation_id'];
@@ -439,6 +444,19 @@
                     $doj_date = new DateTime($doj);
                     if ($doj_date <= $dob_date) {
                         $errors[] = "Date of Joining must be after Date of Birth.";
+                    }
+                }
+
+                // ---------------- LICENSE NUMBER VALIDATION ----------------
+                // NEW BLOCK
+                if (empty($license_number)) {
+                    $errors[] = "License Number is required.";
+                } else {
+                    // Check for uniqueness in the database
+                    $check_sql = "SELECT id FROM doctor_tbl WHERE LICENSE_NUMBER = '$license_number'";
+                    $check_result = $conn->query($check_sql);
+                    if ($check_result && $check_result->num_rows > 0) {
+                        $errors[] = "This license number is already registered.";
                     }
                 }
 
@@ -474,13 +492,15 @@
                 if (empty($errors)) {
                     $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
+                    // MODIFIED: Added LICENSE_NUMBER to the query
                     $sql = "INSERT INTO doctor_tbl 
-                    (SPECIALISATION_ID, PROFILE_IMAGE, FIRST_NAME, LAST_NAME, DOB, DOJ, USERNAME, PSWD, PHONE, EMAIL, GENDER, EDUCATION)
+                    (SPECIALISATION_ID, PROFILE_IMAGE, FIRST_NAME, LAST_NAME, DOB, DOJ, USERNAME, PSWD, PHONE, EMAIL, GENDER, EDUCATION, LICENSE_NUMBER)
                     VALUES 
-                    ('$specialisation_id','$profile_image_path','$first_name','$last_name','$dob','$doj','$username','$hashed_password','$phone','$email','$gender','$education')";
+                    ('$specialisation_id','$profile_image_path','$first_name','$last_name','$dob','$doj','$username','$hashed_password','$phone','$email','$gender','$education','$license_number')";
 
                     if ($conn->query($sql) === TRUE) {
                         $success = true;
+                        // MODIFIED: Added 'license_number' to the reset array
                         $form_data = [
                             'first_name' => '',
                             'last_name' => '',
@@ -490,6 +510,7 @@
                             'phone' => '',
                             'email' => '',
                             'education' => '',
+                            'license_number' => '', // NEW
                             'username' => '',
                             'specialisation_id' => ''
                         ];
@@ -584,6 +605,13 @@
                     <label for="education">Education</label>
                     <textarea id="education" name="education" placeholder="Degree, University, Year..."><?php echo htmlspecialchars($form_data['education']); ?></textarea>
                     <div class="error-message" id="education_error"></div>
+                </div>
+                
+                <!-- NEW ROW: License Number -->
+                <div class="form-group">
+                    <label for="license_number">License Number <span class="required">*</span></label>
+                    <input type="text" id="license_number" name="license_number" placeholder="e.g. A12345678" value="<?php echo htmlspecialchars($form_data['license_number']); ?>" required>
+                    <div class="error-message" id="license_number_error"></div>
                 </div>
                 
                 <!-- Row 6: Professional Details -->
@@ -762,6 +790,13 @@
     document.getElementById('email').addEventListener('input', function() { validateEmail(this); });
     document.getElementById('username').addEventListener('input', function() { validateUsername(this); });
     document.getElementById('password').addEventListener('input', function() { validatePassword(this); });
+    
+    // NEW: Real-time listener for license number
+    document.getElementById('license_number').addEventListener('input', function() { 
+        if (this.value.trim() !== '') {
+            hideError('license_number');
+        }
+    });
 
     // --- File Upload Client-side Validation ---
     document.getElementById('profile_image').addEventListener('change', function () {
@@ -873,8 +908,17 @@
         } else {
             hideError('specialisation_id');
         }
+        
+        // NEW: 8. Validate License Number
+        const license = document.getElementById('license_number');
+        if (license.value.trim() === '') {
+            showError('license_number', "License number is required.");
+            isValid = false;
+        } else {
+            hideError('license_number');
+        }
 
-        // 8. Validate Username
+        // 9. Validate Username
         const username = document.getElementById('username');
         const usernameRegex = /^[A-Z][A-Za-z0-9]*(_[A-Za-z0-9]+)*$/;
         if (username.value.trim() === '') {
@@ -890,7 +934,7 @@
             hideError('username');
         }
 
-        // 9. Validate Password
+        // 10. Validate Password
         const password = document.getElementById('password');
         if (password.value.length < 8) {
             showError('password', "Password must be at least 8 characters long.");
