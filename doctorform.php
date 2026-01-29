@@ -53,7 +53,7 @@
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
             width: 100%;
             max-width: 800px;
-            padding: 30px;
+            padding: 40px; /* Increased padding slightly for breathing room */
             position: relative;
             overflow: hidden;
         }
@@ -71,7 +71,7 @@
         h1 {
             color: var(--dark-blue);
             text-align: center;
-            margin-bottom: 25px;
+            margin-bottom: 30px;
             font-size: 28px;
             position: relative;
         }
@@ -82,30 +82,9 @@
             bottom: -10px;
             left: 50%;
             transform: translateX(-50%);
-            width: 100px;
+            width: 80px;
             height: 3px;
             background-color: var(--accent-blue);
-        }
-
-        .form-section {
-            margin-bottom: 25px;
-        }
-
-        .section-title {
-            color: var(--primary-blue);
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            padding-bottom: 8px;
-            border-bottom: 1px solid var(--gray-blue);
-        }
-
-        .section-title i {
-            margin-right: 10px;
-            font-size: 18px;
-            color: var(--accent-blue);
         }
 
         .form-group {
@@ -113,6 +92,7 @@
             position: relative;
         }
 
+        /* Flex row for side-by-side inputs */
         .form-row {
             display: flex;
             gap: 20px;
@@ -120,7 +100,8 @@
         }
 
         .form-row .form-group {
-            flex: 1;
+            flex: 1; /* Makes inputs equal width */
+            margin-bottom: 0; /* Reset margin for row items */
         }
 
         label {
@@ -171,7 +152,6 @@
             background-color: var(--white);
         }
         
-        /* Adjust padding for password field to accommodate icon */
         input[type="password"] {
             padding-right: 40px; 
         }
@@ -202,6 +182,8 @@
             display: flex;
             gap: 20px;
             margin-top: 8px;
+            align-items: center;
+            height: 48px; /* Align with input boxes */
         }
 
         .radio-option {
@@ -213,19 +195,28 @@
         .radio-option input {
             margin-right: 8px;
             cursor: pointer;
+            width: auto; /* Reset width for radio buttons */
+        }
+        
+        .radio-option label {
+            margin-bottom: 0; /* Remove label bottom margin for inline alignment */
+            font-weight: normal;
+            cursor: pointer;
         }
 
         .btn-container {
             display: flex;
             justify-content: center;
             margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid var(--gray-blue);
         }
 
         .btn {
             background: linear-gradient(90deg, var(--primary-blue), var(--secondary-blue));
             color: var(--white);
             border: none;
-            padding: 12px 30px;
+            padding: 12px 40px;
             font-size: 16px;
             border-radius: 50px;
             cursor: pointer;
@@ -299,6 +290,10 @@
             .form-row {
                 flex-direction: column;
                 gap: 0;
+            }
+            
+            .form-row .form-group {
+                margin-bottom: 20px;
             }
         }
         
@@ -419,7 +414,6 @@
                 $specialisation_id = $_POST['specialisation_id'];
 
                 // ---------------- DATE VALIDATION ----------------
-                // Validate DOB is not empty and not in the future
                 if (empty($dob)) {
                     $errors[] = "Date of Birth is required.";
                 } else {
@@ -430,7 +424,6 @@
                     }
                 }
                 
-                // Validate DOJ is not empty and not in the future
                 if (empty($doj)) {
                     $errors[] = "Date of Joining is required.";
                 } else {
@@ -441,7 +434,6 @@
                     }
                 }
                 
-                // Validate DOJ is after DOB
                 if (!empty($dob) && !empty($doj)) {
                     $dob_date = new DateTime($dob);
                     $doj_date = new DateTime($doj);
@@ -489,7 +481,6 @@
 
                     if ($conn->query($sql) === TRUE) {
                         $success = true;
-                        // Reset form data on successful submission
                         $form_data = [
                             'first_name' => '',
                             'last_name' => '',
@@ -527,141 +518,111 @@
             
             <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post" id="doctorForm" enctype="multipart/form-data">
                 
-                <!-- Personal Information Section -->
-                <div class="form-section">
-                    <h3 class="section-title">
-                        <i class="fas fa-user-md"></i>
-                        Personal Information
-                    </h3>
-                    
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="first_name">First Name <span class="required">*</span></label>
-                            <input type="text" id="first_name" name="first_name" placeholder="e.g. John" value="<?php echo htmlspecialchars($form_data['first_name']); ?>" required>
-                            <div class="error-message" id="first_name_error"></div>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="last_name">Last Name <span class="required">*</span></label>
-                            <input type="text" id="last_name" name="last_name" placeholder="e.g. Doe" value="<?php echo htmlspecialchars($form_data['last_name']); ?>" required>
-                            <div class="error-message" id="last_name_error"></div>
-                        </div>
-                    </div>
-                    
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="dob">Date of Birth <span class="required">*</span></label>
-                            <input type="date" id="dob" name="dob" placeholder="YYYY-MM-DD" value="<?php echo htmlspecialchars($form_data['dob']); ?>" required>
-                            <div class="error-message" id="dob_error"></div>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="doj">Date of Joining <span class="required">*</span></label>
-                            <input type="date" id="doj" name="doj" placeholder="YYYY-MM-DD" value="<?php echo htmlspecialchars($form_data['doj']); ?>" required>
-                            <div class="error-message" id="doj_error"></div>
-                        </div>
-                    </div>
-
+                <!-- Row 1: Name -->
+                <div class="form-row">
                     <div class="form-group">
-                        <label>Gender</label>
-                        <div class="radio-group">
-                            <div class="radio-option">
-                                <input type="radio" id="male" name="gender" value="MALE" <?php echo ($form_data['gender'] == 'MALE') ? 'checked' : ''; ?>>
-                                <label for="male">Male</label>
-                            </div>
-                            <div class="radio-option">
-                                <input type="radio" id="female" name="gender" value="FEMALE" <?php echo ($form_data['gender'] == 'FEMALE') ? 'checked' : ''; ?>>
-                                <label for="female">Female</label>
-                            </div>
-                            <div class="radio-option">
-                                <input type="radio" id="other" name="gender" value="OTHER" <?php echo ($form_data['gender'] == 'OTHER') ? 'checked' : ''; ?>>
-                                <label for="other">Other</label>
-                            </div>
-                        </div>
+                        <label for="first_name">First Name <span class="required">*</span></label>
+                        <input type="text" id="first_name" name="first_name" placeholder="e.g. John" value="<?php echo htmlspecialchars($form_data['first_name']); ?>" required>
+                        <div class="error-message" id="first_name_error"></div>
                     </div>
-                </div>
-
-                <!-- Contact Information Section -->
-                <div class="form-section">
-                    <h3 class="section-title">
-                        <i class="fas fa-address-book"></i>
-                        Contact Information
-                    </h3>
-                    
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="phone">Phone Number <span class="required">*</span></label>
-                            <input type="text" id="phone" name="phone" maxlength="10" placeholder="14152638945" value="<?php echo htmlspecialchars($form_data['phone']); ?>" required>
-                            <div class="error-message" id="phone_error"></div>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="email">Email <span class="required">*</span></label>
-                            <input type="email" id="email" name="email" placeholder="e.g. john@example.com" value="<?php echo htmlspecialchars($form_data['email']); ?>" required>
-                            <div class="error-message" id="email_error"></div>
-                        </div>
-                    </div>
-
                     <div class="form-group">
-                        <label for="education">Education</label>
-                        <textarea id="education" name="education" placeholder="Degree, University, Year..."><?php echo htmlspecialchars($form_data['education']); ?></textarea>
-                        <div class="error-message" id="education_error"></div>
+                        <label for="last_name">Last Name <span class="required">*</span></label>
+                        <input type="text" id="last_name" name="last_name" placeholder="e.g. Doe" value="<?php echo htmlspecialchars($form_data['last_name']); ?>" required>
+                        <div class="error-message" id="last_name_error"></div>
                     </div>
                 </div>
                 
-                <!-- Professional Information Section -->
-                <div class="form-section">
-                    <h3 class="section-title">
-                        <i class="fas fa-briefcase"></i>
-                        Professional Details
-                    </h3>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="specialisation_id">Specialisation <span class="required">*</span></label>
-                            <select id="specialisation_id" name="specialisation_id" required>
-                                <option value="">Select Specialisation</option>
-                                <option value="1" <?php echo ($form_data['specialisation_id'] == '1') ? 'selected' : ''; ?>>Pediatrician</option>
-                                <option value="2" <?php echo ($form_data['specialisation_id'] == '2') ? 'selected' : ''; ?>>Cardiologist</option>
-                                <option value="3" <?php echo ($form_data['specialisation_id'] == '3') ? 'selected' : ''; ?>>Neurologist</option>
-                                <option value="4" <?php echo ($form_data['specialisation_id'] == '4') ? 'selected' : ''; ?>>Orthopedic</option>
-                            </select>
-                            <div class="error-message" id="specialisation_id_error"></div>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="profile_image">Profile Image<span class="required">*</span></label>
-                            <div class="file-upload">
-                                <input type="file" id="profile_image" name="profile_image" accept="image/*" required>
-                                <label for="profile_image" class="file-upload-label" id="file-label">Choose Profile Image (JPG/PNG)*</label>
-                            </div>
-                            <div class="error-message" id="profile_image_error"></div>
-                        </div>
+                <!-- Row 2: Dates -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="dob">Date of Birth <span class="required">*</span></label>
+                        <input type="date" id="dob" name="dob" placeholder="YYYY-MM-DD" value="<?php echo htmlspecialchars($form_data['dob']); ?>" required>
+                        <div class="error-message" id="dob_error"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="doj">Date of Joining <span class="required">*</span></label>
+                        <input type="date" id="doj" name="doj" placeholder="YYYY-MM-DD" value="<?php echo htmlspecialchars($form_data['doj']); ?>" required>
+                        <div class="error-message" id="doj_error"></div>
                     </div>
                 </div>
 
-                <!-- Account Information Section -->
-                <div class="form-section">
-                    <h3 class="section-title">
-                        <i class="fas fa-lock"></i>
-                        Account Information
-                    </h3>
-                    
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="username">Username <span class="required">*</span></label>
-                            <input type="text" id="username" name="username" placeholder="e.g. JohnDoe" value="<?php echo htmlspecialchars($form_data['username']); ?>" required>
-                            <div class="error-message" id="username_error"></div>
+                <!-- Row 3: Gender -->
+                <div class="form-group">
+                    <label>Gender</label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" id="male" name="gender" value="MALE" <?php echo ($form_data['gender'] == 'MALE') ? 'checked' : ''; ?>>
+                            <label for="male">Male</label>
                         </div>
-                        
-                        <div class="form-group">
-                            <label for="password">Password <span class="required">*</span></label>
-                            <div class="password-wrapper">
-                                <input type="password" id="password" name="password" placeholder="John@123" required>
-                                <i class="fas fa-eye toggle-password" id="togglePassword"></i>
-                            </div>
-                            <div class="error-message" id="password_error"></div>
+                        <div class="radio-option">
+                            <input type="radio" id="female" name="gender" value="FEMALE" <?php echo ($form_data['gender'] == 'FEMALE') ? 'checked' : ''; ?>>
+                            <label for="female">Female</label>
                         </div>
+                        <div class="radio-option">
+                            <input type="radio" id="other" name="gender" value="OTHER" <?php echo ($form_data['gender'] == 'OTHER') ? 'checked' : ''; ?>>
+                            <label for="other">Other</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Row 4: Contact -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="phone">Phone Number <span class="required">*</span></label>
+                        <input type="text" id="phone" name="phone" maxlength="10" placeholder="14152638945" value="<?php echo htmlspecialchars($form_data['phone']); ?>" required>
+                        <div class="error-message" id="phone_error"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email <span class="required">*</span></label>
+                        <input type="email" id="email" name="email" placeholder="e.g. john@example.com" value="<?php echo htmlspecialchars($form_data['email']); ?>" required>
+                        <div class="error-message" id="email_error"></div>
+                    </div>
+                </div>
+
+                <!-- Row 5: Education (Full Width) -->
+                <div class="form-group">
+                    <label for="education">Education</label>
+                    <textarea id="education" name="education" placeholder="Degree, University, Year..."><?php echo htmlspecialchars($form_data['education']); ?></textarea>
+                    <div class="error-message" id="education_error"></div>
+                </div>
+                
+                <!-- Row 6: Professional Details -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="specialisation_id">Specialisation <span class="required">*</span></label>
+                        <select id="specialisation_id" name="specialisation_id" required>
+                            <option value="">Select Specialisation</option>
+                            <option value="1" <?php echo ($form_data['specialisation_id'] == '1') ? 'selected' : ''; ?>>Pediatrician</option>
+                            <option value="2" <?php echo ($form_data['specialisation_id'] == '2') ? 'selected' : ''; ?>>Cardiologist</option>
+                            <option value="3" <?php echo ($form_data['specialisation_id'] == '3') ? 'selected' : ''; ?>>Neurologist</option>
+                            <option value="4" <?php echo ($form_data['specialisation_id'] == '4') ? 'selected' : ''; ?>>Orthopedic</option>
+                        </select>
+                        <div class="error-message" id="specialisation_id_error"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="profile_image">Profile Image<span class="required">*</span></label>
+                        <div class="file-upload">
+                            <input type="file" id="profile_image" name="profile_image" accept="image/*" required>
+                            <label for="profile_image" class="file-upload-label" id="file-label">Choose Profile Image (JPG/PNG)*</label>
+                        </div>
+                        <div class="error-message" id="profile_image_error"></div>
+                    </div>
+                </div>
+                
+                <!-- Row 7: Account Details -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="username">Username <span class="required">*</span></label>
+                        <input type="text" id="username" name="username" placeholder="e.g. JohnDoe" value="<?php echo htmlspecialchars($form_data['username']); ?>" required>
+                        <div class="error-message" id="username_error"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password <span class="required">*</span></label>
+                        <div class="password-wrapper">
+                            <input type="password" id="password" name="password" placeholder="John@123" required>
+                            <i class="fas fa-eye toggle-password" id="togglePassword"></i>
+                        </div>
+                        <div class="error-message" id="password_error"></div>
                     </div>
                 </div>
                 
@@ -681,11 +642,8 @@
     const passwordInput = document.querySelector('#password');
 
     togglePassword.addEventListener('click', function (e) {
-        // Toggle the type attribute
         const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
         passwordInput.setAttribute('type', type);
-        
-        // Toggle the eye slash icon
         this.classList.toggle('fa-eye');
         this.classList.toggle('fa-eye-slash');
     });
@@ -733,7 +691,6 @@
         }
     }
 
-    // Complex validation for DOJ (Must check DOB as well)
     function validateDOJ(input) {
         const dojVal = input.value;
         const dobVal = document.getElementById('dob').value;
@@ -743,17 +700,14 @@
         const dojDate = new Date(dojVal);
         const today = new Date();
         
-        // Basic check
         if (dojDate > today) return;
 
-        // If DOB is present, check if DOJ > DOB
         if (dobVal !== '') {
             const dobDate = new Date(dobVal);
             if (dojDate > dobDate) {
                 hideError('doj');
             }
         } else {
-            // If no DOB, check only against today
             if (dojDate <= today) {
                 hideError('doj');
             }
@@ -799,7 +753,6 @@
     document.getElementById('last_name').addEventListener('input', function() { validateLastName(this); });
     document.getElementById('dob').addEventListener('input', function() { 
         validateDOB(this);
-        // Changing DOB affects DOJ validation validity, so we might need to recheck DOJ
         if(document.getElementById('doj').value !== '') validateDOJ(document.getElementById('doj'));
     });
     
@@ -814,9 +767,7 @@
     document.getElementById('profile_image').addEventListener('change', function () {
         const file = this.files[0];
         const label = document.getElementById('file-label');
-        const errorElement = document.getElementById('profile_image_error');
         
-        // Reset error
         hideError('profile_image');
         
         if (file) {
@@ -963,7 +914,6 @@
         }
     });
 
-    // Toast notification function
     function showToast(message, isSuccess = false) {
         const toast = document.getElementById('toast');
         toast.innerHTML = isSuccess ? 
