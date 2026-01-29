@@ -692,7 +692,7 @@ html {
             
             <!-- Book New Appointment Button -->
             <div style="margin-bottom: 20px;">
-                <button class="btn btn-success" onclick="openBookingModal()">
+                <button class="btn btn-success" onClick="window.location.href='appointment.php'">
                     <i class="fas fa-plus"></i> Book New Appointment
                 </button>
             </div>
