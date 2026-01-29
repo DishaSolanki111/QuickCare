@@ -356,6 +356,25 @@ include 'header.php';
             margin-bottom: 15px;
             display: none;
         }
+        
+        /* Password field container and eye icon styles */
+        .password-container {
+            position: relative;
+            margin-bottom: 20px;
+        }
+        
+        .password-toggle {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: var(--text-light);
+        }
+        
+        .password-toggle:hover {
+            color: var(--primary);
+        }
     </style>
 </head>
 <body>
@@ -384,12 +403,20 @@ include 'header.php';
                 <h3>Patient Login</h3>
                 <div class="error-message" id="patient-error"></div>
                 <input type="text" name="username" placeholder="Username" required>
-                <input type="password" name="pswd" placeholder="Password" required>
+                <div class="password-container">
+                    <input type="password" name="pswd" placeholder="Password" required id="patient-password">
+                    <span class="password-toggle" onclick="togglePassword('patient-password', this)">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                    </span>
+                </div>
                 <button type="submit">Login</button>
-  <div class="login-footer">
-    <a href="register.php" class="left-link">Create account</a>
-    <a href="forgot_password.php" class="right-link">Forgot password?</a>
-</div>
+                <div class="login-footer">
+                    <a href="register.php" class="left-link">Create account</a>
+                    <a href="forgot_password.php" class="right-link">Forgot password?</a>
+                </div>
             </form>
 
             <!-- Doctor Login Form -->
@@ -398,11 +425,19 @@ include 'header.php';
                 <h3>Doctor Login</h3>
                 <div class="error-message" id="doctor-error"></div>
                 <input type="text" name="username" placeholder="Username" required>
-                <input type="password" name="pswd" placeholder="Password" required>
+                <div class="password-container">
+                    <input type="password" name="pswd" placeholder="Password" required id="doctor-password">
+                    <span class="password-toggle" onclick="togglePassword('doctor-password', this)">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                    </span>
+                </div>
                 <button type="submit">Login</button>
                 <div class="login-footer">
-    <a href="forgot_password.php" class="right-link">Forgot password?</a>
-</div>
+                    <a href="forgot_password.php" class="right-link">Forgot password?</a>
+                </div>
             </form>
 
             <!-- Receptionist Login Form -->
@@ -411,11 +446,19 @@ include 'header.php';
                 <h3>Receptionist Login</h3>
                 <div class="error-message" id="receptionist-error"></div>
                 <input type="text" name="username" placeholder="Username" required>
-                <input type="password" name="pswd" placeholder="Password" required>
+                <div class="password-container">
+                    <input type="password" name="pswd" placeholder="Password" required id="receptionist-password">
+                    <span class="password-toggle" onclick="togglePassword('receptionist-password', this)">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                    </span>
+                </div>
                 <button type="submit">Login</button>
                 <div class="login-footer">
-    <a href="forgot_password.php" class="right-link">Forgot password?</a>
-</div>
+                    <a href="forgot_password.php" class="right-link">Forgot password?</a>
+                </div>
             </form>
         </div>
     </div>
@@ -428,6 +471,31 @@ include 'header.php';
 </form>
 
 <script>
+    // Password visibility toggle function
+    function togglePassword(inputId, toggleElement) {
+        const passwordInput = document.getElementById(inputId);
+        
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            // Change to eye-off icon
+            toggleElement.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                    <line x1="1" y1="1" x2="23" y2="23"></line>
+                </svg>
+            `;
+        } else {
+            passwordInput.type = 'password';
+            // Change back to eye icon
+            toggleElement.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+            `;
+        }
+    }
+    
     // --- MODIFIED JAVASCRIPT FOR TAB SWITCHING ---
     document.addEventListener('DOMContentLoaded', () => {
         const tabs = document.querySelectorAll(".tab");
