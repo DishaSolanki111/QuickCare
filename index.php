@@ -1,9 +1,11 @@
 <?php
+session_start();
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 include 'header.php';
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -598,10 +600,15 @@ include 'header.php';
             <div class="hero-content fade-in">
                 <h1>Quick Doctor Appointments at Your Convenience</h1>
                 <p>Choose verified specialists, pick your slot, and get treated faster with QuickCare.</p>
-                <div class="hero-buttons">
-                    <a href="appointment.php" class="btn-primary">Book Appointment</a>
-                    
-                </div>
+              <div class="hero-buttons">
+    <?php if (!isset($_SESSION['PATIENT_ID'])) { ?>
+        <a href="appointment.php" class="btn-primary">Book Appointment</a>
+    <?php } else { ?>
+        <a href="patient.php" class="btn-primary">My Dashboard</a>
+    <?php } ?>
+</div>
+
+
                 <div class="stats">
                     <div class="stat-item">
                         <span class="stat-number">15+</span>

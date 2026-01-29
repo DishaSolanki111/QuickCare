@@ -51,7 +51,7 @@ include 'header.php';
         }
 
 .login-footer {
-    margin-bottom: 12px;
+    margin-top: 12px;
     display: flex;
     justify-content: space-between; /* ✅ left & right edges */
     align-items: center;
@@ -140,7 +140,7 @@ include 'header.php';
         .tabs {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 20px;
+            margin-top: 20px;
             background: var(--primary-light);
             border-radius: 15px;
             padding: 5px;
@@ -360,7 +360,7 @@ include 'header.php';
         /* Password field container and eye icon styles */
         .password-container {
             position: relative;
-            margin-bottom: 20px;
+            margin-bottom: 5px;
         }
         
         .password-toggle {
