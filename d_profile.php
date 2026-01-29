@@ -441,7 +441,7 @@ if (!$doctor) {
                         <span class="badge"><?php echo htmlspecialchars($doctor['SPECIALISATION_NAME']); ?></span>
                         
                         <!-- Book Now Button -->
-                        <button class="book-now-btn" onclick="handleBooking(<?php echo $doctor_id; ?>)">
+                        <button class="book-now-btn" onclick="window.location.href='book_appointment_date.php?doctor_id=<?php echo $doctor_id; ?>'">
                             <i class="fas fa-calendar-check"></i> Book Appointment
                         </button>
                     </div>
