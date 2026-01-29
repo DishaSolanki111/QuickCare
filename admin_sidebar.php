@@ -79,7 +79,7 @@
         .logout-btn {
             
             display: block;
-            width: 80%;
+            width:60%;
             margin: 20px auto 0 auto;
             padding: 10px;
             background-color: var(--soft-blue);
@@ -153,8 +153,7 @@
     <a href="Admin_medicine.php">Medicine</a>
     <a href="Admin_payment.php">Payments</a>
     <a href="Admin_feedback.php">Feedback</a>
-  
-    <button class="logout-btn">logout</button>
+    <a href="logout.php" class="logout-btn">Logout</a>
 </div>
 
 <script>
