@@ -1,6 +1,10 @@
 <?php
-// Start session to get booking data
 session_start();
+
+if (isset($_SESSION['PATIENT_ID']) && $_SESSION['role'] === 'patient') {
+    header("Location: book_appointment_confirm.php");
+    exit();
+}
 include "config.php";
 include "header.php";
 

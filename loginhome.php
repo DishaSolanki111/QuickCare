@@ -87,6 +87,8 @@ if ($user_type === 'patient') {
             $_SESSION['USER_TYPE'] = 'patient';
             $_SESSION['PATIENT_ID'] = $row['PATIENT_ID'];
             $_SESSION['USER_NAME'] = $row['FIRST_NAME']; 
+            $_SESSION['role'] = 'patient';
+
 
             // ✅ Return JSON Success
             header('Content-Type: application/json');
