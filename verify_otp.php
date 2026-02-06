@@ -104,13 +104,12 @@ include "header.php";
             <h2>Forgot Password</h2>
             <p>Enter your registered phone number</p>
         </div>
-        <form action="send_otp.php" method="POST">
-        <div class="form-group">
-        <input type="text" name="phone" placeholder="Enter registered phone" required>
-        </div>
-        <button type="submit" class="login-btn">Send OTP</button>
-        </form>
-
+        <form action="check_otp.php" method="POST">
+            <div class="form-group">
+    <input type="text" name="otp" placeholder="Enter OTP">
+    </div>
+    <button class="login-btn">Verify</button>
+</form>
         <div class="back-link">
             <a href="login.php">Back to Login</a>
         </div>
