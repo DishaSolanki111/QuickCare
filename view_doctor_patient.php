@@ -752,10 +752,10 @@ while ($doctor = mysqli_fetch_assoc($doctors_result)) {
 </div>
 </div>
 <div class="doctor-actions">
-<a href="doctor_profiles.php?doctor=<?php echo $doctor['DOCTOR_ID']; ?>" class="btn btn-primary">
+<a href="d_profile.php?doctor=<?php echo $doctor['DOCTOR_ID']; ?>" class="btn btn-primary">
 <i class="fas fa-user-md"></i> View Profile
 </a>
-<button class="btn btn-success" onclick="bookAppointment(<?php echo $doctor['DOCTOR_ID']; ?>)">
+<button class="btn btn-success" onclick="window.location.href='book_appointment_date.php'">
 <i class="fas fa-calendar-plus"></i> Book
 </button>
 </div>

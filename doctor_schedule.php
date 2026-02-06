@@ -524,7 +524,7 @@ body {
                             const time = slot.getAttribute('data-time');
                             const date = document.getElementById('date-picker').value;
                             // Redirect to booking page with parameters
-                            window.location.href = `book_appointment.php?doctor_id=${doctorId}&date=${date}&time=${time}`;
+                            window.location.href = `book_appointment_confirm.php?doctor_id=${doctorId}&date=${date}&time=${time}`;
                         };
                     });
                 });
