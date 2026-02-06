@@ -344,7 +344,6 @@ include 'header.php'; // Include the header
 <body>
     <!-- Animated Background -->
     <div class="bg-animation"></div>
-<?php include 'header.php'; ?>
     <!-- ================= HERO SECTION ================= -->
     <section class="hero">
         <div>

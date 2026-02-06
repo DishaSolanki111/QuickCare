@@ -170,7 +170,7 @@ if (session_status() === PHP_SESSION_NONE) {
 
     .user-type {
         font-size: 0.8rem;
-        color: var(--text-light);
+        color: #4a6fa5; /* Explicit color - pages must not override (index/doctors use --text-light: #fff for hero) */
         display: block !important;
         visibility: visible !important;
         opacity: 1 !important;
@@ -354,7 +354,7 @@ if (session_status() === PHP_SESSION_NONE) {
 
     .mobile-user-type {
         font-size: 0.8rem;
-        color: var(--text-light);
+        color: #4a6fa5; /* Explicit color - consistent with desktop user-type */
         display: block !important;
         visibility: visible !important;
         opacity: 1 !important;

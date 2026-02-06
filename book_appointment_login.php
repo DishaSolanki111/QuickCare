@@ -1,7 +1,9 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
-if (isset($_SESSION['PATIENT_ID']) && $_SESSION['role'] === 'patient') {
+if (isset($_SESSION['PATIENT_ID'])) {
     header("Location: book_appointment_confirm.php");
     exit();
 }

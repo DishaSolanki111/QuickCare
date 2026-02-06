@@ -1,5 +1,7 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 include "config.php";
 
 // Check if form is submitted
@@ -16,10 +18,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         
         // Verify password using bcrypt
         if (password_verify($password, $user['PSWD'])) { // Changed from PASSWORD to PSWD
-            // Set session variables
+            // Set session variables (align with loginhome.php for consistency)
+            $_SESSION['LOGGED_IN'] = true;
+            $_SESSION['USER_TYPE'] = 'patient';
             $_SESSION['PATIENT_ID'] = $user['PATIENT_ID'];
             $_SESSION['PATIENT_NAME'] = $user['FIRST_NAME'] . ' ' . $user['LAST_NAME'];
             $_SESSION['PATIENT_USERNAME'] = $user['USERNAME'];
+            $_SESSION['USER_NAME'] = $user['FIRST_NAME'];
+            $_SESSION['role'] = 'patient';
             
             // Return success response
             echo json_encode(['status' => 'success', 'message' => 'Login successful']);

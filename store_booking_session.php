@@ -1,5 +1,7 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
  $step = isset($_POST['step']) ? $_POST['step'] : '';
 
@@ -22,7 +24,7 @@ switch ($step) {
         $appointment_date = $_SESSION['booking_date'];
         $appointment_time = $_SESSION['booking_time'];
         $reason = $_SESSION['booking_reason'];
-        $patient_id = $_SESSION['patient_id'];
+        $patient_id = $_SESSION['PATIENT_ID'];
         
         $insert_query = "INSERT INTO appointment_tbl (PATIENT_ID, DOCTOR_ID, APPOINTMENT_DATE, APPOINTMENT_TIME, REASON, STATUS, PAYMENT_STATUS) 
                        VALUES ($patient_id, $doctor_id, '$appointment_date', '$appointment_time', '$reason', 'Confirmed', 'Paid')";
