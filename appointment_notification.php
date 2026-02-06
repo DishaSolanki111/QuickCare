@@ -1,8 +1,8 @@
 <?php
-// // Use the same session handling as doctor_header.php
-// if (session_status() === PHP_SESSION_NONE) {
-//     session_start();
-//}
+// Use the same session handling as doctor_header.php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 include 'config.php';
 

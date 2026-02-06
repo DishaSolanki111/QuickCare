@@ -1,9 +1,10 @@
 <?php
+session_start();
 include "config.php";
 include "header.php";
 
- $q = "SELECT SPECIALISATION_ID, SPECIALISATION_NAME FROM specialisation_tbl";
- $res = mysqli_query($conn,$q);
+$q = "SELECT SPECIALISATION_ID, SPECIALISATION_NAME FROM specialisation_tbl";
+$res = mysqli_query($conn,$q);
 ?>
 <!DOCTYPE html>
 <html lang="en">

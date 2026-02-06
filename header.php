@@ -3,15 +3,10 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-$currentPage = basename($_SERVER['PHP_SELF']);
+ $currentPage = basename($_SERVER['PHP_SELF']);
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>QuickCare Hospital</title>
+<!-- Header CSS -->
 <style>
     :root {
         --primary: #0066cc;
@@ -35,39 +30,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
         --shadow-2xl: 0 25px 50px rgba(0,0,0,0.25);
     }
 
-    /* GLOBAL STYLES */
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    }
-    body {
-        background: var(--light);
-        color: var(--text);
-        line-height: 1.6;
-        overflow-x: hidden;
-    }
-
-    /* Custom Scrollbar */
-    ::-webkit-scrollbar {
-        width: 10px;
-    }
-
-    ::-webkit-scrollbar-track {
-        background: #f1f1f1;
-    }
-
-    ::-webkit-scrollbar-thumb {
-        background: var(--primary);
-        border-radius: 5px;
-    }
-
-    ::-webkit-scrollbar-thumb:hover {
-        background: var(--primary-dark);
-    }
-
-    /* ================= HEADER ================= */
+    /* Header Styles */
     header {
         position: fixed;
         top: 0;
@@ -78,7 +41,6 @@ $currentPage = basename($_SERVER['PHP_SELF']);
         background: rgba(255, 255, 255, 0.95);
         backdrop-filter: blur(10px);
         border-bottom: 1px solid rgba(0, 102, 204, 0.1);
-        margin-bottom: 100px;
     }
 
     .navbar {
@@ -86,11 +48,11 @@ $currentPage = basename($_SERVER['PHP_SELF']);
         justify-content: space-between;
         align-items: center;
         width: 100%;
-        padding: 1rem 2rem;   /* small left spacing */
-        margin: 0;            /* REMOVE auto centering */
+        padding: 1rem 2rem;
+        margin: 0;
     }
 
-    /* Logo Area - Left Side */
+    /* Logo Area */
     .logo-area {
         display: flex;
         align-items: center;
@@ -120,14 +82,13 @@ $currentPage = basename($_SERVER['PHP_SELF']);
         color: transparent;
     }
 
-    /* Right Side Container */
+    /* Navigation */
     .nav-right-container {
         display: flex;
         align-items: center;
         gap: 2rem;
     }
 
-    /* Navigation Links - Right Aligned */
     .nav-links {
         display: flex;
         align-items: center;
@@ -168,56 +129,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
         font-weight: 600;
     }
 
-    /* Auth Buttons */
-    .auth-buttons {
-        display: flex;
-        gap: 0.8rem;
-    }
-
-    .btn-login, .btn-register, .btn-logout {
-        padding: 0.6rem 1.2rem;
-        border-radius: 20px;
-        font-weight: 600;
-        font-size: 0.9rem;
-        transition: all 0.3s ease;
-        cursor: pointer;
-        border: none;
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-
-    .btn-login {
-        background: transparent;
-        color: var(--primary);
-        border: 2px solid var(--primary);
-    }
-
-    .btn-login:hover {
-        background: var(--primary);
-        color: white;
-    }
-
-    .btn-register {
-        background: var(--primary);
-        color: white;
-    }
-
-    .btn-register:hover {
-        background: var(--primary-dark);
-    }
-
-    .btn-logout {
-        background: var(--warning);
-        color: white;
-    }
-
-    .btn-logout:hover {
-        background: #ff5252;
-    }
-
-    /* User Profile Section */
+    /* User Profile - KEY PART */
     .user-profile {
         display: flex;
         align-items: center;
@@ -259,6 +171,49 @@ $currentPage = basename($_SERVER['PHP_SELF']);
     .user-type {
         font-size: 0.8rem;
         color: var(--text-light);
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+
+    /* Auth Buttons */
+    .auth-buttons {
+        display: flex;
+        gap: 0.8rem;
+    }
+
+    .btn-login, .btn-register {
+        padding: 0.6rem 1.2rem;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        border: none;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .btn-login {
+        background: transparent;
+        color: var(--primary);
+        border: 2px solid var(--primary);
+    }
+
+    .btn-login:hover {
+        background: var(--primary);
+        color: white;
+    }
+
+    .btn-register {
+        background: var(--primary);
+        color: white;
+    }
+
+    .btn-register:hover {
+        background: var(--primary-dark);
     }
 
     /* Profile Dropdown */
@@ -293,13 +248,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
         color: var(--primary);
     }
 
-    .profile-dropdown a i {
-        margin-right: 0.5rem;
-        width: 20px;
-        text-align: center;
-    }
-
-    /* Mobile Menu Button */
+    /* Mobile Menu */
     .mobile-menu-btn {
         display: none;
         background: var(--primary);
@@ -313,11 +262,6 @@ $currentPage = basename($_SERVER['PHP_SELF']);
         transition: all 0.3s ease;
     }
 
-    .mobile-menu-btn:hover {
-        background: var(--primary-dark);
-    }
-
-    /* Mobile Navigation */
     .mobile-nav {
         position: fixed;
         top: 0;
@@ -359,10 +303,6 @@ $currentPage = basename($_SERVER['PHP_SELF']);
         cursor: pointer;
     }
 
-    .close-menu:hover {
-        background: rgba(255, 255, 255, 0.3);
-    }
-
     .mobile-nav-links {
         padding: 1.5rem;
     }
@@ -381,11 +321,6 @@ $currentPage = basename($_SERVER['PHP_SELF']);
     .mobile-nav-links a:hover {
         background: var(--primary-light);
         color: var(--primary);
-    }
-
-    .mobile-nav-links a.active {
-        background: var(--primary);
-        color: white;
     }
 
     .mobile-user-profile {
@@ -420,14 +355,16 @@ $currentPage = basename($_SERVER['PHP_SELF']);
     .mobile-user-type {
         font-size: 0.8rem;
         color: var(--text-light);
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
     }
 
-    /* RESPONSIVE */
+    /* Responsive */
     @media(max-width: 992px) {
         .nav-right-container {
             display: none;
         }
-
         .mobile-menu-btn {
             display: flex;
             align-items: center;
@@ -442,158 +379,55 @@ $currentPage = basename($_SERVER['PHP_SELF']);
         }
     }
 </style>
+
+<!-- Font Awesome -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-</head>
-<body>
-    <!-- ================= HEADER ================= -->
-    <header>
-        <nav class="navbar">
-            <div class="logo-area">
-                <img src="./uploads/logo.JPG" alt="QuickCare Logo" class="logo-img">
-                <span class="site-name">QuickCare</span>
-            </div>
-            
-            <div class="nav-right-container">
-                <div class="nav-links">
-    <a href="index.php" class="<?= ($currentPage == 'index.php') ? 'active' : '' ?>">Home</a>
 
-    <a href="service.php" class="<?= ($currentPage == 'service.php') ? 'active' : '' ?>">Our services</a>
-
-    <a href="schedule.php" class="<?= ($currentPage == 'schedule.php') ? 'active' : '' ?>">Schedule</a>
-
-    <a href="appointment.php" class="<?= ($currentPage == 'appointment.php') ? 'active' : '' ?>">Doctors</a>
-
-    <a href="aboutus.php" class="<?= ($currentPage == 'aboutus.php') ? 'active' : '' ?>">About us</a>
-</div>
-
-                
-                <?php if (isset($_SESSION['PATIENT_ID']) || isset($_SESSION['DOCTOR_ID']) || isset($_SESSION['RECEPTIONIST_ID'])): ?>
-                    <!-- User Profile Section (when logged in) -->
-                    <div class="user-profile">
-                        <div class="user-avatar" id="profile-icon">
-                            <?php 
-                            if (isset($_SESSION['PATIENT_ID'])) {
-                                echo isset($_SESSION['USER_NAME']) ? strtoupper(substr($_SESSION['USER_NAME'], 0, 2)) : 'PA';
-                            } else if (isset($_SESSION['DOCTOR_ID'])) {
-                                echo isset($_SESSION['DOCTOR_NAME']) ? strtoupper(substr($_SESSION['DOCTOR_NAME'], 0, 2)) : 'DR';
-                            } else {
-                                echo isset($_SESSION['RECEPTIONIST_NAME']) ? strtoupper(substr($_SESSION['RECEPTIONIST_NAME'], 0, 2)) : 'RE';
-                            }
-                            ?>
-                        </div>
-                        <div class="user-info">
-                            <div class="user-name">
-                                <?php 
-                                if (isset($_SESSION['PATIENT_ID'])) {
-                                    echo isset($_SESSION['USER_NAME']) ? htmlspecialchars($_SESSION['USER_NAME']) : 'Patient';
-                                } else if (isset($_SESSION['DOCTOR_ID'])) {
-                                    echo isset($_SESSION['USER_NAME']) ? 'Dr. ' . htmlspecialchars($_SESSION['USER_NAME']) : 'Doctor';
-                                } else {
-                                    echo isset($_SESSION['USER_NAME']) ? htmlspecialchars($_SESSION['USER_NAME']) : 'Receptionist';
-                                }
-                                ?>
-                            </div>
-                            <div class="user-type">
-                                <?php 
-                                if (isset($_SESSION['PATIENT_ID'])) {
-                                    echo 'Patient';
-                                } else if (isset($_SESSION['DOCTOR_ID'])) {
-                                    echo 'Doctor';
-                                } else {
-                                    echo 'Receptionist';
-                                }
-                                ?>
-                            </div>
-                        </div>
-                        
-                        <!-- Profile Dropdown Menu -->
-                        <div class="profile-dropdown" id="profile-dropdown">
-                            <?php 
-                            // Determine the correct profile and dashboard links based on user type
-                            $profile_link = '#';
-                            $dashboard_link = '#';
-                            
-                            if (isset($_SESSION['PATIENT_ID'])) {
-                                $profile_link = 'patient_profile.php';
-                                $dashboard_link = 'patient.php';
-                            } else if (isset($_SESSION['DOCTOR_ID'])) {
-                                $profile_link = 'doctor_profile.php';
-                                $dashboard_link = 'doctor_dashboard.php';
-                            } else if (isset($_SESSION['RECEPTIONIST_ID'])) {
-                                $profile_link = 'receptionist_profile.php';
-                                $dashboard_link = 'receptionist.php';
-                            }
-                            ?>
-                            <a href="<?php echo $profile_link; ?>">
-                                <i class="fas fa-user"></i> My Profile
-                            </a>
-                            <a href="<?php echo $dashboard_link; ?>">
-                                <i class="fas fa-tachometer-alt"></i> Dashboard
-                            </a>
-                            <a href="logout.php">
-                                <i class="fas fa-sign-out-alt"></i> Logout
-                            </a>
-                        </div>
-                    </div>
-                <?php else: ?>
-                    <!-- Auth Buttons (when not logged in) -->
-                    <div class="auth-buttons">
-                        <a href="login_for_all.php" class="btn-login">
-                            Login
-                        </a>
-                        <a href="patientform.php" class="btn-register">
-                            Register
-                        </a>
-                    </div>
-                <?php endif; ?>
-            </div>
-            
-            <button class="mobile-menu-btn">
-                ☰
-            </button>
-        </nav>
-    </header>
-
-    <!-- Mobile Navigation -->
-    <div class="mobile-nav">
-        <div class="mobile-nav-header">
-            <h2>QuickCare Menu</h2>
-            <button class="close-menu">✕</button>
+<!-- Header HTML -->
+<header>
+    <nav class="navbar">
+        <div class="logo-area">
+            <img src="./uploads/logo.JPG" alt="QuickCare Logo" class="logo-img">
+            <span class="site-name">QuickCare</span>
         </div>
-        <div class="mobile-nav-links">
-            <a href="index.php">Home</a>
-            <a href="schedule.php">Schedule</a>
-            <a href="doctors.php">Doctors</a>
-            <a href="aboutus.php" >About Us</a>
-            <a href="contactus.php">Contact</a>
+        
+        <div class="nav-right-container">
+            <div class="nav-links">
+                <a href="index.php" class="<?= ($currentPage == 'index.php') ? 'active' : '' ?>">Home</a>
+                <a href="service.php" class="<?= ($currentPage == 'service.php') ? 'active' : '' ?>">Our services</a>
+                <a href="schedule.php" class="<?= ($currentPage == 'schedule.php') ? 'active' : '' ?>">Schedule</a>
+                <a href="appointment.php" class="<?= ($currentPage == 'appointment.php') ? 'active' : '' ?>">Doctors</a>
+                <a href="aboutus.php" class="<?= ($currentPage == 'aboutus.php') ? 'active' : '' ?>">About us</a>
+            </div>
             
             <?php if (isset($_SESSION['PATIENT_ID']) || isset($_SESSION['DOCTOR_ID']) || isset($_SESSION['RECEPTIONIST_ID'])): ?>
-                <!-- User Profile Section (when logged in) -->
-                <div class="mobile-user-profile">
-                    <div class="mobile-user-avatar">
+                <!-- User Profile Section -->
+                <div class="user-profile">
+                    <div class="user-avatar" id="profile-icon">
                         <?php 
                         if (isset($_SESSION['PATIENT_ID'])) {
-                            echo isset($_SESSION['PATIENT_NAME']) ? strtoupper(substr($_SESSION['PATIENT_NAME'], 0, 2)) : 'PA';
+                            echo isset($_SESSION['USER_NAME']) ? strtoupper(substr($_SESSION['USER_NAME'], 0, 2)) : 'PA';
                         } else if (isset($_SESSION['DOCTOR_ID'])) {
-                            echo isset($_SESSION['DOCTOR_NAME']) ? strtoupper(substr($_SESSION['DOCTOR_NAME'], 0, 2)) : 'DR';
+                            echo isset($_SESSION['USER_NAME']) ? strtoupper(substr($_SESSION['USER_NAME'], 0, 2)) : 'DR';
                         } else {
-                            echo isset($_SESSION['RECEPTIONIST_NAME']) ? strtoupper(substr($_SESSION['RECEPTIONIST_NAME'], 0, 2)) : 'RE';
+                            echo isset($_SESSION['USER_NAME']) ? strtoupper(substr($_SESSION['USER_NAME'], 0, 2)) : 'RE';
                         }
                         ?>
                     </div>
-                    <div class="mobile-user-info">
-                        <div class="mobile-user-name">
+                    <div class="user-info">
+                        <div class="user-name">
                             <?php 
                             if (isset($_SESSION['PATIENT_ID'])) {
-                                echo isset($_SESSION['PATIENT_NAME']) ? htmlspecialchars($_SESSION['PATIENT_NAME']) : 'Patient';
+                                echo isset($_SESSION['USER_NAME']) ? htmlspecialchars($_SESSION['USER_NAME']) : 'Patient';
                             } else if (isset($_SESSION['DOCTOR_ID'])) {
-                                echo isset($_SESSION['DOCTOR_NAME']) ? 'Dr. ' . htmlspecialchars($_SESSION['DOCTOR_NAME']) : 'Doctor';
+                                echo isset($_SESSION['USER_NAME']) ? 'Dr. ' . htmlspecialchars($_SESSION['USER_NAME']) : 'Doctor';
                             } else {
-                                echo isset($_SESSION['RECEPTIONIST_NAME']) ? htmlspecialchars($_SESSION['RECEPTIONIST_NAME']) : 'Receptionist';
+                                echo isset($_SESSION['USER_NAME']) ? htmlspecialchars($_SESSION['USER_NAME']) : 'Receptionist';
                             }
                             ?>
                         </div>
-                        <div class="mobile-user-type">
+                        <!-- USER TYPE - ALWAYS VISIBLE -->
+                        <div class="user-type">
                             <?php 
                             if (isset($_SESSION['PATIENT_ID'])) {
                                 echo 'Patient';
@@ -605,69 +439,149 @@ $currentPage = basename($_SERVER['PHP_SELF']);
                             ?>
                         </div>
                     </div>
+                    
+                    <!-- Profile Dropdown Menu -->
+                    <div class="profile-dropdown" id="profile-dropdown">
+                        <?php 
+                        $profile_link = '#';
+                        $dashboard_link = '#';
+                        
+                        if (isset($_SESSION['PATIENT_ID'])) {
+                            $profile_link = 'patient_profile.php';
+                            $dashboard_link = 'patient.php';
+                        } else if (isset($_SESSION['DOCTOR_ID'])) {
+                            $profile_link = 'doctor_profile.php';
+                            $dashboard_link = 'doctor_dashboard.php';
+                        } else if (isset($_SESSION['RECEPTIONIST_ID'])) {
+                            $profile_link = 'receptionist_profile.php';
+                            $dashboard_link = 'receptionist.php';
+                        }
+                        ?>
+                        <a href="<?php echo $profile_link; ?>">
+                            <i class="fas fa-user"></i> My Profile
+                        </a>
+                        <a href="<?php echo $dashboard_link; ?>">
+                            <i class="fas fa-tachometer-alt"></i> Dashboard
+                        </a>
+                        <a href="logout.php">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </a>
+                    </div>
                 </div>
-                <?php 
-                // Use the same links determined above
-                echo '<a href="' . $profile_link . '">My Profile</a>';
-                echo '<a href="' . $dashboard_link . '">Dashboard</a>';
-                ?>
-                <a href="logout.php">Logout</a>
             <?php else: ?>
-                <!-- Auth Links (when not logged in) -->
-                <a href="login_for_all.php">Login</a>
-                <a href="patientform.php">Register</a>
+                <!-- Auth Buttons -->
+                <div class="auth-buttons">
+                    <a href="login_for_all.php" class="btn-login">Login</a>
+                    <a href="patientform.php" class="btn-register">Register</a>
+                </div>
             <?php endif; ?>
         </div>
-    </div>
-
-    <script>
         
-        // Mobile menu toggle
-        const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
-        const closeMenu = document.querySelector('.close-menu');
-        const mobileNav = document.querySelector('.mobile-nav');
+        <button class="mobile-menu-btn">☰</button>
+    </nav>
+</header>
 
+<!-- Mobile Navigation -->
+<div class="mobile-nav">
+    <div class="mobile-nav-header">
+        <h2>QuickCare Menu</h2>
+        <button class="close-menu">✕</button>
+    </div>
+    <div class="mobile-nav-links">
+        <a href="index.php">Home</a>
+        <a href="schedule.php">Schedule</a>
+        <a href="doctors.php">Doctors</a>
+        <a href="aboutus.php">About Us</a>
+        <a href="contactus.php">Contact</a>
+        
+        <?php if (isset($_SESSION['PATIENT_ID']) || isset($_SESSION['DOCTOR_ID']) || isset($_SESSION['RECEPTIONIST_ID'])): ?>
+            <div class="mobile-user-profile">
+                <div class="mobile-user-avatar">
+                    <?php 
+                    if (isset($_SESSION['PATIENT_ID'])) {
+                        echo isset($_SESSION['USER_NAME']) ? strtoupper(substr($_SESSION['USER_NAME'], 0, 2)) : 'PA';
+                    } else if (isset($_SESSION['DOCTOR_ID'])) {
+                        echo isset($_SESSION['USER_NAME']) ? strtoupper(substr($_SESSION['USER_NAME'], 0, 2)) : 'DR';
+                    } else {
+                        echo isset($_SESSION['USER_NAME']) ? strtoupper(substr($_SESSION['USER_NAME'], 0, 2)) : 'RE';
+                    }
+                    ?>
+                </div>
+                <div class="mobile-user-info">
+                    <div class="mobile-user-name">
+                        <?php 
+                        if (isset($_SESSION['PATIENT_ID'])) {
+                            echo isset($_SESSION['USER_NAME']) ? htmlspecialchars($_SESSION['USER_NAME']) : 'Patient';
+                        } else if (isset($_SESSION['DOCTOR_ID'])) {
+                            echo isset($_SESSION['USER_NAME']) ? 'Dr. ' . htmlspecialchars($_SESSION['USER_NAME']) : 'Doctor';
+                        } else {
+                            echo isset($_SESSION['USER_NAME']) ? htmlspecialchars($_SESSION['USER_NAME']) : 'Receptionist';
+                        }
+                        ?>
+                    </div>
+                    <div class="mobile-user-type">
+                        <?php 
+                        if (isset($_SESSION['PATIENT_ID'])) {
+                            echo 'Patient';
+                        } else if (isset($_SESSION['DOCTOR_ID'])) {
+                            echo 'Doctor';
+                        } else {
+                            echo 'Receptionist';
+                        }
+                        ?>
+                    </div>
+                </div>
+            </div>
+            <?php 
+            echo '<a href="' . $profile_link . '">My Profile</a>';
+            echo '<a href="' . $dashboard_link . '">Dashboard</a>';
+            ?>
+            <a href="logout.php">Logout</a>
+        <?php else: ?>
+            <a href="login_for_all.php">Login</a>
+            <a href="patientform.php">Register</a>
+        <?php endif; ?>
+    </div>
+</div>
+
+<!-- Add padding to body to account for fixed header -->
+<style>
+    body {
+        padding-top: 80px !important;
+    }
+</style>
+
+<script>
+    // Mobile menu toggle
+    const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+    const closeMenu = document.querySelector('.close-menu');
+    const mobileNav = document.querySelector('.mobile-nav');
+
+    if (mobileMenuBtn) {
         mobileMenuBtn.addEventListener('click', () => {
             mobileNav.classList.add('active');
         });
+    }
 
+    if (closeMenu) {
         closeMenu.addEventListener('click', () => {
             mobileNav.classList.remove('active');
         });
+    }
 
-        // Profile dropdown toggle
-        const profileIcon = document.getElementById('profile-icon');
-        const profileDropdown = document.getElementById('profile-dropdown');
-        
-        if (profileIcon && profileDropdown) {
-            profileIcon.addEventListener('click', () => {
-                profileDropdown.classList.toggle('active');
-            });
-            
-            // Close dropdown when clicking outside
-            document.addEventListener('click', (e) => {
-                if (!profileIcon.contains(e.target) && !profileDropdown.contains(e.target)) {
-                    profileDropdown.classList.remove('active');
-                }
-            });
-        }
-
-        // Navbar scroll effect
-        let lastScroll = 0;
-        window.addEventListener('scroll', () => {
-            const header = document.querySelector('header');
-            const currentScroll = window.pageYOffset;
-            
-            if (currentScroll > 100) {
-                header.style.padding = '0.5rem 0';
-                header.style.boxShadow = '0 5px 15px rgba(0, 0, 0, 0.1)';
-            } else {
-                header.style.padding = '1rem 0';
-                header.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.05)';
-            }
-
-            lastScroll = currentScroll;
+    // Profile dropdown toggle
+    const profileIcon = document.getElementById('profile-icon');
+    const profileDropdown = document.getElementById('profile-dropdown');
+    
+    if (profileIcon && profileDropdown) {
+        profileIcon.addEventListener('click', () => {
+            profileDropdown.classList.toggle('active');
         });
-    </script>
-</body>
-</html>
+        
+        document.addEventListener('click', (e) => {
+            if (!profileIcon.contains(e.target) && !profileDropdown.contains(e.target)) {
+                profileDropdown.classList.remove('active');
+            }
+        });
+    }
+</script>

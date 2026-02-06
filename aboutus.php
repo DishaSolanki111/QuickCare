@@ -1,5 +1,6 @@
 <?php
-session_start();
+session_start(); // Start session at the very top
+include 'header.php'; // Include the header
 ?>
 <!DOCTYPE html>
 <html lang="en">

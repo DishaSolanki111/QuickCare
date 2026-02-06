@@ -1,9 +1,6 @@
 <?php
 // Database connection
- $conn = new mysqli("localhost", "root", "", "quick_care");
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
+include 'config.php';
 
 // Get POST data
  $date = isset($_POST['date']) ? $_POST['date'] : date('Y-m-d');

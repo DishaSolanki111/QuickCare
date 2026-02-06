@@ -1,4 +1,5 @@
 <?php
+session_start();
 include "config.php";
 
  $doctor_id = (int)$_GET['doctor_id'];
