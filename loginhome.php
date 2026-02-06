@@ -94,7 +94,7 @@ if ($user_type === 'patient') {
             header('Content-Type: application/json');
             echo json_encode([
                 'status' => 'success',
-                'message' => 'Login Successful! Redirecting to Portal...',
+                'message' => 'Login Successful! Redirecting to dashboard...',
                 'redirect' => 'patient.php'
             ]);
             exit();

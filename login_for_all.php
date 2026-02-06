@@ -390,7 +390,7 @@ include 'header.php';
 </div>
 
                 <button type="submit">Login</button>
-                <div class="login-footer">
+                <div class="login-footer auth-links">
                     <a href="register.php" class="left-link">Create account</a>
                     <a href="forgot_password.php" class="right-link">Forgot password?</a>
                 </div>
@@ -427,7 +427,7 @@ include 'header.php';
                     </span>
                 </div>
                 <button type="submit">Login</button>
-                <div class="login-footer">
+                <div class="login-footer auth-links">
                     <a href="forgot_password.php" class="right-link">Forgot password?</a>
                 </div>
             </form>
@@ -463,7 +463,7 @@ include 'header.php';
                     </span>
                 </div>
                 <button type="submit">Login</button>
-                <div class="login-footer">
+                <div class="login-footer auth-links">
                     <a href="forgot_password.php" class="right-link">Forgot password?</a>
                 </div>
             </form>
@@ -538,35 +538,41 @@ function togglePassword(inputId, toggleElement) {
                     body: formData
                 })
                 .then(response => response.json())
-                .then(data => {
-                    if (data.status === 'success') {
-                        // Show Success Message
-                        successDiv.innerText = data.message;
-                        successDiv.style.display = 'block';
-                        
-                        // Hide inputs (optional, keeps UI clean)
-                       const inputs = this.querySelectorAll('input');
-inputs.forEach(input => input.style.display = 'none');
+                // In the success handling part of the AJAX form submission, modify this section:
+.then(data => {
+    if (data.status === 'success') {
+        // Show Success Message
+        successDiv.innerText = data.message;
+        successDiv.style.display = 'block';
+        
+        // Hide inputs, password toggles, submit button, and footer links
+        const inputs = this.querySelectorAll('input');
+        inputs.forEach(input => input.style.display = 'none');
 
-const toggles = this.querySelectorAll('.password-toggle');
-toggles.forEach(t => t.style.display = 'none');
+        const toggles = this.querySelectorAll('.password-toggle');
+        toggles.forEach(t => t.style.display = 'none');
 
-submitBtn.style.display = 'none';
+        submitBtn.style.display = 'none';
+        
+        // Hide the login footer with create account and forgot password links
+        const loginFooter = this.querySelector('.login-footer');
+        if (loginFooter) {
+            loginFooter.style.display = 'none';
+        }
 
+        // Wait 3 seconds then redirect
+        setTimeout(() => {
+            window.location.href = data.redirect;
+        }, 3000);
 
-                        // Wait 3 seconds then redirect
-                        setTimeout(() => {
-                            window.location.href = data.redirect;
-                        }, 3000);
-
-                    } else {
-                        // Show Error Message
-                        errorDiv.innerText = data.message;
-                        errorDiv.style.display = 'block';
-                        submitBtn.disabled = false;
-                        submitBtn.innerText = 'Login';
-                    }
-                })
+    } else {
+        // Show Error Message
+        errorDiv.innerText = data.message;
+        errorDiv.style.display = 'block';
+        submitBtn.disabled = false;
+        submitBtn.innerText = 'Login';
+    }
+})
                 .catch(error => {
                     console.error('Error:', error);
                     errorDiv.innerText = "An error occurred. Please try again.";
