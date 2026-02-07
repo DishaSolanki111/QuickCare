@@ -404,6 +404,29 @@
                     }
                 }
 
+                // ---------------- LICENSE FILE UPLOAD (PDF, JPG, PNG) ----------------
+                $license_file_path = "";
+                if (isset($_FILES['license_file']) && $_FILES['license_file']['error'] == 0) {
+                    $license_upload_dir = "uploads/licenses/";
+                    if (!file_exists($license_upload_dir)) {
+                        mkdir($license_upload_dir, 0777, true);
+                    }
+
+                    $ext = strtolower(pathinfo($_FILES['license_file']['name'], PATHINFO_EXTENSION));
+                    $allowed = ['pdf', 'jpg', 'jpeg', 'png'];
+                    if (!in_array($ext, $allowed)) {
+                        $errors[] = "Medical license file must be PDF, JPG or PNG format.";
+                    } else {
+                        $file_name = 'license_' . time() . '_' . basename($_FILES['license_file']['name']);
+                        $target_file = $license_upload_dir . $file_name;
+                        if (move_uploaded_file($_FILES['license_file']['tmp_name'], $target_file)) {
+                            $license_file_path = $target_file;
+                        } else {
+                            $errors[] = "Failed to upload license file.";
+                        }
+                    }
+                }
+
                 // ---------------- SANITIZE ----------------
                 $first_name = mysqli_real_escape_string($conn, $_POST['first_name']);
                 $last_name  = mysqli_real_escape_string($conn, $_POST['last_name']);
@@ -498,11 +521,12 @@
                 // ---------------- FINAL INSERT ----------------
                 if (empty($errors)) {
                     $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+                    $license_file_safe = mysqli_real_escape_string($conn, $license_file_path);
 
                     $sql = "INSERT INTO doctor_tbl 
-                    (SPECIALISATION_ID, PROFILE_IMAGE, FIRST_NAME, LAST_NAME, DOB, DOJ, USERNAME, PSWD, PHONE, EMAIL, GENDER, LICENSE_NO, EDUCATION, STATUS)
+                    (SPECIALISATION_ID, PROFILE_IMAGE, FIRST_NAME, LAST_NAME, DOB, DOJ, USERNAME, PSWD, PHONE, EMAIL, GENDER, LICENSE_NO, LICENSE_FILE, EDUCATION, STATUS)
                     VALUES 
-                    ('$specialisation_id','$profile_image_path','$first_name','$last_name','$dob','$doj','$username','$hashed_password','$phone','$email','$gender','$license_number','$education','pending')";
+                    ('$specialisation_id','$profile_image_path','$first_name','$last_name','$dob','$doj','$username','$hashed_password','$phone','$email','$gender','$license_number','$license_file_safe','$education','pending')";
 
                     if ($conn->query($sql) === TRUE) {
                         $success = true;
@@ -618,6 +642,16 @@
                     <label for="license_number">License Number <span class="required">*</span></label>
                     <input type="text" id="license_number" name="license_number" placeholder="e.g. A12345678" value="<?php echo htmlspecialchars($form_data['license_number']); ?>" required>
                     <div class="error-message" id="license_number_error"></div>
+                </div>
+
+                <!-- License File Upload -->
+                <div class="form-group">
+                    <label for="license_file">Medical License File</label>
+                    <div class="file-upload">
+                        <input type="file" id="license_file" name="license_file" accept=".pdf,.jpg,.jpeg,.png">
+                        <label for="license_file" class="file-upload-label" id="license-file-label">Choose Medical License (PDF, JPG or PNG)</label>
+                    </div>
+                    <div class="error-message" id="license_file_error"></div>
                 </div>
                 
                 <!-- Row 6: Professional Details -->
@@ -802,6 +836,25 @@
     document.getElementById('license_number').addEventListener('input', function() { 
         if (this.value.trim() !== '') {
             hideError('license_number');
+        }
+    });
+
+    // License file upload label update
+    document.getElementById('license_file').addEventListener('change', function () {
+        const file = this.files[0];
+        const label = document.getElementById('license-file-label');
+        hideError('license_file');
+        if (file) {
+            const ext = file.name.split('.').pop().toLowerCase();
+            if (['pdf', 'jpg', 'jpeg', 'png'].indexOf(ext) === -1) {
+                showError('license_file', "Medical license must be PDF, JPG or PNG format.");
+                this.value = '';
+                label.textContent = 'Choose Medical License (PDF, JPG or PNG)';
+            } else {
+                label.textContent = file.name;
+            }
+        } else {
+            label.textContent = 'Choose Medical License (PDF, JPG or PNG)';
         }
     });
 
