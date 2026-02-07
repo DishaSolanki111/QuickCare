@@ -23,6 +23,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create_appointment'])
     $appointment_date = mysqli_real_escape_string($conn, $_POST['appointment_date']);
     $appointment_time = mysqli_real_escape_string($conn, $_POST['appointment_time']);
     
+    $today = date('Y-m-d');
+    $maxDate = date('Y-m-d', strtotime('+1 month'));
+    if ($appointment_date < $today || $appointment_date > $maxDate) {
+        $error_message = "Appointments can only be booked from today to 1 month ahead. Please choose a valid date.";
+    } else {
     $create_query = "INSERT INTO appointment_tbl (PATIENT_ID, DOCTOR_ID, SCHEDULE_ID, APPOINTMENT_DATE, APPOINTMENT_TIME, STATUS) 
                      VALUES ('$patient_id', '$doctor_id', '$schedule_id', '$appointment_date', '$appointment_time', 'SCHEDULED')";
     
@@ -30,6 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create_appointment'])
         $success_message = "Appointment created successfully!";
     } else {
         $error_message = "Error creating appointment: " . mysqli_error($conn);
+    }
     }
 }
 
@@ -595,7 +601,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_status'])) {
             
             if (doctorId) {
                 // Make an AJAX request to get schedules for the selected doctor
-                fetch(`get_doctor_schedules.php?doctor_id=${doctorId}`)
+                fetch('doctor_schedule_recep.php', { method: 'POST', headers: {'Content-Type': 'application/x-www-form-urlencoded'}, body: 'doctor_id=' + encodeURIComponent(doctorId) + '&ajax=1' })
                     .then(response => response.json())
                     .then(data => {
                         data.forEach(schedule => {
@@ -637,10 +643,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_status'])) {
             return `${displayHours}:${minutes} ${ampm}`;
         }
         
-        // Set minimum date for appointment to today
+        // Set min (today) and max (today + 1 month) for appointment date
         document.addEventListener('DOMContentLoaded', function() {
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('appointment_date').setAttribute('min', today);
+            const today = new Date();
+            const minDate = today.toISOString().split('T')[0];
+            const maxDate = new Date(today);
+            maxDate.setMonth(maxDate.getMonth() + 1);
+            const maxDateStr = maxDate.toISOString().split('T')[0];
+            const el = document.getElementById('appointment_date');
+            if (el) {
+                el.setAttribute('min', minDate);
+                el.setAttribute('max', maxDateStr);
+            }
         });
     </script>
 </body>

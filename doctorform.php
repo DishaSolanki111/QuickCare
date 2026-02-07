@@ -447,25 +447,32 @@
                     }
                 }
 
-                // ---------------- LICENSE NUMBER VALIDATION ----------------
-                // NEW BLOCK
+                // ---------------- LICENSE NUMBER VALIDATION (license_master dummy validation) ----------------
                 if (empty($license_number)) {
                     $errors[] = "License Number is required.";
                 } else {
-                    // Check for uniqueness in the database
-                    $check_sql = "SELECT id FROM doctor_tbl WHERE LICENSE_NUMBER = '$license_number'";
-                    $check_result = $conn->query($check_sql);
-                    if ($check_result && $check_result->num_rows > 0) {
-                        $errors[] = "This license number is already registered.";
+                    $license_number = mysqli_real_escape_string($conn, $license_number);
+                    // Validate against license_master (dummy valid licenses)
+                    $check_master = $conn->query("SELECT license_no FROM license_master WHERE license_no = '$license_number'");
+                    if (!$check_master || $check_master->num_rows === 0) {
+                        $errors[] = "Invalid license number. Must be one of: DOC1001, DOC1002, DOC1003";
+                    } else {
+                        // Check for uniqueness in doctor_tbl
+                        $check_sql = "SELECT DOCTOR_ID FROM doctor_tbl WHERE LICENSE_NO = '$license_number'";
+                        $check_result = $conn->query($check_sql);
+                        if ($check_result && $check_result->num_rows > 0) {
+                            $errors[] = "This license number is already registered.";
+                        }
                     }
                 }
 
                 // ---------------- USERNAME VALIDATION ----------------
                 if (
                     !preg_match('/^[A-Z][A-Za-z0-9]*(_[A-Za-z0-9]+)*$/', $username) ||
-                    strlen($username) > 20
+                    strlen($username) > 20 ||
+                    !preg_match('/\d/', $username)
                 ) {
-                    $errors[] = "Username must start with a capital letter, max 20 chars, no spaces, no consecutive underscores, and not end with underscore.";
+                    $errors[] = "Username must start with a capital letter, max 20 chars, no spaces, no consecutive underscores, not end with underscore, and include at least 1 digit (e.g. Dr_rajesh05).";
                 }
 
                 // ---------------- PASSWORD VALIDATION ----------------
@@ -492,11 +499,10 @@
                 if (empty($errors)) {
                     $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
-                    // MODIFIED: Added LICENSE_NUMBER to the query
                     $sql = "INSERT INTO doctor_tbl 
-                    (SPECIALISATION_ID, PROFILE_IMAGE, FIRST_NAME, LAST_NAME, DOB, DOJ, USERNAME, PSWD, PHONE, EMAIL, GENDER, EDUCATION, LICENSE_NUMBER)
+                    (SPECIALISATION_ID, PROFILE_IMAGE, FIRST_NAME, LAST_NAME, DOB, DOJ, USERNAME, PSWD, PHONE, EMAIL, GENDER, LICENSE_NO, EDUCATION, STATUS)
                     VALUES 
-                    ('$specialisation_id','$profile_image_path','$first_name','$last_name','$dob','$doj','$username','$hashed_password','$phone','$email','$gender','$education','$license_number')";
+                    ('$specialisation_id','$profile_image_path','$first_name','$last_name','$dob','$doj','$username','$hashed_password','$phone','$email','$gender','$license_number','$education','pending')";
 
                     if ($conn->query($sql) === TRUE) {
                         $success = true;
@@ -641,7 +647,7 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label for="username">Username <span class="required">*</span></label>
-                        <input type="text" id="username" name="username" placeholder="e.g. JohnDoe" value="<?php echo htmlspecialchars($form_data['username']); ?>" required>
+                        <input type="text" id="username" name="username" placeholder="e.g. Dr_rajesh05" value="<?php echo htmlspecialchars($form_data['username']); ?>" required>
                         <div class="error-message" id="username_error"></div>
                     </div>
                     <div class="form-group">
@@ -763,7 +769,8 @@
     function validateUsername(input) {
         const usernameRegex = /^[A-Z][A-Za-z0-9]*(_[A-Za-z0-9]+)*$/;
         const val = input.value;
-        if (val.trim() !== '' && val.length <= 20 && usernameRegex.test(val)) {
+        const hasDigit = /\d/.test(val);
+        if (val.trim() !== '' && val.length <= 20 && usernameRegex.test(val) && hasDigit) {
             hideError('username');
         }
     }
@@ -928,7 +935,10 @@
             showError('username', "Username must be at most 20 characters.");
             isValid = false;
         } else if (!usernameRegex.test(username.value)) {
-            showError('username', "Username must start with a capital letter, no spaces, no consecutive underscores, and not end with underscore.");
+            showError('username', "Username must start with capital, no spaces, no consecutive underscores, not end with underscore.");
+            isValid = false;
+        } else if (!/\d/.test(username.value)) {
+            showError('username', "Username must include at least 1 digit (e.g. Dr_rajesh05).");
             isValid = false;
         } else {
             hideError('username');

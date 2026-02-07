@@ -38,10 +38,11 @@ if ($doc_result->num_rows === 1) {
 
 // Check for success message in URL
  $alert_message = '';
-if (isset($_GET['status'])) {
-    if ($_GET['status'] === 'success') {
+if (isset($_POST['status']) || isset($_GET['status'])) {
+    $status = isset($_POST['status']) ? $_POST['status'] : $_GET['status'];
+    if ($status === 'success') {
         $alert_message = "Prescription added successfully!";
-    } elseif ($_GET['status'] === 'deleted_success') {
+    } elseif ($status === 'deleted_success') {
         $alert_message = "Prescription deleted successfully!";
     }
 }
@@ -308,7 +309,10 @@ if ($result && $result->num_rows > 0) {
                                     <td><?php echo htmlspecialchars($patient['DOB']); ?></td>
                                     <td><?php echo htmlspecialchars($patient['PHONE']); ?></td>
                                     <td>
-                                        <a href="prescription_form.php?patient_id=<?php echo $patient['PATIENT_ID']; ?>" class="btn">Manage Prescriptions</a>
+                                        <form method="POST" action="prescription_form.php" style="display:inline">
+                                        <input type="hidden" name="patient_id" value="<?php echo $patient['PATIENT_ID']; ?>">
+                                        <button type="submit" class="btn">Manage Prescriptions</button>
+                                    </form>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>

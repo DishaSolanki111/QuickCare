@@ -16,7 +16,7 @@ include 'recept_sidebar.php';
  $receptionist = mysqli_fetch_assoc($receptionist_query);
 
 // Handle user type selection
- $user_type = isset($_GET['user_type']) ? $_GET['user_type'] : 'patient';
+ $user_type = isset($_POST['user_type']) ? $_POST['user_type'] : (isset($_GET['user_type']) ? $_GET['user_type'] : 'patient');
 
 // Handle user creation
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create_user'])) {
@@ -611,15 +611,18 @@ if ($user_type === 'patient') {
             </div>
             <div class="card-body">
                 <!-- Tabs -->
+                <form id="navPatientForm" method="POST" action="manage_user_profile.php" style="display:none"><input type="hidden" name="user_type" value="patient"></form>
+                <form id="navDoctorForm" method="POST" action="manage_user_profile.php" style="display:none"><input type="hidden" name="user_type" value="doctor"></form>
+                <form id="navReceptForm" method="POST" action="manage_user_profile.php" style="display:none"><input type="hidden" name="user_type" value="receptionist"></form>
                 <ul class="nav nav-tabs" id="userTabs" role="tablist">
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link <?php echo $user_type === 'patient' ? 'active' : ''; ?>" onclick="window.location.href='manage_user_profile.php?user_type=patient'">Patients</button>
+                        <button type="button" class="nav-link <?php echo $user_type === 'patient' ? 'active' : ''; ?>" onclick="document.getElementById('navPatientForm').submit()">Patients</button>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link <?php echo $user_type === 'doctor' ? 'active' : ''; ?>" onclick="window.location.href='manage_user_profile.php?user_type=doctor'">Doctors</button>
+                        <button type="button" class="nav-link <?php echo $user_type === 'doctor' ? 'active' : ''; ?>" onclick="document.getElementById('navDoctorForm').submit()">Doctors</button>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link <?php echo $user_type === 'receptionist' ? 'active' : ''; ?>" onclick="window.location.href='manage_user_profile.php?user_type=receptionist'">Receptionists</button>
+                        <button type="button" class="nav-link <?php echo $user_type === 'receptionist' ? 'active' : ''; ?>" onclick="document.getElementById('navReceptForm').submit()">Receptionists</button>
                     </li>
                 </ul>
                 

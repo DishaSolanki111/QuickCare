@@ -130,11 +130,11 @@
 
     <!-- FILTER (FIXED) -->
     <div class="filter-container">
-        <form method="GET" action="">
+        <form method="POST" action="">
             <select name="rating_filter">
                 <option value="">All Ratings</option>
                 <?php
-                $selectedRating = $_GET['rating_filter'] ?? '';
+                $selectedRating = $_POST['rating_filter'] ?? '';
                 for ($i = 5; $i >= 1; $i--) {
                     $sel = ($selectedRating == $i) ? "selected" : "";
                     echo "<option value='$i' $sel>$i Star</option>";
@@ -168,8 +168,8 @@
                   JOIN doctor_tbl d ON a.DOCTOR_ID=d.DOCTOR_ID
                   WHERE 1=1";
 
-        if (!empty($_GET['rating_filter'])) {
-            $rating = (int) $_GET['rating_filter'];
+        if (!empty($_POST['rating_filter'])) {
+            $rating = (int) $_POST['rating_filter'];
             $query .= " AND f.RATING = $rating";
         }
 

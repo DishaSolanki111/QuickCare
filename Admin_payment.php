@@ -147,22 +147,22 @@
 
     <!-- FILTER (FIXED) -->
     <div class="filter-container">
-        <form method="GET" action="">
+        <form method="POST" action="">
             <input type="date" name="date_filter"
-                value="<?php echo $_GET['date_filter'] ?? ''; ?>">
+                value="<?php echo $_POST['date_filter'] ?? ''; ?>">
 
             <select name="status_filter">
                 <option value="">All Status</option>
-                <option value="COMPLETED" <?php if(($_GET['status_filter'] ?? '')=='COMPLETED') echo 'selected'; ?>>Completed</option>
-                <option value="FAILED" <?php if(($_GET['status_filter'] ?? '')=='FAILED') echo 'selected'; ?>>Failed</option>
+                <option value="COMPLETED" <?php if(($_POST['status_filter'] ?? '')=='COMPLETED') echo 'selected'; ?>>Completed</option>
+                <option value="FAILED" <?php if(($_POST['status_filter'] ?? '')=='FAILED') echo 'selected'; ?>>Failed</option>
             </select>
 
             <select name="mode_filter">
                 <option value="">All Payment Modes</option>
-                <option value="CREDIT CARD" <?php if(($_GET['mode_filter'] ?? '')=='CREDIT CARD') echo 'selected'; ?>>Credit Card</option>
-                <option value="GOOGLE PAY" <?php if(($_GET['mode_filter'] ?? '')=='GOOGLE PAY') echo 'selected'; ?>>Google Pay</option>
-                <option value="UPI" <?php if(($_GET['mode_filter'] ?? '')=='UPI') echo 'selected'; ?>>UPI</option>
-                <option value="NET BANKING" <?php if(($_GET['mode_filter'] ?? '')=='NET BANKING') echo 'selected'; ?>>Net Banking</option>
+                <option value="CREDIT CARD" <?php if(($_POST['mode_filter'] ?? '')=='CREDIT CARD') echo 'selected'; ?>>Credit Card</option>
+                <option value="GOOGLE PAY" <?php if(($_POST['mode_filter'] ?? '')=='GOOGLE PAY') echo 'selected'; ?>>Google Pay</option>
+                <option value="UPI" <?php if(($_POST['mode_filter'] ?? '')=='UPI') echo 'selected'; ?>>UPI</option>
+                <option value="NET BANKING" <?php if(($_POST['mode_filter'] ?? '')=='NET BANKING') echo 'selected'; ?>>Net Banking</option>
             </select>
 
             <button type="submit">Filter</button>
@@ -190,18 +190,18 @@
                   JOIN patient_tbl pt ON a.PATIENT_ID=pt.PATIENT_ID
                   WHERE 1=1";
 
-        if (!empty($_GET['date_filter'])) {
-            $date = mysqli_real_escape_string($conn, $_GET['date_filter']);
+        if (!empty($_POST['date_filter'])) {
+            $date = mysqli_real_escape_string($conn, $_POST['date_filter']);
             $query .= " AND DATE(p.PAYMENT_DATE) = '$date'";
         }
 
-        if (!empty($_GET['status_filter'])) {
-            $status = mysqli_real_escape_string($conn, $_GET['status_filter']);
+        if (!empty($_POST['status_filter'])) {
+            $status = mysqli_real_escape_string($conn, $_POST['status_filter']);
             $query .= " AND p.STATUS = '$status'";
         }
 
-        if (!empty($_GET['mode_filter'])) {
-            $mode = mysqli_real_escape_string($conn, $_GET['mode_filter']);
+        if (!empty($_POST['mode_filter'])) {
+            $mode = mysqli_real_escape_string($conn, $_POST['mode_filter']);
             $query .= " AND p.PAYMENT_MODE = '$mode'";
         }
 

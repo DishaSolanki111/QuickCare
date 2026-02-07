@@ -98,10 +98,10 @@
 
     <!-- FILTER (NAME ONLY, FIXED) -->
     <div class="filter-container">
-        <form method="GET" action="">
+        <form method="POST" action="">
             <input type="text" name="name_filter"
                    placeholder="Filter by Medicine Name"
-                   value="<?php echo isset($_GET['name_filter']) ? htmlspecialchars($_GET['name_filter']) : ''; ?>">
+                   value="<?php echo isset($_POST['name_filter']) ? htmlspecialchars($_POST['name_filter']) : ''; ?>">
             <button type="submit">Filter</button>
         </form>
     </div>
@@ -128,8 +128,8 @@
                     ON m.RECEPTIONIST_ID = r.RECEPTIONIST_ID
                   WHERE 1=1";
 
-        if (!empty($_GET['name_filter'])) {
-            $name = mysqli_real_escape_string($conn, $_GET['name_filter']);
+        if (!empty($_POST['name_filter'])) {
+            $name = mysqli_real_escape_string($conn, $_POST['name_filter']);
             $query .= " AND m.MED_NAME LIKE '%$name%'";
         }
 

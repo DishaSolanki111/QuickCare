@@ -3,8 +3,8 @@ include 'config.php';
 
 header('Content-Type: application/json');
 
- $doctor_id = $_GET['doctor_id'] ?? '';
- $date = $_GET['date'] ?? '';
+ $doctor_id = $_POST['doctor_id'] ?? $_GET['doctor_id'] ?? '';
+ $date = $_POST['date'] ?? $_GET['date'] ?? '';
 
 if (empty($doctor_id) || empty($date)) {
     echo json_encode(['status' => 'error', 'message' => 'Doctor ID and date are required']);

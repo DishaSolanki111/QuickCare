@@ -103,7 +103,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_medicine'])) {
 }
 
 // ================== SEARCH FUNCTIONALITY ==================
- $search = isset($_GET['search']) ? mysqli_real_escape_string($conn, $_GET['search']) : '';
+ $search = isset($_POST['search']) ? mysqli_real_escape_string($conn, $_POST['search']) : '';
 
 // ================== FETCH MEDICINES ==================
  $medicines_query = "SELECT * FROM medicine_tbl";
@@ -595,7 +595,7 @@ if (!empty($search)) {
             
             <!-- Search Bar -->
             <div class="search-bar">
-                <form method="GET" action="view_medicine.php" style="display: flex; width: 100%;">
+                <form method="POST" action="view_medicine.php" style="display: flex; width: 100%;">
                     <input type="text" name="search" placeholder="Search medicines by name or description..." value="<?php echo htmlspecialchars($search); ?>">
                     <button type="submit">
                         <i class="fas fa-search"></i> Search

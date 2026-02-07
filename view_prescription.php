@@ -30,8 +30,8 @@
     ");
 
     // ================= DOWNLOAD SINGLE PRESCRIPTION =================
-    if (isset($_GET['download'])) {
-        $prescription_id = intval($_GET['download']);
+    if (isset($_POST['download']) || isset($_GET['download'])) {
+        $prescription_id = isset($_POST['download']) ? intval($_POST['download']) : intval($_GET['download']);
 
         $detail_q = mysqli_query($conn, "
             SELECT p.*, 
@@ -372,9 +372,10 @@
                                     </div>
                                     
                                     <div class="mt-3">
-                                        <a href="view_prescription.php?download=<?= $p['PRESCRIPTION_ID'] ?>" class="btn-download">
-                                            <i class="fas fa-download me-1"></i> Download Prescription
-                                        </a>
+                                        <form method="POST" action="view_prescription.php" style="display:inline">
+                                        <input type="hidden" name="download" value="<?= $p['PRESCRIPTION_ID'] ?>">
+                                        <button type="submit" class="btn-download"><i class="fas fa-download me-1"></i> Download Prescription</button>
+                                    </form>
                                     </div>
                                 </div>
                             </div>

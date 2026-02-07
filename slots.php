@@ -2,8 +2,8 @@
 include 'config.php';
 
 // --- Database Logic (Unchanged) ---
- $doctor_id = $_GET['doctor_id'];
- $date = $_GET['date'];
+$doctor_id = $_POST['doctor_id'] ?? $_GET['doctor_id'];
+$date = $_POST['date'] ?? $_GET['date'];
 
 // It's better to select by schedule_id for a specific date if possible,
 // but sticking to your original logic for now.

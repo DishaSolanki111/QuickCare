@@ -45,8 +45,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
 }
 
 // Handle delete
-if (isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['id'])) {
-    $receptionist_id = $_GET['id'];
+if (isset($_POST['action']) && $_POST['action'] == 'delete' && isset($_POST['id'])) {
+    $receptionist_id = $_POST['id'];
     $query = "DELETE FROM receptionist_tbl WHERE RECEPTIONIST_ID = ?";
     $stmt = mysqli_prepare($conn, $query);
     mysqli_stmt_bind_param($stmt, "i", $receptionist_id);
@@ -310,9 +310,9 @@ if (isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['id']))
 
     <!-- FILTER BY NAME ONLY -->
     <div class="filter-container">
-        <form method="GET">
+        <form method="POST">
             <input type="text" name="name_filter" placeholder="Filter by Name"
-                value="<?php echo isset($_GET['name_filter']) ? htmlspecialchars($_GET['name_filter']) : ''; ?>">
+                value="<?php echo isset($_POST['name_filter']) ? htmlspecialchars($_POST['name_filter']) : ''; ?>">
             <button type="submit">Filter</button>
         </form>
     </div>
@@ -332,8 +332,8 @@ if (isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['id']))
         <?php
         $query = "SELECT * FROM receptionist_tbl";
 
-        if (isset($_GET['name_filter']) && $_GET['name_filter'] !== '') {
-            $name = mysqli_real_escape_string($conn, $_GET['name_filter']);
+        if (isset($_POST['name_filter']) && $_POST['name_filter'] !== '') {
+            $name = mysqli_real_escape_string($conn, $_POST['name_filter']);
             $query .= " WHERE CONCAT(FIRST_NAME,' ',LAST_NAME) LIKE '%$name%'";
         }
 
@@ -459,7 +459,21 @@ window.onclick = function(event) {
 
 function deleteReceptionist(id) {
     if (confirm("Are you sure you want to delete this receptionist?")) {
-        window.location.href = "Admin_recept.php?action=delete&id=" + id;
+        var f = document.createElement('form');
+        f.method = 'POST';
+        f.action = 'Admin_recept.php';
+        var a = document.createElement('input');
+        a.type = 'hidden';
+        a.name = 'action';
+        a.value = 'delete';
+        var i = document.createElement('input');
+        i.type = 'hidden';
+        i.name = 'id';
+        i.value = id;
+        f.appendChild(a);
+        f.appendChild(i);
+        document.body.appendChild(f);
+        f.submit();
     }
 }
 

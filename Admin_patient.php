@@ -45,8 +45,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
 }
 
 // Handle delete
-if (isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['id'])) {
-    $patient_id = $_GET['id'];
+if (isset($_POST['action']) && $_POST['action'] == 'delete' && isset($_POST['id'])) {
+    $patient_id = $_POST['id'];
     $query = "DELETE FROM patient_tbl WHERE PATIENT_ID = ?";
     $stmt = mysqli_prepare($conn, $query);
     mysqli_stmt_bind_param($stmt, "i", $patient_id);
@@ -305,16 +305,16 @@ if (isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['id']))
 
     <!-- FILTER (UI UNCHANGED, BUG FIXED) -->
     <div class="filter-container">
-        <form method="GET" action="">
+        <form method="POST" action="">
             <input type="text" name="name_filter" placeholder="Filter by Name"
-                value="<?php echo isset($_GET['name_filter']) ? htmlspecialchars($_GET['name_filter']) : ''; ?>">
+                value="<?php echo isset($_POST['name_filter']) ? htmlspecialchars($_POST['name_filter']) : ''; ?>">
 
             <select name="blood_group_filter">
                 <option value="">All Blood Groups</option>
                 <?php
                 $blood_groups = ['A+','A-','B+','B-','O+','O-','AB+','AB-'];
                 foreach ($blood_groups as $bg) {
-                    $selected = (isset($_GET['blood_group_filter']) && $_GET['blood_group_filter'] === $bg) ? 'selected' : '';
+                    $selected = (isset($_POST['blood_group_filter']) && $_POST['blood_group_filter'] === $bg) ? 'selected' : '';
                     echo "<option value='$bg' $selected>$bg</option>";
                 }
                 ?>
@@ -322,9 +322,9 @@ if (isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['id']))
 
             <select name="gender_filter">
                 <option value="">All Genders</option>
-                <option value="MALE" <?php if(isset($_GET['gender_filter']) && $_GET['gender_filter']=='MALE') echo 'selected'; ?>>Male</option>
-                <option value="FEMALE" <?php if(isset($_GET['gender_filter']) && $_GET['gender_filter']=='FEMALE') echo 'selected'; ?>>Female</option>
-                <option value="OTHER" <?php if(isset($_GET['gender_filter']) && $_GET['gender_filter']=='OTHER') echo 'selected'; ?>>Other</option>
+                <option value="MALE" <?php if(isset($_POST['gender_filter']) && $_POST['gender_filter']=='MALE') echo 'selected'; ?>>Male</option>
+                <option value="FEMALE" <?php if(isset($_POST['gender_filter']) && $_POST['gender_filter']=='FEMALE') echo 'selected'; ?>>Female</option>
+                <option value="OTHER" <?php if(isset($_POST['gender_filter']) && $_POST['gender_filter']=='OTHER') echo 'selected'; ?>>Other</option>
             </select>
 
             <button type="submit">Filter</button>
@@ -346,18 +346,18 @@ if (isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['id']))
         <?php
         $query = "SELECT * FROM patient_tbl WHERE 1=1";
 
-        if (!empty($_GET['name_filter'])) {
-            $name = mysqli_real_escape_string($conn, $_GET['name_filter']);
+        if (!empty($_POST['name_filter'])) {
+            $name = mysqli_real_escape_string($conn, $_POST['name_filter']);
             $query .= " AND CONCAT(FIRST_NAME,' ',LAST_NAME) LIKE '%$name%'";
         }
 
-        if (!empty($_GET['blood_group_filter'])) {
-            $bg = mysqli_real_escape_string($conn, $_GET['blood_group_filter']);
+        if (!empty($_POST['blood_group_filter'])) {
+            $bg = mysqli_real_escape_string($conn, $_POST['blood_group_filter']);
             $query .= " AND BLOOD_GROUP = '$bg'";
         }
 
-        if (!empty($_GET['gender_filter'])) {
-            $gender = mysqli_real_escape_string($conn, $_GET['gender_filter']);
+        if (!empty($_POST['gender_filter'])) {
+            $gender = mysqli_real_escape_string($conn, $_POST['gender_filter']);
             $query .= " AND GENDER = '$gender'";
         }
 
@@ -489,7 +489,21 @@ window.onclick = function(event) {
 
 function deletePatient(id) {
     if (confirm("Are you sure you want to delete this patient?")) {
-        window.location.href = "admin_patient.php?action=delete&id=" + id;
+        var f = document.createElement('form');
+        f.method = 'POST';
+        f.action = 'Admin_patient.php';
+        var a = document.createElement('input');
+        a.type = 'hidden';
+        a.name = 'action';
+        a.value = 'delete';
+        var i = document.createElement('input');
+        i.type = 'hidden';
+        i.name = 'id';
+        i.value = id;
+        f.appendChild(a);
+        f.appendChild(i);
+        document.body.appendChild(f);
+        f.submit();
     }
 }
 

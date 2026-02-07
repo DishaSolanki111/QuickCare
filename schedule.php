@@ -4,8 +4,9 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 include 'config.php';
 
-// Get today's date in YYYY-MM-DD format
+// Get today's date and max date (1 month from today) in YYYY-MM-DD format
  $today = date('Y-m-d');
+ $maxDate = date('Y-m-d', strtotime('+1 month'));
  $formattedToday = date('d-m-Y', strtotime($today));
 
 // Fetch specializations for the dropdown
@@ -451,7 +452,7 @@ if ($result->num_rows > 0) {
         <div class="filters">
             <div class="filter-group">
                 <label for="date-picker">Select Date</label>
-                <input type="date" id="date-picker" value="<?php echo $today; ?>" min="<?php echo $today; ?>">
+                <input type="date" id="date-picker" value="<?php echo $today; ?>" min="<?php echo $today; ?>" max="<?php echo $maxDate; ?>" title="You can book appointments only within the next 1 month">
             </div>
             <div class="filter-group">
                 <label for="specialization">Specialization</label>

@@ -148,16 +148,16 @@ include 'config.php';
     <a href="/QuickCare/admin/doctorform.php" class="add-btn">+ Add New Doctor</a>
 
     <div class="filter-container">
-        <form method="GET">
+        <form method="POST">
             <input type="text" name="name_filter" placeholder="Filter by Name"
-                value="<?php echo isset($_GET['name_filter']) ? htmlspecialchars($_GET['name_filter']) : ''; ?>">
+                value="<?php echo isset($_POST['name_filter']) ? htmlspecialchars($_POST['name_filter']) : ''; ?>">
 
             <select name="specialization_filter">
                 <option value="">All Specializations</option>
                 <?php
                 $spec_q = mysqli_query($conn, "SELECT * FROM specialisation_tbl ORDER BY SPECIALISATION_NAME");
                 while ($spec = mysqli_fetch_assoc($spec_q)) {
-                    $selected = (isset($_GET['specialization_filter']) && $_GET['specialization_filter'] == $spec['SPECIALISATION_ID']) ? 'selected' : '';
+                    $selected = (isset($_POST['specialization_filter']) && $_POST['specialization_filter'] == $spec['SPECIALISATION_ID']) ? 'selected' : '';
                     echo "<option value='{$spec['SPECIALISATION_ID']}' $selected>{$spec['SPECIALISATION_NAME']}</option>";
                 }
                 ?>
@@ -188,13 +188,13 @@ include 'config.php';
             WHERE 1=1
         ";
 
-        if (!empty($_GET['name_filter'])) {
-            $name = mysqli_real_escape_string($conn, $_GET['name_filter']);
+        if (!empty($_POST['name_filter'])) {
+            $name = mysqli_real_escape_string($conn, $_POST['name_filter']);
             $query .= " AND CONCAT(IFNULL(d.FIRST_NAME,''),' ',IFNULL(d.LAST_NAME,'')) LIKE '%$name%'";
         }
 
-        if (!empty($_GET['specialization_filter'])) {
-            $spec_id = (int)$_GET['specialization_filter'];
+        if (!empty($_POST['specialization_filter'])) {
+            $spec_id = (int)$_POST['specialization_filter'];
             $query .= " AND d.SPECIALISATION_ID = $spec_id";
         }
 

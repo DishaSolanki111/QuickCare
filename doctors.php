@@ -2,15 +2,15 @@
 session_start();
 include "config.php";
 include "header.php";
-if (!isset($_GET['spec_id'])) {
+if (!isset($_POST['spec_id']) && !isset($_GET['spec_id'])) {
     die("Specialization ID not provided");
 }
 
-$spec_id = intval($_GET['spec_id']);
+$spec_id = isset($_POST['spec_id']) ? intval($_POST['spec_id']) : intval($_GET['spec_id']);
 
  $q = "SELECT DOCTOR_ID, FIRST_NAME, LAST_NAME, PROFILE_IMAGE, SPECIALISATION_ID 
      FROM doctor_tbl 
-     WHERE SPECIALISATION_ID = $spec_id";
+     WHERE SPECIALISATION_ID = $spec_id AND STATUS = 'approved'";
 
  $res = mysqli_query($conn, $q);
 
@@ -378,12 +378,14 @@ $spec_id = intval($_GET['spec_id']);
                             <i class="fas fa-star-half-alt"></i>
                         </div>
                         <div class="card-actions">
-                            <a href="d_profile.php?id=<?php echo $row['DOCTOR_ID']; ?>" class="btn-secondary">
-                                <i class="fas fa-user"></i> View Profile
-                            </a>
-                            <a href="book_appointment_date.php?doctor_id=<?php echo $row['DOCTOR_ID']; ?>" class="btn-primary">
-                                <i class="fas fa-calendar-check"></i> Book Now
-                            </a>
+                            <form method="POST" action="d_profile.php" style="display:inline">
+                                <input type="hidden" name="id" value="<?php echo $row['DOCTOR_ID']; ?>">
+                                <button type="submit" class="btn-secondary"><i class="fas fa-user"></i> View Profile</button>
+                            </form>
+                            <form method="POST" action="book_appointment_date.php" style="display:inline">
+                                <input type="hidden" name="doctor_id" value="<?php echo $row['DOCTOR_ID']; ?>">
+                                <button type="submit" class="btn-primary"><i class="fas fa-calendar-check"></i> Book Now</button>
+                            </form>
                         </div>
                     </div>
                 <?php } ?>

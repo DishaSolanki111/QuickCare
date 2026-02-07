@@ -292,14 +292,14 @@
     <!-- Appointments Report -->
     <div class="report-container">
         <h2>Appointments Report</h2>
-        <form method="GET" action="reports.php">
-            <input type="date" name="start_date" placeholder="Start Date" value="<?php echo isset($_GET['start_date']) ? $_GET['start_date'] : date('Y-m-01'); ?>">
-            <input type="date" name="end_date" placeholder="End Date" value="<?php echo isset($_GET['end_date']) ? $_GET['end_date'] : date('Y-m-d'); ?>">
+        <form method="POST" action="Admin_report.php">
+            <input type="date" name="start_date" placeholder="Start Date" value="<?php echo isset($_POST['start_date']) ? $_POST['start_date'] : date('Y-m-01'); ?>">
+            <input type="date" name="end_date" placeholder="End Date" value="<?php echo isset($_POST['end_date']) ? $_POST['end_date'] : date('Y-m-d'); ?>">
             <select name="status_filter">
                 <option value="">All Status</option>
-                <option value="SCHEDULED" <?php echo (isset($_GET['status_filter']) && $_GET['status_filter'] == 'SCHEDULED') ? 'selected' : ''; ?>>Scheduled</option>
-                <option value="COMPLETED" <?php echo (isset($_GET['status_filter']) && $_GET['status_filter'] == 'COMPLETED') ? 'selected' : ''; ?>>Completed</option>
-                <option value="CANCELLED" <?php echo (isset($_GET['status_filter']) && $_GET['status_filter'] == 'CANCELLED') ? 'selected' : ''; ?>>Cancelled</option>
+                <option value="SCHEDULED" <?php echo (isset($_POST['status_filter']) && $_POST['status_filter'] == 'SCHEDULED') ? 'selected' : ''; ?>>Scheduled</option>
+                <option value="COMPLETED" <?php echo (isset($_POST['status_filter']) && $_POST['status_filter'] == 'COMPLETED') ? 'selected' : ''; ?>>Completed</option>
+                <option value="CANCELLED" <?php echo (isset($_POST['status_filter']) && $_POST['status_filter'] == 'CANCELLED') ? 'selected' : ''; ?>>Cancelled</option>
             </select>
             <button type="submit">Generate Report</button>
             <button type="button" class="export-btn" onclick="exportAppointmentReport()">Export</button>
@@ -315,9 +315,9 @@
             </tr>
             <?php
             // PHP code to generate appointments report
-            $start_date = isset($_GET['start_date']) ? $_GET['start_date'] : date('Y-m-01');
-            $end_date = isset($_GET['end_date']) ? $_GET['end_date'] : date('Y-m-d');
-            $status_filter = isset($_GET['status_filter']) ? $_GET['status_filter'] : '';
+            $start_date = isset($_POST['start_date']) ? $_POST['start_date'] : date('Y-m-01');
+            $end_date = isset($_POST['end_date']) ? $_POST['end_date'] : date('Y-m-d');
+            $status_filter = isset($_POST['status_filter']) ? $_POST['status_filter'] : '';
             
             // Build query based on filters
             $query = "SELECT APPOINTMENT_DATE, STATUS, COUNT(*) as count 
@@ -382,9 +382,9 @@
     <!-- Revenue Report -->
     <div class="report-container">
         <h2>Revenue Report</h2>
-        <form method="GET" action="reports.php">
-            <input type="date" name="revenue_start_date" placeholder="Start Date" value="<?php echo isset($_GET['revenue_start_date']) ? $_GET['revenue_start_date'] : date('Y-m-01'); ?>">
-            <input type="date" name="revenue_end_date" placeholder="End Date" value="<?php echo isset($_GET['revenue_end_date']) ? $_GET['revenue_end_date'] : date('Y-m-d'); ?>">
+        <form method="POST" action="Admin_report.php">
+            <input type="date" name="revenue_start_date" placeholder="Start Date" value="<?php echo isset($_POST['revenue_start_date']) ? $_POST['revenue_start_date'] : date('Y-m-01'); ?>">
+            <input type="date" name="revenue_end_date" placeholder="End Date" value="<?php echo isset($_POST['revenue_end_date']) ? $_POST['revenue_end_date'] : date('Y-m-d'); ?>">
             <button type="submit">Generate Report</button>
             <button type="button" class="export-btn" onclick="exportRevenueReport()">Export</button>
         </form>
@@ -397,8 +397,8 @@
             </tr>
             <?php
             // PHP code to generate revenue report
-            $revenue_start_date = isset($_GET['revenue_start_date']) ? $_GET['revenue_start_date'] : date('Y-m-01');
-            $revenue_end_date = isset($_GET['revenue_end_date']) ? $_GET['revenue_end_date'] : date('Y-m-d');
+            $revenue_start_date = isset($_POST['revenue_start_date']) ? $_POST['revenue_start_date'] : date('Y-m-01');
+            $revenue_end_date = isset($_POST['revenue_end_date']) ? $_POST['revenue_end_date'] : date('Y-m-d');
             
             $query = "SELECT PAYMENT_MODE, COUNT(*) as count, SUM(AMOUNT) as total 
                       FROM payment_tbl 
@@ -433,9 +433,9 @@
     <!-- Doctor Performance Report -->
     <div class="report-container">
         <h2>Doctor Performance Report</h2>
-        <form method="GET" action="reports.php">
-            <input type="date" name="doctor_start_date" placeholder="Start Date" value="<?php echo isset($_GET['doctor_start_date']) ? $_GET['doctor_start_date'] : date('Y-m-01'); ?>">
-            <input type="date" name="doctor_end_date" placeholder="End Date" value="<?php echo isset($_GET['doctor_end_date']) ? $_GET['doctor_end_date'] : date('Y-m-d'); ?>">
+        <form method="POST" action="Admin_report.php">
+            <input type="date" name="doctor_start_date" placeholder="Start Date" value="<?php echo isset($_POST['doctor_start_date']) ? $_POST['doctor_start_date'] : date('Y-m-01'); ?>">
+            <input type="date" name="doctor_end_date" placeholder="End Date" value="<?php echo isset($_POST['doctor_end_date']) ? $_POST['doctor_end_date'] : date('Y-m-d'); ?>">
             <button type="submit">Generate Report</button>
             <button type="button" class="export-btn" onclick="exportDoctorReport()">Export</button>
         </form>
@@ -451,8 +451,8 @@
             </tr>
             <?php
             // PHP code to generate doctor performance report
-            $doctor_start_date = isset($_GET['doctor_start_date']) ? $_GET['doctor_start_date'] : date('Y-m-01');
-            $doctor_end_date = isset($_GET['doctor_end_date']) ? $_GET['doctor_end_date'] : date('Y-m-d');
+            $doctor_start_date = isset($_POST['doctor_start_date']) ? $_POST['doctor_start_date'] : date('Y-m-01');
+            $doctor_end_date = isset($_POST['doctor_end_date']) ? $_POST['doctor_end_date'] : date('Y-m-d');
             
             $query = "SELECT d.DOCTOR_ID, d.FIRST_NAME, d.LAST_NAME, s.SPECIALISATION_NAME,
                       COUNT(a.APPOINTMENT_ID) as total_appointments,
@@ -491,21 +491,21 @@
 <script>
 function exportAppointmentReport() {
     window.location.href = "export_appointments_report.php?" + 
-        "start_date=<?php echo isset($_GET['start_date']) ? $_GET['start_date'] : date('Y-m-01'); ?>" + 
-        "&end_date=<?php echo isset($_GET['end_date']) ? $_GET['end_date'] : date('Y-m-d'); ?>" + 
-        "&status_filter=<?php echo isset($_GET['status_filter']) ? $_GET['status_filter'] : ''; ?>";
+        "start_date=<?php echo isset($_POST['start_date']) ? $_POST['start_date'] : date('Y-m-01'); ?>" + 
+        "&end_date=<?php echo isset($_POST['end_date']) ? $_POST['end_date'] : date('Y-m-d'); ?>" + 
+        "&status_filter=<?php echo isset($_POST['status_filter']) ? $_POST['status_filter'] : ''; ?>";
 }
 
 function exportRevenueReport() {
     window.location.href = "export_revenue_report.php?" + 
-        "start_date=<?php echo isset($_GET['revenue_start_date']) ? $_GET['revenue_start_date'] : date('Y-m-01'); ?>" + 
-        "&end_date=<?php echo isset($_GET['revenue_end_date']) ? $_GET['revenue_end_date'] : date('Y-m-d'); ?>";
+        "start_date=<?php echo isset($_POST['revenue_start_date']) ? $_POST['revenue_start_date'] : date('Y-m-01'); ?>" + 
+        "&end_date=<?php echo isset($_POST['revenue_end_date']) ? $_POST['revenue_end_date'] : date('Y-m-d'); ?>";
 }
 
 function exportDoctorReport() {
     window.location.href = "export_doctor_report.php?" + 
-        "start_date=<?php echo isset($_GET['doctor_start_date']) ? $_GET['doctor_start_date'] : date('Y-m-01'); ?>" + 
-        "&end_date=<?php echo isset($_GET['doctor_end_date']) ? $_GET['doctor_end_date'] : date('Y-m-d'); ?>";
+        "start_date=<?php echo isset($_POST['doctor_start_date']) ? $_POST['doctor_start_date'] : date('Y-m-01'); ?>" + 
+        "&end_date=<?php echo isset($_POST['doctor_end_date']) ? $_POST['doctor_end_date'] : date('Y-m-d'); ?>";
 }
 </script>
 

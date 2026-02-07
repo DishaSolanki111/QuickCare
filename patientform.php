@@ -386,8 +386,8 @@ include 'header.php';?>
                 $errors = [];
 
                 // ---------------- SANITIZE ----------------
-                $first_name = mysqli_real_escape_string($conn, $_POST['first_name']);
-                $last_name  = mysqli_real_escape_string($conn, $_POST['last_name']);
+                $first_name = strtoupper(trim(mysqli_real_escape_string($conn, $_POST['first_name'])));
+                $last_name  = strtoupper(trim(mysqli_real_escape_string($conn, $_POST['last_name'])));
                 $dob        = $_POST['dob'];
                 $blood_group = $_POST['blood_group'] ?? '';
                 $address    = mysqli_real_escape_string($conn, $_POST['address']);
@@ -399,15 +399,23 @@ include 'header.php';?>
                 $password   = $_POST['password'];
               
 
+                // ---------------- FIRST NAME / LAST NAME - MUST BE CAPITAL ----------------
+                if (!preg_match('/^[A-Z\s]+$/', $first_name)) {
+                    $errors[] = "First name must contain only capital letters.";
+                }
+                if (!preg_match('/^[A-Z\s]+$/', $last_name)) {
+                    $errors[] = "Last name must contain only capital letters.";
+                }
+
                 // ---------------- DATE VALIDATION ----------------
-                // Validate DOB is not empty and not in the future
+                // DOB must be BEFORE current date (not on or after)
                 if (empty($dob)) {
                     $errors[] = "Date of Birth is required.";
                 } else {
                     $dob_date = new DateTime($dob);
-                    $today = new DateTime();
-                    if ($dob_date > $today) {
-                        $errors[] = "Date of Birth cannot be in the future.";
+                    $today = new DateTime('today');
+                    if ($dob_date >= $today) {
+                        $errors[] = "Date of Birth must be before today (not today or in the future).";
                     }
                 }
                 
@@ -417,9 +425,10 @@ include 'header.php';?>
                 // ---------------- USERNAME VALIDATION ----------------
                 if (
                     !preg_match('/^[A-Z][A-Za-z0-9]*(_[A-Za-z0-9]+)*$/', $username) ||
-                    strlen($username) > 20
+                    strlen($username) > 20 ||
+                    !preg_match('/\d/', $username)
                 ) {
-                    $errors[] = "Username must start with a capital letter, max 20 chars, no spaces, no consecutive underscores, and not end with underscore.";
+                    $errors[] = "Username must start with a capital letter, max 20 chars, no spaces, no consecutive underscores, not end with underscore, and include at least 1 digit (e.g. Dr_rajesh05).";
                 }
 
                 // ---------------- PASSWORD VALIDATION ----------------
@@ -446,12 +455,13 @@ include 'header.php';?>
                 if (empty($errors)) {
                     $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
+                   $blood_val = ($blood_group === '' || $blood_group === null) ? 'NULL' : "'$blood_group'";
                    $sql = "
                 INSERT INTO patient_tbl
                 (FIRST_NAME, LAST_NAME, USERNAME, PSWD, DOB, GENDER, BLOOD_GROUP, PHONE, EMAIL, ADDRESS)
                 VALUES
                 ('$first_name','$last_name','$username','$hashed_password','$dob','$gender',
-                 '$blood_group','$phone','$email','$address')
+                 $blood_val,'$phone','$email','$address')
             ";
                     if ($conn->query($sql) === TRUE) {
                         $success = true;
@@ -519,9 +529,9 @@ include 'header.php';?>
                     </div>
                     
                     <div class="form-group">
-                        <label>Blood Group <span class="required">*</span></label>
+                        <label>Blood Group <span style="color:#888;">(Optional)</span></label>
                         <select name="blood_group">
-                            <option value="">Select Blood Group</option>
+                            <option value="">Select Blood Group (Optional)</option>
                             <option value="A+" <?php echo ($form_data['blood_group'] == 'A+') ? 'selected' : ''; ?>>A+</option>
                             <option value="A-" <?php echo ($form_data['blood_group'] == 'A-') ? 'selected' : ''; ?>>A-</option>
                             <option value="B+" <?php echo ($form_data['blood_group'] == 'B+') ? 'selected' : ''; ?>>B+</option>
@@ -579,7 +589,7 @@ include 'header.php';?>
                 <div class="form-row">
                     <div class="form-group">
                         <label for="username">Username <span class="required">*</span></label>
-                        <input type="text" id="username" name="username" placeholder="e.g. John_11" value="<?php echo htmlspecialchars($form_data['username']); ?>" required>
+                        <input type="text" id="username" name="username" placeholder="e.g. Arjun_m01" value="<?php echo htmlspecialchars($form_data['username']); ?>" required>
                         <div class="error-message" id="username_error"></div>
                     </div>
                     
@@ -682,7 +692,8 @@ include 'header.php';?>
     function validateUsername(input) {
         const usernameRegex = /^[A-Z][A-Za-z0-9]*(_[A-Za-z0-9]+)*$/;
         const val = input.value;
-        if (val.trim() !== '' && val.length <= 20 && usernameRegex.test(val)) {
+        const hasDigit = /\d/.test(val);
+        if (val.trim() !== '' && val.length <= 20 && usernameRegex.test(val) && hasDigit) {
             hideError('username');
         }
     }
@@ -711,25 +722,31 @@ include 'header.php';?>
     document.getElementById('PatientForm').addEventListener('submit', function (e) {
         let isValid = true;
         
-        // 1. Validate First Name
+        // 1. Validate First Name - must be capital letters only
         const firstName = document.getElementById('first_name');
         if (firstName.value.trim() === '') {
             showError('first_name', "First name is required.");
+            isValid = false;
+        } else if (!/^[A-Za-z\s]+$/.test(firstName.value.trim())) {
+            showError('first_name', "First name must contain only letters (stored in CAPITAL).");
             isValid = false;
         } else {
             hideError('first_name');
         }
 
-        // 2. Validate Last Name
+        // 2. Validate Last Name - must be capital letters only
         const lastName = document.getElementById('last_name');
         if (lastName.value.trim() === '') {
             showError('last_name', "Last name is required.");
+            isValid = false;
+        } else if (!/^[A-Za-z\s]+$/.test(lastName.value.trim())) {
+            showError('last_name', "Last name must contain only letters (stored in CAPITAL).");
             isValid = false;
         } else {
             hideError('last_name');
         }
 
-        // 3. Validate Date of Birth
+        // 3. Validate Date of Birth - must be BEFORE today (not on or after)
         const dob = document.getElementById('dob');
         if (dob.value === '') {
             showError('dob', "Date of Birth is required.");
@@ -737,22 +754,18 @@ include 'header.php';?>
         } else {
             const dobDate = new Date(dob.value);
             const today = new Date();
-            if (dobDate > today) {
-                showError('dob', "Date of Birth cannot be in the future.");
+            today.setHours(23, 59, 59, 999);
+            if (dobDate >= today) {
+                showError('dob', "Date of Birth must be before today.");
                 isValid = false;
             } else {
                 hideError('dob');
             }
         }
 
-        // 4. Validate Blood Group
+        // 4. Blood Group - optional (no validation required)
         const bloodGroup = document.querySelector('select[name="blood_group"]');
-        if (bloodGroup.value === '') {
-            showError('blood_group', "Please select your blood group.");
-            isValid = false;
-        } else {
-            hideError('blood_group');
-        }
+        hideError('blood_group');
 
         // 5. Validate Phone Number
         const phone = document.getElementById('phone');
@@ -782,7 +795,10 @@ include 'header.php';?>
             showError('username', "Username must be at most 20 characters.");
             isValid = false;
         } else if (!usernameRegex.test(username.value)) {
-            showError('username', "Username must start with a capital letter, no spaces, no consecutive underscores, and not end with underscore.");
+            showError('username', "Username must start with capital, no spaces, no consecutive underscores, not end with underscore.");
+            isValid = false;
+        } else if (!/\d/.test(username.value)) {
+            showError('username', "Username must include at least 1 digit (e.g. Arjun_m01).");
             isValid = false;
         } else {
             hideError('username');

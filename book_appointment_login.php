@@ -463,7 +463,7 @@ if (mysqli_num_rows($doctor_query) == 0) {
                             </button>
                         </div>
                         
-                        <p>Don't have an account? <a href="register.php">Register here</a></p>
+                        <p>Don't have an account? <a href="patientform.php">Register here</a></p>
                         <p><a href="forgot_password.php">Forgot password?</a></p>
                     </div>
                     

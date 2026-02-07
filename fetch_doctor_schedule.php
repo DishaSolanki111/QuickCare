@@ -6,6 +6,15 @@ include 'config.php';
  $date = isset($_POST['date']) ? $_POST['date'] : date('Y-m-d');
  $specializationId = isset($_POST['specialization']) ? (int)$_POST['specialization'] : 0;
 
+// Validate date: must be from today to 1 month from today
+ $today = date('Y-m-d');
+ $maxDate = date('Y-m-d', strtotime('+1 month'));
+if ($date < $today || $date > $maxDate) {
+    header('Content-Type: application/json');
+    echo json_encode(['success' => false, 'message' => 'Appointments can only be booked from today to 1 month ahead.', 'doctors' => []]);
+    exit;
+}
+
 // Convert date to day of week (MON, TUE, etc.)
  $dayOfWeek = date('D', strtotime($date));
  $dayMap = [
@@ -25,7 +34,7 @@ include 'config.php';
         FROM doctor_tbl d
         JOIN specialisation_tbl s ON d.SPECIALISATION_ID = s.SPECIALISATION_ID
         LEFT JOIN doctor_schedule_tbl ds ON d.DOCTOR_ID = ds.DOCTOR_ID AND ds.AVAILABLE_DAY = ?
-        WHERE (? = 0 OR d.SPECIALISATION_ID = ?)
+        WHERE d.STATUS = 'approved' AND (? = 0 OR d.SPECIALISATION_ID = ?)
         ORDER BY s.SPECIALISATION_NAME, d.FIRST_NAME, d.LAST_NAME";
 
  $stmt = $conn->prepare($sql);

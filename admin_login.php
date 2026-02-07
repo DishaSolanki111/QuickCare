@@ -432,8 +432,8 @@ include 'header.php';
                 <h3>Admin Login</h3>
                 <div class="error-message" id="admin-error">
                     <?php 
-                    if (isset($_GET['error'])) {
-                        echo htmlspecialchars($_GET['error']);
+                    if (isset($_POST['error']) || isset($_GET['error'])) {
+                        echo htmlspecialchars($_POST['error'] ?? $_GET['error']);
                     }
                     ?>
                 </div>
@@ -539,7 +539,7 @@ include 'header.php';
         });
         
         // Show error messages from GET data
-        <?php if (isset($_GET['error'])): ?>
+        <?php if (isset($_POST['error']) || isset($_GET['error'])): ?>
             const errorElement = document.getElementById('admin-error');
             if (errorElement) {
                 errorElement.style.display = 'block';

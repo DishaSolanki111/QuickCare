@@ -2,11 +2,11 @@
 session_start();
 include "config.php";
 
- $doctor_id = (int)$_GET['doctor_id'];
+ $doctor_id = isset($_POST['doctor_id']) ? (int)$_POST['doctor_id'] : (int)$_GET['doctor_id'];
 
 /* Month & Year */
- $month = isset($_GET['month']) ? (int)$_GET['month'] : date('n');
- $year  = isset($_GET['year'])  ? (int)$_GET['year']  : date('Y');
+ $month = isset($_POST['month']) ? (int)$_POST['month'] : (isset($_GET['month']) ? (int)$_GET['month'] : date('n'));
+ $year  = isset($_POST['year'])  ? (int)$_POST['year']  : (isset($_GET['year']) ? (int)$_GET['year'] : date('Y'));
 
 /* Normalize month overflow */
 if ($month < 1) { $month = 12; $year--; }
@@ -303,13 +303,19 @@ while ($row = mysqli_fetch_assoc($bookedQuery)) {
 <body>
     <div class="main-container">
         <div class="calendar-header">
-            <a href="?doctor_id=<?= $doctor_id ?>&month=<?= $month-1 ?>&year=<?= $year ?>" class="nav-button">
-                <i class="fas fa-chevron-left"></i>
-            </a>
+            <form method="POST" action="calendar.php" style="display:inline">
+            <input type="hidden" name="doctor_id" value="<?= $doctor_id ?>">
+            <input type="hidden" name="month" value="<?= $month-1 ?>">
+            <input type="hidden" name="year" value="<?= $year ?>">
+            <button type="submit" class="nav-button"><i class="fas fa-chevron-left"></i></button>
+        </form>
             <h3><?= date('F Y', $firstDayOfMonth) ?></h3>
-            <a href="?doctor_id=<?= $doctor_id ?>&month=<?= $month+1 ?>&year=<?= $year ?>" class="nav-button">
-                <i class="fas fa-chevron-right"></i>
-            </a>
+            <form method="POST" action="calendar.php" style="display:inline">
+            <input type="hidden" name="doctor_id" value="<?= $doctor_id ?>">
+            <input type="hidden" name="month" value="<?= $month+1 ?>">
+            <input type="hidden" name="year" value="<?= $year ?>">
+            <button type="submit" class="nav-button"><i class="fas fa-chevron-right"></i></button>
+        </form>
         </div>
 
         <div class="calendar-content">

@@ -15,7 +15,7 @@ include 'config.php';
  $patient = mysqli_fetch_assoc($patient_query);
 
 // Get selected specialization from query parameters
- $selected_specialization = isset($_GET['specialization']) ? mysqli_real_escape_string($conn, $_GET['specialization']) : '';
+ $selected_specialization = isset($_POST['specialization']) ? mysqli_real_escape_string($conn, $_POST['specialization']) : (isset($_GET['specialization']) ? mysqli_real_escape_string($conn, $_GET['specialization']) : '');
 
 // Fetch specializations for filter
  $specializations_query = mysqli_query($conn, "SELECT * FROM specialisation_tbl ORDER BY SPECIALISATION_NAME");
@@ -37,7 +37,7 @@ if (!empty($selected_specialization)) {
  $doctors_result = mysqli_query($conn, $doctors_query);
 
 // Get doctor ID from URL if viewing a specific doctor
- $doctor_id = isset($_GET['doctor']) ? mysqli_real_escape_string($conn, $_GET['doctor']) : '';
+ $doctor_id = isset($_POST['doctor']) ? mysqli_real_escape_string($conn, $_POST['doctor']) : (isset($_GET['doctor']) ? mysqli_real_escape_string($conn, $_GET['doctor']) : '');
 
 // If doctor ID is provided, get doctor details
  $doctor_details = null;
@@ -691,7 +691,7 @@ echo '<div class="empty-state">
 <?php else: ?>
 <!-- Filter Section -->
 <div class="filter-section">
-<form method="GET" action="doctor_profiles.php" class="filter-form">
+<form method="POST" action="view_doctor_patient.php" class="filter-form">
 <div class="form-group">
 <label for="specialization">Filter by Specialization</label>
 <select class="form-control" id="specialization" name="specialization">
@@ -714,7 +714,7 @@ mysqli_data_seek($specializations_query, 0);
 <button type="submit" class="btn btn-primary">
 <i class="fas fa-filter"></i> Apply Filters
 </button>
-<a href="doctor_profiles.php" class="btn" style="margin-left: 10px; background-color: #6c757d; color: white;">
+<a href="view_doctor_patient.php" class="btn" style="margin-left: 10px; background-color: #6c757d; color: white;">
 <i class="fas fa-redo"></i> Reset
 </a>
 </div>
@@ -752,12 +752,16 @@ while ($doctor = mysqli_fetch_assoc($doctors_result)) {
 </div>
 </div>
 <div class="doctor-actions">
-<a href="d_profile.php?doctor=<?php echo $doctor['DOCTOR_ID']; ?>" class="btn btn-primary">
-<i class="fas fa-user-md"></i> View Profile
-</a>
-<button class="btn btn-success" onclick="window.location.href='book_appointment_date.php'">
+<form method="POST" action="d_profile.php" style="display:inline">
+<input type="hidden" name="id" value="<?php echo $doctor['DOCTOR_ID']; ?>">
+<button type="submit" class="btn btn-primary"><i class="fas fa-user-md"></i> View Profile</button>
+</form>
+<form method="POST" action="book_appointment_date.php" style="display:inline">
+<input type="hidden" name="doctor_id" value="<?php echo $doctor['DOCTOR_ID']; ?>">
+<button type="submit" class="btn btn-success">
 <i class="fas fa-calendar-plus"></i> Book
 </button>
+</form>
 </div>
 </div>
 </div>
@@ -778,12 +782,23 @@ echo '<div class="empty-state" style="grid-column: 1 / -1;">
 
 <script>
 function bookAppointment(doctorId, day) {
-// Redirect to appointment booking page with pre-selected doctor
-let url = 'manage_appointments.php?doctor=' + doctorId;
+var f = document.createElement('form');
+f.method = 'POST';
+f.action = 'manage_appointments.php';
+var d = document.createElement('input');
+d.type = 'hidden';
+d.name = 'doctor';
+d.value = doctorId;
+f.appendChild(d);
 if (day) {
-url += '&day=' + day;
+var dayInput = document.createElement('input');
+dayInput.type = 'hidden';
+dayInput.name = 'day';
+dayInput.value = day;
+f.appendChild(dayInput);
 }
-window.location.href = url;
+document.body.appendChild(f);
+f.submit();
 }
 </script>
 </body>

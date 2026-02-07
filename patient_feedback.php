@@ -63,7 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_feedback'])) {
 ");
 
 // Get appointment ID from URL if coming from appointments page
- $appointment_id = isset($_GET['appointment']) ? mysqli_real_escape_string($conn, $_GET['appointment']) : '';
+ $appointment_id = isset($_POST['appointment']) ? mysqli_real_escape_string($conn, $_POST['appointment']) : (isset($_GET['appointment']) ? mysqli_real_escape_string($conn, $_GET['appointment']) : '');
 
 // If appointment ID is provided, get appointment details
  $appointment_details = null;

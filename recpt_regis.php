@@ -384,9 +384,10 @@ include 'config.php';
                 // ---------------- USERNAME VALIDATION ----------------
                 if (
                     !preg_match('/^[A-Z][A-Za-z0-9]*(_[A-Za-z0-9]+)*$/', $username) ||
-                    strlen($username) > 20
+                    strlen($username) > 20 ||
+                    !preg_match('/\d/', $username)
                 ) {
-                    $errors[] = "Username must start with a capital letter, max 20 chars, no spaces, no consecutive underscores, and not end with underscore.";
+                    $errors[] = "Username must start with a capital letter, max 20 chars, no spaces, no consecutive underscores, not end with underscore, and include at least 1 digit (e.g. Meena_k01).";
                 }
 
                 // ---------------- PASSWORD VALIDATION ----------------
@@ -531,7 +532,7 @@ include 'config.php';
                 <div class="form-row">
                     <div class="form-group">
                         <label for="username">Username <span class="required">*</span></label>
-                        <input type="text" id="username" name="username" placeholder="Start with capital (e.g. JohnDoe)" value="<?php echo htmlspecialchars($form_data['username']); ?>" required>
+                        <input type="text" id="username" name="username" placeholder="e.g. Meena_k01" value="<?php echo htmlspecialchars($form_data['username']); ?>" required>
                         <div class="error-message" id="username_error"></div>
                     </div>
                     
@@ -651,7 +652,8 @@ include 'config.php';
     function validateUsername(input) {
         const usernameRegex = /^[A-Z][A-Za-z0-9]*(_[A-Za-z0-9]+)*$/;
         const val = input.value;
-        if (val.trim() !== '' && val.length <= 20 && usernameRegex.test(val)) {
+        const hasDigit = /\d/.test(val);
+        if (val.trim() !== '' && val.length <= 20 && usernameRegex.test(val) && hasDigit) {
             hideError('username');
         }
     }
@@ -771,7 +773,10 @@ include 'config.php';
             showError('username', "Username must be at most 20 characters.");
             isValid = false;
         } else if (!usernameRegex.test(username.value)) {
-            showError('username', "Username must start with a capital letter, no spaces, no consecutive underscores, and not end with underscore.");
+            showError('username', "Username must start with capital, no spaces, no consecutive underscores, not end with underscore.");
+            isValid = false;
+        } else if (!/\d/.test(username.value)) {
+            showError('username', "Username must include at least 1 digit (e.g. Meena_k01).");
             isValid = false;
         } else {
             hideError('username');

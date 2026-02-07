@@ -432,9 +432,10 @@ $res = mysqli_query($conn,$q);
                                 <i class="fas <?php echo $icon; ?>"></i>
                             </div>
                             <h2><?php echo $row['SPECIALISATION_NAME']; ?></h2>
-                            <a href="doctors.php?spec_id=<?php echo $row['SPECIALISATION_ID']; ?>">
-                                <button>View Doctors</button>
-                            </a>
+                            <form method="POST" action="doctors.php" style="display:inline">
+                                <input type="hidden" name="spec_id" value="<?php echo $row['SPECIALISATION_ID']; ?>">
+                                <button type="submit">View Doctors</button>
+                            </form>
                         </div>
                     </div>
                 <?php } ?>

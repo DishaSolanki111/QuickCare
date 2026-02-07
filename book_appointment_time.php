@@ -448,7 +448,10 @@ if (mysqli_num_rows($doctor_query) == 0) {
                 </div>
 
                 <div class="modal-content">
-                    <a href="book_appointment_date.php?doctor_id=<?php echo $doctor['DOCTOR_ID']; ?>" class="close">&times;</a>
+                    <form method="POST" action="book_appointment_date.php" style="display:inline">
+                    <input type="hidden" name="doctor_id" value="<?php echo $doctor['DOCTOR_ID']; ?>">
+                    <button type="submit" class="close" style="background:none;border:none;font-size:28px;cursor:pointer">&times;</button>
+                </form>
                     <h2>Select Time Slot</h2>
                     
                     <!-- Step Indicator -->
@@ -534,7 +537,7 @@ if (mysqli_num_rows($doctor_query) == 0) {
             </div>
         `;
         
-        fetch(`get_time_slots.php?doctor_id=${doctorId}&date=${date}`)
+        fetch('get_time_slots.php', { method: 'POST', headers: {'Content-Type': 'application/x-www-form-urlencoded'}, body: 'doctor_id=' + encodeURIComponent(doctorId) + '&date=' + encodeURIComponent(date) })
             .then(response => response.json())
             .then(data => {
                 if (data.status === 'success') {
@@ -586,7 +589,16 @@ if (mysqli_num_rows($doctor_query) == 0) {
     }
     
     function goBack() {
-        window.location.href = 'book_appointment_date.php?doctor_id=<?php echo $doctor['DOCTOR_ID']; ?>';
+        var f = document.createElement('form');
+        f.method = 'POST';
+        f.action = 'book_appointment_date.php';
+        var i = document.createElement('input');
+        i.type = 'hidden';
+        i.name = 'doctor_id';
+        i.value = '<?php echo $doctor['DOCTOR_ID']; ?>';
+        f.appendChild(i);
+        document.body.appendChild(f);
+        f.submit();
     }
     
     function proceedToLogin() {

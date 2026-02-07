@@ -5,9 +5,9 @@ include 'config.php';
 /* TEMP: hardcoded patient for demo */
  $patient_id = 1;
 
- $doctor_id = $_GET['doctor_id'];
- $date      = $_GET['date'];
- $time      = $_GET['time'];
+$doctor_id = $_POST['doctor_id'] ?? $_GET['doctor_id'];
+$date      = $_POST['date'] ?? $_GET['date'];
+$time      = $_POST['time'] ?? $_GET['time'];
 
 /* 1️⃣ Find day name from date (MON, TUE...) */
  $day = strtoupper(date('D', strtotime($date))); // MON, TUE, WED

@@ -25,8 +25,8 @@ include 'config.php';
 ");
 
 // Handle prescription download
-if (isset($_GET['download']) && !empty($_GET['download'])) {
-    $prescription_id = mysqli_real_escape_string($conn, $_GET['download']);
+if ((isset($_POST['download']) && !empty($_POST['download'])) || (isset($_GET['download']) && !empty($_GET['download']))) {
+    $prescription_id = mysqli_real_escape_string($conn, isset($_POST['download']) ? $_POST['download'] : $_GET['download']);
     
     // Get prescription details
     $prescription_detail = mysqli_query($conn, "
@@ -459,9 +459,10 @@ html {
                         </div>
                         
                         <div class="btn-group">
-                            <a href="prescriptions.php?download=<?php echo $prescription['PRESCRIPTION_ID']; ?>" class="btn btn-primary">
-                                <i class="fas fa-download"></i> Download PDF
-                            </a>
+                            <form method="POST" action="patinet_prescriptions.php" style="display:inline">
+                                <input type="hidden" name="download" value="<?php echo $prescription['PRESCRIPTION_ID']; ?>">
+                                <button type="submit" class="btn btn-primary"><i class="fas fa-download"></i> Download PDF</button>
+                            </form>
                             <button class="btn btn-success" onclick="setReminder(<?php echo $prescription['PRESCRIPTION_ID']; ?>)">
                                 <i class="fas fa-bell"></i> Set Medicine Reminder
                             </button>

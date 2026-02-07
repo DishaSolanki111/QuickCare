@@ -1,8 +1,8 @@
 <?php
 include "config.php";
 
- $doctor_id = $_GET['doctor_id'] ?? null;
- $date = $_GET['date'] ?? null;
+ $doctor_id = $_POST['doctor_id'] ?? $_GET['doctor_id'] ?? null;
+ $date = $_POST['date'] ?? $_GET['date'] ?? null;
 
 if (!$doctor_id || !$date) {
     die("Doctor or date missing");

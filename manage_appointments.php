@@ -1241,7 +1241,7 @@ html {
             `;
             
             // Fetch doctor's schedule from database
-            fetch(`get_doctor_schedule.php?doctor_id=${doctorId}`)
+            fetch('get_doctor_schedule.php', { method: 'POST', headers: {'Content-Type': 'application/x-www-form-urlencoded'}, body: 'doctor_id=' + encodeURIComponent(doctorId) })
                 .then(response => response.json())
                 .then(data => {
                     if (data.status === 'success') {
@@ -1298,7 +1298,7 @@ html {
             `;
             
             // Fetch time slots from database
-            fetch(`get_time_slots.php?doctor_id=${doctorId}&date=${date}`)
+            fetch('get_time_slots.php', { method: 'POST', headers: {'Content-Type': 'application/x-www-form-urlencoded'}, body: 'doctor_id=' + encodeURIComponent(doctorId) + '&date=' + encodeURIComponent(date) })
                 .then(response => response.json())
                 .then(data => {
                     if (data.status === 'success') {

@@ -342,7 +342,7 @@ include 'header.php';
             <h2>Get In Touch</h2>
             <p>Fill out the form below to book your appointment.</p>
 
-            <form>
+            <form method="POST">
                 <input type="text" placeholder="Your Name" required>
                 <input type="email" placeholder="Your Email" required>
                 <input type="text" placeholder="Phone Number" required>

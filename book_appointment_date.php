@@ -6,7 +6,7 @@ include "config.php";
 include "header.php";
 
 // Get doctor ID from URL
- $doctor_id = isset($_GET['doctor_id']) ? intval($_GET['doctor_id']) : 0;
+ $doctor_id = isset($_POST['doctor_id']) ? intval($_POST['doctor_id']) : (isset($_GET['doctor_id']) ? intval($_GET['doctor_id']) : 0);
 
 // Redirect if no doctor ID is provided
 if ($doctor_id == 0) {
@@ -19,7 +19,7 @@ if ($doctor_id == 0) {
     SELECT d.*, s.SPECIALISATION_NAME 
     FROM doctor_tbl d
     JOIN specialisation_tbl s ON d.SPECIALISATION_ID = s.SPECIALISATION_ID
-    WHERE d.DOCTOR_ID = $doctor_id
+    WHERE d.DOCTOR_ID = $doctor_id AND d.STATUS = 'approved'
 ");
 
 if (mysqli_num_rows($doctor_query) == 0) {
@@ -473,7 +473,10 @@ if (mysqli_num_rows($doctor_query) == 0) {
                 </div>
 
                 <div class="modal-content">
-                    <a href="doctors.php?spec_id=<?php echo $doctor['SPECIALISATION_ID']; ?>" class="close">&times;</a>
+                    <form method="POST" action="doctors.php" style="display:inline">
+                    <input type="hidden" name="spec_id" value="<?php echo $doctor['SPECIALISATION_ID']; ?>">
+                    <button type="submit" class="close" style="background:none;border:none;font-size:28px;cursor:pointer">&times;</button>
+                </form>
                     <h2>Select Appointment Date</h2>
                     
                     <!-- Step Indicator -->
@@ -559,7 +562,13 @@ if (mysqli_num_rows($doctor_query) == 0) {
     function initCalendar() {
         renderCalendar(currentMonth, currentYear);
         
+        const today = new Date();
+        const maxDate = new Date(today.getFullYear(), today.getMonth() + 1, today.getDate());
+        
         document.getElementById('prevMonth').addEventListener('click', () => {
+            const currentView = new Date(currentYear, currentMonth);
+            const minView = new Date(today.getFullYear(), today.getMonth());
+            if (currentView <= minView) return;
             currentMonth--;
             if (currentMonth < 0) {
                 currentMonth = 11;
@@ -569,6 +578,9 @@ if (mysqli_num_rows($doctor_query) == 0) {
         });
         
         document.getElementById('nextMonth').addEventListener('click', () => {
+            const currentView = new Date(currentYear, currentMonth);
+            const maxView = new Date(maxDate.getFullYear(), maxDate.getMonth());
+            if (currentView >= maxView) return;
             currentMonth++;
             if (currentMonth > 11) {
                 currentMonth = 0;
@@ -604,13 +616,18 @@ if (mysqli_num_rows($doctor_query) == 0) {
         }
         
         const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const maxDate = new Date();
+        maxDate.setMonth(maxDate.getMonth() + 1);
+        maxDate.setHours(23, 59, 59, 999);
         for (let day = 1; day <= daysInMonth; day++) {
             const dayElement = document.createElement('div');
             dayElement.className = 'calendar-day';
             dayElement.textContent = day;
             
             const currentDate = new Date(year, month, day);
-            if (currentDate < today.setHours(0, 0, 0, 0)) {
+            currentDate.setHours(0, 0, 0, 0);
+            if (currentDate < today || currentDate > maxDate) {
                 dayElement.classList.add('disabled');
             }
             
@@ -633,7 +650,7 @@ if (mysqli_num_rows($doctor_query) == 0) {
     function loadDoctorSchedule(doctorId) {
         selectedDoctorId = doctorId;
         
-        fetch(`get_doctor_schedule.php?doctor_id=${doctorId}`)
+        fetch('get_doctor_schedule.php', { method: 'POST', headers: {'Content-Type': 'application/x-www-form-urlencoded'}, body: 'doctor_id=' + encodeURIComponent(doctorId) })
             .then(response => response.json())
             .then(data => {
                 if (data.status === 'success') {

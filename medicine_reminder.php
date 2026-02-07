@@ -81,7 +81,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_reminder'])) {
 }
 
 // Get prescription ID from URL if coming from prescriptions page
- $prescription_id = isset($_GET['prescription']) ? mysqli_real_escape_string($conn, $_GET['prescription']) : '';
+ $prescription_id = isset($_POST['prescription']) ? mysqli_real_escape_string($conn, $_POST['prescription']) : (isset($_GET['prescription']) ? mysqli_real_escape_string($conn, $_GET['prescription']) : '');
 
 // Fetch ONLY medicines prescribed to this patient
 $prescribed_medicines_query = mysqli_query($conn, "

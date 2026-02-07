@@ -9,10 +9,11 @@ if (!$conn) {
 }
 
 // --- GET PATIENT ID FROM URL ---
-if (!isset($_GET['patient_id']) || !is_numeric($_GET['patient_id'])) {
+$patient_id_val = isset($_POST['patient_id']) ? $_POST['patient_id'] : (isset($_GET['patient_id']) ? $_GET['patient_id'] : null);
+if (!$patient_id_val || !is_numeric($patient_id_val)) {
     die("<div style='font-family: Arial, sans-serif; color: #d9534f; padding: 20px; border: 1px solid #d9534f; background-color: #f2dede; border-radius: 5px;'><strong>Error:</strong> Invalid or missing Patient ID. Please go back and select a patient.</div>");
 }
- $patient_id = intval($_GET['patient_id']);
+ $patient_id = intval($patient_id_val);
 
 // --- FETCH PATIENT DETAILS ---
  $stmt = $conn->prepare("SELECT FIRST_NAME, LAST_NAME FROM patient_tbl WHERE PATIENT_ID = ?");
@@ -514,7 +515,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_prescription_i
                     <?php if (empty($completed_appointments)): ?>
                         <p style="color: #8a6d3b; background-color: #fcf8e3; border: 1px solid #faebcc; padding: 15px; border-radius: 4px;"><strong>Note:</strong> This patient has no completed appointments.</p>
                     <?php else: ?>
-                        <form action="prescription_form.php?patient_id=<?php echo $patient_id; ?>" method="POST">
+                        <form action="prescription_form.php" method="POST">
+                            <input type="hidden" name="patient_id" value="<?php echo $patient_id; ?>">
                             <div class="form-group">
                                 <label for="appointment_id">Link to Completed Appointment:</label>
                                 <select id="appointment_id" name="appointment_id" required>
@@ -602,7 +604,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_prescription_i
                                         <strong>Issue Date:</strong> <?php echo htmlspecialchars($prescription['ISSUE_DATE']); ?> | 
                                         <strong>Doctor:</strong> <?php echo htmlspecialchars($prescription['DOC_FNAME'] . ' ' . $prescription['DOC_LNAME']); ?>
                                     </div>
-                                    <form action="prescription_form.php?patient_id=<?php echo $patient_id; ?>" method="POST" onsubmit="return confirm('Are you sure?');">
+                                    <form action="prescription_form.php" method="POST" onsubmit="return confirm('Are you sure?');">
+                                        <input type="hidden" name="patient_id" value="<?php echo $patient_id; ?>">
                                         <input type="hidden" name="delete_prescription_id" value="<?php echo $prescription['PRESCRIPTION_ID']; ?>">
                                         <button type="submit" class="btn btn-delete">Delete</button>
                                     </form>

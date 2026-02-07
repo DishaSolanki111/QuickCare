@@ -2,11 +2,11 @@
 session_start(); // Start session to check login status
 include 'config.php';
 include 'header.php';
-if (!isset($_GET['id'])) {
+if (!isset($_POST['id']) && !isset($_GET['id'])) {
     die("Doctor ID missing.");
 }
 
- $doctor_id = intval($_GET['id']);
+ $doctor_id = isset($_POST['id']) ? intval($_POST['id']) : intval($_GET['id']);
 
 /* =========================
    FETCH DOCTOR DETAILS
@@ -441,7 +441,10 @@ if (!$doctor) {
                         <span class="badge"><?php echo htmlspecialchars($doctor['SPECIALISATION_NAME']); ?></span>
                         
                         <!-- Book Now Button -->
-                        <button class="book-now-btn" onclick="window.location.href='book_appointment_date.php?doctor_id=<?php echo $doctor_id; ?>'">
+                        <form id="goBookForm" method="POST" action="book_appointment_date.php">
+                            <input type="hidden" name="doctor_id" value="<?php echo $doctor_id; ?>">
+                        </form>
+                        <button class="book-now-btn" type="button" onclick="document.getElementById('goBookForm').submit()">
                             <i class="fas fa-calendar-check"></i> Book Appointment
                         </button>
                     </div>

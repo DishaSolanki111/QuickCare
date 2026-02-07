@@ -130,7 +130,7 @@
     </div>
 
     <div class="filter-container">
-        <form method="GET" action="">
+        <form method="POST" action="">
             <input type="date" name="date_filter">
 
             <select name="status_filter">
@@ -177,18 +177,18 @@
                   JOIN doctor_tbl d ON a.DOCTOR_ID = d.DOCTOR_ID
                   WHERE 1=1";
 
-        if(!empty($_GET['date_filter'])) {
-            $date = mysqli_real_escape_string($conn, $_GET['date_filter']);
+        if(!empty($_POST['date_filter'])) {
+            $date = mysqli_real_escape_string($conn, $_POST['date_filter']);
             $query .= " AND a.APPOINTMENT_DATE='$date'";
         }
 
-        if(!empty($_GET['status_filter'])) {
-            $status = mysqli_real_escape_string($conn, $_GET['status_filter']);
+        if(!empty($_POST['status_filter'])) {
+            $status = mysqli_real_escape_string($conn, $_POST['status_filter']);
             $query .= " AND a.STATUS='$status'";
         }
 
-        if(!empty($_GET['doctor_filter'])) {
-            $doc = mysqli_real_escape_string($conn, $_GET['doctor_filter']);
+        if(!empty($_POST['doctor_filter'])) {
+            $doc = mysqli_real_escape_string($conn, $_POST['doctor_filter']);
             $query .= " AND a.DOCTOR_ID='$doc'";
         }
 
