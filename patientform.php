@@ -31,7 +31,7 @@ include 'header.php';?>
         }
 
         body {
-            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+            background: linear-gradient(135deg, var(--light-blue) 0%, var(--card-bg) 100%);
             min-height: 100vh;
             display: flex;
             padding-top: 80px;
