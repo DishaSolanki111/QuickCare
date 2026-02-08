@@ -72,22 +72,6 @@ if ($today_result->num_rows > 0) {
 }
  $today_stmt->close();
 
-// Add static data for today's appointments
- $static_appointment = [
-    'APPOINTMENT_ID' => 0,
-    'PATIENT_ID' => 0,
-    'PAT_FNAME' => 'John',
-    'PAT_LNAME' => 'Doe',
-    'PAT_PHONE' => '123-456-7890',
-    'PAT_EMAIL' => 'john.doe@example.com',
-    'APPOINTMENT_DATE' => $today,
-    'APPOINTMENT_TIME' => '10:00:00',
-    'STATUS' => 'SCHEDULED',
-    'REASON' => 'Regular Checkup',
-    'NOTES' => 'Patient reports mild headache'
-];
-array_unshift($today_appointments, $static_appointment);
-
 // Upcoming appointments (only scheduled)
  $upcoming_appointments = [];
  $upcoming_sql = "
@@ -560,7 +544,7 @@ if ($past_result->num_rows > 0) {
             <div class="tab-content active" id="today">
                 <?php if (count($today_appointments) > 0): ?>
                     <?php foreach ($today_appointments as $appointment): ?>
-                        <div class="appointment-card <?php echo $appointment['APPOINTMENT_ID'] == 0 ? 'static-appointment' : ''; ?>">
+                        <div class="appointment-card">
                             <div class="appointment-header">
                                 <div class="patient-info">
                                     <h3><?php echo htmlspecialchars($appointment['PAT_FNAME'] . ' ' . $appointment['PAT_LNAME']); ?></h3>
@@ -597,7 +581,6 @@ if ($past_result->num_rows > 0) {
                             
                             <div class="appointment-actions">
                                 <?php if ($appointment['STATUS'] === 'SCHEDULED'): ?>
-                                    <?php if ($appointment['APPOINTMENT_ID'] != 0): ?>
                                     <form method="POST" style="display: inline;">
                                         <input type="hidden" name="appointment_id" value="<?php echo $appointment['APPOINTMENT_ID']; ?>">
                                         <input type="hidden" name="status" value="COMPLETED">
@@ -612,15 +595,6 @@ if ($past_result->num_rows > 0) {
                                             <i class="fas fa-times"></i> Cancel
                                         </button>
                                     </form>
-                                    <?php else: ?>
-                                    <!-- For static appointment, show disabled buttons -->
-                                    <button class="btn btn-success" disabled>
-                                        <i class="fas fa-check"></i> Mark as Completed
-                                    </button>
-                                    <button class="btn btn-danger" disabled>
-                                        <i class="fas fa-times"></i> Cancel
-                                    </button>
-                                    <?php endif; ?>
                                 <?php endif; ?>
                                 
                                 <button class="btn btn-primary" onclick="viewPrescription(<?php echo $appointment['APPOINTMENT_ID']; ?>)">

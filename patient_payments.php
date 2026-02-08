@@ -25,6 +25,13 @@ include 'config.php';
     ORDER BY p.PAYMENT_DATE DESC
 ");
 
+// Fetch fixed appointment booking amount from payment_tbl (no static fallback)
+$booking_fee = 0;
+$fee_result = mysqli_query($conn, "SELECT AMOUNT FROM payment_tbl WHERE STATUS='COMPLETED' ORDER BY PAYMENT_ID DESC LIMIT 1");
+if ($fee_result && $row = mysqli_fetch_assoc($fee_result)) {
+    $booking_fee = (float) $row['AMOUNT'];
+}
+
 // Fetch unpaid appointments
  $unpaid_query = mysqli_query($conn, "
     SELECT a.*, d.FIRST_NAME as DOC_FNAME, d.LAST_NAME as DOC_LNAME, s.SPECIALISATION_NAME
@@ -40,7 +47,7 @@ include 'config.php';
 // Handle payment processing
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['process_payment'])) {
     $appointment_id = mysqli_real_escape_string($conn, $_POST['appointment_id']);
-    $amount = mysqli_real_escape_string($conn, $_POST['amount']);
+    $amount = mysqli_real_escape_string($conn, str_replace(',', '', $_POST['amount']));
     $payment_mode = mysqli_real_escape_string($conn, $_POST['payment_mode']);
     
     // Generate a transaction ID
@@ -526,7 +533,7 @@ html {
                                 </div>
                                 <div class="payment-item">
                                     <i class="fas fa-rupee-sign"></i>
-                                    <span>Amount: ₹<?php echo $payment['AMOUNT']; ?></span>
+                                    <span>Booking Fee: ₹<?php echo number_format($payment['AMOUNT'], 2); ?></span>
                                 </div>
                                 <div class="payment-item">
                                     <i class="fas fa-credit-card"></i>
@@ -562,12 +569,12 @@ html {
         <div class="modal-content">
             <span class="close" onclick="closePaymentModal()">&times;</span>
             <h2>Process Payment</h2>
-            <form method="POST" action="payments.php">
+            <form method="POST" action="patient_payments.php">
                 <input type="hidden" id="payment_appointment_id" name="appointment_id">
                 
                 <div class="form-group">
-                    <label for="amount">Amount</label>
-                    <input type="text" class="form-control" id="amount" name="amount" value="500" readonly>
+                    <label for="amount">Booking Fee</label>
+                    <input type="text" class="form-control" id="amount" name="amount" value="<?php echo number_format($booking_fee, 2); ?>" readonly>
                 </div>
                 
                 <div class="form-group">
@@ -583,16 +590,16 @@ html {
                 
                 <div class="payment-summary">
                     <div class="summary-item">
-                        <span>Consultation Fee:</span>
-                        <span>₹500</span>
+                        <span>Booking Fee:</span>
+                        <span>₹<?php echo number_format($booking_fee, 2); ?></span>
                     </div>
                     <div class="summary-item">
                         <span>Tax:</span>
-                        <span>₹0</span>
+                        <span>₹<?php echo number_format(0, 2); ?></span>
                     </div>
                     <div class="summary-item">
                         <span>Total Amount:</span>
-                        <span>₹500</span>
+                        <span>₹<?php echo number_format($booking_fee, 2); ?></span>
                     </div>
                 </div>
                 

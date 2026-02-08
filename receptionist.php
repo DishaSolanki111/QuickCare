@@ -1,6 +1,41 @@
 <?php
 session_start();
 
+if (!isset($_SESSION['RECEPTIONIST_ID'])) {
+    header("Location: login.php");
+    exit;
+}
+
+include 'config.php';
+$receptionist_id = $_SESSION['RECEPTIONIST_ID'];
+
+// Fetch receptionist name from database
+$receptionist_name = 'Receptionist';
+$rec_query = mysqli_query($conn, "SELECT FIRST_NAME, LAST_NAME FROM receptionist_tbl WHERE RECEPTIONIST_ID = '$receptionist_id'");
+if ($rec_query && $rec_row = mysqli_fetch_assoc($rec_query)) {
+    $receptionist_name = htmlspecialchars($rec_row['FIRST_NAME'] . ' ' . $rec_row['LAST_NAME']);
+}
+
+// Fetch stats from database
+$total_appointments = 0;
+$apt_result = mysqli_query($conn, "SELECT COUNT(*) as cnt FROM appointment_tbl");
+if ($apt_result && $row = mysqli_fetch_assoc($apt_result)) {
+    $total_appointments = (int) $row['cnt'];
+}
+
+$medicine_reminders = 0;
+$rem_result = mysqli_query($conn, "SELECT COUNT(*) as cnt FROM medicine_reminder_tbl");
+if ($rem_result && $row = mysqli_fetch_assoc($rem_result)) {
+    $medicine_reminders = (int) $row['cnt'];
+}
+
+$medicine_count = 0;
+$med_result = mysqli_query($conn, "SELECT COUNT(*) as cnt FROM medicine_tbl");
+if ($med_result && $row = mysqli_fetch_assoc($med_result)) {
+    $medicine_count = (int) $row['cnt'];
+}
+
+$conn->close();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -164,7 +199,7 @@ body {
 <div class="main-content">
  <div class="topbar">
         <h1>Receptionist Dashboard</h1>
-        <p>Welcome, Receptionist</p>
+        <p>Welcome, <?php echo $receptionist_name; ?></p>
     </div>
   
 
@@ -178,7 +213,7 @@ body {
                 <div class="col-md-3 col-sm-6 mb-4">
                     <div class="stats-card">
                         <i class="bi bi-calendar-check stats-icon"></i>
-                        <div class="stats-number">24</div>
+                        <div class="stats-number"><?php echo $total_appointments; ?></div>
                         <div class="stats-label">Total Appointments</div>
                     </div>
                 </div>
@@ -186,14 +221,14 @@ body {
                 <div class="col-md-3 col-sm-6 mb-4">
                     <div class="stats-card">
                         <i class="bi bi-bell stats-icon"></i>
-                        <div class="stats-number">9</div>
+                        <div class="stats-number"><?php echo $medicine_reminders; ?></div>
                         <div class="stats-label">Medicine Reminders</div>
                     </div>
                 </div>
                 <div class="col-md-3 col-sm-6 mb-4">
                     <div class="stats-card">
                         <i class="bi bi-capsule stats-icon"></i>
-                        <div class="stats-number">15</div>
+                        <div class="stats-number"><?php echo $medicine_count; ?></div>
                         <div class="stats-label">Medicine Management</div>
                     </div>
                 </div>

@@ -516,7 +516,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_status'])) {
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form method="POST" action="manage_appointments.php">
+                    <form method="POST" action="appointment_recep.php">
                         <input type="hidden" name="create_appointment" value="1">
                         
                         <div class="form-row">

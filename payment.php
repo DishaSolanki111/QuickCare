@@ -25,6 +25,13 @@ include "config.php";
  $doctor_query = mysqli_query($conn, "SELECT FIRST_NAME, LAST_NAME FROM doctor_tbl WHERE DOCTOR_ID = $doctor_id");
  $doctor = mysqli_fetch_assoc($doctor_query);
  $doctor_full_name = $doctor['FIRST_NAME'] . ' ' . $doctor['LAST_NAME'];
+
+// Fetch fixed appointment booking amount from payment_tbl
+$booking_charge = 0;
+$fee_result = mysqli_query($conn, "SELECT AMOUNT FROM payment_tbl WHERE STATUS='COMPLETED' ORDER BY PAYMENT_ID DESC LIMIT 1");
+if ($fee_result && $row = mysqli_fetch_assoc($fee_result)) {
+    $booking_charge = (float) $row['AMOUNT'];
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -265,14 +272,14 @@ include "config.php";
                     <strong><?php echo htmlspecialchars($reason); ?></strong>
                 </p>
                 <p>
-                    <span>Consultation Fee:</span>
-                    <strong>₹300</strong>
+                    <span>Booking Charge:</span>
+                    <strong>₹<?php echo number_format($booking_charge, 2); ?></strong>
                 </p>
             </div>
             
             <div class="amount-container">
                 <div class="amount-label">Total Amount</div>
-                <div class="amount">₹300</div>
+                <div class="amount">₹<?php echo number_format($booking_charge, 2); ?></div>
             </div>
             
             <div class="payment-methods">

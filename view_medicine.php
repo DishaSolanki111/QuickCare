@@ -36,8 +36,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_medicine'])) {
     $med_name = mysqli_real_escape_string($conn, $_POST['med_name']);
     $description = mysqli_real_escape_string($conn, $_POST['description']);
     
-    // Get a receptionist ID (using ID 1 as default)
+    // Get receptionist ID from database (first active receptionist)
     $receptionist_id = 1;
+    $rec_result = $conn->query("SELECT RECEPTIONIST_ID FROM receptionist_tbl ORDER BY RECEPTIONIST_ID ASC LIMIT 1");
+    if ($rec_result && $rec_row = $rec_result->fetch_assoc()) {
+        $receptionist_id = (int) $rec_row['RECEPTIONIST_ID'];
+    }
     
     $add_sql = "INSERT INTO medicine_tbl (RECEPTIONIST_ID, MED_NAME, DESCRIPTION) 
                 VALUES (?, ?, ?)";

@@ -5,8 +5,12 @@ if (!isset($_SESSION['PATIENT_ID'])) {
     die("Patient not logged in");
 }
 
-// dummy amount
- $amount = 300;
+// Fetch fixed appointment booking amount from payment_tbl (no static fallback)
+$amount = 0;
+$fee_result = mysqli_query($conn, "SELECT AMOUNT FROM payment_tbl WHERE STATUS='COMPLETED' ORDER BY PAYMENT_ID DESC LIMIT 1");
+if ($fee_result && $row = mysqli_fetch_assoc($fee_result)) {
+    $amount = (float) $row['AMOUNT'];
+}
 
 // Get patient information
  $patient_id = $_SESSION['PATIENT_ID'];
@@ -631,8 +635,8 @@ if (isset($_POST['razorpay_payment_id'])) {
                             </div>
                             <?php endif; ?>
                             <div class="summary-row">
-                                <span>Consultation Fee:</span>
-                                <span>₹<?php echo $amount; ?></span>
+                                <span>Booking Charge:</span>
+                                <span>₹<?php echo number_format($amount, 2); ?></span>
                             </div>
                             <div class="summary-row total">
                                 <span>Total Amount:</span>
