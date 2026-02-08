@@ -12,7 +12,46 @@ if (!isset($_SESSION['LOGGED_IN']) || $_SESSION['LOGGED_IN'] !== true || $_SESSI
 }
 
 // Get admin name for display
- $adminName = $_SESSION['USER_NAME'] ?? 'Admin';
+$adminName = $_SESSION['USER_NAME'] ?? 'Admin';
+
+// Fetch dashboard stats from database
+include 'config.php';
+
+$total_patients = 0;
+$r = mysqli_query($conn, "SELECT COUNT(*) as c FROM patient_tbl");
+if ($r && $row = mysqli_fetch_assoc($r)) $total_patients = (int) $row['c'];
+
+$total_appointments = 0;
+$r = mysqli_query($conn, "SELECT COUNT(*) as c FROM appointment_tbl");
+if ($r && $row = mysqli_fetch_assoc($r)) $total_appointments = (int) $row['c'];
+
+$total_doctors = 0;
+$r = mysqli_query($conn, "SELECT COUNT(*) as c FROM doctor_tbl");
+if ($r && $row = mysqli_fetch_assoc($r)) $total_doctors = (int) $row['c'];
+
+$total_revenue = 0;
+$r = mysqli_query($conn, "SELECT COALESCE(SUM(AMOUNT), 0) as c FROM payment_tbl WHERE STATUS='COMPLETED'");
+if ($r && $row = mysqli_fetch_assoc($r)) $total_revenue = (float) $row['c'];
+
+$new_registrations = 0;
+$r = mysqli_query($conn, "SELECT COUNT(*) as c FROM doctor_tbl WHERE STATUS != 'approved' OR STATUS IS NULL");
+if ($r && $row = mysqli_fetch_assoc($r)) $new_registrations = (int) $row['c'];
+
+$recent_appointments = [];
+$r = mysqli_query($conn, "
+    SELECT p.FIRST_NAME as p_first, p.LAST_NAME as p_last, d.FIRST_NAME as d_first, d.LAST_NAME as d_last,
+           a.APPOINTMENT_DATE, a.STATUS
+    FROM appointment_tbl a
+    JOIN patient_tbl p ON a.PATIENT_ID = p.PATIENT_ID
+    JOIN doctor_tbl d ON a.DOCTOR_ID = d.DOCTOR_ID
+    ORDER BY a.APPOINTMENT_DATE DESC, a.APPOINTMENT_TIME DESC
+    LIMIT 10
+");
+if ($r && mysqli_num_rows($r) > 0) {
+    while ($row = mysqli_fetch_assoc($r)) $recent_appointments[] = $row;
+}
+
+$conn->close();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -182,26 +221,26 @@ if (!isset($_SESSION['LOGGED_IN']) || $_SESSION['LOGGED_IN'] !== true || $_SESSI
     <div class="cards">
         <div class="card">
             <h3>Total Patients</h3>
-            <p>120</p>
+            <p><?php echo $total_patients; ?></p>
         </div>
 
         <div class="card">
             <h3>Total Appointments</h3>
-            <p>45</p>
+            <p><?php echo $total_appointments; ?></p>
         </div>
 
         <div class="card">
             <h3>Total Doctors</h3>
-            <p>10</p>
+            <p><?php echo $total_doctors; ?></p>
         </div>
         <div class="card">
             <h3>Total Revenue</h3>
-            <p>₹15,000</p>
+            <p>₹<?php echo number_format($total_revenue, 2); ?></p>
         </div>
         
         <div class="card">
           <h3>New Registrations</h3>
-          <p>25</p>
+          <p><?php echo $new_registrations; ?></p>
         </div>
     </div>
     <!-- Registration Links -->
@@ -223,24 +262,18 @@ if (!isset($_SESSION['LOGGED_IN']) || $_SESSION['LOGGED_IN'] !== true || $_SESSI
             <th>Date</th>
             <th>Status</th>
         </tr>
+        <?php if (count($recent_appointments) > 0): ?>
+            <?php foreach ($recent_appointments as $ra): ?>
         <tr>
-            <td>Riya Patel</td>
-            <td>Dr. Smith</td>
-            <td>30 Nov</td>
-            <td>Completed</td>
+            <td><?php echo htmlspecialchars($ra['p_first'] . ' ' . $ra['p_last']); ?></td>
+            <td>Dr. <?php echo htmlspecialchars($ra['d_first'] . ' ' . $ra['d_last']); ?></td>
+            <td><?php echo date('d M', strtotime($ra['APPOINTMENT_DATE'])); ?></td>
+            <td><?php echo htmlspecialchars($ra['STATUS']); ?></td>
         </tr>
-        <tr>
-            <td>Aman Shah</td>
-            <td>Dr. Mehta</td>
-            <td>29 Nov</td>
-            <td>Upcoming</td>
-        </tr>
-        <tr>
-            <td>Nikita Shah</td>
-            <td>Dr. Rohan</td>
-            <td>28 Nov</td>
-            <td>Cancelled</td>
-        </tr>
+            <?php endforeach; ?>
+        <?php else: ?>
+        <tr><td colspan="4">No appointments found</td></tr>
+        <?php endif; ?>
     </table>
 
 </div>

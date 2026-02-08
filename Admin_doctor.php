@@ -134,18 +134,37 @@
 <body>
 
 <?php
-include 'admin_sidebar.php';
+if (session_status() === PHP_SESSION_NONE) session_start();
 include 'config.php';
+
+// Handle delete
+if (isset($_GET['delete'])) {
+    $id = (int) $_GET['delete'];
+    if ($id > 0) {
+        $check = mysqli_query($conn, "SELECT COUNT(*) as c FROM appointment_tbl WHERE DOCTOR_ID = $id");
+        $row = mysqli_fetch_assoc($check);
+        if ((int) $row['c'] > 0) {
+            header("Location: Admin_doctor.php?error=Cannot delete doctor with appointments");
+        } else {
+            mysqli_query($conn, "DELETE FROM doctor_tbl WHERE DOCTOR_ID = $id");
+            header("Location: Admin_doctor.php");
+        }
+        exit;
+    }
+}
+
+include 'admin_sidebar.php';
+$adminName = isset($_SESSION['USER_NAME']) ? $_SESSION['USER_NAME'] : 'Admin';
 ?>
 
 <div class="main">
 
     <div class="topbar">
         <h1>Manage Doctors</h1>
-        <p>Welcome, Admin</p>
+        <p>Welcome, <?php echo htmlspecialchars($adminName); ?></p>
     </div>
 
-    <a href="/QuickCare/admin/doctorform.php" class="add-btn">+ Add New Doctor</a>
+    <a href="doctorform.php" class="add-btn">+ Add New Doctor</a>
 
     <div class="filter-container">
         <form method="POST">
@@ -205,7 +224,7 @@ include 'config.php';
             while ($row = mysqli_fetch_assoc($result)) {
 
                 $img = !empty($row['PROFILE_IMAGE'])
-                    ? $row['PROFILE_IMAGE']
+                    ? 'uploads/' . $row['PROFILE_IMAGE']
                     : 'uploads/default_doctor.png';
         ?>
         <tr>
@@ -223,7 +242,7 @@ include 'config.php';
             <td><?php echo $row['EMAIL']; ?></td>
             <td class="actions-td">
                 <button type="button" class="action-btn edit-btn"
-                    onclick="window.location.href='/QuickCare/admin/edit_doctor.php?id=<?php echo $row['DOCTOR_ID']; ?>'">
+                    onclick="window.location.href='doctorform.php?edit=<?php echo $row['DOCTOR_ID']; ?>'">
                     Edit
                 </button>
 
@@ -247,7 +266,7 @@ include 'config.php';
 <script>
 function confirmDelete(id) {
     if (confirm("Are you sure you want to delete this doctor?")) {
-        window.location.href = "/QuickCare/admin/delete_doctor.php?id=" + id;
+        window.location.href = "Admin_doctor.php?delete=" + id;
     }
 }
 </script>

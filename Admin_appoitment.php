@@ -1,3 +1,7 @@
+<?php
+if (session_status() === PHP_SESSION_NONE) session_start();
+$adminName = isset($_SESSION['USER_NAME']) ? $_SESSION['USER_NAME'] : 'Admin';
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -126,7 +130,7 @@
 
     <div class="topbar">
         <h1>View Appointments</h1>
-        <p>Welcome, Admin</p>
+        <p>Welcome, <?php echo htmlspecialchars($adminName); ?></p>
     </div>
 
     <div class="filter-container">

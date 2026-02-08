@@ -1,6 +1,7 @@
 <?php
-// Include configuration file
+if (session_status() === PHP_SESSION_NONE) session_start();
 include 'config.php';
+$adminName = isset($_SESSION['USER_NAME']) ? $_SESSION['USER_NAME'] : 'Admin';
 
 // Initialize messages
  $success_message = "";
@@ -295,7 +296,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'delete' && isset($_POST['id'
 
     <div class="topbar">
         <h1>Manage Receptionists</h1>
-        <p>Welcome, Admin</p>
+        <p>Welcome, <?php echo htmlspecialchars($adminName); ?></p>
     </div>
 
     <?php if (!empty($success_message)): ?>
