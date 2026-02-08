@@ -37,8 +37,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_schedule'])) {
     $end_time = $_POST['end_time'];
     $available_day = $_POST['available_day'];
     
-    // Get a receptionist ID (using ID 1 as default)
+    // Get receptionist ID from database (first active receptionist)
     $receptionist_id = 1;
+    $rec_result = $conn->query("SELECT RECEPTIONIST_ID FROM receptionist_tbl ORDER BY RECEPTIONIST_ID ASC LIMIT 1");
+    if ($rec_result && $rec_row = $rec_result->fetch_assoc()) {
+        $receptionist_id = (int) $rec_row['RECEPTIONIST_ID'];
+    }
     
     $add_sql = "INSERT INTO doctor_schedule_tbl (DOCTOR_ID, RECEPTIONIST_ID, START_TIME, END_TIME, AVAILABLE_DAY) 
                 VALUES (?, ?, ?, ?, ?)";

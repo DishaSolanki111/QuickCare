@@ -66,6 +66,91 @@ if ($row = $week_result->fetch_assoc()) {
 }
  $week_stmt->close();
 
+// Feedback average for this doctor
+$feedback_avg = 0;
+$feedback_sql = "SELECT AVG(f.RATING) AS avg_rating FROM feedback_tbl f 
+    JOIN appointment_tbl a ON f.APPOINTMENT_ID = a.APPOINTMENT_ID 
+    WHERE a.DOCTOR_ID = ?";
+$feedback_stmt = $conn->prepare($feedback_sql);
+$feedback_stmt->bind_param("i", $doctor_id);
+$feedback_stmt->execute();
+$feedback_result = $feedback_stmt->get_result();
+$row = $feedback_result->fetch_assoc();
+if ($row && $row['avg_rating'] !== null) {
+    $feedback_avg = round((float) $row['avg_rating'], 1);
+}
+$feedback_stmt->close();
+
+// Change percentages (compare with previous period)
+$appt_change = null;
+$week_sql2 = "SELECT COUNT(*) AS total FROM appointment_tbl WHERE DOCTOR_ID = ? AND DATE(APPOINTMENT_DATE) = DATE_SUB(CURDATE(), INTERVAL 7 DAY)";
+$week_stmt2 = $conn->prepare($week_sql2);
+$week_stmt2->bind_param("i", $doctor_id);
+$week_stmt2->execute();
+$week_result2 = $week_stmt2->get_result();
+if (($row2 = $week_result2->fetch_assoc()) && $row2['total'] > 0) {
+    $last_week = (int) $row2['total'];
+    $appt_change = $last_week > 0 ? round((($today_appointments - $last_week) / $last_week) * 100) : 0;
+}
+$week_stmt2->close();
+
+$patients_change = null;
+$pat_sql = "SELECT COUNT(DISTINCT PATIENT_ID) AS total FROM appointment_tbl WHERE DOCTOR_ID = ? AND APPOINTMENT_DATE BETWEEN DATE_SUB(CURDATE(), INTERVAL 7 DAY) AND CURDATE() - INTERVAL 1 DAY";
+$pat_stmt = $conn->prepare($pat_sql);
+$pat_stmt->bind_param("i", $doctor_id);
+$pat_stmt->execute();
+$pat_result = $pat_stmt->get_result();
+$row3 = $pat_result->fetch_assoc();
+if ($row3 && $row3['total'] > 0) {
+    $last_week_patients = (int) $row3['total'];
+    $patients_change = $last_week_patients > 0 ? round((($patients_this_week - $last_week_patients) / $last_week_patients) * 100) : 0;
+}
+$pat_stmt->close();
+
+// Next available slot and available slots today
+$day_map = ['Monday' => 'MON', 'Tuesday' => 'TUE', 'Wednesday' => 'WED', 'Thursday' => 'THUR', 'Friday' => 'FRI', 'Saturday' => 'SAT', 'Sunday' => 'SUN'];
+$today_day = $day_map[date('l')];
+$next_slot = '-';
+$available_slots_today = 0;
+$slot_sql = "SELECT ds.START_TIME, ds.END_TIME FROM doctor_schedule_tbl ds WHERE ds.DOCTOR_ID = ? AND ds.AVAILABLE_DAY = ?";
+$slot_stmt = $conn->prepare($slot_sql);
+$slot_stmt->bind_param("is", $doctor_id, $today_day);
+$slot_stmt->execute();
+$slot_result = $slot_stmt->get_result();
+if ($slot_result->num_rows > 0) {
+    $slot_row = $slot_result->fetch_assoc();
+    if ($slot_row && isset($slot_row['START_TIME'], $slot_row['END_TIME'])) {
+        $start = strtotime($slot_row['START_TIME']);
+        $end = strtotime($slot_row['END_TIME']);
+    $today_date = date('Y-m-d');
+    $booked_sql = "SELECT APPOINTMENT_TIME FROM appointment_tbl WHERE DOCTOR_ID = ? AND APPOINTMENT_DATE = ? AND STATUS = 'SCHEDULED'";
+    $booked_stmt = $conn->prepare($booked_sql);
+    $booked_stmt->bind_param("is", $doctor_id, $today_date);
+    $booked_stmt->execute();
+    $booked_result = $booked_stmt->get_result();
+    $booked_times = [];
+    while ($br = $booked_result->fetch_assoc()) {
+        $booked_times[] = date('H:i', strtotime($br['APPOINTMENT_TIME']));
+    }
+    $booked_stmt->close();
+    $slot_duration = 30 * 60; // 30 min in seconds
+    $total_slots = 0;
+    $found_first = false;
+    for ($t = $start; $t < $end; $t += $slot_duration) {
+        $ts = date('H:i', $t);
+        if (!in_array($ts, $booked_times)) {
+            $total_slots++;
+            if (!$found_first) {
+                $next_slot = date('h:i A', $t);
+                $found_first = true;
+            }
+        }
+    }
+    $available_slots_today = $total_slots;
+    }
+}
+$slot_stmt->close();
+
  $conn->close();
 ?>
 
@@ -455,7 +540,9 @@ if ($row = $week_result->fetch_assoc()) {
                     </div>
                     <div class="card-value"><?php echo $today_appointments; ?></div>
                     <div class="card-change">
-                        <i class="fas fa-arrow-up"></i> 12% from last week
+                        <?php if ($appt_change !== null): ?>
+                        <i class="fas fa-arrow-<?php echo $appt_change >= 0 ? 'up' : 'down'; ?>"></i> <?php echo abs($appt_change); ?>% from last week
+                        <?php else: ?>—<?php endif; ?>
                     </div>
                 </div>
                 
@@ -466,9 +553,9 @@ if ($row = $week_result->fetch_assoc()) {
                             <i class="fas fa-star"></i>
                         </div>
                     </div>
-                    <div class="card-value">⭐ 4.8</div>
+                    <div class="card-value">⭐ <?php echo $feedback_avg > 0 ? $feedback_avg : '—'; ?></div>
                     <div class="card-change">
-                        <i class="fas fa-arrow-up"></i> 0.3 from last month
+                        <?php echo $feedback_avg > 0 ? 'From patient feedback' : 'No feedback yet'; ?>
                     </div>
                 </div>
                 
@@ -481,7 +568,9 @@ if ($row = $week_result->fetch_assoc()) {
                     </div>
                     <div class="card-value"><?php echo $patients_this_week; ?></div>
                     <div class="card-change">
-                        <i class="fas fa-arrow-up"></i> 5% from last week
+                        <?php if ($patients_change !== null): ?>
+                        <i class="fas fa-arrow-<?php echo $patients_change >= 0 ? 'up' : 'down'; ?>"></i> <?php echo abs($patients_change); ?>% from last week
+                        <?php else: ?>—<?php endif; ?>
                     </div>
                 </div>
             </div>
@@ -491,7 +580,7 @@ if ($row = $week_result->fetch_assoc()) {
                 <div class="schedule-info">
                     <div class="schedule-info-item">
                         <h4>Next Available Slot</h4>
-                        <p>10:00 AM</p>
+                        <p><?php echo htmlspecialchars($next_slot); ?></p>
                     </div>
                     <div class="schedule-info-item">
                         <h4>Total Patients This Week</h4>
@@ -499,7 +588,7 @@ if ($row = $week_result->fetch_assoc()) {
                     </div>
                     <div class="schedule-info-item">
                         <h4>Available Slots Today</h4>
-                        <p>5</p>
+                        <p><?php echo $available_slots_today; ?></p>
                     </div>
                 </div>
             </div>

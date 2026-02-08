@@ -1,5 +1,31 @@
 <?php
 session_start();
+
+if (!isset($_SESSION['LOGGED_IN']) || $_SESSION['LOGGED_IN'] !== true || !isset($_SESSION['USER_TYPE']) || $_SESSION['USER_TYPE'] !== 'doctor') {
+    header("Location: login.php");
+    exit();
+}
+
+include 'config.php';
+$doctor_id = $_SESSION['DOCTOR_ID'];
+
+// Fetch feedback for this doctor's appointments from database
+$feedback_query = "SELECT f.FEEDBACK_ID, f.RATING, f.COMMENTS, a.APPOINTMENT_DATE, p.FIRST_NAME, p.LAST_NAME 
+    FROM feedback_tbl f 
+    JOIN appointment_tbl a ON f.APPOINTMENT_ID = a.APPOINTMENT_ID 
+    JOIN patient_tbl p ON a.PATIENT_ID = p.PATIENT_ID 
+    WHERE a.DOCTOR_ID = ? 
+    ORDER BY a.APPOINTMENT_DATE DESC";
+$feedback_stmt = $conn->prepare($feedback_query);
+$feedback_stmt->bind_param("i", $doctor_id);
+$feedback_stmt->execute();
+$feedback_result = $feedback_stmt->get_result();
+$feedbacks = [];
+while ($row = $feedback_result->fetch_assoc()) {
+    $feedbacks[] = $row;
+}
+$feedback_stmt->close();
+$conn->close();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -232,68 +258,34 @@ session_start();
             <div class="content-card">
                 <div class="feedback-section" style="margin-top: 30px;">
                     <h3 style="margin-bottom: 20px;">Patient Feedback</h3>
+                    <?php if (count($feedbacks) > 0): ?>
+                        <?php foreach ($feedbacks as $fb): 
+                            $initials = strtoupper(substr($fb['FIRST_NAME'], 0, 1) . substr($fb['LAST_NAME'], 0, 1));
+                            $rating = (int) ($fb['RATING'] ?? 0);
+                        ?>
                     <div class="feedback-card">
                         <div class="feedback-header">
                             <div class="patient-info">
-                                <div class="patient-avatar">MN</div>
+                                <div class="patient-avatar"><?php echo htmlspecialchars($initials); ?></div>
                                 <div>
-                                    <div class="patient-name">Meera Nair</div>
-                                    <div style="color: #777; font-size: 14px;">July 15, 2024</div>
+                                    <div class="patient-name"><?php echo htmlspecialchars($fb['FIRST_NAME'] . ' ' . $fb['LAST_NAME']); ?></div>
+                                    <div style="color: #777; font-size: 14px;"><?php echo date('F d, Y', strtotime($fb['APPOINTMENT_DATE'])); ?></div>
                                 </div>
                             </div>
                             <div class="rating">
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
+                                <?php for ($i = 1; $i <= 5; $i++): ?>
+                                <i class="<?php echo $i <= $rating ? 'fas fa-star' : 'far fa-star'; ?>"></i>
+                                <?php endfor; ?>
                             </div>
                         </div>
-                        
-                        <p style="margin-top: 15px;">Dr. Sharma is very empathetic and provided a clear plan of action. She took time to explain my condition and treatment options in detail. Highly recommended!</p>
+                        <p style="margin-top: 15px;"><?php echo htmlspecialchars($fb['COMMENTS'] ?? 'No comments'); ?></p>
                     </div>
-                    
+                        <?php endforeach; ?>
+                    <?php else: ?>
                     <div class="feedback-card">
-                        <div class="feedback-header">
-                            <div class="patient-info">
-                                <div class="patient-avatar">SK</div>
-                                <div>
-                                    <div class="patient-name">Sunil Kapoor</div>
-                                    <div style="color: #777; font-size: 14px;">June 28, 2024</div>
-                                </div>
-                            </div>
-                            <div class="rating">
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="far fa-star"></i>
-                            </div>
-                        </div>
-                        
-                        <p style="margin-top: 15px;">Dr. Kumar is thorough. The consultation was good but the waiting time was a bit long. However, once I was in the consultation room, he gave me his full attention and answered all my questions.</p>
+                        <p style="text-align: center; color: #777;">No feedback received yet.</p>
                     </div>
-                    
-                    <div class="feedback-card">
-                        <div class="feedback-header">
-                            <div class="patient-info">
-                                <div class="patient-avatar">RV</div>
-                                <div>
-                                    <div class="patient-name">Rohan Verma</div>
-                                    <div style="color: #777; font-size: 14px;">May 10, 2024</div>
-                                </div>
-                            </div>
-                            <div class="rating">
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                            </div>
-                        </div>
-                        
-                        <p style="margin-top: 15px;">Dr. Kumar's detailed explanation put my mind at ease. He was very patient and made sure I understood everything about my condition and treatment. Highly recommend!</p>
-                    </div>
+                    <?php endif; ?>
                 </div>
             </div>
             

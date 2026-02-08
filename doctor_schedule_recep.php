@@ -555,7 +555,7 @@ if ((isset($_POST['doctor_id']) || isset($_GET['doctor_id'])) && (isset($_POST['
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form method="POST" action="manage_doctor_schedule.php">
+                    <form method="POST" action="doctor_schedule_recep.php">
                         <input type="hidden" name="create_schedule" value="1">
                         
                         <div class="form-group">
@@ -625,7 +625,7 @@ if ((isset($_POST['doctor_id']) || isset($_GET['doctor_id'])) && (isset($_POST['
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form method="POST" action="manage_doctor_schedule.php">
+                    <form method="POST" action="doctor_schedule_recep.php">
                         <input type="hidden" id="edit_schedule_id" name="schedule_id">
                         <input type="hidden" name="update_schedule" value="1">
                         

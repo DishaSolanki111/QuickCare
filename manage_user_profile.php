@@ -1277,7 +1277,7 @@ if ($user_type === 'patient') {
             // Hide all forms
             document.getElementById('editPatientForm').style.display = 'none';
             document.getElementById('editDoctorForm').style.display = 'none';
-            document.getElementById('editReceptionistForm').style="display = 'none';
+            document.getElementById('editReceptionistForm').style.display = 'none';
             
             // Show the appropriate form
             document.getElementById('edit' + userType.charAt(0).toUpperCase() + userType.slice(1) + 'Form').style.display = 'block';
@@ -1293,7 +1293,7 @@ if ($user_type === 'patient') {
             
             // Hide all forms
             document.getElementById('patientForm').style.display = 'none';
-            document.getElementById('doctorForm').style.display = 'form';
+            document.getElementById('doctorForm').style.display = 'none';
             document.getElementById('receptionistForm').style.display = 'none';
             
             // Show the appropriate form
