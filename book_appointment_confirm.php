@@ -23,6 +23,13 @@ if (mysqli_num_rows($doctor_query) == 0) {
 
  $doctor = mysqli_fetch_assoc($doctor_query);
 
+// Fetch fixed appointment booking amount from payment_tbl
+$booking_charge = 0;
+$fee_result = mysqli_query($conn, "SELECT AMOUNT FROM payment_tbl WHERE STATUS='COMPLETED' ORDER BY PAYMENT_ID DESC LIMIT 1");
+if ($fee_result && $row = mysqli_fetch_assoc($fee_result)) {
+    $booking_charge = (float) $row['AMOUNT'];
+}
+
 // Get selected date, time, and reason from session
  $selected_date = isset($_SESSION['booking_date']) ? $_SESSION['booking_date'] : '';
  $selected_time = isset($_SESSION['booking_time']) ? $_SESSION['booking_time'] : '';
@@ -440,8 +447,8 @@ if (mysqli_num_rows($doctor_query) == 0) {
                                 <span class="detail-value"><?php echo htmlspecialchars($reason ?: 'Not specified'); ?></span>
                             </div>
                             <div class="detail-row">
-                                <span class="detail-label">Consultation Fee:</span>
-                                <span class="detail-value">₹300</span>
+                                <span class="detail-label">Booking Charge:</span>
+                                <span class="detail-value">₹<?php echo number_format($booking_charge, 2); ?></span>
                             </div>
                         </div>
                         
