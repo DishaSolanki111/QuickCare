@@ -1,7 +1,7 @@
 <?php
 if (session_status() === PHP_SESSION_NONE) session_start();
 include 'config.php';
-$adminName = isset($_SESSION['USER_NAME']) ? $_SESSION['USER_NAME'] : 'Admin';
+ $adminName = isset($_SESSION['USER_NAME']) ? $_SESSION['USER_NAME'] : 'Admin';
 
 // Initialize messages
  $success_message = "";
@@ -18,10 +18,72 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
     $phone = mysqli_real_escape_string($conn, $_POST['phone']);
     $email = mysqli_real_escape_string($conn, $_POST['email']);
     
-    // Validate required fields
-    if (empty($first_name) || empty($last_name) || empty($dob) || empty($doj) || empty($gender) || empty($phone) || empty($email)) {
-        $error_message = "All fields are required.";
+    $errors = [];
+    
+    // ---------------- NAME VALIDATION ----------------
+    if (empty($first_name)) {
+        $errors[] = "First name is required.";
+    } elseif (!preg_match("/^[a-zA-Z]+$/", $first_name)) {
+        $errors[] = "First name should contain only letters.";
+    }
+    
+    if (empty($last_name)) {
+        $errors[] = "Last name is required.";
+    } elseif (!preg_match("/^[a-zA-Z]+$/", $last_name)) {
+        $errors[] = "Last name should contain only letters.";
+    }
+    
+    // ---------------- DATE VALIDATION ----------------
+    if (empty($dob)) {
+        $errors[] = "Date of Birth is required.";
     } else {
+        $dob_date = new DateTime($dob);
+        $today = new DateTime();
+        if ($dob_date > $today) {
+            $errors[] = "Date of Birth cannot be in future.";
+        }
+    }
+    
+    if (empty($doj)) {
+        $errors[] = "Date of Joining is required.";
+    } else {
+        $doj_date = new DateTime($doj);
+        $today = new DateTime();
+        if ($doj_date > $today) {
+            $errors[] = "Date of Joining cannot be in future.";
+        }
+    }
+    
+    if (!empty($dob) && !empty($doj)) {
+        $dob_date = new DateTime($dob);
+        $doj_date = new DateTime($doj);
+        if ($doj_date <= $dob_date) {
+            $errors[] = "Date of Joining must be after Date of Birth.";
+        }
+    }
+    
+    // ---------------- PHONE VALIDATION ----------------
+    if (empty($phone)) {
+        $errors[] = "Phone number is required.";
+    } elseif (!preg_match('/^[0-9]{10}$/', $phone)) {
+        $errors[] = "Phone number must be exactly 10 digits.";
+    }
+    
+    // ---------------- EMAIL VALIDATION ----------------
+    if (empty($email)) {
+        $errors[] = "Email is required.";
+    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $errors[] = "Invalid email format.";
+    }
+    
+    // ---------------- GENDER VALIDATION ----------------
+    if (empty($gender)) {
+        $errors[] = "Gender is required.";
+    } elseif (!in_array($gender, ['Male', 'Female', 'Other'])) {
+        $errors[] = "Invalid gender value.";
+    }
+    
+    if (empty($errors)) {
         // Update receptionist data
         $query = "UPDATE receptionist_tbl SET 
                  FIRST_NAME = ?, 
@@ -42,6 +104,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
             $error_message = "Error updating receptionist: " . mysqli_error($conn);
         }
         mysqli_stmt_close($stmt);
+    } else {
+        $error_message = implode("<br>", $errors);
     }
 }
 
@@ -213,6 +277,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'delete' && isset($_POST['id'
     
     .form-group {
         margin-bottom: 15px;
+        position: relative;
     }
     
     .form-group label {
@@ -228,6 +293,11 @@ if (isset($_POST['action']) && $_POST['action'] == 'delete' && isset($_POST['id'
         border: 1px solid #D0D7E1;
         border-radius: 5px;
         box-sizing: border-box;
+    }
+    
+    .form-group input:focus, .form-group select:focus {
+        border-color: #5790AB;
+        outline: none;
     }
     
     .form-row {
@@ -284,6 +354,49 @@ if (isset($_POST['action']) && $_POST['action'] == 'delete' && isset($_POST['id'
         background: #f8d7da;
         color: #721c24;
         border: 1px solid #f5c6cb;
+    }
+    
+    .error-message {
+        color: #e74c3c;
+        font-size: 12px;
+        margin-top: 5px;
+        display: none;
+    }
+    
+    /* Toast Styles */
+    .toast {
+        visibility: hidden;
+        min-width: 250px;
+        margin-left: -125px;
+        background-color: #e74c3c;
+        color: #fff;
+        text-align: center;
+        border-radius: 5px;
+        padding: 16px;
+        position: fixed;
+        z-index: 2000;
+        left: 50%;
+        top: 20px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+    
+    .toast.show {
+        visibility: visible;
+        animation: fadein 0.5s, fadeout 0.5s 2.5s;
+    }
+    
+    .toast.success {
+        background-color: #2ecc71;
+    }
+    
+    @keyframes fadein {
+        from {top: 0; opacity: 0;}
+        to {top: 20px; opacity: 1;}
+    }
+    
+    @keyframes fadeout {
+        from {opacity: 1;}
+        to {opacity: 0;}
     }
 </style>
 </head>
@@ -385,10 +498,12 @@ if (isset($_POST['action']) && $_POST['action'] == 'delete' && isset($_POST['id'
                 <div class="form-group">
                     <label for="edit_first_name">First Name</label>
                     <input type="text" id="edit_first_name" name="first_name" required>
+                    <div class="error-message" id="edit_first_name_error"></div>
                 </div>
                 <div class="form-group">
                     <label for="edit_last_name">Last Name</label>
                     <input type="text" id="edit_last_name" name="last_name" required>
+                    <div class="error-message" id="edit_last_name_error"></div>
                 </div>
             </div>
             
@@ -396,10 +511,12 @@ if (isset($_POST['action']) && $_POST['action'] == 'delete' && isset($_POST['id'
                 <div class="form-group">
                     <label for="edit_dob">Date of Birth</label>
                     <input type="date" id="edit_dob" name="dob" required>
+                    <div class="error-message" id="edit_dob_error"></div>
                 </div>
                 <div class="form-group">
                     <label for="edit_doj">Date of Joining</label>
                     <input type="date" id="edit_doj" name="doj" required>
+                    <div class="error-message" id="edit_doj_error"></div>
                 </div>
             </div>
             
@@ -411,16 +528,19 @@ if (isset($_POST['action']) && $_POST['action'] == 'delete' && isset($_POST['id'
                         <option value="Female">Female</option>
                         <option value="Other">Other</option>
                     </select>
+                    <div class="error-message" id="edit_gender_error"></div>
                 </div>
                 <div class="form-group">
                     <label for="edit_phone">Phone</label>
                     <input type="tel" id="edit_phone" name="phone" required>
+                    <div class="error-message" id="edit_phone_error"></div>
                 </div>
             </div>
             
             <div class="form-group">
                 <label for="edit_email">Email</label>
                 <input type="email" id="edit_email" name="email" required>
+                <div class="error-message" id="edit_email_error"></div>
             </div>
             
             <div style="margin-top: 20px;">
@@ -430,6 +550,9 @@ if (isset($_POST['action']) && $_POST['action'] == 'delete' && isset($_POST['id'
         </form>
     </div>
 </div>
+
+<!-- Toast Notification -->
+<div id="toast" class="toast"></div>
 
 <script>
 // Modal functions
@@ -442,6 +565,10 @@ function openEditModal(id, firstName, lastName, dob, doj, gender, phone, email) 
     document.getElementById('edit_gender').value = gender;
     document.getElementById('edit_phone').value = phone;
     document.getElementById('edit_email').value = email;
+    
+    // Clear any previous error messages
+    const errorElements = document.querySelectorAll('.error-message');
+    errorElements.forEach(el => el.style.display = 'none');
     
     document.getElementById('editModal').style.display = 'block';
 }
@@ -478,10 +605,185 @@ function deleteReceptionist(id) {
     }
 }
 
-// Handle form submission to close modal after successful update
-document.getElementById('editForm').addEventListener('submit', function() {
-    // The form will submit normally and the page will refresh
-    // showing the updated data and success message
+// Toast notification function
+function showToast(message, isSuccess = false) {
+    const toast = document.getElementById('toast');
+    toast.innerHTML = isSuccess ? 
+        `<i class="fas fa-check-circle"></i> ${message}` : 
+        `<i class="fas fa-exclamation-circle"></i> ${message}`;
+    toast.className = isSuccess ? 'toast success show' : 'toast show';
+    
+    setTimeout(() => {
+        toast.className = toast.className.replace('show', '');
+    }, 3000);
+}
+
+// Validation functions
+function validateFirstName() {
+    const firstName = document.getElementById('edit_first_name');
+    const errorElement = document.getElementById('edit_first_name_error');
+    
+    if (firstName.value.trim() === '') {
+        errorElement.textContent = 'First name is required';
+        errorElement.style.display = 'block';
+        return false;
+    } else if (!/^[a-zA-Z]+$/.test(firstName.value.trim())) {
+        errorElement.textContent = 'First name should contain only letters';
+        errorElement.style.display = 'block';
+        return false;
+    } else {
+        errorElement.style.display = 'none';
+        return true;
+    }
+}
+
+function validateLastName() {
+    const lastName = document.getElementById('edit_last_name');
+    const errorElement = document.getElementById('edit_last_name_error');
+    
+    if (lastName.value.trim() === '') {
+        errorElement.textContent = 'Last name is required';
+        errorElement.style.display = 'block';
+        return false;
+    } else if (!/^[a-zA-Z]+$/.test(lastName.value.trim())) {
+        errorElement.textContent = 'Last name should contain only letters';
+        errorElement.style.display = 'block';
+        return false;
+    } else {
+        errorElement.style.display = 'none';
+        return true;
+    }
+}
+
+function validateDOB() {
+    const dob = document.getElementById('edit_dob');
+    const errorElement = document.getElementById('edit_dob_error');
+    
+    if (dob.value === '') {
+        errorElement.textContent = 'Date of Birth is required';
+        errorElement.style.display = 'block';
+        return false;
+    } else {
+        const dobDate = new Date(dob.value);
+        const today = new Date();
+        if (dobDate > today) {
+            errorElement.textContent = 'Date of Birth cannot be in future';
+            errorElement.style.display = 'block';
+            return false;
+        } else {
+            errorElement.style.display = 'none';
+            return true;
+        }
+    }
+}
+
+function validateDOJ() {
+    const doj = document.getElementById('edit_doj');
+    const dob = document.getElementById('edit_dob');
+    const errorElement = document.getElementById('edit_doj_error');
+    
+    if (doj.value === '') {
+        errorElement.textContent = 'Date of Joining is required';
+        errorElement.style.display = 'block';
+        return false;
+    } else {
+        const dojDate = new Date(doj.value);
+        const today = new Date();
+        if (dojDate > today) {
+            errorElement.textContent = 'Date of Joining cannot be in future';
+            errorElement.style.display = 'block';
+            return false;
+        } else if (dob.value !== '') {
+            const dobDate = new Date(dob.value);
+            if (dojDate <= dobDate) {
+                errorElement.textContent = 'Date of Joining must be after Date of Birth';
+                errorElement.style.display = 'block';
+                return false;
+            }
+        }
+        errorElement.style.display = 'none';
+        return true;
+    }
+}
+
+function validatePhone() {
+    const phone = document.getElementById('edit_phone');
+    const errorElement = document.getElementById('edit_phone_error');
+    
+    if (phone.value.trim() === '') {
+        errorElement.textContent = 'Phone number is required';
+        errorElement.style.display = 'block';
+        return false;
+    } else if (!/^[0-9]{10}$/.test(phone.value.trim())) {
+        errorElement.textContent = 'Phone number must be exactly 10 digits';
+        errorElement.style.display = 'block';
+        return false;
+    } else {
+        errorElement.style.display = 'none';
+        return true;
+    }
+}
+
+function validateEmail() {
+    const email = document.getElementById('edit_email');
+    const errorElement = document.getElementById('edit_email_error');
+    
+    if (email.value.trim() === '') {
+        errorElement.textContent = 'Email is required';
+        errorElement.style.display = 'block';
+        return false;
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim())) {
+        errorElement.textContent = 'Invalid email format';
+        errorElement.style.display = 'block';
+        return false;
+    } else {
+        errorElement.style.display = 'none';
+        return true;
+    }
+}
+
+function validateGender() {
+    const gender = document.getElementById('edit_gender');
+    const errorElement = document.getElementById('edit_gender_error');
+    
+    if (gender.value === '') {
+        errorElement.textContent = 'Gender is required';
+        errorElement.style.display = 'block';
+        return false;
+    } else {
+        errorElement.style.display = 'none';
+        return true;
+    }
+}
+
+// Add event listeners for real-time validation
+document.getElementById('edit_first_name').addEventListener('input', validateFirstName);
+document.getElementById('edit_last_name').addEventListener('input', validateLastName);
+document.getElementById('edit_dob').addEventListener('change', function() {
+    validateDOB();
+    validateDOJ(); // Re-validate DOJ when DOB changes
+});
+document.getElementById('edit_doj').addEventListener('change', validateDOJ);
+document.getElementById('edit_phone').addEventListener('input', validatePhone);
+document.getElementById('edit_email').addEventListener('input', validateEmail);
+document.getElementById('edit_gender').addEventListener('change', validateGender);
+
+// Form submission validation
+document.getElementById('editForm').addEventListener('submit', function(e) {
+    // Run all validation functions
+    const isFirstNameValid = validateFirstName();
+    const isLastNameValid = validateLastName();
+    const isDOBValid = validateDOB();
+    const isDOJValid = validateDOJ();
+    const isPhoneValid = validatePhone();
+    const isEmailValid = validateEmail();
+    const isGenderValid = validateGender();
+    
+    // If any validation fails, prevent form submission
+    if (!isFirstNameValid || !isLastNameValid || !isDOBValid || !isDOJValid || !isPhoneValid || !isEmailValid || !isGenderValid) {
+        e.preventDefault();
+        showToast('Please correct the errors in the form');
+    }
 });
 </script>
 
