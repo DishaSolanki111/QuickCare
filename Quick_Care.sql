@@ -865,7 +865,7 @@ ALTER TABLE `doctor_tbl`
 
 --
 -- AUTO_INCREMENT for table `feedback_tbl`
---
+--  
 ALTER TABLE `feedback_tbl`
   MODIFY `FEEDBACK_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
