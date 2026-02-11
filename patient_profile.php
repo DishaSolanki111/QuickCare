@@ -15,38 +15,57 @@ include 'config.php';
  $patient = mysqli_fetch_assoc($patient_query);
 
 // Handle form submission for profile update
+// First name and last name are not editable in this form (disabled in UI),
+// so only update contact details.
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_profile'])) {
-    $first_name = mysqli_real_escape_string($conn, $_POST['firstName']);
-    $last_name = mysqli_real_escape_string($conn, $_POST['lastName']);
-    $dob = mysqli_real_escape_string($conn, $_POST['dob']);
-    $gender = mysqli_real_escape_string($conn, $_POST['gender']);
-    $blood_group = mysqli_real_escape_string($conn, $_POST['bloodGroup']);
-    $phone = mysqli_real_escape_string($conn, $_POST['phone']);
-    $email = mysqli_real_escape_string($conn, $_POST['email']);
+    $phone   = mysqli_real_escape_string($conn, $_POST['phone']);
+    $email   = mysqli_real_escape_string($conn, $_POST['email']);
     $address = mysqli_real_escape_string($conn, $_POST['address']);
     
     $update_query = "UPDATE patient_tbl SET 
-                   FIRST_NAME = '$first_name',
-                   LAST_NAME = '$last_name',
-                   DOB = '$dob',
-                   GENDER = '$gender',
-                   BLOOD_GROUP = '$blood_group',
-                   PHONE = '$phone',
-                   EMAIL = '$email',
-                   ADDRESS = '$address'
-                   WHERE PATIENT_ID = '$patient_id'";
+                       PHONE   = '$phone',
+                       EMAIL   = '$email',
+                       ADDRESS = '$address'
+                     WHERE PATIENT_ID = '$patient_id'";
     
     if (mysqli_query($conn, $update_query)) {
-        // Update session variables
-        $_SESSION['PATIENT_NAME'] = $first_name . ' ' . $last_name;
-        
         // Refresh patient data
         $patient_query = mysqli_query($conn, "SELECT * FROM patient_tbl WHERE PATIENT_ID = '$patient_id'");
         $patient = mysqli_fetch_assoc($patient_query);
+
+        // Keep session name in sync with DB values (unchanged here)
+        if ($patient) {
+            $_SESSION['PATIENT_NAME'] = $patient['FIRST_NAME'] . ' ' . $patient['LAST_NAME'];
+        }
         
         $success_message = "Profile updated successfully!";
     } else {
         $error_message = "Error updating profile: " . mysqli_error($conn);
+    }
+}
+
+// Handle password change (same rules as doctor_profile)
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
+    $current_password = $_POST['current_password'];
+    $new_password = $_POST['new_password'];
+    $confirm_password = $_POST['confirm_password'];
+    
+    // Verify current password with hash from DB
+    if (password_verify($current_password, $patient['PSWD'])) {
+        if ($new_password === $confirm_password) {
+            $hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
+            
+            $password_query = "UPDATE patient_tbl SET PSWD = '$hashed_password' WHERE PATIENT_ID = '$patient_id'";
+            if (mysqli_query($conn, $password_query)) {
+                $password_success = "Password changed successfully!";
+            } else {
+                $password_error = "Error changing password: " . mysqli_error($conn);
+            }
+        } else {
+            $password_error = "New passwords do not match!";
+        }
+    } else {
+        $password_error = "Current password is incorrect!";
     }
 }
 
@@ -347,6 +366,75 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_profile'])) {
         .edit-profile-form {
             display: none;
         }
+
+        .error-message {
+            color: var(--danger-color);
+            font-size: 13px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        /* Password modal popup (same as doctor_profile style) */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: #ffffff;
+            border-radius: 10px;
+            padding: 25px 30px;
+            width: 100%;
+            max-width: 450px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            font-size: 20px;
+            color: var(--primary-color);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 22px;
+            cursor: pointer;
+            color: var(--dark-color);
+        }
+
+        .password-wrapper {
+            position: relative;
+        }
+
+        .password-wrapper .toggle-password {
+            position: absolute;
+            top: 50%;
+            right: 12px;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: var(--secondary-color);
+            font-size: 14px;
+        }
         
         .form-group {
             margin-bottom: 20px;
@@ -494,7 +582,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_profile'])) {
                             <button class="btn btn-primary" id="editProfileBtn">
                                 <i class="fas fa-edit"></i> Edit Profile
                             </button>
-                            <button class="btn btn-danger">
+                            <button class="btn btn-danger" id="changePasswordBtn">
                                 <i class="fas fa-key"></i> Change Password
                             </button>
                         </div>
@@ -546,13 +634,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_profile'])) {
                                 </div>
                                 <div class="form-group">
                                     <label for="phone">Phone Number</label>
-                                    <input type="tel" class="form-control" id="phone" name="phone" value="<?php echo htmlspecialchars($patient['PHONE']); ?>" required>
+                                    <input type="tel" class="form-control" id="phone" name="phone" value="<?php echo htmlspecialchars($patient['PHONE']); ?>" required maxlength="10">
+                                    <div class="error-message" id="phone_error"></div>
                                 </div>
                             </div>
                             
                             <div class="form-group">
                                 <label for="email">Email Address</label>
                                 <input type="email" class="form-control" id="email" name="email" value="<?php echo htmlspecialchars($patient['EMAIL']); ?>" required>
+                                <div class="error-message" id="email_error"></div>
                             </div>
                             
                             <div class="form-group">
@@ -575,16 +665,63 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_profile'])) {
         </div>
     </div>
     
-    <!-- Notification Popup -->
-    <div class="notification-popup" id="notificationPopup">
-        <div class="notification-popup-content">
-            <div class="notification-popup-icon">
-                <i class="fas fa-bell"></i>
+    <!-- Change Password Modal -->
+    <?php if (isset($password_success)): ?>
+        <div class="alert alert-success" style="margin: 0 20px 10px 20px;">
+            <i class="fas fa-check-circle"></i>
+            <?php echo $password_success; ?>
+        </div>
+    <?php endif; ?>
+    
+    <?php if (isset($password_error)): ?>
+        <div class="alert alert-danger" style="margin: 0 20px 10px 20px;">
+            <i class="fas fa-exclamation-circle"></i>
+            <?php echo $password_error; ?>
+        </div>
+    <?php endif; ?>
+    
+    <div id="passwordModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Change Password</h3>
+                <button type="button" class="modal-close" id="closePasswordModal">&times;</button>
             </div>
-            <div class="notification-popup-message" id="notificationPopupMessage">
-                <!-- Message will be inserted here -->
-            </div>
-            <button class="notification-popup-close" onclick="closeNotificationPopup()">&times;</button>
+            <form method="POST" action="patient_profile.php" id="patientPasswordForm">
+                <input type="hidden" name="change_password" value="1">
+                
+                <div class="form-group">
+                    <label for="current_password">Current Password</label>
+                    <div class="password-wrapper">
+                        <input type="password" class="form-control" id="current_password" name="current_password" required>
+                        <i class="fas fa-eye toggle-password" data-target="current_password"></i>
+                    </div>
+                    <div class="error-message" id="current_password_error"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="new_password">New Password</label>
+                    <div class="password-wrapper">
+                        <input type="password" class="form-control" id="new_password" name="new_password" required>
+                        <i class="fas fa-eye toggle-password" data-target="new_password"></i>
+                    </div>
+                    <div class="error-message" id="new_password_error"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="confirm_password">Confirm New Password</label>
+                    <div class="password-wrapper">
+                        <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
+                        <i class="fas fa-eye toggle-password" data-target="confirm_password"></i>
+                    </div>
+                    <div class="error-message" id="confirm_password_error"></div>
+                </div>
+                
+                <div class="btn-group">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-key"></i> Change Password
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
     
@@ -596,15 +733,161 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_profile'])) {
             const profileView = document.getElementById('profileView');
             const editProfileForm = document.getElementById('editProfileForm');
             
-            editProfileBtn.addEventListener('click', () => {
-                profileView.style.display = 'none';
-                editProfileForm.style.display = 'block';
-            });
+            if (editProfileBtn && profileView && editProfileForm) {
+                editProfileBtn.addEventListener('click', () => {
+                    profileView.style.display = 'none';
+                    editProfileForm.style.display = 'block';
+                });
+            }
             
-            cancelEditBtn.addEventListener('click', () => {
-                profileView.style.display = 'block';
-                editProfileForm.style.display = 'none';
+            if (cancelEditBtn && profileView && editProfileForm) {
+                cancelEditBtn.addEventListener('click', () => {
+                    profileView.style.display = 'block';
+                    editProfileForm.style.display = 'none';
+                });
+            }
+
+            // Phone & email validation on edit form
+            const phoneInput = document.getElementById('phone');
+            const emailInput = document.getElementById('email');
+            const editForm = document.querySelector('#editProfileForm form');
+
+            function hideError(id) {
+                const el = document.getElementById(id + '_error');
+                if (el) {
+                    el.style.display = 'none';
+                    el.textContent = '';
+                }
+            }
+
+            function showError(id, msg) {
+                const el = document.getElementById(id + '_error');
+                if (el) {
+                    el.textContent = msg;
+                    el.style.display = 'block';
+                }
+            }
+
+            if (phoneInput) {
+                phoneInput.addEventListener('input', function () {
+                    this.value = this.value.replace(/[^0-9]/g, '');
+                    if (/^\d{10}$/.test(this.value)) {
+                        hideError('phone');
+                    }
+                });
+            }
+
+            if (emailInput) {
+                emailInput.addEventListener('input', function () {
+                    if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.value.trim())) {
+                        hideError('email');
+                    }
+                });
+            }
+
+            if (editForm) {
+                editForm.addEventListener('submit', function (e) {
+                    let valid = true;
+
+                    if (phoneInput && !/^\d{10}$/.test(phoneInput.value.trim())) {
+                        showError('phone', 'Phone number must be exactly 10 digits.');
+                        valid = false;
+                    }
+
+                    if (emailInput && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailInput.value.trim())) {
+                        showError('email', 'e.g. abc@gmail.com');
+                        valid = false;
+                    }
+
+                    if (!valid) {
+                        e.preventDefault();
+                    }
+                });
+            }
+
+            // Change password modal functionality (same as doctor_profile)
+            const changePasswordBtn = document.getElementById('changePasswordBtn');
+            const passwordModal = document.getElementById('passwordModal');
+            const closePasswordModal = document.getElementById('closePasswordModal');
+            const patientPasswordForm = document.getElementById('patientPasswordForm');
+
+            if (changePasswordBtn && passwordModal) {
+                changePasswordBtn.addEventListener('click', () => {
+                    passwordModal.classList.add('active');
+                });
+            }
+
+            if (closePasswordModal && passwordModal) {
+                closePasswordModal.addEventListener('click', () => {
+                    passwordModal.classList.remove('active');
+                });
+            }
+
+            if (passwordModal) {
+                passwordModal.addEventListener('click', (e) => {
+                    if (e.target === passwordModal) {
+                        passwordModal.classList.remove('active');
+                    }
+                });
+            }
+
+            // Show/hide password toggles
+            const toggleIcons = document.querySelectorAll('.toggle-password');
+            toggleIcons.forEach(icon => {
+                icon.addEventListener('click', () => {
+                    const targetId = icon.getAttribute('data-target');
+                    const input = document.getElementById(targetId);
+                    if (!input) return;
+                    const isPassword = input.getAttribute('type') === 'password';
+                    input.setAttribute('type', isPassword ? 'text' : 'password');
+                    icon.classList.toggle('fa-eye');
+                    icon.classList.toggle('fa-eye-slash');
+                });
             });
+
+            // Password validation on change password submit (same as doctor_profile)
+            if (patientPasswordForm) {
+                patientPasswordForm.addEventListener('submit', function (e) {
+                    let validPwd = true;
+
+                    const currentPassword = document.getElementById('current_password');
+                    const newPassword = document.getElementById('new_password');
+                    const confirmPassword = document.getElementById('confirm_password');
+
+                    hideError('current_password');
+                    hideError('new_password');
+                    hideError('confirm_password');
+
+                    if (!currentPassword.value.trim()) {
+                        showError('current_password', 'Current password is required.');
+                        validPwd = false;
+                    }
+
+                    const pwd = newPassword.value;
+                    if (pwd.length < 8) {
+                        showError('new_password', 'Password must be at least 8 characters long.');
+                        validPwd = false;
+                    } else if (!/[A-Z]/.test(pwd)) {
+                        showError('new_password', 'Password must contain at least one uppercase letter.');
+                        validPwd = false;
+                    } else if (!/[0-9]/.test(pwd)) {
+                        showError('new_password', 'Password must contain at least one digit.');
+                        validPwd = false;
+                    } else if (!/[\W_]/.test(pwd)) {
+                        showError('new_password', 'Password must contain at least one special character.');
+                        validPwd = false;
+                    }
+
+                    if (confirmPassword.value !== pwd) {
+                        showError('confirm_password', 'Confirm password must match new password.');
+                        validPwd = false;
+                    }
+
+                    if (!validPwd) {
+                        e.preventDefault();
+                    }
+                });
+            }
             
             // Check for new reminders
             checkReminders();
