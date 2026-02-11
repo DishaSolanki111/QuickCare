@@ -580,7 +580,7 @@ if ($result->num_rows > 0) {
                     html += `
                         <div class="doctor-card">
                             <div class="doctor-header">
-                                <img src="${doctor.profile_image ? 'uploads/' + doctor.profile_image : 'uploads/logo.JPG'}" alt="${doctor.first_name} ${doctor.last_name}" class="doctor-image">
+                                <img src="${doctor.profile_image ? doctor.profile_image : 'uploads/default_doctor.JPG'}" alt="${doctor.first_name} ${doctor.last_name}" class="doctor-image">
                                 <div class="doctor-info">
                                     <h3>Dr. ${doctor.first_name} ${doctor.last_name}</h3>
                                     <div class="doctor-specialization">${doctor.specialization_name}</div>
