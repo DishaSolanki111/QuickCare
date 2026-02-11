@@ -5,42 +5,79 @@
 <meta charset="UTF-8">
 <title>QuickCare Services</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root {
     --primary: #0066cc;
     --secondary: #00a8cc;
+    --primary-blue: #1a73e8;
+    --secondary-blue: #4285f4;
+    --medium-blue: #8ab4f8;
+    --header-gradient-1: linear-gradient(135deg, #0066cc 0%, #00a8cc 100%);
     --light: #f8fbff;
     --dark: #1a3a5f;
     --text: #444;
 }
 
 * {
+    margin: 0;
+    padding: 0;
     box-sizing: border-box;
-    font-family: "Segoe UI", sans-serif;
+    font-family: 'Inter', sans-serif;
 }
 
 body {
-    margin: 0;
-    background: var(--light);
+    font-family: 'Inter', sans-serif;
+    background: linear-gradient(135deg, #f5f8ff 0%, #e6f0ff 100%);
     color: var(--text);
+    min-height: 100vh;
+    padding-top: 80px;
 }
 
-/* ===== PAGE HEADER ===== */
+/* ===== PAGE HEADER (same as appointment.php) ===== */
 .page-header {
+    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+    color: white;
+    padding: 4rem 0;
     text-align: center;
-    padding: 100px;
+    position: relative;
+    overflow: hidden;
+}
+
+.page-header::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%23ffffff' fill-opacity='0.1' d='M0,224L48,213.3C96,203,192,181,288,181.3C384,181,480,203,576,224C672,245,768,267,864,261.3C960,256,1056,224,1152,213.3C1248,203,1344,213,1392,218.7L1440,224L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z'%3E%3C/path%3E%3C/svg%3E") no-repeat bottom;
+    background-size: cover;
+}
+
+.page-header .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    position: relative;
+    z-index: 2;
 }
 
 .page-header h1 {
-    font-size: 2.6rem;
-    color: var(--dark);
+    font-size: 2.8rem;
+    margin-bottom: 1rem;
+    position: relative;
+    z-index: 2;
 }
 
 .page-header p {
-    max-width: 750px;
-    margin: 10px auto;
-    font-size: 1.1rem;
+    font-size: 1.2rem;
+    max-width: 700px;
+    margin: 0 auto;
+    opacity: 0.9;
+    position: relative;
+    z-index: 2;
 }
 
 /* ===== SERVICES ===== */
@@ -153,7 +190,115 @@ body {
     color: var(--dark);
 }
 
-/* ===== RESPONSIVE ===== */
+/* ===== FOOTER (same as appointment.php) ===== */
+footer {
+    background: var(--header-gradient-1);
+    color: white;
+    padding: 3rem 5%;
+    position: relative;
+}
+
+footer::before {
+    content: "";
+    position: absolute;
+    top: -100px;
+    left: 0;
+    width: 100%;
+    height: 100px;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%23ffffff' fill-opacity='1' d='M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,138.7C960,139,1056,117,1152,112C1248,107,1344,117,1392,122.7L1440,128L1440,0L1392,0C1344,0,1248,0,1152,0C1056,0,960,0,864,0C768,0,672,0,576,0C480,0,384,0,288,0C192,0,96,0,48,0L0,0Z'%3E%3C/path%3E%3C/svg%3E") no-repeat bottom;
+    background-size: cover;
+}
+
+.footer-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 2;
+}
+
+.footer-column h3 {
+    font-size: 1.3rem;
+    margin-bottom: 1.5rem;
+    position: relative;
+    padding-bottom: 0.5rem;
+}
+
+.footer-column h3::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 50px;
+    height: 3px;
+    background-color: var(--medium-blue);
+}
+
+.footer-column ul {
+    list-style: none;
+}
+
+.footer-column ul li {
+    margin-bottom: 0.8rem;
+}
+
+.footer-column ul li a {
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    transition: all 0.3s ease;
+    display: inline-block;
+}
+
+.footer-column ul li a:hover {
+    color: white;
+    transform: translateX(5px);
+}
+
+.footer-bottom {
+    text-align: center;
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* ===== RESPONSIVE (same as appointment.php) ===== */
+@media (max-width: 992px) {
+    .page-header h1 {
+        font-size: 2.4rem;
+    }
+    
+    .page-header p {
+        font-size: 1.1rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .page-header {
+        padding: 3rem 0;
+    }
+
+    .page-header h1 {
+        font-size: 2.2rem;
+    }
+
+    .page-header p {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .page-header h1 {
+        font-size: 2rem;
+    }
+    
+    .page-header p {
+        font-size: 1rem;
+    }
+}
+
 @media(max-width: 900px) {
     .service-card {
         flex-direction: column;
@@ -172,14 +317,22 @@ body {
         margin-bottom: 20px;
     }
 }
+
+@media (max-width: 576px) {
+    .footer-content {
+        grid-template-columns: 1fr;
+    }
+}
 </style>
 </head>
 
 <body>
 
 <div class="page-header">
-    <h1>Our Healthcare Services</h1>
-    <p>QuickCare provides smart digital healthcare solutions for patients, doctors and hospital staff.</p>
+    <div class="container">
+        <h1>Our Healthcare Services</h1>
+        <p>QuickCare provides smart digital healthcare solutions for patients, doctors and hospital staff.</p>
+    </div>
 </div>
 
 <div class="services-container">
@@ -337,5 +490,36 @@ body {
 
 </div>
 
+    <!-- Footer (same as appointment.php) -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-column">
+                <h3>QuickCare</h3>
+                <p>Your trusted partner in healthcare. Book appointments with verified specialists quickly and easily.</p>
+            </div>
+            <div class="footer-column">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="index.php">Home</a></li>
+                    <li><a href="appointment.php">Find Doctors</a></li>
+                    <li><a href="appointment.php">Book Appointment</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Contact Us</h3>
+                <ul>
+                    <li><a href="#"><i class="fas fa-map-marker-alt"></i> 123 Healthcare Ave, Medical City</a></li>
+                    <li><a href="#"><i class="fas fa-phone"></i> 91+ 9632587418</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; <span id="year"></span> QuickCare. All Rights Reserved. | <a href="#" style="color: rgba(255, 255, 255, 0.7);">Privacy Policy</a> | <a href="#" style="color: rgba(255, 255, 255, 0.7);">Terms of Service</a></p>
+        </div>
+    </footer>
+
+    <script>
+        document.getElementById('year').textContent = new Date().getFullYear();
+    </script>
 </body>
 </html>
