@@ -27,13 +27,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cancel_appointment'])
     }
 }
 
-// Fetch appointments data
+// Fetch appointments data (GROUP BY prevents duplicate rows from joins)
  $appointments_query = mysqli_query($conn, "
     SELECT a.*, d.FIRST_NAME as DOC_FNAME, d.LAST_NAME as DOC_LNAME, s.SPECIALISATION_NAME as SPECIALIZATION 
     FROM appointment_tbl a
     JOIN doctor_tbl d ON a.DOCTOR_ID = d.DOCTOR_ID
     JOIN specialisation_tbl s ON d.SPECIALISATION_ID = s.SPECIALISATION_ID
-    WHERE a.PATIENT_ID = '$patient_id'
+    WHERE a.PATIENT_ID = '" . mysqli_real_escape_string($conn, $patient_id) . "'
+    GROUP BY a.APPOINTMENT_ID
     ORDER BY a.APPOINTMENT_DATE DESC
 ");
 
@@ -712,7 +713,8 @@ html {
                     // Reset the result pointer to beginning
                     mysqli_data_seek($appointments_query, 0);
                     while ($appointment = mysqli_fetch_assoc($appointments_query)) {
-                        if ($appointment['APPOINTMENT_DATE'] >= date('Y-m-d')) {
+                        // Only show SCHEDULED appointments (exclude CANCELLED/COMPLETED)
+                        if ($appointment['APPOINTMENT_DATE'] >= date('Y-m-d') && $appointment['STATUS'] === 'SCHEDULED') {
                             $upcoming_appointments[] = $appointment;
                         }
                     }
