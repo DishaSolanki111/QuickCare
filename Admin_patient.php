@@ -1,7 +1,7 @@
 <?php
 if (session_status() === PHP_SESSION_NONE) session_start();
 include 'config.php';
-$adminName = isset($_SESSION['USER_NAME']) ? $_SESSION['USER_NAME'] : 'Admin';
+ $adminName = isset($_SESSION['USER_NAME']) ? $_SESSION['USER_NAME'] : 'Admin';
 
 // Initialize messages
  $success_message = "";
@@ -210,6 +210,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'delete' && isset($_POST['id'
     
     .form-group {
         margin-bottom: 15px;
+        position: relative;
     }
     
     .form-group label {
@@ -225,6 +226,12 @@ if (isset($_POST['action']) && $_POST['action'] == 'delete' && isset($_POST['id'
         border: 1px solid #D0D7E1;
         border-radius: 5px;
         box-sizing: border-box;
+        transition: border-color 0.3s;
+    }
+    
+    .form-group input:focus, .form-group select:focus {
+        border-color: var(--soft-blue);
+        outline: none;
     }
     
     .form-row {
@@ -281,6 +288,64 @@ if (isset($_POST['action']) && $_POST['action'] == 'delete' && isset($_POST['id'
         background: #f8d7da;
         color: #721c24;
         border: 1px solid #f5c6cb;
+    }
+    
+    .error-message {
+        color: var(--danger-color);
+        font-size: 12px;
+        margin-top: 5px;
+        display: none;
+    }
+    
+    .form-group.error input,
+    .form-group.error select {
+        border-color: var(--danger-color);
+    }
+    
+    .form-group.success input,
+    .form-group.success select {
+        border-color: #28a745;
+    }
+    
+    /* Toast Notification */
+    .toast {
+        visibility: hidden;
+        min-width: 250px;
+        margin-left: -125px;
+        background-color: #333;
+        color: #fff;
+        text-align: center;
+        border-radius: 5px;
+        padding: 16px;
+        position: fixed;
+        z-index: 1001;
+        left: 50%;
+        bottom: 30px;
+        font-size: 14px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+    
+    .toast.show {
+        visibility: visible;
+        animation: fadein 0.5s, fadeout 0.5s 2.5s;
+    }
+    
+    .toast.success {
+        background-color: #28a745;
+    }
+    
+    .toast.error {
+        background-color: var(--danger-color);
+    }
+    
+    @keyframes fadein {
+        from {bottom: 0; opacity: 0;}
+        to {bottom: 30px; opacity: 1;}
+    }
+    
+    @keyframes fadeout {
+        from {bottom: 30px; opacity: 1;}
+        to {bottom: 0; opacity: 0;}
     }
 </style>
 </head>
@@ -406,10 +471,12 @@ if (isset($_POST['action']) && $_POST['action'] == 'delete' && isset($_POST['id'
                 <div class="form-group">
                     <label for="edit_first_name">First Name</label>
                     <input type="text" id="edit_first_name" name="first_name" required>
+                    <div class="error-message" id="edit_first_name_error"></div>
                 </div>
                 <div class="form-group">
                     <label for="edit_last_name">Last Name</label>
                     <input type="text" id="edit_last_name" name="last_name" required>
+                    <div class="error-message" id="edit_last_name_error"></div>
                 </div>
             </div>
             
@@ -417,14 +484,17 @@ if (isset($_POST['action']) && $_POST['action'] == 'delete' && isset($_POST['id'
                 <div class="form-group">
                     <label for="edit_dob">Date of Birth</label>
                     <input type="date" id="edit_dob" name="dob" required>
+                    <div class="error-message" id="edit_dob_error"></div>
                 </div>
                 <div class="form-group">
                     <label for="edit_gender">Gender</label>
                     <select id="edit_gender" name="gender" required>
+                        <option value="">Select Gender</option>
                         <option value="MALE">Male</option>
                         <option value="FEMALE">Female</option>
                         <option value="OTHER">Other</option>
                     </select>
+                    <div class="error-message" id="edit_gender_error"></div>
                 </div>
             </div>
             
@@ -432,6 +502,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'delete' && isset($_POST['id'
                 <div class="form-group">
                     <label for="edit_blood_group">Blood Group</label>
                     <select id="edit_blood_group" name="blood_group" required>
+                        <option value="">Select Blood Group</option>
                         <option value="A+">A+</option>
                         <option value="A-">A-</option>
                         <option value="B+">B+</option>
@@ -441,16 +512,19 @@ if (isset($_POST['action']) && $_POST['action'] == 'delete' && isset($_POST['id'
                         <option value="AB+">AB+</option>
                         <option value="AB-">AB-</option>
                     </select>
+                    <div class="error-message" id="edit_blood_group_error"></div>
                 </div>
                 <div class="form-group">
                     <label for="edit_phone">Phone</label>
                     <input type="tel" id="edit_phone" name="phone" required>
+                    <div class="error-message" id="edit_phone_error"></div>
                 </div>
             </div>
             
             <div class="form-group">
                 <label for="edit_email">Email</label>
                 <input type="email" id="edit_email" name="email" required>
+                <div class="error-message" id="edit_email_error"></div>
             </div>
             
             <div style="margin-top: 20px;">
@@ -460,6 +534,9 @@ if (isset($_POST['action']) && $_POST['action'] == 'delete' && isset($_POST['id'
         </form>
     </div>
 </div>
+
+<!-- Toast Notification -->
+<div id="toast" class="toast"></div>
 
 <script>
 // Modal functions
@@ -472,6 +549,14 @@ function openEditModal(id, firstName, lastName, dob, gender, bloodGroup, phone, 
     document.getElementById('edit_blood_group').value = bloodGroup;
     document.getElementById('edit_phone').value = phone;
     document.getElementById('edit_email').value = email;
+    
+    // Clear any previous error messages
+    const errorElements = document.querySelectorAll('.error-message');
+    errorElements.forEach(el => el.style.display = 'none');
+    
+    // Remove error classes from form groups
+    const formGroups = document.querySelectorAll('.form-group');
+    formGroups.forEach(el => el.classList.remove('error', 'success'));
     
     document.getElementById('editModal').style.display = 'block';
 }
@@ -508,10 +593,219 @@ function deletePatient(id) {
     }
 }
 
-// Handle form submission to close modal after successful update
-document.getElementById('editForm').addEventListener('submit', function() {
-    // The form will submit normally and the page will refresh
-    // showing the updated data and success message
+// Toast notification function
+function showToast(message, isSuccess = false) {
+    const toast = document.getElementById('toast');
+    toast.innerHTML = isSuccess ? 
+        `<i class="fas fa-check-circle"></i> ${message}` : 
+        `<i class="fas fa-exclamation-circle"></i> ${message}`;
+    toast.className = isSuccess ? 'toast success show' : 'toast error show';
+    
+    setTimeout(() => {
+        toast.className = toast.className.replace('show', '');
+    }, 3000);
+}
+
+// Validation functions
+function validateFirstName() {
+    const firstName = document.getElementById('edit_first_name');
+    const errorElement = document.getElementById('edit_first_name_error');
+    const formGroup = firstName.closest('.form-group');
+    
+    if (firstName.value.trim() === '') {
+        errorElement.textContent = 'First name is required';
+        errorElement.style.display = 'block';
+        formGroup.classList.add('error');
+        formGroup.classList.remove('success');
+        return false;
+    } else if (!/^[a-zA-Z\s]+$/.test(firstName.value.trim())) {
+        errorElement.textContent = 'First name should contain only letters and spaces';
+        errorElement.style.display = 'block';
+        formGroup.classList.add('error');
+        formGroup.classList.remove('success');
+        return false;
+    } else {
+        errorElement.style.display = 'none';
+        formGroup.classList.remove('error');
+        formGroup.classList.add('success');
+        return true;
+    }
+}
+
+function validateLastName() {
+    const lastName = document.getElementById('edit_last_name');
+    const errorElement = document.getElementById('edit_last_name_error');
+    const formGroup = lastName.closest('.form-group');
+    
+    if (lastName.value.trim() === '') {
+        errorElement.textContent = 'Last name is required';
+        errorElement.style.display = 'block';
+        formGroup.classList.add('error');
+        formGroup.classList.remove('success');
+        return false;
+    } else if (!/^[a-zA-Z\s]+$/.test(lastName.value.trim())) {
+        errorElement.textContent = 'Last name should contain only letters and spaces';
+        errorElement.style.display = 'block';
+        formGroup.classList.add('error');
+        formGroup.classList.remove('success');
+        return false;
+    } else {
+        errorElement.style.display = 'none';
+        formGroup.classList.remove('error');
+        formGroup.classList.add('success');
+        return true;
+    }
+}
+
+function validateDOB() {
+    const dob = document.getElementById('edit_dob');
+    const errorElement = document.getElementById('edit_dob_error');
+    const formGroup = dob.closest('.form-group');
+    const selectedDate = new Date(dob.value);
+    const today = new Date();
+    
+    if (dob.value === '') {
+        errorElement.textContent = 'Date of birth is required';
+        errorElement.style.display = 'block';
+        formGroup.classList.add('error');
+        formGroup.classList.remove('success');
+        return false;
+    } else if (selectedDate > today) {
+        errorElement.textContent = 'Date of birth cannot be in the future';
+        errorElement.style.display = 'block';
+        formGroup.classList.add('error');
+        formGroup.classList.remove('success');
+        return false;
+    } else {
+        // Check if age is reasonable (e.g., not more than 120 years)
+        const age = today.getFullYear() - selectedDate.getFullYear();
+        if (age > 120) {
+            errorElement.textContent = 'Invalid date of birth';
+            errorElement.style.display = 'block';
+            formGroup.classList.add('error');
+            formGroup.classList.remove('success');
+            return false;
+        }
+        errorElement.style.display = 'none';
+        formGroup.classList.remove('error');
+        formGroup.classList.add('success');
+        return true;
+    }
+}
+
+function validateGender() {
+    const gender = document.getElementById('edit_gender');
+    const errorElement = document.getElementById('edit_gender_error');
+    const formGroup = gender.closest('.form-group');
+    
+    if (gender.value === '') {
+        errorElement.textContent = 'Gender is required';
+        errorElement.style.display = 'block';
+        formGroup.classList.add('error');
+        formGroup.classList.remove('success');
+        return false;
+    } else {
+        errorElement.style.display = 'none';
+        formGroup.classList.remove('error');
+        formGroup.classList.add('success');
+        return true;
+    }
+}
+
+function validateBloodGroup() {
+    const bloodGroup = document.getElementById('edit_blood_group');
+    const errorElement = document.getElementById('edit_blood_group_error');
+    const formGroup = bloodGroup.closest('.form-group');
+    
+    if (bloodGroup.value === '') {
+        errorElement.textContent = 'Blood group is required';
+        errorElement.style.display = 'block';
+        formGroup.classList.add('error');
+        formGroup.classList.remove('success');
+        return false;
+    } else {
+        errorElement.style.display = 'none';
+        formGroup.classList.remove('error');
+        formGroup.classList.add('success');
+        return true;
+    }
+}
+
+function validatePhone() {
+    const phone = document.getElementById('edit_phone');
+    const errorElement = document.getElementById('edit_phone_error');
+    const formGroup = phone.closest('.form-group');
+    
+    if (phone.value.trim() === '') {
+        errorElement.textContent = 'Phone number is required';
+        errorElement.style.display = 'block';
+        formGroup.classList.add('error');
+        formGroup.classList.remove('success');
+        return false;
+    } else if (!/^[0-9]{10}$/.test(phone.value.trim())) {
+        errorElement.textContent = 'Phone number must be exactly 10 digits';
+        errorElement.style.display = 'block';
+        formGroup.classList.add('error');
+        formGroup.classList.remove('success');
+        return false;
+    } else {
+        errorElement.style.display = 'none';
+        formGroup.classList.remove('error');
+        formGroup.classList.add('success');
+        return true;
+    }
+}
+
+function validateEmail() {
+    const email = document.getElementById('edit_email');
+    const errorElement = document.getElementById('edit_email_error');
+    const formGroup = email.closest('.form-group');
+    
+    if (email.value.trim() === '') {
+        errorElement.textContent = 'Email is required';
+        errorElement.style.display = 'block';
+        formGroup.classList.add('error');
+        formGroup.classList.remove('success');
+        return false;
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim())) {
+        errorElement.textContent = 'Invalid email format';
+        errorElement.style.display = 'block';
+        formGroup.classList.add('error');
+        formGroup.classList.remove('success');
+        return false;
+    } else {
+        errorElement.style.display = 'none';
+        formGroup.classList.remove('error');
+        formGroup.classList.add('success');
+        return true;
+    }
+}
+
+// Add event listeners for real-time validation
+document.getElementById('edit_first_name').addEventListener('input', validateFirstName);
+document.getElementById('edit_last_name').addEventListener('input', validateLastName);
+document.getElementById('edit_dob').addEventListener('change', validateDOB);
+document.getElementById('edit_gender').addEventListener('change', validateGender);
+document.getElementById('edit_blood_group').addEventListener('change', validateBloodGroup);
+document.getElementById('edit_phone').addEventListener('input', validatePhone);
+document.getElementById('edit_email').addEventListener('input', validateEmail);
+
+// Form submission validation
+document.getElementById('editForm').addEventListener('submit', function(e) {
+    // Run all validation functions
+    const isFirstNameValid = validateFirstName();
+    const isLastNameValid = validateLastName();
+    const isDOBValid = validateDOB();
+    const isGenderValid = validateGender();
+    const isBloodGroupValid = validateBloodGroup();
+    const isPhoneValid = validatePhone();
+    const isEmailValid = validateEmail();
+    
+    // If any validation fails, prevent form submission
+    if (!isFirstNameValid || !isLastNameValid || !isDOBValid || !isGenderValid || !isBloodGroupValid || !isPhoneValid || !isEmailValid) {
+        e.preventDefault();
+        showToast('Please correct the errors in the form', false);
+    }
 });
 </script>
 
