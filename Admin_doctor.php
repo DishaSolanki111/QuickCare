@@ -649,20 +649,6 @@ include 'admin_sidebar.php';
                 </div>
             </div>
             
-            <div class="form-group">
-                <label for="edit_specialization">Specialization</label>
-                <select id="edit_specialization" name="specialization_id" required>
-                    <option value="">Select Specialization</option>
-                    <?php
-                    include 'config.php';
-                    $spec_q = mysqli_query($conn, "SELECT * FROM specialisation_tbl ORDER BY SPECIALISATION_NAME");
-                    while ($spec = mysqli_fetch_assoc($spec_q)) {
-                        echo "<option value='{$spec['SPECIALISATION_ID']}'>{$spec['SPECIALISATION_NAME']}</option>";
-                    }
-                    ?>
-                </select>
-                <div class="error-message" id="edit_specialization_error"></div>
-            </div>
             
             <div style="margin-top: 20px;">
                 <button type="submit" class="btn-save">Save Changes</button>
@@ -684,7 +670,7 @@ function openEditModal(id, firstName, lastName, education, phone, email, special
     document.getElementById('edit_education').value = education;
     document.getElementById('edit_phone').value = phone;
     document.getElementById('edit_email').value = email;
-    document.getElementById('edit_specialization').value = specializationId;
+    
     document.getElementById('current_image').value = profileImage;
     
     // Display current image
@@ -907,7 +893,7 @@ window.addEventListener('load', function() {
         '<?php echo addslashes($doctor_data['EDUCATION']); ?>',
         '<?php echo $doctor_data['PHONE']; ?>',
         '<?php echo $doctor_data['EMAIL']; ?>',
-        '<?php echo $doctor_data['SPECIALISATION_ID']; ?>',
+      
         '<?php echo $doctor_data['PROFILE_IMAGE']; ?>'
     );
 });
