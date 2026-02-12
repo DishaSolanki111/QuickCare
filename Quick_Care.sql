@@ -1,3 +1,4 @@
+```sql
 -- phpMyAdmin SQL Dump
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
@@ -132,36 +133,32 @@ CREATE TABLE `appointment_tbl` (
 --
 
 INSERT INTO `appointment_tbl` (`APPOINTMENT_ID`, `PATIENT_ID`, `DOCTOR_ID`, `SCHEDULE_ID`, `CREATED_AT`, `APPOINTMENT_DATE`, `APPOINTMENT_TIME`, `STATUS`) VALUES
-(1, 1, 1, 1, '2023-11-13 04:30:00', '2023-11-20', '10:00:00', 'COMPLETED'),
-(2, 1, 1, 2, '2023-11-13 04:30:00', '2023-12-04', '10:00:00', 'COMPLETED'),
-(3, 2, 2, 4, '2023-11-13 05:30:00', '2023-11-21', '11:00:00', 'COMPLETED'),
-(4, 2, 2, 5, '2023-11-13 05:30:00', '2023-12-05', '11:00:00', 'COMPLETED'),
-(5, 3, 3, 7, '2023-11-13 06:30:00', '2023-11-22', '09:00:00', 'COMPLETED'),
-(6, 3, 3, 8, '2023-11-13 06:30:00', '2023-12-06', '09:00:00', 'COMPLETED'),
-(7, 4, 4, 10, '2023-11-13 07:30:00', '2023-11-23', '10:00:00', 'COMPLETED'),
-(8, 4, 4, 11, '2023-11-13 07:30:00', '2023-12-07', '10:00:00', 'COMPLETED'),
-(9, 5, 5, 13, '2023-11-13 08:30:00', '2023-11-24', '11:00:00', 'COMPLETED'),
-(10, 5, 5, 14, '2023-11-13 08:30:00', '2023-12-08', '11:00:00', 'COMPLETED'),
-(11, 6, 6, 16, '2023-11-13 09:30:00', '2023-11-25', '09:00:00', 'COMPLETED'),
-(12, 6, 6, 17, '2023-11-13 09:30:00', '2023-12-09', '09:00:00', 'COMPLETED'),
-(13, 7, 7, 19, '2023-11-13 10:30:00', '2023-11-27', '10:00:00', 'COMPLETED'),
-(14, 7, 7, 20, '2023-11-13 10:30:00', '2023-12-11', '10:00:00', 'COMPLETED'),
-(15, 8, 8, 22, '2023-11-13 11:30:00', '2023-11-28', '11:00:00', 'COMPLETED'),
-(16, 8, 8, 23, '2023-11-13 11:30:00', '2023-12-12', '11:00:00', 'COMPLETED'),
-(17, 9, 9, 25, '2023-11-13 12:30:00', '2023-11-29', '09:00:00', 'COMPLETED'),
-(18, 9, 9, 26, '2023-11-13 12:30:00', '2023-12-13', '09:00:00', 'COMPLETED'),
-(19, 10, 10, 28, '2023-11-13 13:30:00', '2023-11-30', '10:00:00', 'COMPLETED'),
-(20, 10, 10, 29, '2023-11-13 13:30:00', '2023-12-14', '10:00:00', 'COMPLETED'),
+(1, 1, 1, 1, '2023-11-01 09:00:00', '2023-11-03', '10:00:00', 'COMPLETED'),
+(2, 1, 1, 2, '2023-11-03 10:15:00', '2023-11-07', '10:00:00', 'COMPLETED'),
+(3, 2, 2, 4, '2023-11-01 11:30:00', '2023-11-04', '11:00:00', 'COMPLETED'),
+(4, 2, 2, 5, '2023-11-05 12:00:00', '2023-11-10', '11:00:00', 'COMPLETED'),
+(5, 3, 3, 7, '2023-11-04 13:20:00', '2023-11-09', '09:00:00', 'COMPLETED'),
+(6, 3, 3, 8, '2023-11-06 14:45:00', '2023-11-12', '09:00:00', 'COMPLETED'),
+(7, 4, 4, 10, '2023-11-07 08:30:00', '2023-11-14', '10:00:00', 'COMPLETED'),
+(8, 4, 4, 11, '2023-11-08 09:10:00', '2023-11-15', '10:00:00', 'COMPLETED'),
+(9, 5, 5, 13, '2023-11-09 10:00:00', '2023-11-17', '11:00:00', 'COMPLETED'),
+(10, 5, 5, 14, '2023-11-10 11:30:00', '2023-11-20', '11:00:00', 'COMPLETED'),
+(11, 6, 6, 16, '2023-11-11 12:15:00', '2023-11-22', '09:00:00', 'COMPLETED'),
+(12, 6, 6, 17, '2023-11-12 13:00:00', '2023-11-25', '09:00:00', 'COMPLETED'),
+(13, 7, 7, 19, '2023-11-02 14:00:00', '2023-11-06', '10:00:00', 'COMPLETED'),
+(14, 7, 7, 20, '2023-11-05 15:30:00', '2023-11-11', '10:00:00', 'COMPLETED'),
+(15, 8, 8, 22, '2023-11-08 16:00:00', '2023-11-16', '11:00:00', 'COMPLETED'),
+(16, 8, 8, 23, '2023-11-10 17:20:00', '2023-11-18', '11:00:00', 'COMPLETED'),
+(17, 9, 9, 25, '2023-11-12 09:45:00', '2023-11-21', '09:00:00', 'COMPLETED'),
+(18, 9, 9, 26, '2023-11-15 10:30:00', '2023-11-24', '09:00:00', 'COMPLETED'),
+(19, 10, 10, 28, '2023-11-18 11:00:00', '2023-11-28', '10:00:00', 'COMPLETED'),
+(20, 10, 10, 29, '2023-11-20 12:00:00', '2023-11-30', '10:00:00', 'COMPLETED'),
 (21, 7, 2, 18, '2026-01-09 10:38:09', '2026-02-10', '10:30:00', 'SCHEDULED'),
 (22, 8, 3, 19, '2026-01-09 10:38:09', '2026-02-15', '11:00:00', 'SCHEDULED'),
 (23, 9, 1, 20, '2026-01-09 10:38:09', '2026-02-20', '09:30:00', 'SCHEDULED'),
 (24, 1, 1, 1, '2026-01-09 11:11:14', '2026-02-12', '10:00:00', 'SCHEDULED'),
 (25, 1, 1, 1, '2026-01-09 14:44:14', '2026-02-25', '13:00:00', 'SCHEDULED'),
 (26, 1, 1, 1, '2026-01-10 08:00:25', '2026-02-08', '12:00:00', 'SCHEDULED');
-
--- Note: Appointments can only be booked from today to 1 month ahead. Sample SCHEDULED dates above
--- are set within that window. After import, if dates become invalid, run:
--- UPDATE appointment_tbl SET APPOINTMENT_DATE = DATE_ADD(CURDATE(), INTERVAL FLOOR(RAND()*28)+1 DAY) WHERE STATUS = 'SCHEDULED' AND (APPOINTMENT_DATE < CURDATE() OR APPOINTMENT_DATE > DATE_ADD(CURDATE(), INTERVAL 1 MONTH));
 
 -- --------------------------------------------------------
 
@@ -324,7 +321,6 @@ CREATE TABLE `doctor_tbl` (
   `EMAIL` varchar(50) DEFAULT NULL,
   `GENDER` enum('MALE','FEMALE','OTHER') DEFAULT NULL,
   `LICENSE_NO` varchar(50) DEFAULT NULL,
-  `LICENSE_FILE` varchar(255) DEFAULT NULL,
   `EDUCATION` varchar(50) DEFAULT NULL,
   `STATUS` enum('pending','approved','rejected') DEFAULT 'pending'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -333,47 +329,47 @@ CREATE TABLE `doctor_tbl` (
 -- Dumping data for table `doctor_tbl`
 --
 
-INSERT INTO `doctor_tbl` (`DOCTOR_ID`, `SPECIALISATION_ID`, `PROFILE_IMAGE`, `FIRST_NAME`, `LAST_NAME`, `DOB`, `DOJ`, `USERNAME`, `PSWD`, `PHONE`, `EMAIL`, `GENDER`, `LICENSE_NO`, `LICENSE_FILE`, `EDUCATION`, `STATUS`) VALUES
-(1, 1, 'uploads/rajesh.jpeg', 'Rajesh', 'Kumar', '1975-03-15', '2010-06-20', 'Dr_rajesh01', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543210, 'rajesh.kumar@gmail.com', 'MALE', 'DOC1001', NULL, 'MBBS, MD (Pediatrics)', 'approved'),
-(2, 1, 'uploads/priya.jpeg', 'Priya', 'Sharma', '1980-07-22', '2012-09-15', 'Dr_priya02', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543211, 'priya.sharma@gmail.com', 'FEMALE', 'DOC1002', NULL, 'MBBS, DCH', 'approved'),
-(3, 1, 'uploads/amit.jpeg', 'Amit', 'Patel', '1978-11-10', '2015-03-25', 'Dr_amit03', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543212, 'amit.patel@gmail.com', 'MALE', 'DOC1003', NULL, 'MBBS, DNB (Pediatrics)', 'approved'),
-(4, 2, 'uploads/sunita1.jpeg', 'Sunita', 'Reddy', '1976-05-18', '2011-07-10', 'Dr_sunita04', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543213, 'sunita.reddy@gmail.com', 'FEMALE', 'DOC1004', NULL, 'MBBS, MD (Cardiology)', 'approved'),
-(5, 2, 'uploads/vikram1.jpeg', 'Vikram', 'Singh', '1973-09-25', '2009-12-05', 'Dr_vikram05', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543214, 'vikram.singh@gmail.com', 'MALE', 'DOC1005', NULL, 'MBBS, DM (Cardiology)', 'approved'),
-(6, 2, 'uploads/anjali.jpeg', 'Anjali', 'Gupta', '1982-02-14', '2014-08-20', 'Dr_anjali06', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543215, 'anjali.gupta@gmail.com', 'FEMALE', 'DOC1006', NULL, 'MBBS, MD (Cardiology)', 'approved'),
-(7, 3, 'uploads/rahul.jpeg', 'Rahul', 'Verma', '1977-08-30', '2013-04-15', 'Dr_rahul07', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543216, 'rahul.verma@gmail.com', 'MALE', 'DOC1007', NULL, 'MBBS, MS (Orthopedics)', 'approved'),
-(8, 3, 'uploads/meera.jpeg', 'Meera', 'Joshi', '1981-12-05', '2016-01-10', 'Dr_meera08', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543217, 'meera.joshi@gmail.com', 'FEMALE', 'DOC1008', NULL, 'MBBS, DNB (Orthopedics)', 'approved'),
-(9, 4, 'uploads/sanjay.jpeg', 'Sanjay', 'Malhotra', '1974-06-20', '2010-11-30', 'Dr_sanjay09', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543218, 'sanjay.malhotra@gmail.com', 'MALE', 'DOC1009', NULL, 'MBBS, MD, DM (Neurology)', 'approved'),
-(10, 4, 'uploads/kavita1.jpeg', 'Kavita', 'Nair', '1979-04-12', '2015-07-25', 'Dr_kavita10', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543219, 'kavita.nair@gmail.com', 'FEMALE', 'DOC1010', NULL, 'MBBS, MD (Neurology)', 'approved'),
-(11, 1, NULL, 'Suresh', 'Reddy', '1976-01-18', '2011-05-10', 'Dr_suresh11', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543220, 'suresh.reddy@gmail.com', 'MALE', 'DOC1011', NULL, 'MBBS, MD (Pediatrics)', 'approved'),
-(12, 1, NULL, 'Lakshmi', 'Iyer', '1983-09-05', '2014-02-20', 'Dr_lakshmi12', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543221, 'lakshmi.iyer@gmail.com', 'FEMALE', 'DOC1012', NULL, 'MBBS, DCH', 'approved'),
-(13, 1, NULL, 'Arun', 'Menon', '1979-12-22', '2013-08-15', 'Dr_arun13', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543222, 'arun.menon@gmail.com', 'MALE', 'DOC1013', NULL, 'MBBS, DNB (Pediatrics)', 'approved'),
-(14, 1, NULL, 'Deepa', 'Nair', '1981-04-08', '2016-11-01', 'Dr_deepa14', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543223, 'deepa.nair@gmail.com', 'FEMALE', 'DOC1014', NULL, 'MBBS, MD (Pediatrics)', 'approved'),
-(15, 1, NULL, 'Karthik', 'Pillai', '1977-07-30', '2010-03-12', 'Dr_karthik15', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543224, 'karthik.pillai@gmail.com', 'MALE', 'DOC1015', NULL, 'MBBS, DCH', 'approved'),
-(16, 1, NULL, 'Divya', 'Krishnan', '1984-02-14', '2015-06-25', 'Dr_divya16', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543225, 'divya.krishnan@gmail.com', 'FEMALE', 'DOC1016', NULL, 'MBBS, DNB (Pediatrics)', 'approved'),
-(17, 1, NULL, 'Ramesh', 'Bose', '1974-10-28', '2009-09-08', 'Dr_ramesh17', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543226, 'ramesh.bose@gmail.com', 'MALE', 'DOC1017', NULL, 'MBBS, MD (Pediatrics)', 'approved'),
-(18, 2, NULL, 'Manoj', 'Desai', '1978-06-12', '2012-04-18', 'Dr_manoj18', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543230, 'manoj.desai@gmail.com', 'MALE', 'DOC1018', NULL, 'MBBS, DM (Cardiology)', 'approved'),
-(19, 2, NULL, 'Preeti', 'Shah', '1980-11-03', '2015-01-22', 'Dr_preeti19', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543231, 'preeti.shah@gmail.com', 'FEMALE', 'DOC1019', NULL, 'MBBS, MD (Cardiology)', 'approved'),
-(20, 2, NULL, 'Rohit', 'Kapoor', '1975-03-25', '2010-10-05', 'Dr_rohit20', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543232, 'rohit.kapoor@gmail.com', 'MALE', 'DOC1020', NULL, 'MBBS, DM (Cardiology)', 'approved'),
-(21, 2, NULL, 'Swati', 'Bhatia', '1982-08-17', '2013-07-14', 'Dr_swati21', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543233, 'swati.bhatia@gmail.com', 'FEMALE', 'DOC1021', NULL, 'MBBS, MD (Cardiology)', 'approved'),
-(22, 2, NULL, 'Nikhil', 'Agarwal', '1979-01-30', '2016-05-28', 'Dr_nikhil22', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543234, 'nikhil.agarwal@gmail.com', 'MALE', 'DOC1022', NULL, 'MBBS, DNB (Cardiology)', 'approved'),
-(23, 2, NULL, 'Pooja', 'Mehta', '1983-05-08', '2014-12-10', 'Dr_pooja23', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543235, 'pooja.mehta@gmail.com', 'FEMALE', 'DOC1023', NULL, 'MBBS, MD (Cardiology)', 'approved'),
-(24, 2, NULL, 'Ajay', 'Sethi', '1976-09-20', '2011-02-15', 'Dr_ajay24', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543236, 'ajay.sethi@gmail.com', 'MALE', 'DOC1024', NULL, 'MBBS, DM (Cardiology)', 'approved'),
-(25, 2, NULL, 'Tanuja', 'Verma', '1981-04-05', '2012-08-20', 'Dr_tanuja25', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543237, 'tanuja.verma@gmail.com', 'FEMALE', 'DOC1025', NULL, 'MBBS, MD (Cardiology)', 'approved'),
-(26, 3, NULL, 'Vishal', 'Jain', '1974-04-18', '2010-08-22', 'Dr_vishal26', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543240, 'vishal.jain@gmail.com', 'MALE', 'DOC1026', NULL, 'MBBS, MS (Orthopedics)', 'approved'),
-(27, 3, NULL, 'Neha', 'Aggarwal', '1982-07-09', '2014-03-05', 'Dr_neha27', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543241, 'neha.aggarwal@gmail.com', 'FEMALE', 'DOC1027', NULL, 'MBBS, DNB (Orthopedics)', 'approved'),
-(28, 3, NULL, 'Rajiv', 'Chopra', '1978-02-28', '2012-11-18', 'Dr_rajiv28', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543242, 'rajiv.chopra@gmail.com', 'MALE', 'DOC1028', NULL, 'MBBS, MS (Orthopedics)', 'approved'),
-(29, 3, NULL, 'Kavita', 'Srinivasan', '1980-10-14', '2015-06-30', 'Dr_kavita29', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543243, 'kavita.srinivasan@gmail.com', 'FEMALE', 'DOC1029', NULL, 'MBBS, DNB (Orthopedics)', 'approved'),
-(30, 3, NULL, 'Sandeep', 'Rao', '1976-12-05', '2011-09-12', 'Dr_sandeep30', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543244, 'sandeep.rao@gmail.com', 'MALE', 'DOC1030', NULL, 'MBBS, MS (Orthopedics)', 'approved'),
-(31, 3, NULL, 'Anita', 'Malhotra', '1983-05-22', '2016-04-08', 'Dr_anita31', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543245, 'anita.malhotra@gmail.com', 'FEMALE', 'DOC1031', NULL, 'MBBS, DNB (Orthopedics)', 'approved'),
-(32, 3, NULL, 'Prakash', 'Tiwari', '1975-08-03', '2009-07-20', 'Dr_prakash32', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543246, 'prakash.tiwari@gmail.com', 'MALE', 'DOC1032', NULL, 'MBBS, MS (Orthopedics)', 'approved'),
-(33, 3, NULL, 'Shalini', 'Venkatesh', '1981-01-16', '2013-10-25', 'Dr_shalini33', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543247, 'shalini.venkatesh@gmail.com', 'FEMALE', 'DOC1033', NULL, 'MBBS, DNB (Orthopedics)', 'approved'),
-(34, 4, NULL, 'Ashok', 'Bhatt', '1977-11-08', '2012-02-14', 'Dr_ashok34', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543250, 'ashok.bhatt@gmail.com', 'MALE', 'DOC1034', NULL, 'MBBS, DM (Neurology)', 'approved'),
-(35, 4, NULL, 'Rekha', 'Subramanian', '1982-03-25', '2014-09-18', 'Dr_rekha35', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543251, 'rekha.subramanian@gmail.com', 'FEMALE', 'DOC1035', NULL, 'MBBS, MD (Neurology)', 'approved'),
-(36, 4, NULL, 'Ganesh', 'Murthy', '1976-07-12', '2011-05-30', 'Dr_ganesh36', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543252, 'ganesh.murthy@gmail.com', 'MALE', 'DOC1036', NULL, 'MBBS, DM (Neurology)', 'approved'),
-(37, 4, NULL, 'Smita', 'Dixit', '1980-12-03', '2015-11-22', 'Dr_smita37', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543253, 'smita.dixit@gmail.com', 'FEMALE', 'DOC1037', NULL, 'MBBS, DNB (Neurology)', 'approved'),
-(38, 4, NULL, 'Venkat', 'Rao', '1978-05-18', '2013-08-05', 'Dr_venkat38', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543254, 'venkat.rao@gmail.com', 'MALE', 'DOC1038', NULL, 'MBBS, MD, DM (Neurology)', 'approved'),
-(39, 4, NULL, 'Mamta', 'Singh', '1983-09-28', '2016-01-15', 'Dr_mamta39', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543255, 'mamta.singh@gmail.com', 'FEMALE', 'DOC1039', NULL, 'MBBS, MD (Neurology)', 'approved'),
-(40, 4, NULL, 'Harish', 'Pandey', '1975-02-14', '2010-04-28', 'Dr_harish40', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543256, 'harish.pandey@gmail.com', 'MALE', 'DOC1040', NULL, 'MBBS, DM (Neurology)', 'approved');
+INSERT INTO `doctor_tbl` (`DOCTOR_ID`, `SPECIALISATION_ID`, `PROFILE_IMAGE`, `FIRST_NAME`, `LAST_NAME`, `DOB`, `DOJ`, `USERNAME`, `PSWD`, `PHONE`, `EMAIL`, `GENDER`, `LICENSE_NO`, `EDUCATION`, `STATUS`) VALUES
+(1, 1, 'uploads/rajesh.jpeg', 'Rajesh', 'Kumar', '1975-03-15', '2010-06-20', 'Dr_rajesh01', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543210, 'rajesh.kumar@gmail.com', 'MALE', 'DOC1001', 'MBBS, MD (Pediatrics)', 'approved'),
+(2, 1, 'uploads/priya.jpeg', 'Priya', 'Sharma', '1980-07-22', '2012-09-15', 'Dr_priya02', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543211, 'priya.sharma@gmail.com', 'FEMALE', 'DOC1002', 'MBBS, DCH', 'approved'),
+(3, 1, 'uploads/amit.jpeg', 'Amit', 'Patel', '1978-11-10', '2015-03-25', 'Dr_amit03', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543212, 'amit.patel@gmail.com', 'MALE', 'DOC1003', 'MBBS, DNB (Pediatrics)', 'approved'),
+(4, 2, 'uploads/sunita1.jpeg', 'Sunita', 'Reddy', '1976-05-18', '2011-07-10', 'Dr_sunita04', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543213, 'sunita.reddy@gmail.com', 'FEMALE', 'DOC1004', 'MBBS, MD (Cardiology)', 'approved'),
+(5, 2, 'uploads/vikram1.jpeg', 'Vikram', 'Singh', '1973-09-25', '2009-12-05', 'Dr_vikram05', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543214, 'vikram.singh@gmail.com', 'MALE', 'DOC1005', 'MBBS, DM (Cardiology)', 'approved'),
+(6, 2, 'uploads/anjali.jpeg', 'Anjali', 'Gupta', '1982-02-14', '2014-08-20', 'Dr_anjali06', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543215, 'anjali.gupta@gmail.com', 'FEMALE', 'DOC1006', 'MBBS, MD (Cardiology)', 'approved'),
+(7, 3, 'uploads/rahul.jpeg', 'Rahul', 'Verma', '1977-08-30', '2013-04-15', 'Dr_rahul07', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543216, 'rahul.verma@gmail.com', 'MALE', 'DOC1007', 'MBBS, MS (Orthopedics)', 'approved'),
+(8, 3, 'uploads/meera.jpeg', 'Meera', 'Joshi', '1981-12-05', '2016-01-10', 'Dr_meera08', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543217, 'meera.joshi@gmail.com', 'FEMALE', 'DOC1008', 'MBBS, DNB (Orthopedics)', 'approved'),
+(9, 4, 'uploads/sanjay.jpeg', 'Sanjay', 'Malhotra', '1974-06-20', '2010-11-30', 'Dr_sanjay09', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543218, 'sanjay.malhotra@gmail.com', 'MALE', 'DOC1009', 'MBBS, MD, DM (Neurology)', 'approved'),
+(10, 4, 'uploads/kavita1.jpeg', 'Kavita', 'Nair', '1979-04-12', '2015-07-25', 'Dr_kavita10', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543219, 'kavita.nair@gmail.com', 'FEMALE', 'DOC1010', 'MBBS, MD (Neurology)', 'approved'),
+(11, 1, NULL, 'Suresh', 'Reddy', '1976-01-18', '2011-05-10', 'Dr_suresh11', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543220, 'suresh.reddy@gmail.com', 'MALE', 'DOC1011', 'MBBS, MD (Pediatrics)', 'approved'),
+(12, 1, NULL, 'Lakshmi', 'Iyer', '1983-09-05', '2014-02-20', 'Dr_lakshmi12', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543221, 'lakshmi.iyer@gmail.com', 'FEMALE', 'DOC1012', 'MBBS, DCH', 'approved'),
+(13, 1, NULL, 'Arun', 'Menon', '1979-12-22', '2013-08-15', 'Dr_arun13', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543222, 'arun.menon@gmail.com', 'MALE', 'DOC1013', 'MBBS, DNB (Pediatrics)', 'approved'),
+(14, 1, NULL, 'Deepa', 'Nair', '1981-04-08', '2016-11-01', 'Dr_deepa14', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543223, 'deepa.nair@gmail.com', 'FEMALE', 'DOC1014', 'MBBS, MD (Pediatrics)', 'approved'),
+(15, 1, NULL, 'Karthik', 'Pillai', '1977-07-30', '2010-03-12', 'Dr_karthik15', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543224, 'karthik.pillai@gmail.com', 'MALE', 'DOC1015', 'MBBS, DCH', 'approved'),
+(16, 1, NULL, 'Divya', 'Krishnan', '1984-02-14', '2015-06-25', 'Dr_divya16', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543225, 'divya.krishnan@gmail.com', 'FEMALE', 'DOC1016', 'MBBS, DNB (Pediatrics)', 'approved'),
+(17, 1, NULL, 'Ramesh', 'Bose', '1974-10-28', '2009-09-08', 'Dr_ramesh17', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543226, 'ramesh.bose@gmail.com', 'MALE', 'DOC1017', 'MBBS, MD (Pediatrics)', 'approved'),
+(18, 2, NULL, 'Manoj', 'Desai', '1978-06-12', '2012-04-18', 'Dr_manoj18', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543230, 'manoj.desai@gmail.com', 'MALE', 'DOC1018', 'MBBS, DM (Cardiology)', 'approved'),
+(19, 2, NULL, 'Preeti', 'Shah', '1980-11-03', '2015-01-22', 'Dr_preeti19', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543231, 'preeti.shah@gmail.com', 'FEMALE', 'DOC1019', 'MBBS, MD (Cardiology)', 'approved'),
+(20, 2, NULL, 'Rohit', 'Kapoor', '1975-03-25', '2010-10-05', 'Dr_rohit20', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543232, 'rohit.kapoor@gmail.com', 'MALE', 'DOC1020', 'MBBS, DM (Cardiology)', 'approved'),
+(21, 2, NULL, 'Swati', 'Bhatia', '1982-08-17', '2013-07-14', 'Dr_swati21', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543233, 'swati.bhatia@gmail.com', 'FEMALE', 'DOC1021', 'MBBS, MD (Cardiology)', 'approved'),
+(22, 2, NULL, 'Nikhil', 'Agarwal', '1979-01-30', '2016-05-28', 'Dr_nikhil22', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543234, 'nikhil.agarwal@gmail.com', 'MALE', 'DOC1022', 'MBBS, DNB (Cardiology)', 'approved'),
+(23, 2, NULL, 'Pooja', 'Mehta', '1983-05-08', '2014-12-10', 'Dr_pooja23', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543235, 'pooja.mehta@gmail.com', 'FEMALE', 'DOC1023', 'MBBS, MD (Cardiology)', 'approved'),
+(24, 2, NULL, 'Ajay', 'Sethi', '1976-09-20', '2011-02-15', 'Dr_ajay24', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543236, 'ajay.sethi@gmail.com', 'MALE', 'DOC1024', 'MBBS, DM (Cardiology)', 'approved'),
+(25, 2, NULL, 'Tanuja', 'Verma', '1981-04-05', '2012-08-20', 'Dr_tanuja25', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543237, 'tanuja.verma@gmail.com', 'FEMALE', 'DOC1025', 'MBBS, MD (Cardiology)', 'approved'),
+(26, 3, NULL, 'Vishal', 'Jain', '1974-04-18', '2010-08-22', 'Dr_vishal26', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543240, 'vishal.jain@gmail.com', 'MALE', 'DOC1026', 'MBBS, MS (Orthopedics)', 'approved'),
+(27, 3, NULL, 'Neha', 'Aggarwal', '1982-07-09', '2014-03-05', 'Dr_neha27', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543241, 'neha.aggarwal@gmail.com', 'FEMALE', 'DOC1027', 'MBBS, DNB (Orthopedics)', 'approved'),
+(28, 3, NULL, 'Rajiv', 'Chopra', '1978-02-28', '2012-11-18', 'Dr_rajiv28', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543242, 'rajiv.chopra@gmail.com', 'MALE', 'DOC1028', 'MBBS, MS (Orthopedics)', 'approved'),
+(29, 3, NULL, 'Kavita', 'Srinivasan', '1980-10-14', '2015-06-30', 'Dr_kavita29', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543243, 'kavita.srinivasan@gmail.com', 'FEMALE', 'DOC1029', 'MBBS, DNB (Orthopedics)', 'approved'),
+(30, 3, NULL, 'Sandeep', 'Rao', '1976-12-05', '2011-09-12', 'Dr_sandeep30', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543244, 'sandeep.rao@gmail.com', 'MALE', 'DOC1030', 'MBBS, MS (Orthopedics)', 'approved'),
+(31, 3, NULL, 'Anita', 'Malhotra', '1983-05-22', '2016-04-08', 'Dr_anita31', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543245, 'anita.malhotra@gmail.com', 'FEMALE', 'DOC1031', 'MBBS, DNB (Orthopedics)', 'approved'),
+(32, 3, NULL, 'Prakash', 'Tiwari', '1975-08-03', '2009-07-20', 'Dr_prakash32', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543246, 'prakash.tiwari@gmail.com', 'MALE', 'DOC1032', 'MBBS, MS (Orthopedics)', 'approved'),
+(33, 3, NULL, 'Shalini', 'Venkatesh', '1981-01-16', '2013-10-25', 'Dr_shalini33', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543247, 'shalini.venkatesh@gmail.com', 'FEMALE', 'DOC1033', 'MBBS, DNB (Orthopedics)', 'approved'),
+(34, 4, NULL, 'Ashok', 'Bhatt', '1977-11-08', '2012-02-14', 'Dr_ashok34', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543250, 'ashok.bhatt@gmail.com', 'MALE', 'DOC1034', 'MBBS, DM (Neurology)', 'approved'),
+(35, 4, NULL, 'Rekha', 'Subramanian', '1982-03-25', '2014-09-18', 'Dr_rekha35', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543251, 'rekha.subramanian@gmail.com', 'FEMALE', 'DOC1035', 'MBBS, MD (Neurology)', 'approved'),
+(36, 4, NULL, 'Ganesh', 'Murthy', '1976-07-12', '2011-05-30', 'Dr_ganesh36', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543252, 'ganesh.murthy@gmail.com', 'MALE', 'DOC1036', 'MBBS, DM (Neurology)', 'approved'),
+(37, 4, NULL, 'Smita', 'Dixit', '1980-12-03', '2015-11-22', 'Dr_smita37', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543253, 'smita.dixit@gmail.com', 'FEMALE', 'DOC1037', 'MBBS, DNB (Neurology)', 'approved'),
+(38, 4, NULL, 'Venkat', 'Rao', '1978-05-18', '2013-08-05', 'Dr_venkat38', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543254, 'venkat.rao@gmail.com', 'MALE', 'DOC1038', 'MBBS, MD, DM (Neurology)', 'approved'),
+(39, 4, NULL, 'Mamta', 'Singh', '1983-09-28', '2016-01-15', 'Dr_mamta39', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543255, 'mamta.singh@gmail.com', 'FEMALE', 'DOC1039', 'MBBS, MD (Neurology)', 'approved'),
+(40, 4, NULL, 'Harish', 'Pandey', '1975-02-14', '2010-04-28', 'Dr_harish40', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543256, 'harish.pandey@gmail.com', 'MALE', 'DOC1040', 'MBBS, DM (Neurology)', 'approved');
 
 -- --------------------------------------------------------
 
@@ -547,34 +543,35 @@ CREATE TABLE `payment_tbl` (
   `PAYMENT_DATE` date DEFAULT NULL,
   `PAYMENT_MODE` enum('CREDIT CARD','GOOGLE PAY','UPI','NET BANKING') DEFAULT NULL,
   `STATUS` enum('COMPLETED','FAILED') DEFAULT NULL,
-  `TRANSACTION_ID` varchar(36) DEFAULT NULL
+  `TRANSACTION_ID` varchar(36) DEFAULT NULL,
+  `CREATED_AT` timestamp NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `payment_tbl`
 --
 
-INSERT INTO `payment_tbl` (`PAYMENT_ID`, `APPOINTMENT_ID`, `AMOUNT`, `PAYMENT_DATE`, `PAYMENT_MODE`, `STATUS`, `TRANSACTION_ID`) VALUES
-(1, 1, 300.00, '2023-11-13', 'CREDIT CARD', 'COMPLETED', 'TXN123456789'),
-(2, 2, 300.00, '2023-11-13', 'GOOGLE PAY', 'COMPLETED', 'TXN123456790'),
-(3, 3, 300.00, '2023-11-13', 'UPI', 'COMPLETED', 'TXN123456791'),
-(4, 4, 300.00, '2023-11-13', 'NET BANKING', 'COMPLETED', 'TXN123456792'),
-(5, 5, 300.00, '2023-11-13', 'CREDIT CARD', 'COMPLETED', 'TXN123456793'),
-(6, 6, 300.00, '2023-11-13', 'GOOGLE PAY', 'COMPLETED', 'TXN123456794'),
-(7, 7, 300.00, '2023-11-13', 'UPI', 'COMPLETED', 'TXN123456795'),
-(8, 8, 300.00, '2023-11-13', 'NET BANKING', 'COMPLETED', 'TXN123456796'),
-(9, 9, 300.00, '2023-11-13', 'CREDIT CARD', 'COMPLETED', 'TXN123456797'),
-(10, 10, 300.00, '2023-11-13', 'GOOGLE PAY', 'COMPLETED', 'TXN123456798'),
-(11, 11, 300.00, '2023-11-13', 'UPI', 'COMPLETED', 'TXN123456799'),
-(12, 12, 300.00, '2023-11-13', 'NET BANKING', 'COMPLETED', 'TXN123456800'),
-(13, 13, 300.00, '2023-11-13', 'CREDIT CARD', 'COMPLETED', 'TXN123456801'),
-(14, 14, 300.00, '2023-11-13', 'GOOGLE PAY', 'COMPLETED', 'TXN123456802'),
-(15, 15, 300.00, '2023-11-13', 'UPI', 'COMPLETED', 'TXN123456803'),
-(16, 16, 300.00, '2023-11-13', 'NET BANKING', 'COMPLETED', 'TXN123456804'),
-(17, 17, 300.00, '2023-11-13', 'CREDIT CARD', 'COMPLETED', 'TXN123456805'),
-(18, 18, 300.00, '2023-11-13', 'GOOGLE PAY', 'COMPLETED', 'TXN123456806'),
-(19, 19, 300.00, '2023-11-13', 'UPI', 'COMPLETED', 'TXN123456807'),
-(20, 20, 300.00, '2023-11-13', 'NET BANKING', 'COMPLETED', 'TXN123456808');
+INSERT INTO `payment_tbl` (`PAYMENT_ID`, `APPOINTMENT_ID`, `AMOUNT`, `PAYMENT_DATE`, `PAYMENT_MODE`, `STATUS`, `TRANSACTION_ID`, `CREATED_AT`) VALUES
+(1, 1, 500.00, '2023-11-01', 'CREDIT CARD', 'COMPLETED', 'TXN123456789', '2023-11-01 09:00:00'),
+(2, 2, 500.00, '2023-11-03', 'GOOGLE PAY', 'COMPLETED', 'TXN123456790', '2023-11-03 10:15:00'),
+(3, 3, 800.00, '2023-11-01', 'UPI', 'COMPLETED', 'TXN123456791', '2023-11-01 11:30:00'),
+(4, 4, 800.00, '2023-11-05', 'NET BANKING', 'COMPLETED', 'TXN123456792', '2023-11-05 12:00:00'),
+(5, 5, 600.00, '2023-11-04', 'CREDIT CARD', 'COMPLETED', 'TXN123456793', '2023-11-04 13:20:00'),
+(6, 6, 600.00, '2023-11-06', 'GOOGLE PAY', 'COMPLETED', 'TXN123456794', '2023-11-06 14:45:00'),
+(7, 7, 1000.00, '2023-11-07', 'UPI', 'COMPLETED', 'TXN123456795', '2023-11-07 08:30:00'),
+(8, 8, 1000.00, '2023-11-08', 'NET BANKING', 'COMPLETED', 'TXN123456796', '2023-11-08 09:10:00'),
+(9, 9, 900.00, '2023-11-09', 'CREDIT CARD', 'COMPLETED', 'TXN123456797', '2023-11-09 10:00:00'),
+(10, 10, 900.00, '2023-11-10', 'GOOGLE PAY', 'COMPLETED', 'TXN123456798', '2023-11-10 11:30:00'),
+(11, 11, 850.00, '2023-11-11', 'UPI', 'COMPLETED', 'TXN123456799', '2023-11-11 12:15:00'),
+(12, 12, 850.00, '2023-11-12', 'NET BANKING', 'COMPLETED', 'TXN123456800', '2023-11-12 13:00:00'),
+(13, 13, 700.00, '2023-11-02', 'CREDIT CARD', 'COMPLETED', 'TXN123456801', '2023-11-02 14:00:00'),
+(14, 14, 700.00, '2023-11-05', 'GOOGLE PAY', 'COMPLETED', 'TXN123456802', '2023-11-05 15:30:00'),
+(15, 15, 750.00, '2023-11-08', 'UPI', 'COMPLETED', 'TXN123456803', '2023-11-08 16:00:00'),
+(16, 16, 750.00, '2023-11-10', 'NET BANKING', 'COMPLETED', 'TXN123456804', '2023-11-10 17:20:00'),
+(17, 17, 1200.00, '2023-11-12', 'CREDIT CARD', 'COMPLETED', 'TXN123456805', '2023-11-12 09:45:00'),
+(18, 18, 1200.00, '2023-11-15', 'GOOGLE PAY', 'COMPLETED', 'TXN123456806', '2023-11-15 10:30:00'),
+(19, 19, 1100.00, '2023-11-18', 'UPI', 'COMPLETED', 'TXN123456807', '2023-11-18 11:00:00'),
+(20, 20, 1100.00, '2023-11-20', 'NET BANKING', 'COMPLETED', 'TXN123456808', '2023-11-20 12:00:00');
 
 -- --------------------------------------------------------
 
@@ -596,46 +593,46 @@ CREATE TABLE `prescription_medicine_tbl` (
 --
 
 INSERT INTO `prescription_medicine_tbl` (`PRESCRIPTION_ID`, `MEDICINE_ID`, `DOSAGE`, `DURATION`, `FREQUENCY`, `CREATED_AT`) VALUES
-(1, 1, '5ml', '5 days', 'Twice daily', '2023-11-13 04:30:00'),
-(1, 2, '125mg', '7 days', 'Three times daily', '2023-11-13 04:30:00'),
-(2, 1, '5ml', '3 days', 'As needed', '2023-11-13 04:30:00'),
-(2, 4, '1ml', '30 days', 'Once daily', '2023-11-13 04:30:00'),
-(3, 5, '50mg', '30 days', 'Once daily', '2023-11-13 05:30:00'),
-(3, 6, '75mg', '30 days', 'Once daily', '2023-11-13 05:30:00'),
-(4, 5, '50mg', '30 days', 'Once daily', '2023-11-13 05:30:00'),
-(4, 7, '10mg', '30 days', 'Once daily', '2023-11-13 05:30:00'),
-(5, 1, '5ml', '3 days', 'As needed for fever', '2023-11-13 06:30:00'),
-(5, 3, '2 puffs', '30 days', 'As needed', '2023-11-13 06:30:00'),
-(6, 3, '2 puffs', '30 days', 'As needed', '2023-11-13 06:30:00'),
-(6, 4, '1ml', '30 days', 'Once daily', '2023-11-13 06:30:00'),
-(7, 7, '10mg', '30 days', 'Once daily', '2023-11-13 07:30:00'),
-(7, 8, '20mg', '30 days', 'Once daily at night', '2023-11-13 07:30:00'),
-(8, 7, '10mg', '30 days', 'Once daily', '2023-11-13 07:30:00'),
-(8, 8, '20mg', '30 days', 'Once daily at night', '2023-11-13 07:30:00'),
-(9, 5, '50mg', '30 days', 'Once daily', '2023-11-13 08:30:00'),
-(9, 7, '10mg', '30 days', 'Once daily', '2023-11-13 08:30:00'),
-(10, 5, '50mg', '30 days', 'Once daily', '2023-11-13 08:30:00'),
-(10, 7, '10mg', '30 days', 'Once daily', '2023-11-13 08:30:00'),
-(11, 5, '25mg', '30 days', 'Twice daily', '2023-11-13 09:30:00'),
-(11, 6, '75mg', '30 days', 'Once daily', '2023-11-13 09:30:00'),
-(12, 5, '25mg', '30 days', 'Twice daily', '2023-11-13 09:30:00'),
-(12, 6, '75mg', '30 days', 'Once daily', '2023-11-13 09:30:00'),
-(13, 9, '400mg', '30 days', 'Three times daily', '2023-11-13 10:30:00'),
-(13, 10, '500mg', '30 days', 'Twice daily', '2023-11-13 10:30:00'),
-(14, 9, '400mg', '30 days', 'As needed', '2023-11-13 10:30:00'),
-(14, 10, '500mg', '30 days', 'Twice daily', '2023-11-13 10:30:00'),
-(15, 11, '300mg', '30 days', 'Three times daily', '2023-11-13 11:30:00'),
-(15, 12, '50mg', '15 days', 'As needed for pain', '2023-11-13 11:30:00'),
-(16, 11, '300mg', '30 days', 'Three times daily', '2023-11-13 11:30:00'),
-(16, 12, '50mg', '15 days', 'As needed for pain', '2023-11-13 11:30:00'),
-(17, 13, '500mg', '30 days', 'Twice daily', '2023-11-13 12:30:00'),
-(17, 14, '25mg', '30 days', 'Once daily at night', '2023-11-13 12:30:00'),
-(18, 13, '500mg', '30 days', 'Twice daily', '2023-11-13 12:30:00'),
-(18, 14, '25mg', '30 days', 'Once daily at night', '2023-11-13 12:30:00'),
-(19, 15, '2mg', '30 days', 'Three times daily', '2023-11-13 13:30:00'),
-(19, 16, '100mg', '30 days', 'Once daily at night', '2023-11-13 13:30:00'),
-(20, 15, '2mg', '30 days', 'Three times daily', '2023-11-13 13:30:00'),
-(20, 16, '100mg', '30 days', 'Once daily at night', '2023-11-13 13:30:00');
+(1, 1, '5ml', '5 days', 'Twice daily', '2023-11-03 10:00:00'),
+(1, 2, '125mg', '7 days', 'Three times daily', '2023-11-03 10:00:00'),
+(2, 1, '5ml', '3 days', 'As needed', '2023-11-07 10:00:00'),
+(2, 4, '1ml', '30 days', 'Once daily', '2023-11-07 10:00:00'),
+(3, 5, '50mg', '30 days', 'Once daily', '2023-11-04 11:00:00'),
+(3, 6, '75mg', '30 days', 'Once daily', '2023-11-04 11:00:00'),
+(4, 5, '50mg', '30 days', 'Once daily', '2023-11-10 11:00:00'),
+(4, 7, '10mg', '30 days', 'Once daily', '2023-11-10 11:00:00'),
+(5, 1, '5ml', '3 days', 'As needed for fever', '2023-11-09 09:00:00'),
+(5, 3, '2 puffs', '30 days', 'As needed', '2023-11-09 09:00:00'),
+(6, 3, '2 puffs', '30 days', 'As needed', '2023-11-12 09:00:00'),
+(6, 4, '1ml', '30 days', 'Once daily', '2023-11-12 09:00:00'),
+(7, 7, '10mg', '30 days', 'Once daily', '2023-11-14 10:00:00'),
+(7, 8, '20mg', '30 days', 'Once daily at night', '2023-11-14 10:00:00'),
+(8, 7, '10mg', '30 days', 'Once daily', '2023-11-15 10:00:00'),
+(8, 8, '20mg', '30 days', 'Once daily at night', '2023-11-15 10:00:00'),
+(9, 5, '50mg', '30 days', 'Once daily', '2023-11-17 11:00:00'),
+(9, 7, '10mg', '30 days', 'Once daily', '2023-11-17 11:00:00'),
+(10, 5, '50mg', '30 days', 'Once daily', '2023-11-20 11:00:00'),
+(10, 7, '10mg', '30 days', 'Once daily', '2023-11-20 11:00:00'),
+(11, 5, '25mg', '30 days', 'Twice daily', '2023-11-22 09:00:00'),
+(11, 6, '75mg', '30 days', 'Once daily', '2023-11-22 09:00:00'),
+(12, 5, '25mg', '30 days', 'Twice daily', '2023-11-25 09:00:00'),
+(12, 6, '75mg', '30 days', 'Once daily', '2023-11-25 09:00:00'),
+(13, 9, '400mg', '30 days', 'Three times daily', '2023-11-06 10:00:00'),
+(13, 10, '500mg', '30 days', 'Twice daily', '2023-11-06 10:00:00'),
+(14, 9, '400mg', '30 days', 'As needed', '2023-11-11 10:00:00'),
+(14, 10, '500mg', '30 days', 'Twice daily', '2023-11-11 10:00:00'),
+(15, 11, '300mg', '30 days', 'Three times daily', '2023-11-16 11:00:00'),
+(15, 12, '50mg', '15 days', 'As needed for pain', '2023-11-16 11:00:00'),
+(16, 11, '300mg', '30 days', 'Three times daily', '2023-11-18 11:00:00'),
+(16, 12, '50mg', '15 days', 'As needed for pain', '2023-11-18 11:00:00'),
+(17, 13, '500mg', '30 days', 'Twice daily', '2023-11-21 09:00:00'),
+(17, 14, '25mg', '30 days', 'Once daily at night', '2023-11-21 09:00:00'),
+(18, 13, '500mg', '30 days', 'Twice daily', '2023-11-24 09:00:00'),
+(18, 14, '25mg', '30 days', 'Once daily at night', '2023-11-24 09:00:00'),
+(19, 15, '2mg', '30 days', 'Three times daily', '2023-11-28 10:00:00'),
+(19, 16, '100mg', '30 days', 'Once daily at night', '2023-11-28 10:00:00'),
+(20, 15, '2mg', '30 days', 'Three times daily', '2023-11-30 10:00:00'),
+(20, 16, '100mg', '30 days', 'Once daily at night', '2023-11-30 10:00:00');
 
 -- --------------------------------------------------------
 
@@ -662,26 +659,26 @@ CREATE TABLE `prescription_tbl` (
 --
 
 INSERT INTO `prescription_tbl` (`PRESCRIPTION_ID`, `APPOINTMENT_ID`, `ISSUE_DATE`, `HEIGHT_CM`, `WEIGHT_KG`, `BLOOD_PRESSURE`, `DIABETES`, `SYMPTOMS`, `DIAGNOSIS`, `ADDITIONAL_NOTES`, `CREATED_AT`) VALUES
-(1, 1, '2023-11-20', 120, 25.00, 110, 'NO', 'Fever, cough, and cold', 'Upper respiratory tract infection', 'Advise plenty of rest and fluids', '2023-11-13 04:30:00'),
-(2, 2, '2023-12-04', 120, 25.00, 110, 'NO', 'Follow-up check', 'Recovering well', 'Continue prescribed medication', '2023-11-13 04:30:00'),
-(3, 3, '2023-11-21', 160, 55.00, 120, 'NO', 'Chest pain, shortness of breath', 'Angina', 'Stress management recommended', '2023-11-13 05:30:00'),
-(4, 4, '2023-12-05', 160, 55.00, 120, 'NO', 'Follow-up check', 'Stable condition', 'Continue medication as prescribed', '2023-11-13 05:30:00'),
-(5, 5, '2023-11-22', 110, 20.00, 100, 'NO', 'Wheezing, difficulty breathing', 'Asthma exacerbation', 'Avoid triggers like dust and pollen', '2023-11-13 06:30:00'),
-(6, 6, '2023-12-06', 110, 20.00, 100, 'NO', 'Follow-up check', 'Asthma under control', 'Continue inhaler as needed', '2023-11-13 06:30:00'),
-(7, 7, '2023-11-23', 165, 60.00, 130, 'TYPE-2', 'Chest discomfort, palpitations', 'Hypertension with diabetes', 'Strict diet control required', '2023-11-13 07:30:00'),
-(8, 8, '2023-12-07', 165, 60.00, 130, 'TYPE-2', 'Follow-up check', 'Blood sugar levels improving', 'Continue medication and exercise', '2023-11-13 07:30:00'),
-(9, 9, '2023-11-24', 170, 75.00, 140, 'PRE-DIABTIC', 'High blood pressure, dizziness', 'Hypertension', 'Reduce salt intake', '2023-11-13 08:30:00'),
-(10, 10, '2023-12-08', 170, 75.00, 140, 'PRE-DIABTIC', 'Follow-up check', 'Blood pressure controlled', 'Continue lifestyle changes', '2023-11-13 08:30:00'),
-(11, 11, '2023-11-25', 155, 50.00, 120, 'NO', 'Irregular heartbeat', 'Arrhythmia', 'Avoid caffeine and stress', '2023-11-13 09:30:00'),
-(12, 12, '2023-12-09', 155, 50.00, 120, 'NO', 'Follow-up check', 'Heart rhythm normal', 'Continue medication as prescribed', '2023-11-13 09:30:00'),
-(13, 13, '2023-11-27', 175, 80.00, 125, 'NO', 'Knee pain, difficulty walking', 'Osteoarthritis', 'Physical therapy recommended', '2023-11-13 10:30:00'),
-(14, 14, '2023-12-11', 175, 80.00, 125, 'NO', 'Follow-up check', 'Pain management effective', 'Continue exercises', '2023-11-13 10:30:00'),
-(15, 15, '2023-11-28', 160, 65.00, 115, 'NO', 'Back pain, numbness in legs', 'Herniated disc', 'Surgery may be considered if no improvement', '2023-11-13 11:30:00'),
-(16, 16, '2023-12-12', 160, 65.00, 115, 'NO', 'Follow-up check', 'Symptoms improving', 'Continue physiotherapy', '2023-11-13 11:30:00'),
-(17, 17, '2023-11-29', 172, 70.00, 130, 'NO', 'Frequent headaches, dizziness', 'Migraine', 'Identify and avoid triggers', '2023-11-13 12:30:00'),
-(18, 18, '2023-12-13', 172, 70.00, 130, 'NO', 'Follow-up check', 'Migraine frequency reduced', 'Continue preventive medication', '2023-11-13 12:30:00'),
-(19, 19, '2023-11-30', 165, 60.00, 120, 'NO', 'Seizures, loss of consciousness', 'Epilepsy', 'Regular medication essential', '2023-11-13 13:30:00'),
-(20, 20, '2023-12-14', 165, 60.00, 120, 'NO', 'Follow-up check', 'Seizure controlled', 'Never skip medication', '2023-11-13 13:30:00');
+(1, 1, '2023-11-03', 120, 25.00, 110, 'NO', 'Fever, cough, and cold', 'Upper respiratory tract infection', 'Advise plenty of rest and fluids', '2023-11-03 10:00:00'),
+(2, 2, '2023-11-07', 120, 25.00, 110, 'NO', 'Follow-up check', 'Recovering well', 'Continue prescribed medication', '2023-11-07 10:00:00'),
+(3, 3, '2023-11-04', 160, 55.00, 120, 'NO', 'Chest pain, shortness of breath', 'Angina', 'Stress management recommended', '2023-11-04 11:00:00'),
+(4, 4, '2023-11-10', 160, 55.00, 120, 'NO', 'Follow-up check', 'Stable condition', 'Continue medication as prescribed', '2023-11-10 11:00:00'),
+(5, 5, '2023-11-09', 110, 20.00, 100, 'NO', 'Wheezing, difficulty breathing', 'Asthma exacerbation', 'Avoid triggers like dust and pollen', '2023-11-09 09:00:00'),
+(6, 6, '2023-11-12', 110, 20.00, 100, 'NO', 'Follow-up check', 'Asthma under control', 'Continue inhaler as needed', '2023-11-12 09:00:00'),
+(7, 7, '2023-11-14', 165, 60.00, 130, 'TYPE-2', 'Chest discomfort, palpitations', 'Hypertension with diabetes', 'Strict diet control required', '2023-11-14 10:00:00'),
+(8, 8, '2023-11-15', 165, 60.00, 130, 'TYPE-2', 'Follow-up check', 'Blood sugar levels improving', 'Continue medication and exercise', '2023-11-15 10:00:00'),
+(9, 9, '2023-11-17', 170, 75.00, 140, 'PRE-DIABTIC', 'High blood pressure, dizziness', 'Hypertension', 'Reduce salt intake', '2023-11-17 11:00:00'),
+(10, 10, '2023-11-20', 170, 75.00, 140, 'PRE-DIABTIC', 'Follow-up check', 'Blood pressure controlled', 'Continue lifestyle changes', '2023-11-20 11:00:00'),
+(11, 11, '2023-11-22', 155, 50.00, 120, 'NO', 'Irregular heartbeat', 'Arrhythmia', 'Avoid caffeine and stress', '2023-11-22 09:00:00'),
+(12, 12, '2023-11-25', 155, 50.00, 120, 'NO', 'Follow-up check', 'Heart rhythm normal', 'Continue medication as prescribed', '2023-11-25 09:00:00'),
+(13, 13, '2023-11-06', 175, 80.00, 125, 'NO', 'Knee pain, difficulty walking', 'Osteoarthritis', 'Physical therapy recommended', '2023-11-06 10:00:00'),
+(14, 14, '2023-11-11', 175, 80.00, 125, 'NO', 'Follow-up check', 'Pain management effective', 'Continue exercises', '2023-11-11 10:00:00'),
+(15, 15, '2023-11-16', 160, 65.00, 115, 'NO', 'Back pain, numbness in legs', 'Herniated disc', 'Surgery may be considered if no improvement', '2023-11-16 11:00:00'),
+(16, 16, '2023-11-18', 160, 65.00, 115, 'NO', 'Follow-up check', 'Symptoms improving', 'Continue physiotherapy', '2023-11-18 11:00:00'),
+(17, 17, '2023-11-21', 172, 70.00, 130, 'NO', 'Frequent headaches, dizziness', 'Migraine', 'Identify and avoid triggers', '2023-11-21 09:00:00'),
+(18, 18, '2023-11-24', 172, 70.00, 130, 'NO', 'Follow-up check', 'Migraine frequency reduced', 'Continue preventive medication', '2023-11-24 09:00:00'),
+(19, 19, '2023-11-28', 165, 60.00, 120, 'NO', 'Seizures, loss of consciousness', 'Epilepsy', 'Regular medication essential', '2023-11-28 10:00:00'),
+(20, 20, '2023-11-30', 165, 60.00, 120, 'NO', 'Follow-up check', 'Seizure controlled', 'Never skip medication', '2023-11-30 10:00:00');
 
 -- --------------------------------------------------------
 
@@ -865,7 +862,7 @@ ALTER TABLE `doctor_tbl`
 
 --
 -- AUTO_INCREMENT for table `feedback_tbl`
---  
+--
 ALTER TABLE `feedback_tbl`
   MODIFY `FEEDBACK_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
@@ -985,3 +982,4 @@ COMMIT;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+```
