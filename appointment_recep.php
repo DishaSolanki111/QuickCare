@@ -14,630 +14,236 @@ include 'recept_sidebar.php';
 // Fetch receptionist data from database
  $receptionist_query = mysqli_query($conn, "SELECT * FROM receptionist_tbl WHERE RECEPTIONIST_ID = '$receptionist_id'");
  $receptionist = mysqli_fetch_assoc($receptionist_query);
-
-// Handle appointment creation
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create_appointment'])) {
-    $patient_id = mysqli_real_escape_string($conn, $_POST['patient_id']);
-    $doctor_id = mysqli_real_escape_string($conn, $_POST['doctor_id']);
-    $schedule_id = mysqli_real_escape_string($conn, $_POST['schedule_id']);
-    $appointment_date = mysqli_real_escape_string($conn, $_POST['appointment_date']);
-    $appointment_time = mysqli_real_escape_string($conn, $_POST['appointment_time']);
-    
-    $today = date('Y-m-d');
-    $maxDate = date('Y-m-d', strtotime('+1 month'));
-    if ($appointment_date < $today || $appointment_date > $maxDate) {
-        $error_message = "Appointments can only be booked from today to 1 month ahead. Please choose a valid date.";
-    } else {
-    $create_query = "INSERT INTO appointment_tbl (PATIENT_ID, DOCTOR_ID, SCHEDULE_ID, APPOINTMENT_DATE, APPOINTMENT_TIME, STATUS) 
-                     VALUES ('$patient_id', '$doctor_id', '$schedule_id', '$appointment_date', '$appointment_time', 'SCHEDULED')";
-    
-    if (mysqli_query($conn, $create_query)) {
-        $success_message = "Appointment created successfully!";
-    } else {
-        $error_message = "Error creating appointment: " . mysqli_error($conn);
-    }
-    }
-}
-
-// Handle appointment status update
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_status'])) {
-    $appointment_id = mysqli_real_escape_string($conn, $_POST['appointment_id']);
-    $status = mysqli_real_escape_string($conn, $_POST['status']);
-    
-    $update_query = "UPDATE appointment_tbl SET STATUS = '$status' WHERE APPOINTMENT_ID = '$appointment_id'";
-    
-    if (mysqli_query($conn, $update_query)) {
-        $success_message = "Appointment status updated successfully!";
-    } else {
-        $error_message = "Error updating appointment status: " . mysqli_error($conn);
-    }
-}
-
-// Fetch appointments data
- $appointments_query = mysqli_query($conn, "
-    SELECT a.*, p.FIRST_NAME as PAT_FNAME, p.LAST_NAME as PAT_LNAME, p.PHONE as PAT_PHONE,
-           d.FIRST_NAME as DOC_FNAME, d.LAST_NAME as DOC_LNAME, s.SPECIALISATION_NAME
-    FROM appointment_tbl a
-    JOIN patient_tbl p ON a.PATIENT_ID = p.PATIENT_ID
-    JOIN doctor_tbl d ON a.DOCTOR_ID = d.DOCTOR_ID
-    JOIN specialisation_tbl s ON d.SPECIALISATION_ID = s.SPECIALISATION_ID
-    ORDER BY a.APPOINTMENT_DATE DESC, a.APPOINTMENT_TIME DESC
-");
-
-// Fetch patients for dropdown
- $patients_query = mysqli_query($conn, "SELECT * FROM patient_tbl ORDER BY FIRST_NAME, LAST_NAME");
-
-// Fetch doctors for dropdown
- $doctors_query = mysqli_query($conn, "
-    SELECT d.*, s.SPECIALISATION_NAME 
-    FROM doctor_tbl d
-    JOIN specialisation_tbl s ON d.SPECIALISATION_ID = s.SPECIALISATION_ID
-    ORDER BY s.SPECIALISATION_NAME, d.FIRST_NAME
-");
-
-// Fetch doctor schedules for dropdown
- $schedules_query = mysqli_query($conn, "
-    SELECT ds.*, d.FIRST_NAME as DOC_FNAME, d.LAST_NAME as DOC_LNAME, s.SPECIALISATION_NAME
-    FROM doctor_schedule_tbl ds
-    JOIN doctor_tbl d ON ds.DOCTOR_ID = d.DOCTOR_ID
-    JOIN specialisation_tbl s ON d.SPECIALISATION_ID = s.SPECIALISATION_ID
-    ORDER BY s.SPECIALISATION_NAME, d.FIRST_NAME, ds.AVAILABLE_DAY
-");
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manage Appointments - QuickCare</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-    <style>
-        :root {
-            --dark-blue: #072D44;
-            --mid-blue: #064469;
-            --soft-blue: #5790AB;
-            --light-blue: #9CCDD8;
-            --gray-blue: #D0D7E1;
-            --white: #ffffff;
-            --card-bg: #F6F9FB;
-            --primary-color: #1a3a5f;
-           --secondary-color: #3498db;
-            --accent-color: #2ecc71;
-            --danger-color: #e74c3c;
-            --warning-color: #f39c12;
-        }
-        
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            font-weight: bold;
-            background: #F5F8FA;
-            display: flex;
-        }
-        
-        
-        
-        .main-content {
-            margin-left: 240px;
-            padding: 20px;
-            width: calc(100% - 240px);
-        }
-        
-        .topbar {
-            background: white;
-            padding: 15px 25px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: space-between;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        }
+<meta charset="UTF-8">
+<title>View Appointments - QuickCare</title>
 
-        .topbar h1 {
-            margin: 0;
-            color: #064469;
-        }
-        
-        .card {
-            border: none;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            margin-bottom: 25px;
-            transition: all 0.3s ease;
-        }
-        
-        .card:hover {
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-        
-        .card-header {
-            background-color: var(--white);
-            border-bottom: 1px solid var(--gray-blue);
-            padding: 15px 20px;
-            font-weight: 600;
-            color: var(--primary-color);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .card-body {
-            padding: 20px;
-        }
-        
-        .btn-primary {
-            background-color: var(--secondary-color);
-            border-color: var(--secondary-color);
-        }
-        
-        .btn-primary:hover {
-            background-color: #2980b9;
-            border-color: #2980b9;
-        }
-        
-        .btn-success {
-            background-color: var(--accent-color);
-            border-color: var(--accent-color);
-        }
-        
-        .btn-success:hover {
-            background-color: #27ae60;
-            border-color: #27ae60;
-        }
-        
-        .btn-danger {
-            background-color: var(--danger-color);
-            border-color: var(--danger-color);
-        }
-        
-        .btn-danger:hover {
-            background-color: #c0392b;
-            border-color: #c0392b;
-        }
-        
-        .btn-warning {
-            background-color: var(--warning-color);
-            border-color: var(--warning-color);
-        }
-        
-        .btn-warning:hover {
-            background-color: #e67e22;
-            border-color: #e67e22;
-        }
-        
-        .alert {
-            padding: 15px;
-            margin-bottom: 20px;
-            border-radius: 5px;
-        }
-        
-        .alert-success {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-        
-        .alert-danger {
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-        
-        .form-group {
-            margin-bottom: 20px;
-        }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: var(--primary-color);
-        }
-        
-        .form-control {
-            width: 100%;
-            padding: 10px 15px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 16px;
-        }
-        
-        .form-control:focus {
-            border-color: var(--secondary-color);
-            outline: none;
-            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
-        }
-        
-        .appointment-card {
-            border-left: 4px solid var(--secondary-color);
-            margin-bottom: 15px;
-            padding: 15px;
-            background-color: var(--white);
-            border-radius: 0 8px 8px 0;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        }
-        
-        .appointment-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-        
-        .appointment-title {
-            font-weight: 600;
-            color: var(--primary-color);
-        }
-        
-        .appointment-details {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 10px;
-            margin-bottom: 10px;
-        }
-        
-        .appointment-detail {
-            display: flex;
-            align-items: center;
-            color: #666;
-        }
-        
-        .appointment-detail i {
-            margin-right: 8px;
-            color: var(--secondary-color);
-        }
-        
-        .status-badge {
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-        
-        .status-scheduled {
-            background-color: rgba(52, 152, 219, 0.1);
-            color: var(--secondary-color);
-        }
-        
-        .status-completed {
-            background-color: rgba(46, 204, 113, 0.1);
-            color: var(--accent-color);
-        }
-        
-        .status-cancelled {
-            background-color: rgba(231, 76, 60, 0.1);
-            color: var(--danger-color);
-        }
-        
-        .appointment-actions {
-            display: flex;
-            gap: 10px;
-        }
-        
-        .empty-state {
-            text-align: center;
-            padding: 40px;
-            color: #777;
-        }
-        
-        .empty-state i {
-            font-size: 48px;
-            margin-bottom: 15px;
-            color: #ddd;
-        }
-        
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0,0,0,0.4);
-        }
-        
-        .modal-content {
-            background-color: #fefefe;
-            margin: 5% auto;
-            padding: 20px;
-            border: none;
-            width: 80%;
-            max-width: 800px;
-            border-radius: 8px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-        }
-        
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-        }
-        
-        .close:hover,
-        .close:focus {
-            color: black;
-            text-decoration: none;
-            cursor: pointer;
-        }
-        
-        .form-row {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
-        }
-        
-        @media (max-width: 768px) {
-            
-            .main-content {
-                margin-left: 70px;
-                width: calc(100% - 70px);
-            }
-            
-            .form-row {
-                grid-template-columns: 1fr;
-            }
-            
-            .appointment-details {
-                grid-template-columns: 1fr;
-            }
-            
-            .appointment-header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 10px;
-            }
-        }
-    </style>
+<style>
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #D0D7E1;
+        display: flex;
+    }
+
+    :root {
+        --dark-blue: #072D44;
+        --mid-blue: #064469;
+        --soft-blue: #5790AB;
+        --light-blue: #9CCDD8;
+        --gray-blue: #D0D7E1;
+        --white: #ffffff;
+        --card-bg: #F6F9FB;
+    }
+
+    .main {
+        margin-left: 250px;
+        padding: 20px;
+        width: calc(100% - 250px);
+    }
+
+    .topbar {
+        background: white;
+        padding: 15px 25px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        display: flex;
+        justify-content: space-between;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    .topbar h1 {
+        margin: 0;
+        color: #064469;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    th, td {
+        padding: 14px;
+        border-bottom: 1px solid #D0D7E1;
+    }
+
+    th {
+        background: #5790AB;
+        color: white;
+        text-align: left;
+    }
+
+    tr:hover {
+        background: #F2F9FB;
+    }
+
+    .filter-container {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    .filter-container form {
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+
+    .filter-container input,
+    .filter-container select {
+        padding: 10px;
+        border: 1px solid #D0D7E1;
+        border-radius: 5px;
+    }
+
+    .filter-container button {
+        padding: 10px 15px;
+        background: #5790AB;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .filter-container button:hover {
+        background: #064469;
+    }
+
+    .status-badge {
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: bold;
+        color: white;
+    }
+
+    .status-completed { background: #2ecc71; }
+    .status-scheduled { background: #3498db; }
+    .status-cancelled { background: #e74c3c; }
+
+  
+
+</style>
 </head>
+
 <body>
 
+<?php include 'recept_sidebar.php'; 
+$receptionist_id = $_SESSION['RECEPTIONIST_ID'];
 
-    <!-- Main Content -->
-    <div class="main-content">
-        <div class="topbar">
-            <h1>Manage Appointments</h1>
+// Fetch receptionist data from database
+ $receptionist_query = mysqli_query($conn, "SELECT * FROM receptionist_tbl WHERE RECEPTIONIST_ID = '$receptionist_id'");
+ $receptionist = mysqli_fetch_assoc($receptionist_query);
+?>
+<div class="main">
+
+    <div class="topbar">
+        <h1>View Appointments</h1>
             <p>Welcome, <?php echo htmlspecialchars($receptionist['FIRST_NAME'] . ' ' . $receptionist['LAST_NAME']); ?></p>
-        </div>
         
-        <!-- Success/Error Messages -->
-        <?php if (isset($success_message)): ?>
-            <div class="alert alert-success">
-                <?php echo $success_message; ?>
-            </div>
-        <?php endif; ?>
-        
-        <?php if (isset($error_message)): ?>
-            <div class="alert alert-danger">
-                <?php echo $error_message; ?>
-            </div>
-        <?php endif; ?>
-        
-        <!-- Appointments Card -->
-        <div class="card">
-            <div class="card-body">
+    </div>
+
+    <div class="filter-container">
+        <form method="POST" action="">
+            <input type="date" name="date_filter">
+
+            <select name="status_filter">
+                <option value="">All Status</option>
+                <option value="SCHEDULED">Scheduled</option>
+                <option value="COMPLETED">Completed</option>
+                <option value="CANCELLED">Cancelled</option>
+            </select>
+
+            <select name="doctor_filter">
+                <option value="">All Doctors</option>
                 <?php
-                if (mysqli_num_rows($appointments_query) > 0) {
-                    while ($appointment = mysqli_fetch_assoc($appointments_query)) {
-                        $status_class = '';
-                        if ($appointment['STATUS'] == 'SCHEDULED') {
-                            $status_class = 'status-scheduled';
-                        } elseif ($appointment['STATUS'] == 'COMPLETED') {
-                            $status_class = 'status-completed';
-                        } elseif ($appointment['STATUS'] == 'CANCELLED') {
-                            $status_class = 'status-cancelled';
-                        }
-                        ?>
-                        <div class="appointment-card">
-                            <div class="appointment-header">
-                                <div class="appointment-title">
-                                    <?php echo htmlspecialchars($appointment['PAT_FNAME'] . ' ' . $appointment['PAT_LNAME']); ?> with Dr. <?php echo htmlspecialchars($appointment['DOC_FNAME'] . ' ' . $appointment['DOC_LNAME']); ?>
-                                </div>
-                                <span class="status-badge <?php echo $status_class; ?>"><?php echo $appointment['STATUS']; ?></span>
-                            </div>
-                            
-                            <div class="appointment-details">
-                                <div class="appointment-detail">
-                                    <i class="bi bi-calendar"></i>
-                                    <span><?php echo date('F d, Y', strtotime($appointment['APPOINTMENT_DATE'])); ?></span>
-                                </div>
-                                <div class="appointment-detail">
-                                    <i class="bi bi-clock"></i>
-                                    <span><?php echo date('h:i A', strtotime($appointment['APPOINTMENT_TIME'])); ?></span>
-                                </div>
-                                <div class="appointment-detail">
-                                    <i class="bi bi-person"></i>
-                                    <span><?php echo htmlspecialchars($appointment['SPECIALISATION_NAME']); ?></span>
-                                </div>
-                                <div class="appointment-detail">
-                                    <i class="bi bi-telephone"></i>
-                                    <span><?php echo htmlspecialchars($appointment['PAT_PHONE']); ?></span>
-                                </div>
-                            </div>
-                            
-                            <div class="appointment-actions">
-                                <?php if ($appointment['STATUS'] == 'SCHEDULED'): ?>
-                                    <form method="POST" style="display: inline;">
-                                        <input type="hidden" name="appointment_id" value="<?php echo $appointment['APPOINTMENT_ID']; ?>">
-                                        <input type="hidden" name="status" value="COMPLETED">
-                                        
-                                    </form>
-                                    <form method="POST" style="display: inline;">
-                                        <input type="hidden" name="appointment_id" value="<?php echo $appointment['APPOINTMENT_ID']; ?>">
-                                        <input type="hidden" name="status" value="CANCELLED">
-                                     
-                                    </form>
-                                <?php endif; ?>
-                            </div>
-                        </div>
-                        <?php
-                    }
-                } else {
-                    echo '<div class="empty-state">
-                        <i class="bi bi-calendar-x"></i>
-                        <h4>No appointments found</h4>
-                        <p>There are no appointments scheduled yet.</p>
-                    </div>';
+                include 'config.php';
+                $doctor_query = "SELECT DOCTOR_ID, FIRST_NAME, LAST_NAME FROM doctor_tbl";
+                $doctor_result = mysqli_query($conn, $doctor_query);
+                while($row = mysqli_fetch_assoc($doctor_result)) {
+                    echo "<option value='".$row['DOCTOR_ID']."'>".$row['FIRST_NAME']." ".$row['LAST_NAME']."</option>";
                 }
                 ?>
-            </div>
-        </div>
+            </select>
+
+            <button type="submit">Filter</button>
+        </form>
     </div>
-    
-    <!-- Create Appointment Modal -->
-    <div class="modal fade" id="createAppointmentModal" tabindex="-1" aria-labelledby="createAppointmentModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="createAppointmentModalLabel">Create New Appointment</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form method="POST" action="appointment_recep.php">
-                        <input type="hidden" name="create_appointment" value="1">
-                        
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="patient_id">Patient</label>
-                                <select class="form-control" id="patient_id" name="patient_id" required>
-                                    <option value="">Select Patient</option>
-                                    <?php
-                                    if (mysqli_num_rows($patients_query) > 0) {
-                                        while ($patient = mysqli_fetch_assoc($patients_query)) {
-                                            echo '<option value="' . $patient['PATIENT_ID'] . '">' . 
-                                                 htmlspecialchars($patient['FIRST_NAME'] . ' ' . $patient['LAST_NAME']) . '</option>';
-                                        }
-                                        // Reset the result pointer
-                                        mysqli_data_seek($patients_query, 0);
-                                    }
-                                    ?>
-                                </select>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="doctor_id">Doctor</label>
-                                <select class="form-control" id="doctor_id" name="doctor_id" required onchange="updateScheduleOptions()">
-                                    <option value="">Select Doctor</option>
-                                    <?php
-                                    if (mysqli_num_rows($doctors_query) > 0) {
-                                        while ($doctor = mysqli_fetch_assoc($doctors_query)) {
-                                            echo '<option value="' . $doctor['DOCTOR_ID'] . '">' . 
-                                                 'Dr. ' . htmlspecialchars($doctor['FIRST_NAME'] . ' ' . $doctor['LAST_NAME']) . 
-                                                 ' (' . htmlspecialchars($doctor['SPECIALISATION_NAME']) . ')</option>';
-                                        }
-                                        // Reset the result pointer
-                                        mysqli_data_seek($doctors_query, 0);
-                                    }
-                                    ?>
-                                </select>
-                            </div>
-                        </div>
-                        
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="schedule_id">Schedule</label>
-                                <select class="form-control" id="schedule_id" name="schedule_id" required>
-                                    <option value="">Select Schedule</option>
-                                </select>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="appointment_date">Appointment Date</label>
-                                <input type="date" class="form-control" id="appointment_date" name="appointment_date" required>
-                            </div>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="appointment_time">Appointment Time</label>
-                            <input type="time" class="form-control" id="appointment_time" name="appointment_time" required>
-                        </div>
-                        
-                        <div class="text-end">
-                            <button type="submit" class="btn btn-success">
-                                <i class="bi bi-check"></i> Create Appointment
-                            </button>
-                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
-                                <i class="bi bi-x"></i> Cancel
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        // Function to update schedule options based on selected doctor
-        function updateScheduleOptions() {
-            const doctorId = document.getElementById('doctor_id').value;
-            const scheduleSelect = document.getElementById('schedule_id');
-            
-            // Clear existing options
-            scheduleSelect.innerHTML = '<option value="">Select Schedule</option>';
-            
-            if (doctorId) {
-                // Make an AJAX request to get schedules for the selected doctor
-                fetch('doctor_schedule_recep.php', { method: 'POST', headers: {'Content-Type': 'application/x-www-form-urlencoded'}, body: 'doctor_id=' + encodeURIComponent(doctorId) + '&ajax=1' })
-                    .then(response => response.json())
-                    .then(data => {
-                        data.forEach(schedule => {
-                            const option = document.createElement('option');
-                            option.value = schedule.SCHEDULE_ID;
-                            
-                            const dayName = getDayName(schedule.AVAILABLE_DAY);
-                            const startTime = formatTime(schedule.START_TIME);
-                            const endTime = formatTime(schedule.END_TIME);
-                            
-                            option.textContent = `${dayName}: ${startTime} - ${endTime}`;
-                            scheduleSelect.appendChild(option);
-                        });
-                    })
-                    .catch(error => console.error('Error:', error));
+
+    <table>
+        <tr>
+            <th>Appointment ID</th>
+            <th>Patient Name</th>
+            <th>Doctor Name</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Status</th>
+         
+        </tr>
+
+        <?php
+        $query = "SELECT a.APPOINTMENT_ID,
+                         p.FIRST_NAME p_first, p.LAST_NAME p_last,
+                         d.FIRST_NAME d_first, d.LAST_NAME d_last,
+                         a.APPOINTMENT_DATE, a.APPOINTMENT_TIME, a.STATUS
+                  FROM appointment_tbl a
+                  JOIN patient_tbl p ON a.PATIENT_ID = p.PATIENT_ID
+                  JOIN doctor_tbl d ON a.DOCTOR_ID = d.DOCTOR_ID
+                  WHERE 1=1";
+
+        if(!empty($_POST['date_filter'])) {
+            $date = mysqli_real_escape_string($conn, $_POST['date_filter']);
+            $query .= " AND a.APPOINTMENT_DATE='$date'";
+        }
+
+        if(!empty($_POST['status_filter'])) {
+            $status = mysqli_real_escape_string($conn, $_POST['status_filter']);
+            $query .= " AND a.STATUS='$status'";
+        }
+
+        if(!empty($_POST['doctor_filter'])) {
+            $doc = mysqli_real_escape_string($conn, $_POST['doctor_filter']);
+            $query .= " AND a.DOCTOR_ID='$doc'";
+        }
+
+        $result = mysqli_query($conn, $query);
+
+        if(mysqli_num_rows($result) > 0) {
+            while($row = mysqli_fetch_assoc($result)) {
+
+                $cls = ($row['STATUS']=="COMPLETED") ? "status-completed" :
+                       (($row['STATUS']=="SCHEDULED") ? "status-scheduled" : "status-cancelled");
+
+                echo "<tr>
+                    <td>{$row['APPOINTMENT_ID']}</td>
+                    <td>{$row['p_first']} {$row['p_last']}</td>
+                    <td>{$row['d_first']} {$row['d_last']}</td>
+                    <td>{$row['APPOINTMENT_DATE']}</td>
+                    <td>{$row['APPOINTMENT_TIME']}</td>
+                    <td><span class='status-badge $cls'>{$row['STATUS']}</span></td>
+                  
+                </tr>";
             }
+        } else {
+            echo "<tr><td colspan='7'>No appointments found</td></tr>";
         }
-        
-        // Helper function to convert day abbreviation to full name
-        function getDayName(day) {
-            const days = {
-                'MON': 'Monday',
-                'TUE': 'Tuesday',
-                'WED': 'Wednesday',
-                'THUR': 'Thursday',
-                'FRI': 'Friday',
-                'SAT': 'Saturday',
-                'SUN': 'Sunday'
-            };
-            return days[day] || day;
-        }
-        
-        // Helper function to format time
-        function formatTime(time) {
-            const [hours, minutes] = time.split(':');
-            const h = parseInt(hours);
-            const ampm = h >= 12 ? 'PM' : 'AM';
-            const displayHours = h % 12 || 12;
-            return `${displayHours}:${minutes} ${ampm}`;
-        }
-        
-        // Set min (today) and max (today + 1 month) for appointment date
-        document.addEventListener('DOMContentLoaded', function() {
-            const today = new Date();
-            const minDate = today.toISOString().split('T')[0];
-            const maxDate = new Date(today);
-            maxDate.setMonth(maxDate.getMonth() + 1);
-            const maxDateStr = maxDate.toISOString().split('T')[0];
-            const el = document.getElementById('appointment_date');
-            if (el) {
-                el.setAttribute('min', minDate);
-                el.setAttribute('max', maxDateStr);
-            }
-        });
-    </script>
+
+        mysqli_close($conn);
+        ?>
+    </table>
+
+</div>
+
+
 </body>
 </html>
