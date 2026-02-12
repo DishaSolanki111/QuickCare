@@ -569,10 +569,6 @@ function generatePDFAsHTML($prescription, $medicines) {
     
     $html .= '</div>
         
-        <div class="footer">
-            <p>This is a digitally generated prescription. For any queries, please contact the medical center.</p>
-            <p>Generated on: ' . date('F d, Y') . '</p>
-        </div>
     </div>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </body>
