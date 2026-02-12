@@ -978,17 +978,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_prescription_i
                 </div>
             </div>
             
-            <!-- Footer -->
-            <footer>
-                <div class="footer-content">
-                    <p>&copy; <span id="year"></span> QuickCare — Revolutionizing Healthcare Access</p>
-                    <div class="social-links">
-                    <a href="#" class="social-link"><span>f</span></a>
-                    <a href="#" class="social-link"><span>𝕏</span></a>
-                    <a href="#" class="social-link"><span>in</span></a>
-                    <a href="#" class="social-link"><span>📷</span></a>
-                </div>
-            </footer>
+            
         </div>
     </div>
 
