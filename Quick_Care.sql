@@ -1,8 +1,6 @@
-```sql
 -- phpMyAdmin SQL Dump
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
---
 -- Host: 127.0.0.1
 -- Generation Time: Jan 10, 2026 at 09:47 AM
 -- Server version: 10.4.32-MariaDB
@@ -19,13 +17,13 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `quick_care`
+-- Database:quick_care
 --
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `appointment_reminder_tbl`
+-- Table structure for table appointment_reminder_tbl
 --
 
 CREATE TABLE `appointment_reminder_tbl` (
