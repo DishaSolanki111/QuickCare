@@ -373,13 +373,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_status'])) {
         }
         
         @media (max-width: 768px) {
-            .sidebar {
-                width: 70px;
-            }
-            
-            .sidebar h2, .sidebar a span {
-                display: none;
-            }
             
             .main-content {
                 margin-left: 70px;

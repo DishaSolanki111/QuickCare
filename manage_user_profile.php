@@ -546,13 +546,7 @@ if ($user_type === 'patient') {
         }
         
         @media (max-width: 768px) {
-            .sidebar {
-                width: 70px;
-            }
-            
-            .sidebar h2, .sidebar a span {
-                display: none;
-            }
+           
             
             .main-content {
                 margin-left: 70px;
