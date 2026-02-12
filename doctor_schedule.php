@@ -159,12 +159,13 @@ body {
         }
 
         .doctor-image {
-            width: 80px;
-            height: 80px;
+            width: 90px;
+            height: 90px;
             border-radius: 50%;
             object-fit: cover;
+            object-position: 50% 20%;
             margin-right: 1rem;
-            border: 3px solid white;
+            border: 3px solid #ffffff;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
 
@@ -486,7 +487,7 @@ body {
                     html += `
                         <div class="doctor-card">
                             <div class="doctor-header">
-                                <img src="${doctor.profile_image ? 'uploads/' + doctor.profile_image : 'uploads/logo.JPG'}" alt="${doctor.first_name} ${doctor.last_name}" class="doctor-image">
+                                <img src="${doctor.profile_image ? doctor.profile_image : 'uploads/logo.JPG'}" alt="${doctor.first_name} ${doctor.last_name}" class="doctor-image">
                                 <div class="doctor-info">
                                     <h3>Dr. ${doctor.first_name} ${doctor.last_name}</h3>
                                     <div class="doctor-specialization">${doctor.specialization_name}</div>
