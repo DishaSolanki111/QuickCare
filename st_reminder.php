@@ -502,9 +502,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_medicine_remin
         
         <!-- Reminder Card -->
         <div class="card">
-            <div class="card-header">
-                <h3>Reminders</h3>
-            </div>
+            
             <div class="card-body">
                 <!-- Tabs -->
                 <ul class="nav nav-tabs" id="reminderTabs" role="tablist">
@@ -545,10 +543,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_medicine_remin
                                     </div>
                                     
                                     <div class="patient-details">
-                                        <div class="patient-detail">
-                                            <i class="bi bi-person"></i>
-                                            <span>Patient ID: <?php echo $appointment['PATIENT_ID']; ?></span>
-                                        </div>
+                                        
                                         <div class="patient-detail">
                                             <i class="bi bi-telephone"></i>
                                             <span><?php echo htmlspecialchars($appointment['PHONE']); ?></span>
@@ -779,7 +774,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_medicine_remin
                     const prescriptionId = button.getAttribute('data-prescription-id');
                     
                     // Update modal content
-                    document.getElementById('patient_info').textContent = `Setting reminder for ${patientName} (ID: ${patientId})`;
+                    document.getElementById('patient_info').textContent = `Setting reminder for ${patientName} `;
                     document.getElementById('prescription_id').value = prescriptionId;
                     
                     // Set default date to today

@@ -400,19 +400,19 @@ if (!empty($search)) {
         <?php endif; ?>
         
         <!-- Search Bar -->
-        <div class="search-bar">
+        <!-- <div class="search-bar">
             <form method="POST" action="manage_medicine.php" style="display: flex; width: 100%;">
                 <input type="text" name="search" placeholder="Search medicines by name or description..." value="<?php echo htmlspecialchars($search); ?>">
                 <button type="submit">
                     <i class="bi bi-search"></i> Search
                 </button>
             </form>
-        </div>
+        </div> -->
         
         <!-- Medicines Card -->
         <div class="card">
             <div class="card-header">
-                <h3>Medicine Inventory</h3>
+               
                 <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addMedicineModal">
                     <i class="bi bi-plus-circle"></i> Add Medicine
                 </button>
@@ -427,9 +427,7 @@ if (!empty($search)) {
                                 <div class="medicine-title">
                                     <?php echo htmlspecialchars($medicine['MED_NAME']); ?>
                                 </div>
-                                <div class="medicine-id">
-                                    ID: #<?php echo $medicine['MEDICINE_ID']; ?>
-                                </div>
+                               
                             </div>
                             
                             <div class="medicine-description">

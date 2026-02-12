@@ -149,20 +149,20 @@ $conn->close();
             min-height: 100vh;
         }
 /* Top bar */
-    .topbar {
-        background: white;
-        padding: 15px 25px;
-        border-radius: 10px;
-        margin-bottom: 20px;
-        display: flex;
-        justify-content: space-between;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    }
+   .topbar {
+            background: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
 
-    .topbar h1 {
-        margin: 0;
-        color: #064469;
-    }
+        .topbar h1 {
+            margin: 0;
+            color: #064469;
+        }
         
         .profile-header {
             display: flex;
@@ -531,7 +531,10 @@ $conn->close();
                     <span class="info-label">Date of Birth</span>
                     <span class="info-value"><?php echo date('F d, Y', strtotime($receptionist['DOB'])); ?></span>
                 </div>
-                
+                <div class="info-item">
+                    <span class="info-label">Date of Joining</span>
+                    <span class="info-value"><?php echo date('F d, Y', strtotime($receptionist['DOJ'])); ?></span>
+                </div>
                 <div class="info-item">
                     <span class="info-label">Gender</span>
                     <span class="info-value"><?php echo htmlspecialchars($receptionist['GENDER']); ?></span>
@@ -580,23 +583,32 @@ $conn->close();
                         <input type="date" class="form-control" id="dob" name="dob" value="<?php echo htmlspecialchars($receptionist['DOB']); ?>" disabled>
                     </div>
                     <div class="form-group">
-                        <label for="gender">Gender</label>
-                        <input type="text" class="form-control" id="gender" name="gender" value="<?php echo htmlspecialchars($receptionist['GENDER']); ?>" disabled>
+                        <label for="dob">Date of Joining</label>
+                        <input type="date" class="form-control" id="dob" name="dob" value="<?php echo htmlspecialchars($receptionist['DOJ']); ?>" disabled>
                     </div>
+                    
                 </div>
                 
                 <div class="info-grid">
+                    <div class="form-group">
+                        <label for="gender">Gender</label>
+                        <input type="text" class="form-control" id="gender" name="gender" value="<?php echo htmlspecialchars($receptionist['GENDER']); ?>" disabled>
+                    </div>
                     <div class="form-group">
                         <label for="phone">Phone Number</label>
                         <input type="tel" class="form-control" id="phone" name="phone" value="<?php echo htmlspecialchars($receptionist['PHONE']); ?>" required maxlength="10">
                         <div class="error-message" id="phone_error"></div>
                     </div>
+                </div>
+                <div class="info-grid">
                     <div class="form-group">
                         <label for="email">Email Address</label>
                         <input type="email" class="form-control" id="email" name="email" value="<?php echo htmlspecialchars($receptionist['EMAIL']); ?>" required>
                         <div class="error-message" id="email_error"></div>
                     </div>
+
                 </div>
+                
                 
                 <div class="btn-group">
                     <button type="submit" class="btn btn-primary">

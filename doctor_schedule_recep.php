@@ -477,7 +477,7 @@ if ((isset($_POST['doctor_id']) || isset($_GET['doctor_id'])) && (isset($_POST['
         <!-- Schedules Card -->
         <div class="card">
             <div class="card-header">
-                <h3>Doctor Schedules</h3>
+
                 <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createScheduleModal">
                     <i class="bi bi-plus-circle"></i> Create Schedule
                 </button>
@@ -521,6 +521,7 @@ if ((isset($_POST['doctor_id']) || isset($_GET['doctor_id'])) && (isset($_POST['
                             </div>
                             
                             <div class="schedule-actions">
+                                
                                 <button class="btn btn-warning btn-sm" onclick="editSchedule(<?php echo $schedule['SCHEDULE_ID']; ?>, '<?php echo $schedule['DOCTOR_ID']; ?>', '<?php echo $schedule['START_TIME']; ?>', '<?php echo $schedule['END_TIME']; ?>', '<?php echo $schedule['AVAILABLE_DAY']; ?>')">
                                     <i class="bi bi-pencil"></i> Edit
                                 </button>
