@@ -107,8 +107,7 @@ include 'header.php'; // Include the header
         color: white;
         padding: 20px;
         /* Kept margin-top for header alignment */
-        margin-top: 40px;
-        margin-top: 30px;
+      
 
     }
     .hero h1 {
