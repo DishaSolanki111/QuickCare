@@ -18,22 +18,71 @@ include 'config.php';
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create_prescription_reminder'])) {
     $prescription_id = mysqli_real_escape_string($conn, $_POST['prescription_id']);
     $reminder_time = mysqli_real_escape_string($conn, $_POST['reminder_time']);
-    $reminder_date = mysqli_real_escape_string($conn, $_POST['reminder_date']);
+    $duration = mysqli_real_escape_string($conn, $_POST['duration']);
     $remarks = mysqli_real_escape_string($conn, $_POST['remarks']);
     
-    // Get patient ID from prescription
-    $prescription_query = mysqli_query($conn, "SELECT p.PATIENT_ID FROM prescription_tbl pr JOIN appointment_tbl a ON pr.APPOINTMENT_ID = a.APPOINTMENT_ID JOIN patient_tbl p ON a.PATIENT_ID = p.PATIENT_ID WHERE pr.PRESCRIPTION_ID = '$prescription_id'");
+    // Get patient ID and appointment date from prescription
+    $prescription_query = mysqli_query($conn, "SELECT p.PATIENT_ID, a.APPOINTMENT_DATE 
+                                                FROM prescription_tbl pr 
+                                                JOIN appointment_tbl a ON pr.APPOINTMENT_ID = a.APPOINTMENT_ID 
+                                                JOIN patient_tbl p ON a.PATIENT_ID = p.PATIENT_ID 
+                                                WHERE pr.PRESCRIPTION_ID = '$prescription_id'");
     $prescription_data = mysqli_fetch_assoc($prescription_query);
     $patient_id = $prescription_data['PATIENT_ID'];
+    $appointment_date = $prescription_data['APPOINTMENT_DATE'];
+    
+    // Calculate reminder date based on duration (duration is in days after appointment)
+    $duration_days = (int)$duration;
+    $reminder_date = date('Y-m-d', strtotime("+$duration_days days", strtotime($appointment_date)));
+    
+    // Combine duration info with remarks
+    $full_remarks = "Duration: $duration days after appointment. " . ($remarks ? $remarks : '');
     
     // Insert into medicine_reminder_tbl
     $create_query = "INSERT INTO medicine_reminder_tbl (MEDICINE_ID, CREATOR_ROLE, CREATOR_ID, PATIENT_ID, REMINDER_TIME, REMARKS) 
-                     VALUES (0, 'RECEPTIONIST', '$receptionist_id', '$patient_id', '$reminder_time', '$remarks')";
+                     VALUES (0, 'RECEPTIONIST', '$receptionist_id', '$patient_id', '$reminder_time', '$full_remarks')";
     
     if (mysqli_query($conn, $create_query)) {
         $success_message = "Prescription reminder created successfully!";
     } else {
         $error_message = "Error creating prescription reminder: " . mysqli_error($conn);
+    }
+}
+
+// Handle medicine reminder update
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_medicine_reminder'])) {
+    $reminder_id = mysqli_real_escape_string($conn, $_POST['reminder_id']);
+    $reminder_time = mysqli_real_escape_string($conn, $_POST['reminder_time']);
+    $duration = mysqli_real_escape_string($conn, $_POST['duration']);
+    $remarks = mysqli_real_escape_string($conn, $_POST['remarks']);
+    
+    // Get appointment date from reminder (need to find associated appointment)
+    $reminder_query = mysqli_query($conn, "SELECT mr.PATIENT_ID FROM medicine_reminder_tbl mr WHERE mr.MEDICINE_REMINDER_ID = '$reminder_id'");
+    $reminder_data = mysqli_fetch_assoc($reminder_query);
+    
+    if ($reminder_data) {
+        $patient_id = $reminder_data['PATIENT_ID'];
+        // Get latest appointment date for this patient
+        $appointment_query = mysqli_query($conn, "SELECT APPOINTMENT_DATE FROM appointment_tbl WHERE PATIENT_ID = '$patient_id' AND STATUS = 'COMPLETED' ORDER BY APPOINTMENT_DATE DESC LIMIT 1");
+        $appointment_data = mysqli_fetch_assoc($appointment_query);
+        
+        if ($appointment_data) {
+            $appointment_date = $appointment_data['APPOINTMENT_DATE'];
+            $duration_days = (int)$duration;
+            $full_remarks = "Duration: $duration days after appointment. " . ($remarks ? $remarks : '');
+            
+            $update_query = "UPDATE medicine_reminder_tbl SET REMINDER_TIME = '$reminder_time', REMARKS = '$full_remarks' WHERE MEDICINE_REMINDER_ID = '$reminder_id'";
+            
+            if (mysqli_query($conn, $update_query)) {
+                $success_message = "Medicine reminder updated successfully!";
+            } else {
+                $error_message = "Error updating reminder: " . mysqli_error($conn);
+            }
+        } else {
+            $error_message = "Could not find associated appointment for this reminder.";
+        }
+    } else {
+        $error_message = "Reminder not found.";
     }
 }
 
@@ -62,17 +111,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_medicine_remin
     JOIN doctor_tbl d ON a.DOCTOR_ID = d.DOCTOR_ID
     JOIN specialisation_tbl s ON d.SPECIALISATION_ID = s.SPECIALISATION_ID
     LEFT JOIN prescription_tbl pr ON a.APPOINTMENT_ID = pr.APPOINTMENT_ID
-    WHERE a.STATUS = 'COMPLETED'
+    WHERE a.STATUS = 'COMPLETED' AND pr.PRESCRIPTION_ID IS NOT NULL
     ORDER BY a.APPOINTMENT_DATE DESC
 ");
 
-// Fetch medicine reminders
+// Fetch medicine reminders with appointment info
  $medicine_reminders_query = mysqli_query($conn, "
-    SELECT mr.*, p.FIRST_NAME as PAT_FNAME, p.LAST_NAME as PAT_LNAME
+    SELECT mr.*, p.FIRST_NAME as PAT_FNAME, p.LAST_NAME as PAT_LNAME,
+           (SELECT MAX(a.APPOINTMENT_DATE) 
+            FROM appointment_tbl a 
+            JOIN prescription_tbl pr ON a.APPOINTMENT_ID = pr.APPOINTMENT_ID
+            WHERE a.PATIENT_ID = mr.PATIENT_ID AND a.STATUS = 'COMPLETED'
+           ) AS APPOINTMENT_DATE
     FROM medicine_reminder_tbl mr
     JOIN patient_tbl p ON mr.PATIENT_ID = p.PATIENT_ID
+    WHERE mr.CREATOR_ROLE = 'RECEPTIONIST'
     ORDER BY mr.REMINDER_TIME
 ");
+
+// Get reminder data for editing
+$edit_reminder_data = null;
+if (isset($_GET['edit_reminder_id'])) {
+    $edit_reminder_id = (int)$_GET['edit_reminder_id'];
+    $edit_query = mysqli_query($conn, "SELECT * FROM medicine_reminder_tbl WHERE MEDICINE_REMINDER_ID = $edit_reminder_id");
+    if ($edit_query && mysqli_num_rows($edit_query) > 0) {
+        $edit_reminder_data = mysqli_fetch_assoc($edit_query);
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -124,8 +189,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_medicine_remin
 
         .topbar h1 {
             margin: 0;
-            color: var(--primary-color);
-            font-weight: 600;
+            color: #064469;
         }
         
         .card {
@@ -192,13 +256,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_medicine_remin
         .btn-warning {
             background-color: var(--warning-color);
             border-color: var(--warning-color);
-            padding: 10px 20px;
+            padding: 8px 16px;
             font-weight: 500;
+            border-radius: 8px;
+            transition: all 0.3s ease;
         }
         
         .btn-warning:hover {
             background-color: #e67e22;
             border-color: #e67e22;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 0.875rem;
         }
         
         .alert {
@@ -244,19 +317,51 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_medicine_remin
             box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
         }
         
+        .form-control[readonly] {
+            background-color: #f8f9fa;
+            cursor: not-allowed;
+            opacity: 0.8;
+        }
+        
+        .form-control select {
+            cursor: pointer;
+        }
+        
+        .form-text {
+            display: block;
+            margin-top: 5px;
+            font-size: 0.875rem;
+        }
+        
+        .modal-content {
+            border-radius: 15px;
+            border: none;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        
+        .modal-header {
+            border-radius: 15px 15px 0 0;
+            border-bottom: none;
+        }
+        
+        .modal-body {
+            padding: 30px;
+        }
+        
         .patient-card {
-            border-left: 4px solid var(--secondary-color);
-            margin-bottom: 20px;
-            padding: 20px;
-            background-color: var(--white);
-            border-radius: 0 10px 10px 0;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            border-left: 5px solid var(--secondary-color);
+            margin-bottom: 25px;
+            padding: 25px;
+            background: linear-gradient(to right, var(--white) 0%, var(--card-bg) 100%);
+            border-radius: 0 12px 12px 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
             transition: all 0.3s ease;
         }
         
         .patient-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            border-left-color: var(--accent-color);
         }
         
         .patient-header {
@@ -356,12 +461,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_medicine_remin
         }
         
         .reminder-card {
-            border-left: 4px solid var(--warning-color);
-            margin-bottom: 15px;
-            padding: 15px;
-            background-color: var(--white);
-            border-radius: 0 8px 8px 0;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            border-left: 5px solid var(--warning-color);
+            margin-bottom: 20px;
+            padding: 20px;
+            background: linear-gradient(to right, var(--white) 0%, var(--card-bg) 100%);
+            border-radius: 0 12px 12px 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+        }
+        
+        .reminder-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.12);
         }
         
         .reminder-header {
@@ -404,9 +515,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_medicine_remin
             color: var(--secondary-color);
         }
         
+        .reminder-remarks {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: var(--card-bg);
+            border-radius: 5px;
+            color: #666;
+        }
+        
+        .reminder-remarks strong {
+            color: var(--primary-color);
+        }
+        
         .reminder-actions {
             display: flex;
             gap: 10px;
+            margin-top: 15px;
         }
         
         .empty-state {
@@ -528,6 +652,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_medicine_remin
                                     JOIN medicine_tbl m ON pm.MEDICINE_ID = m.MEDICINE_ID
                                     WHERE pm.PRESCRIPTION_ID = '" . $appointment['PRESCRIPTION_ID'] . "'
                                 ");
+                                
+                                // Calculate prescription duration (extract max days from medicine durations)
+                                $prescription_duration_days = 0;
+                                $prescription_duration_text = 'Not specified';
+                                $temp_query = mysqli_query($conn, "
+                                    SELECT pm.DURATION
+                                    FROM prescription_medicine_tbl pm
+                                    WHERE pm.PRESCRIPTION_ID = '" . $appointment['PRESCRIPTION_ID'] . "'
+                                ");
+                                
+                                if ($temp_query && mysqli_num_rows($temp_query) > 0) {
+                                    $max_days = 0;
+                                    while ($dur_row = mysqli_fetch_assoc($temp_query)) {
+                                        // Extract number from duration string (e.g., "5 days" -> 5, "30 days" -> 30)
+                                        if (preg_match('/(\d+)/', $dur_row['DURATION'], $matches)) {
+                                            $days = (int)$matches[1];
+                                            if ($days > $max_days) {
+                                                $max_days = $days;
+                                            }
+                                        }
+                                    }
+                                    if ($max_days > 0) {
+                                        $prescription_duration_days = $max_days;
+                                        $prescription_duration_text = $max_days . ' day' . ($max_days > 1 ? 's' : '');
+                                    }
+                                }
                                 ?>
                                 <div class="patient-card">
                                     <div class="patient-header">
@@ -537,8 +687,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_medicine_remin
                                         <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#createPrescriptionReminderModal" 
                                                 data-patient-id="<?php echo $appointment['PATIENT_ID']; ?>"
                                                 data-patient-name="<?php echo htmlspecialchars($appointment['PAT_FNAME'] . ' ' . $appointment['PAT_LNAME']); ?>"
-                                                data-prescription-id="<?php echo $appointment['PRESCRIPTION_ID']; ?>">
-                                            <i class="bi bi-bell"></i> Set Reminder
+                                                data-prescription-id="<?php echo $appointment['PRESCRIPTION_ID']; ?>"
+                                                data-appointment-date="<?php echo $appointment['APPOINTMENT_DATE']; ?>"
+                                                data-prescription-duration="<?php echo $prescription_duration_days; ?>">
+                                            <i class="bi bi-bell-fill me-1"></i> Set Reminder
                                         </button>
                                     </div>
                                     
@@ -599,6 +751,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_medicine_remin
                                                 <span>Diabetes: <?php echo $appointment['DIABETES']; ?></span>
                                             </div>
                                             <?php endif; ?>
+                                            <div class="prescription-detail">
+                                                <i class="bi bi-calendar-range"></i>
+                                                <span>Duration: <?php echo htmlspecialchars($prescription_duration_text); ?></span>
+                                            </div>
                                         </div>
                                         
                                         <?php if ($appointment['SYMPTOMS']): ?>
@@ -680,15 +836,50 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_medicine_remin
                                     <div class="reminder-details">
                                         <div class="reminder-detail">
                                             <i class="bi bi-clock"></i>
-                                            <span>Reminder at <?php echo date('h:i A', strtotime($reminder['REMINDER_TIME'])); ?></span>
+                                            <span>Time: <?php echo date('h:i A', strtotime($reminder['REMINDER_TIME'])); ?></span>
                                         </div>
+                                        <?php
+                                        // Extract duration from remarks
+                                        $duration_text = 'Not specified';
+                                        if (preg_match('/Duration:\s*(\d+)\s*days?/i', $reminder['REMARKS'], $matches)) {
+                                            $days = (int)$matches[1];
+                                            if ($days == 0) {
+                                                $duration_text = 'On appointment day';
+                                            } else {
+                                                $duration_text = $days . ' day' . ($days > 1 ? 's' : '') . ' after appointment';
+                                            }
+                                        }
+                                        ?>
+                                        <div class="reminder-detail">
+                                            <i class="bi bi-calendar-range"></i>
+                                            <span>Duration: <?php echo $duration_text; ?></span>
+                                        </div>
+                                        <?php if (isset($reminder['APPOINTMENT_DATE']) && $reminder['APPOINTMENT_DATE']): ?>
+                                        <div class="reminder-detail">
+                                            <i class="bi bi-calendar-check"></i>
+                                            <span>Appointment: <?php echo date('F d, Y', strtotime($reminder['APPOINTMENT_DATE'])); ?></span>
+                                        </div>
+                                        <?php endif; ?>
                                     </div>
                                     
                                     <div class="reminder-remarks">
-                                        <strong>Remarks:</strong> <?php echo htmlspecialchars($reminder['REMARKS']); ?>
+                                        <?php
+                                        // Extract actual remarks (remove duration part)
+                                        $actual_remarks = preg_replace('/Duration:\s*\d+\s*days?\s*(before|after)\s*appointment\.?\s*/i', '', $reminder['REMARKS']);
+                                        if (trim($actual_remarks)): ?>
+                                            <strong>Remarks:</strong> <?php echo htmlspecialchars(trim($actual_remarks)); ?>
+                                        <?php endif; ?>
                                     </div>
                                     
                                     <div class="reminder-actions">
+                                        <button class="btn btn-warning btn-sm" onclick="openEditReminderModal(
+                                            <?php echo $reminder['MEDICINE_REMINDER_ID']; ?>,
+                                            '<?php echo $reminder['REMINDER_TIME']; ?>',
+                                            '<?php echo addslashes($reminder['REMARKS']); ?>',
+                                            '<?php echo isset($reminder['APPOINTMENT_DATE']) ? $reminder['APPOINTMENT_DATE'] : ''; ?>'
+                                        )">
+                                            <i class="bi bi-pencil"></i> Edit
+                                        </button>
                                         <form method="POST" style="display: inline;">
                                             <input type="hidden" name="reminder_id" value="<?php echo $reminder['MEDICINE_REMINDER_ID']; ?>">
                                             <button type="submit" name="delete_medicine_reminder" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this reminder?')">
@@ -715,43 +906,108 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_medicine_remin
     
     <!-- Create Prescription Reminder Modal -->
     <div class="modal fade" id="createPrescriptionReminderModal" tabindex="-1" aria-labelledby="createPrescriptionReminderModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="createPrescriptionReminderModalLabel">Create Prescription Reminder</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <div class="modal-header" style="background: linear-gradient(135deg, var(--secondary-color), var(--soft-blue)); color: white;">
+                    <h5 class="modal-title" id="createPrescriptionReminderModalLabel">
+                        <i class="bi bi-bell-fill me-2"></i>Create Prescription Reminder
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form method="POST" action="set_reminder.php">
+                    <form method="POST" action="" id="createReminderForm">
                         <input type="hidden" name="create_prescription_reminder" value="1">
                         <input type="hidden" id="prescription_id" name="prescription_id">
                         
-                        <div class="alert alert-info">
+                        <div class="alert alert-info d-flex align-items-center">
                             <i class="bi bi-info-circle-fill me-2"></i>
-                            <span id="patient_info"></span>
+                            <div>
+                                <strong>Patient:</strong> <span id="patient_info"></span><br>
+                                <small id="appointment_info" class="text-muted"></small>
+                            </div>
                         </div>
                         
                         <div class="form-group">
-                            <label for="reminder_date">Reminder Date</label>
-                            <input type="date" class="form-control" id="reminder_date" name="reminder_date" required>
+                            <label for="duration">
+                                <i class="bi bi-calendar-range me-2"></i>Duration After Appointment (Days)
+                            </label>
+                            <input type="number" class="form-control" id="duration" name="duration" min="0" required readonly>
+                            <small class="form-text text-muted">Duration fetched from prescription details</small>
                         </div>
                         
                         <div class="form-group">
-                            <label for="reminder_time">Reminder Time</label>
+                            <label for="reminder_time">
+                                <i class="bi bi-clock me-2"></i>Reminder Time
+                            </label>
                             <input type="time" class="form-control" id="reminder_time" name="reminder_time" required>
+                            <small class="form-text text-muted">Time of day to send the reminder</small>
                         </div>
                         
                         <div class="form-group">
-                            <label for="remarks">Remarks</label>
+                            <label for="remarks">
+                                <i class="bi bi-chat-left-text me-2"></i>Remarks
+                            </label>
                             <textarea class="form-control" id="remarks" name="remarks" rows="3" placeholder="Add any additional notes for the reminder"></textarea>
                         </div>
                         
-                        <div class="text-end">
+                        <div class="text-end mt-4">
                             <button type="submit" class="btn btn-success">
-                                <i class="bi bi-check"></i> Create Reminder
+                                <i class="bi bi-check-circle me-2"></i> Create Reminder
                             </button>
-                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
-                                <i class="bi bi-x"></i> Cancel
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                <i class="bi bi-x-circle me-2"></i> Cancel
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Edit Reminder Modal -->
+    <div class="modal fade" id="editReminderModal" tabindex="-1" aria-labelledby="editReminderModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header" style="background: linear-gradient(135deg, var(--warning-color), #e67e22); color: white;">
+                    <h5 class="modal-title" id="editReminderModalLabel">
+                        <i class="bi bi-pencil-square me-2"></i>Edit Reminder
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" action="" id="editReminderForm">
+                        <input type="hidden" name="update_medicine_reminder" value="1">
+                        <input type="hidden" id="edit_reminder_id" name="reminder_id">
+                        
+                        <div class="form-group">
+                            <label for="edit_duration">
+                                <i class="bi bi-calendar-range me-2"></i>Duration After Appointment (Days)
+                            </label>
+                            <input type="number" class="form-control" id="edit_duration" name="duration" min="0" required>
+                            <small class="form-text text-muted">Enter number of days after the appointment to send the reminder</small>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="edit_reminder_time">
+                                <i class="bi bi-clock me-2"></i>Reminder Time
+                            </label>
+                            <input type="time" class="form-control" id="edit_reminder_time" name="reminder_time" required>
+                            <small class="form-text text-muted">Time of day to send the reminder</small>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="edit_remarks">
+                                <i class="bi bi-chat-left-text me-2"></i>Remarks
+                            </label>
+                            <textarea class="form-control" id="edit_remarks" name="remarks" rows="3" placeholder="Add any additional notes for the reminder"></textarea>
+                        </div>
+                        
+                        <div class="text-end mt-4">
+                            <button type="submit" class="btn btn-success">
+                                <i class="bi bi-check-circle me-2"></i> Update Reminder
+                            </button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                <i class="bi bi-x-circle me-2"></i> Cancel
                             </button>
                         </div>
                     </form>
@@ -774,14 +1030,77 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_medicine_remin
                     const prescriptionId = button.getAttribute('data-prescription-id');
                     
                     // Update modal content
-                    document.getElementById('patient_info').textContent = `Setting reminder for ${patientName} `;
+                    document.getElementById('patient_info').textContent = patientName;
+                    
+                    // Get appointment date from button data attribute
+                    const appointmentDateStr = button.getAttribute('data-appointment-date');
+                    if (appointmentDateStr) {
+                        const appointmentDate = new Date(appointmentDateStr);
+                        const formattedDate = appointmentDate.toLocaleDateString('en-US', { 
+                            weekday: 'long', 
+                            year: 'numeric', 
+                            month: 'long', 
+                            day: 'numeric' 
+                        });
+                        document.getElementById('appointment_info').textContent = `Appointment Date: ${formattedDate}`;
+                    }
+                    
+                    // Get prescription duration from button data attribute
+                    const prescriptionDuration = button.getAttribute('data-prescription-duration');
                     document.getElementById('prescription_id').value = prescriptionId;
                     
-                    // Set default date to today
-                    const today = new Date().toISOString().split('T')[0];
-                    document.getElementById('reminder_date').value = today;
+                    // Set duration from prescription
+                    if (prescriptionDuration && parseInt(prescriptionDuration) > 0) {
+                        document.getElementById('duration').value = prescriptionDuration;
+                    } else {
+                        document.getElementById('duration').value = '0';
+                    }
+                    
+                    // Set default time to 9 AM
+                    document.getElementById('reminder_time').value = '09:00';
+                    
+                    // Reset remarks
+                    document.getElementById('remarks').value = '';
                 });
             }
+            
+            // Function to open edit reminder modal
+            window.openEditReminderModal = function(reminderId, reminderTime, remarks, appointmentDate) {
+                try {
+                    document.getElementById('edit_reminder_id').value = reminderId;
+                    document.getElementById('edit_reminder_time').value = reminderTime;
+                    
+                    // Extract duration from remarks
+                    let duration = '';
+                    if (remarks) {
+                        const durationMatch = remarks.match(/Duration:\s*(\d+)\s*days?/i);
+                        if (durationMatch) {
+                            duration = durationMatch[1];
+                        }
+                    }
+                    document.getElementById('edit_duration').value = duration || '1';
+                    
+                    // Extract actual remarks (remove duration part)
+                    let actualRemarks = '';
+                    if (remarks) {
+                        actualRemarks = remarks.replace(/Duration:\s*\d+\s*days?\s*(before|after)\s*appointment\.?\s*/i, '').trim();
+                    }
+                    document.getElementById('edit_remarks').value = actualRemarks;
+                    
+                    // Show the modal
+                    const editModalElement = document.getElementById('editReminderModal');
+                    if (editModalElement) {
+                        const editModal = new bootstrap.Modal(editModalElement);
+                        editModal.show();
+                    } else {
+                        console.error('Edit modal element not found');
+                        alert('Error: Could not open edit modal. Please refresh the page.');
+                    }
+                } catch (error) {
+                    console.error('Error opening edit modal:', error);
+                    alert('Error opening edit form. Please refresh the page and try again.');
+                }
+            };
         });
     </script>
 </body>
