@@ -53,8 +53,8 @@ include 'header.php';?>
             border-radius: 12px;
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
             width: 100%;
-            max-width: 800px;
-            padding: 35px;
+            max-width: 1400px;
+            padding: 30px 40px;
             position: relative;
         }
 
@@ -71,7 +71,7 @@ include 'header.php';?>
         h1 {
             color: var(--dark-blue);
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
             font-size: 28px;
             position: relative;
         }
@@ -87,15 +87,31 @@ include 'header.php';?>
             background-color: var(--accent-blue);
         }
 
-        /* Simplified spacing since headers are removed */
+        /* Multi-column form layout */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
         .form-section {
+            margin-bottom: 0;
+        }
+
+        .form-section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--primary-blue);
             margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--light-blue);
         }
 
         .form-row {
             display: flex;
-            gap: 20px;
-            margin-bottom: 20px;
+            gap: 15px;
+            margin-bottom: 15px;
         }
 
         .form-row .form-group {
@@ -103,16 +119,16 @@ include 'header.php';?>
         }
 
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             position: relative;
         }
 
         label {
             display: block;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             color: var(--primary-blue);
             font-weight: 600;
-            font-size: 15px;
+            font-size: 14px;
         }
 
         .required {
@@ -147,10 +163,10 @@ include 'header.php';?>
         select,
         textarea {
             width: 100%;
-            padding: 12px 15px;
+            padding: 10px 12px;
             border: 1px solid var(--gray-blue);
             border-radius: 6px;
-            font-size: 15px;
+            font-size: 14px;
             transition: all 0.3s ease;
             background-color: var(--white);
         }
@@ -184,13 +200,15 @@ include 'header.php';?>
 
         textarea {
             resize: vertical;
-            min-height: 80px;
+            min-height: 70px;
+            max-height: 100px;
         }
 
         .radio-group {
             display: flex;
-            gap: 20px;
-            margin-top: 8px;
+            gap: 15px;
+            margin-top: 6px;
+            flex-wrap: wrap;
         }
 
         .radio-option {
@@ -207,7 +225,8 @@ include 'header.php';?>
         .btn-container {
             display: flex;
             justify-content: center;
-            margin-top: 30px;
+            margin-top: 20px;
+            grid-column: 1 / -1;
         }
 
         .btn {
@@ -316,11 +335,21 @@ include 'header.php';?>
         }
 
         /* Responsive styles */
+        @media (max-width: 1200px) {
+            .form-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
         @media (max-width: 768px) {
             .main-content {
                 margin-left: 0;
                 width: 100%;
                 padding: 20px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
             }
 
             .form-row {
@@ -330,6 +359,7 @@ include 'header.php';?>
 
             .container {
                 padding: 25px;
+                max-width: 100%;
             }
 
             h1 {
@@ -384,6 +414,74 @@ include 'header.php';?>
                 ];
 
                 $errors = [];
+
+                // ---------------- MEDICAL HISTORY FILE UPLOAD (OPTIONAL) ----------------
+                $medical_history_file_path = "";
+                if (isset($_FILES['medical_history']) && $_FILES['medical_history']['error'] == 0) {
+                    $medical_history_upload_dir = "uploads/medical_history/";
+                    if (!file_exists($medical_history_upload_dir)) {
+                        mkdir($medical_history_upload_dir, 0777, true);
+                    }
+
+                    $ext = strtolower(pathinfo($_FILES['medical_history']['name'], PATHINFO_EXTENSION));
+                    $allowed = ['pdf', 'jpg', 'jpeg', 'png'];
+                    
+                    // Validate file extension
+                    if (!in_array($ext, $allowed)) {
+                        $errors[] = "Medical history file must be PDF, JPG, JPEG, or PNG format only.";
+                    } else {
+                        // Validate file size (max 10MB)
+                        $max_file_size = 10 * 1024 * 1024; // 10MB in bytes
+                        if ($_FILES['medical_history']['size'] > $max_file_size) {
+                            $errors[] = "Medical history file size must not exceed 10MB.";
+                        } else {
+                            // Additional security: Check MIME type
+                            $finfo = finfo_open(FILEINFO_MIME_TYPE);
+                            $mime_type = finfo_file($finfo, $_FILES['medical_history']['tmp_name']);
+                            finfo_close($finfo);
+                            
+                            $allowed_mime_types = [
+                                'application/pdf',
+                                'image/jpeg',
+                                'image/jpg',
+                                'image/png'
+                            ];
+                            
+                            if (!in_array($mime_type, $allowed_mime_types)) {
+                                $errors[] = "Invalid file type. Medical history file must be PDF, JPG, JPEG, or PNG format.";
+                            } else {
+                                // Generate unique filename
+                                $file_name = 'medical_history_' . time() . '_' . uniqid() . '.' . $ext;
+                                $target_file = $medical_history_upload_dir . $file_name;
+                                
+                                if (move_uploaded_file($_FILES['medical_history']['tmp_name'], $target_file)) {
+                                    $medical_history_file_path = $target_file;
+                                } else {
+                                    $errors[] = "Failed to upload medical history file.";
+                                }
+                            }
+                        }
+                    }
+                } elseif (isset($_FILES['medical_history']) && $_FILES['medical_history']['error'] != UPLOAD_ERR_NO_FILE) {
+                    // Handle upload errors
+                    switch ($_FILES['medical_history']['error']) {
+                        case UPLOAD_ERR_INI_SIZE:
+                        case UPLOAD_ERR_FORM_SIZE:
+                            $errors[] = "Medical history file size exceeds the maximum allowed size.";
+                            break;
+                        case UPLOAD_ERR_PARTIAL:
+                            $errors[] = "Medical history file was only partially uploaded.";
+                            break;
+                        case UPLOAD_ERR_NO_TMP_DIR:
+                            $errors[] = "Missing temporary folder for medical history file upload.";
+                            break;
+                        case UPLOAD_ERR_CANT_WRITE:
+                            $errors[] = "Failed to write medical history file to disk.";
+                            break;
+                        default:
+                            $errors[] = "Unknown error occurred while uploading medical history file.";
+                    }
+                }
 
                 // ---------------- SANITIZE ----------------
                 $first_name = strtoupper(trim(mysqli_real_escape_string($conn, $_POST['first_name'])));
@@ -456,12 +554,14 @@ include 'header.php';?>
                     $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
                    $blood_val = ($blood_group === '' || $blood_group === null) ? 'NULL' : "'$blood_group'";
+                   $medical_history_val = ($medical_history_file_path === '') ? 'NULL' : "'" . mysqli_real_escape_string($conn, $medical_history_file_path) . "'";
+                   
                    $sql = "
                 INSERT INTO patient_tbl
-                (FIRST_NAME, LAST_NAME, USERNAME, PSWD, DOB, GENDER, BLOOD_GROUP, PHONE, EMAIL, ADDRESS)
+                (FIRST_NAME, LAST_NAME, USERNAME, PSWD, DOB, GENDER, BLOOD_GROUP, PHONE, EMAIL, ADDRESS, MEDICAL_HISTORY_FILE)
                 VALUES
                 ('$first_name','$last_name','$username','$hashed_password','$dob','$gender',
-                 $blood_val,'$phone','$email','$address')
+                 $blood_val,'$phone','$email','$address',$medical_history_val)
             ";
                     if ($conn->query($sql) === TRUE) {
                         $success = true;
@@ -481,10 +581,18 @@ include 'header.php';?>
 
                         ];
                     } else {
-                        $error = "Database error.";
+                        $error = "Database error: " . mysqli_error($conn);
+                        // If database insert fails, delete uploaded file
+                        if (!empty($medical_history_file_path) && file_exists($medical_history_file_path)) {
+                            unlink($medical_history_file_path);
+                        }
                     }
                 } else {
                     $error = implode("<br>", $errors);
+                    // If validation fails, delete uploaded file
+                    if (!empty($medical_history_file_path) && file_exists($medical_history_file_path)) {
+                        unlink($medical_history_file_path);
+                    }
                 }
 
                 $conn->close();
@@ -504,102 +612,117 @@ include 'header.php';?>
             <?php endif; ?>
             
             <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post" id="PatientForm" enctype="multipart/form-data">
-                
-                <!-- First Name and Last Name -->
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="first_name">First Name <span class="required">*</span></label>
-                        <input type="text" id="first_name" name="first_name" placeholder="e.g. John" value="<?php echo htmlspecialchars($form_data['first_name']); ?>" required>
-                        <div class="error-message" id="first_name_error"></div>
+                <div class="form-grid">
+                    <!-- Column 1: Personal Details -->
+                    <div class="form-section">
+                        <div class="form-section-title">Personal Details</div>
+                        
+                        <div class="form-group">
+                            <label for="first_name">First Name <span class="required">*</span></label>
+                            <input type="text" id="first_name" name="first_name" placeholder="e.g. John" value="<?php echo htmlspecialchars($form_data['first_name']); ?>" required>
+                            <div class="error-message" id="first_name_error"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="last_name">Last Name <span class="required">*</span></label>
+                            <input type="text" id="last_name" name="last_name" placeholder="e.g. Doe" value="<?php echo htmlspecialchars($form_data['last_name']); ?>" required>
+                            <div class="error-message" id="last_name_error"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="dob">Date of Birth <span class="required">*</span></label>
+                            <input type="date" id="dob" name="dob" placeholder="YYYY-MM-DD" value="<?php echo htmlspecialchars($form_data['dob']); ?>" required>
+                            <div class="error-message" id="dob_error"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Blood Group <span style="color:#888;">(Optional)</span></label>
+                            <select name="blood_group">
+                                <option value="">Select Blood Group (Optional)</option>
+                                <option value="A+" <?php echo ($form_data['blood_group'] == 'A+') ? 'selected' : ''; ?>>A+</option>
+                                <option value="A-" <?php echo ($form_data['blood_group'] == 'A-') ? 'selected' : ''; ?>>A-</option>
+                                <option value="B+" <?php echo ($form_data['blood_group'] == 'B+') ? 'selected' : ''; ?>>B+</option>
+                                <option value="B-" <?php echo ($form_data['blood_group'] == 'B-') ? 'selected' : ''; ?>>B-</option>
+                                <option value="O+" <?php echo ($form_data['blood_group'] == 'O+') ? 'selected' : ''; ?>>O+</option>
+                                <option value="O-" <?php echo ($form_data['blood_group'] == 'O-') ? 'selected' : ''; ?>>O-</option>
+                                <option value="AB+" <?php echo ($form_data['blood_group'] == 'AB+') ? 'selected' : ''; ?>>AB+</option>
+                                <option value="AB-" <?php echo ($form_data['blood_group'] == 'AB-') ? 'selected' : ''; ?>>AB-</option>
+                            </select>
+                            <div class="error-message" id="blood_group_error"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Gender</label>
+                            <div class="radio-group">
+                                <div class="radio-option">
+                                    <input type="radio" id="male" name="gender" value="MALE" <?php echo ($form_data['gender'] == 'MALE') ? 'checked' : ''; ?>>
+                                    <label for="male">Male</label>
+                                </div>
+                                <div class="radio-option">
+                                    <input type="radio" id="female" name="gender" value="FEMALE" <?php echo ($form_data['gender'] == 'FEMALE') ? 'checked' : ''; ?>>
+                                    <label for="female">Female</label>
+                                </div>
+                                <div class="radio-option">
+                                    <input type="radio" id="other" name="gender" value="OTHER" <?php echo ($form_data['gender'] == 'OTHER') ? 'checked' : ''; ?>>
+                                    <label for="other">Other</label>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     
-                    <div class="form-group">
-                        <label for="last_name">Last Name <span class="required">*</span></label>
-                        <input type="text" id="last_name" name="last_name" placeholder="e.g.Doe" value="<?php echo htmlspecialchars($form_data['last_name']); ?>" required>
-                        <div class="error-message" id="last_name_error"></div>
-                    </div>
-                </div>
-                
-                <!-- Date of Birth and Blood Group-->
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="dob">Date of Birth <span class="required">*</span></label>
-                        <input type="date" id="dob" name="dob" placeholder="YYYY-MM-DD" value="<?php echo htmlspecialchars($form_data['dob']); ?>" required>
-                        <div class="error-message" id="dob_error"></div>
+                    <!-- Column 2: Contact Details -->
+                    <div class="form-section">
+                        <div class="form-section-title">Contact Details</div>
+                        
+                        <div class="form-group">
+                            <label for="phone">Phone Number <span class="required">*</span></label>
+                            <input type="text" id="phone" name="phone" maxlength="10" placeholder="e.g 1234567891" value="<?php echo htmlspecialchars($form_data['phone']); ?>" required>
+                            <div class="error-message" id="phone_error"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="email">Email <span class="required">*</span></label>
+                            <input type="email" id="email" name="email" placeholder="e.g. john@example.com" value="<?php echo htmlspecialchars($form_data['email']); ?>" required>
+                            <div class="error-message" id="email_error"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="address">Address</label>
+                            <textarea name="address" id="address" placeholder="Street, City, Zip Code"><?php echo htmlspecialchars($form_data['address']); ?></textarea>
+                            <div class="error-message" id="address_error"></div>
+                        </div>
                     </div>
                     
-                    <div class="form-group">
-                        <label>Blood Group <span style="color:#888;">(Optional)</span></label>
-                        <select name="blood_group">
-                            <option value="">Select Blood Group (Optional)</option>
-                            <option value="A+" <?php echo ($form_data['blood_group'] == 'A+') ? 'selected' : ''; ?>>A+</option>
-                            <option value="A-" <?php echo ($form_data['blood_group'] == 'A-') ? 'selected' : ''; ?>>A-</option>
-                            <option value="B+" <?php echo ($form_data['blood_group'] == 'B+') ? 'selected' : ''; ?>>B+</option>
-                            <option value="B-" <?php echo ($form_data['blood_group'] == 'B-') ? 'selected' : ''; ?>>B-</option>
-                            <option value="O+" <?php echo ($form_data['blood_group'] == 'O+') ? 'selected' : ''; ?>>O+</option>
-                            <option value="O-" <?php echo ($form_data['blood_group'] == 'O-') ? 'selected' : ''; ?>>O-</option>
-                            <option value="AB+" <?php echo ($form_data['blood_group'] == 'AB+') ? 'selected' : ''; ?>>AB+</option>
-                            <option value="AB-" <?php echo ($form_data['blood_group'] == 'AB-') ? 'selected' : ''; ?>>AB-</option>
-                        </select>
-                        <div class="error-message" id="blood_group_error"></div>
-                    </div>
-                </div>
-                
-                <!-- Gender -->
-                <div class="form-group">
-                    <label>Gender</label>
-                    <div class="radio-group">
-                        <div class="radio-option">
-                            <input type="radio" id="male" name="gender" value="MALE" <?php echo ($form_data['gender'] == 'MALE') ? 'checked' : ''; ?>>
-                            <label for="male">Male</label>
+                    <!-- Column 3: Account Details -->
+                    <div class="form-section">
+                        <div class="form-section-title">Account Details</div>
+                        
+                        <div class="form-group">
+                            <label for="username">Username <span class="required">*</span></label>
+                            <input type="text" id="username" name="username" placeholder="e.g. Arjun_m01" value="<?php echo htmlspecialchars($form_data['username']); ?>" required>
+                            <div class="error-message" id="username_error"></div>
                         </div>
-                        <div class="radio-option">
-                            <input type="radio" id="female" name="gender" value="FEMALE" <?php echo ($form_data['gender'] == 'FEMALE') ? 'checked' : ''; ?>>
-                            <label for="female">Female</label>
+                        
+                        <div class="form-group">
+                            <label for="password">Password <span class="required">*</span></label>
+                            <div class="password-wrapper">
+                                <input type="password" id="password" name="password" placeholder="John@123" required>
+                                <i class="fas fa-eye toggle-password" id="togglePassword"></i>
+                            </div>
+                            <div class="error-message" id="password_error"></div>
                         </div>
-                        <div class="radio-option">
-                            <input type="radio" id="other" name="gender" value="OTHER" <?php echo ($form_data['gender'] == 'OTHER') ? 'checked' : ''; ?>>
-                            <label for="other">Other</label>
+                        
+                        <div class="form-group">
+                            <label for="medical_history">Medical History <span style="color:#888;">(Optional)</span></label>
+                            <div class="file-upload">
+                                <input type="file" id="medical_history" name="medical_history" accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png">
+                                <label for="medical_history" class="file-upload-label" id="medical-history-label">
+                                    <i class="fas fa-file-upload"></i> Choose File (PDF, JPG, JPEG, PNG - Max 10MB)
+                                </label>
+                            </div>
+                            <div class="error-message" id="medical_history_error"></div>
+                            <small style="color: #666; display: block; margin-top: 5px; font-size: 12px;">Accepted: PDF, JPG, JPEG, PNG. Max: 10MB</small>
                         </div>
-                    </div>
-                </div>
-
-                <!-- Phone Number and Email ID -->
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="phone">Phone Number <span class="required">*</span></label>
-                        <input type="text" id="phone" name="phone" maxlength="10" placeholder="e.g 1234567891" value="<?php echo htmlspecialchars($form_data['phone']); ?>" required>
-                        <div class="error-message" id="phone_error"></div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="email">Email <span class="required">*</span></label>
-                        <input type="email" id="email" name="email" placeholder="e.g. john@example.com" value="<?php echo htmlspecialchars($form_data['email']); ?>" required>
-                        <div class="error-message" id="email_error"></div>
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label for="address">Address</label>
-                    <textarea name="address" id="address" placeholder="Street, City, Zip Code"><?php echo htmlspecialchars($form_data['address']); ?></textarea>
-                    <div class="error-message" id="address_error"></div>
-                </div>
-                
-                <!-- Username and Password -->
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="username">Username <span class="required">*</span></label>
-                        <input type="text" id="username" name="username" placeholder="e.g. Arjun_m01" value="<?php echo htmlspecialchars($form_data['username']); ?>" required>
-                        <div class="error-message" id="username_error"></div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="password">Password <span class="required">*</span></label>
-                        <div class="password-wrapper">
-                            <input type="password" id="password" name="password" placeholder="John@123" required>
-                            <i class="fas fa-eye toggle-password" id="togglePassword"></i>
-                        </div>
-                        <div class="error-message" id="password_error"></div>
                     </div>
                 </div>
                 
@@ -704,6 +827,33 @@ include 'header.php';?>
             hideError('password');
         }
     }
+
+    // --- Medical History File Upload Validation ---
+    document.getElementById('medical_history').addEventListener('change', function () {
+        const file = this.files[0];
+        const label = document.getElementById('medical-history-label');
+        hideError('medical_history');
+        
+        if (file) {
+            const ext = file.name.split('.').pop().toLowerCase();
+            const allowed = ['pdf', 'jpg', 'jpeg', 'png'];
+            const maxSize = 10 * 1024 * 1024; // 10MB
+            
+            if (allowed.indexOf(ext) === -1) {
+                showError('medical_history', "Medical history file must be PDF, JPG, JPEG, or PNG format only.");
+                this.value = '';
+                label.textContent = 'Choose Medical History File (PDF, JPG, JPEG, PNG - Max 10MB)';
+            } else if (file.size > maxSize) {
+                showError('medical_history', "Medical history file size must not exceed 10MB.");
+                this.value = '';
+                label.textContent = 'Choose Medical History File (PDF, JPG, JPEG, PNG - Max 10MB)';
+            } else {
+                label.textContent = file.name + ' (' + (file.size / 1024 / 1024).toFixed(2) + ' MB)';
+            }
+        } else {
+            label.textContent = 'Choose Medical History File (PDF, JPG, JPEG, PNG - Max 10MB)';
+        }
+    });
 
     // --- Attach Real-time Listeners ---
     

@@ -578,6 +578,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
                             </div>
                         </div>
                         
+                        <!-- Medical History File Display -->
+                        <?php if (!empty($patient['MEDICAL_HISTORY_FILE']) && file_exists($patient['MEDICAL_HISTORY_FILE'])): ?>
+                            <div class="info-item" style="grid-column: 1 / -1; margin-top: 15px; padding-top: 15px; border-top: 1px solid #eee;">
+                                <span class="info-label">Medical History</span>
+                                <div style="margin-top: 10px;">
+                                    <?php
+                                    $file_ext = strtolower(pathinfo($patient['MEDICAL_HISTORY_FILE'], PATHINFO_EXTENSION));
+                                    $file_name = basename($patient['MEDICAL_HISTORY_FILE']);
+                                    $file_size = filesize($patient['MEDICAL_HISTORY_FILE']);
+                                    $file_size_mb = round($file_size / 1024 / 1024, 2);
+                                    ?>
+                                    <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                                        <i class="fas fa-file-<?php echo ($file_ext == 'pdf') ? 'pdf' : 'image'; ?>" style="color: var(--secondary-color); font-size: 24px;"></i>
+                                        <div style="flex: 1;">
+                                            <div style="font-weight: 600; color: var(--dark-color);"><?php echo htmlspecialchars($file_name); ?></div>
+                                            <div style="font-size: 12px; color: #666;"><?php echo strtoupper($file_ext); ?> • <?php echo $file_size_mb; ?> MB</div>
+                                        </div>
+                                        <div style="display: flex; gap: 8px;">
+                                            <a href="view_medical_history.php?file=<?php echo urlencode($patient['MEDICAL_HISTORY_FILE']); ?>" 
+                                               target="_blank" 
+                                               class="btn btn-primary" 
+                                               style="padding: 8px 15px; font-size: 14px; text-decoration: none;">
+                                                <i class="fas fa-eye"></i> View
+                                            </a>
+                                            <a href="download_medical_history.php?file=<?php echo urlencode($patient['MEDICAL_HISTORY_FILE']); ?>" 
+                                               class="btn btn-success" 
+                                               style="padding: 8px 15px; font-size: 14px; text-decoration: none;">
+                                                <i class="fas fa-download"></i> Download
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php else: ?>
+                            <div class="info-item" style="grid-column: 1 / -1; margin-top: 15px; padding-top: 15px; border-top: 1px solid #eee;">
+                                <span class="info-label">Medical History</span>
+                                <span class="info-value" style="color: #999; font-style: italic;">No medical history file uploaded</span>
+                            </div>
+                        <?php endif; ?>
+                        
                         <div class="btn-group">
                             <button class="btn btn-primary" id="editProfileBtn">
                                 <i class="fas fa-edit"></i> Edit Profile

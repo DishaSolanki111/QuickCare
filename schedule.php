@@ -79,7 +79,8 @@ if ($result->num_rows > 0) {
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            padding-top: 80px; /* Account for fixed header */
+            padding-top: 0;
+            margin-top: 0;
         }
 
         header {
@@ -92,10 +93,11 @@ if ($result->num_rows > 0) {
         .page-header {
             background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
             color: white;
-            padding: 4rem 0;
+            padding: calc(80px + 2rem) 0 4rem 0;
             text-align: center;
             position: relative;
             overflow: hidden;
+            margin-top: 0;
         }
 
         .page-header::before {
@@ -513,7 +515,8 @@ if ($result->num_rows > 0) {
             }
             
             .page-header {
-                padding: 3rem 0;
+                padding-top: calc(80px + 1.5rem);
+                padding-bottom: 3rem;
             }
             
             .page-header h1 {
