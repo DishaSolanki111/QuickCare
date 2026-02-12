@@ -16,46 +16,62 @@ include 'config.php';
 
 // Handle form submission for adding new reminder
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_reminder'])) {
-    $medicine_id = mysqli_real_escape_string($conn, $_POST['medicine_id']);
-    $reminder_time = mysqli_real_escape_string($conn, $_POST['reminder_time']);
-    $remarks = mysqli_real_escape_string($conn, $_POST['remarks']);
+    $medicine_id   = isset($_POST['medicine_id'])   ? mysqli_real_escape_string($conn, trim($_POST['medicine_id']))   : '';
+    $start_date    = isset($_POST['start_date'])    ? mysqli_real_escape_string($conn, trim($_POST['start_date']))    : '';
+    $end_date      = isset($_POST['end_date'])      ? mysqli_real_escape_string($conn, trim($_POST['end_date']))      : '';
+    $reminder_time = isset($_POST['reminder_time']) ? mysqli_real_escape_string($conn, trim($_POST['reminder_time'])) : '';
+    $remarks       = isset($_POST['remarks'])       ? mysqli_real_escape_string($conn, trim($_POST['remarks']))       : '';
     
-    // Verify that this medicine is prescribed to the patient
-$verify_query = mysqli_query($conn, "
-    SELECT COUNT(*) as count
-    FROM prescription_medicine_tbl pm
-    JOIN prescription_tbl p 
-        ON pm.PRESCRIPTION_ID = p.PRESCRIPTION_ID
-    JOIN appointment_tbl a 
-        ON p.APPOINTMENT_ID = a.APPOINTMENT_ID
-    WHERE pm.MEDICINE_ID = '$medicine_id'
-      AND a.PATIENT_ID = '$patient_id'
-");
-
-
-    $verify_result = mysqli_fetch_assoc($verify_query);
-    
-    if ($verify_result['count'] > 0) {
-        $add_query = "INSERT INTO medicine_reminder_tbl (MEDICINE_ID, CREATOR_ROLE, CREATOR_ID, PATIENT_ID, REMINDER_TIME, REMARKS) 
-                      VALUES ('$medicine_id', 'PATIENT', '$patient_id', '$patient_id', '$reminder_time', '$remarks')";
-        
-        if (mysqli_query($conn, $add_query)) {
-            $success_message = "Medicine reminder added successfully!";
-        } else {
-            $error_message = "Error adding reminder: " . mysqli_error($conn);
-        }
+    // Validate required fields
+    if (empty($medicine_id) || empty($start_date) || empty($end_date) || empty($reminder_time)) {
+        $error_message = "Please fill in Medicine, Start Date, End Date, and Reminder Time.";
     } else {
-        $error_message = "You can only set reminders for medicines prescribed to you.";
+        // Verify that this medicine is prescribed to the patient
+        $verify_query = mysqli_query($conn, "
+            SELECT COUNT(*) as count
+            FROM prescription_medicine_tbl pm
+            JOIN prescription_tbl p 
+                ON pm.PRESCRIPTION_ID = p.PRESCRIPTION_ID
+            JOIN appointment_tbl a 
+                ON p.APPOINTMENT_ID = a.APPOINTMENT_ID
+            WHERE pm.MEDICINE_ID = '$medicine_id'
+              AND a.PATIENT_ID = '$patient_id'
+        ");
+
+        $verify_result = $verify_query ? mysqli_fetch_assoc($verify_query) : null;
+        
+        if ($verify_result && (int)$verify_result['count'] > 0) {
+            // Get the next ID for MEDICINE_REMINDER_ID
+            $id_query = mysqli_query($conn, "SELECT MAX(MEDICINE_REMINDER_ID) as max_id FROM medicine_reminder_tbl");
+            $id_result = mysqli_fetch_assoc($id_query);
+            $next_id = ($id_result['max_id'] ?? 0) + 1;
+            
+            $add_query = "INSERT INTO medicine_reminder_tbl (MEDICINE_REMINDER_ID, MEDICINE_ID, CREATOR_ROLE, CREATOR_ID, PATIENT_ID, START_DATE, END_DATE, REMINDER_TIME, REMARKS) 
+                          VALUES ('$next_id', '$medicine_id', 'PATIENT', '$patient_id', '$patient_id', '$start_date', '$end_date', '$reminder_time', '$remarks')";
+            
+            if (mysqli_query($conn, $add_query)) {
+                header("Location: medicine_reminder.php?added=1");
+                exit;
+            } else {
+                $error_message = "Error adding reminder: " . mysqli_error($conn);
+            }
+        } else {
+            $error_message = "You can only set reminders for medicines prescribed to you.";
+        }
     }
 }
 
 // Handle form submission for updating reminder
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_reminder'])) {
-    $reminder_id = mysqli_real_escape_string($conn, $_POST['reminder_id']);
-    $reminder_time = mysqli_real_escape_string($conn, $_POST['reminder_time']);
-    $remarks = mysqli_real_escape_string($conn, $_POST['remarks']);
+    $reminder_id   = isset($_POST['reminder_id'])   ? mysqli_real_escape_string($conn, $_POST['reminder_id'])   : '';
+    $start_date    = isset($_POST['start_date'])    ? mysqli_real_escape_string($conn, $_POST['start_date'])    : '';
+    $end_date      = isset($_POST['end_date'])      ? mysqli_real_escape_string($conn, $_POST['end_date'])      : '';
+    $reminder_time = isset($_POST['reminder_time']) ? mysqli_real_escape_string($conn, $_POST['reminder_time']) : '';
+    $remarks       = isset($_POST['remarks'])       ? mysqli_real_escape_string($conn, $_POST['remarks'])       : '';
     
     $update_query = "UPDATE medicine_reminder_tbl SET 
+                    START_DATE = '$start_date',
+                    END_DATE = '$end_date',
                     REMINDER_TIME = '$reminder_time',
                     REMARKS = '$remarks'
                     WHERE MEDICINE_REMINDER_ID = '$reminder_id' AND PATIENT_ID = '$patient_id'";
@@ -80,11 +96,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_reminder'])) {
     }
 }
 
+// Show success message after redirect following add
+if (isset($_GET['added']) && $_GET['added'] == '1') {
+    $success_message = "Medicine reminder added successfully!";
+}
+
 // Get prescription ID from URL if coming from prescriptions page
  $prescription_id = isset($_POST['prescription']) ? mysqli_real_escape_string($conn, $_POST['prescription']) : '';
 
-// Fetch ONLY medicines prescribed to this patient
-$prescribed_medicines_query = mysqli_query($conn, "
+// Fetch ONLY medicines prescribed to this patient (all prescriptions)
+ $prescribed_medicines_query = mysqli_query($conn, "
     SELECT DISTINCT m.MEDICINE_ID, m.MED_NAME
     FROM medicine_tbl m
     JOIN prescription_medicine_tbl pm 
@@ -103,7 +124,7 @@ $prescribed_medicines_query = mysqli_query($conn, "
     FROM medicine_reminder_tbl mr
     JOIN medicine_tbl m ON mr.MEDICINE_ID = m.MEDICINE_ID
     WHERE mr.PATIENT_ID = '$patient_id'
-    ORDER BY mr.REMINDER_TIME
+    ORDER BY mr.START_DATE, mr.REMINDER_TIME
 ");
 
 // If prescription ID is provided, get medicines from that prescription
@@ -527,16 +548,31 @@ if (!empty($prescription_id)) {
                             <select class="form-control" id="medicine_id" name="medicine_id" required>
                                 <option value="">-- Select Medicine --</option>
                                 <?php
-                                if (mysqli_num_rows($prescribed_medicines_query) > 0) {
-                                    while ($medicine = mysqli_fetch_assoc($prescribed_medicines_query)) {
+                                // If coming from a specific prescription, only show medicines from that prescription
+                                if (!empty($prescription_medicines)) {
+                                    foreach ($prescription_medicines as $medicine) {
                                         echo '<option value="' . $medicine['MEDICINE_ID'] . '">' . 
                                              htmlspecialchars($medicine['MED_NAME']) . '</option>';
                                     }
-                                    // Reset the result pointer
-                                    mysqli_data_seek($prescribed_medicines_query, 0);
+                                } else {
+                                    // Otherwise, show all medicines ever prescribed to this patient
+                                    if ($prescribed_medicines_query && mysqli_num_rows($prescribed_medicines_query) > 0) {
+                                        while ($medicine = mysqli_fetch_assoc($prescribed_medicines_query)) {
+                                            echo '<option value="' . $medicine['MEDICINE_ID'] . '">' . 
+                                                 htmlspecialchars($medicine['MED_NAME']) . '</option>';
+                                        }
+                                    }
                                 }
                                 ?>
                             </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="start_date">Start Date</label>
+                            <input type="date" class="form-control" id="start_date" name="start_date" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="end_date">End Date</label>
+                            <input type="date" class="form-control" id="end_date" name="end_date" required>
                         </div>
                         <div class="form-group">
                             <label for="reminder_time">Reminder Time</label>
@@ -545,8 +581,8 @@ if (!empty($prescription_id)) {
                     </div>
                     
                     <div class="form-group">
-                        <label for="remarks">Remarks</label>
-                        <textarea class="form-control" id="remarks" name="remarks" rows="3" placeholder="Add any notes or dosage instructions"></textarea>
+                        <label for="remarks">Additional Notes</label>
+                        <textarea class="form-control" id="remarks" name="remarks" rows="3" placeholder="Add any additional notes or dosage instructions"></textarea>
                     </div>
                     
                     <button type="submit" name="add_reminder" class="btn btn-success">
@@ -568,13 +604,21 @@ if (!empty($prescription_id)) {
                         </div>
                         <div class="reminder-content">
                             <h4><?php echo htmlspecialchars($reminder['MED_NAME']); ?></h4>
-                            <p><?php echo htmlspecialchars($reminder['REMARKS']); ?></p>
+                            <?php if (!empty($reminder['REMARKS'])): ?>
+                                <p><strong>Notes:</strong> <?php echo htmlspecialchars($reminder['REMARKS']); ?></p>
+                            <?php endif; ?>
                             <div class="reminder-time">
-                                <i class="far fa-clock"></i> Daily at <?php echo date('h:i A', strtotime($reminder['REMINDER_TIME'])); ?>
+                                <i class="far fa-calendar-alt"></i>
+                                <?php echo $reminder['START_DATE'] ? date('d M Y', strtotime($reminder['START_DATE'])) : '—'; ?>
+                                &nbsp; to &nbsp;
+                                <?php echo $reminder['END_DATE'] ? date('d M Y', strtotime($reminder['END_DATE'])) : '—'; ?>
+                                &nbsp; | &nbsp;
+                                <i class="far fa-clock"></i>
+                                <?php echo date('h:i A', strtotime($reminder['REMINDER_TIME'])); ?>
                             </div>
                         </div>
                         <div class="btn-group">
-                            <button class="btn btn-primary" onclick="openEditModal(<?php echo $reminder['MEDICINE_REMINDER_ID']; ?>, '<?php echo htmlspecialchars($reminder['MED_NAME']); ?>', '<?php echo $reminder['REMINDER_TIME']; ?>', '<?php echo htmlspecialchars($reminder['REMARKS']); ?>')">
+                            <button class="btn btn-primary" onclick="openEditModal(<?php echo $reminder['MEDICINE_REMINDER_ID']; ?>, <?php echo json_encode($reminder['MED_NAME']); ?>, <?php echo json_encode($reminder['START_DATE']); ?>, <?php echo json_encode($reminder['END_DATE']); ?>, <?php echo json_encode($reminder['REMINDER_TIME']); ?>, <?php echo json_encode($reminder['REMARKS']); ?>)">
                                 <i class="fas fa-edit"></i>
                             </button>
                             <form method="POST" style="display: inline;">
@@ -611,12 +655,20 @@ if (!empty($prescription_id)) {
                 </div>
                 
                 <div class="form-group">
+                    <label for="edit_start_date">Start Date</label>
+                    <input type="date" class="form-control" id="edit_start_date" name="start_date" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit_end_date">End Date</label>
+                    <input type="date" class="form-control" id="edit_end_date" name="end_date" required>
+                </div>
+                <div class="form-group">
                     <label for="edit_reminder_time">Reminder Time</label>
                     <input type="time" class="form-control" id="edit_reminder_time" name="reminder_time" required>
                 </div>
                 
                 <div class="form-group">
-                    <label for="edit_remarks">Remarks</label>
+                    <label for="edit_remarks">Additional Notes</label>
                     <textarea class="form-control" id="edit_remarks" name="remarks" rows="3"></textarea>
                 </div>
                 
@@ -635,15 +687,16 @@ if (!empty($prescription_id)) {
     <script>
         function selectMedicine(medicineId, medicineName) {
             document.getElementById('medicine_id').value = medicineId;
-            // Focus on the next field
-            document.getElementById('reminder_time').focus();
+            document.getElementById('start_date').focus();
         }
         
-        function openEditModal(reminderId, medicineName, reminderTime, remarks) {
+        function openEditModal(reminderId, medicineName, startDate, endDate, reminderTime, remarks) {
             document.getElementById('edit_reminder_id').value = reminderId;
             document.getElementById('edit_medicine_name').value = medicineName;
+            document.getElementById('edit_start_date').value = startDate;
+            document.getElementById('edit_end_date').value = endDate;
             document.getElementById('edit_reminder_time').value = reminderTime;
-            document.getElementById('edit_remarks').value = remarks;
+            document.getElementById('edit_remarks').value = remarks || '';
             document.getElementById('editModal').style.display = 'block';
         }
         
