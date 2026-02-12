@@ -266,7 +266,7 @@ if ($user_type === 'patient') {
         body {
             margin: 0;
             font-family: Arial, sans-serif;
-            font-weight: bold;
+            font-weight: normal;
             background: #F5F8FA;
             display: flex;
         }
