@@ -978,226 +978,424 @@ if ($user_type === 'patient') {
     </div>
     
     <!-- Edit User Modal -->
-    <div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editUserModalLabel">Edit User</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <div id="editModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeEditModal()">&times;</span>
+
+        <!-- Dynamic Title -->
+        <h2 id="modalTitle">Edit User</h2>
+
+        <!-- ================= PATIENT FORM ================= -->
+        <form id="editPatientForm" method="post" action="manage_user_profile.php" style="display:none;">
+            <input type="hidden" name="action" value="edit_patient">
+            <input type="hidden" id="edit_patient_id" name="patient_id">
+
+            <!-- PASTE YOUR PATIENT FORM FIELDS HERE EXACTLY -->
+             <div class="form-row">
+                <div class="form-group">
+                    <label for="edit_first_name">First Name</label>
+                    <input type="text" id="edit_first_name" name="first_name" required>
+                    <div class="error-message" id="edit_first_name_error"></div>
                 </div>
-                <div class="modal-body">
-                    <form method="POST" action="manage_user_profile.php">
-                        <input type="hidden" id="edit_user_type" name="user_type">
-                        <input type="hidden" id="edit_user_id" name="user_id">
-                        <input type="hidden" name="update_user" value="1">
-                        
-                        <!-- Patient Edit Form -->
-                        <div id="editPatientForm">
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="edit_first_name">First Name</label>
-                                    <input type="text" class="form-control" id="edit_first_name" name="first_name" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="edit_last_name">Last Name</label>
-                                    <input type="text" class="form-control" id="edit_last_name" name="last_name" required>
-                                </div>
-                            </div>
-                            
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="edit_dob">Date of Birth</label>
-                                    <input type="date" class="form-control" id="edit_dob" name="dob" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="edit_gender">Gender</label>
-                                    <select class="form-control" id="edit_gender" name="gender" required>
-                                        <option value="MALE">Male</option>
-                                        <option value="FEMALE">Female</option>
-                                        <option value="OTHER">Other</option>
-                                    </select>
-                                </div>
-                            </div>
-                            
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="edit_blood_group">Blood Group</label>
-                                    <select class="form-control" id="edit_blood_group" name="blood_group" required>
-                                        <option value="A+">A+</option>
-                                        <option value="A-">A-</option>
-                                        <option value="B+">B+</option>
-                                        <option value="B-">B-</option>
-                                        <option value="O+">O+</option>
-                                        <option value="O-">O-</option>
-                                        <option value="AB+">AB+</option>
-                                        <option value="AB-">AB-</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label for="edit_phone">Phone Number</label>
-                                    <input type="tel" class="form-control" id="edit_phone" name="phone" required>
-                                </div>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="edit_email">Email Address</label>
-                                <input type="email" class="form-control" id="edit_email" name="email" required>
-                                </div>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="edit_address">Address</label>
-                                <textarea class="form-control" id="edit_address" name="address" rows="3"></textarea>
-                            </div>
-                        </div>
-                        
-                        <!-- Doctor Edit Form -->
-                        <div id="editDoctorForm" style="display: none;">
-                            <div class="form-group">
-                                <label for="edit_specialisation_id">Specialization</label>
-                                <select class="form-control" id="edit_specialisation_id" name="specialisation_id" required>
-                                    <option value="">Select Specialization</option>
-                                    <?php
-                                    if (mysqli_num_rows($specialisations_query) > 0) {
-                                        while ($specialisation = mysqli_fetch_assoc($specialisations_query)) {
-                                            echo '<option value="' . $specialisation['SPECIALISATION_ID'] . '">' . 
-                                                 htmlspecialchars($specialisation['SPECIALISATION_NAME']) . '</option>';
-                                        }
-                                        // Reset the result pointer
-                                        mysqli_data_seek($specialisations_query, 0);
-                                    }
-                                    ?>
-                                </select>
-                            </div>
-                            
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="edit_first_name">First Name</label>
-                                    <input type="text" class="form-control" id="edit_first_name" name="first_name" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="edit_last_name">Last Name</label>
-                                    <input type="text" class="form-control" id="edit_last_name" name="last_name" required>
-                                </div>
-                            </div>
-                            
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="edit_dob">Date of Birth</label>
-                                    <input type="date" class="form-control" id="edit_dob" name="dob" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="edit_gender">Gender</label>
-                                    <select class="form-control" id="edit_gender" name="gender" required>
-                                        <option value="MALE">Male</option>
-                                        <option value="FEMALE">Female</option>
-                                        <option value="OTHER">Other</option>
-                                    </select>
-                                </div>
-                            </div>
-                            
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="edit_doj">Date of Joining</label>
-                                    <input type="date" class="form-control" id="edit_doj" name="doj" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="edit_phone">Phone Number</label>
-                                    <input type="tel" class="form-control" id="edit_phone" name="phone" required>
-                                </div>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="edit_email">Email Address</label>
-                                <input type="email" class="form-control" id="edit_email" name="email" required>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Receptionist Edit Form -->
-                        <div id="editReceptionistForm" style="display: none;">
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="edit_first_name">First Name</label>
-                                    <input type="text" class="form-control" id="edit_first_name" name="first_name" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="edit_last_name">Last Name</label>
-                                    <input type="text" class="form-control" id="edit_last_name" name="last_name" required>
-                                </div>
-                            </div>
-                            
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="edit_dob">Date of Birth</label>
-                                    <input type="date" class="form-control" id="edit_dob" name="dob" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="edit_gender">Gender</label>
-                                    <select class="form-control" id="edit_gender" name="gender" required>
-                                        <option value="MALE">Male</option>
-                                        <option value="FEMALE">Female</option>
-                                        <option value="OTHER">Other</option>
-                                    </select>
-                                </div>
-                            </div>
-                            
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="edit_doj">Date of Joining</label>
-                                    <input type="date" class="form-control" id="edit_doj" name="doj" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="edit_phone">Phone Number</label>
-                                    <input type="tel" class="form-control" id="edit_phone" name="phone" required>
-                                </div>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="edit_email">Email Address</label>
-                                <input type="email" class="form-control" id="edit_email" name="email" required>
-                                </div>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="edit_address">Address</label>
-                                <textarea class="form-control" id="edit_address" name="address" rows="3"></textarea>
-                            </div>
-                        </div>
-                        
-                        <div class="text-end">
-                            <button type="submit" class="btn btn-success">
-                                <i class="bi bi-check"></i> Update User
-                            </button>
-                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
-                                <i class="bi bi-x"></i> Cancel
-                            </button>
-                        </div>
-                    </form>
+                <div class="form-group">
+                    <label for="edit_last_name">Last Name</label>
+                    <input type="text" id="edit_last_name" name="last_name" required>
+                    <div class="error-message" id="edit_last_name_error"></div>
                 </div>
             </div>
-        </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="edit_dob">Date of Birth</label>
+                    <input type="date" id="edit_dob" name="dob" required>
+                    <div class="error-message" id="edit_dob_error"></div>
+                </div>
+                <div class="form-group">
+                    <label for="edit_gender">Gender</label>
+                    <select id="edit_gender" name="gender" required>
+                        <option value="">Select Gender</option>
+                        <option value="MALE">Male</option>
+                        <option value="FEMALE">Female</option>
+                        <option value="OTHER">Other</option>
+                    </select>
+                    <div class="error-message" id="edit_gender_error"></div>
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="edit_blood_group">Blood Group</label>
+                    <select id="edit_blood_group" name="blood_group" required>
+                        <option value="">Select Blood Group</option>
+                        <option value="A+">A+</option>
+                        <option value="A-">A-</option>
+                        <option value="B+">B+</option>
+                        <option value="B-">B-</option>
+                        <option value="O+">O+</option>
+                        <option value="O-">O-</option>
+                        <option value="AB+">AB+</option>
+                        <option value="AB-">AB-</option>
+                    </select>
+                    <div class="error-message" id="edit_blood_group_error"></div>
+                </div>
+                <div class="form-group">
+                    <label for="edit_phone">Phone</label>
+                    <input type="tel" id="edit_phone" name="phone" required>
+                    <div class="error-message" id="edit_phone_error"></div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="edit_email">Email</label>
+                <input type="email" id="edit_email" name="email" required>
+                <div class="error-message" id="edit_email_error"></div>
+            </div>
+            
+            <div style="margin-top: 20px;">
+                <button type="submit" class="btn-save">Save Changes</button>
+                <button type="button" class="btn-cancel" onclick="closeEditModal()">Cancel</button>
+            </div>
+        </form>
+
+
+        <!-- ================= DOCTOR FORM ================= -->
+        <form id="editDoctorForm" method="post" action="manage_user_profile.php" enctype="multipart/form-data" style="display:none;">
+            <input type="hidden" name="action" value="edit_doctor">
+            <input type="hidden" id="edit_doctor_id" name="doctor_id">
+            <input type="hidden" id="current_image" name="current_image">
+
+           
+        <form id="editForm" method="post" action="Admin_doctor.php" enctype="multipart/form-data">
+            <input type="hidden" name="action" value="edit_doctor">
+            <input type="hidden" id="edit_doctor_id" name="doctor_id">
+            <input type="hidden" id="current_image" name="current_image">
+            
+            <div class="form-group">
+                <label>Current Profile Image</label>
+                <img id="current_img_display" class="current-image" src="uploads/default_doctor.png">
+                <br>
+                <label for="profile_image" class="image-upload-label">Change Profile Image</label>
+                <input type="file" id="profile_image" name="profile_image" accept="image/*">
+                <div class="error-message" id="edit_image_error"></div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="edit_first_name">First Name</label>
+                    <input type="text" id="edit_first_name" name="first_name" required>
+                    <div class="error-message" id="edit_first_name_error"></div>
+                </div>
+                <div class="form-group">
+                    <label for="edit_last_name">Last Name</label>
+                    <input type="text" id="edit_last_name" name="last_name" required>
+                    <div class="error-message" id="edit_last_name_error"></div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="edit_education">Education</label>
+                <input type="text" id="edit_education" name="education" required>
+                <div class="error-message" id="edit_education_error"></div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="edit_phone">Phone</label>
+                    <input type="tel" id="edit_phone" name="phone" required>
+                    <div class="error-message" id="edit_phone_error"></div>
+                </div>
+                <div class="form-group">
+                    <label for="edit_email">Email</label>
+                    <input type="email" id="edit_email" name="email" required>
+                    <div class="error-message" id="edit_email_error"></div>
+                </div>
+            </div>
+            
+            
+            <div style="margin-top: 20px;">
+                <button type="submit" class="btn-save">Save Changes</button>
+                <button type="button" class="btn-cancel" onclick="closeEditModal()">Cancel</button>
+            </div>
+        </form>
     </div>
+</div>
+        </form>
+
+    </div>
+</div>
+
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+// Modal functions
+function openEditModal(id, firstName, lastName, education, phone, email, specializationId, profileImage) {
+    document.getElementById('edit_doctor_id').value = id;
+    document.getElementById('edit_first_name').value = firstName;
+    document.getElementById('edit_last_name').value = lastName;
+    document.getElementById('edit_education').value = education;
+    document.getElementById('edit_phone').value = phone;
+    document.getElementById('edit_email').value = email;
+    
+    document.getElementById('current_image').value = profileImage;
+    
+    // Display current image
+    const imgDisplay = document.getElementById('current_img_display');
+    imgDisplay.src = profileImage && profileImage !== '' ? profileImage : 'uploads/default_doctor.png';
+    
+    // Clear any previous error messages
+    const errorElements = document.querySelectorAll('.error-message');
+    errorElements.forEach(el => el.style.display = 'none');
+    
+    document.getElementById('editModal').style.display = 'block';
+}
+
+function closeEditModal() {
+    document.getElementById('editModal').style.display = 'none';
+}
+
+// Close modal when clicking outside of it
+window.onclick = function(event) {
+    const modal = document.getElementById('editModal');
+    if (event.target == modal) {
+        closeEditModal();
+    }
+}
+
+function confirmDelete(id) {
+    if (confirm("Are you sure you want to delete this doctor?")) {
+        var form = document.createElement('form');
+        form.method = 'POST';
+        form.action = 'Admin_doctor.php';
+        var input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'delete';
+        input.value = id;
+        form.appendChild(input);
+        document.body.appendChild(form);
+        form.submit();
+    }
+}
+
+// Toast notification function
+function showToast(message, isSuccess = false) {
+    const toast = document.getElementById('toast');
+    toast.innerHTML = isSuccess ? 
+        `<i class="fas fa-check-circle"></i> ${message}` : 
+        `<i class="fas fa-exclamation-circle"></i> ${message}`;
+    toast.className = isSuccess ? 'toast success show' : 'toast show';
+    
+    setTimeout(() => {
+        toast.className = toast.className.replace('show', '');
+    }, 3000);
+}
+
+// Validation functions
+function validateFirstName() {
+    const firstName = document.getElementById('edit_first_name');
+    const errorElement = document.getElementById('edit_first_name_error');
+    
+    if (firstName.value.trim() === '') {
+        errorElement.textContent = 'First name is required';
+        errorElement.style.display = 'block';
+        return false;
+    } else if (!/^[a-zA-Z\s]+$/.test(firstName.value.trim())) {
+        errorElement.textContent = 'First name should contain only letters and spaces';
+        errorElement.style.display = 'block';
+        return false;
+    } else {
+        errorElement.style.display = 'none';
+        return true;
+    }
+}
+
+function validateLastName() {
+    const lastName = document.getElementById('edit_last_name');
+    const errorElement = document.getElementById('edit_last_name_error');
+    
+    if (lastName.value.trim() === '') {
+        errorElement.textContent = 'Last name is required';
+        errorElement.style.display = 'block';
+        return false;
+    } else if (!/^[a-zA-Z\s]+$/.test(lastName.value.trim())) {
+        errorElement.textContent = 'Last name should contain only letters and spaces';
+        errorElement.style.display = 'block';
+        return false;
+    } else {
+        errorElement.style.display = 'none';
+        return true;
+    }
+}
+
+function validateEducation() {
+    const education = document.getElementById('edit_education');
+    const errorElement = document.getElementById('edit_education_error');
+    
+    if (education.value.trim() === '') {
+        errorElement.textContent = 'Education is required';
+        errorElement.style.display = 'block';
+        return false;
+    } else if (!/^[a-zA-Z\s\.\,]+$/.test(education.value.trim())) {
+        errorElement.textContent = 'Education should contain only letters, spaces, dots, and commas';
+        errorElement.style.display = 'block';
+        return false;
+    } else {
+        errorElement.style.display = 'none';
+        return true;
+    }
+}
+
+function validatePhone() {
+    const phone = document.getElementById('edit_phone');
+    const errorElement = document.getElementById('edit_phone_error');
+    
+    if (phone.value.trim() === '') {
+        errorElement.textContent = 'Phone number is required';
+        errorElement.style.display = 'block';
+        return false;
+    } else if (!/^[0-9]{10}$/.test(phone.value.trim())) {
+        errorElement.textContent = 'Phone number must be exactly 10 digits';
+        errorElement.style.display = 'block';
+        return false;
+    } else {
+        errorElement.style.display = 'none';
+        return true;
+    }
+}
+
+function validateEmail() {
+    const email = document.getElementById('edit_email');
+    const errorElement = document.getElementById('edit_email_error');
+    
+    if (email.value.trim() === '') {
+        errorElement.textContent = 'Email is required';
+        errorElement.style.display = 'block';
+        return false;
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim())) {
+        errorElement.textContent = 'Invalid email format';
+        errorElement.style.display = 'block';
+        return false;
+    } else {
+        errorElement.style.display = 'none';
+        return true;
+    }
+}
+
+function validateSpecialization() {
+    const specialization = document.getElementById('edit_specialization');
+    const errorElement = document.getElementById('edit_specialization_error');
+    
+    if (specialization.value === '') {
+        errorElement.textContent = 'Specialization is required';
+        errorElement.style.display = 'block';
+        return false;
+    } else {
+        errorElement.style.display = 'none';
+        return true;
+    }
+}
+
+function validateImage() {
+    const imageInput = document.getElementById('profile_image');
+    const errorElement = document.getElementById('edit_image_error');
+    
+    if (imageInput.files && imageInput.files[0]) {
+        const file = imageInput.files[0];
+        const allowed = ['jpg', 'jpeg', 'png', 'gif'];
+        const ext = file.name.split('.').pop().toLowerCase();
+        
+        if (!allowed.includes(ext)) {
+            errorElement.textContent = 'Only JPG, JPEG, PNG, and GIF files are allowed';
+            errorElement.style.display = 'block';
+            return false;
+        } else if (file.size > 5 * 1024 * 1024) { // 5MB limit
+            errorElement.textContent = 'Image size must be less than 5MB';
+            errorElement.style.display = 'block';
+            return false;
+        }
+    }
+    
+    errorElement.style.display = 'none';
+    return true;
+}
+
+// Add event listeners for real-time validation
+document.getElementById('edit_first_name').addEventListener('input', validateFirstName);
+document.getElementById('edit_last_name').addEventListener('input', validateLastName);
+document.getElementById('edit_education').addEventListener('input', validateEducation);
+document.getElementById('edit_phone').addEventListener('input', validatePhone);
+document.getElementById('edit_email').addEventListener('input', validateEmail);
+document.getElementById('edit_specialization').addEventListener('change', validateSpecialization);
+document.getElementById('profile_image').addEventListener('change', validateImage);
+
+// Preview image when selected
+document.getElementById('profile_image').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('current_img_display').src = e.target.result;
+        }
+        reader.readAsDataURL(file);
+    }
+});
+
+// Form submission validation
+document.getElementById('editForm').addEventListener('submit', function(e) {
+    // Run all validation functions
+    const isFirstNameValid = validateFirstName();
+    const isLastNameValid = validateLastName();
+    const isEducationValid = validateEducation();
+    const isPhoneValid = validatePhone();
+    const isEmailValid = validateEmail();
+    const isSpecializationValid = validateSpecialization();
+    const isImageValid = validateImage();
+    
+    // If any validation fails, prevent form submission
+    if (!isFirstNameValid || !isLastNameValid || !isEducationValid || !isPhoneValid || !isEmailValid || !isSpecializationValid || !isImageValid) {
+        e.preventDefault();
+        showToast('Please correct the errors in the form');
+    }
+});
+
+// Open edit modal if edit parameter is in POST
+<?php if (isset($_POST['edit']) && $doctor_data): ?>
+window.addEventListener('load', function() {
+    openEditModal(
+        <?php echo $doctor_data['DOCTOR_ID']; ?>,
+        '<?php echo addslashes($doctor_data['FIRST_NAME']); ?>',
+        '<?php echo addslashes($doctor_data['LAST_NAME']); ?>',
+        '<?php echo addslashes($doctor_data['EDUCATION']); ?>',
+        '<?php echo $doctor_data['PHONE']; ?>',
+        '<?php echo $doctor_data['EMAIL']; ?>',
+      
+        '<?php echo $doctor_data['PROFILE_IMAGE']; ?>'
+    );
+});
+<?php endif; ?>
+
         // Function to edit user
         function editUser(userType, userId) {
-            document.getElementById('edit_user_type').value = userType;
-            document.getElementById('edit_user_id').value = userId;
-            
-            // Hide all forms
-            document.getElementById('editPatientForm').style.display = 'none';
-            document.getElementById('editDoctorForm').style.display = 'none';
-            document.getElementById('editReceptionistForm').style.display = 'none';
-            
-            // Show the appropriate form
-            document.getElementById('edit' + userType.charAt(0).toUpperCase() + userType.slice(1) + 'Form').style.display = 'block';
-            
-            // Show the modal
-            const editModal = new bootstrap.Modal(document.getElementById('editUserModal'));
-            editModal.show();
-        }
+
+    // Hide both forms first
+    document.getElementById("editPatientForm").style.display = "none";
+    document.getElementById("editDoctorForm").style.display = "none";
+
+    // Set modal title
+    document.getElementById("modalTitle").innerText = "Edit " + userType.charAt(0).toUpperCase() + userType.slice(1);
+
+    if(userType === "patient"){
+        document.getElementById("editPatientForm").style.display = "block";
+        document.getElementById("edit_patient_id").value = userId;
+    }
+
+    if(userType === "doctor"){
+        document.getElementById("editDoctorForm").style.display = "block";
+        document.getElementById("edit_doctor_id").value = userId;
+    }
+
+    document.getElementById("editModal").style.display = "block";
+}
+
         
         // Function to update user form based on selected user type
         function updateUserForm() {
@@ -1217,6 +1415,273 @@ if ($user_type === 'patient') {
                 document.getElementById('receptionistForm').style.display = 'block';
             }
         }
+        function openEditModal(id, firstName, lastName, dob, gender, bloodGroup, phone, email) {
+    document.getElementById('edit_patient_id').value = id;
+    document.getElementById('edit_first_name').value = firstName;
+    document.getElementById('edit_last_name').value = lastName;
+    document.getElementById('edit_dob').value = dob;
+    document.getElementById('edit_gender').value = gender;
+    document.getElementById('edit_blood_group').value = bloodGroup;
+    document.getElementById('edit_phone').value = phone;
+    document.getElementById('edit_email').value = email;
+    
+    // Clear any previous error messages
+    const errorElements = document.querySelectorAll('.error-message');
+    errorElements.forEach(el => el.style.display = 'none');
+    
+    // Remove error classes from form groups
+    const formGroups = document.querySelectorAll('.form-group');
+    formGroups.forEach(el => el.classList.remove('error', 'success'));
+    
+    document.getElementById('editModal').style.display = 'block';
+}
+
+function closeEditModal() {
+    document.getElementById('editModal').style.display = 'none';
+}
+
+// Close modal when clicking outside of it
+window.onclick = function(event) {
+    const modal = document.getElementById('editModal');
+    if (event.target == modal) {
+        closeEditModal();
+    }
+}
+
+function deletePatient(id) {
+    if (confirm("Are you sure you want to delete this patient?")) {
+        var f = document.createElement('form');
+        f.method = 'POST';
+        f.action = 'Admin_patient.php';
+        var a = document.createElement('input');
+        a.type = 'hidden';
+        a.name = 'action';
+        a.value = 'delete';
+        var i = document.createElement('input');
+        i.type = 'hidden';
+        i.name = 'id';
+        i.value = id;
+        f.appendChild(a);
+        f.appendChild(i);
+        document.body.appendChild(f);
+        f.submit();
+    }
+}
+
+// Toast notification function
+function showToast(message, isSuccess = false) {
+    const toast = document.getElementById('toast');
+    toast.innerHTML = isSuccess ? 
+        `<i class="fas fa-check-circle"></i> ${message}` : 
+        `<i class="fas fa-exclamation-circle"></i> ${message}`;
+    toast.className = isSuccess ? 'toast success show' : 'toast error show';
+    
+    setTimeout(() => {
+        toast.className = toast.className.replace('show', '');
+    }, 3000);
+}
+
+// Validation functions
+function validateFirstName() {
+    const firstName = document.getElementById('edit_first_name');
+    const errorElement = document.getElementById('edit_first_name_error');
+    const formGroup = firstName.closest('.form-group');
+    
+    if (firstName.value.trim() === '') {
+        errorElement.textContent = 'First name is required';
+        errorElement.style.display = 'block';
+        formGroup.classList.add('error');
+        formGroup.classList.remove('success');
+        return false;
+    } else if (!/^[a-zA-Z\s]+$/.test(firstName.value.trim())) {
+        errorElement.textContent = 'First name should contain only letters and spaces';
+        errorElement.style.display = 'block';
+        formGroup.classList.add('error');
+        formGroup.classList.remove('success');
+        return false;
+    } else {
+        errorElement.style.display = 'none';
+        formGroup.classList.remove('error');
+        formGroup.classList.add('success');
+        return true;
+    }
+}
+
+function validateLastName() {
+    const lastName = document.getElementById('edit_last_name');
+    const errorElement = document.getElementById('edit_last_name_error');
+    const formGroup = lastName.closest('.form-group');
+    
+    if (lastName.value.trim() === '') {
+        errorElement.textContent = 'Last name is required';
+        errorElement.style.display = 'block';
+        formGroup.classList.add('error');
+        formGroup.classList.remove('success');
+        return false;
+    } else if (!/^[a-zA-Z\s]+$/.test(lastName.value.trim())) {
+        errorElement.textContent = 'Last name should contain only letters and spaces';
+        errorElement.style.display = 'block';
+        formGroup.classList.add('error');
+        formGroup.classList.remove('success');
+        return false;
+    } else {
+        errorElement.style.display = 'none';
+        formGroup.classList.remove('error');
+        formGroup.classList.add('success');
+        return true;
+    }
+}
+
+function validateDOB() {
+    const dob = document.getElementById('edit_dob');
+    const errorElement = document.getElementById('edit_dob_error');
+    const formGroup = dob.closest('.form-group');
+    const selectedDate = new Date(dob.value);
+    const today = new Date();
+    
+    if (dob.value === '') {
+        errorElement.textContent = 'Date of birth is required';
+        errorElement.style.display = 'block';
+        formGroup.classList.add('error');
+        formGroup.classList.remove('success');
+        return false;
+    } else if (selectedDate > today) {
+        errorElement.textContent = 'Date of birth cannot be in the future';
+        errorElement.style.display = 'block';
+        formGroup.classList.add('error');
+        formGroup.classList.remove('success');
+        return false;
+    } else {
+        // Check if age is reasonable (e.g., not more than 120 years)
+        const age = today.getFullYear() - selectedDate.getFullYear();
+        if (age > 120) {
+            errorElement.textContent = 'Invalid date of birth';
+            errorElement.style.display = 'block';
+            formGroup.classList.add('error');
+            formGroup.classList.remove('success');
+            return false;
+        }
+        errorElement.style.display = 'none';
+        formGroup.classList.remove('error');
+        formGroup.classList.add('success');
+        return true;
+    }
+}
+
+function validateGender() {
+    const gender = document.getElementById('edit_gender');
+    const errorElement = document.getElementById('edit_gender_error');
+    const formGroup = gender.closest('.form-group');
+    
+    if (gender.value === '') {
+        errorElement.textContent = 'Gender is required';
+        errorElement.style.display = 'block';
+        formGroup.classList.add('error');
+        formGroup.classList.remove('success');
+        return false;
+    } else {
+        errorElement.style.display = 'none';
+        formGroup.classList.remove('error');
+        formGroup.classList.add('success');
+        return true;
+    }
+}
+
+function validateBloodGroup() {
+    const bloodGroup = document.getElementById('edit_blood_group');
+    const errorElement = document.getElementById('edit_blood_group_error');
+    const formGroup = bloodGroup.closest('.form-group');
+    
+    if (bloodGroup.value === '') {
+        errorElement.textContent = 'Blood group is required';
+        errorElement.style.display = 'block';
+        formGroup.classList.add('error');
+        formGroup.classList.remove('success');
+        return false;
+    } else {
+        errorElement.style.display = 'none';
+        formGroup.classList.remove('error');
+        formGroup.classList.add('success');
+        return true;
+    }
+}
+
+function validatePhone() {
+    const phone = document.getElementById('edit_phone');
+    const errorElement = document.getElementById('edit_phone_error');
+    const formGroup = phone.closest('.form-group');
+    
+    if (phone.value.trim() === '') {
+        errorElement.textContent = 'Phone number is required';
+        errorElement.style.display = 'block';
+        formGroup.classList.add('error');
+        formGroup.classList.remove('success');
+        return false;
+    } else if (!/^[0-9]{10}$/.test(phone.value.trim())) {
+        errorElement.textContent = 'Phone number must be exactly 10 digits';
+        errorElement.style.display = 'block';
+        formGroup.classList.add('error');
+        formGroup.classList.remove('success');
+        return false;
+    } else {
+        errorElement.style.display = 'none';
+        formGroup.classList.remove('error');
+        formGroup.classList.add('success');
+        return true;
+    }
+}
+
+function validateEmail() {
+    const email = document.getElementById('edit_email');
+    const errorElement = document.getElementById('edit_email_error');
+    const formGroup = email.closest('.form-group');
+    
+    if (email.value.trim() === '') {
+        errorElement.textContent = 'Email is required';
+        errorElement.style.display = 'block';
+        formGroup.classList.add('error');
+        formGroup.classList.remove('success');
+        return false;
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim())) {
+        errorElement.textContent = 'Invalid email format';
+        errorElement.style.display = 'block';
+        formGroup.classList.add('error');
+        formGroup.classList.remove('success');
+        return false;
+    } else {
+        errorElement.style.display = 'none';
+        formGroup.classList.remove('error');
+        formGroup.classList.add('success');
+        return true;
+    }
+}
+
+// Add event listeners for real-time validation
+document.getElementById('edit_first_name').addEventListener('input', validateFirstName);
+document.getElementById('edit_last_name').addEventListener('input', validateLastName);
+document.getElementById('edit_dob').addEventListener('change', validateDOB);
+document.getElementById('edit_gender').addEventListener('change', validateGender);
+document.getElementById('edit_blood_group').addEventListener('change', validateBloodGroup);
+document.getElementById('edit_phone').addEventListener('input', validatePhone);
+document.getElementById('edit_email').addEventListener('input', validateEmail);
+
+// Form submission validation
+document.getElementById('editForm').addEventListener('submit', function(e) {
+    // Run all validation functions
+    const isFirstNameValid = validateFirstName();
+    const isLastNameValid = validateLastName();
+    const isDOBValid = validateDOB();
+    const isGenderValid = validateGender();
+    const isBloodGroupValid = validateBloodGroup();
+    const isPhoneValid = validatePhone();
+    const isEmailValid = validateEmail();
+    
+    // If any validation fails, prevent form submission
+    if (!isFirstNameValid || !isLastNameValid || !isDOBValid || !isGenderValid || !isBloodGroupValid || !isPhoneValid || !isEmailValid) {
+        e.preventDefault();
+        showToast('Please correct the errors in the form', false);
+    }
+});
     </script>
 </body>
 </html>
