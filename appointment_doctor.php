@@ -749,14 +749,32 @@ if ($past_result->num_rows > 0) {
         
         // View prescription function
         function viewPrescription(appointmentId) {
-            // Redirect to prescription page
-            window.location.href = 'manage_prescriptions.php?appointment=' + appointmentId;
+            // Submit POST form to prescription page
+            var form = document.createElement('form');
+            form.method = 'POST';
+            form.action = 'manage_prescriptions.php';
+            var input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'appointment';
+            input.value = appointmentId;
+            form.appendChild(input);
+            document.body.appendChild(form);
+            form.submit();
         }
         
         // View feedback function
         function viewFeedback(appointmentId) {
-            // Redirect to feedback page
-            window.location.href = 'doctor_feedback.php?appointment=' + appointmentId;
+            // Submit POST form to feedback page
+            var form = document.createElement('form');
+            form.method = 'POST';
+            form.action = 'doctor_feedback.php';
+            var input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'appointment';
+            input.value = appointmentId;
+            form.appendChild(input);
+            document.body.appendChild(form);
+            form.submit();
         }
     </script>
 </body>

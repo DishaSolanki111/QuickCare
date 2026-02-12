@@ -719,8 +719,27 @@ if ($result->num_rows > 0) {
                         bookBtn.onclick = function() {
                             const time = slot.getAttribute('data-time');
                             const date = document.getElementById('date-picker').value;
-                            // Redirect to booking page with parameters
-                            window.location.href = `book_appointment_login.php?doctor_id=${doctorId}&date=${date}&time=${time}`;
+                            // Submit POST form to booking page with parameters
+                            var form = document.createElement('form');
+                            form.method = 'POST';
+                            form.action = 'book_appointment_login.php';
+                            var doctorInput = document.createElement('input');
+                            doctorInput.type = 'hidden';
+                            doctorInput.name = 'doctor_id';
+                            doctorInput.value = doctorId;
+                            form.appendChild(doctorInput);
+                            var dateInput = document.createElement('input');
+                            dateInput.type = 'hidden';
+                            dateInput.name = 'date';
+                            dateInput.value = date;
+                            form.appendChild(dateInput);
+                            var timeInput = document.createElement('input');
+                            timeInput.type = 'hidden';
+                            timeInput.name = 'time';
+                            timeInput.value = time;
+                            form.appendChild(timeInput);
+                            document.body.appendChild(form);
+                            form.submit();
                         };
                     });
                 });

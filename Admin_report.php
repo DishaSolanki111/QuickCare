@@ -490,22 +490,62 @@
 
 <script>
 function exportAppointmentReport() {
-    window.location.href = "export_appointments_report.php?" + 
-        "start_date=<?php echo isset($_POST['start_date']) ? $_POST['start_date'] : date('Y-m-01'); ?>" + 
-        "&end_date=<?php echo isset($_POST['end_date']) ? $_POST['end_date'] : date('Y-m-d'); ?>" + 
-        "&status_filter=<?php echo isset($_POST['status_filter']) ? $_POST['status_filter'] : ''; ?>";
+    var form = document.createElement('form');
+    form.method = 'POST';
+    form.action = 'export_appointments_report.php';
+    var startDateInput = document.createElement('input');
+    startDateInput.type = 'hidden';
+    startDateInput.name = 'start_date';
+    startDateInput.value = '<?php echo isset($_POST['start_date']) ? $_POST['start_date'] : date('Y-m-01'); ?>';
+    form.appendChild(startDateInput);
+    var endDateInput = document.createElement('input');
+    endDateInput.type = 'hidden';
+    endDateInput.name = 'end_date';
+    endDateInput.value = '<?php echo isset($_POST['end_date']) ? $_POST['end_date'] : date('Y-m-d'); ?>';
+    form.appendChild(endDateInput);
+    var statusInput = document.createElement('input');
+    statusInput.type = 'hidden';
+    statusInput.name = 'status_filter';
+    statusInput.value = '<?php echo isset($_POST['status_filter']) ? $_POST['status_filter'] : ''; ?>';
+    form.appendChild(statusInput);
+    document.body.appendChild(form);
+    form.submit();
 }
 
 function exportRevenueReport() {
-    window.location.href = "export_revenue_report.php?" + 
-        "start_date=<?php echo isset($_POST['revenue_start_date']) ? $_POST['revenue_start_date'] : date('Y-m-01'); ?>" + 
-        "&end_date=<?php echo isset($_POST['revenue_end_date']) ? $_POST['revenue_end_date'] : date('Y-m-d'); ?>";
+    var form = document.createElement('form');
+    form.method = 'POST';
+    form.action = 'export_revenue_report.php';
+    var startDateInput = document.createElement('input');
+    startDateInput.type = 'hidden';
+    startDateInput.name = 'start_date';
+    startDateInput.value = '<?php echo isset($_POST['revenue_start_date']) ? $_POST['revenue_start_date'] : date('Y-m-01'); ?>';
+    form.appendChild(startDateInput);
+    var endDateInput = document.createElement('input');
+    endDateInput.type = 'hidden';
+    endDateInput.name = 'end_date';
+    endDateInput.value = '<?php echo isset($_POST['revenue_end_date']) ? $_POST['revenue_end_date'] : date('Y-m-d'); ?>';
+    form.appendChild(endDateInput);
+    document.body.appendChild(form);
+    form.submit();
 }
 
 function exportDoctorReport() {
-    window.location.href = "export_doctor_report.php?" + 
-        "start_date=<?php echo isset($_POST['doctor_start_date']) ? $_POST['doctor_start_date'] : date('Y-m-01'); ?>" + 
-        "&end_date=<?php echo isset($_POST['doctor_end_date']) ? $_POST['doctor_end_date'] : date('Y-m-d'); ?>";
+    var form = document.createElement('form');
+    form.method = 'POST';
+    form.action = 'export_doctor_report.php';
+    var startDateInput = document.createElement('input');
+    startDateInput.type = 'hidden';
+    startDateInput.name = 'start_date';
+    startDateInput.value = '<?php echo isset($_POST['doctor_start_date']) ? $_POST['doctor_start_date'] : date('Y-m-01'); ?>';
+    form.appendChild(startDateInput);
+    var endDateInput = document.createElement('input');
+    endDateInput.type = 'hidden';
+    endDateInput.name = 'end_date';
+    endDateInput.value = '<?php echo isset($_POST['doctor_end_date']) ? $_POST['doctor_end_date'] : date('Y-m-d'); ?>';
+    form.appendChild(endDateInput);
+    document.body.appendChild(form);
+    form.submit();
 }
 </script>
 

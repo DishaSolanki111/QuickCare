@@ -2,11 +2,11 @@
 session_start(); // Start session to check login status
 include 'config.php';
 include 'header.php';
-if (!isset($_POST['id']) && !isset($_GET['id'])) {
+if (!isset($_POST['id'])) {
     die("Doctor ID missing.");
 }
 
- $doctor_id = isset($_POST['id']) ? intval($_POST['id']) : intval($_GET['id']);
+ $doctor_id = intval($_POST['id']);
 
 /* =========================
    FETCH DOCTOR DETAILS
@@ -535,7 +535,16 @@ if (!$doctor) {
                 openCalendar(doctorId);
             } else {
                 // User is not logged in, redirect to login with standalone parameter
-                window.location.href = 'login.php?standalone=true';
+                var form = document.createElement('form');
+                form.method = 'POST';
+                form.action = 'login.php';
+                var input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'standalone';
+                input.value = 'true';
+                form.appendChild(input);
+                document.body.appendChild(form);
+                form.submit();
             }
         }
         
