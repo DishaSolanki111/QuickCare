@@ -173,91 +173,178 @@ function generatePDFWithTCPDF($prescription, $medicines) {
 }
 
 function generatePDFAsHTML($prescription, $medicines) {
+    // Clear any previous output buffers
+    if (ob_get_level()) {
+        ob_end_clean();
+    }
+    
     // Fallback: Generate HTML that can be printed as PDF
     header('Content-Type: text/html; charset=UTF-8');
+    header('Cache-Control: no-cache, must-revalidate');
+    header('Expires: Sat, 26 Jul 1997 05:00:00 GMT');
     
     $html = '<!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Prescription - ' . htmlspecialchars($prescription['PRESCRIPTION_ID']) . '</title>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
         @media print {
-            @page { margin: 1cm; }
-            body { margin: 0; }
+            @page { 
+                margin: 1.5cm; 
+                size: A4;
+            }
+            .no-print { 
+                display: none !important; 
+            }
+            body { 
+                margin: 0;
+                padding: 0;
+            }
+            .container {
+                max-width: 100%;
+                padding: 0;
+            }
         }
         body { 
-            font-family: Arial, sans-serif; 
-            margin: 20px; 
+            font-family: "Segoe UI", Arial, sans-serif; 
+            margin: 0;
+            padding: 20px;
             line-height: 1.6;
+            background-color: #f5f5f5;
+            color: #333;
+            overflow-x: hidden;
+        }
+        .container {
+            max-width: 210mm;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            width: 100%;
+            box-sizing: border-box;
         }
         .header { 
             text-align: center; 
-            margin-bottom: 30px; 
-            border-bottom: 3px solid #064469;
-            padding-bottom: 15px;
+            margin-bottom: 35px; 
+            border-bottom: 4px solid #064469;
+            padding-bottom: 20px;
         }
         .header h1 { 
             color: #064469; 
-            margin: 0;
-            font-size: 24px;
+            margin: 0 0 8px 0;
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: 1px;
         }
         .header h2 { 
             color: #064469; 
-            margin: 5px 0;
-            font-size: 18px;
+            margin: 0;
+            font-size: 20px;
+            font-weight: 500;
+        }
+        .content-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            width: 100%;
+            box-sizing: border-box;
         }
         .section { 
-            margin-bottom: 20px; 
-            padding: 10px;
-            background-color: #f9f9f9;
-            border-left: 4px solid #064469;
+            margin-bottom: 0;
+            padding: 18px;
+            background-color: #f8f9fa;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            width: 100%;
+            box-sizing: border-box;
+            overflow: hidden;
         }
         .section h3 {
             color: #064469;
-            margin-top: 0;
-            font-size: 14px;
+            margin: 0 0 15px 0;
+            font-size: 16px;
             text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid #064469;
+            padding-bottom: 8px;
         }
         .info-row {
-            margin: 5px 0;
+            margin: 10px 0;
+            display: flex;
+            align-items: flex-start;
         }
         .info-label {
-            font-weight: bold;
+            font-weight: 700;
             color: #064469;
-            display: inline-block;
-            width: 150px;
+            min-width: 140px;
+            flex-shrink: 0;
+            font-size: 13px;
+        }
+        .info-value {
+            color: #333;
+            flex: 1;
+            font-size: 13px;
+            word-wrap: break-word;
+        }
+        .full-width {
+            grid-column: 1 / -1;
+        }
+        .medicine-section {
+            margin-top: 10px;
         }
         .medicine-table { 
             width: 100%; 
             border-collapse: collapse; 
-            margin: 15px 0; 
+            margin: 15px 0 0 0;
+            font-size: 12px;
+            table-layout: auto;
+            word-wrap: break-word;
         }
         .medicine-table th, .medicine-table td { 
             border: 1px solid #ddd; 
-            padding: 10px; 
-            text-align: left; 
+            padding: 12px 10px; 
+            text-align: left;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
         }
         .medicine-table th { 
             background-color: #064469; 
             color: white;
-            font-weight: bold;
+            font-weight: 700;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
-        .medicine-table tr:nth-child(even) {
-            background-color: #f2f2f2;
+        .medicine-table td {
+            background-color: white;
+        }
+        .medicine-table tr:nth-child(even) td {
+            background-color: #f8f9fa;
         }
         .footer { 
             margin-top: 40px; 
+            padding-top: 20px;
             text-align: center; 
             font-style: italic; 
             color: #666;
-            font-size: 12px;
-            border-top: 1px solid #ddd;
-            padding-top: 15px;
+            font-size: 11px;
+            border-top: 2px solid #e0e0e0;
         }
-        @media print {
-            .no-print { display: none; }
-            body { margin: 0; }
+        .footer p {
+            margin: 5px 0;
         }
         .print-button {
             position: fixed;
@@ -266,46 +353,71 @@ function generatePDFAsHTML($prescription, $medicines) {
             background: #064469;
             color: white;
             border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
+            padding: 12px 24px;
+            border-radius: 6px;
             cursor: pointer;
             font-size: 14px;
+            font-weight: 600;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            z-index: 1000;
+            transition: all 0.3s ease;
         }
         .print-button:hover {
             background: #072D44;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0,0,0,0.3);
+        }
+        .print-button:active {
+            transform: translateY(0);
+        }
+        @media (max-width: 768px) {
+            .two-column {
+                grid-template-columns: 1fr;
+            }
+            .container {
+                padding: 20px;
+            }
+            body {
+                padding: 10px;
+            }
         }
     </style>
 </head>
 <body>
-    <button class="print-button no-print" onclick="window.print()">Print / Save as PDF</button>
+    <button class="print-button no-print" onclick="window.print()">
+        <i class="fas fa-print"></i> Print / Save as PDF
+    </button>
     
-    <div class="header">
-        <h1>QuickCare Medical Center</h1>
-        <h2>Medical Prescription</h2>
-    </div>
-    
-    <div class="section">
-        <h3>Doctor Information</h3>
-        <div class="info-row">
-            <span class="info-label">Name:</span>
-            <span>Dr. ' . htmlspecialchars($prescription['DOC_FNAME'] . ' ' . $prescription['DOC_LNAME']) . '</span>
+    <div class="container">
+        <div class="header">
+            <h1>QuickCare Medical Center</h1>
+            <h2>Medical Prescription</h2>
         </div>
-        <div class="info-row">
-            <span class="info-label">Specialization:</span>
-            <span>' . htmlspecialchars($prescription['SPECIALISATION_NAME']) . '</span>
-        </div>';
+        
+        <div class="content-wrapper">
+            <div class="two-column">
+                <div class="section">
+                    <h3>Doctor Information</h3>
+                    <div class="info-row">
+                        <span class="info-label">Name:</span>
+                        <span class="info-value">Dr. ' . htmlspecialchars($prescription['DOC_FNAME'] . ' ' . $prescription['DOC_LNAME']) . '</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Specialization:</span>
+                        <span class="info-value">' . htmlspecialchars($prescription['SPECIALISATION_NAME']) . '</span>
+                    </div>';
     
     if (!empty($prescription['EDUCATION'])) {
         $html .= '<div class="info-row">
             <span class="info-label">Education:</span>
-            <span>' . htmlspecialchars($prescription['EDUCATION']) . '</span>
+            <span class="info-value">' . htmlspecialchars($prescription['EDUCATION']) . '</span>
         </div>';
     }
     
     if (!empty($prescription['DOC_PHONE'])) {
         $html .= '<div class="info-row">
             <span class="info-label">Contact:</span>
-            <span>' . htmlspecialchars($prescription['DOC_PHONE']);
+            <span class="info-value">' . htmlspecialchars($prescription['DOC_PHONE']);
         if (!empty($prescription['DOC_EMAIL'])) {
             $html .= ' | ' . htmlspecialchars($prescription['DOC_EMAIL']);
         }
@@ -314,32 +426,32 @@ function generatePDFAsHTML($prescription, $medicines) {
     }
     
     $html .= '</div>
-    
-    <div class="section">
-        <h3>Patient Information</h3>
-        <div class="info-row">
-            <span class="info-label">Name:</span>
-            <span>' . htmlspecialchars($prescription['PAT_FNAME'] . ' ' . $prescription['PAT_LNAME']) . '</span>
-        </div>';
+                
+                <div class="section">
+                    <h3>Patient Information</h3>
+                    <div class="info-row">
+                        <span class="info-label">Name:</span>
+                        <span class="info-value">' . htmlspecialchars($prescription['PAT_FNAME'] . ' ' . $prescription['PAT_LNAME']) . '</span>
+                    </div>';
     
     if (!empty($prescription['DOB'])) {
         $html .= '<div class="info-row">
             <span class="info-label">Date of Birth:</span>
-            <span>' . date('F d, Y', strtotime($prescription['DOB'])) . '</span>
+            <span class="info-value">' . date('F d, Y', strtotime($prescription['DOB'])) . '</span>
         </div>';
     }
     
     if (!empty($prescription['GENDER'])) {
         $html .= '<div class="info-row">
             <span class="info-label">Gender:</span>
-            <span>' . htmlspecialchars($prescription['GENDER']) . '</span>
+            <span class="info-value">' . htmlspecialchars($prescription['GENDER']) . '</span>
         </div>';
     }
     
     if (!empty($prescription['PAT_PHONE'])) {
         $html .= '<div class="info-row">
             <span class="info-label">Contact:</span>
-            <span>' . htmlspecialchars($prescription['PAT_PHONE']);
+            <span class="info-value">' . htmlspecialchars($prescription['PAT_PHONE']);
         if (!empty($prescription['PAT_EMAIL'])) {
             $html .= ' | ' . htmlspecialchars($prescription['PAT_EMAIL']);
         }
@@ -350,109 +462,128 @@ function generatePDFAsHTML($prescription, $medicines) {
     if (!empty($prescription['ADDRESS'])) {
         $html .= '<div class="info-row">
             <span class="info-label">Address:</span>
-            <span>' . nl2br(htmlspecialchars($prescription['ADDRESS'])) . '</span>
+            <span class="info-value">' . nl2br(htmlspecialchars($prescription['ADDRESS'])) . '</span>
         </div>';
     }
     
     $html .= '</div>
+            </div>
+            
+            <div class="section full-width">
+                <h3>Prescription Details</h3>
+                <div class="two-column">';
     
-    <div class="section">
-        <h3>Prescription Details</h3>
-        <div class="info-row">
+    $html .= '<div class="info-row">
             <span class="info-label">Date:</span>
-            <span>' . date('F d, Y', strtotime($prescription['ISSUE_DATE'])) . '</span>
+            <span class="info-value">' . date('F d, Y', strtotime($prescription['ISSUE_DATE'])) . '</span>
         </div>';
     
     if (!empty($prescription['APPOINTMENT_DATE'])) {
         $html .= '<div class="info-row">
             <span class="info-label">Appointment Date:</span>
-            <span>' . date('F d, Y', strtotime($prescription['APPOINTMENT_DATE'])) . '</span>
+            <span class="info-value">' . date('F d, Y', strtotime($prescription['APPOINTMENT_DATE'])) . '</span>
         </div>';
     }
     
     if (!empty($prescription['HEIGHT_CM'])) {
         $html .= '<div class="info-row">
             <span class="info-label">Height:</span>
-            <span>' . $prescription['HEIGHT_CM'] . ' cm</span>
+            <span class="info-value">' . $prescription['HEIGHT_CM'] . ' cm</span>
         </div>';
     }
     
     if (!empty($prescription['WEIGHT_KG'])) {
         $html .= '<div class="info-row">
             <span class="info-label">Weight:</span>
-            <span>' . $prescription['WEIGHT_KG'] . ' kg</span>
+            <span class="info-value">' . $prescription['WEIGHT_KG'] . ' kg</span>
         </div>';
     }
     
     if (!empty($prescription['BLOOD_PRESSURE'])) {
         $html .= '<div class="info-row">
             <span class="info-label">Blood Pressure:</span>
-            <span>' . $prescription['BLOOD_PRESSURE'] . ' mmHg</span>
+            <span class="info-value">' . $prescription['BLOOD_PRESSURE'] . ' mmHg</span>
         </div>';
     }
     
     if (!empty($prescription['DIABETES'])) {
         $html .= '<div class="info-row">
             <span class="info-label">Diabetes:</span>
-            <span>' . htmlspecialchars($prescription['DIABETES']) . '</span>
+            <span class="info-value">' . htmlspecialchars($prescription['DIABETES']) . '</span>
         </div>';
     }
     
+    $html .= '</div>';
+    
+    // Full-width fields below the two-column grid
     if (!empty($prescription['SYMPTOMS'])) {
-        $html .= '<div class="info-row">
-            <span class="info-label">Symptoms:</span>
-            <span>' . nl2br(htmlspecialchars($prescription['SYMPTOMS'])) . '</span>
+        $html .= '<div class="info-row" style="flex-direction: column; margin-top: 15px;">
+            <span class="info-label" style="margin-bottom: 5px;">Symptoms:</span>
+            <span class="info-value">' . nl2br(htmlspecialchars($prescription['SYMPTOMS'])) . '</span>
         </div>';
     }
     
     if (!empty($prescription['DIAGNOSIS'])) {
-        $html .= '<div class="info-row">
-            <span class="info-label">Diagnosis:</span>
-            <span>' . nl2br(htmlspecialchars($prescription['DIAGNOSIS'])) . '</span>
+        $html .= '<div class="info-row" style="flex-direction: column; margin-top: 15px;">
+            <span class="info-label" style="margin-bottom: 5px;">Diagnosis:</span>
+            <span class="info-value">' . nl2br(htmlspecialchars($prescription['DIAGNOSIS'])) . '</span>
         </div>';
     }
     
     if (!empty($prescription['ADDITIONAL_NOTES'])) {
-        $html .= '<div class="info-row">
-            <span class="info-label">Additional Notes:</span>
-            <span>' . nl2br(htmlspecialchars($prescription['ADDITIONAL_NOTES'])) . '</span>
+        $html .= '<div class="info-row" style="flex-direction: column; margin-top: 15px;">
+            <span class="info-label" style="margin-bottom: 5px;">Additional Notes:</span>
+            <span class="info-value">' . nl2br(htmlspecialchars($prescription['ADDITIONAL_NOTES'])) . '</span>
         </div>';
     }
     
     $html .= '</div>';
     
     if (!empty($medicines)) {
-        $html .= '<div class="section">
+        $html .= '<div class="section full-width medicine-section">
         <h3>Prescribed Medicines</h3>
         <table class="medicine-table">
-            <tr>
-                <th>Medicine Name</th>
-                <th>Dosage</th>
-                <th>Frequency</th>
-                <th>Duration</th>
-            </tr>';
+            <thead>
+                <tr>
+                    <th>Medicine Name</th>
+                    <th>Dosage</th>
+                    <th>Frequency</th>
+                    <th>Duration</th>
+                </tr>
+            </thead>
+            <tbody>';
         
         foreach ($medicines as $medicine) {
             $html .= '<tr>
-                <td>' . htmlspecialchars($medicine['MED_NAME']) . '</td>
+                <td><strong>' . htmlspecialchars($medicine['MED_NAME']) . '</strong></td>
                 <td>' . htmlspecialchars($medicine['DOSAGE']) . '</td>
                 <td>' . htmlspecialchars($medicine['FREQUENCY']) . '</td>
                 <td>' . htmlspecialchars($medicine['DURATION']) . '</td>
             </tr>';
         }
         
-        $html .= '</table>
+        $html .= '</tbody>
+        </table>
         </div>';
     }
     
-    $html .= '<div class="footer">
-        <p>This is a digitally generated prescription. For any queries, please contact the medical center.</p>
-        <p>Generated on: ' . date('F d, Y') . '</p>
+    $html .= '</div>
+        
+        <div class="footer">
+            <p>This is a digitally generated prescription. For any queries, please contact the medical center.</p>
+            <p>Generated on: ' . date('F d, Y') . '</p>
+        </div>
     </div>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </body>
 </html>';
     
+    // Output the HTML and ensure no further processing
     echo $html;
+    // Flush output and exit immediately
+    if (function_exists('fastcgi_finish_request')) {
+        fastcgi_finish_request();
+    }
     exit;
 }
 ?>

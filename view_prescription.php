@@ -1,36 +1,21 @@
 <?php
     session_start();
     include 'config.php';
-    include 'recept_sidebar.php';
+    
+    // Check authentication first
     if (!isset($_SESSION['RECEPTIONIST_ID'])) {
         header("Location: login.php");
         exit;
     }
   
-    $receptionist_id = $_SESSION['RECEPTIONIST_ID'];
-    
-    // Get receptionist information for the welcome message
-    $receptionist_query = mysqli_query($conn, "SELECT * FROM receptionist_tbl WHERE RECEPTIONIST_ID = $receptionist_id");
-    $receptionist = mysqli_fetch_assoc($receptionist_query);
-
-    // ================= FETCH PRESCRIPTIONS =================
-    $prescriptions_query = mysqli_query($conn, "
-        SELECT p.*, 
-            a.APPOINTMENT_DATE, a.APPOINTMENT_TIME,
-            d.FIRST_NAME AS DOC_FNAME, d.LAST_NAME AS DOC_LNAME, d.EDUCATION, d.PHONE AS DOC_PHONE, d.EMAIL AS DOC_EMAIL,
-            s.SPECIALISATION_NAME,
-            pat.FIRST_NAME AS PAT_FNAME, pat.LAST_NAME AS PAT_LNAME,
-            pat.DOB, pat.GENDER, pat.BLOOD_GROUP, pat.ADDRESS, pat.PHONE AS PAT_PHONE, pat.EMAIL AS PAT_EMAIL
-        FROM prescription_tbl p
-        JOIN appointment_tbl a ON p.APPOINTMENT_ID = a.APPOINTMENT_ID
-        JOIN doctor_tbl d ON a.DOCTOR_ID = d.DOCTOR_ID
-        JOIN specialisation_tbl s ON d.SPECIALISATION_ID = s.SPECIALISATION_ID
-        JOIN patient_tbl pat ON a.PATIENT_ID = pat.PATIENT_ID
-        ORDER BY p.ISSUE_DATE DESC
-    ");
-
     // ================= DOWNLOAD SINGLE PRESCRIPTION =================
+    // Handle download BEFORE any HTML output (including sidebar)
     if (isset($_POST['download']) || isset($_GET['download'])) {
+        // Clear any output buffers to ensure clean PDF output
+        while (ob_get_level()) {
+            ob_end_clean();
+        }
+        
         $prescription_id = isset($_POST['download']) ? intval($_POST['download']) : intval($_GET['download']);
 
         $detail_q = mysqli_query($conn, "
@@ -72,9 +57,35 @@
         // Include PDF generator
         require_once 'generate_prescription_pdf.php';
         
-        // Generate and download PDF
+        // Generate and download PDF - this will exit and output only PDF content
         generatePrescriptionPDF($prescription, $medicines, $conn);
+        exit; // Ensure no further output
     }
+    
+    // Only include sidebar and show page if NOT downloading
+    include 'recept_sidebar.php';
+    
+    $receptionist_id = $_SESSION['RECEPTIONIST_ID'];
+    
+    // Get receptionist information for the welcome message
+    $receptionist_query = mysqli_query($conn, "SELECT * FROM receptionist_tbl WHERE RECEPTIONIST_ID = $receptionist_id");
+    $receptionist = mysqli_fetch_assoc($receptionist_query);
+
+    // ================= FETCH PRESCRIPTIONS =================
+    $prescriptions_query = mysqli_query($conn, "
+        SELECT p.*, 
+            a.APPOINTMENT_DATE, a.APPOINTMENT_TIME,
+            d.FIRST_NAME AS DOC_FNAME, d.LAST_NAME AS DOC_LNAME, d.EDUCATION, d.PHONE AS DOC_PHONE, d.EMAIL AS DOC_EMAIL,
+            s.SPECIALISATION_NAME,
+            pat.FIRST_NAME AS PAT_FNAME, pat.LAST_NAME AS PAT_LNAME,
+            pat.DOB, pat.GENDER, pat.BLOOD_GROUP, pat.ADDRESS, pat.PHONE AS PAT_PHONE, pat.EMAIL AS PAT_EMAIL
+        FROM prescription_tbl p
+        JOIN appointment_tbl a ON p.APPOINTMENT_ID = a.APPOINTMENT_ID
+        JOIN doctor_tbl d ON a.DOCTOR_ID = d.DOCTOR_ID
+        JOIN specialisation_tbl s ON d.SPECIALISATION_ID = s.SPECIALISATION_ID
+        JOIN patient_tbl pat ON a.PATIENT_ID = pat.PATIENT_ID
+        ORDER BY p.ISSUE_DATE DESC
+    ");
     ?>
 
     <!DOCTYPE html>
