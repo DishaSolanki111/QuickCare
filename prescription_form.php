@@ -1,5 +1,17 @@
 <?php
 session_start();
+
+// Check if user is logged in and is a doctor
+if (
+    !isset($_SESSION['LOGGED_IN']) ||
+    $_SESSION['LOGGED_IN'] !== true ||
+    !isset($_SESSION['USER_TYPE']) ||
+    $_SESSION['USER_TYPE'] !== 'doctor'
+) {
+    header("Location: login.php");
+    exit();
+}
+
 // Include your existing config file
 require_once 'config.php';
 
@@ -8,6 +20,9 @@ if (!$conn) {
     die("Error: Database connection failed. Please check your config.php file.");
 }
 
+// Get doctor ID from session
+$doctor_id = $_SESSION['DOCTOR_ID'];
+
 // --- GET PATIENT ID FROM URL ---
 $patient_id_val = isset($_POST['patient_id']) ? $_POST['patient_id'] : (isset($_GET['patient_id']) ? $_GET['patient_id'] : null);
 if (!$patient_id_val || !is_numeric($patient_id_val)) {
@@ -15,18 +30,44 @@ if (!$patient_id_val || !is_numeric($patient_id_val)) {
 }
  $patient_id = intval($patient_id_val);
 
-// --- FETCH PATIENT DETAILS ---
- $stmt = $conn->prepare("SELECT FIRST_NAME, LAST_NAME FROM patient_tbl WHERE PATIENT_ID = ?");
+// --- FETCH PATIENT DETAILS AND VERIFY PATIENT HAS APPOINTMENT WITH THIS DOCTOR ---
+// This ensures doctors can only access patients assigned to them
+// Fetch all patient fields and calculate age from DOB
+ $stmt = $conn->prepare("SELECT pt.PATIENT_ID, pt.FIRST_NAME, pt.LAST_NAME, pt.DOB, pt.GENDER, 
+                                pt.BLOOD_GROUP, pt.PHONE, pt.EMAIL, pt.ADDRESS,
+                                MAX(a.APPOINTMENT_DATE) AS LAST_APPOINTMENT_DATE
+                         FROM patient_tbl pt
+                         INNER JOIN appointment_tbl a ON pt.PATIENT_ID = a.PATIENT_ID
+                         WHERE pt.PATIENT_ID = ? AND a.DOCTOR_ID = ?
+                         GROUP BY pt.PATIENT_ID, pt.FIRST_NAME, pt.LAST_NAME, pt.DOB, pt.GENDER, 
+                                  pt.BLOOD_GROUP, pt.PHONE, pt.EMAIL, pt.ADDRESS
+                         LIMIT 1");
 if ($stmt === false) {
     die("Error preparing patient query: " . $conn->error);
 }
- $stmt->bind_param("i", $patient_id);
+ $stmt->bind_param("ii", $patient_id, $doctor_id);
  $stmt->execute();
  $result = $stmt->get_result();
  $patient = $result->fetch_assoc();
  $stmt->close();
 if (!$patient) {
-    die("<div style='font-family: Arial, sans-serif; color: #d9534f; padding: 20px; border: 1px solid #d9534f; background-color: #f2dede; border-radius: 5px;'><strong>Error:</strong> Patient not found.</div>");
+    die("<div style='font-family: Arial, sans-serif; color: #d9534f; padding: 20px; border: 1px solid #d9534f; background-color: #f2dede; border-radius: 5px;'><strong>Error:</strong> Patient not found or you do not have access to this patient's records.</div>");
+}
+
+// Calculate age from DOB (backend calculation)
+$patient_age = null;
+if (!empty($patient['DOB']) && $patient['DOB'] !== '0000-00-00' && $patient['DOB'] !== null) {
+    $dob = new DateTime($patient['DOB']);
+    $today = new DateTime();
+    $age = $today->diff($dob);
+    $patient_age = $age->y; // Years
+}
+
+// Format last appointment date
+$last_appointment_formatted = null;
+if (!empty($patient['LAST_APPOINTMENT_DATE']) && $patient['LAST_APPOINTMENT_DATE'] !== '0000-00-00' && $patient['LAST_APPOINTMENT_DATE'] !== null) {
+    $last_appt = new DateTime($patient['LAST_APPOINTMENT_DATE']);
+    $last_appointment_formatted = $last_appt->format('F d, Y');
 }
 
  $message = '';
@@ -34,6 +75,22 @@ if (!$patient) {
 // --- HANDLE FORM SUBMISSION (ADD NEW PRESCRIPTION) ---
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_prescription'])) {
     try {
+        // Verify that the appointment belongs to this doctor before adding prescription
+        $appointment_id = intval($_POST['appointment_id']);
+        $verify_appointment_sql = "SELECT APPOINTMENT_ID 
+                                   FROM appointment_tbl 
+                                   WHERE APPOINTMENT_ID = ? AND DOCTOR_ID = ? AND PATIENT_ID = ? AND STATUS = 'COMPLETED'";
+        $verify_appointment_stmt = $conn->prepare($verify_appointment_sql);
+        $verify_appointment_stmt->bind_param("iii", $appointment_id, $doctor_id, $patient_id);
+        $verify_appointment_stmt->execute();
+        $verify_appointment_result = $verify_appointment_stmt->get_result();
+        
+        if ($verify_appointment_result->num_rows === 0) {
+            $verify_appointment_stmt->close();
+            throw new Exception("Invalid appointment or you do not have permission to add prescriptions for this appointment.");
+        }
+        $verify_appointment_stmt->close();
+        
         $conn->begin_transaction();
         
         // 1. Insert into prescription_tbl
@@ -51,7 +108,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_prescription'])) 
         $bp = !empty($_POST['blood_pressure']) ? $_POST['blood_pressure'] : null;
         
         // --- CHANGED: 'd' to 's' for weight for better compatibility ---
-        $stmt->bind_param("isissssss", $_POST['appointment_id'], $_POST['issue_date'], $height, $weight, $bp, $_POST['diabetes'], $_POST['symptoms'], $_POST['diagnosis'], $_POST['additional_notes']);
+        $stmt->bind_param("isissssss", $appointment_id, $_POST['issue_date'], $height, $weight, $bp, $_POST['diabetes'], $_POST['symptoms'], $_POST['diagnosis'], $_POST['additional_notes']);
         
         if (!$stmt->execute()) {
             throw new Exception("Error executing prescription insert: " . $stmt->error);
@@ -94,6 +151,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_prescription'])) 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_prescription_id'])) {
     $delete_id = intval($_POST['delete_prescription_id']);
     try {
+        // Verify that the prescription belongs to this doctor before deletion
+        $verify_sql = "SELECT p.PRESCRIPTION_ID 
+                      FROM prescription_tbl p
+                      INNER JOIN appointment_tbl a ON p.APPOINTMENT_ID = a.APPOINTMENT_ID
+                      WHERE p.PRESCRIPTION_ID = ? AND a.DOCTOR_ID = ?";
+        $verify_stmt = $conn->prepare($verify_sql);
+        $verify_stmt->bind_param("ii", $delete_id, $doctor_id);
+        $verify_stmt->execute();
+        $verify_result = $verify_stmt->get_result();
+        
+        if ($verify_result->num_rows === 0) {
+            $verify_stmt->close();
+            die("<div style='font-family: Arial, sans-serif; color: #d9534f; padding: 20px; border: 1px solid #d9534f; background-color: #f2dede; border-radius: 5px;'><strong>Error:</strong> You do not have permission to delete this prescription.</div>");
+        }
+        $verify_stmt->close();
+        
+        // Proceed with deletion
         $stmt = $conn->prepare("DELETE FROM prescription_medicine_tbl WHERE PRESCRIPTION_ID = ?");
         $stmt->bind_param("i", $delete_id);
         $stmt->execute();
@@ -113,9 +187,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_prescription_i
 }
 
 // --- FETCH EXISTING PRESCRIPTIONS ---
- $sql = "SELECT p.PRESCRIPTION_ID, p.ISSUE_DATE, p.DIAGNOSIS, p.SYMPTOMS, a.APPOINTMENT_DATE, d.FIRST_NAME AS DOC_FNAME, d.LAST_NAME AS DOC_LNAME FROM prescription_tbl p JOIN appointment_tbl a ON p.APPOINTMENT_ID = a.APPOINTMENT_ID JOIN doctor_tbl d ON a.DOCTOR_ID = d.DOCTOR_ID WHERE a.PATIENT_ID = ? ORDER BY a.APPOINTMENT_DATE DESC";
+// Filter prescriptions by doctor_id to ensure doctors only see their own prescriptions
+ $sql = "SELECT p.PRESCRIPTION_ID, p.ISSUE_DATE, p.DIAGNOSIS, p.SYMPTOMS, a.APPOINTMENT_DATE, d.FIRST_NAME AS DOC_FNAME, d.LAST_NAME AS DOC_LNAME 
+         FROM prescription_tbl p 
+         JOIN appointment_tbl a ON p.APPOINTMENT_ID = a.APPOINTMENT_ID 
+         JOIN doctor_tbl d ON a.DOCTOR_ID = d.DOCTOR_ID 
+         WHERE a.PATIENT_ID = ? AND a.DOCTOR_ID = ? 
+         ORDER BY a.APPOINTMENT_DATE DESC";
  $stmt = $conn->prepare($sql);
- $stmt->bind_param("i", $patient_id);
+ $stmt->bind_param("ii", $patient_id, $doctor_id);
  $stmt->execute();
  $prescriptions_result = $stmt->get_result();
  $prescriptions = $prescriptions_result->fetch_all(MYSQLI_ASSOC);
@@ -126,9 +206,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_prescription_i
  $medicines = $medicines_result->fetch_all(MYSQLI_ASSOC);
 
 // --- FETCH PATIENT'S COMPLETED APPOINTMENTS ---
- $appointment_sql = "SELECT a.APPOINTMENT_ID, a.APPOINTMENT_DATE, d.FIRST_NAME, d.LAST_NAME, s.SPECIALISATION_NAME FROM appointment_tbl a JOIN doctor_tbl d ON a.DOCTOR_ID = d.DOCTOR_ID JOIN specialisation_tbl s ON d.SPECIALISATION_ID = s.SPECIALISATION_ID WHERE a.PATIENT_ID = ? AND a.STATUS = 'COMPLETED' ORDER BY a.APPOINTMENT_DATE DESC";
+// Filter appointments by doctor_id to ensure doctors only see their own appointments
+ $appointment_sql = "SELECT a.APPOINTMENT_ID, a.APPOINTMENT_DATE, d.FIRST_NAME, d.LAST_NAME, s.SPECIALISATION_NAME 
+                     FROM appointment_tbl a 
+                     JOIN doctor_tbl d ON a.DOCTOR_ID = d.DOCTOR_ID 
+                     JOIN specialisation_tbl s ON d.SPECIALISATION_ID = s.SPECIALISATION_ID 
+                     WHERE a.PATIENT_ID = ? AND a.DOCTOR_ID = ? AND a.STATUS = 'COMPLETED' 
+                     ORDER BY a.APPOINTMENT_DATE DESC";
  $appointment_stmt = $conn->prepare($appointment_sql);
- $appointment_stmt->bind_param("i", $patient_id);
+ $appointment_stmt->bind_param("ii", $patient_id, $doctor_id);
  $appointment_stmt->execute();
  $appointment_result = $appointment_stmt->get_result();
  $completed_appointments = $appointment_result->fetch_all(MYSQLI_ASSOC);
@@ -326,6 +412,117 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_prescription_i
             color: #0056b3;
             text-decoration: none;
             font-weight: bold;
+            padding: 8px 16px;
+            border: 1px solid #0056b3;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+        
+        .back-link:hover {
+            background-color: #0056b3;
+            color: white;
+        }
+        
+        /* Patient Details Card Styles */
+        .patient-details-card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e0e0e0;
+        }
+        
+        .patient-details-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
+        .patient-details-header h2 {
+            color: var(--primary-color);
+            margin: 0;
+            border: none;
+            padding: 0;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .patient-details-header h2 i {
+            color: var(--secondary-color);
+            font-size: 1.6rem;
+        }
+        
+        .patient-details-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+        }
+        
+        .patient-detail-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+        
+        .patient-detail-icon {
+            width: 40px;
+            height: 40px;
+            min-width: 40px;
+            background: linear-gradient(135deg, var(--secondary-color), var(--soft-blue));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.1rem;
+        }
+        
+        .patient-detail-content {
+            flex: 1;
+        }
+        
+        .patient-detail-label {
+            font-size: 0.85rem;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .patient-detail-value {
+            font-size: 1rem;
+            color: #333;
+            font-weight: 500;
+            word-break: break-word;
+        }
+        
+        .patient-detail-value.not-provided {
+            color: #999;
+            font-style: italic;
+        }
+        
+        @media (max-width: 768px) {
+            .patient-details-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .patient-details-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .patient-details-header h2 {
+                font-size: 1.5rem;
+            }
         }
         
         .message {
@@ -509,6 +706,167 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_prescription_i
                 <a href="manage_prescriptions.php" class="back-link">&larr; Back to Patient List</a>
                 
                 <?php echo $message; ?>
+
+                <!-- Patient Details Card -->
+                <div class="patient-details-card">
+                    <div class="patient-details-header">
+                        <h2><i class="fas fa-user-md"></i> Patient Information</h2>
+                    </div>
+                    
+                    <div class="patient-details-grid">
+                        <!-- Patient Name -->
+                        <div class="patient-detail-item">
+                            <div class="patient-detail-icon">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div class="patient-detail-content">
+                                <div class="patient-detail-label">Patient Name</div>
+                                <div class="patient-detail-value">
+                                    <?php echo htmlspecialchars($patient['FIRST_NAME'] . ' ' . $patient['LAST_NAME']); ?>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Age -->
+                        <div class="patient-detail-item">
+                            <div class="patient-detail-icon">
+                                <i class="fas fa-birthday-cake"></i>
+                            </div>
+                            <div class="patient-detail-content">
+                                <div class="patient-detail-label">Age</div>
+                                <div class="patient-detail-value">
+                                    <?php if ($patient_age !== null): ?>
+                                        <?php echo $patient_age; ?> years
+                                    <?php else: ?>
+                                        <span class="not-provided">Not Provided</span>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Gender -->
+                        <?php if (!empty($patient['GENDER']) && $patient['GENDER'] !== 'NULL'): ?>
+                        <div class="patient-detail-item">
+                            <div class="patient-detail-icon">
+                                <i class="fas fa-venus-mars"></i>
+                            </div>
+                            <div class="patient-detail-content">
+                                <div class="patient-detail-label">Gender</div>
+                                <div class="patient-detail-value"><?php echo htmlspecialchars($patient['GENDER']); ?></div>
+                            </div>
+                        </div>
+                        <?php endif; ?>
+                        
+                        <!-- Blood Group -->
+                        <div class="patient-detail-item">
+                            <div class="patient-detail-icon">
+                                <i class="fas fa-tint"></i>
+                            </div>
+                            <div class="patient-detail-content">
+                                <div class="patient-detail-label">Blood Group</div>
+                                <div class="patient-detail-value">
+                                    <?php if (!empty($patient['BLOOD_GROUP']) && $patient['BLOOD_GROUP'] !== 'NULL'): ?>
+                                        <?php echo htmlspecialchars($patient['BLOOD_GROUP']); ?>
+                                    <?php else: ?>
+                                        <span class="not-provided">Not Provided</span>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Phone Number -->
+                        <?php if (!empty($patient['PHONE'])): ?>
+                        <div class="patient-detail-item">
+                            <div class="patient-detail-icon">
+                                <i class="fas fa-phone"></i>
+                            </div>
+                            <div class="patient-detail-content">
+                                <div class="patient-detail-label">Phone Number</div>
+                                <div class="patient-detail-value"><?php echo htmlspecialchars($patient['PHONE']); ?></div>
+                            </div>
+                        </div>
+                        <?php else: ?>
+                        <div class="patient-detail-item">
+                            <div class="patient-detail-icon">
+                                <i class="fas fa-phone"></i>
+                            </div>
+                            <div class="patient-detail-content">
+                                <div class="patient-detail-label">Phone Number</div>
+                                <div class="patient-detail-value not-provided">Not Provided</div>
+                            </div>
+                        </div>
+                        <?php endif; ?>
+                        
+                        <!-- Email Address -->
+                        <?php if (!empty($patient['EMAIL'])): ?>
+                        <div class="patient-detail-item">
+                            <div class="patient-detail-icon">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            <div class="patient-detail-content">
+                                <div class="patient-detail-label">Email Address</div>
+                                <div class="patient-detail-value"><?php echo htmlspecialchars($patient['EMAIL']); ?></div>
+                            </div>
+                        </div>
+                        <?php else: ?>
+                        <div class="patient-detail-item">
+                            <div class="patient-detail-icon">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            <div class="patient-detail-content">
+                                <div class="patient-detail-label">Email Address</div>
+                                <div class="patient-detail-value not-provided">Not Provided</div>
+                            </div>
+                        </div>
+                        <?php endif; ?>
+                        
+                        <!-- Address -->
+                        <?php if (!empty($patient['ADDRESS'])): ?>
+                        <div class="patient-detail-item">
+                            <div class="patient-detail-icon">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </div>
+                            <div class="patient-detail-content">
+                                <div class="patient-detail-label">Address</div>
+                                <div class="patient-detail-value"><?php echo htmlspecialchars($patient['ADDRESS']); ?></div>
+                            </div>
+                        </div>
+                        <?php else: ?>
+                        <div class="patient-detail-item">
+                            <div class="patient-detail-icon">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </div>
+                            <div class="patient-detail-content">
+                                <div class="patient-detail-label">Address</div>
+                                <div class="patient-detail-value not-provided">Not Provided</div>
+                            </div>
+                        </div>
+                        <?php endif; ?>
+                        
+                        <!-- Last Visit Date -->
+                        <?php if ($last_appointment_formatted !== null): ?>
+                        <div class="patient-detail-item">
+                            <div class="patient-detail-icon">
+                                <i class="fas fa-calendar-check"></i>
+                            </div>
+                            <div class="patient-detail-content">
+                                <div class="patient-detail-label">Last Visit Date</div>
+                                <div class="patient-detail-value"><?php echo htmlspecialchars($last_appointment_formatted); ?></div>
+                            </div>
+                        </div>
+                        <?php else: ?>
+                        <div class="patient-detail-item">
+                            <div class="patient-detail-icon">
+                                <i class="fas fa-calendar-check"></i>
+                            </div>
+                            <div class="patient-detail-content">
+                                <div class="patient-detail-label">Last Visit Date</div>
+                                <div class="patient-detail-value not-provided">Not Available</div>
+                            </div>
+                        </div>
+                        <?php endif; ?>
+                    </div>
+                </div>
 
                 <div class="form-container">
                     <h2>Add New Prescription</h2>

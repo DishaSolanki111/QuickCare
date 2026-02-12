@@ -373,13 +373,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_status'])) {
         }
         
         @media (max-width: 768px) {
-            .sidebar {
-                width: 70px;
-            }
-            
-            .sidebar h2, .sidebar a span {
-                display: none;
-            }
             
             .main-content {
                 margin-left: 70px;
@@ -427,13 +420,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_status'])) {
         
         <!-- Appointments Card -->
         <div class="card">
-            <div class="card-header">
-                <h3>Appointments</h3>
-              <button class="btn btn-primary" onclick="window.location.href='appointment.php'">
-    <i class="bi bi-plus-circle"></i> Create Appointment
-</button>
-
-            </div>
             <div class="card-body">
                 <?php
                 if (mysqli_num_rows($appointments_query) > 0) {
@@ -479,16 +465,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_status'])) {
                                     <form method="POST" style="display: inline;">
                                         <input type="hidden" name="appointment_id" value="<?php echo $appointment['APPOINTMENT_ID']; ?>">
                                         <input type="hidden" name="status" value="COMPLETED">
-                                        <button type="submit" name="update_status" class="btn btn-success btn-sm">
-                                            <i class="bi bi-check"></i> Complete
-                                        </button>
+                                        
                                     </form>
                                     <form method="POST" style="display: inline;">
                                         <input type="hidden" name="appointment_id" value="<?php echo $appointment['APPOINTMENT_ID']; ?>">
                                         <input type="hidden" name="status" value="CANCELLED">
-                                        <button type="submit" name="update_status" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to cancel this appointment?')">
-                                            <i class="bi bi-x"></i> Cancel
-                                        </button>
+                                     
                                     </form>
                                 <?php endif; ?>
                             </div>

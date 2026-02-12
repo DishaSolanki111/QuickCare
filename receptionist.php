@@ -229,7 +229,7 @@ body {
                     <div class="stats-card">
                         <i class="bi bi-capsule stats-icon"></i>
                         <div class="stats-number"><?php echo $medicine_count; ?></div>
-                        <div class="stats-label">Medicine Management</div>
+                        <div class="stats-label">Medicines</div>
                     </div>
                 </div>
             </div>
