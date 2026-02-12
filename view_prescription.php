@@ -49,11 +49,13 @@
         ");
 
         if (mysqli_num_rows($detail_q) === 0) {
-            exit("Invalid prescription");
+            header("Location: view_prescription.php?error=invalid_prescription");
+            exit;
         }
 
         $prescription = mysqli_fetch_assoc($detail_q);
 
+        // Get medicines for this prescription
         $med_q = mysqli_query($conn, "
             SELECT m.MED_NAME, pm.DOSAGE, pm.FREQUENCY, pm.DURATION
             FROM prescription_medicine_tbl pm
@@ -61,92 +63,17 @@
             WHERE pm.PRESCRIPTION_ID = $prescription_id
         ");
 
-        $med_html = '';
+        // Fetch all medicines into an array
+        $medicines = array();
         while ($m = mysqli_fetch_assoc($med_q)) {
-            $med_html .= "
-                <div class='medicine-item'>
-                    <strong>{$m['MED_NAME']}</strong><br>
-                    {$m['DOSAGE']} | {$m['FREQUENCY']} | {$m['DURATION']}
-                </div>
-            ";
+            $medicines[] = $m;
         }
 
-        header("Content-Type: application/html");
-        header("Content-Disposition: attachment; filename=prescription_$prescription_id.html");
-
-        ob_start();
-        ?>
-        <html>
-        <head>
-            <style>
-                body { font-family: Arial, sans-serif; padding:15px; }
-                h2 { color:#064469; border-bottom: 2px solid #064469; padding-bottom: 5px; margin-bottom: 10px; }
-                .section { margin-bottom:15px; }
-                .label { font-weight:bold; color:#064469; }
-                .medicine-item { border-bottom:1px solid #ddd; padding:5px 0; }
-                .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-                .logo { font-size: 20px; font-weight: bold; color: #064469; }
-                .doctor-info { margin-bottom: 10px; background-color: #f8f9fa; padding: 10px; border-radius: 5px; }
-                .patient-info { margin-bottom: 10px; background-color: #e9f7fe; padding: 10px; border-radius: 5px; }
-                .prescription-content { margin-bottom: 10px; }
-                .footer { margin-top: 15px; text-align: center; font-style: italic; color: #666; font-size: 0.9em; }
-            </style>
-        </head>
-        <body>
-            <div class="header">
-                <div class="logo">QuickCare Medical Center</div>
-                <div>
-                    <strong>Date:</strong> <?= date('d M Y', strtotime($prescription['ISSUE_DATE'])) ?>
-                </div>
-            </div>
-
-            <h2>Medical Prescription</h2>
-
-            <div class="doctor-info">
-                <div class="label">Prescribing Doctor:</div>
-                Dr. <?= htmlspecialchars($prescription['DOC_FNAME'].' '.$prescription['DOC_LNAME']) ?><br>
-                <?= htmlspecialchars($prescription['SPECIALISATION_NAME']) ?><br>
-                <?= htmlspecialchars($prescription['EDUCATION']) ?>
-            </div>
-
-            <div class="patient-info">
-                <div class="label">Patient Information:</div>
-                <strong>Name:</strong> <?= htmlspecialchars($prescription['PAT_FNAME'].' '.$prescription['PAT_LNAME']) ?><br>
-                <strong>Address:</strong> <?= nl2br(htmlspecialchars($prescription['ADDRESS'])) ?><br>
-                <strong>Phone:</strong> <?= htmlspecialchars($prescription['PAT_PHONE']) ?>
-            </div>
-
-            <div class="prescription-content">
-                <div class="section">
-                    <div class="label">Diagnosis:</div>
-                    <?= nl2br(htmlspecialchars($prescription['DIAGNOSIS'])) ?>
-                </div>
-
-                <div class="section">
-                    <div class="label">Symptoms:</div>
-                    <?= nl2br(htmlspecialchars($prescription['SYMPTOMS'])) ?>
-                </div>
-
-                <div class="section">
-                    <div class="label">Prescribed Medicines:</div>
-                    <?= $med_html ?>
-                </div>
-
-                <div class="section">
-                    <div class="label">Additional Notes:</div>
-                    <?= nl2br(htmlspecialchars($prescription['NOTES'] ?? 'None')) ?>
-                </div>
-            </div>
-
-            <div class="footer">
-                <p>This is a digitally generated prescription. For any queries, please contact the medical center.</p>
-                <p>Generated on <?= date('d M Y') ?></p>
-            </div>
-        </body>
-        </html>
-        <?php
-        echo ob_get_clean();
-        exit;
+        // Include PDF generator
+        require_once 'generate_prescription_pdf.php';
+        
+        // Generate and download PDF
+        generatePrescriptionPDF($prescription, $medicines, $conn);
     }
     ?>
 

@@ -30,7 +30,7 @@ if ((isset($_POST['download']) && !empty($_POST['download'])) || (isset($_GET['d
     
     // Get prescription details
     $prescription_detail = mysqli_query($conn, "
-        SELECT p.*, d.FIRST_NAME as DOC_FNAME, d.LAST_NAME as DOC_LNAME, d.EDUCATION, d.PHONE, d.EMAIL,
+        SELECT p.*, d.FIRST_NAME as DOC_FNAME, d.LAST_NAME as DOC_LNAME, d.EDUCATION, d.PHONE as DOC_PHONE, d.EMAIL as DOC_EMAIL,
                s.SPECIALISATION_NAME, a.APPOINTMENT_DATE, pa.FIRST_NAME as PAT_FNAME, pa.LAST_NAME as PAT_LNAME,
                pa.DOB, pa.GENDER, pa.ADDRESS, pa.PHONE as PAT_PHONE, pa.EMAIL as PAT_EMAIL
         FROM prescription_tbl p
@@ -52,108 +52,19 @@ if ((isset($_POST['download']) && !empty($_POST['download'])) || (isset($_GET['d
             WHERE pm.PRESCRIPTION_ID = " . $prescription['PRESCRIPTION_ID']
         );
         
-        // Generate PDF content (simplified for this example)
-        header('Content-Type: application/pdf');
-        header('Content-Disposition: attachment; filename="prescription_' . $prescription_id . '.pdf"');
+        // Fetch all medicines into an array
+        $medicines = array();
+        while ($medicine = mysqli_fetch_assoc($medicines_query)) {
+            $medicines[] = $medicine;
+        }
         
-        // In a real application, you would use a library like FPDF or TCPDF to generate a proper PDF
-        // For this example, we'll just output a simple HTML that can be saved as PDF
-        echo '<html>
-        <head>
-            <title>Prescription - ' . $prescription['PRESCRIPTION_ID'] . '</title>
-            <style>
-                body { font-family: Arial, sans-serif; margin: 20px; }
-                .header { text-align: center; margin-bottom: 30px; }
-                .doctor-info, .patient-info { margin-bottom: 20px; }
-                .prescription-details { margin-bottom: 20px; }
-                .medicine-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-                .medicine-table th, .medicine-table td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-                .medicine-table th { background-color: #f2f2f2; }
-                .footer { margin-top: 30px; text-align: center; font-style: italic; }
-            </style>
-        </head>
-        <body>
-            <div class="header">
-                <h1>QuickCare Medical Center</h1>
-                <h2>Medical Prescription</h2>
-            </div>
-            
-            <div class="doctor-info">
-                <h3>Doctor Information</h3>
-                <p><strong>Name:</strong> Dr. ' . htmlspecialchars($prescription['DOC_FNAME'] . ' ' . $prescription['DOC_LNAME']) . '</p>
-                <p><strong>Specialization:</strong> ' . htmlspecialchars($prescription['SPECIALISATION_NAME']) . '</p>
-                <p><strong>Education:</strong> ' . htmlspecialchars($prescription['EDUCATION']) . '</p>
-                <p><strong>Contact:</strong> ' . htmlspecialchars($prescription['PHONE']) . ' | ' . htmlspecialchars($prescription['EMAIL']) . '</p>
-            </div>
-            
-            <div class="patient-info">
-                <h3>Patient Information</h3>
-                <p><strong>Name:</strong> ' . htmlspecialchars($prescription['PAT_FNAME'] . ' ' . $prescription['PAT_LNAME']) . '</p>
-                <p><strong>Date of Birth:</strong> ' . date('F d, Y', strtotime($prescription['DOB'])) . '</p>
-                <p><strong>Gender:</strong> ' . htmlspecialchars($prescription['GENDER']) . '</p>
-                <p><strong>Contact:</strong> ' . htmlspecialchars($prescription['PAT_PHONE']) . ' | ' . htmlspecialchars($prescription['PAT_EMAIL']) . '</p>
-                <p><strong>Address:</strong> ' . htmlspecialchars($prescription['ADDRESS']) . '</p>
-            </div>
-            
-            <div class="prescription-details">
-                <h3>Prescription Details</h3>
-                <p><strong>Date:</strong> ' . date('F d, Y', strtotime($prescription['ISSUE_DATE'])) . '</p>
-                <p><strong>Appointment Date:</strong> ' . date('F d, Y', strtotime($prescription['APPOINTMENT_DATE'])) . '</p>';
-                
-                if (!empty($prescription['HEIGHT_CM'])) {
-                    echo '<p><strong>Height:</strong> ' . $prescription['HEIGHT_CM'] . ' cm</p>';
-                }
-                
-                if (!empty($prescription['WEIGHT_KG'])) {
-                    echo '<p><strong>Weight:</strong> ' . $prescription['WEIGHT_KG'] . ' kg</p>';
-                }
-                
-                if (!empty($prescription['BLOOD_PRESSURE'])) {
-                    echo '<p><strong>Blood Pressure:</strong> ' . $prescription['BLOOD_PRESSURE'] . ' mmHg</p>';
-                }
-                
-                if (!empty($prescription['DIABETES'])) {
-                    echo '<p><strong>Diabetes:</strong> ' . $prescription['DIABETES'] . '</p>';
-                }
-                
-                echo '<p><strong>Symptoms:</strong> ' . htmlspecialchars($prescription['SYMPTOMS']) . '</p>
-                <p><strong>Diagnosis:</strong> ' . htmlspecialchars($prescription['DIAGNOSIS']) . '</p>';
-                
-                if (!empty($prescription['ADDITIONAL_NOTES'])) {
-                    echo '<p><strong>Additional Notes:</strong> ' . htmlspecialchars($prescription['ADDITIONAL_NOTES']) . '</p>';
-                }
-                
-                echo '</div>
-            
-            <div class="medicines">
-                <h3>Prescribed Medicines</h3>
-                <table class="medicine-table">
-                    <tr>
-                        <th>Medicine Name</th>
-                        <th>Dosage</th>
-                        <th>Frequency</th>
-                        <th>Duration</th>
-                    </tr>';
-                    
-                    while ($medicine = mysqli_fetch_assoc($medicines_query)) {
-                        echo '<tr>
-                            <td>' . htmlspecialchars($medicine['MED_NAME']) . '</td>
-                            <td>' . htmlspecialchars($medicine['DOSAGE']) . '</td>
-                            <td>' . htmlspecialchars($medicine['FREQUENCY']) . '</td>
-                            <td>' . htmlspecialchars($medicine['DURATION']) . '</td>
-                        </tr>';
-                    }
-                    
-                    echo '</table>
-            </div>
-            
-            <div class="footer">
-                <p>This is a digitally generated prescription. For any queries, please contact the medical center.</p>
-                <p>Generated on: ' . date('F d, Y') . '</p>
-            </div>
-        </body>
-        </html>';
+        // Include PDF generator
+        require_once 'generate_prescription_pdf.php';
         
+        // Generate and download PDF
+        generatePrescriptionPDF($prescription, $medicines, $conn);
+    } else {
+        header("Location: patinet_prescriptions.php?error=invalid_prescription");
         exit;
     }
 }
