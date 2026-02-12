@@ -6,7 +6,7 @@ include "config.php";
 include "header.php";
 
 // Get doctor ID from URL
- $doctor_id = isset($_POST['doctor_id']) ? intval($_POST['doctor_id']) : (isset($_GET['doctor_id']) ? intval($_GET['doctor_id']) : 0);
+ $doctor_id = isset($_POST['doctor_id']) ? intval($_POST['doctor_id']) : 0;
 
 // Redirect if no doctor ID is provided
 if ($doctor_id == 0) {

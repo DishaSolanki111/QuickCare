@@ -123,8 +123,8 @@ if (isset($_POST['action']) && $_POST['action'] == 'edit_doctor') {
 }
 
 // Handle delete
-if (isset($_GET['delete'])) {
-    $id = (int) $_GET['delete'];
+if (isset($_POST['delete'])) {
+    $id = (int) $_POST['delete'];
     if ($id > 0) {
         $check = mysqli_query($conn, "SELECT COUNT(*) as c FROM appointment_tbl WHERE DOCTOR_ID = $id");
         $row = mysqli_fetch_assoc($check);
@@ -140,8 +140,8 @@ if (isset($_GET['delete'])) {
 
 // Get doctor data for editing
  $doctor_data = null;
-if (isset($_GET['edit'])) {
-    $doctor_id = (int) $_GET['edit'];
+if (isset($_POST['edit'])) {
+    $doctor_id = (int) $_POST['edit'];
     $query = "SELECT * FROM doctor_tbl WHERE DOCTOR_ID = $doctor_id";
     $result = mysqli_query($conn, $query);
     if ($result && mysqli_num_rows($result) > 0) {
@@ -698,7 +698,16 @@ window.onclick = function(event) {
 
 function confirmDelete(id) {
     if (confirm("Are you sure you want to delete this doctor?")) {
-        window.location.href = "Admin_doctor.php?delete=" + id;
+        var form = document.createElement('form');
+        form.method = 'POST';
+        form.action = 'Admin_doctor.php';
+        var input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'delete';
+        input.value = id;
+        form.appendChild(input);
+        document.body.appendChild(form);
+        form.submit();
     }
 }
 
@@ -883,8 +892,8 @@ document.getElementById('editForm').addEventListener('submit', function(e) {
     }
 });
 
-// Open edit modal if edit parameter is in URL
-<?php if (isset($_GET['edit']) && $doctor_data): ?>
+// Open edit modal if edit parameter is in POST
+<?php if (isset($_POST['edit']) && $doctor_data): ?>
 window.addEventListener('load', function() {
     openEditModal(
         <?php echo $doctor_data['DOCTOR_ID']; ?>,

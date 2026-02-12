@@ -2,8 +2,8 @@
 include 'config.php';
 
 // --- Database Logic (Unchanged) ---
-$doctor_id = $_POST['doctor_id'] ?? $_GET['doctor_id'];
-$date = $_POST['date'] ?? $_GET['date'];
+$doctor_id = $_POST['doctor_id'] ?? null;
+$date = $_POST['date'] ?? null;
 
 // It's better to select by schedule_id for a specific date if possible,
 // but sticking to your original logic for now.
@@ -151,10 +151,8 @@ if (mysqli_num_rows($q) > 0) {
             // Loop to generate the time slot buttons
             while($start < $end){
                 $slot = date("H:i", $start);
-                // Construct the URL for the redirect
-                $redirectUrl = "login.php?doctor_id=" . urlencode($doctor_id) . "&date=" . urlencode($date) . "&time=" . urlencode($slot) . "&schedule_id=" . urlencode($row['SCHEDULE_ID']);
                 ?>
-                <button class="slot" onclick="window.location.href='<?= $redirectUrl ?>'">
+                <button class="slot" onclick="submitSlotForm(<?= htmlspecialchars(json_encode($doctor_id)) ?>, <?= htmlspecialchars(json_encode($date)) ?>, <?= htmlspecialchars(json_encode($slot)) ?>, <?= htmlspecialchars(json_encode($row['SCHEDULE_ID'])) ?>)">
                     <?= date("h:i A", strtotime($slot)) ?>
                 </button>
                 <?php
@@ -167,3 +165,33 @@ if (mysqli_num_rows($q) > 0) {
         <p class="no-slots-message">No slots available for this date.</p>
     <?php endif; ?>
 </div>
+
+<script>
+function submitSlotForm(doctorId, date, time, scheduleId) {
+    var form = document.createElement('form');
+    form.method = 'POST';
+    form.action = 'login.php';
+    var doctorInput = document.createElement('input');
+    doctorInput.type = 'hidden';
+    doctorInput.name = 'doctor_id';
+    doctorInput.value = doctorId;
+    form.appendChild(doctorInput);
+    var dateInput = document.createElement('input');
+    dateInput.type = 'hidden';
+    dateInput.name = 'date';
+    dateInput.value = date;
+    form.appendChild(dateInput);
+    var timeInput = document.createElement('input');
+    timeInput.type = 'hidden';
+    timeInput.name = 'time';
+    timeInput.value = time;
+    form.appendChild(timeInput);
+    var scheduleInput = document.createElement('input');
+    scheduleInput.type = 'hidden';
+    scheduleInput.name = 'schedule_id';
+    scheduleInput.value = scheduleId;
+    form.appendChild(scheduleInput);
+    document.body.appendChild(form);
+    form.submit();
+}
+</script>

@@ -25,8 +25,8 @@ include 'config.php';
 ");
 
 // Handle prescription download
-if ((isset($_POST['download']) && !empty($_POST['download'])) || (isset($_GET['download']) && !empty($_GET['download']))) {
-    $prescription_id = mysqli_real_escape_string($conn, isset($_POST['download']) ? $_POST['download'] : $_GET['download']);
+if (isset($_POST['download']) && !empty($_POST['download'])) {
+    $prescription_id = mysqli_real_escape_string($conn, $_POST['download']);
     
     // Get prescription details
     $prescription_detail = mysqli_query($conn, "
@@ -393,8 +393,17 @@ html {
     
     <script>
         function setReminder(prescriptionId) {
-            // Redirect to medicine reminder page with prescription ID
-            window.location.href = 'medicine_reminder.php?prescription=' + prescriptionId;
+            // Submit POST form to medicine reminder page with prescription ID
+            var form = document.createElement('form');
+            form.method = 'POST';
+            form.action = 'medicine_reminder.php';
+            var input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'prescription';
+            input.value = prescriptionId;
+            form.appendChild(input);
+            document.body.appendChild(form);
+            form.submit();
         }
     </script>
 </body>

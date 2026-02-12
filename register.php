@@ -234,10 +234,30 @@ setTimeout(function() {
     if (window.opener) {
         window.close();
         // If window.close() doesn't work (popup blocked), redirect the parent window
-        window.opener.location.href = 'login.php?standalone=true';
+        var form = document.createElement('form');
+        form.method = 'POST';
+        form.action = 'login.php';
+        var input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'standalone';
+        input.value = 'true';
+        form.appendChild(input);
+        if (window.opener && window.opener.document) {
+            window.opener.document.body.appendChild(form);
+            form.submit();
+        }
     } else {
         // If opened in a regular tab/window
-        window.location.href = 'login.php?standalone=true';
+        var form = document.createElement('form');
+        form.method = 'POST';
+        form.action = 'login.php';
+        var input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'standalone';
+        input.value = 'true';
+        form.appendChild(input);
+        document.body.appendChild(form);
+        form.submit();
     }
 }, 2000);
 <?php endif; ?>

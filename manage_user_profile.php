@@ -16,7 +16,7 @@ include 'recept_sidebar.php';
  $receptionist = mysqli_fetch_assoc($receptionist_query);
 
 // Handle user type selection
- $user_type = isset($_POST['user_type']) ? $_POST['user_type'] : (isset($_GET['user_type']) ? $_GET['user_type'] : 'patient');
+ $user_type = isset($_POST['user_type']) ? $_POST['user_type'] : 'patient';
 
 // Handle user creation
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create_user'])) {

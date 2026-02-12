@@ -82,8 +82,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_schedule'])) {
 ");
 
 // Handle AJAX request for doctor schedules
-if ((isset($_POST['doctor_id']) || isset($_GET['doctor_id'])) && (isset($_POST['ajax']) || isset($_GET['ajax']))) {
-    $doctor_id = mysqli_real_escape_string($conn, isset($_POST['doctor_id']) ? $_POST['doctor_id'] : $_GET['doctor_id']);
+if (isset($_POST['doctor_id']) && isset($_POST['ajax'])) {
+    $doctor_id = mysqli_real_escape_string($conn, $_POST['doctor_id']);
     
     $doctor_schedules_query = mysqli_query($conn, "
         SELECT * FROM doctor_schedule_tbl WHERE DOCTOR_ID = '$doctor_id' ORDER BY FIELD(AVAILABLE_DAY, 'MON', 'TUE', 'WED', 'THUR', 'FRI', 'SAT', 'SUN')

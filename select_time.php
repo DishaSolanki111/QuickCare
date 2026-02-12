@@ -7,13 +7,13 @@ if (!isset($_SESSION['PATIENT_ID'])) {
     exit;
 }
 
-if ((!isset($_POST['doctor']) && !isset($_GET['doctor'])) || (!isset($_POST['day']) && !isset($_GET['day']))) {
+if (!isset($_POST['doctor']) || !isset($_POST['day'])) {
     header("Location: doctor_schedule.php");
     exit;
 }
 
-$doctor_id = $_POST['doctor'] ?? $_GET['doctor'];
-$day = $_POST['day'] ?? $_GET['day'];
+$doctor_id = $_POST['doctor'];
+$day = $_POST['day'];
 
 /* Get doctor schedule */
 $q = mysqli_query($conn, "

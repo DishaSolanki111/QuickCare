@@ -15,7 +15,7 @@ include 'config.php';
  $patient = mysqli_fetch_assoc($patient_query);
 
 // Get selected specialization from query parameters
- $selected_specialization = isset($_POST['specialization']) ? mysqli_real_escape_string($conn, $_POST['specialization']) : (isset($_GET['specialization']) ? mysqli_real_escape_string($conn, $_GET['specialization']) : '');
+ $selected_specialization = isset($_POST['specialization']) ? mysqli_real_escape_string($conn, $_POST['specialization']) : '';
 
 // Fetch specializations for filter
  $specializations_query = mysqli_query($conn, "SELECT * FROM specialisation_tbl ORDER BY SPECIALISATION_NAME");
@@ -37,7 +37,7 @@ if (!empty($selected_specialization)) {
  $doctors_result = mysqli_query($conn, $doctors_query);
 
 // Get doctor ID from URL if viewing a specific doctor
- $doctor_id = isset($_POST['doctor']) ? mysqli_real_escape_string($conn, $_POST['doctor']) : (isset($_GET['doctor']) ? mysqli_real_escape_string($conn, $_GET['doctor']) : '');
+ $doctor_id = isset($_POST['doctor']) ? mysqli_real_escape_string($conn, $_POST['doctor']) : '';
 
 // If doctor ID is provided, get doctor details
  $doctor_details = null;

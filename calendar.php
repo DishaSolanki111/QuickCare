@@ -2,11 +2,11 @@
 session_start();
 include "config.php";
 
- $doctor_id = isset($_POST['doctor_id']) ? (int)$_POST['doctor_id'] : (int)$_GET['doctor_id'];
+ $doctor_id = isset($_POST['doctor_id']) ? (int)$_POST['doctor_id'] : 0;
 
 /* Month & Year */
- $month = isset($_POST['month']) ? (int)$_POST['month'] : (isset($_GET['month']) ? (int)$_GET['month'] : date('n'));
- $year  = isset($_POST['year'])  ? (int)$_POST['year']  : (isset($_GET['year']) ? (int)$_GET['year'] : date('Y'));
+ $month = isset($_POST['month']) ? (int)$_POST['month'] : date('n');
+ $year  = isset($_POST['year'])  ? (int)$_POST['year']  : date('Y');
 
 /* Normalize month overflow */
 if ($month < 1) { $month = 12; $year--; }
