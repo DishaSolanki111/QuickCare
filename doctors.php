@@ -2,11 +2,11 @@
 session_start();
 include "config.php";
 include "header.php";
-if (!isset($_POST['spec_id']) && !isset($_GET['spec_id'])) {
+if (!isset($_POST['spec_id'])) {
     die("Specialization ID not provided");
 }
 
-$spec_id = isset($_POST['spec_id']) ? intval($_POST['spec_id']) : intval($_GET['spec_id']);
+$spec_id = intval($_POST['spec_id']);
 
  $q = "SELECT DOCTOR_ID, FIRST_NAME, LAST_NAME, PROFILE_IMAGE, SPECIALISATION_ID 
      FROM doctor_tbl 

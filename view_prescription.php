@@ -10,13 +10,13 @@
   
     // ================= DOWNLOAD SINGLE PRESCRIPTION =================
     // Handle download BEFORE any HTML output (including sidebar)
-    if (isset($_POST['download']) || isset($_GET['download'])) {
+    if (isset($_POST['download'])) {
         // Clear any output buffers to ensure clean PDF output
         while (ob_get_level()) {
             ob_end_clean();
         }
         
-        $prescription_id = isset($_POST['download']) ? intval($_POST['download']) : intval($_GET['download']);
+        $prescription_id = intval($_POST['download']);
 
         $detail_q = mysqli_query($conn, "
             SELECT p.*, 

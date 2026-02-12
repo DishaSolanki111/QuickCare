@@ -38,8 +38,8 @@ if ($doc_result->num_rows === 1) {
 
 // Check for success message in URL
  $alert_message = '';
-if (isset($_POST['status']) || isset($_GET['status'])) {
-    $status = isset($_POST['status']) ? $_POST['status'] : $_GET['status'];
+if (isset($_POST['status'])) {
+    $status = $_POST['status'];
     if ($status === 'success') {
         $alert_message = "Prescription added successfully!";
     } elseif ($status === 'deleted_success') {

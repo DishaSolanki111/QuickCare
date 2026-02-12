@@ -24,7 +24,7 @@ if (!$conn) {
 $doctor_id = $_SESSION['DOCTOR_ID'];
 
 // --- GET PATIENT ID FROM URL ---
-$patient_id_val = isset($_POST['patient_id']) ? $_POST['patient_id'] : (isset($_GET['patient_id']) ? $_GET['patient_id'] : null);
+$patient_id_val = isset($_POST['patient_id']) ? $_POST['patient_id'] : null;
 if (!$patient_id_val || !is_numeric($patient_id_val)) {
     die("<div style='font-family: Arial, sans-serif; color: #d9534f; padding: 20px; border: 1px solid #d9534f; background-color: #f2dede; border-radius: 5px;'><strong>Error:</strong> Invalid or missing Patient ID. Please go back and select a patient.</div>");
 }

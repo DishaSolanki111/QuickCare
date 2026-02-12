@@ -131,8 +131,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_medicine_remin
 
 // Get reminder data for editing
 $edit_reminder_data = null;
-if (isset($_GET['edit_reminder_id'])) {
-    $edit_reminder_id = (int)$_GET['edit_reminder_id'];
+if (isset($_POST['edit_reminder_id'])) {
+    $edit_reminder_id = (int)$_POST['edit_reminder_id'];
     $edit_query = mysqli_query($conn, "SELECT * FROM medicine_reminder_tbl WHERE MEDICINE_REMINDER_ID = $edit_reminder_id");
     if ($edit_query && mysqli_num_rows($edit_query) > 0) {
         $edit_reminder_data = mysqli_fetch_assoc($edit_query);

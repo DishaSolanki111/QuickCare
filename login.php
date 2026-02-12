@@ -2,15 +2,15 @@
 session_start();
 
 // Check if this is a standalone login (not from appointment booking)
- $standalone = $_POST['standalone'] ?? ($_GET['standalone'] ?? false);
+ $standalone = $_POST['standalone'] ?? false;
 
 // Only require these parameters if not standalone
 if (!$standalone) {
     // Check both POST and GET for parameters
-    $doctor_id   = $_POST['doctor_id']   ?? ($_GET['doctor_id']   ?? null);
-    $date        = $_POST['date']        ?? ($_GET['date']        ?? null);
-    $time        = $_POST['time']        ?? ($_GET['time']        ?? null);
-    $schedule_id = $_POST['schedule_id'] ?? ($_GET['schedule_id'] ?? null);
+    $doctor_id   = $_POST['doctor_id']   ?? null;
+    $date        = $_POST['date']        ?? null;
+    $time        = $_POST['time']        ?? null;
+    $schedule_id = $_POST['schedule_id'] ?? null;
 
     // Only check for appointment data if at least one parameter is provided
     // This allows the login page to work both with and without appointment data
