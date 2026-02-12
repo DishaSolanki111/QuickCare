@@ -155,7 +155,7 @@ if ($past_result->num_rows > 0) {
             --card-bg: #F6F9FB;
             --primary-color: #1a3a5f;
             --info-color: #17a2b8;
-        }
+            --danger-color: #ff6b6b;        }
 
 * {
             margin: 0;
