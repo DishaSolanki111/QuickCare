@@ -475,7 +475,7 @@ include 'config.php';
             <a href="appointment.php" class="btn">Book Appointment</a>
             <a href="patinet_prescriptions.php" class="btn">View Prescription</a>
             <a href="patient_feedback.php" class="btn">Give Feedback</a>
-            <a href="patient_payments.php" class="btn">Make Payment</a>
+            <a href="patient_payments.php" class="btn">Payment History</a>
         </div>
     </div>
 </div>
