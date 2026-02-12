@@ -170,8 +170,8 @@ html {
         }
         
         .user-avatar {
-            width: 40px;
-            height: 40px;
+            width: 60px;
+            height: 60px;
             border-radius: 50%;
             background-color: var(--secondary-color);
             color: white;
@@ -419,6 +419,7 @@ html {
         
         <!-- Main Content -->
         <div class="main-content">
+
             <!-- Header -->
             <div class="header">
                 <div class="welcome-msg">Feedback</div>
@@ -429,6 +430,11 @@ html {
                         <i class="fas fa-chevron-down" style="margin-left: 8px;"></i>
                     </div>
                 </div>
+            </div>
+            <!-- Tab Navigation -->
+            <div style="margin-bottom: 25px;">
+                <button class="btn btn-primary" id="tabAppointments" onclick="showTab('appointments')">Your Feedback</button>
+                <button class="btn btn-primary" id="tabAllFeedback" onclick="showTab('allfeedback')">All Feedback</button>
             </div>
             
             <!-- Success/Error Messages -->
@@ -444,14 +450,15 @@ html {
                 </div>
             <?php endif; ?>
             
-            <!-- Appointment Details for Feedback -->
-            <?php if ($appointment_details): ?>
+
+            <!-- Tab Content: Appointments -->
+            <div id="appointmentsTab">
+                <?php if ($appointment_details): ?>
                 <div class="feedback-card">
                     <div class="feedback-header">
                         <h3>Leave Feedback for Dr. <?php echo htmlspecialchars($appointment_details['DOC_FNAME'] . ' ' . $appointment_details['DOC_LNAME']); ?></h3>
                         <span><?php echo htmlspecialchars($appointment_details['SPECIALISATION_NAME']); ?></span>
                     </div>
-                    
                     <div class="feedback-details">
                         <div class="feedback-item">
                             <i class="far fa-calendar"></i>
@@ -462,7 +469,6 @@ html {
                             <span><?php echo date('h:i A', strtotime($appointment_details['APPOINTMENT_TIME'])); ?></span>
                         </div>
                     </div>
-                    
                     <?php if ($appointment_details['FEEDBACK_ID']): ?>
                         <div class="rating">
                             <div class="rating-stars">
@@ -472,11 +478,9 @@ html {
                             </div>
                             <span class="rating-value"><?php echo $appointment_details['RATING']; ?>/5</span>
                         </div>
-                        
                         <div class="feedback-text">
                             <?php echo htmlspecialchars($appointment_details['FEEDBACK_COMMENTS']); ?>
                         </div>
-                        
                         <div class="btn-group">
                             <button class="btn btn-primary" onclick="openFeedbackModal(<?php echo $appointment_details['APPOINTMENT_ID']; ?>, <?php echo $appointment_details['RATING']; ?>, '<?php echo htmlspecialchars($appointment_details['FEEDBACK_COMMENTS']); ?>')">
                                 <i class="fas fa-edit"></i> Edit Feedback
@@ -490,113 +494,109 @@ html {
                         </div>
                     <?php endif; ?>
                 </div>
-            <?php endif; ?>
-            
-            <!-- Completed Appointments -->
-            <h3 style="margin-bottom: 20px;">Your Completed Appointments</h3>
-            
-            <?php
-            if (mysqli_num_rows($appointments_query) > 0) {
-                while ($appointment = mysqli_fetch_assoc($appointments_query)) {
-                    ?>
-                    <div class="feedback-card">
-                        <div class="feedback-header">
-                            <h3>Dr. <?php echo htmlspecialchars($appointment['DOC_FNAME'] . ' ' . $appointment['DOC_LNAME']); ?></h3>
-                            <span><?php echo htmlspecialchars($appointment['SPECIALISATION_NAME']); ?></span>
-                        </div>
-                        
-                        <div class="feedback-details">
-                            <div class="feedback-item">
-                                <i class="far fa-calendar"></i>
-                                <span><?php echo date('F d, Y', strtotime($appointment['APPOINTMENT_DATE'])); ?></span>
+                <?php endif; ?>
+
+                <h3 style="margin-bottom: 20px;">Your Completed Appointments</h3>
+                <?php
+                if (mysqli_num_rows($appointments_query) > 0) {
+                    while ($appointment = mysqli_fetch_assoc($appointments_query)) {
+                        ?>
+                        <div class="feedback-card">
+                            <div class="feedback-header">
+                                <h3>Dr. <?php echo htmlspecialchars($appointment['DOC_FNAME'] . ' ' . $appointment['DOC_LNAME']); ?></h3>
+                                <span><?php echo htmlspecialchars($appointment['SPECIALISATION_NAME']); ?></span>
                             </div>
-                            <div class="feedback-item">
-                                <i class="far fa-clock"></i>
-                                <span><?php echo date('h:i A', strtotime($appointment['APPOINTMENT_TIME'])); ?></span>
-                            </div>
-                        </div>
-                        
-                        <?php if ($appointment['FEEDBACK_ID']): ?>
-                            <div class="rating">
-                                <div class="rating-stars">
-                                    <?php for ($i = 1; $i <= 5; $i++): ?>
-                                        <i class="fas fa-star star <?php echo $i <= $appointment['RATING'] ? 'active' : ''; ?>"></i>
-                                    <?php endfor; ?>
+                            <div class="feedback-details">
+                                <div class="feedback-item">
+                                    <i class="far fa-calendar"></i>
+                                    <span><?php echo date('F d, Y', strtotime($appointment['APPOINTMENT_DATE'])); ?></span>
                                 </div>
-                                <span class="rating-value"><?php echo $appointment['RATING']; ?>/5</span>
+                                <div class="feedback-item">
+                                    <i class="far fa-clock"></i>
+                                    <span><?php echo date('h:i A', strtotime($appointment['APPOINTMENT_TIME'])); ?></span>
+                                </div>
                             </div>
-                            
-                            <div class="feedback-text">
-                                <?php echo htmlspecialchars($appointment['FEEDBACK_COMMENTS']); ?>
-                            </div>
-                            
-                            <div class="btn-group">
-                                <button class="btn btn-primary" onclick="openFeedbackModal(<?php echo $appointment['APPOINTMENT_ID']; ?>, <?php echo $appointment['RATING']; ?>, '<?php echo htmlspecialchars($appointment['FEEDBACK_COMMENTS']); ?>')">
-                                    <i class="fas fa-edit"></i> Edit Feedback
-                                </button>
-                            </div>
-                        <?php else: ?>
-                            <div class="btn-group">
-                                <button class="btn btn-success" onclick="openFeedbackModal(<?php echo $appointment['APPOINTMENT_ID']; ?>)">
-                                    <i class="fas fa-star"></i> Leave Feedback
-                                </button>
-                            </div>
-                        <?php endif; ?>
-                    </div>
-                    <?php
-                }
-            } else {
-                echo '<div class="empty-state">
-                    <i class="fas fa-comment-slash"></i>
-                    <p>No completed appointments found</p>
-                </div>';
-            }
-            ?>
-        </div>
-    </div>
-    
-    <!-- Feedback Modal -->
-    <div id="feedbackModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeFeedbackModal()">&times;</span>
-            <h2>Leave Your Feedback</h2>
-            <form method="POST" action="feedback.php">
-                <input type="hidden" id="feedback_appointment_id" name="appointment_id">
-                
-                <div class="form-group">
-                    <label>Rating</label>
-                    <div class="rating">
-                        <div class="rating-stars" id="ratingStars">
-                            <i class="fas fa-star star" data-rating="1"></i>
-                            <i class="fas fa-star star" data-rating="2"></i>
-                            <i class="fas fa-star star" data-rating="3"></i>
-                            <i class="fas fa-star star" data-rating="4"></i>
-                            <i class="fas fa-star star" data-rating="5"></i>
+                            <?php if ($appointment['FEEDBACK_ID']): ?>
+                                <div class="rating">
+                                    <div class="rating-stars">
+                                        <?php for ($i = 1; $i <= 5; $i++): ?>
+                                            <i class="fas fa-star star <?php echo $i <= $appointment['RATING'] ? 'active' : ''; ?>"></i>
+                                        <?php endfor; ?>
+                                    </div>
+                                    <span class="rating-value"><?php echo $appointment['RATING']; ?>/5</span>
+                                </div>
+                                <div class="feedback-text">
+                                    <?php echo htmlspecialchars($appointment['FEEDBACK_COMMENTS']); ?>
+                                </div>
+                                <div class="btn-group">
+                                    <button class="btn btn-primary" onclick="openFeedbackModal(<?php echo $appointment['APPOINTMENT_ID']; ?>, <?php echo $appointment['RATING']; ?>, '<?php echo htmlspecialchars($appointment['FEEDBACK_COMMENTS']); ?>')">
+                                        <i class="fas fa-edit"></i> Edit Feedback
+                                    </button>
+                                </div>
+                            <?php else: ?>
+                                <div class="btn-group">
+                                    <button class="btn btn-success" onclick="openFeedbackModal(<?php echo $appointment['APPOINTMENT_ID']; ?>)">
+                                        <i class="fas fa-star"></i> Leave Feedback
+                                    </button>
+                                </div>
+                            <?php endif; ?>
                         </div>
-                        <span class="rating-value" id="ratingValue">0/5</span>
-                    </div>
-                    <input type="hidden" id="rating" name="rating" value="0" required>
+                        <?php
+                    }
+                } else {
+                    echo '<div class="empty-state">
+                        <i class="fas fa-comment-slash"></i>
+                        <p>No completed appointments found</p>
+                    </div>';
+                }
+                ?>
+            </div>
+
+            <!-- Tab Content: All Feedback -->
+            <div id="allFeedbackTab" style="display:none;">
+                <h3 style="margin-bottom: 20px;">All Patient Feedback</h3>
+                <div style="overflow-x:auto;">
+                <table style="width:100%; border-collapse:collapse; background:white; border-radius:12px; overflow:hidden; box-shadow:0 4px 12px rgba(0,0,0,0.05);">
+                    <tr style="background:#5790AB; color:white;">
+                        <th>Patient Name</th>
+                        <th>Doctor Name</th>
+                        <th>Rating</th>
+                        <th>Comments</th>
+                    </tr>
+                    <?php
+                    $all_feedback_query = mysqli_query($conn, "SELECT f.RATING, f.COMMENTS, p.FIRST_NAME AS P_FNAME, p.LAST_NAME AS P_LNAME, d.FIRST_NAME AS D_FNAME, d.LAST_NAME AS D_LNAME FROM feedback_tbl f JOIN appointment_tbl a ON f.APPOINTMENT_ID=a.APPOINTMENT_ID JOIN patient_tbl p ON a.PATIENT_ID=p.PATIENT_ID JOIN doctor_tbl d ON a.DOCTOR_ID=d.DOCTOR_ID ORDER BY f.FEEDBACK_ID DESC");
+                    if ($all_feedback_query && mysqli_num_rows($all_feedback_query) > 0) {
+                        while ($row = mysqli_fetch_assoc($all_feedback_query)) {
+                            echo '<tr>';
+                            echo '<td>' . htmlspecialchars($row['P_FNAME'] . ' ' . $row['P_LNAME']) . '</td>';
+                            echo '<td>' . htmlspecialchars($row['D_FNAME'] . ' ' . $row['D_LNAME']) . '</td>';
+                            echo '<td class="rating">';
+                            for ($i = 1; $i <= 5; $i++) {
+                                echo ($i <= $row['RATING']) ? '★' : '☆';
+                            }
+                            echo ' ' . $row['RATING'] . '/5</td>';
+                            echo '<td>' . htmlspecialchars($row['COMMENTS']) . '</td>';
+                            echo '</tr>';
+                        }
+                    } else {
+                        echo '<tr><td colspan="4">No feedback found</td></tr>';
+                    }
+                    ?>
+                </table>
                 </div>
-                
-                <div class="form-group">
-                    <label for="comments">Comments</label>
-                    <textarea class="form-control" id="comments" name="comments" rows="4" placeholder="Share your experience with this doctor..." required></textarea>
-                </div>
-                
-                <div class="btn-group">
-                    <button type="submit" name="submit_feedback" class="btn btn-success">
-                        <i class="fas fa-check"></i> Submit Feedback
-                    </button>
-                    <button type="button" class="btn btn-danger" onclick="closeFeedbackModal()">
-                        <i class="fas fa-times"></i> Cancel
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
+            </div>
     
     <script>
+        // Tab switching logic
+        function showTab(tab) {
+            document.getElementById('appointmentsTab').style.display = (tab === 'appointments') ? 'block' : 'none';
+            document.getElementById('allFeedbackTab').style.display = (tab === 'allfeedback') ? 'block' : 'none';
+            document.getElementById('tabAppointments').classList.toggle('btn-success', tab === 'appointments');
+            document.getElementById('tabAllFeedback').classList.toggle('btn-success', tab === 'allfeedback');
+        }
+        // Default to appointments tab
         document.addEventListener('DOMContentLoaded', function() {
+            showTab('appointments');
             // Rating stars functionality
             const stars = document.querySelectorAll('.star');
             const ratingValue = document.getElementById('ratingValue');
