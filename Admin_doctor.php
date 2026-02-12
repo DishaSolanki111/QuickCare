@@ -1,5 +1,16 @@
 <?php
-if (session_status() === PHP_SESSION_NONE) session_start();
+// Start session if not already started
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Check if user is logged in and is an admin
+if (!isset($_SESSION['LOGGED_IN']) || $_SESSION['LOGGED_IN'] !== true || $_SESSION['USER_TYPE'] !== 'admin') {
+    // If not logged in or not an admin, redirect to admin login page
+    header("Location: admin_login.php");
+    exit();
+}
+
 include 'config.php';
 
 // Handle edit form submission
