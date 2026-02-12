@@ -157,8 +157,6 @@ body {
 
     <a href="manage_prescriptions.php" class="<?= ($currentPage == 'manage_prescriptions.php') ? 'active' : '' ?>">Prescription</a>
 
-    <a href="view_medicine.php" class="<?= ($currentPage == 'view_medicine.php') ? 'active' : '' ?>">Medicine</a>
-
     <a href="doctor_feedback.php" class="<?= ($currentPage == 'doctor_feedback.php') ? 'active' : '' ?>">Feedback</a>
 
     <a href="logout.php" class="logout-btn">Logout</a>

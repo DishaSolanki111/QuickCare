@@ -32,10 +32,10 @@ include 'config.php';
         }
 
         body {
-            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+            background: linear-gradient(135deg, var(--light-blue) 0%, var(--card-bg) 100%);
             min-height: 100vh;
             display: flex;
-            padding: 0;
+            padding-top: 80px;
         }
 
         /* Main Content */
@@ -48,14 +48,14 @@ include 'config.php';
             align-items: center;
         }
 
-        /* Form Container */
+        /* Form Container - same as patient form */
         .container {
             background-color: var(--white);
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
             width: 100%;
-            max-width: 800px;
-            padding: 30px;
+            max-width: 1400px;
+            padding: 30px 40px;
             position: relative;
             overflow: hidden;
         }
@@ -66,7 +66,7 @@ include 'config.php';
             top: 0;
             left: 0;
             width: 100%;
-            height: 5px;
+            height: 4px;
             background: linear-gradient(90deg, var(--accent-blue), var(--secondary-blue));
         }
 
@@ -84,32 +84,53 @@ include 'config.php';
             bottom: -10px;
             left: 50%;
             transform: translateX(-50%);
-            width: 100px;
+            width: 80px;
             height: 3px;
             background-color: var(--accent-blue);
         }
 
-        .form-group {
+        /* Multi-column form layout - same as patient form */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
             margin-bottom: 20px;
-            position: relative;
+        }
+
+        .form-section {
+            margin-bottom: 0;
+        }
+
+        .form-section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--primary-blue);
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--light-blue);
         }
 
         .form-row {
             display: flex;
-            gap: 20px;
-            margin-bottom: 20px;
+            gap: 15px;
+            margin-bottom: 15px;
         }
 
         .form-row .form-group {
             flex: 1;
         }
 
+        .form-group {
+            margin-bottom: 15px;
+            position: relative;
+        }
+
         label {
             display: block;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             color: var(--primary-blue);
             font-weight: 600;
-            font-size: 15px;
+            font-size: 14px;
         }
 
         .required {
@@ -144,25 +165,28 @@ include 'config.php';
         select,
         textarea {
             width: 100%;
-            padding: 12px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 16px;
-            transition: border-color 0.3s;
+            padding: 10px 12px;
+            border: 1px solid var(--gray-blue);
+            border-radius: 6px;
+            font-size: 14px;
+            transition: all 0.3s ease;
             background-color: var(--white);
         }
         
-        /* Adjust padding for password field to accommodate icon */
         input[type="password"] {
             padding-right: 40px; 
         }
 
-        input:focus,
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        input[type="email"]:focus,
+        input[type="password"]:focus,
+        input[type="date"]:focus,
         select:focus,
         textarea:focus {
             outline: none;
             border-color: var(--accent-blue);
-            box-shadow: 0 0 0 2px rgba(0, 180, 216, 0.2);
+            box-shadow: 0 0 0 2px rgba(0, 180, 216, 0.1);
         }
 
         select {
@@ -176,13 +200,15 @@ include 'config.php';
 
         textarea {
             resize: vertical;
-            min-height: 100px;
+            min-height: 70px;
+            max-height: 100px;
         }
 
         .radio-group {
             display: flex;
-            gap: 20px;
-            margin-top: 8px;
+            gap: 15px;
+            margin-top: 6px;
+            flex-wrap: wrap;
         }
 
         .radio-option {
@@ -194,31 +220,41 @@ include 'config.php';
         .radio-option input {
             margin-right: 8px;
             cursor: pointer;
+            width: auto;
+        }
+
+        .radio-option label {
+            margin-bottom: 0;
+            font-weight: normal;
+            cursor: pointer;
         }
 
         .btn-container {
             display: flex;
             justify-content: center;
-            margin-top: 30px;
+            margin-top: 20px;
+            grid-column: 1 / -1;
         }
 
         .btn {
             background: linear-gradient(90deg, var(--primary-blue), var(--secondary-blue));
             color: var(--white);
             border: none;
-            padding: 12px 30px;
+            padding: 12px 35px;
             font-size: 16px;
-            border-radius: 50px;
+            font-weight: 600;
+            border-radius: 6px;
             cursor: pointer;
-            transition: transform 0.3s, box-shadow 0.3s;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(10, 77, 104, 0.2);
             display: flex;
             align-items: center;
             gap: 8px;
         }
 
         .btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(10, 77, 104, 0.3);
         }
 
         .error-message {
@@ -240,7 +276,13 @@ include 'config.php';
             border: 1px solid var(--light-blue);
         }
         
-        /* Responsive styles */
+        /* Responsive - same as patient form */
+        @media (max-width: 1200px) {
+            .form-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
         @media (max-width: 768px) {
             .main-content {
                 margin-left: 0;
@@ -248,9 +290,22 @@ include 'config.php';
                 padding: 20px;
             }
 
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
             .form-row {
                 flex-direction: column;
                 gap: 0;
+            }
+
+            .container {
+                padding: 25px;
+                max-width: 100%;
+            }
+
+            h1 {
+                font-size: 24px;
             }
         }
         
@@ -259,9 +314,9 @@ include 'config.php';
             position: fixed;
             top: 20px;
             right: 20px;
-            background-color: #fff;
-            color: #333;
-            padding: 15px 25px;
+            background-color: var(--white);
+            color: var(--primary-blue);
+            padding: 15px 20px;
             border-radius: 6px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
             display: none;
@@ -456,93 +511,95 @@ include 'config.php';
             <?php endif; ?>
             
             <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post" id="receptionistForm" enctype="multipart/form-data">
-                
-                <!-- First Name and Last Name -->
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="first_name">First Name <span class="required">*</span></label>
-                        <input type="text" id="first_name" name="first_name" placeholder="e.g. John" value="<?php echo htmlspecialchars($form_data['first_name']); ?>" required>
-                        <div class="error-message" id="first_name_error"></div>
+                <div class="form-grid">
+                    <!-- Column 1: Personal Details -->
+                    <div class="form-section">
+                        <div class="form-section-title">Personal Details</div>
+                        
+                        <div class="form-group">
+                            <label for="first_name">First Name <span class="required">*</span></label>
+                            <input type="text" id="first_name" name="first_name" placeholder="e.g. John" value="<?php echo htmlspecialchars($form_data['first_name']); ?>" required>
+                            <div class="error-message" id="first_name_error"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="last_name">Last Name <span class="required">*</span></label>
+                            <input type="text" id="last_name" name="last_name" placeholder="e.g. Doe" value="<?php echo htmlspecialchars($form_data['last_name']); ?>" required>
+                            <div class="error-message" id="last_name_error"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="dob">Date of Birth <span class="required">*</span></label>
+                            <input type="date" id="dob" name="dob" placeholder="YYYY-MM-DD" value="<?php echo htmlspecialchars($form_data['dob']); ?>" required>
+                            <div class="error-message" id="dob_error"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="doj">Date of Joining <span class="required">*</span></label>
+                            <input type="date" id="doj" name="doj" placeholder="YYYY-MM-DD" value="<?php echo htmlspecialchars($form_data['doj']); ?>" required>
+                            <div class="error-message" id="doj_error"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Gender</label>
+                            <div class="radio-group">
+                                <div class="radio-option">
+                                    <input type="radio" id="male" name="gender" value="MALE" <?php echo ($form_data['gender'] == 'MALE') ? 'checked' : ''; ?>>
+                                    <label for="male">Male</label>
+                                </div>
+                                <div class="radio-option">
+                                    <input type="radio" id="female" name="gender" value="FEMALE" <?php echo ($form_data['gender'] == 'FEMALE') ? 'checked' : ''; ?>>
+                                    <label for="female">Female</label>
+                                </div>
+                                <div class="radio-option">
+                                    <input type="radio" id="other" name="gender" value="OTHER" <?php echo ($form_data['gender'] == 'OTHER') ? 'checked' : ''; ?>>
+                                    <label for="other">Other</label>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     
-                    <div class="form-group">
-                        <label for="last_name">Last Name <span class="required">*</span></label>
-                        <input type="text" id="last_name" name="last_name" placeholder="e.g. Doe" value="<?php echo htmlspecialchars($form_data['last_name']); ?>" required>
-                        <div class="error-message" id="last_name_error"></div>
-                    </div>
-                </div>
-                
-                <!-- Date of Birth and Date of Joining -->
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="dob">Date of Birth <span class="required">*</span></label>
-                        <input type="date" id="dob" name="dob" placeholder="YYYY-MM-DD" value="<?php echo htmlspecialchars($form_data['dob']); ?>" required>
-                        <div class="error-message" id="dob_error"></div>
+                    <!-- Column 2: Contact Details -->
+                    <div class="form-section">
+                        <div class="form-section-title">Contact Details</div>
+                        
+                        <div class="form-group">
+                            <label for="phone">Phone Number <span class="required">*</span></label>
+                            <input type="text" id="phone" name="phone" maxlength="10" placeholder="e.g. 1234567891" value="<?php echo htmlspecialchars($form_data['phone']); ?>" required>
+                            <div class="error-message" id="phone_error"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="email">Email <span class="required">*</span></label>
+                            <input type="email" id="email" name="email" placeholder="e.g. john@example.com" value="<?php echo htmlspecialchars($form_data['email']); ?>" required>
+                            <div class="error-message" id="email_error"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="address">Address</label>
+                            <textarea id="address" name="address" placeholder="Street, City, Zip Code"><?php echo htmlspecialchars($form_data['address']); ?></textarea>
+                            <div class="error-message" id="address_error"></div>
+                        </div>
                     </div>
                     
-                    <div class="form-group">
-                        <label for="doj">Date of Joining <span class="required">*</span></label>
-                        <input type="date" id="doj" name="doj" placeholder="YYYY-MM-DD" value="<?php echo htmlspecialchars($form_data['doj']); ?>" required>
-                        <div class="error-message" id="doj_error"></div>
-                    </div>
-                </div>
-
-                <!-- Gender -->
-                <div class="form-group">
-                    <label>Gender</label>
-                    <div class="radio-group">
-                        <div class="radio-option">
-                            <input type="radio" id="male" name="gender" value="MALE" <?php echo ($form_data['gender'] == 'MALE') ? 'checked' : ''; ?>>
-                            <label for="male">Male</label>
+                    <!-- Column 3: Account Details -->
+                    <div class="form-section">
+                        <div class="form-section-title">Account Details</div>
+                        
+                        <div class="form-group">
+                            <label for="username">Username <span class="required">*</span></label>
+                            <input type="text" id="username" name="username" placeholder="e.g. Meena_k01" value="<?php echo htmlspecialchars($form_data['username']); ?>" required>
+                            <div class="error-message" id="username_error"></div>
                         </div>
-                        <div class="radio-option">
-                            <input type="radio" id="female" name="gender" value="FEMALE" <?php echo ($form_data['gender'] == 'FEMALE') ? 'checked' : ''; ?>>
-                            <label for="female">Female</label>
+                        
+                        <div class="form-group">
+                            <label for="password">Password <span class="required">*</span></label>
+                            <div class="password-wrapper">
+                                <input type="password" id="password" name="password" placeholder="Min 8 chars, 1 Uppercase, 1 Digit, 1 Special" required>
+                                <i class="fas fa-eye toggle-password" id="togglePassword"></i>
+                            </div>
+                            <div class="error-message" id="password_error"></div>
                         </div>
-                        <div class="radio-option">
-                            <input type="radio" id="other" name="gender" value="OTHER" <?php echo ($form_data['gender'] == 'OTHER') ? 'checked' : ''; ?>>
-                            <label for="other">Other</label>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Phone Number and Email ID -->
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="phone">Phone Number <span class="required">*</span></label>
-                        <input type="text" id="phone" name="phone" maxlength="10" placeholder="10 digit number" value="<?php echo htmlspecialchars($form_data['phone']); ?>" required>
-                        <div class="error-message" id="phone_error"></div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="email">Email <span class="required">*</span></label>
-                        <input type="email" id="email" name="email" placeholder="e.g. john@example.com" value="<?php echo htmlspecialchars($form_data['email']); ?>" required>
-                        <div class="error-message" id="email_error"></div>
-                    </div>
-                </div>
-                
-                <!-- Address -->
-                <div class="form-group">
-                    <label for="address">Address</label>
-                    <textarea id="address" name="address" placeholder="Street, City, Zip Code"><?php echo htmlspecialchars($form_data['address']); ?></textarea>
-                    <div class="error-message" id="address_error"></div>
-                </div>
-                
-                <!-- Username and Password -->
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="username">Username <span class="required">*</span></label>
-                        <input type="text" id="username" name="username" placeholder="e.g. Meena_k01" value="<?php echo htmlspecialchars($form_data['username']); ?>" required>
-                        <div class="error-message" id="username_error"></div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="password">Password <span class="required">*</span></label>
-                        <div class="password-wrapper">
-                            <input type="password" id="password" name="password" placeholder="Min 8 chars, 1 Uppercase, 1 Digit, 1 Special" required>
-                            <i class="fas fa-eye toggle-password" id="togglePassword"></i>
-                        </div>
-                        <div class="error-message" id="password_error"></div>
                     </div>
                 </div>
                 

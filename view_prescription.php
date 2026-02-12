@@ -144,7 +144,8 @@
             .prescriptions-container {
                 display: flex;
                 flex-wrap: wrap;
-                gap: 15px;
+                gap: 20px;
+                align-items: stretch;
             }
 
             .prescription-card {
@@ -153,9 +154,13 @@
                 box-shadow: 0 4px 10px rgba(0,0,0,0.1);
                 overflow: hidden;
                 transition: transform 0.2s, box-shadow 0.2s;
-                flex: 1 1 calc(50% - 15px);
-                min-width: 300px;
-                max-width: calc(50% - 15px);
+                flex: 1 1 calc(50% - 20px);
+                min-width: 320px;
+                max-width: calc(50% - 20px);
+                display: flex;
+                flex-direction: column;
+                font-size: 0.95rem;
+                line-height: 1.5;
             }
 
             .prescription-card:hover {
@@ -166,7 +171,7 @@
             .card-header-custom {
                 background: linear-gradient(135deg, var(--mid-blue) 0%, var(--soft-blue) 100%);
                 color: white;
-                padding: 12px 20px;
+                padding: 14px 20px;
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
@@ -174,58 +179,97 @@
 
             .doctor-name {
                 font-weight: 600;
-                font-size: 1.1rem;
+                font-size: 1.05rem;
                 margin: 0;
             }
 
             .specialization {
                 font-size: 0.9rem;
-                opacity: 0.9;
+                opacity: 0.95;
             }
 
             .card-body-custom {
-                padding: 20px;
+                padding: 18px 20px 14px 20px;
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .card-section {
+                padding: 8px 0;
+            }
+
+            .card-section + .card-section {
+                border-top: 1px dashed #e0e6f0;
+            }
+
+            .details-grid {
+                display: grid;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                column-gap: 16px;
+                row-gap: 8px;
             }
 
             .info-row {
                 display: flex;
-                margin-bottom: 10px;
+                align-items: flex-start;
             }
 
             .info-label {
                 font-weight: 600;
                 color: var(--primary-color);
-                width: 100px;
+                width: 95px;
                 flex-shrink: 0;
+                margin-right: 6px;
+                line-height: 1.4;
             }
 
             .info-value {
                 color: var(--dark-color);
+                word-break: break-word;
+                line-height: 1.4;
             }
 
             .diagnosis-box {
                 background-color: #f0f8ff;
                 border-left: 4px solid var(--primary-color);
-                padding: 10px 15px;
-                margin: 15px 0;
-                border-radius: 0 5px 5px 0;
+                padding: 10px 14px;
+                margin-top: 8px;
+                border-radius: 5px;
+                line-height: 1.5;
+            }
+
+            .diagnosis-box .info-label {
+                width: auto;
+                margin-bottom: 4px;
+                display: block;
+            }
+
+            .card-footer-custom {
+                padding: 12px 20px 16px 20px;
+                border-top: 1px solid #edf1f7;
+                display: flex;
+                justify-content: flex-end;
             }
 
             .btn-download {
                 background: var(--primary-color);
                 color: white;
                 border: none;
-                padding: 8px 15px;
+                padding: 8px 16px;
                 border-radius: 5px;
                 font-size: 0.9rem;
-                transition: background 0.3s;
+                transition: background 0.3s, box-shadow 0.3s;
                 display: inline-flex;
                 align-items: center;
+                gap: 6px;
+                line-height: 1.4;
             }
 
             .btn-download:hover {
                 background: var(--dark-blue);
                 color: white;
+                box-shadow: 0 4px 10px rgba(0,0,0,0.15);
             }
 
             .btn-close {
@@ -265,6 +309,10 @@
                     flex: 1 1 100%;
                     max-width: 100%;
                 }
+
+                .details-grid {
+                    grid-template-columns: 1fr;
+                }
             }
         </style>
     </head>
@@ -291,30 +339,38 @@
                                     </button>
                                 </div>
                                 <div class="card-body-custom">
-                                    <div class="info-row">
-                                        <div class="info-label">Patient:</div>
-                                        <div class="info-value"><?= htmlspecialchars($p['PAT_FNAME'].' '.$p['PAT_LNAME']) ?></div>
-                                    </div>
-                                    <div class="info-row">
-                                        <div class="info-label">Date:</div>
-                                        <div class="info-value"><?= date('d M Y', strtotime($p['ISSUE_DATE'])) ?></div>
-                                    </div>
-                                    <div class="info-row">
-                                        <div class="info-label">Appointment:</div>
-                                        <div class="info-value"><?= date('d M Y', strtotime($p['APPOINTMENT_DATE'])) ?> at <?= $p['APPOINTMENT_TIME'] ?></div>
+                                    <div class="card-section">
+                                        <div class="details-grid">
+                                            <div class="info-row">
+                                                <div class="info-label">Patient:</div>
+                                                <div class="info-value"><?= htmlspecialchars($p['PAT_FNAME'].' '.$p['PAT_LNAME']) ?></div>
+                                            </div>
+                                            <div class="info-row">
+                                                <div class="info-label">Date:</div>
+                                                <div class="info-value"><?= date('d M Y', strtotime($p['ISSUE_DATE'])) ?></div>
+                                            </div>
+                                            <div class="info-row">
+                                                <div class="info-label">Appointment:</div>
+                                                <div class="info-value"><?= date('d M Y', strtotime($p['APPOINTMENT_DATE'])) ?> at <?= $p['APPOINTMENT_TIME'] ?></div>
+                                            </div>
+                                        </div>
                                     </div>
                                     
-                                    <div class="diagnosis-box">
-                                        <div class="info-label">Diagnosis:</div>
-                                        <div class="info-value"><?= htmlspecialchars($p['DIAGNOSIS']) ?></div>
+                                    <div class="card-section">
+                                        <div class="diagnosis-box">
+                                            <div class="info-label">Diagnosis:</div>
+                                            <div class="info-value"><?= htmlspecialchars($p['DIAGNOSIS']) ?></div>
+                                        </div>
                                     </div>
-                                    
-                                    <div class="mt-3">
-                                        <form method="POST" action="view_prescription.php" style="display:inline">
+                                </div>
+                                <div class="card-footer-custom">
+                                    <form method="POST" action="view_prescription.php" style="display:inline">
                                         <input type="hidden" name="download" value="<?= $p['PRESCRIPTION_ID'] ?>">
-                                        <button type="submit" class="btn-download"><i class="fas fa-download me-1"></i> Download Prescription</button>
+                                        <button type="submit" class="btn-download">
+                                            <i class="fas fa-download me-1"></i>
+                                            Download Prescription
+                                        </button>
                                     </form>
-                                    </div>
                                 </div>
                             </div>
                         <?php } ?>
