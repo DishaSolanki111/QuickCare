@@ -307,7 +307,7 @@ if ($result && $result->num_rows > 0) {
             
             <!-- Content Card -->
             <div class="content-card">
-                <p>Select a patient to view, add, or delete their prescriptions.</p>
+         
                 
                 <table>
                     <thead>
