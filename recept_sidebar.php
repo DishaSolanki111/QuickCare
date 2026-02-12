@@ -103,7 +103,9 @@ body {
 
     <a href="receptionist_profile.php" class="<?= ($currentPage == 'receptionist_profile.php') ? 'active' : '' ?>">My Profile</a>
 
-    <a href="manage_user_profile.php" class="<?= ($currentPage == 'manage_user_profile.php') ? 'active' : '' ?>">User Profile</a>
+    <a href="Admin_patient.php" class="<?= ($currentPage == 'recep_patient.php') ? 'active' : '' ?>">Patients Profile</a>
+
+    <a href="Admin_doctor.php" class="<?= ($currentPage == 'recep_doctor.php') ? 'active' : '' ?>">Doctors Profile</a>
 
     <a href="appointment_recep.php" class="<?= ($currentPage == 'appointment_recep.php') ? 'active' : '' ?>">Appointments</a>
 
