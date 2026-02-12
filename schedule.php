@@ -23,11 +23,12 @@ if ($result->num_rows > 0) {
 
 <!DOCTYPE html>
 <html lang="en">
-<head>
+<head>  
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quick Care - Doctor Appointment Booking</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary-color: #4a6fdc;
@@ -50,20 +51,35 @@ if ($result->num_rows > 0) {
             --text-dark: #1a3a5f;
             --text-light: #ffffff;
             --gradient-1: linear-gradient(135deg, #0066cc 0%, #00a8cc 100%);
+            
+            /* Using same color variables as appointment.php */
+            --primary-blue: #1a73e8;
+            --secondary-blue: #4285f4;
+            --light-blue-bg: #e8f0fe;
+            --medium-blue-icon: #8ab4f8;
+            --dark-blue-header: #174ea6;
+            --accent-blue: #0b57d0;
+            --text-dark-header: #202124;
+            --text-light-header: #ffffff;
+            --shadow-header: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --shadow-hover-header: 0 10px 20px rgba(0, 0, 0, 0.15);
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         body {
-            background-color: #f5f7fb;
-            color: var(--dark-color);
-            line-height: 1.6;
-            padding-top: 90px;
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f5f8ff 0%, #e6f0ff 100%);
+            color: var(--text-dark-header);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding-top: 80px; /* Account for fixed header */
         }
 
         header {
@@ -73,10 +89,51 @@ if ($result->num_rows > 0) {
             box-shadow: var(--shadow);
         }
 
+        .page-header {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+            color: white;
+            padding: 4rem 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-header::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%23ffffff' fill-opacity='0.1' d='M0,224L48,213.3C96,203,192,181,288,181.3C384,181,480,203,576,224C672,245,768,267,864,261.3C960,256,1056,224,1152,213.3C1248,203,1344,213,1392,218.7L1440,224L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z'%3E%3C/path%3E%3C/svg%3E") no-repeat bottom;
+            background-size: cover;
+        }
+
+        .page-header h1 {
+            font-size: 2.8rem;
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .page-header p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto;
+            opacity: 0.9;
+            position: relative;
+            z-index: 2;
+        }
+
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 0 20px;
+        }
+
+        .main-content {
+            flex-grow: 1;
+            background-color: white;
         }
 
         /* .header-content {
@@ -102,11 +159,12 @@ if ($result->num_rows > 0) {
             padding: 1.5rem;
             border-radius: 10px;
             box-shadow: var(--shadow);
-            margin: 2rem 0;
+            margin: 2rem auto;
             display: flex;
             flex-wrap: wrap;
             gap: 1rem;
             align-items: center;
+            max-width: 1200px;
         }
 
         .filter-group {
@@ -141,18 +199,21 @@ if ($result->num_rows > 0) {
             background-color: var(--secondary-color);
             padding: 1rem;
             border-radius: 10px;
-            margin-bottom: 1.5rem;
+            margin: 2rem auto 1.5rem;
             text-align: center;
             font-weight: 600;
             color: var(--primary-color);
-            font-size: 40px;
+            font-size: 1.5rem;
+            max-width: 1200px;
         }
 
         .doctors-container {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
             gap: 1.5rem;
-            margin-bottom: 2rem;
+            margin: 2rem auto 2rem;
+            max-width: 1200px;
+            padding: 0 20px;
         }
 
         .doctor-card {
@@ -428,6 +489,16 @@ if ($result->num_rows > 0) {
             color: rgba(255, 255, 255, 0.7);
         }
 
+        @media (max-width: 992px) {
+            .page-header h1 {
+                font-size: 2.4rem;
+            }
+            
+            .page-header p {
+                font-size: 1.1rem;
+            }
+        }
+
         @media (max-width: 768px) {
             .doctors-container {
                 grid-template-columns: 1fr;
@@ -440,6 +511,24 @@ if ($result->num_rows > 0) {
             .filter-group {
                 width: 100%;
             }
+            
+            .page-header {
+                padding: 3rem 0;
+            }
+            
+            .page-header h1 {
+                font-size: 2.2rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .page-header h1 {
+                font-size: 2rem;
+            }
+            
+            .page-header p {
+                font-size: 1rem;
+            }
         }
     </style>
 </head>
@@ -448,7 +537,15 @@ if ($result->num_rows > 0) {
         <?php include 'header.php'; ?>
     </header>
 
-    <main class="container">
+    <div class="page-header">
+        <div class="container">
+            <h1>Our Doctor Schedule</h1>
+            <p>View available time slots and book appointments with our trusted specialists</p>
+        </div>
+    </div>
+
+    <main class="main-content">
+        <div class="container">
         <div class="filters">
             <div class="filter-group">
                 <label for="date-picker">Select Date</label>
@@ -477,6 +574,7 @@ if ($result->num_rows > 0) {
             <div class="loading">
                 <div class="spinner"></div>
             </div>
+        </div>
         </div>
     </main>
 
