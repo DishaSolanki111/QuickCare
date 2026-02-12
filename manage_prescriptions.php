@@ -47,9 +47,25 @@ if (isset($_POST['status']) || isset($_GET['status'])) {
     }
 }
 
-// Fetch all patients from database
- $sql = "SELECT PATIENT_ID, FIRST_NAME, LAST_NAME, DOB, PHONE FROM patient_tbl ORDER BY LAST_NAME, FIRST_NAME";
- $result = $conn->query($sql);
+// Fetch only patients who have appointments with this doctor
+// This ensures doctors can only see patients assigned to them
+// Get the most recent appointment date for each patient
+ $sql = "SELECT pt.PATIENT_ID, pt.FIRST_NAME, pt.LAST_NAME, pt.PHONE, 
+                MAX(a.APPOINTMENT_DATE) AS LAST_APPOINTMENT_DATE
+         FROM patient_tbl pt
+         INNER JOIN appointment_tbl a ON pt.PATIENT_ID = a.PATIENT_ID
+         WHERE a.DOCTOR_ID = ?
+         GROUP BY pt.PATIENT_ID, pt.FIRST_NAME, pt.LAST_NAME, pt.PHONE
+         ORDER BY pt.LAST_NAME, pt.FIRST_NAME";
+ $stmt = $conn->prepare($sql);
+ 
+if (!$stmt) {
+    die("Error preparing query: " . $conn->error);
+}
+
+ $stmt->bind_param("i", $doctor_id);
+ $stmt->execute();
+ $result = $stmt->get_result();
 
  $patients = [];
 if ($result && $result->num_rows > 0) {
@@ -57,6 +73,7 @@ if ($result && $result->num_rows > 0) {
         $patients[] = $row;
     }
 }
+ $stmt->close();
  $conn->close(); // Close connection when done
 ?>
 
@@ -296,7 +313,7 @@ if ($result && $result->num_rows > 0) {
                     <thead>
                         <tr>
                             <th>Patient Name</th>
-                            <th>Date of Birth</th>
+                            <th>Appointment Date</th>
                             <th>Contact</th>
                             <th>Action</th>
                         </tr>
@@ -306,7 +323,15 @@ if ($result && $result->num_rows > 0) {
                             <?php foreach ($patients as $patient): ?>
                                 <tr>
                                     <td><?php echo htmlspecialchars($patient['FIRST_NAME'] . ' ' . $patient['LAST_NAME']); ?></td>
-                                    <td><?php echo htmlspecialchars($patient['DOB']); ?></td>
+                                    <td><?php 
+                                        if (!empty($patient['LAST_APPOINTMENT_DATE'])) {
+                                            // Format the date for display
+                                            $appointment_date = new DateTime($patient['LAST_APPOINTMENT_DATE']);
+                                            echo htmlspecialchars($appointment_date->format('F d, Y'));
+                                        } else {
+                                            echo 'N/A';
+                                        }
+                                    ?></td>
                                     <td><?php echo htmlspecialchars($patient['PHONE']); ?></td>
                                     <td>
                                         <form method="POST" action="prescription_form.php" style="display:inline">
