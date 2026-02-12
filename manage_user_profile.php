@@ -601,19 +601,12 @@ if ($user_type === 'patient') {
         
         <!-- User Type Selection -->
         <div class="card">
-            <div class="card-header">
-                <h3>User Management</h3>
-                <div>
-                    <button class="btn btn-primary" onclick="window.location.href='patientform.php'">
-                        <i class="bi bi-person-plus"></i> Create User
-                    </button>
-                </div>
-            </div>
+            
             <div class="card-body">
                 <!-- Tabs -->
                 <form id="navPatientForm" method="POST" action="manage_user_profile.php" style="display:none"><input type="hidden" name="user_type" value="patient"></form>
                 <form id="navDoctorForm" method="POST" action="manage_user_profile.php" style="display:none"><input type="hidden" name="user_type" value="doctor"></form>
-                <form id="navReceptForm" method="POST" action="manage_user_profile.php" style="display:none"><input type="hidden" name="user_type" value="receptionist"></form>
+                
                 <ul class="nav nav-tabs" id="userTabs" role="tablist">
                     <li class="nav-item" role="presentation">
                         <button type="button" class="nav-link <?php echo $user_type === 'patient' ? 'active' : ''; ?>" onclick="document.getElementById('navPatientForm').submit()">Patients</button>
@@ -621,9 +614,7 @@ if ($user_type === 'patient') {
                     <li class="nav-item" role="presentation">
                         <button type="button" class="nav-link <?php echo $user_type === 'doctor' ? 'active' : ''; ?>" onclick="document.getElementById('navDoctorForm').submit()">Doctors</button>
                     </li>
-                    <li class="nav-item" role="presentation">
-                        <button type="button" class="nav-link <?php echo $user_type === 'receptionist' ? 'active' : ''; ?>" onclick="document.getElementById('navReceptForm').submit()">Receptionists</button>
-                    </li>
+                    
                 </ul>
                 
                 <!-- Tab Content -->
@@ -637,14 +628,9 @@ if ($user_type === 'patient') {
                                     <div class="user-title">
                                         <?php echo htmlspecialchars($user['FIRST_NAME'] . ' ' . $user['LAST_NAME']); ?>
                                     </div>
-                                    <span class="user-type">Patient</span>
+                           
                                 </div>
-                                
                                 <div class="user-details">
-                                    <div class="user-detail">
-                                        <i class="bi bi-calendar"></i>
-                                        <span>DOB: <?php echo date('F d, Y', strtotime($user['DOB'])); ?></span>
-                                    </div>
                                     <div class="user-detail">
                                         <i class="bi bi-telephone"></i>
                                         <span><?php echo htmlspecialchars($user['PHONE']); ?></span>
@@ -700,7 +686,7 @@ if ($user_type === 'patient') {
                                     <div class="user-title">
                                         Dr. <?php echo htmlspecialchars($user['FIRST_NAME'] . ' ' . $user['LAST_NAME']); ?>
                                     </div>
-                                    <span class="user-type">Doctor</span>
+                              
                                 </div>
                                 
                                 <div class="user-details">
@@ -708,10 +694,7 @@ if ($user_type === 'patient') {
                                         <i class="bi bi-person-badge"></i>
                                         <span><?php echo htmlspecialchars($user['SPECIALISATION_NAME']); ?></span>
                                     </div>
-                                    <div class="user-detail">
-                                        <i class="bi bi-calendar"></i>
-                                        <span>DOB: <?php echo date('F d, Y', strtotime($user['DOB'])); ?></span>
-                                    </div>
+                                   
                                     <div class="user-detail">
                                         <i class="bi bi-telephone"></i>
                                         <span><?php echo htmlspecialchars($user['PHONE']); ?></span>
@@ -752,72 +735,7 @@ if ($user_type === 'patient') {
                     ?>
                 </div>
                 
-                <div class="tab-content <?php echo $user_type === 'receptionist' ? 'active' : ''; ?>" id="receptionist">
-                    <?php
-                    // Reset the result pointer for receptionists
-                    if ($user_type === 'receptionist') {
-                        mysqli_data_seek($users_result, 0);
-                    }
-                    
-                    if (mysqli_num_rows($users_result) > 0) {
-                        while ($user = mysqli_fetch_assoc($users_result)) {
-                            ?>
-                            <div class="user-card">
-                                <div class="user-header">
-                                    <div class="user-title">
-                                        <?php echo htmlspecialchars($user['FIRST_NAME'] . ' ' . $user['LAST_NAME']); ?>
-                                    </div>
-                                    <span class="user-type">Receptionist</span>
-                                </div>
-                                
-                                <div class="user-details">
-                                    <div class="user-detail">
-                                        <i class="bi bi-calendar"></i>
-                                        <span>DOB: <?php echo date('F d, Y', strtotime($user['DOB'])); ?></span>
-                                    </div>
-                                    <div class="user-detail">
-                                        <i class="bi bi-calendar-check"></i>
-                                        <span>DOJ: <?php echo date('F d, Y', strtotime($user['DOJ'])); ?></span>
-                                    </div>
-                                    <div class="user-detail">
-                                        <i class="bi-telephone"></i>
-                                        <span><?php echo htmlspecialchars($user['PHONE']); ?></span>
-                                    </div>
-                                    <div class="user-detail">
-                                        <i class="bi-envelope"></i>
-                                        <span><?php echo htmlspecialchars($user['EMAIL']); ?></span>
-                                    </div>
-                                    <div class="user-detail">
-                                        <i class="bi-geo-alt"></i>
-                                        <span><?php echo htmlspecialchars($user['ADDRESS']); ?></span>
-                                    </div>
-                                </div>
-                                
-                                <div class="user-actions">
-                                    <button class="btn btn-warning btn-sm" onclick="editUser('receptionist', <?php echo $user['RECEPTIONIST_ID']; ?>)">
-                                        <i class="bi bi-pencil"></i> Edit
-                                    </button>
-                                    <form method="POST" style="display: inline;">
-                                        <input type="hidden" name="user_type" value="receptionist">
-                                        <input type="hidden" name="user_id" value="<?php echo $user['RECEPTIONIST_ID']; ?>">
-                                        <input type="hidden" name="delete_user" value="1">
-                                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this user?')">
-                                            <i class="bi bi-trash"></i> Delete
-                                        </button>
-                                    </form>
-                                </div>
-                            </div>
-                            <?php
-                        }
-                    } else {
-                        echo '<div class="empty-state">
-                            <i class="bi bi-person-x"></i>
-                            <h4>No receptionists found</h4>
-                            <p>No receptionists have been registered yet.</p>
-                        </div>';
-                    }
-                    ?>
-                </div>
+                
             </div>
         </div>
     </div>
