@@ -30,10 +30,10 @@
         }
 
         body {
-            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+            background: linear-gradient(135deg, var(--light-blue) 0%, var(--card-bg) 100%);
             min-height: 100vh;
             display: flex;
-            padding: 0;
+            padding-top: 80px;
         }
 
         /* Main Content */
@@ -46,16 +46,15 @@
             align-items: center;
         }
 
-        /* Form Container */
+        /* Form Container - same as patient form */
         .container {
             background-color: var(--white);
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
             width: 100%;
-            max-width: 800px;
-            padding: 40px; /* Increased padding slightly for breathing room */
+            max-width: 1400px;
+            padding: 30px 40px;
             position: relative;
-            overflow: hidden;
         }
 
         .container::before {
@@ -64,14 +63,14 @@
             top: 0;
             left: 0;
             width: 100%;
-            height: 5px;
+            height: 4px;
             background: linear-gradient(90deg, var(--accent-blue), var(--secondary-blue));
         }
 
         h1 {
             color: var(--dark-blue);
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
             font-size: 28px;
             position: relative;
         }
@@ -87,29 +86,48 @@
             background-color: var(--accent-blue);
         }
 
-        .form-group {
-            margin-bottom: 20px;
-            position: relative;
-        }
-
-        /* Flex row for side-by-side inputs */
-        .form-row {
-            display: flex;
+        /* Multi-column form layout - same as patientform.php */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
             gap: 20px;
             margin-bottom: 20px;
         }
 
+        .form-section {
+            margin-bottom: 0;
+        }
+
+        .form-section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--primary-blue);
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--light-blue);
+        }
+
+        .form-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
         .form-row .form-group {
-            flex: 1; /* Makes inputs equal width */
-            margin-bottom: 0; /* Reset margin for row items */
+            flex: 1;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+            position: relative;
         }
 
         label {
             display: block;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             color: var(--primary-blue);
             font-weight: 600;
-            font-size: 15px;
+            font-size: 14px;
         }
 
         .required {
@@ -144,11 +162,11 @@
         select,
         textarea {
             width: 100%;
-            padding: 12px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 16px;
-            transition: border-color 0.3s;
+            padding: 10px 12px;
+            border: 1px solid var(--gray-blue);
+            border-radius: 6px;
+            font-size: 14px;
+            transition: all 0.3s ease;
             background-color: var(--white);
         }
         
@@ -156,12 +174,17 @@
             padding-right: 40px; 
         }
 
-        input:focus,
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        input[type="email"]:focus,
+        input[type="password"]:focus,
+        input[type="date"]:focus,
+        input[type="file"]:focus,
         select:focus,
         textarea:focus {
             outline: none;
             border-color: var(--accent-blue);
-            box-shadow: 0 0 0 2px rgba(0, 180, 216, 0.2);
+            box-shadow: 0 0 0 2px rgba(0, 180, 216, 0.1);
         }
 
         select {
@@ -175,15 +198,15 @@
 
         textarea {
             resize: vertical;
-            min-height: 100px;
+            min-height: 70px;
+            max-height: 100px;
         }
 
         .radio-group {
             display: flex;
-            gap: 20px;
-            margin-top: 8px;
-            align-items: center;
-            height: 48px; /* Align with input boxes */
+            gap: 15px;
+            margin-top: 6px;
+            flex-wrap: wrap;
         }
 
         .radio-option {
@@ -195,11 +218,11 @@
         .radio-option input {
             margin-right: 8px;
             cursor: pointer;
-            width: auto; /* Reset width for radio buttons */
+            width: auto;
         }
-        
+
         .radio-option label {
-            margin-bottom: 0; /* Remove label bottom margin for inline alignment */
+            margin-bottom: 0;
             font-weight: normal;
             cursor: pointer;
         }
@@ -207,28 +230,29 @@
         .btn-container {
             display: flex;
             justify-content: center;
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid var(--gray-blue);
+            margin-top: 20px;
+            grid-column: 1 / -1;
         }
 
         .btn {
             background: linear-gradient(90deg, var(--primary-blue), var(--secondary-blue));
             color: var(--white);
             border: none;
-            padding: 12px 40px;
+            padding: 12px 35px;
             font-size: 16px;
-            border-radius: 50px;
+            font-weight: 600;
+            border-radius: 6px;
             cursor: pointer;
-            transition: transform 0.3s, box-shadow 0.3s;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(10, 77, 104, 0.2);
             display: flex;
             align-items: center;
             gap: 8px;
         }
 
         .btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(10, 77, 104, 0.3);
         }
 
         .error-message {
@@ -279,32 +303,14 @@
             background-color: rgba(0, 180, 216, 0.05);
         }
 
-        /* Responsive styles */
-        @media (max-width: 768px) {
-            .main-content {
-                margin-left: 0;
-                width: 100%;
-                padding: 20px;
-            }
-
-            .form-row {
-                flex-direction: column;
-                gap: 0;
-            }
-            
-            .form-row .form-group {
-                margin-bottom: 20px;
-            }
-        }
-        
-        /* Toast notification styles */
+        /* Toast notification styles - same as patient form */
         .toast {
             position: fixed;
             top: 20px;
             right: 20px;
-            background-color: #fff;
-            color: #333;
-            padding: 15px 25px;
+            background-color: var(--white);
+            color: var(--primary-blue);
+            padding: 15px 20px;
             border-radius: 6px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
             display: none;
@@ -332,6 +338,39 @@
                 opacity: 1;
             }
         }
+
+        /* Responsive styles - same as patient form */
+        @media (max-width: 1200px) {
+            .form-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+                padding: 20px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+
+            .container {
+                padding: 25px;
+                max-width: 100%;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -352,7 +391,6 @@
             $profile_image_path = "";
             
             // Store submitted values to repopulate form if needed
-            // MODIFIED: Added 'license_number' to the array
             $form_data = [
                 'first_name' => '',
                 'last_name' => '',
@@ -362,14 +400,12 @@
                 'phone' => '',
                 'email' => '',
                 'education' => '',
-                'license_number' => '', // NEW
                 'username' => '',
                 'specialisation_id' => ''
             ];
             
             if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 // Store form data
-                // MODIFIED: Added 'license_number'
                 $form_data = [
                     'first_name' => $_POST['first_name'] ?? '',
                     'last_name' => $_POST['last_name'] ?? '',
@@ -379,7 +415,6 @@
                     'phone' => $_POST['phone'] ?? '',
                     'email' => $_POST['email'] ?? '',
                     'education' => $_POST['education'] ?? '',
-                    'license_number' => $_POST['license_number'] ?? '', // NEW
                     'username' => $_POST['username'] ?? '',
                     'specialisation_id' => $_POST['specialisation_id'] ?? ''
                 ];
@@ -404,29 +439,6 @@
                     }
                 }
 
-                // ---------------- LICENSE FILE UPLOAD (PDF, JPG, PNG) ----------------
-                $license_file_path = "";
-                if (isset($_FILES['license_file']) && $_FILES['license_file']['error'] == 0) {
-                    $license_upload_dir = "uploads/licenses/";
-                    if (!file_exists($license_upload_dir)) {
-                        mkdir($license_upload_dir, 0777, true);
-                    }
-
-                    $ext = strtolower(pathinfo($_FILES['license_file']['name'], PATHINFO_EXTENSION));
-                    $allowed = ['pdf', 'jpg', 'jpeg', 'png'];
-                    if (!in_array($ext, $allowed)) {
-                        $errors[] = "Medical license file must be PDF, JPG or PNG format.";
-                    } else {
-                        $file_name = 'license_' . time() . '_' . basename($_FILES['license_file']['name']);
-                        $target_file = $license_upload_dir . $file_name;
-                        if (move_uploaded_file($_FILES['license_file']['tmp_name'], $target_file)) {
-                            $license_file_path = $target_file;
-                        } else {
-                            $errors[] = "Failed to upload license file.";
-                        }
-                    }
-                }
-
                 // ---------------- SANITIZE ----------------
                 $first_name = mysqli_real_escape_string($conn, $_POST['first_name']);
                 $last_name  = mysqli_real_escape_string($conn, $_POST['last_name']);
@@ -436,7 +448,6 @@
                 $phone      = $_POST['phone'];
                 $email      = $_POST['email'];
                 $education  = mysqli_real_escape_string($conn, $_POST['education']);
-                $license_number = mysqli_real_escape_string($conn, $_POST['license_number']); // NEW
                 $username   = $_POST['username'];
                 $password   = $_POST['password'];
                 $specialisation_id = $_POST['specialisation_id'];
@@ -467,25 +478,6 @@
                     $doj_date = new DateTime($doj);
                     if ($doj_date <= $dob_date) {
                         $errors[] = "Date of Joining must be after Date of Birth.";
-                    }
-                }
-
-                // ---------------- LICENSE NUMBER VALIDATION (license_master dummy validation) ----------------
-                if (empty($license_number)) {
-                    $errors[] = "License Number is required.";
-                } else {
-                    $license_number = mysqli_real_escape_string($conn, $license_number);
-                    // Validate against license_master (dummy valid licenses)
-                    $check_master = $conn->query("SELECT license_no FROM license_master WHERE license_no = '$license_number'");
-                    if (!$check_master || $check_master->num_rows === 0) {
-                        $errors[] = "Invalid license number. Must be one of: DOC1001, DOC1002, DOC1003";
-                    } else {
-                        // Check for uniqueness in doctor_tbl
-                        $check_sql = "SELECT DOCTOR_ID FROM doctor_tbl WHERE LICENSE_NO = '$license_number'";
-                        $check_result = $conn->query($check_sql);
-                        if ($check_result && $check_result->num_rows > 0) {
-                            $errors[] = "This license number is already registered.";
-                        }
                     }
                 }
 
@@ -521,16 +513,14 @@
                 // ---------------- FINAL INSERT ----------------
                 if (empty($errors)) {
                     $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-                    $license_file_safe = mysqli_real_escape_string($conn, $license_file_path);
 
                     $sql = "INSERT INTO doctor_tbl 
                     (SPECIALISATION_ID, PROFILE_IMAGE, FIRST_NAME, LAST_NAME, DOB, DOJ, USERNAME, PSWD, PHONE, EMAIL, GENDER, LICENSE_NO, LICENSE_FILE, EDUCATION, STATUS)
                     VALUES 
-                    ('$specialisation_id','$profile_image_path','$first_name','$last_name','$dob','$doj','$username','$hashed_password','$phone','$email','$gender','$license_number','$license_file_safe','$education','pending')";
+                    ('$specialisation_id','$profile_image_path','$first_name','$last_name','$dob','$doj','$username','$hashed_password','$phone','$email','$gender',NULL,NULL,'$education','pending')";
 
                     if ($conn->query($sql) === TRUE) {
                         $success = true;
-                        // MODIFIED: Added 'license_number' to the reset array
                         $form_data = [
                             'first_name' => '',
                             'last_name' => '',
@@ -540,7 +530,6 @@
                             'phone' => '',
                             'email' => '',
                             'education' => '',
-                            'license_number' => '', // NEW
                             'username' => '',
                             'specialisation_id' => ''
                         ];
@@ -568,129 +557,116 @@
             <?php endif; ?>
             
             <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post" id="doctorForm" enctype="multipart/form-data">
-                
-                <!-- Row 1: Name -->
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="first_name">First Name <span class="required">*</span></label>
-                        <input type="text" id="first_name" name="first_name" placeholder="e.g. John" value="<?php echo htmlspecialchars($form_data['first_name']); ?>" required>
-                        <div class="error-message" id="first_name_error"></div>
-                    </div>
-                    <div class="form-group">
-                        <label for="last_name">Last Name <span class="required">*</span></label>
-                        <input type="text" id="last_name" name="last_name" placeholder="e.g. Doe" value="<?php echo htmlspecialchars($form_data['last_name']); ?>" required>
-                        <div class="error-message" id="last_name_error"></div>
-                    </div>
-                </div>
-                
-                <!-- Row 2: Dates -->
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="dob">Date of Birth <span class="required">*</span></label>
-                        <input type="date" id="dob" name="dob" placeholder="YYYY-MM-DD" value="<?php echo htmlspecialchars($form_data['dob']); ?>" required>
-                        <div class="error-message" id="dob_error"></div>
-                    </div>
-                    <div class="form-group">
-                        <label for="doj">Date of Joining <span class="required">*</span></label>
-                        <input type="date" id="doj" name="doj" placeholder="YYYY-MM-DD" value="<?php echo htmlspecialchars($form_data['doj']); ?>" required>
-                        <div class="error-message" id="doj_error"></div>
-                    </div>
-                </div>
-
-                <!-- Row 3: Gender -->
-                <div class="form-group">
-                    <label>Gender</label>
-                    <div class="radio-group">
-                        <div class="radio-option">
-                            <input type="radio" id="male" name="gender" value="MALE" <?php echo ($form_data['gender'] == 'MALE') ? 'checked' : ''; ?>>
-                            <label for="male">Male</label>
+                <div class="form-grid">
+                    <!-- Column 1: Personal Details -->
+                    <div class="form-section">
+                        <div class="form-section-title">Personal Details</div>
+                        
+                        <div class="form-group">
+                            <label for="first_name">First Name <span class="required">*</span></label>
+                            <input type="text" id="first_name" name="first_name" placeholder="e.g. John" value="<?php echo htmlspecialchars($form_data['first_name']); ?>" required>
+                            <div class="error-message" id="first_name_error"></div>
                         </div>
-                        <div class="radio-option">
-                            <input type="radio" id="female" name="gender" value="FEMALE" <?php echo ($form_data['gender'] == 'FEMALE') ? 'checked' : ''; ?>>
-                            <label for="female">Female</label>
+                        
+                        <div class="form-group">
+                            <label for="last_name">Last Name <span class="required">*</span></label>
+                            <input type="text" id="last_name" name="last_name" placeholder="e.g. Doe" value="<?php echo htmlspecialchars($form_data['last_name']); ?>" required>
+                            <div class="error-message" id="last_name_error"></div>
                         </div>
-                        <div class="radio-option">
-                            <input type="radio" id="other" name="gender" value="OTHER" <?php echo ($form_data['gender'] == 'OTHER') ? 'checked' : ''; ?>>
-                            <label for="other">Other</label>
+                        
+                        <div class="form-group">
+                            <label for="dob">Date of Birth <span class="required">*</span></label>
+                            <input type="date" id="dob" name="dob" placeholder="YYYY-MM-DD" value="<?php echo htmlspecialchars($form_data['dob']); ?>" required>
+                            <div class="error-message" id="dob_error"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="doj">Date of Joining <span class="required">*</span></label>
+                            <input type="date" id="doj" name="doj" placeholder="YYYY-MM-DD" value="<?php echo htmlspecialchars($form_data['doj']); ?>" required>
+                            <div class="error-message" id="doj_error"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Gender</label>
+                            <div class="radio-group">
+                                <div class="radio-option">
+                                    <input type="radio" id="male" name="gender" value="MALE" <?php echo ($form_data['gender'] == 'MALE') ? 'checked' : ''; ?>>
+                                    <label for="male">Male</label>
+                                </div>
+                                <div class="radio-option">
+                                    <input type="radio" id="female" name="gender" value="FEMALE" <?php echo ($form_data['gender'] == 'FEMALE') ? 'checked' : ''; ?>>
+                                    <label for="female">Female</label>
+                                </div>
+                                <div class="radio-option">
+                                    <input type="radio" id="other" name="gender" value="OTHER" <?php echo ($form_data['gender'] == 'OTHER') ? 'checked' : ''; ?>>
+                                    <label for="other">Other</label>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-                
-                <!-- Row 4: Contact -->
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="phone">Phone Number <span class="required">*</span></label>
-                        <input type="text" id="phone" name="phone" maxlength="10" placeholder="14152638945" value="<?php echo htmlspecialchars($form_data['phone']); ?>" required>
-                        <div class="error-message" id="phone_error"></div>
-                    </div>
-                    <div class="form-group">
-                        <label for="email">Email <span class="required">*</span></label>
-                        <input type="email" id="email" name="email" placeholder="e.g. john@example.com" value="<?php echo htmlspecialchars($form_data['email']); ?>" required>
-                        <div class="error-message" id="email_error"></div>
-                    </div>
-                </div>
-
-                <!-- Row 5: Education (Full Width) -->
-                <div class="form-group">
-                    <label for="education">Education</label>
-                    <textarea id="education" name="education" placeholder="Degree, University, Year..."><?php echo htmlspecialchars($form_data['education']); ?></textarea>
-                    <div class="error-message" id="education_error"></div>
-                </div>
-                
-                <!-- NEW ROW: License Number -->
-                <div class="form-group">
-                    <label for="license_number">License Number <span class="required">*</span></label>
-                    <input type="text" id="license_number" name="license_number" placeholder="e.g. A12345678" value="<?php echo htmlspecialchars($form_data['license_number']); ?>" required>
-                    <div class="error-message" id="license_number_error"></div>
-                </div>
-
-                <!-- License File Upload -->
-                <div class="form-group">
-                    <label for="license_file">Medical License File</label>
-                    <div class="file-upload">
-                        <input type="file" id="license_file" name="license_file" accept=".pdf,.jpg,.jpeg,.png">
-                        <label for="license_file" class="file-upload-label" id="license-file-label">Choose Medical License (PDF, JPG or PNG)</label>
-                    </div>
-                    <div class="error-message" id="license_file_error"></div>
-                </div>
-                
-                <!-- Row 6: Professional Details -->
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="specialisation_id">Specialisation <span class="required">*</span></label>
-                        <select id="specialisation_id" name="specialisation_id" required>
-                            <option value="">Select Specialisation</option>
-                            <option value="1" <?php echo ($form_data['specialisation_id'] == '1') ? 'selected' : ''; ?>>Pediatrician</option>
-                            <option value="2" <?php echo ($form_data['specialisation_id'] == '2') ? 'selected' : ''; ?>>Cardiologist</option>
-                            <option value="3" <?php echo ($form_data['specialisation_id'] == '3') ? 'selected' : ''; ?>>Neurologist</option>
-                            <option value="4" <?php echo ($form_data['specialisation_id'] == '4') ? 'selected' : ''; ?>>Orthopedic</option>
-                        </select>
-                        <div class="error-message" id="specialisation_id_error"></div>
-                    </div>
-                    <div class="form-group">
-                        <label for="profile_image">Profile Image<span class="required">*</span></label>
-                        <div class="file-upload">
-                            <input type="file" id="profile_image" name="profile_image" accept="image/*" required>
-                            <label for="profile_image" class="file-upload-label" id="file-label">Choose Profile Image (JPG/PNG)*</label>
+                    
+                    <!-- Column 2: Contact & Professional Details -->
+                    <div class="form-section">
+                        <div class="form-section-title">Contact & Professional Details</div>
+                        
+                        <div class="form-group">
+                            <label for="phone">Phone Number <span class="required">*</span></label>
+                            <input type="text" id="phone" name="phone" maxlength="10" placeholder="e.g. 1234567891" value="<?php echo htmlspecialchars($form_data['phone']); ?>" required>
+                            <div class="error-message" id="phone_error"></div>
                         </div>
-                        <div class="error-message" id="profile_image_error"></div>
-                    </div>
-                </div>
-                
-                <!-- Row 7: Account Details -->
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="username">Username <span class="required">*</span></label>
-                        <input type="text" id="username" name="username" placeholder="e.g. Dr_rajesh05" value="<?php echo htmlspecialchars($form_data['username']); ?>" required>
-                        <div class="error-message" id="username_error"></div>
-                    </div>
-                    <div class="form-group">
-                        <label for="password">Password <span class="required">*</span></label>
-                        <div class="password-wrapper">
-                            <input type="password" id="password" name="password" placeholder="John@123" required>
-                            <i class="fas fa-eye toggle-password" id="togglePassword"></i>
+                        
+                        <div class="form-group">
+                            <label for="email">Email <span class="required">*</span></label>
+                            <input type="email" id="email" name="email" placeholder="e.g. john@example.com" value="<?php echo htmlspecialchars($form_data['email']); ?>" required>
+                            <div class="error-message" id="email_error"></div>
                         </div>
-                        <div class="error-message" id="password_error"></div>
+                        
+                        <div class="form-group">
+                            <label for="education">Education</label>
+                            <textarea id="education" name="education" placeholder="Degree, University, Year..."><?php echo htmlspecialchars($form_data['education']); ?></textarea>
+                            <div class="error-message" id="education_error"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="specialisation_id">Specialisation <span class="required">*</span></label>
+                            <select id="specialisation_id" name="specialisation_id" required>
+                                <option value="">Select Specialisation</option>
+                                <option value="1" <?php echo ($form_data['specialisation_id'] == '1') ? 'selected' : ''; ?>>Pediatrician</option>
+                                <option value="2" <?php echo ($form_data['specialisation_id'] == '2') ? 'selected' : ''; ?>>Cardiologist</option>
+                                <option value="3" <?php echo ($form_data['specialisation_id'] == '3') ? 'selected' : ''; ?>>Neurologist</option>
+                                <option value="4" <?php echo ($form_data['specialisation_id'] == '4') ? 'selected' : ''; ?>>Orthopedic</option>
+                            </select>
+                            <div class="error-message" id="specialisation_id_error"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="profile_image">Profile Image <span class="required">*</span></label>
+                            <div class="file-upload">
+                                <input type="file" id="profile_image" name="profile_image" accept="image/*" required>
+                                <label for="profile_image" class="file-upload-label" id="file-label">Choose Profile Image (JPG/PNG)*</label>
+                            </div>
+                            <div class="error-message" id="profile_image_error"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Column 3: Account Details (same alignment as patient form: Username, Password) -->
+                    <div class="form-section">
+                        <div class="form-section-title">Account Details</div>
+                        
+                        <div class="form-group">
+                            <label for="username">Username <span class="required">*</span></label>
+                            <input type="text" id="username" name="username" placeholder="e.g. Dr_rajesh05" value="<?php echo htmlspecialchars($form_data['username']); ?>" required>
+                            <div class="error-message" id="username_error"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="password">Password <span class="required">*</span></label>
+                            <div class="password-wrapper">
+                                <input type="password" id="password" name="password" placeholder="John@123" required>
+                                <i class="fas fa-eye toggle-password" id="togglePassword"></i>
+                            </div>
+                            <div class="error-message" id="password_error"></div>
+                        </div>
                     </div>
                 </div>
                 
@@ -831,32 +807,6 @@
     document.getElementById('email').addEventListener('input', function() { validateEmail(this); });
     document.getElementById('username').addEventListener('input', function() { validateUsername(this); });
     document.getElementById('password').addEventListener('input', function() { validatePassword(this); });
-    
-    // NEW: Real-time listener for license number
-    document.getElementById('license_number').addEventListener('input', function() { 
-        if (this.value.trim() !== '') {
-            hideError('license_number');
-        }
-    });
-
-    // License file upload label update
-    document.getElementById('license_file').addEventListener('change', function () {
-        const file = this.files[0];
-        const label = document.getElementById('license-file-label');
-        hideError('license_file');
-        if (file) {
-            const ext = file.name.split('.').pop().toLowerCase();
-            if (['pdf', 'jpg', 'jpeg', 'png'].indexOf(ext) === -1) {
-                showError('license_file', "Medical license must be PDF, JPG or PNG format.");
-                this.value = '';
-                label.textContent = 'Choose Medical License (PDF, JPG or PNG)';
-            } else {
-                label.textContent = file.name;
-            }
-        } else {
-            label.textContent = 'Choose Medical License (PDF, JPG or PNG)';
-        }
-    });
 
     // --- File Upload Client-side Validation ---
     document.getElementById('profile_image').addEventListener('change', function () {
@@ -968,17 +918,8 @@
         } else {
             hideError('specialisation_id');
         }
-        
-        // NEW: 8. Validate License Number
-        const license = document.getElementById('license_number');
-        if (license.value.trim() === '') {
-            showError('license_number', "License number is required.");
-            isValid = false;
-        } else {
-            hideError('license_number');
-        }
 
-        // 9. Validate Username
+        // 8. Validate Username
         const username = document.getElementById('username');
         const usernameRegex = /^[A-Z][A-Za-z0-9]*(_[A-Za-z0-9]+)*$/;
         if (username.value.trim() === '') {
