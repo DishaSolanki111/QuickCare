@@ -67,56 +67,56 @@ if ($row = $week_result->fetch_assoc()) {
  $week_stmt->close();
 
 // Feedback average for this doctor
-$feedback_avg = 0;
-$feedback_sql = "SELECT AVG(f.RATING) AS avg_rating FROM feedback_tbl f 
+ $feedback_avg = 0;
+ $feedback_sql = "SELECT AVG(f.RATING) AS avg_rating FROM feedback_tbl f 
     JOIN appointment_tbl a ON f.APPOINTMENT_ID = a.APPOINTMENT_ID 
     WHERE a.DOCTOR_ID = ?";
-$feedback_stmt = $conn->prepare($feedback_sql);
-$feedback_stmt->bind_param("i", $doctor_id);
-$feedback_stmt->execute();
-$feedback_result = $feedback_stmt->get_result();
-$row = $feedback_result->fetch_assoc();
+ $feedback_stmt = $conn->prepare($feedback_sql);
+ $feedback_stmt->bind_param("i", $doctor_id);
+ $feedback_stmt->execute();
+ $feedback_result = $feedback_stmt->get_result();
+ $row = $feedback_result->fetch_assoc();
 if ($row && $row['avg_rating'] !== null) {
     $feedback_avg = round((float) $row['avg_rating'], 1);
 }
-$feedback_stmt->close();
+ $feedback_stmt->close();
 
 // Change percentages (compare with previous period)
-$appt_change = null;
-$week_sql2 = "SELECT COUNT(*) AS total FROM appointment_tbl WHERE DOCTOR_ID = ? AND DATE(APPOINTMENT_DATE) = DATE_SUB(CURDATE(), INTERVAL 7 DAY)";
-$week_stmt2 = $conn->prepare($week_sql2);
-$week_stmt2->bind_param("i", $doctor_id);
-$week_stmt2->execute();
-$week_result2 = $week_stmt2->get_result();
+ $appt_change = null;
+ $week_sql2 = "SELECT COUNT(*) AS total FROM appointment_tbl WHERE DOCTOR_ID = ? AND DATE(APPOINTMENT_DATE) = DATE_SUB(CURDATE(), INTERVAL 7 DAY)";
+ $week_stmt2 = $conn->prepare($week_sql2);
+ $week_stmt2->bind_param("i", $doctor_id);
+ $week_stmt2->execute();
+ $week_result2 = $week_stmt2->get_result();
 if (($row2 = $week_result2->fetch_assoc()) && $row2['total'] > 0) {
     $last_week = (int) $row2['total'];
     $appt_change = $last_week > 0 ? round((($today_appointments - $last_week) / $last_week) * 100) : 0;
 }
-$week_stmt2->close();
+ $week_stmt2->close();
 
-$patients_change = null;
-$pat_sql = "SELECT COUNT(DISTINCT PATIENT_ID) AS total FROM appointment_tbl WHERE DOCTOR_ID = ? AND APPOINTMENT_DATE BETWEEN DATE_SUB(CURDATE(), INTERVAL 7 DAY) AND CURDATE() - INTERVAL 1 DAY";
-$pat_stmt = $conn->prepare($pat_sql);
-$pat_stmt->bind_param("i", $doctor_id);
-$pat_stmt->execute();
-$pat_result = $pat_stmt->get_result();
-$row3 = $pat_result->fetch_assoc();
+ $patients_change = null;
+ $pat_sql = "SELECT COUNT(DISTINCT PATIENT_ID) AS total FROM appointment_tbl WHERE DOCTOR_ID = ? AND APPOINTMENT_DATE BETWEEN DATE_SUB(CURDATE(), INTERVAL 7 DAY) AND CURDATE() - INTERVAL 1 DAY";
+ $pat_stmt = $conn->prepare($pat_sql);
+ $pat_stmt->bind_param("i", $doctor_id);
+ $pat_stmt->execute();
+ $pat_result = $pat_stmt->get_result();
+ $row3 = $pat_result->fetch_assoc();
 if ($row3 && $row3['total'] > 0) {
     $last_week_patients = (int) $row3['total'];
     $patients_change = $last_week_patients > 0 ? round((($patients_this_week - $last_week_patients) / $last_week_patients) * 100) : 0;
 }
-$pat_stmt->close();
+ $pat_stmt->close();
 
 // Next available slot and available slots today
-$day_map = ['Monday' => 'MON', 'Tuesday' => 'TUE', 'Wednesday' => 'WED', 'Thursday' => 'THUR', 'Friday' => 'FRI', 'Saturday' => 'SAT', 'Sunday' => 'SUN'];
-$today_day = $day_map[date('l')];
-$next_slot = '-';
-$available_slots_today = 0;
-$slot_sql = "SELECT ds.START_TIME, ds.END_TIME FROM doctor_schedule_tbl ds WHERE ds.DOCTOR_ID = ? AND ds.AVAILABLE_DAY = ?";
-$slot_stmt = $conn->prepare($slot_sql);
-$slot_stmt->bind_param("is", $doctor_id, $today_day);
-$slot_stmt->execute();
-$slot_result = $slot_stmt->get_result();
+ $day_map = ['Monday' => 'MON', 'Tuesday' => 'TUE', 'Wednesday' => 'WED', 'Thursday' => 'THUR', 'Friday' => 'FRI', 'Saturday' => 'SAT', 'Sunday' => 'SUN'];
+ $today_day = $day_map[date('l')];
+ $next_slot = '-';
+ $available_slots_today = 0;
+ $slot_sql = "SELECT ds.START_TIME, ds.END_TIME FROM doctor_schedule_tbl ds WHERE ds.DOCTOR_ID = ? AND ds.AVAILABLE_DAY = ?";
+ $slot_stmt = $conn->prepare($slot_sql);
+ $slot_stmt->bind_param("is", $doctor_id, $today_day);
+ $slot_stmt->execute();
+ $slot_result = $slot_stmt->get_result();
 if ($slot_result->num_rows > 0) {
     $slot_row = $slot_result->fetch_assoc();
     if ($slot_row && isset($slot_row['START_TIME'], $slot_row['END_TIME'])) {
@@ -149,7 +149,28 @@ if ($slot_result->num_rows > 0) {
     $available_slots_today = $total_slots;
     }
 }
-$slot_stmt->close();
+ $slot_stmt->close();
+
+// Next appointment (earliest upcoming SCHEDULED) with patient details
+ $next_appointment = null;
+ $next_sql = "
+    SELECT a.APPOINTMENT_ID, a.APPOINTMENT_DATE, a.APPOINTMENT_TIME,
+           p.FIRST_NAME AS PAT_FNAME, p.LAST_NAME AS PAT_LNAME, p.PHONE AS PAT_PHONE, p.EMAIL AS PAT_EMAIL
+    FROM appointment_tbl a
+    JOIN patient_tbl p ON a.PATIENT_ID = p.PATIENT_ID
+    WHERE a.DOCTOR_ID = ? AND a.STATUS = 'SCHEDULED'
+      AND ( (a.APPOINTMENT_DATE > CURDATE()) OR (a.APPOINTMENT_DATE = CURDATE() AND a.APPOINTMENT_TIME >= CURTIME()) )
+    ORDER BY a.APPOINTMENT_DATE, a.APPOINTMENT_TIME
+    LIMIT 1
+";
+ $next_stmt = $conn->prepare($next_sql);
+ $next_stmt->bind_param("i", $doctor_id);
+ $next_stmt->execute();
+ $next_result = $next_stmt->get_result();
+if ($next_result->num_rows > 0) {
+    $next_appointment = $next_result->fetch_assoc();
+}
+ $next_stmt->close();
 
  $conn->close();
 ?>
@@ -187,7 +208,6 @@ $slot_stmt->close();
     --soft-blue: #5790AB;
     --light-blue: #9CCDD8;
     --gray-blue: #D0D7E1;
-    --white: #ffffff;
     --card-bg: #F6F9FB;
     --primary-color: #1a3a5f;
     --secondary-color: #3498db;
@@ -195,149 +215,85 @@ $slot_stmt->close();
     --danger-color: #e74c3c;
     --warning-color: #f39c12;
     --info-color: #17a2b8;
-    
-        }
+}
 
 * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
-        body {
-            background-color: #f5f7fa;
-            color: #333;
-            line-height: 1.6;
-        }
-        
-        .container {
-            display: flex;
-            min-height: 100vh;
-        }
-        
-       
-        /* Main Content */
-        .main-content {
-            flex: 1;
-            margin-left: 250px;
-            padding: 20px;
-            margin-top:-15px;
-        }
-        
-        
-        .welcome-msg {
-            font-size: 24px;
-            font-weight: 600;
-            color: var(--primary-color);
-        }
-        
-        .user-actions {
-            display: flex;
-            align-items: center;
-        }
-        
-        .notification-btn {
-            position: relative;
-            background: none;
-            border: none;
-            font-size: 20px;
-            color: var(--dark-color);
-            margin-right: 20px;
-            cursor: pointer;
-        }
-        
-        .notification-badge {
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            background-color: var(--danger-color);
-            color: white;
-            border-radius: 50%;
-            width: 18px;
-            height: 18px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 11px;
-            font-weight: bold;
-        }
-        
-        .user-dropdown {
-            display: flex;
-            align-items: center;
-            cursor: pointer;
-        }
-        
-        .user-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background-color: var(--secondary-color);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 10px;
-            font-weight: bold;
-        }
-        
-        .container {
-            display: flex;
-            min-height: 100vh;
-        }
-.sidebar a {
-    display: block;
-    padding: 15px 25px;
-    color: var(--gray-blue);
-    text-decoration: none;
-    font-size: 17px;
-    border-left: 4px solid transparent;
-    transition: all 0.3s ease;
-}
-.sidebar a.active {
-    background: var(--mid-blue);
-    border-left: 4px solid var(--light-blue);
-    color: var(--white);
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
+body {
+    background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+    color: #333;
+    line-height: 1.6;
+}
 
+.container {
+    display: flex;
+    min-height: 100vh;
+}
 
-        
+/* Main Content */
+.main-content {
+    flex: 1;
+    margin-left: 250px;
+    padding: 20px 20px 0 20px;
+    margin-top: -15px;
+}
+
 /* Dashboard Content */
 .dashboard-content {
     padding: 10px;
+    padding-bottom: 0;
 }
 
 .welcome-section {
-    margin-bottom: 30px;
+    margin-bottom: 16px;
     text-align: left;
+    padding: 0;
 }
 
 .welcome-section h2 {
-    font-size: 28px;
+    font-size: 32px;
     font-weight: 700;
     color: var(--dark);
-    margin-bottom: 5px;
+    margin: 0 0 10px 0;
+    position: relative;
+    display: inline-block;
+}
+
+.welcome-section h2:after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 60px;
+    height: 4px;
+    background: var(--gradient-1);
+    border-radius: 2px;
 }
 
 .welcome-section p {
     color: var(--text-light);
     font-size: 16px;
+    max-width: 600px;
 }
 
-/* Cards */
+/* Cards Container */
 .cards-container {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 25px;
-    margin-bottom: 40px;
+    gap: 16px;
+    margin-bottom: 24px;
 }
 
+/* Card Design */
 .card {
     background: var(--white);
-    border-radius: 12px;
-    padding: 25px;
+    border-radius: 0;
+    padding: 16px;
     box-shadow: var(--shadow-md);
     transition: all 0.3s ease;
     position: relative;
@@ -355,6 +311,7 @@ $slot_stmt->close();
     width: 100%;
     height: 4px;
     background: var(--gradient-1);
+    border-radius: 0;
 }
 
 .card:hover {
@@ -366,68 +323,112 @@ $slot_stmt->close();
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 15px;
+    margin-bottom: 12px;
 }
 
 .card h3 {
-    font-size: 18px;
+    font-size: 15px;
     color: var(--text);
     margin: 0;
+    font-weight: 600;
 }
 
 .card-icon {
-    width: 50px;
-    height: 50px;
-    border-radius: 10px;
+    width: 44px;
+    height: 44px;
+    border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 24px;
+    font-size: 20px;
+    box-shadow: var(--shadow-sm);
 }
 
 .appointments-icon {
-    background: rgba(0, 102, 204, 0.1);
+    background: linear-gradient(135deg, rgba(0, 102, 204, 0.1) 0%, rgba(0, 168, 204, 0.1) 100%);
     color: var(--primary);
 }
 
 .feedback-icon {
-    background: rgba(255, 193, 7, 0.1);
+    background: linear-gradient(135deg, rgba(255, 193, 7, 0.1) 0%, rgba(255, 152, 0, 0.1) 100%);
     color: #ffc107;
 }
 
 .patients-icon {
-    background: rgba(0, 168, 107, 0.1);
+    background: linear-gradient(135deg, rgba(0, 168, 107, 0.1) 0%, rgba(46, 204, 113, 0.1) 100%);
     color: var(--accent);
 }
 
 .card-value {
-    font-size: 32px;
+    font-size: 28px;
     font-weight: 700;
     color: var(--dark);
-    margin-bottom: 5px;
+    margin-bottom: 0;
+    position: relative;
+    z-index: 1;
 }
 
 .card-change {
     font-size: 14px;
     color: var(--text-light);
     margin-top: auto;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.card-change i {
+    font-size: 12px;
+}
+
+.card-change.positive {
+    color: var(--accent);
+}
+
+.card-change.negative {
+    color: var(--warning);
 }
 
 /* Schedule Card */
 .schedule-card {
     background: var(--white);
-    border-radius: 12px;
-    padding: 25px;
+    border-radius: 0;
+    padding: 30px;
     box-shadow: var(--shadow-md);
-    margin-bottom: 30px;
+    margin-bottom: 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.schedule-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: var(--gradient-2);
+    border-radius: 0;
 }
 
 .schedule-card h3 {
-    font-size: 20px;
+    font-size: 22px;
     color: var(--dark);
-    margin-bottom: 20px;
+    margin-bottom: 25px;
     padding-bottom: 15px;
     border-bottom: 1px solid #eee;
+    position: relative;
+}
+
+.schedule-card h3::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 50px;
+    height: 3px;
+    background: var(--gradient-2);
+    border-radius: 2px;
 }
 
 .schedule-info {
@@ -439,21 +440,107 @@ $slot_stmt->close();
 .schedule-info-item {
     flex: 1;
     text-align: center;
-    padding: 0 15px;
+    padding: 20px 15px;
+    border-radius: 12px;
+    background: var(--card-bg);
+    margin: 0 10px;
+    transition: all 0.3s ease;
+}
+
+.schedule-info-item:first-child {
+    margin-left: 0;
+}
+
+.schedule-info-item:last-child {
+    margin-right: 0;
+}
+
+.schedule-info-item:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
 }
 
 .schedule-info-item h4 {
     font-size: 14px;
     color: var(--text-light);
-    margin-bottom: 10px;
+    margin-bottom: 15px;
     font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .schedule-info-item p {
-    font-size: 20px;
-    font-weight: 600;
+    font-size: 24px;
+    font-weight: 700;
     color: var(--dark);
     margin: 0;
+}
+
+/* Next Appointment patient details */
+.next-appointment-card .next-appointment-details {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.next-appt-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    background: var(--light);
+    border-radius: 10px;
+    border-left: 4px solid var(--accent);
+}
+
+.next-appt-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-light);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    min-width: 100px;
+}
+
+.next-appt-value {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--dark);
+    text-align: right;
+    word-break: break-word;
+}
+
+.next-appointment-empty {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--text-light);
+}
+
+.next-appointment-empty i {
+    font-size: 48px;
+    margin-bottom: 12px;
+    opacity: 0.5;
+}
+
+.next-appointment-empty p {
+    font-size: 16px;
+    margin: 0;
+}
+
+/* Animation for numbers */
+@keyframes countUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.card-value, .schedule-info-item p {
+    animation: countUp 0.5s ease-out;
 }
 
 /* Responsive Design */
@@ -480,17 +567,6 @@ $slot_stmt->close();
         width: 100%;
     }
     
-    .topbar {
-        padding: 15px 20px;
-        flex-direction: column;
-        align-items: flex-start;
-    }
-    
-    .topbar-right {
-        margin-top: 15px;
-        align-self: flex-end;
-    }
-    
     .dashboard-content {
         padding: 20px;
     }
@@ -505,12 +581,22 @@ $slot_stmt->close();
     
     .schedule-info-item {
         margin-bottom: 15px;
-        padding: 10px 0;
-        border-bottom: 1px solid #eee;
+        margin-left: 0;
+        margin-right: 0;
     }
     
     .schedule-info-item:last-child {
-        border-bottom: none;
+        margin-bottom: 0;
+    }
+    
+    .next-appt-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+    }
+    
+    .next-appt-value {
+        text-align: left;
     }
 }
 </style>
@@ -518,16 +604,15 @@ $slot_stmt->close();
 <body>
 
 <div class="container">
-
     <?php include 'doctor_sidebar.php'; ?>
 
     <div class="main-content">
         <?php include 'doctor_header.php'; ?>
+        
         <!-- Dashboard Content -->
         <div class="dashboard-content">
             <div class="welcome-section">
                 <h2>Dashboard Overview</h2>
-                <p>Here's what's happening with your practice today.</p>
             </div>
             
             <div class="cards-container">
@@ -539,11 +624,6 @@ $slot_stmt->close();
                         </div>
                     </div>
                     <div class="card-value"><?php echo $today_appointments; ?></div>
-                    <div class="card-change">
-                        <?php if ($appt_change !== null): ?>
-                        <i class="fas fa-arrow-<?php echo $appt_change >= 0 ? 'up' : 'down'; ?>"></i> <?php echo abs($appt_change); ?>% from last week
-                        <?php else: ?>—<?php endif; ?>
-                    </div>
                 </div>
                 
                 <div class="card">
@@ -554,9 +634,6 @@ $slot_stmt->close();
                         </div>
                     </div>
                     <div class="card-value">⭐ <?php echo $feedback_avg > 0 ? $feedback_avg : '—'; ?></div>
-                    <div class="card-change">
-                        <?php echo $feedback_avg > 0 ? 'From patient feedback' : 'No feedback yet'; ?>
-                    </div>
                 </div>
                 
                 <div class="card">
@@ -567,30 +644,40 @@ $slot_stmt->close();
                         </div>
                     </div>
                     <div class="card-value"><?php echo $patients_this_week; ?></div>
-                    <div class="card-change">
-                        <?php if ($patients_change !== null): ?>
-                        <i class="fas fa-arrow-<?php echo $patients_change >= 0 ? 'up' : 'down'; ?>"></i> <?php echo abs($patients_change); ?>% from last week
-                        <?php else: ?>—<?php endif; ?>
-                    </div>
                 </div>
             </div>
             
-            <div class="schedule-card">
-                <h3>Schedule Summary</h3>
-                <div class="schedule-info">
-                    <div class="schedule-info-item">
-                        <h4>Next Available Slot</h4>
-                        <p><?php echo htmlspecialchars($next_slot); ?></p>
+            <div class="schedule-card next-appointment-card">
+                <h3>Next Appointment</h3>
+                <?php if ($next_appointment): ?>
+                <div class="next-appointment-details">
+                    <div class="next-appt-row">
+                        <span class="next-appt-label">Patient</span>
+                        <span class="next-appt-value"><?php echo htmlspecialchars(trim($next_appointment['PAT_FNAME'] . ' ' . $next_appointment['PAT_LNAME'])); ?></span>
                     </div>
-                    <div class="schedule-info-item">
-                        <h4>Total Patients This Week</h4>
-                        <p><?php echo $patients_this_week; ?></p>
+                    <div class="next-appt-row">
+                        <span class="next-appt-label">Date & Time</span>
+                        <span class="next-appt-value"><?php echo date('M d, Y', strtotime($next_appointment['APPOINTMENT_DATE'])); ?> · <?php echo date('h:i A', strtotime($next_appointment['APPOINTMENT_TIME'])); ?></span>
                     </div>
-                    <div class="schedule-info-item">
-                        <h4>Available Slots Today</h4>
-                        <p><?php echo $available_slots_today; ?></p>
+                    <?php if (!empty($next_appointment['PAT_PHONE'])): ?>
+                    <div class="next-appt-row">
+                        <span class="next-appt-label">Phone</span>
+                        <span class="next-appt-value"><?php echo htmlspecialchars($next_appointment['PAT_PHONE']); ?></span>
                     </div>
+                    <?php endif; ?>
+                    <?php if (!empty($next_appointment['PAT_EMAIL'])): ?>
+                    <div class="next-appt-row">
+                        <span class="next-appt-label">Email</span>
+                        <span class="next-appt-value"><?php echo htmlspecialchars($next_appointment['PAT_EMAIL']); ?></span>
+                    </div>
+                    <?php endif; ?>
                 </div>
+                <?php else: ?>
+                <div class="next-appointment-empty">
+                    <i class="fas fa-calendar-check"></i>
+                    <p>No upcoming appointments</p>
+                </div>
+                <?php endif; ?>
             </div>
         </div>
     </div>
