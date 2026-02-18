@@ -89,21 +89,7 @@ $conn->close();
         width: calc(100% - 250px);
     }
 
-    /* Top bar */
-    .topbar {
-        background: white;
-        padding: 15px 25px;
-        border-radius: 10px;
-        margin-bottom: 20px;
-        display: flex;
-        justify-content: space-between;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    }
-
-    .topbar h1 {
-        margin: 0;
-        color: #064469;
-    }
+    
 
     /* Cards */
     .cards {
@@ -211,11 +197,7 @@ $conn->close();
 <!-- Main Content -->
 <div class="main">
 
-    <!-- Topbar -->
-    <div class="topbar">
-        <h1>Admin Dashboard</h1>
-        <p>Welcome, <?php echo htmlspecialchars($adminName); ?></p>
-    </div>
+    <?php include 'admin_header.php'; ?>
 
     <!-- Cards -->
     <div class="cards">

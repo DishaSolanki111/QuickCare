@@ -197,16 +197,7 @@ include 'admin_sidebar.php';
             width: calc(100% - 250px);
         }
 
-        .topbar {
-            background: white;
-            padding: 15px 25px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: space-between;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        }
-
+        
         table {
             width: 100%;
             border-collapse: collapse;
@@ -491,10 +482,7 @@ include 'admin_sidebar.php';
 
 <div class="main">
 
-    <div class="topbar">
-        <h1>Manage Doctors</h1>
-        <p>Welcome, <?php echo htmlspecialchars($adminName); ?></p>
-    </div>
+    <?php include 'admin_header.php'; ?>
 
     <?php if (!empty($success_message)): ?>
         <div class="alert alert-success"><?php echo $success_message; ?></div>

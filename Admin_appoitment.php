@@ -44,20 +44,7 @@ $adminName = $_SESSION['USER_NAME'] ?? 'Admin';
         width: calc(100% - 250px);
     }
 
-    .topbar {
-        background: white;
-        padding: 15px 25px;
-        border-radius: 10px;
-        margin-bottom: 20px;
-        display: flex;
-        justify-content: space-between;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    }
-
-    .topbar h1 {
-        margin: 0;
-        color: #064469;
-    }
+    
 
     table {
         width: 100%;
@@ -140,10 +127,7 @@ $adminName = $_SESSION['USER_NAME'] ?? 'Admin';
 
 <div class="main">
 
-    <div class="topbar">
-        <h1>View Appointments</h1>
-        <p>Welcome, <?php echo htmlspecialchars($adminName); ?></p>
-    </div>
+    <?php include 'admin_header.php'; ?>
 
     <div class="filter-container">
         <form method="POST" action="">
