@@ -1,32 +1,32 @@
 <?php
-// patient_header.php
+// receptionist_header.php
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Expect $patient (and optional $page_title, $reminder_query) to be set
-$patient_full_name = isset($patient)
-    ? trim(($patient['FIRST_NAME'] ?? '') . ' ' . ($patient['LAST_NAME'] ?? ''))
-    : 'Patient';
-$patient_full_name = $patient_full_name !== '' ? $patient_full_name : 'Patient';
+// Expect $receptionist (and optional $page_title, $reminder_query) to be set
+$receptionist_full_name = isset($receptionist)
+    ? trim(($receptionist['FIRST_NAME'] ?? '') . ' ' . ($receptionist['LAST_NAME'] ?? ''))
+    : 'Receptionist';
+$receptionist_full_name = $receptionist_full_name !== '' ? $receptionist_full_name : 'Receptionist';
 
 // Simple initials avatar from name
 $initials = '';
-if (!empty($patient['FIRST_NAME']) || !empty($patient['LAST_NAME'])) {
-    $initials .= strtoupper(substr($patient['FIRST_NAME'] ?? '', 0, 1));
-    $initials .= strtoupper(substr($patient['LAST_NAME'] ?? '', 0, 1));
+if (!empty($receptionist['FIRST_NAME']) || !empty($receptionist['LAST_NAME'])) {
+    $initials .= strtoupper(substr($receptionist['FIRST_NAME'] ?? '', 0, 1));
+    $initials .= strtoupper(substr($receptionist['LAST_NAME'] ?? '', 0, 1));
 } else {
-    $initials = 'PT';
+    $initials = 'RC';
 }
 
-// Notification count (if query provided)
-$reminder_count = isset($reminder_query) && $reminder_query
+// Optional notifications (e.g. reminders or tasks) if a query is provided
+$notif_count = isset($reminder_query) && $reminder_query
     ? mysqli_num_rows($reminder_query)
     : 0;
 ?>
 
 <header class="topbar">
-    <h2><?php echo htmlspecialchars($page_title ?? 'Welcome back'); ?></h2>
+    <h2><?php echo htmlspecialchars($page_title ?? 'Receptionist Dashboard'); ?></h2>
 
     <div class="topbar-right">
         <div class="user-info">
@@ -37,7 +37,7 @@ $reminder_count = isset($reminder_query) && $reminder_query
             <div class="user-details">
                 <div class="name-row">
                     <span class="user-name">
-                        <?php echo htmlspecialchars($patient_full_name); ?>
+                        <?php echo htmlspecialchars($receptionist_full_name); ?>
                     </span>
                 </div>
 
@@ -46,42 +46,40 @@ $reminder_count = isset($reminder_query) && $reminder_query
                 </span>
             </div>
 
-            <!-- Notification bell + dropdown, aligned like doctor header -->
-            <div class="notification-bell" onclick="toggleNotifications()">
-                <i class="fas fa-bell"></i>
+            <!-- Optional notification bell + dropdown -->
+            <?php if (isset($reminder_query)): ?>
+                <div class="notification-bell" onclick="toggleNotifications()">
+                    <i class="fas fa-bell"></i>
 
-                <?php if ($reminder_count > 0): ?>
-                    <span class="notification-badge"><?php echo $reminder_count; ?></span>
-                <?php endif; ?>
-
-                <div class="notification-dropdown" id="notificationDropdown">
-                    <?php if ($reminder_count > 0 && isset($reminder_query) && $reminder_query): ?>
-                        <?php while ($reminder = mysqli_fetch_assoc($reminder_query)): ?>
-                            <div class="notification-item">
-                                <div class="notification-icon">
-                                    <i class="fas fa-calendar-check"></i>
-                                </div>
-                                <div class="notification-content">
-                                    <div class="notification-title">Appointment Reminder</div>
-                                    <div class="notification-message">
-                                        <?php echo htmlspecialchars($reminder['REMARKS']); ?>
-                                    </div>
-                                    <div class="notification-time">
-                                        <?php
-                                        echo date(
-                                            'M d, Y h:i A',
-                                            strtotime($reminder['APPOINTMENT_DATE'] . ' ' . $reminder['APPOINTMENT_TIME'])
-                                        );
-                                        ?>
-                                    </div>
-                                </div>
-                            </div>
-                        <?php endwhile; ?>
-                    <?php else: ?>
-                        <div class="no-notifications">No new notifications</div>
+                    <?php if ($notif_count > 0): ?>
+                        <span class="notification-badge"><?php echo $notif_count; ?></span>
                     <?php endif; ?>
+
+                    <div class="notification-dropdown" id="notificationDropdown">
+                        <?php if ($notif_count > 0 && $reminder_query): ?>
+                            <?php while ($row = mysqli_fetch_assoc($reminder_query)): ?>
+                                <div class="notification-item">
+                                    <div class="notification-icon">
+                                        <i class="fas fa-calendar-check"></i>
+                                    </div>
+                                    <div class="notification-content">
+                                        <div class="notification-title">
+                                            <?php echo htmlspecialchars($row['TITLE'] ?? 'Reminder'); ?>
+                                        </div>
+                                        <?php if (!empty($row['REMARKS'] ?? '')): ?>
+                                            <div class="notification-message">
+                                                <?php echo htmlspecialchars($row['REMARKS']); ?>
+                                            </div>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+                            <?php endwhile; ?>
+                        <?php else: ?>
+                            <div class="no-notifications">No new notifications</div>
+                        <?php endif; ?>
+                    </div>
                 </div>
-            </div>
+            <?php endif; ?>
         </div>
     </div>
 </header>
@@ -216,15 +214,10 @@ $reminder_count = isset($reminder_query) && $reminder_query
     color: #4b5563;
 }
 
-.notification-time {
-    font-size: 11px;
-    color: #9ca3af;
-    margin-top: 2px;
-}
-
 .no-notifications {
     padding: 10px 14px;
     font-size: 13px;
     color: #6b7280;
 }
 </style>
+

@@ -375,7 +375,8 @@ body {
 
     <!-- RIGHT MAIN CONTENT -->
     <div class="main">
-
+        <!-- Header -->
+<?php include 'patient_header.php'; ?>
         <div class="filters">
             <div class="filter-group">
                 <label>Select Date</label>

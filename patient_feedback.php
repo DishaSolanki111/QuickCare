@@ -147,23 +147,6 @@ html {
     height: 100%;
     overflow-y: auto;
 }
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 20px;
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            margin-bottom: 25px;
-        }
-        
-        .welcome-msg {
-            font-size: 24px;
-            font-weight: 600;
-            color: var(--primary-color);
-        }
-        
         .user-actions {
             display: flex;
             align-items: center;
@@ -421,16 +404,7 @@ html {
         <div class="main-content">
 
             <!-- Header -->
-            <div class="header">
-                <div class="welcome-msg">Feedback</div>
-                <div class="user-actions">
-                    <div class="user-dropdown">
-                        <div class="user-avatar"><?php echo strtoupper(substr($patient['FIRST_NAME'], 0, 1) . substr($patient['LAST_NAME'], 0, 1)); ?></div>
-                        <span><?php echo htmlspecialchars($patient['FIRST_NAME'] . ' ' . $patient['LAST_NAME']); ?></span>
-                        <i class="fas fa-chevron-down" style="margin-left: 8px;"></i>
-                    </div>
-                </div>
-            </div>
+            <?php include 'patient_header.php'; ?>
             <!-- Tab Navigation -->
             <div style="margin-bottom: 25px;">
                 <button class="btn btn-primary" id="tabAppointments" onclick="showTab('appointments')">Your Feedback</button>

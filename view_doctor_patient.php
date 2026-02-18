@@ -148,41 +148,6 @@ min-height: 100vh;
 width: 100%;
 }
 
-.header {
-display: flex;
-justify-content: space-between;
-align-items: center;
-padding: 15px 20px;
-background-color: white;
-border-radius: 8px;
-box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-margin-bottom: 25px;
-}
-
-.welcome-msg {
-font-size: 24px;
-font-weight: 600;
-color: var(--primary-color);
-}
-
-.user-actions {
-display: flex;
-align-items: center;
-}
-
-.user-avatar {
-width: 40px;
-height: 40px;
-border-radius: 50%;
-background-color: var(--secondary-color);
-color: white;
-display: flex;
-align-items: center;
-justify-content: center;
-margin-right: 10px;
-font-weight: bold;
-}
-
 .filter-section {
 background-color: white;
 border-radius: 10px;
@@ -569,16 +534,7 @@ margin-bottom: 15px;
 <!-- Main Content -->
 <div class="main-content">
 <!-- Header -->
-<div class="header">
-<div class="welcome-msg">Doctor Profiles</div>
-<div class="user-actions">
-<div class="user-dropdown">
-<div class="user-avatar"><?php echo strtoupper(substr($patient['FIRST_NAME'], 0, 1) . substr($patient['LAST_NAME'], 0, 1)); ?></div>
-<span><?php echo htmlspecialchars($patient['FIRST_NAME'] . ' ' . $patient['LAST_NAME']); ?></span>
-<i class="fas fa-chevron-down" style="margin-left: 8px;"></i>
-</div>
-</div>
-</div>
+<?php include 'patient_header.php'; ?>
 
 <?php if ($doctor_details): ?>
 <!-- Doctor Detail View -->
