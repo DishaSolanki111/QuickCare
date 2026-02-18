@@ -46,21 +46,6 @@ include 'recept_sidebar.php';
         width: calc(100% - 250px);
     }
 
-    .topbar {
-        background: white;
-        padding: 15px 25px;
-        border-radius: 10px;
-        margin-bottom: 20px;
-        display: flex;
-        justify-content: space-between;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    }
-
-    .topbar h1 {
-        margin: 0;
-        color: #064469;
-    }
-
     table {
         width: 100%;
         border-collapse: collapse;
@@ -146,12 +131,7 @@ $receptionist_id = $_SESSION['RECEPTIONIST_ID'];
  $receptionist = mysqli_fetch_assoc($receptionist_query);
 ?>
 <div class="main">
-
-    <div class="topbar">
-        <h1>View Appointments</h1>
-            <p>Welcome, <?php echo htmlspecialchars($receptionist['FIRST_NAME'] . ' ' . $receptionist['LAST_NAME']); ?></p>
-        
-    </div>
+<?php include 'receptionist_header.php'; ?>
 
     <div class="filter-container">
         <form method="POST" action="">

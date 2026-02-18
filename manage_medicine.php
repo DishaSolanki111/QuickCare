@@ -122,20 +122,7 @@ if (!empty($search)) {
             width: calc(100% - 240px);
         }
         
-        .topbar {
-            background: white;
-            padding: 15px 25px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: space-between;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        }
-
-        .topbar h1 {
-            margin: 0;
-            color: #064469;
-        }
+        
         
         .card {
             border: none;
@@ -381,10 +368,7 @@ if (!empty($search)) {
 
     <!-- Main Content -->
     <div class="main-content">
-        <div class="topbar">
-            <h1>Manage Medicine</h1>
-            <p>Welcome, <?php echo htmlspecialchars($receptionist['FIRST_NAME'] . ' ' . $receptionist['LAST_NAME']); ?></p>
-        </div>
+        <?php include 'receptionist_header.php'; ?>
         
         <!-- Success/Error Messages -->
         <?php if (isset($success_message)): ?>

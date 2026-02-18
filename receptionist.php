@@ -2,7 +2,7 @@
 session_start();
 
 if (!isset($_SESSION['RECEPTIONIST_ID'])) {
-    header("Location: login.php");
+    header("Location: login_for_all.php");
     exit;
 }
 
@@ -75,21 +75,9 @@ body {
 /* ---------------- SIDEBAR ---------------- */
 
 
-    /* Top bar */
-    .topbar {
-        background: white;
-        padding: 15px 25px;
-        border-radius: 10px;
-        margin-bottom: 20px;
-        display: flex;
-        justify-content: space-between;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    }
+    
 
-    .topbar h1 {
-        margin: 0;
-        color: #064469;
-    }
+    
 
 /* ---------------- MAIN CONTENT ---------------- */
 .main-content {
@@ -197,12 +185,8 @@ body {
 <?php include 'recept_sidebar.php'; ?>
 <!-- ---------------- MAIN CONTENT ---------------- -->
 <div class="main-content">
- <div class="topbar">
-        <h1>Receptionist Dashboard</h1>
-        <p>Welcome, <?php echo $receptionist_name; ?></p>
-    </div>
-  
-
+    <!-- Header -->
+    <?php include 'receptionist_header.php'; ?>
     <!-- Stats Cards -->
     <div class="card">
         <div class="card-header">

@@ -7,7 +7,7 @@ if (
     $_SESSION['LOGGED_IN'] !== true ||
     $_SESSION['USER_TYPE'] !== 'receptionist'
 ) {
-    header("Location: login.php");
+    header("Location: login_for_all.php");
     exit();
 }
 
@@ -148,22 +148,7 @@ $conn->close();
             width: 1500px;
             min-height: 100vh;
         }
-/* Top bar */
-   .topbar {
-            background: white;
-            padding: 15px 25px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: space-between;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        }
 
-        .topbar h1 {
-            margin: 0;
-            color: #064469;
-        }
-        
         .profile-header {
             display: flex;
             align-items: center;
@@ -492,10 +477,8 @@ $conn->close();
 
 
 <div class="main-content">
-    <div class="topbar">
-        <h1>My Profile</h1>
-        <p>Welcome,<?= $receptionist['FIRST_NAME'].' '.$receptionist['LAST_NAME'] ?></p>
-    </div>
+    <!-- Header -->
+    <?php include 'receptionist_header.php'; ?>
   
 <div class="profile-content">
     <!-- Combined Information Section (Personal + Security) -->
