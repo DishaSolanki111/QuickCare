@@ -391,7 +391,7 @@ include 'header.php';
 
                 <button type="submit">Login</button>
                 <div class="login-footer auth-links">
-                    <a href="register.php" class="left-link">Create account</a>
+                    <a href="patientform.php" class="left-link">Create account</a>
                     <a href="forgot_password.php" class="right-link">Forgot password?</a>
                 </div>
             </form>

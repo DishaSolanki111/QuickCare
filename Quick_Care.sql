@@ -323,7 +323,7 @@ CREATE TABLE `doctor_tbl` (
   `STATUS` enum('pending','approved','rejected') DEFAULT 'pending'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 --
---otp table
+-- otp table
 --
 CREATE TABLE password_resets (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -523,7 +523,8 @@ CREATE TABLE `patient_tbl` (
   `BLOOD_GROUP` enum('A+','A-','B+','B-','O+','O-','AB+','AB-') DEFAULT NULL,
   `PHONE` bigint(20) DEFAULT NULL,
   `EMAIL` varchar(50) DEFAULT NULL,
-  `ADDRESS` text DEFAULT NULL
+  `ADDRESS` text DEFAULT NULL,
+  `MEDICAL_HISTORY_FILE` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
