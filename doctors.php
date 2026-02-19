@@ -41,6 +41,8 @@ $spec_id = intval($_POST['spec_id']);
             --soft-blue: #5790AB;
             --light-blue: #9CCDD8;
             --gray-blue: #D0D7E1;
+            --primary-dark: #0f2640;
+            --medium-blue: #4f8fb5;
             --white: #ffffff;
         }
 
@@ -186,13 +188,22 @@ $spec_id = intval($_POST['spec_id']);
 
         .card-actions {
             display: flex;
-            gap: 10px;
+            align-items: center;
+            gap: 12px;
             width: 100%;
             margin-top: auto;
         }
 
-        .card-actions button, .card-actions a {
+        .card-actions form {
             flex: 1;
+            display: flex;
+            min-width: 0;
+        }
+
+        .card-actions button,
+        .card-actions a {
+            flex: 1;
+            width: 100%;
             padding: 12px 0;
             border: none;
             border-radius: 8px;
@@ -202,6 +213,10 @@ $spec_id = intval($_POST['spec_id']);
             text-align: center;
             text-decoration: none;
             font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
         }
 
         .btn-primary {
