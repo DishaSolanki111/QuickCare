@@ -310,15 +310,10 @@ if (mysqli_num_rows($doctor_query) == 0) {
         }
 
         .calendar-day.available {
-           background-color: rgba(46, 204, 113, 0.1);
+            background-color: rgba(46, 204, 113, 0.3); /* Increased green opacity */
             border-color: var(--accent-color);
             color: var(--accent-color);
             font-weight: 500;
-        }
-
-        .calendar-day.available:hover {
-            background-color: var(--accent-color);
-            color: white;
         }
 
         .calendar-day.selected {
@@ -505,7 +500,7 @@ if (mysqli_num_rows($doctor_query) == 0) {
                         </div>
                         
                         <div class="btn-group">
-                            <button type="button" class="btn btn-primary" onclick="proceedToTime()" id="nextToTime" disabled>
+                            <button type="button" class="btn btn-primary" onclick="proceedToTime()" id="nextToTime">
                                 Next: Select Time <i class="fas fa-arrow-right" style="margin-left: 5px;"></i>
                             </button>
                         </div>

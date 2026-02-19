@@ -113,12 +113,10 @@ include 'header.php'; // Include the header
     .hero h1 {
         font-size: 3.8rem;
         font-weight: 700;
-        animation: fadeInDown 1s ease;
     }
     .hero p {
         margin-top: 10px;
         font-size: 1.2rem;
-        animation: fadeInUp 1s ease;
     }
 
     @keyframes fadeInDown {

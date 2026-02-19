@@ -484,7 +484,7 @@ if (mysqli_num_rows($doctor_query) == 0) {
                             <button type="button" class="btn btn-danger" onclick="goBack()">
                                 <i class="fas fa-arrow-left" style="margin-right: 5px;"></i> Back
                             </button>
-                            <button type="button" class="btn btn-primary" onclick="proceedToLogin()" id="nextToLogin" disabled>
+                            <button type="button" class="btn btn-primary" onclick="proceedToLogin()" id="nextToLogin">
                                 Next: Login <i class="fas fa-arrow-right" style="margin-left: 5px;"></i>
                             </button>
                         </div>
@@ -584,8 +584,6 @@ if (mysqli_num_rows($doctor_query) == 0) {
             slot.classList.remove('selected');
         });
         event.target.classList.add('selected');
-        
-        document.getElementById('nextToLogin').disabled = false;
     }
     
     function goBack() {

@@ -65,10 +65,14 @@ $spec_id = intval($_POST['spec_id']);
         .page-header {
             background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
             color: white;
-            padding: 7rem 0;
+            height: 200px; /* Match aboutus.php hero height */
+            padding: 20px; /* Match vertical spacing from aboutus.php */
             text-align: center;
             position: relative;
             overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .page-header::before {
