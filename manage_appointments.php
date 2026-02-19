@@ -721,10 +721,6 @@ html {
                                         <i class="far fa-clock"></i>
                                         <span><?php echo date('h:i A', strtotime($appointment['APPOINTMENT_TIME'])); ?></span>
                                     </div>
-                                    <div class="appointment-detail">
-                                        <i class="fas fa-map-marker-alt"></i>
-                                        <span>Main Hospital, Room 204</span>
-                                    </div>
                                 </div>
                             </div>
                             <div class="appointment-actions">
