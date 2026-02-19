@@ -407,7 +407,7 @@ if ($fee_result && $row = mysqli_fetch_assoc($fee_result)) {
                 </div>
 
                 <div class="modal-content">
-                    <a href="book_appointment_login.php" class="close">&times;</a>
+                    <a href="book_appointment_time.php" class="close">&times;</a>
                     <h2>Appointment Details</h2>
                     
                     <!-- Step Indicator -->
@@ -496,7 +496,8 @@ if ($fee_result && $row = mysqli_fetch_assoc($fee_result)) {
 
     <script>
     function goBack() {
-        window.location.href = 'book_appointment_login.php';
+        // Go back to time-slot selection (step 2) while keeping login session
+        window.location.href = 'book_appointment_time.php';
     }
     
     function proceedToPayment() {
