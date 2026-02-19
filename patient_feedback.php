@@ -231,6 +231,16 @@ html {
             color: #ffc107;
         }
         
+        /* Display-only stars (cards) */
+        .star-display {
+            color: #ddd;
+            font-size: 20px;
+        }
+        
+        .star-display.active {
+            color: #ffc107;
+        }
+        
         .rating-value {
             font-weight: 600;
             color: var(--dark-color);
@@ -344,6 +354,39 @@ html {
             margin-bottom: 15px;
             color: #ddd;
         }
+
+        /* Tabs styling (same as manage_appointments.php) */
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 20px;
+        }
+        
+        .tab {
+            padding: 12px 20px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            font-weight: 600;
+            color: #777;
+            transition: all 0.3s ease;
+        }
+        
+        .tab.active {
+            color: var(--primary-color);
+            border-bottom: 3px solid var(--secondary-color);
+        }
+        
+        .tab:hover {
+            color: var(--primary-color);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
         
         .modal {
             display: none;
@@ -405,10 +448,11 @@ html {
 
             <!-- Header -->
             <?php include 'patient_header.php'; ?>
-            <!-- Tab Navigation -->
-            <div style="margin-bottom: 25px;">
-                <button class="btn btn-primary" id="tabAppointments" onclick="showTab('appointments')">Your Feedback</button>
-                <button class="btn btn-primary" id="tabAllFeedback" onclick="showTab('allfeedback')">All Feedback</button>
+            
+            <!-- Tabs Section (same style as manage_appointments.php) -->
+            <div class="tabs">
+                <div class="tab active" data-tab="your-feedback">Your Feedback</div>
+                <div class="tab" data-tab="all-feedback">All Feedback</div>
             </div>
             
             <!-- Success/Error Messages -->
@@ -425,8 +469,8 @@ html {
             <?php endif; ?>
             
 
-            <!-- Tab Content: Appointments -->
-            <div id="appointmentsTab">
+            <!-- Tab Content: Your Feedback -->
+            <div class="tab-content active" id="your-feedback">
                 <?php if ($appointment_details): ?>
                 <div class="feedback-card">
                     <div class="feedback-header">
@@ -447,7 +491,7 @@ html {
                         <div class="rating">
                             <div class="rating-stars">
                                 <?php for ($i = 1; $i <= 5; $i++): ?>
-                                    <i class="fas fa-star star <?php echo $i <= $appointment_details['RATING'] ? 'active' : ''; ?>"></i>
+                                    <i class="fas fa-star star-display <?php echo $i <= $appointment_details['RATING'] ? 'active' : ''; ?>"></i>
                                 <?php endfor; ?>
                             </div>
                             <span class="rating-value"><?php echo $appointment_details['RATING']; ?>/5</span>
@@ -494,7 +538,7 @@ html {
                                 <div class="rating">
                                     <div class="rating-stars">
                                         <?php for ($i = 1; $i <= 5; $i++): ?>
-                                            <i class="fas fa-star star <?php echo $i <= $appointment['RATING'] ? 'active' : ''; ?>"></i>
+                                            <i class="fas fa-star star-display <?php echo $i <= $appointment['RATING'] ? 'active' : ''; ?>"></i>
                                         <?php endfor; ?>
                                     </div>
                                     <span class="rating-value"><?php echo $appointment['RATING']; ?>/5</span>
@@ -527,23 +571,41 @@ html {
             </div>
 
             <!-- Tab Content: All Feedback -->
-            <div id="allFeedbackTab" style="display:none;">
+            <div class="tab-content" id="all-feedback">
                 <h3 style="margin-bottom: 20px;">All Patient Feedback</h3>
                 <div style="overflow-x:auto;">
                 <table style="width:100%; border-collapse:collapse; background:white; border-radius:12px; overflow:hidden; box-shadow:0 4px 12px rgba(0,0,0,0.05);">
                     <tr style="background:#5790AB; color:white;">
                         <th>Patient Name</th>
                         <th>Doctor Name</th>
+                        <th>Specialization</th>
                         <th>Rating</th>
                         <th>Comments</th>
                     </tr>
                     <?php
-                    $all_feedback_query = mysqli_query($conn, "SELECT f.RATING, f.COMMENTS, p.FIRST_NAME AS P_FNAME, p.LAST_NAME AS P_LNAME, d.FIRST_NAME AS D_FNAME, d.LAST_NAME AS D_LNAME FROM feedback_tbl f JOIN appointment_tbl a ON f.APPOINTMENT_ID=a.APPOINTMENT_ID JOIN patient_tbl p ON a.PATIENT_ID=p.PATIENT_ID JOIN doctor_tbl d ON a.DOCTOR_ID=d.DOCTOR_ID ORDER BY f.FEEDBACK_ID DESC");
+                    $all_feedback_query = mysqli_query(
+                        $conn,
+                        "SELECT 
+                            f.RATING, 
+                            f.COMMENTS, 
+                            p.FIRST_NAME AS P_FNAME, 
+                            p.LAST_NAME AS P_LNAME, 
+                            d.FIRST_NAME AS D_FNAME, 
+                            d.LAST_NAME AS D_LNAME,
+                            s.SPECIALISATION_NAME
+                         FROM feedback_tbl f 
+                         JOIN appointment_tbl a ON f.APPOINTMENT_ID = a.APPOINTMENT_ID 
+                         JOIN patient_tbl p ON a.PATIENT_ID = p.PATIENT_ID 
+                         JOIN doctor_tbl d ON a.DOCTOR_ID = d.DOCTOR_ID
+                         JOIN specialisation_tbl s ON d.SPECIALISATION_ID = s.SPECIALISATION_ID
+                         ORDER BY f.FEEDBACK_ID DESC"
+                    );
                     if ($all_feedback_query && mysqli_num_rows($all_feedback_query) > 0) {
                         while ($row = mysqli_fetch_assoc($all_feedback_query)) {
                             echo '<tr>';
                             echo '<td>' . htmlspecialchars($row['P_FNAME'] . ' ' . $row['P_LNAME']) . '</td>';
                             echo '<td>' . htmlspecialchars($row['D_FNAME'] . ' ' . $row['D_LNAME']) . '</td>';
+                            echo '<td>' . htmlspecialchars($row['SPECIALISATION_NAME']) . '</td>';
                             echo '<td class="rating">';
                             for ($i = 1; $i <= 5; $i++) {
                                 echo ($i <= $row['RATING']) ? '★' : '☆';
@@ -553,24 +615,68 @@ html {
                             echo '</tr>';
                         }
                     } else {
-                        echo '<tr><td colspan="4">No feedback found</td></tr>';
+                        echo '<tr><td colspan="5">No feedback found</td></tr>';
                     }
                     ?>
                 </table>
                 </div>
             </div>
+
+            <!-- Feedback Modal -->
+            <div id="feedbackModal" class="modal">
+                <div class="modal-content">
+                    <span class="close" onclick="closeFeedbackModal()">&times;</span>
+                    <h2>Rate Your Experience</h2>
+                    <form method="POST">
+                        <input type="hidden" name="appointment_id" id="feedback_appointment_id">
+                        <div class="form-group">
+                            <label>Rating</label>
+                            <div class="rating">
+                                <div class="rating-stars">
+                                    <?php for ($i = 1; $i <= 5; $i++): ?>
+                                        <i class="fas fa-star star" data-rating="<?php echo $i; ?>"></i>
+                                    <?php endfor; ?>
+                                </div>
+                                <span class="rating-value" id="ratingValue">0/5</span>
+                                <input type="hidden" name="rating" id="rating" value="0">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="comments">Comments</label>
+                            <textarea class="form-control" id="comments" name="comments" rows="4" placeholder="Share your experience..."></textarea>
+                        </div>
+                        <div class="btn-group">
+                            <button type="submit" name="submit_feedback" class="btn btn-success">
+                                <i class="fas fa-check"></i> Save Feedback
+                            </button>
+                            <button type="button" class="btn btn-danger" onclick="closeFeedbackModal()">
+                                <i class="fas fa-times"></i> Cancel
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
     
     <script>
-        // Tab switching logic
-        function showTab(tab) {
-            document.getElementById('appointmentsTab').style.display = (tab === 'appointments') ? 'block' : 'none';
-            document.getElementById('allFeedbackTab').style.display = (tab === 'allfeedback') ? 'block' : 'none';
-            document.getElementById('tabAppointments').classList.toggle('btn-success', tab === 'appointments');
-            document.getElementById('tabAllFeedback').classList.toggle('btn-success', tab === 'allfeedback');
-        }
-        // Default to appointments tab
         document.addEventListener('DOMContentLoaded', function() {
-            showTab('appointments');
+            // Tabs behavior (same as manage_appointments.php)
+            const tabs = document.querySelectorAll('.tab');
+            const tabContents = document.querySelectorAll('.tab-content');
+            
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const tabId = tab.getAttribute('data-tab');
+                    
+                    // Remove active class from all tabs and contents
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tabContents.forEach(content => content.classList.remove('active'));
+                    
+                    // Add active class to clicked tab and corresponding content
+                    tab.classList.add('active');
+                    document.getElementById(tabId).classList.add('active');
+                });
+            });
+
             // Rating stars functionality
             const stars = document.querySelectorAll('.star');
             const ratingValue = document.getElementById('ratingValue');

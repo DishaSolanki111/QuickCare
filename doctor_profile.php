@@ -757,6 +757,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
                                     <input type="email" class="form-control" id="email" name="email" value="<?php echo htmlspecialchars($doctor['EMAIL']); ?>" required>
                                 </div>
                             </div>
+
+                            <!-- Read-only professional details shown during edit -->
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="specialization">Specialization</label>
+                                    <input type="text" class="form-control" id="specialization" value="<?php echo htmlspecialchars($doctor['SPECIALISATION_NAME']); ?>" disabled>
+                                </div>
+                                <div class="form-group">
+                                    <label for="education">Education</label>
+                                    <input type="text" class="form-control" id="education" value="<?php echo htmlspecialchars($doctor['EDUCATION']); ?>" disabled>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="doj">Date of Joining</label>
+                                    <input type="date" class="form-control" id="doj" value="<?php echo htmlspecialchars($doctor['DOJ']); ?>" disabled>
+                                </div>
+                                <div class="form-group">
+                                    <label for="experience">Years of Experience</label>
+                                    <input type="text" class="form-control" id="experience" value="<?php echo date('Y') - date('Y', strtotime($doctor['DOJ'])); ?> years" disabled>
+                                </div>
+                            </div>
                             
                             <div class="btn-group">
                                 <button type="submit" class="btn btn-success">
