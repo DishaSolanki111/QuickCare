@@ -39,10 +39,14 @@ body {
 .page-header {
     background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
     color: white;
-    padding: 4rem 0;
+    height: 200px; /* Match aboutus.php hero height */
+    padding: 20px; /* Match aboutus.php vertical spacing */
     text-align: center;
     position: relative;
     overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .page-header::before {
