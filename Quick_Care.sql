@@ -322,6 +322,19 @@ CREATE TABLE `doctor_tbl` (
   `EDUCATION` varchar(50) DEFAULT NULL,
   `STATUS` enum('pending','approved','rejected') DEFAULT 'pending'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+--
+--otp table
+--
+CREATE TABLE password_resets (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_type ENUM('patient','doctor','receptionist') NOT NULL,
+    user_id INT NOT NULL,
+    phone VARCHAR(15) NOT NULL,
+    otp_hash VARCHAR(255) NOT NULL,
+    expires_at DATETIME NOT NULL,
+    attempts INT DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 
 --
 -- Dumping data for table `doctor_tbl`
