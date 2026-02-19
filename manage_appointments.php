@@ -27,6 +27,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cancel_appointment'])
     }
 }
 
+// Read any flash messages from reschedule_appointment.php
+if (isset($_SESSION['APPOINTMENT_SUCCESS'])) {
+    $success_message = $_SESSION['APPOINTMENT_SUCCESS'];
+    unset($_SESSION['APPOINTMENT_SUCCESS']);
+}
+if (isset($_SESSION['APPOINTMENT_ERROR'])) {
+    $error_message = $_SESSION['APPOINTMENT_ERROR'];
+    unset($_SESSION['APPOINTMENT_ERROR']);
+}
+
 // Fetch appointments data (GROUP BY prevents duplicate rows from joins)
  $appointments_query = mysqli_query($conn, "
     SELECT a.*, d.FIRST_NAME as DOC_FNAME, d.LAST_NAME as DOC_LNAME, s.SPECIALISATION_NAME as SPECIALIZATION 
@@ -759,7 +769,8 @@ html {
                     // Reset the result pointer to beginning
                     mysqli_data_seek($appointments_query, 0);
                     while ($appointment = mysqli_fetch_assoc($appointments_query)) {
-                        if ($appointment['APPOINTMENT_DATE'] < date('Y-m-d')) {
+                        // Past completed appointments only
+                        if ($appointment['APPOINTMENT_DATE'] < date('Y-m-d') && $appointment['STATUS'] === 'COMPLETED') {
                             $past_appointments[] = $appointment;
                         }
                     }
