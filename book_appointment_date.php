@@ -322,6 +322,13 @@ if (mysqli_num_rows($doctor_query) == 0) {
             font-weight: bold;
         }
 
+        .calendar-day.fully-booked {
+            background-color: rgba(243, 156, 18, 0.35); /* yellow when all slots are booked */
+            border: 1px solid var(--warning-color);
+            color: #b36b00;
+            font-weight: 500;
+        }
+
         .calendar-day.disabled {
             color: #ccc;
             cursor: not-allowed;
@@ -496,6 +503,12 @@ if (mysqli_num_rows($doctor_query) == 0) {
                                     <!-- Calendar will be generated here -->
                                 </div>
                             </div>
+                            <div style="margin-top:10px; font-size: 0.9rem; color:#555;">
+                                <span style="display:inline-block;width:16px;height:12px;border-radius:3px;background-color:rgba(46, 204, 113, 0.3);border:1px solid #2ecc71;margin-right:6px;vertical-align:middle;"></span>
+                                Green = Available date&nbsp;&nbsp;
+                                <span style="display:inline-block;width:16px;height:12px;border-radius:3px;background-color:rgba(243, 156, 18, 0.35);border:1px solid #f39c12;margin:0 6px;vertical-align:middle;"></span>
+                                Yellow = Fully booked date
+                            </div>
                             <input type="hidden" id="selected_date" name="appointment_date" required>
                         </div>
                         
@@ -553,6 +566,7 @@ if (mysqli_num_rows($doctor_query) == 0) {
     let currentYear = new Date().getFullYear();
     let selectedDoctorId = <?php echo $doctor['DOCTOR_ID']; ?>;
     let doctorSchedule = [];
+    let fullyBookedDates = [];
     
     function initCalendar() {
         renderCalendar(currentMonth, currentYear);
@@ -569,6 +583,7 @@ if (mysqli_num_rows($doctor_query) == 0) {
                 currentMonth = 11;
                 currentYear--;
             }
+            loadFullyBookedDates(currentMonth, currentYear);
             renderCalendar(currentMonth, currentYear);
         });
         
@@ -581,8 +596,12 @@ if (mysqli_num_rows($doctor_query) == 0) {
                 currentMonth = 0;
                 currentYear++;
             }
+            loadFullyBookedDates(currentMonth, currentYear);
             renderCalendar(currentMonth, currentYear);
         });
+
+        // Initial fully booked dates load
+        loadFullyBookedDates(currentMonth, currentYear);
     }
     
     function renderCalendar(month, year) {
@@ -632,6 +651,12 @@ if (mysqli_num_rows($doctor_query) == 0) {
                 
                 if (doctorSchedule.includes(dayMap[dayOfWeek])) {
                     dayElement.classList.add('available');
+
+                    const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                    if (fullyBookedDates.includes(dateStr)) {
+                        dayElement.classList.add('fully-booked');
+                    }
+
                     dayElement.addEventListener('click', () => selectDate(year, month, day));
                 } else {
                     dayElement.classList.add('disabled');
@@ -667,6 +692,29 @@ if (mysqli_num_rows($doctor_query) == 0) {
                     </div>
                 `;
             });
+    }
+
+    function loadFullyBookedDates(month, year) {
+        // month in JS is 0-based; backend expects 1-12
+        const backendMonth = month + 1;
+
+        fetch('get_fully_booked_dates.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: 'doctor_id=' + encodeURIComponent(selectedDoctorId) +
+                  '&month=' + encodeURIComponent(backendMonth) +
+                  '&year=' + encodeURIComponent(year)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success' && Array.isArray(data.fully_booked_dates)) {
+                fullyBookedDates = data.fully_booked_dates;
+                renderCalendar(currentMonth, currentYear);
+            }
+        })
+        .catch(err => {
+            console.error('Error loading fully booked dates:', err);
+        });
     }
     
     function selectDate(year, month, day) {

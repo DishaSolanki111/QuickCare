@@ -21,7 +21,6 @@ if ($fee_result && $row = mysqli_fetch_assoc($fee_result)) {
  $doctor_id = isset($_SESSION['booking_doctor_id']) ? $_SESSION['booking_doctor_id'] : 0;
  $selected_date = isset($_SESSION['booking_date']) ? $_SESSION['booking_date'] : '';
  $selected_time = isset($_SESSION['booking_time']) ? $_SESSION['booking_time'] : '';
- $reason = isset($_SESSION['booking_reason']) ? $_SESSION['booking_reason'] : '';
 
 // Get doctor details if available
  $doctor = null;
@@ -626,12 +625,6 @@ if (isset($_POST['razorpay_payment_id'])) {
                             <div class="summary-row">
                                 <span>Time:</span>
                                 <span><?php echo htmlspecialchars($selected_time); ?></span>
-                            </div>
-                            <?php endif; ?>
-                            <?php if ($reason): ?>
-                            <div class="summary-row">
-                                <span>Reason:</span>
-                                <span><?php echo htmlspecialchars($reason); ?></span>
                             </div>
                             <?php endif; ?>
                             <div class="summary-row">

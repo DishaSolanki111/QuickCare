@@ -273,6 +273,13 @@ if (mysqli_num_rows($doctor_query) == 0) {
             color: var(--accent-color);
         }
 
+        .time-slot.booked {
+            background-color: rgba(243, 156, 18, 0.35); /* yellow for booked slots */
+            border-color: var(--warning-color);
+            color: #b36b00;
+            cursor: not-allowed;
+        }
+
         .time-slot.available:hover {
             background-color: var(--accent-color);
             color: white;
@@ -472,6 +479,12 @@ if (mysqli_num_rows($doctor_query) == 0) {
                                     <p>Loading available time slots...</p>
                                 </div>
                             </div>
+                            <div style="margin-top:10px; font-size:0.9rem; color:#555;">
+                                <span style="display:inline-block;width:16px;height:12px;border-radius:3px;background-color:rgba(46, 204, 113, 0.1);border:1px solid #2ecc71;margin-right:6px;vertical-align:middle;"></span>
+                                Green = Available slot&nbsp;&nbsp;
+                                <span style="display:inline-block;width:16px;height:12px;border-radius:3px;background-color:rgba(243, 156, 18, 0.35);border:1px solid #f39c12;margin:0 6px;vertical-align:middle;"></span>
+                                Yellow = Booked slot
+                            </div>
                             <input type="hidden" id="selected_time" name="appointment_time" required>
                         </div>
                         
@@ -540,11 +553,21 @@ if (mysqli_num_rows($doctor_query) == 0) {
                     timeSlotsContainer.innerHTML = '';
                     
                     if (data.time_slots.length > 0) {
-                        data.time_slots.forEach(timeSlot => {
+                        data.time_slots.forEach(slot => {
                             const timeSlotElement = document.createElement('div');
-                            timeSlotElement.className = 'time-slot available';
-                            timeSlotElement.textContent = timeSlot;
-                            timeSlotElement.addEventListener('click', () => selectTimeSlot(timeSlot));
+                            const timeLabel = slot.time || slot; // support both {time, booked} and plain string
+                            const isBooked  = !!slot.booked;
+
+                            timeSlotElement.textContent = timeLabel;
+
+                            if (isBooked) {
+                                timeSlotElement.className = 'time-slot booked';
+                                timeSlotElement.title = 'Already booked';
+                            } else {
+                                timeSlotElement.className = 'time-slot available';
+                                timeSlotElement.addEventListener('click', (event) => selectTimeSlot(timeLabel, event));
+                            }
+
                             timeSlotsContainer.appendChild(timeSlotElement);
                         });
                     } else {
@@ -572,13 +595,15 @@ if (mysqli_num_rows($doctor_query) == 0) {
             });
     }
     
-    function selectTimeSlot(time) {
+    function selectTimeSlot(time, evt) {
         document.getElementById('selected_time').value = time;
         
         document.querySelectorAll('.time-slot').forEach(slot => {
             slot.classList.remove('selected');
         });
-        event.target.classList.add('selected');
+        if (evt && evt.target) {
+            evt.target.classList.add('selected');
+        }
     }
     
     function goBack() {
