@@ -475,11 +475,6 @@ if (mysqli_num_rows($doctor_query) == 0) {
                             <input type="hidden" id="selected_time" name="appointment_time" required>
                         </div>
                         
-                        <div class="form-group">
-                            <label for="reason">Reason for Visit</label>
-                            <textarea class="form-control" id="reason" name="reason" rows="3" placeholder="Please describe your symptoms or reason for the appointment"></textarea>
-                        </div>
-                        
                         <div class="btn-group">
                             <button type="button" class="btn btn-danger" onclick="goBack()">
                                 <i class="fas fa-arrow-left" style="margin-right: 5px;"></i> Back
@@ -601,20 +596,19 @@ if (mysqli_num_rows($doctor_query) == 0) {
     
     function proceedToLogin() {
         const selectedTime = document.getElementById('selected_time').value;
-        const reason = document.getElementById('reason').value;
         
         if (!selectedTime) {
             alert('Please select a time slot');
             return;
         }
         
-        // Store the selected time and reason in session
+        // Store only the selected time in session
         fetch('store_booking_session.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
             },
-            body: `step=time&appointment_time=${selectedTime}&reason=${encodeURIComponent(reason)}`
+            body: `step=time&appointment_time=${selectedTime}`
         })
         .then(response => response.json())
         .then(data => {

@@ -30,10 +30,9 @@ if ($fee_result && $row = mysqli_fetch_assoc($fee_result)) {
     $booking_charge = (float) $row['AMOUNT'];
 }
 
-// Get selected date, time, and reason from session
+// Get selected date and time from session
  $selected_date = isset($_SESSION['booking_date']) ? $_SESSION['booking_date'] : '';
  $selected_time = isset($_SESSION['booking_time']) ? $_SESSION['booking_time'] : '';
- $reason = isset($_SESSION['booking_reason']) ? $_SESSION['booking_reason'] : '';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -441,10 +440,6 @@ if ($fee_result && $row = mysqli_fetch_assoc($fee_result)) {
                             <div class="detail-row">
                                 <span class="detail-label">Time:</span>
                                 <span class="detail-value"><?php echo htmlspecialchars($selected_time); ?></span>
-                            </div>
-                            <div class="detail-row">
-                                <span class="detail-label">Reason:</span>
-                                <span class="detail-value"><?php echo htmlspecialchars($reason ?: 'Not specified'); ?></span>
                             </div>
                             <div class="detail-row">
                                 <span class="detail-label">Booking Charge:</span>
