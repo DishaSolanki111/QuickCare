@@ -3,10 +3,7 @@
     include 'config.php';
     
     // Check authentication first
-    if (!isset($_SESSION['RECEPTIONIST_ID'])) {
-        header("Location: login.php");
-        exit;
-    }
+   
   
     // ================= DOWNLOAD SINGLE PRESCRIPTION =================
     // Handle download BEFORE any HTML output (including sidebar)
@@ -63,13 +60,9 @@
     }
     
     // Only include sidebar and show page if NOT downloading
-    include 'recept_sidebar.php';
+    include 'Admin_sidebar.php';
     
-    $receptionist_id = $_SESSION['RECEPTIONIST_ID'];
-    
-    // Get receptionist information for the welcome message
-    $receptionist_query = mysqli_query($conn, "SELECT * FROM receptionist_tbl WHERE RECEPTIONIST_ID = $receptionist_id");
-    $receptionist = mysqli_fetch_assoc($receptionist_query);
+   
 
     // ================= SEARCH FUNCTIONALITY =================
     $search_term = '';
@@ -749,7 +742,7 @@
     <body>
         <!-- Main Content -->
         <div class="main-content">
-            <?php include 'receptionist_header.php'; ?>
+            <?php include 'Admin_header.php'; ?>
 
             <!-- Page Header -->
             <div class="page-header">
@@ -941,4 +934,4 @@
             });
         </script>
     </body>
-    </html>
+    </html>Ad
