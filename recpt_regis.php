@@ -35,7 +35,7 @@ include 'config.php';
             background: linear-gradient(135deg, var(--light-blue) 0%, var(--card-bg) 100%);
             min-height: 100vh;
             display: flex;
-            padding-top: 80px;
+            padding-top: 10px;
         }
 
         /* Main Content */
@@ -69,7 +69,19 @@ include 'config.php';
             height: 4px;
             background: linear-gradient(90deg, var(--accent-blue), var(--secondary-blue));
         }
-
+        .back-btn {
+    display: inline-block;
+    padding: 8px 18px;
+    margin-bottom: 15px;
+    background-color: #0a3d62;
+    color: #ffffff;
+    border: 2px solid #0a3d62;
+    text-decoration: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    transition: 0.3s ease;
+}
         h1 {
             color: var(--dark-blue);
             text-align: center;
@@ -352,6 +364,7 @@ include 'config.php';
     <!-- Main Content -->
     <div class="main-content">
         <div class="container">
+             <a class="  back-btn" href="admin.php">back</a>  
             <h1>Receptionist Registration</h1>
             
             <!-- Toast notification for errors -->

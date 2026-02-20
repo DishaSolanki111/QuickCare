@@ -130,8 +130,12 @@ body {
 
     <a href="Admin_patient.php" class="<?= ($currentPage == 'Admin_patient.php') ? 'active' : '' ?>">Patients</a>
 
+    <a href="Admin_Doctor_schedule.php" class="<?= ($currentPage == 'Admin_Doctor_schedule.php') ? 'active' : '' ?>">Doctor Schedule</a>
+
     <a href="Admin_medicine.php" class="<?= ($currentPage == 'Admin_medicine.php') ? 'active' : '' ?>">Medicine</a>
 
+    <a href="Admin_prescription.php" class="<?= ($currentPage == 'Admin_prescription.php') ? 'active' : '' ?>">Prescriptions</a>
+    
     <a href="Admin_payment.php" class="<?= ($currentPage == 'Admin_payment.php') ? 'active' : '' ?>">Payments</a>
 
     <a href="Admin_feedback.php" class="<?= ($currentPage == 'Admin_feedback.php') ? 'active' : '' ?>">Feedback</a>

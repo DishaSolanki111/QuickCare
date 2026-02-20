@@ -33,7 +33,7 @@
             background: linear-gradient(135deg, var(--light-blue) 0%, var(--card-bg) 100%);
             min-height: 100vh;
             display: flex;
-            padding-top: 80px;
+            padding-top: 10px;
         }
 
         /* Main Content */
@@ -371,6 +371,19 @@
                 font-size: 24px;
             }
         }
+        .back-btn {
+    display: inline-block;
+    padding: 8px 18px;
+    margin-bottom: 15px;
+    background-color: #0a3d62;
+    color: #ffffff;
+    border: 2px solid #0a3d62;
+    text-decoration: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    transition: 0.3s ease;
+}
     </style>
 </head>
 <body>
@@ -379,7 +392,8 @@
     <!-- Main Content -->
     <div class="main-content">
         <div class="container">
-            <h1>Doctor Registration</h1>
+        <a class="  back-btn" href="admin.php">back</a>    
+        <h1>Doctor Registration</h1>
             
             <!-- Toast notification for errors -->
             <div id="toast" class="toast"></div>

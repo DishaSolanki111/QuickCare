@@ -64,22 +64,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_schedule'])) {
     }
 }
 
-// Fetch schedules data
- $schedules_query = mysqli_query($conn, "
-    SELECT ds.*, d.FIRST_NAME as DOC_FNAME, d.LAST_NAME as DOC_LNAME, s.SPECIALISATION_NAME
-    FROM doctor_schedule_tbl ds
-    JOIN doctor_tbl d ON ds.DOCTOR_ID = d.DOCTOR_ID
-    JOIN specialisation_tbl s ON d.SPECIALISATION_ID = s.SPECIALISATION_ID
-    ORDER BY s.SPECIALISATION_NAME, d.FIRST_NAME, ds.AVAILABLE_DAY
-");
-
-// Fetch doctors for dropdown
+// Fetch doctors with their schedules grouped
+ $doctors_with_schedules = [];
  $doctors_query = mysqli_query($conn, "
-    SELECT d.*, s.SPECIALISATION_NAME 
+    SELECT d.DOCTOR_ID, d.FIRST_NAME, d.LAST_NAME, d.PROFILE_IMAGE, s.SPECIALISATION_NAME
     FROM doctor_tbl d
     JOIN specialisation_tbl s ON d.SPECIALISATION_ID = s.SPECIALISATION_ID
-    ORDER BY s.SPECIALISATION_NAME, d.FIRST_NAME
+    ORDER BY s.SPECIALISATION_NAME, d.FIRST_NAME, d.LAST_NAME
 ");
+
+if (mysqli_num_rows($doctors_query) > 0) {
+    while ($doctor = mysqli_fetch_assoc($doctors_query)) {
+        $doctor_id = $doctor['DOCTOR_ID'];
+        
+        // Get schedules for this doctor
+        $schedules_query = mysqli_query($conn, "
+            SELECT * FROM doctor_schedule_tbl 
+            WHERE DOCTOR_ID = '$doctor_id' 
+            ORDER BY FIELD(AVAILABLE_DAY, 'MON', 'TUE', 'WED', 'THUR', 'FRI', 'SAT', 'SUN')
+        ");
+        
+        $schedules = [];
+        while ($schedule = mysqli_fetch_assoc($schedules_query)) {
+            $schedules[] = $schedule;
+        }
+        
+        $doctors_with_schedules[] = [
+            'doctor' => $doctor,
+            'schedules' => $schedules
+        ];
+    }
+}
 
 // Handle AJAX request for doctor schedules
 if (isset($_POST['doctor_id']) && isset($_POST['ajax'])) {
@@ -127,42 +142,45 @@ if (isset($_POST['doctor_id']) && isset($_POST['ajax'])) {
         
         body {
             margin: 0;
-            font-family: Arial, sans-serif;
-            font-weight: bold;
-            background: #F5F8FA;
-            display: flex;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
         }
         
         .sidebar {
             width: 250px;
-            background: #072D44;
+            background: var(--dark-blue);
             min-height: 100vh;
             color: white;
             padding-top: 30px;
             position: fixed;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            z-index: 1000;
         }
 
         .sidebar h2 {
             text-align: center;
             margin-bottom: 40px;
-            color: #9CCDD8;
+            color: var(--light-blue);
+            font-size: 24px;
         }
 
         .sidebar a {
             display: block;
             padding: 15px 25px;
-            color: #D0D7E1;
+            color: var(--gray-blue);
             text-decoration: none;
-            font-size: 17px;
+            font-size: 16px;
             border-left: 4px solid transparent;
+            transition: all 0.3s ease;
         }
 
         .sidebar a:hover, .sidebar a.active {
-            background: #064469;
-            border-left: 4px solid #9CCDD8;
-            color: white;
+            background: var(--mid-blue);
+            border-left: 4px solid var(--light-blue);
+            color: var(--white);
         }
-
+        
         .logout-btn:hover{
             background-color: var(--light-blue);
         }
@@ -182,229 +200,320 @@ if (isset($_POST['doctor_id']) && isset($_POST['ajax'])) {
         }
         
         .main-content {
-            margin-left: 240px;
-            padding: 20px;
-            width: calc(100% - 240px);
+            margin-left: 250px;
+            padding: 30px;
+            width: calc(100% - 250px);
         }
         
+        .page-header {
+            background: var(--white);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
         
-        .card {
-            border: none;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        .page-title {
+            font-size: 28px;
+            font-weight: 600;
+            color: var(--dark-blue);
+            margin: 0;
+        }
+        
+        .doctor-schedule-card {
+            background: var(--white);
+            border-radius: 15px;
+            padding: 0;
             margin-bottom: 25px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            overflow: hidden;
             transition: all 0.3s ease;
         }
         
-        .card:hover {
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        .doctor-schedule-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
         }
         
-        .card-header {
-            background-color: var(--white);
-            border-bottom: 1px solid var(--gray-blue);
-            padding: 15px 20px;
-            font-weight: 600;
+        .doctor-header {
+            background: var(--white);
             color: var(--primary-color);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .card-body {
-            padding: 20px;
-        }
-        
-        .btn-primary {
-            background-color: var(--secondary-color);
-            border-color: var(--secondary-color);
-        }
-        
-        .btn-primary:hover {
-            background-color: #2980b9;
-            border-color: #2980b9;
-        }
-        
-        .btn-success {
-            background-color: var(--accent-color);
-            border-color: var(--accent-color);
-        }
-        
-        .btn-success:hover {
-            background-color: #27ae60;
-            border-color: #27ae60;
-        }
-        
-        .btn-danger {
-            background-color: var(--danger-color);
-            border-color: var(--danger-color);
-        }
-        
-        .btn-danger:hover {
-            background-color: #c0392b;
-            border-color: #c0392b;
-        }
-        
-        .btn-warning {
-            background-color: var(--warning-color);
-            border-color: var(--warning-color);
-        }
-        
-        .btn-warning:hover {
-            background-color: #e67e22;
-            border-color: #e67e22;
-        }
-        
-        .alert {
-            padding: 15px;
-            margin-bottom: 20px;
-            border-radius: 5px;
-        }
-        
-        .alert-success {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-        
-        .alert-danger {
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-        
-        .form-group {
-            margin-bottom: 20px;
-        }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: var(--primary-color);
-        }
-        
-        .form-control {
-            width: 100%;
-            padding: 10px 15px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 16px;
-        }
-        
-        .form-control:focus {
-            border-color: var(--secondary-color);
-            outline: none;
-            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
-        }
-        
-        .schedule-card {
-            border-left: 4px solid var(--secondary-color);
-            margin-bottom: 15px;
-            padding: 15px;
-            background-color: var(--white);
-            border-radius: 0 8px 8px 0;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        }
-        
-        .schedule-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-        
-        .schedule-title {
-            font-weight: 600;
-            color: var(--primary-color);
-        }
-        
-        .schedule-details {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 10px;
-            margin-bottom: 10px;
-        }
-        
-        .schedule-detail {
+            padding: 20px 25px;
             display: flex;
             align-items: center;
-            color: #666;
+            gap: 20px;
         }
         
-        .schedule-detail i {
-            margin-right: 8px;
-            color: var(--secondary-color);
+        .doctor-avatar {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            border: 3px solid var(--light-blue);
+            object-fit: cover;
         }
         
-        .day-badge {
+        .doctor-info h3 {
+            margin: 0;
+            font-size: 22px;
+            font-weight: 600;
+        }
+        
+        .doctor-specialization {
             display: inline-block;
-            padding: 5px 10px;
+            background: rgba(72, 41, 112, 0.2);
+            padding: 5px 12px;
             border-radius: 20px;
-            font-size: 12px;
+            font-size: 14px;
+            margin-top: 8px;
+        }
+        
+        .schedule-content {
+            padding: 25px;
+        }
+        
+        .schedule-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+      
+        }
+        
+        .day-schedule {
+            background: var(--card-bg);
+            border-radius: 10px;
+            padding: 15px;
+            border-left: 4px solid var(--secondary-color);
+            transition: all 0.3s ease;
+        }
+        
+        .day-schedule:hover {
+            background: #e8f4f8;
+            transform: scale(1.02);
+        }
+        
+        .day-name {
             font-weight: 600;
-            background-color: rgba(52, 152, 219, 0.1);
+            color: var(--dark-blue);
+            margin-bottom: 10px;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .day-name i {
             color: var(--secondary-color);
+        }
+        
+        .time-range {
+            color: #555;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .time-range i {
+            color: var(--accent-color);
+            font-size: 20px;
         }
         
         .schedule-actions {
             display: flex;
             gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .btn-edit, .btn-delete {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .btn-edit {
+            background: var(--warning-color);
+            color: var(--white);
+        }
+        
+        .btn-edit:hover {
+            background: #e67e22;
+        }
+        
+        .btn-delete {
+            background: var(--danger-color);
+            color: var(--white);
+        }
+        
+        .btn-delete:hover {
+            background: #c0392b;
+        }
+        
+        .no-schedule {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            color: #6c757d;
+            font-style: italic;
+        }
+        
+        .no-schedule i {
+            font-size: 24px;
+            margin-bottom: 10px;
+            display: block;
+        }
+        
+        .add-schedule-btn {
+            background: var(--accent-color);
+            color: var(--white);
+            border: none;
+            padding: 12px 25px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .add-schedule-btn:hover {
+            background: #27ae60;
+            transform: translateY(-2px);
+        }
+        
+        .alert {
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .alert-danger {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .modal-content {
+            border-radius: 15px;
+            border: none;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        
+        .modal-header {
+            background: linear-gradient(135deg, var(--dark-blue) 0%, var(--mid-blue) 100%);
+            color: var(--white);
+            border-radius: 15px 15px 0 0;
+            border: none;
+        }
+        
+        .modal-title {
+            font-weight: 600;
+        }
+        
+        .btn-close {
+            filter: brightness(0) invert(1);
+        }
+        
+        .form-label {
+            font-weight: 600;
+            color: var(--dark-blue);
+            margin-bottom: 8px;
+        }
+        
+        .form-control, .form-select {
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            padding: 10px 15px;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+        }
+        
+        .btn-primary {
+            background: var(--secondary-color);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+        
+        .btn-success {
+            background: var(--accent-color);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-success:hover {
+            background: #27ae60;
+            transform: translateY(-2px);
+        }
+        
+        .btn-danger {
+            background: var(--danger-color);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-danger:hover {
+            background: #c0392b;
+            transform: translateY(-2px);
         }
         
         .empty-state {
             text-align: center;
-            padding: 40px;
-            color: #777;
+            padding: 60px 20px;
+            background: var(--white);
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
         }
         
         .empty-state i {
-            font-size: 48px;
-            margin-bottom: 15px;
+            font-size: 64px;
             color: #ddd;
+            margin-bottom: 20px;
         }
         
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0,0,0,0.4);
+        .empty-state h4 {
+            color: var(--dark-blue);
+            margin-bottom: 10px;
         }
         
-        .modal-content {
-            background-color: #fefefe;
-            margin: 5% auto;
-            padding: 20px;
-            border: none;
-            width: 80%;
-            max-width: 600px;
-            border-radius: 8px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-        }
-        
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-        }
-        
-        .close:hover,
-        .close:focus {
-            color: black;
-            text-decoration: none;
-            cursor: pointer;
-        }
-        
-        .form-row {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
+        .empty-state p {
+            color: #6c757d;
         }
         
         @media (max-width: 768px) {
@@ -419,20 +528,20 @@ if (isset($_POST['doctor_id']) && isset($_POST['ajax'])) {
             .main-content {
                 margin-left: 70px;
                 width: calc(100% - 70px);
+                padding: 20px;
             }
             
-            .form-row {
-                grid-template-columns: 1fr;
-            }
-            
-            .schedule-details {
-                grid-template-columns: 1fr;
-            }
-            
-            .schedule-header {
+            .page-header {
                 flex-direction: column;
-                align-items: flex-start;
-                gap: 10px;
+                gap: 15px;
+                text-align: center;
+            }
+            
+            
+            
+            .doctor-header {
+                flex-direction: column;
+                text-align: center;
             }
         }
     </style>
@@ -447,87 +556,108 @@ if (isset($_POST['doctor_id']) && isset($_POST['ajax'])) {
         <!-- Success/Error Messages -->
         <?php if (isset($success_message)): ?>
             <div class="alert alert-success">
+                <i class="bi bi-check-circle-fill"></i>
                 <?php echo $success_message; ?>
             </div>
         <?php endif; ?>
         
         <?php if (isset($error_message)): ?>
             <div class="alert alert-danger">
+                <i class="bi bi-exclamation-triangle-fill"></i>
                 <?php echo $error_message; ?>
             </div>
         <?php endif; ?>
         
-        <!-- Schedules Card -->
-        <div class="card">
-            <div class="card-header">
-
-                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createScheduleModal">
-                    <i class="bi bi-plus-circle"></i> Create Schedule
-                </button>
-            </div>
-            <div class="card-body">
-                <?php
-                if (mysqli_num_rows($schedules_query) > 0) {
-                    while ($schedule = mysqli_fetch_assoc($schedules_query)) {
-                        ?>
-                        <div class="schedule-card">
-                            <div class="schedule-header">
-                                <div class="schedule-title">
-                                    Dr. <?php echo htmlspecialchars($schedule['DOC_FNAME'] . ' ' . $schedule['DOC_LNAME']); ?>
-                                </div>
-                                <span class="day-badge">
-                                    <?php 
-                                    $day_name = '';
-                                    switch($schedule['AVAILABLE_DAY']) {
-                                        case 'MON': $day_name = 'Monday'; break;
-                                        case 'TUE': $day_name = 'Tuesday'; break;
-                                        case 'WED': $day_name = 'Wednesday'; break;
-                                        case 'THUR': $day_name = 'Thursday'; break;
-                                        case 'FRI': $day_name = 'Friday'; break;
-                                        case 'SAT': $day_name = 'Saturday'; break;
-                                        case 'SUN': $day_name = 'Sunday'; break;
-                                    }
-                                    echo $day_name;
-                                    ?>
-                                </span>
-                            </div>
-                            
-                            <div class="schedule-details">
-                                <div class="schedule-detail">
-                                    <i class="bi bi-person"></i>
-                                    <span><?php echo htmlspecialchars($schedule['SPECIALISATION_NAME']); ?></span>
-                                </div>
-                                <div class="schedule-detail">
-                                    <i class="bi bi-clock"></i>
-                                    <span><?php echo date('h:i A', strtotime($schedule['START_TIME'])); ?> - <?php echo date('h:i A', strtotime($schedule['END_TIME'])); ?></span>
-                                </div>
-                            </div>
-                            
-                            <div class="schedule-actions">
-                                
-                                <button class="btn btn-warning btn-sm" onclick="editSchedule(<?php echo $schedule['SCHEDULE_ID']; ?>, '<?php echo $schedule['DOCTOR_ID']; ?>', '<?php echo $schedule['START_TIME']; ?>', '<?php echo $schedule['END_TIME']; ?>', '<?php echo $schedule['AVAILABLE_DAY']; ?>')">
-                                    <i class="bi bi-pencil"></i> Edit
-                                </button>
-                                <form method="POST" style="display: inline;">
-                                    <input type="hidden" name="schedule_id" value="<?php echo $schedule['SCHEDULE_ID']; ?>">
-                                    <button type="submit" name="delete_schedule" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this schedule?')">
-                                        <i class="bi bi-trash"></i> Delete
-                                    </button>
-                                </form>
-                            </div>
-                        </div>
-                        <?php
-                    }
-                } else {
-                    echo '<div class="empty-state">
-                        <i class="bi bi-calendar-x"></i>
-                        <h4>No schedules found</h4>
-                        <p>There are no doctor schedules created yet.</p>
-                    </div>';
-                }
-                ?>
-            </div>
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1 class="page-title">
+                <i class="bi bi-calendar-week"></i> Doctor Schedules
+            </h1>
+            <button class="add-schedule-btn" data-bs-toggle="modal" data-bs-target="#createScheduleModal">
+                <i class="bi bi-plus-circle"></i> Create New Schedule
+            </button>
         </div>
+        
+        <!-- Doctor Schedules -->
+        <?php if (!empty($doctors_with_schedules)): ?>
+            <?php foreach ($doctors_with_schedules as $doctor_data): ?>
+                <div class="doctor-schedule-card">
+                    <div class="doctor-header">
+                        <img src="<?php echo !empty($doctor_data['doctor']['PROFILE_IMAGE']) ? $doctor_data['doctor']['PROFILE_IMAGE'] : 'https://picsum.photos/seed/doctor' . $doctor_data['doctor']['DOCTOR_ID'] . '/70/70.jpg'; ?>" 
+                             alt="Doctor" class="doctor-avatar">
+                        <div class="doctor-info">
+                            <h3>Dr. <?php echo htmlspecialchars($doctor_data['doctor']['FIRST_NAME'] . ' ' . $doctor_data['doctor']['LAST_NAME']); ?></h3>
+                            <span class="doctor-specialization">
+                                <i class="bi bi-award"></i> 
+                                <?php echo htmlspecialchars($doctor_data['doctor']['SPECIALISATION_NAME']); ?>
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div class="schedule-content">
+                        <?php if (!empty($doctor_data['schedules'])): ?>
+                            <div class="schedule-grid">
+                                <?php foreach ($doctor_data['schedules'] as $schedule): ?>
+                                    <div class="day-schedule">
+                                        <div class="day-name">
+                                            <?php 
+                                            $day_icons = [
+                                                'MON' => 'bi-calendar-week',
+                                                'TUE' => 'bi-calendar2-week',
+                                                'WED' => 'bi-calendar3',
+                                                'THUR' => 'bi-calendar4',
+                                                'FRI' => 'bi-calendar5',
+                                                'SAT' => 'bi-calendar6',
+                                                'SUN' => 'bi-calendar'
+                                            ];
+                                            $day_names = [
+                                                'MON' => 'Monday',
+                                                'TUE' => 'Tuesday',
+                                                'WED' => 'Wednesday',
+                                                'THUR' => 'Thursday',
+                                                'FRI' => 'Friday',
+                                                'SAT' => 'Saturday',
+                                                'SUN' => 'Sunday'
+                                            ];
+                                            ?>
+                                            <i class="bi <?php echo $day_icons[$schedule['AVAILABLE_DAY']]; ?>"></i>
+                                            <?php echo $day_names[$schedule['AVAILABLE_DAY']]; ?>
+                                        </div>
+                                        <div class="time-range">
+                                            <i class="bi bi-clock-fill"></i>
+                                            <?php echo date('h:i A', strtotime($schedule['START_TIME'])); ?> - 
+                                            <?php echo date('h:i A', strtotime($schedule['END_TIME'])); ?>
+                                        </div>
+                                        <div class="schedule-actions">
+                                            <button class="btn-edit" onclick="editSchedule(<?php echo $schedule['SCHEDULE_ID']; ?>, '<?php echo $schedule['DOCTOR_ID']; ?>', '<?php echo $schedule['START_TIME']; ?>', '<?php echo $schedule['END_TIME']; ?>', '<?php echo $schedule['AVAILABLE_DAY']; ?>')">
+                                                <i class="bi bi-pencil"></i> Edit
+                                            </button>
+                                            <form method="POST" style="display: inline;">
+                                                <input type="hidden" name="schedule_id" value="<?php echo $schedule['SCHEDULE_ID']; ?>">
+                                                <button type="submit" name="delete_schedule" class="btn-delete" onclick="return confirm('Are you sure you want to delete this schedule?')">
+                                                    <i class="bi bi-trash"></i> Delete
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
+                        <?php else: ?>
+                            <div class="no-schedule">
+                                <i class="bi bi-calendar-x"></i>
+                                No schedules assigned to this doctor yet
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+        <?php else: ?>
+            <div class="empty-state">
+                <i class="bi bi-calendar-x"></i>
+                <h4>No Doctors Found</h4>
+                <p>There are no doctors in the system yet.</p>
+            </div>
+        <?php endif; ?>
     </div>
     
     <!-- Create Schedule Modal -->
@@ -535,47 +665,53 @@ if (isset($_POST['doctor_id']) && isset($_POST['ajax'])) {
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="createScheduleModalLabel">Create New Schedule</h5>
+                    <h5 class="modal-title" id="createScheduleModalLabel">
+                        <i class="bi bi-plus-circle"></i> Create New Schedule
+                    </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <form method="POST" action="doctor_schedule_recep.php">
                         <input type="hidden" name="create_schedule" value="1">
                         
-                        <div class="form-group">
-                            <label for="doctor_id">Doctor</label>
-                            <select class="form-control" id="doctor_id" name="doctor_id" required>
-                                <option value="">Select Doctor</option>
+                        <div class="mb-3">
+                            <label for="doctor_id" class="form-label">Select Doctor</label>
+                            <select class="form-select" id="doctor_id" name="doctor_id" required>
+                                <option value="">Choose a doctor...</option>
                                 <?php
-                                if (mysqli_num_rows($doctors_query) > 0) {
-                                    while ($doctor = mysqli_fetch_assoc($doctors_query)) {
+                                $doctors_dropdown_query = mysqli_query($conn, "
+                                    SELECT d.*, s.SPECIALISATION_NAME 
+                                    FROM doctor_tbl d
+                                    JOIN specialisation_tbl s ON d.SPECIALISATION_ID = s.SPECIALISATION_ID
+                                    ORDER BY s.SPECIALISATION_NAME, d.FIRST_NAME
+                                ");
+                                if (mysqli_num_rows($doctors_dropdown_query) > 0) {
+                                    while ($doctor = mysqli_fetch_assoc($doctors_dropdown_query)) {
                                         echo '<option value="' . $doctor['DOCTOR_ID'] . '">' . 
                                              'Dr. ' . htmlspecialchars($doctor['FIRST_NAME'] . ' ' . $doctor['LAST_NAME']) . 
                                              ' (' . htmlspecialchars($doctor['SPECIALISATION_NAME']) . ')</option>';
                                     }
-                                    // Reset the result pointer
-                                    mysqli_data_seek($doctors_query, 0);
                                 }
                                 ?>
                             </select>
                         </div>
                         
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="start_time">Start Time</label>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="start_time" class="form-label">Start Time</label>
                                 <input type="time" class="form-control" id="start_time" name="start_time" required>
                             </div>
                             
-                            <div class="form-group">
-                                <label for="end_time">End Time</label>
+                            <div class="col-md-6 mb-3">
+                                <label for="end_time" class="form-label">End Time</label>
                                 <input type="time" class="form-control" id="end_time" name="end_time" required>
                             </div>
                         </div>
                         
-                        <div class="form-group">
-                            <label for="available_day">Available Day</label>
-                            <select class="form-control" id="available_day" name="available_day" required>
-                                <option value="">Select Day</option>
+                        <div class="mb-3">
+                            <label for="available_day" class="form-label">Available Day</label>
+                            <select class="form-select" id="available_day" name="available_day" required>
+                                <option value="">Select day...</option>
                                 <option value="MON">Monday</option>
                                 <option value="TUE">Tuesday</option>
                                 <option value="WED">Wednesday</option>
@@ -587,11 +723,11 @@ if (isset($_POST['doctor_id']) && isset($_POST['ajax'])) {
                         </div>
                         
                         <div class="text-end">
-                            <button type="submit" class="btn btn-success">
-                                <i class="bi bi-check"></i> Create Schedule
+                            <button type="submit" class="btn btn-success me-2">
+                                <i class="bi bi-check-circle"></i> Create Schedule
                             </button>
                             <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
-                                <i class="bi bi-x"></i> Cancel
+                                <i class="bi bi-x-circle"></i> Cancel
                             </button>
                         </div>
                     </form>
@@ -605,7 +741,9 @@ if (isset($_POST['doctor_id']) && isset($_POST['ajax'])) {
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="editScheduleModalLabel">Edit Schedule</h5>
+                    <h5 class="modal-title" id="editScheduleModalLabel">
+                        <i class="bi bi-pencil-square"></i> Edit Schedule
+                    </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -613,40 +751,44 @@ if (isset($_POST['doctor_id']) && isset($_POST['ajax'])) {
                         <input type="hidden" id="edit_schedule_id" name="schedule_id">
                         <input type="hidden" name="update_schedule" value="1">
                         
-                        <div class="form-group">
-                            <label for="edit_doctor_id">Doctor</label>
-                            <select class="form-control" id="edit_doctor_id" name="doctor_id" required>
-                                <option value="">Select Doctor</option>
+                        <div class="mb-3">
+                            <label for="edit_doctor_id" class="form-label">Select Doctor</label>
+                            <select class="form-select" id="edit_doctor_id" name="doctor_id" required>
+                                <option value="">Choose a doctor...</option>
                                 <?php
-                                if (mysqli_num_rows($doctors_query) > 0) {
-                                    while ($doctor = mysqli_fetch_assoc($doctors_query)) {
+                                $doctors_dropdown_query = mysqli_query($conn, "
+                                    SELECT d.*, s.SPECIALISATION_NAME 
+                                    FROM doctor_tbl d
+                                    JOIN specialisation_tbl s ON d.SPECIALISATION_ID = s.SPECIALISATION_ID
+                                    ORDER BY s.SPECIALISATION_NAME, d.FIRST_NAME
+                                ");
+                                if (mysqli_num_rows($doctors_dropdown_query) > 0) {
+                                    while ($doctor = mysqli_fetch_assoc($doctors_dropdown_query)) {
                                         echo '<option value="' . $doctor['DOCTOR_ID'] . '">' . 
                                              'Dr. ' . htmlspecialchars($doctor['FIRST_NAME'] . ' ' . $doctor['LAST_NAME']) . 
                                              ' (' . htmlspecialchars($doctor['SPECIALISATION_NAME']) . ')</option>';
                                     }
-                                    // Reset the result pointer
-                                    mysqli_data_seek($doctors_query, 0);
                                 }
                                 ?>
                             </select>
                         </div>
                         
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="edit_start_time">Start Time</label>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="edit_start_time" class="form-label">Start Time</label>
                                 <input type="time" class="form-control" id="edit_start_time" name="start_time" required>
                             </div>
                             
-                            <div class="form-group">
-                                <label for="edit_end_time">End Time</label>
+                            <div class="col-md-6 mb-3">
+                                <label for="edit_end_time" class="form-label">End Time</label>
                                 <input type="time" class="form-control" id="edit_end_time" name="end_time" required>
                             </div>
                         </div>
                         
-                        <div class="form-group">
-                            <label for="edit_available_day">Available Day</label>
-                            <select class="form-control" id="edit_available_day" name="available_day" required>
-                                <option value="">Select Day</option>
+                        <div class="mb-3">
+                            <label for="edit_available_day" class="form-label">Available Day</label>
+                            <select class="form-select" id="edit_available_day" name="available_day" required>
+                                <option value="">Select day...</option>
                                 <option value="MON">Monday</option>
                                 <option value="TUE">Tuesday</option>
                                 <option value="WED">Wednesday</option>
@@ -658,11 +800,11 @@ if (isset($_POST['doctor_id']) && isset($_POST['ajax'])) {
                         </div>
                         
                         <div class="text-end">
-                            <button type="submit" class="btn btn-success">
-                                <i class="bi bi-check"></i> Update Schedule
+                            <button type="submit" class="btn btn-success me-2">
+                                <i class="bi bi-check-circle"></i> Update Schedule
                             </button>
                             <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
-                                <i class="bi bi-x"></i> Cancel
+                                <i class="bi bi-x-circle"></i> Cancel
                             </button>
                         </div>
                     </form>
@@ -685,6 +827,15 @@ if (isset($_POST['doctor_id']) && isset($_POST['ajax'])) {
             const editModal = new bootstrap.Modal(document.getElementById('editScheduleModal'));
             editModal.show();
         }
+        
+        // Auto-hide alerts after 5 seconds
+        setTimeout(() => {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                const bsAlert = new bootstrap.Alert(alert);
+                bsAlert.close();
+            });
+        }, 5000);
     </script>
 </body>
 </html>
