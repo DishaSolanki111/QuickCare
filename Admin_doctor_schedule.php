@@ -761,11 +761,11 @@ if ($doctors_query && mysqli_num_rows($doctors_query) > 0) {
     </style>
 </head>
 <body>
-    <?php include 'recept_sidebar.php'; ?>
+    <?php include 'Admin_sidebar.php'; ?>
 
     <!-- Main Content -->
     <div class="main-content">
-        <?php include 'receptionist_header.php'; ?>
+        <?php include 'Admin_header.php'; ?>
         
         <!-- Success/Error Messages -->
         <?php if (isset($success_message)): ?>
