@@ -164,8 +164,8 @@ $adminName = $_SESSION['USER_NAME'] ?? 'Admin';
 
             <select name="mode_filter">
                 <option value="">All Payment Modes</option>
-                <option value="CREDIT CARD" <?php if(($_POST['mode_filter'] ?? '')=='CREDIT CARD') echo 'selected'; ?>>Credit Card</option>
-                <option value="GOOGLE PAY" <?php if(($_POST['mode_filter'] ?? '')=='GOOGLE PAY') echo 'selected'; ?>>Google Pay</option>
+                <option value="CARD" <?php if(($_POST['mode_filter'] ?? '')=='CREDIT CARD') echo 'selected'; ?>>Credit Card</option>
+                <!-- <option value="GOOGLE PAY" <?php if(($_POST['mode_filter'] ?? '')=='GOOGLE PAY') echo 'selected'; ?>>Google Pay</option> -->
                 <option value="UPI" <?php if(($_POST['mode_filter'] ?? '')=='UPI') echo 'selected'; ?>>UPI</option>
                 <option value="NET BANKING" <?php if(($_POST['mode_filter'] ?? '')=='NET BANKING') echo 'selected'; ?>>Net Banking</option>
             </select>

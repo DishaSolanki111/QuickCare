@@ -465,7 +465,7 @@ include 'config.php';
             
             <!-- STAT 3 -->
             <div class="card stat">
-                <div>Upcoming Medicines</div>
+                <div>Medicines Reminders</div>
                 <div class="num"><?php echo $upcoming_medicines; ?></div>
             </div>
         </div>

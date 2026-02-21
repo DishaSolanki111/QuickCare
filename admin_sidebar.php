@@ -132,7 +132,7 @@ body {
 
     <a href="Admin_Doctor_schedule.php" class="<?= ($currentPage == 'Admin_Doctor_schedule.php') ? 'active' : '' ?>">Doctor Schedule</a>
 
-    <a href="Admin_medicine.php" class="<?= ($currentPage == 'Admin_medicine.php') ? 'active' : '' ?>">Medicine</a>
+
 
     <a href="Admin_prescription.php" class="<?= ($currentPage == 'Admin_prescription.php') ? 'active' : '' ?>">Prescriptions</a>
     

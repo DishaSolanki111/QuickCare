@@ -476,16 +476,6 @@ if ($fee_result && $row = mysqli_fetch_assoc($fee_result)) {
                     <li><a href="appointment.php">Book Appointment</a></li>
                 </ul>
             </div>
-            <div class="footer-column">
-                <h3>Contact Us</h3>
-                <ul>
-                    <li><a href="#"><i class="fas fa-map-marker-alt"></i> 123 Healthcare Ave, Medical City</a></li>
-                    <li><a href="#"><i class="fas fa-phone"></i> 91+ 9632587418</a></li>
-                </ul>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>&copy; 2023 QuickCare. All Rights Reserved. | <a href="#" style="color: rgba(255, 255, 255, 0.7);">Privacy Policy</a> | <a href="#" style="color: rgba(255, 255, 255, 0.7);">Terms of Service</a></p>
         </div>
     </footer>
 

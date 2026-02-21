@@ -419,24 +419,10 @@ include 'header.php'; // Include the header
                   
                 </ul>
             </div>
-            <div class="footer-column">
-                <h3>Contact Us</h3>
-                <ul>
-                    <li><a href="#"><i class="fas fa-map-marker-alt"></i> 123 Healthcare Ave, Medical City</a></li>
-                    <li><a href="#"><i class="fas fa-phone"></i> 91+ 9632587418</a></li>
-                    <li><a href="#"><i class="fas fa-envelope"></i> info@quickcare.com</a></li>
-                </ul>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>&copy; <span id="year"></span> QuickCare. All Rights Reserved. | <a href="#" style="color: rgba(255, 255, 255, 0.7);">Privacy Policy</a> | <a href="#" style="color: rgba(255, 255, 255, 0.7);">Terms of Service</a></p>
         </div>
     </footer>
 
     <script>
-        // Set current year
-        document.getElementById('year').textContent = new Date().getFullYear();
-
         // Mobile menu toggle
         const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
         const closeMenu = document.querySelector('.close-menu');

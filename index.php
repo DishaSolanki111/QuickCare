@@ -617,7 +617,7 @@ include 'header.php';
                     </div>
                     <div class="stat-item">
                         <span class="stat-number">3+</span>
-                        <span class="stat-label">appointments</span>
+                        <span class="stat-label">Specialists</span>
                     </div>
                 </div>
             </div>
@@ -633,7 +633,7 @@ include 'header.php';
     <!-- Popular Specialists Section with White Background -->
     <section class="specialists" id="specialists-section">
         <div class="container">
-            <h2 class="section-title fade-in">Popular Specialists</h2>
+            <h2 class="section-title fade-in">Our Specialists</h2>
             <p class="section-subtitle fade-in">Find right specialist for your health needs</p>
             <div class="specialist-cards">
                 <div class="specialist-card fade-in">
@@ -731,17 +731,6 @@ include 'header.php';
                     <li><a href="#">Medicine Delivery</a></li>
                 </ul>
             </div> -->
-            <div class="footer-column">
-                <h3>Contact Us</h3>
-                <ul>
-                    <li><a href="#"><i class="fas fa-map-marker-alt"></i> 123 Healthcare Ave, Medical City</a></li>
-                    <li><a href="#"><i class="fas fa-phone"></i> 91+ 9632587418</a></li>
-                
-                </ul>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>&copy; 2023 QuickCare. All Rights Reserved. | <a href="#" style="color: rgba(255, 255, 255, 0.7);">Privacy Policy</a> | <a href="#" style="color: rgba(255, 255, 255, 0.7);">Terms of Service</a></p>
         </div>
     </footer>
 

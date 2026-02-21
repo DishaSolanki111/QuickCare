@@ -143,7 +143,6 @@ body {
 
     <a href="manage_appointments.php" class="<?= ($currentPage == 'manage_appointments.php') ? 'active' : '' ?>">Appointments</a>
 
-    <a href="doctor_schedule.php" class="<?= ($currentPage == 'doctor_schedule.php') ? 'active' : '' ?>">Doctor Schedule</a>
 
     <a href="patinet_prescriptions.php" class="<?= ($currentPage == 'patinet_prescriptions.php') ? 'active' : '' ?>">Prescriptions</a>
 
