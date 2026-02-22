@@ -70,26 +70,7 @@ include 'recept_sidebar.php';
     tr:hover {
         background: #F2F9FB;
     }
-    .btn-edit {
-            padding: 5px 10px;
-            border: none;
-            border-radius: 5px;
-            font-size: 18px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-        }
-        
-        .btn-edit {
-            background: #f39c12;
-            color: var(--white);
-        }
-        
-        .btn-edit:hover {
-            background: #e67e22;
-        }
+
     .filter-container {
         background: white;
         padding: 20px;
@@ -187,7 +168,6 @@ $receptionist_id = $_SESSION['RECEPTIONIST_ID'];
             <th>Doctor Name</th>
             <th>Date</th>
             <th>Time</th>
-            <th>Action</th>
             <th>Status</th>
          
         </tr>
@@ -231,7 +211,6 @@ $receptionist_id = $_SESSION['RECEPTIONIST_ID'];
                     <td>{$row['d_first']} {$row['d_last']}</td>
                     <td>{$row['APPOINTMENT_DATE']}</td>
                     <td>{$row['APPOINTMENT_TIME']}</td>
-                    <td><button  class='btn-edit'>Edit</button></td>
                     <td><span class='status-badge $cls'>{$row['STATUS']}</span></td>
                   
                 </tr>";
