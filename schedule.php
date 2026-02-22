@@ -303,8 +303,8 @@ if ($result->num_rows > 0) {
         }
 
         .booked {
-            background-color: var(--danger-color);
-            color: white;
+            background-color: #ffc107;
+            color: #333;
             cursor: not-allowed;
         }
 
@@ -708,7 +708,7 @@ if ($result->num_rows > 0) {
                             // Submit POST form to booking page with parameters
                             var form = document.createElement('form');
                             form.method = 'POST';
-                            form.action = 'book_appointment_login.php';
+                            form.action = 'book_appointment.php';
                             var doctorInput = document.createElement('input');
                             doctorInput.type = 'hidden';
                             doctorInput.name = 'doctor_id';

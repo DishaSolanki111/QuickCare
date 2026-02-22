@@ -45,15 +45,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
     $new_password = $_POST['new_password'];
     $confirm_password = $_POST['confirm_password'];
     
-    // Verify current password
-    if (password_verify($current_password, $doctor['PASSWORD'])) {
+    // Verify current password (doctor_tbl uses PSWD column)
+    if (password_verify($current_password, $doctor['PSWD'])) {
         // Check if new passwords match
         if ($new_password === $confirm_password) {
             // Hash new password
             $hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
             
             // Update password in database
-            $password_query = "UPDATE doctor_tbl SET PASSWORD = '$hashed_password' WHERE DOCTOR_ID = '$doctor_id'";
+            $hashed_esc = mysqli_real_escape_string($conn, $hashed_password);
+            $password_query = "UPDATE doctor_tbl SET PSWD = '$hashed_esc' WHERE DOCTOR_ID = '$doctor_id'";
             
             if (mysqli_query($conn, $password_query)) {
                 $password_success = "Password changed successfully!";

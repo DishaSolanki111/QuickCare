@@ -38,30 +38,39 @@ if ($doctor_id > 0) {
 
 // Handle Razorpay payment success
 if (isset($_POST['razorpay_payment_id'])) {
-    // Get the payment details
     $payment_id = $_POST['razorpay_payment_id'];
     $signature = isset($_POST['razorpay_signature']) ? $_POST['razorpay_signature'] : '';
     
-    // Database insertion is commented out to skip saving to database
-    /*
-    // Insert appointment into database
-    $insert_query = "INSERT INTO appointment_tbl (PATIENT_ID, DOCTOR_ID, APPOINTMENT_DATE, APPOINTMENT_TIME, REASON, STATUS) 
-                   VALUES ($patient_id, $doctor_id, '$selected_date', '$selected_time', '$reason', 'COMPLETED')";
+    // Get SCHEDULE_ID from doctor_schedule_tbl (doctor_id + day of week from date)
+    $day_map = [1=>'MON', 2=>'TUE', 3=>'WED', 4=>'THUR', 5=>'FRI', 6=>'SAT', 7=>'SUN'];
+    $day_of_week = $day_map[(int) date('N', strtotime($selected_date))] ?? '';
+    $schedule_id = 0;
+    if ($day_of_week) {
+        $sq = mysqli_query($conn, "SELECT SCHEDULE_ID FROM doctor_schedule_tbl WHERE DOCTOR_ID = $doctor_id AND AVAILABLE_DAY = '" . mysqli_real_escape_string($conn, $day_of_week) . "' LIMIT 1");
+        if ($sq && $row = mysqli_fetch_assoc($sq)) {
+            $schedule_id = (int) $row['SCHEDULE_ID'];
+        }
+    }
     
-    $result = mysqli_query($conn, $insert_query);
-    
-    if ($result) {
-        // Get the appointment ID that was just inserted
-        $appointment_id = mysqli_insert_id($conn);
+    if ($schedule_id > 0) {
+        // Format time for TIME column (HH:MM:SS)
+        $time_formatted = date('H:i:s', strtotime($selected_time));
+        $selected_date_esc = mysqli_real_escape_string($conn, $selected_date);
+        $time_esc = mysqli_real_escape_string($conn, $time_formatted);
         
-        // Insert payment record
-        $payment_insert_query = "INSERT INTO payment_tbl (APPOINTMENT_ID, AMOUNT, PAYMENT_DATE, PAYMENT_MODE, STATUS, TRANSACTION_ID) 
-                                VALUES ($appointment_id, $amount, NOW(), 'RAZORPAY', 'COMPLETED', '$payment_id')";
+        $insert_query = "INSERT INTO appointment_tbl (PATIENT_ID, DOCTOR_ID, SCHEDULE_ID, APPOINTMENT_DATE, APPOINTMENT_TIME, STATUS) 
+                         VALUES ($patient_id, $doctor_id, $schedule_id, '$selected_date_esc', '$time_esc', 'SCHEDULED')";
         
-        $payment_result = mysqli_query($conn, $payment_insert_query);
-    */
+        if (mysqli_query($conn, $insert_query)) {
+            $appointment_id = mysqli_insert_id($conn);
+            $amount_esc = (float) $amount;
+            $payment_id_esc = mysqli_real_escape_string($conn, $payment_id);
+            $payment_insert = "INSERT INTO payment_tbl (APPOINTMENT_ID, AMOUNT, PAYMENT_DATE, PAYMENT_MODE, STATUS, TRANSACTION_ID) 
+                               VALUES ($appointment_id, $amount_esc, CURDATE(), 'UPI', 'COMPLETED', '$payment_id_esc')";
+            mysqli_query($conn, $payment_insert);
+        }
+    }
     
-    // Since we're not inserting into database, we'll proceed directly to clearing session and redirecting
     // Clear booking session data
     unset($_SESSION['booking_doctor_id']);
     unset($_SESSION['booking_doctor_name']);
@@ -70,14 +79,8 @@ if (isset($_POST['razorpay_payment_id'])) {
     unset($_SESSION['booking_time']);
     unset($_SESSION['booking_reason']);
     
-    // Redirect to success page
     header("Location: payment_success.php");
     exit;
-    /*
-    } else {
-        $error_message = "Failed to book appointment. Please try again. Error: " . mysqli_error($conn);
-    }
-    */
 }
 ?>
 <!DOCTYPE html>
