@@ -119,12 +119,39 @@ if (isset($_GET['added']) && $_GET['added'] == '1') {
 ");
 
 // Fetch medicine reminders
- $reminders_query = mysqli_query($conn, "
+$reminders_query = mysqli_query($conn, "
     SELECT mr.*, m.MED_NAME
     FROM medicine_reminder_tbl mr
     JOIN medicine_tbl m ON mr.MEDICINE_ID = m.MEDICINE_ID
     WHERE mr.PATIENT_ID = '$patient_id'
     ORDER BY mr.START_DATE, mr.REMINDER_TIME
+");
+
+// Appointment reminders for notification bell
+$reminder_query = mysqli_query($conn, "
+    SELECT ar.REMARKS, a.APPOINTMENT_DATE, a.APPOINTMENT_TIME, d.FIRST_NAME, d.LAST_NAME
+    FROM appointment_reminder_tbl ar
+    JOIN appointment_tbl a ON ar.APPOINTMENT_ID = a.APPOINTMENT_ID
+    JOIN doctor_tbl d ON a.DOCTOR_ID = d.DOCTOR_ID
+    WHERE a.PATIENT_ID = '$patient_id'
+    AND a.APPOINTMENT_DATE >= CURDATE()
+    AND ar.REMINDER_TIME <= CURTIME()
+    AND ar.REMINDER_TIME > DATE_SUB(CURTIME(), INTERVAL 1 HOUR)
+    ORDER BY ar.REMINDER_TIME DESC
+    LIMIT 5
+");
+
+// Medicine reminders for notification bell (today, fired in last hour)
+$medicine_reminder_query = mysqli_query($conn, "
+    SELECT mr.REMARKS, mr.REMINDER_TIME, m.MED_NAME, CURDATE() as REMINDER_DATE
+    FROM medicine_reminder_tbl mr
+    JOIN medicine_tbl m ON mr.MEDICINE_ID = m.MEDICINE_ID
+    WHERE mr.PATIENT_ID = '$patient_id'
+    AND CURDATE() BETWEEN mr.START_DATE AND mr.END_DATE
+    AND mr.REMINDER_TIME <= CURTIME()
+    AND mr.REMINDER_TIME > DATE_SUB(CURTIME(), INTERVAL 1 HOUR)
+    ORDER BY mr.REMINDER_TIME DESC
+    LIMIT 5
 ");
 
 // If prescription ID is provided, get medicines from that prescription
@@ -686,6 +713,7 @@ if (!empty($prescription_id)) {
                 modal.style.display = 'none';
             }
         }
+        
     </script>
 </body>
 </html>

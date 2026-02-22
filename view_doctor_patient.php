@@ -667,12 +667,8 @@ mysqli_data_seek($specializations_query, 0);
 </div>
 
 <div class="form-group" style="display: flex; align-items: flex-end;">
-<button type="submit" class="btn btn-primary">
-<i class="fas fa-filter"></i> Apply Filters
-</button>
-<a href="view_doctor_patient.php" class="btn" style="margin-left: 10px; background-color: #6c757d; color: white;">
-<i class="fas fa-redo"></i> Reset
-</a>
+<button type="submit" class="btn btn-primary">Search</button>
+<a href="view_doctor_patient.php" class="btn" style="margin-left: 10px; background-color: #e74c3c; color: white; text-decoration: none;">Reset</a>
 </div>
 </form>
 </div>

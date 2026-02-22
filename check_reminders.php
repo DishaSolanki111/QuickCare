@@ -33,7 +33,35 @@ if ($result) {
             'message' => $row['REMARKS'],
             'date' => $row['APPOINTMENT_DATE'],
             'time' => $row['APPOINTMENT_TIME'],
-            'doctor' => 'Dr. ' . $row['FIRST_NAME'] . ' ' . $row['LAST_NAME']
+            'doctor' => 'Dr. ' . $row['FIRST_NAME'] . ' ' . $row['LAST_NAME'],
+            'type' => 'appointment'
+        ];
+    }
+}
+
+// Medicine reminders: today between START_DATE and END_DATE, REMINDER_TIME in last hour
+$med_query = "SELECT mr.REMARKS, mr.REMINDER_TIME, m.MED_NAME
+    FROM medicine_reminder_tbl mr
+    JOIN medicine_tbl m ON mr.MEDICINE_ID = m.MEDICINE_ID
+    WHERE mr.PATIENT_ID = $patient_id
+    AND '$current_date' BETWEEN mr.START_DATE AND mr.END_DATE
+    AND mr.REMINDER_TIME <= '$current_time'
+    AND mr.REMINDER_TIME > DATE_SUB('$current_time', INTERVAL 1 HOUR)
+    ORDER BY mr.REMINDER_TIME DESC
+    LIMIT 5";
+$med_result = mysqli_query($conn, $med_query);
+if ($med_result) {
+    while ($row = mysqli_fetch_assoc($med_result)) {
+        $msg = 'Medicine Reminder: Take ' . $row['MED_NAME'];
+        if (!empty(trim($row['REMARKS']))) {
+            $msg .= ' - ' . $row['REMARKS'];
+        }
+        $reminders[] = [
+            'message' => $msg,
+            'date' => $current_date,
+            'time' => $row['REMINDER_TIME'],
+            'doctor' => '',
+            'type' => 'medicine'
         ];
     }
 }

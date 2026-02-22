@@ -83,6 +83,19 @@ $reminder_query = mysqli_query($conn, "
     LIMIT 5
 ");
 
+// Get medicine reminders (today, fired in last hour)
+$medicine_reminder_query = mysqli_query($conn, "
+    SELECT mr.REMARKS, mr.REMINDER_TIME, m.MED_NAME, CURDATE() as REMINDER_DATE
+    FROM medicine_reminder_tbl mr
+    JOIN medicine_tbl m ON mr.MEDICINE_ID = m.MEDICINE_ID
+    WHERE mr.PATIENT_ID = '$patient_id'
+    AND CURDATE() BETWEEN mr.START_DATE AND mr.END_DATE
+    AND mr.REMINDER_TIME <= CURTIME()
+    AND mr.REMINDER_TIME > DATE_SUB(CURTIME(), INTERVAL 1 HOUR)
+    ORDER BY mr.REMINDER_TIME DESC
+    LIMIT 5
+");
+
 ?>
 
 <!DOCTYPE html>
@@ -611,11 +624,6 @@ $reminder_query = mysqli_query($conn, "
                                     </div>
                                 </div>
                             </div>
-                        <?php else: ?>
-                            <div class="info-item" style="grid-column: 1 / -1; margin-top: 15px; padding-top: 15px; border-top: 1px solid #eee;">
-                                <span class="info-label">Medical History</span>
-                                <span class="info-value" style="color: #999; font-style: italic;">No medical history file uploaded</span>
-                            </div>
                         <?php endif; ?>
                         
                         <div class="btn-group">
@@ -929,74 +937,7 @@ $reminder_query = mysqli_query($conn, "
                 });
             }
             
-            // Check for new reminders
-            checkReminders();
-            
-            // Check for reminders every 5 minutes
-            setInterval(checkReminders, 5 * 60 * 1000);
         });
-        
-        // Toggle notification dropdown
-        function toggleNotifications() {
-            const dropdown = document.getElementById('notificationDropdown');
-            dropdown.classList.toggle('show');
-            
-            // Close dropdown when clicking outside
-            document.addEventListener('click', function closeDropdown(e) {
-                if (!e.target.closest('.notification-bell')) {
-                    dropdown.classList.remove('show');
-                    document.removeEventListener('click', closeDropdown);
-                }
-            });
-        }
-        
-        // Close notification popup
-        function closeNotificationPopup() {
-            const popup = document.getElementById('notificationPopup');
-            popup.classList.remove('show');
-        }
-        
-        // Check for new reminders
-        function checkReminders() {
-            fetch('check_reminders.php')
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === 'success' && data.reminders.length > 0) {
-                        // Show each reminder as a popup notification
-                        data.reminders.forEach(reminder => {
-                            showNotificationPopup(reminder.message);
-                        });
-                        
-                        // Update notification badge
-                        const badge = document.querySelector('.notification-badge');
-                        if (badge) {
-                            badge.textContent = data.reminders.length;
-                            badge.style.display = 'flex';
-                        } else {
-                            const bell = document.querySelector('.notification-bell');
-                            const newBadge = document.createElement('span');
-                            newBadge.className = 'notification-badge';
-                            newBadge.textContent = data.reminders.length;
-                            bell.appendChild(newBadge);
-                        }
-                    }
-                })
-                .catch(error => console.error('Error checking reminders:', error));
-        }
-        
-        // Show notification popup
-        function showNotificationPopup(message) {
-            const popup = document.getElementById('notificationPopup');
-            const messageElement = document.getElementById('notificationPopupMessage');
-            
-            messageElement.textContent = message;
-            popup.classList.add('show');
-            
-            // Auto hide after 5 seconds
-            setTimeout(() => {
-                popup.classList.remove('show');
-            }, 5000);
-        }
     </script>
 </body>
 </html>

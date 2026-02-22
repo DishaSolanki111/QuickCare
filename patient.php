@@ -45,7 +45,7 @@ include 'config.php';
 
 // Get appointment reminders
 $reminder_query = mysqli_query($conn, "
-    SELECT ar.REMARKS, a.APPOINTMENT_DATE, a.APPOINTMENT_TIME, d.FIRST_NAME, d.LAST_NAME
+    SELECT ar.REMARKS, a.APPOINTMENT_DATE, a.APPOINTMENT_TIME, d.FIRST_NAME, d.LAST_NAME, 'appointment' as REMINDER_TYPE
     FROM appointment_reminder_tbl ar
     JOIN appointment_tbl a ON ar.APPOINTMENT_ID = a.APPOINTMENT_ID
     JOIN doctor_tbl d ON a.DOCTOR_ID = d.DOCTOR_ID
@@ -54,6 +54,19 @@ $reminder_query = mysqli_query($conn, "
     AND ar.REMINDER_TIME <= CURTIME()
     AND ar.REMINDER_TIME > DATE_SUB(CURTIME(), INTERVAL 1 HOUR)
     ORDER BY ar.REMINDER_TIME DESC
+    LIMIT 5
+");
+
+// Get medicine reminders (today, fired in last hour)
+$medicine_reminder_query = mysqli_query($conn, "
+    SELECT mr.REMARKS, mr.REMINDER_TIME, m.MED_NAME, CURDATE() as REMINDER_DATE, 'medicine' as REMINDER_TYPE
+    FROM medicine_reminder_tbl mr
+    JOIN medicine_tbl m ON mr.MEDICINE_ID = m.MEDICINE_ID
+    WHERE mr.PATIENT_ID = '$patient_id'
+    AND CURDATE() BETWEEN mr.START_DATE AND mr.END_DATE
+    AND mr.REMINDER_TIME <= CURTIME()
+    AND mr.REMINDER_TIME > DATE_SUB(CURTIME(), INTERVAL 1 HOUR)
+    ORDER BY mr.REMINDER_TIME DESC
     LIMIT 5
 ");
 
@@ -481,76 +494,5 @@ $reminder_query = mysqli_query($conn, "
     </div>
 </div>
 
-<!-- Notification Popup -->
-<div class="notification-popup" id="notificationPopup">
-    <div class="notification-popup-content">
-        <div class="notification-popup-icon">
-            <i class="fas fa-bell"></i>
-        </div>
-        <div class="notification-popup-message" id="notificationPopupMessage">
-            <!-- Message will be inserted here -->
-        </div>
-        <button class="notification-popup-close" onclick="closeNotificationPopup()">&times;</button>
-    </div>
-</div>
-
-<script>
-    // Toggle notification dropdown
-    function toggleNotifications() {
-        const dropdown = document.getElementById('notificationDropdown');
-        dropdown.classList.toggle('show');
-        
-        // Close dropdown when clicking outside
-        document.addEventListener('click', function closeDropdown(e) {
-            if (!e.target.closest('.notification-bell')) {
-                dropdown.classList.remove('show');
-                document.removeEventListener('click', closeDropdown);
-            }
-        });
-    }
-    
-    // Close notification popup
-    function closeNotificationPopup() {
-        const popup = document.getElementById('notificationPopup');
-        popup.classList.remove('show');
-    }
-    
-    // Check for new reminders
-    function checkReminders() {
-        fetch('check_reminders.php')
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 'success' && data.reminders.length > 0) {
-                    // Show each reminder as a popup notification
-                    data.reminders.forEach(reminder => {
-                        showNotificationPopup(reminder.message);
-                    });
-                }
-            })
-            .catch(error => console.error('Error checking reminders:', error));
-    }
-    
-    // Show notification popup
-    function showNotificationPopup(message) {
-        const popup = document.getElementById('notificationPopup');
-        const messageElement = document.getElementById('notificationPopupMessage');
-        
-        messageElement.textContent = message;
-        popup.classList.add('show');
-        
-        // Auto hide after 5 seconds
-        setTimeout(() => {
-            popup.classList.remove('show');
-        }, 5000);
-    }
-    
-    // Check for reminders when page loads
-    document.addEventListener('DOMContentLoaded', function() {
-        checkReminders();
-        
-        // Check for reminders every 5 minutes
-        setInterval(checkReminders, 5 * 60 * 1000);
-    });
-</script>
 </body>
 </html>

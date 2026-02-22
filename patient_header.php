@@ -4,7 +4,39 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Expect $patient (and optional $page_title, $reminder_query) to be set
+// Fetch reminder queries if not set (so reminders work on every page)
+if ((!isset($reminder_query) || !isset($medicine_reminder_query)) && isset($patient, $conn) && !empty($patient['PATIENT_ID'])) {
+    $pid = (int) $patient['PATIENT_ID'];
+    if (!isset($reminder_query)) {
+        $reminder_query = @mysqli_query($conn, "
+            SELECT ar.REMARKS, a.APPOINTMENT_DATE, a.APPOINTMENT_TIME, d.FIRST_NAME, d.LAST_NAME
+            FROM appointment_reminder_tbl ar
+            JOIN appointment_tbl a ON ar.APPOINTMENT_ID = a.APPOINTMENT_ID
+            JOIN doctor_tbl d ON a.DOCTOR_ID = d.DOCTOR_ID
+            WHERE a.PATIENT_ID = $pid
+            AND a.APPOINTMENT_DATE >= CURDATE()
+            AND ar.REMINDER_TIME <= CURTIME()
+            AND ar.REMINDER_TIME > DATE_SUB(CURTIME(), INTERVAL 1 HOUR)
+            ORDER BY ar.REMINDER_TIME DESC
+            LIMIT 5
+        ");
+    }
+    if (!isset($medicine_reminder_query)) {
+        $medicine_reminder_query = @mysqli_query($conn, "
+            SELECT mr.REMARKS, mr.REMINDER_TIME, m.MED_NAME, CURDATE() as REMINDER_DATE
+            FROM medicine_reminder_tbl mr
+            JOIN medicine_tbl m ON mr.MEDICINE_ID = m.MEDICINE_ID
+            WHERE mr.PATIENT_ID = $pid
+            AND CURDATE() BETWEEN mr.START_DATE AND mr.END_DATE
+            AND mr.REMINDER_TIME <= CURTIME()
+            AND mr.REMINDER_TIME > DATE_SUB(CURTIME(), INTERVAL 1 HOUR)
+            ORDER BY mr.REMINDER_TIME DESC
+            LIMIT 5
+        ");
+    }
+}
+
+// Expect $patient (and optional $page_title, $reminder_query, $medicine_reminder_query) to be set
 $patient_full_name = isset($patient)
     ? trim(($patient['FIRST_NAME'] ?? '') . ' ' . ($patient['LAST_NAME'] ?? ''))
     : 'Patient';
@@ -19,10 +51,10 @@ if (!empty($patient['FIRST_NAME']) || !empty($patient['LAST_NAME'])) {
     $initials = 'PT';
 }
 
-// Notification count (if query provided)
-$reminder_count = isset($reminder_query) && $reminder_query
-    ? mysqli_num_rows($reminder_query)
-    : 0;
+// Notification count (appointment + medicine reminders)
+$reminder_count = isset($reminder_query) && $reminder_query ? mysqli_num_rows($reminder_query) : 0;
+$medicine_reminder_count = isset($medicine_reminder_query) && $medicine_reminder_query ? mysqli_num_rows($medicine_reminder_query) : 0;
+$reminder_count += $medicine_reminder_count;
 ?>
 
 <header class="topbar">
@@ -55,28 +87,45 @@ $reminder_count = isset($reminder_query) && $reminder_query
                 <?php endif; ?>
 
                 <div class="notification-dropdown" id="notificationDropdown">
-                    <?php if ($reminder_count > 0 && isset($reminder_query) && $reminder_query): ?>
-                        <?php while ($reminder = mysqli_fetch_assoc($reminder_query)): ?>
-                            <div class="notification-item">
-                                <div class="notification-icon">
-                                    <i class="fas fa-calendar-check"></i>
-                                </div>
-                                <div class="notification-content">
-                                    <div class="notification-title">Appointment Reminder</div>
-                                    <div class="notification-message">
-                                        <?php echo htmlspecialchars($reminder['REMARKS']); ?>
+                    <?php if ($reminder_count > 0): ?>
+                        <?php if (isset($reminder_query) && $reminder_query): ?>
+                            <?php while ($reminder = mysqli_fetch_assoc($reminder_query)): ?>
+                                <div class="notification-item">
+                                    <div class="notification-icon">
+                                        <i class="fas fa-calendar-check"></i>
                                     </div>
-                                    <div class="notification-time">
-                                        <?php
-                                        echo date(
-                                            'M d, Y h:i A',
-                                            strtotime($reminder['APPOINTMENT_DATE'] . ' ' . $reminder['APPOINTMENT_TIME'])
-                                        );
-                                        ?>
+                                    <div class="notification-content">
+                                        <div class="notification-title">Appointment Reminder</div>
+                                        <div class="notification-message">
+                                            <?php echo htmlspecialchars($reminder['REMARKS']); ?>
+                                        </div>
+                                        <div class="notification-time">
+                                            <?php
+                                            echo date('M d, Y h:i A', strtotime($reminder['APPOINTMENT_DATE'] . ' ' . $reminder['APPOINTMENT_TIME']));
+                                            ?>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        <?php endwhile; ?>
+                            <?php endwhile; ?>
+                        <?php endif; ?>
+                        <?php if (isset($medicine_reminder_query) && $medicine_reminder_query): ?>
+                            <?php while ($med = mysqli_fetch_assoc($medicine_reminder_query)): ?>
+                                <div class="notification-item">
+                                    <div class="notification-icon">
+                                        <i class="fas fa-pills"></i>
+                                    </div>
+                                    <div class="notification-content">
+                                        <div class="notification-title">Medicine Reminder</div>
+                                        <div class="notification-message">
+                                            Take <?php echo htmlspecialchars($med['MED_NAME']); ?><?php echo !empty(trim($med['REMARKS'])) ? ' - ' . htmlspecialchars($med['REMARKS']) : ''; ?>
+                                        </div>
+                                        <div class="notification-time">
+                                            <?php echo date('M d, Y h:i A', strtotime($med['REMINDER_DATE'] . ' ' . $med['REMINDER_TIME'])); ?>
+                                        </div>
+                                    </div>
+                                </div>
+                            <?php endwhile; ?>
+                        <?php endif; ?>
                     <?php else: ?>
                         <div class="no-notifications">No new notifications</div>
                     <?php endif; ?>
@@ -227,4 +276,80 @@ $reminder_count = isset($reminder_query) && $reminder_query
     font-size: 13px;
     color: #6b7280;
 }
+
+.notification-dropdown.show {
+    display: block;
+}
+
+.notification-popup {
+    display: none;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #1a3a5f;
+    color: white;
+    padding: 16px 24px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    z-index: 9999;
+    max-width: 320px;
+}
+.notification-popup.show {
+    display: block;
+}
 </style>
+
+<!-- Notification popup (appointment + medicine reminders) -->
+<div class="notification-popup" id="notificationPopup">
+    <div style="display:flex; align-items:center; gap:12px;">
+        <i class="fas fa-bell" style="font-size:24px;"></i>
+        <div>
+            <div id="notificationPopupMessage" style="font-weight:500;"></div>
+            <button onclick="document.getElementById('notificationPopup').classList.remove('show')" style="margin-top:8px; background:rgba(255,255,255,0.2); border:none; color:white; padding:4px 12px; border-radius:4px; cursor:pointer;">Close</button>
+        </div>
+    </div>
+</div>
+
+<script>
+(function() {
+    function toggleNotifications() {
+        var d = document.getElementById('notificationDropdown');
+        if (d) d.classList.toggle('show');
+        document.addEventListener('click', function close(e) {
+            if (!e.target.closest('.notification-bell')) {
+                if (d) d.classList.remove('show');
+                document.removeEventListener('click', close);
+            }
+        });
+    }
+    window.toggleNotifications = toggleNotifications;
+    
+    function checkReminders() {
+        fetch('check_reminders.php')
+            .then(function(r){ return r.json(); })
+            .then(function(data) {
+                if (data.status === 'success' && data.reminders && data.reminders.length > 0) {
+                    data.reminders.forEach(function(rem) {
+                        var el = document.getElementById('notificationPopupMessage');
+                        var pop = document.getElementById('notificationPopup');
+                        if (el && pop) {
+                            el.textContent = rem.message;
+                            pop.classList.add('show');
+                            setTimeout(function(){ pop.classList.remove('show'); }, 5000);
+                        }
+                    });
+                }
+            })
+            .catch(function(e){ console.error('Error checking reminders:', e); });
+    }
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', function() {
+            checkReminders();
+            setInterval(checkReminders, 60 * 1000);
+        });
+    } else {
+        checkReminders();
+        setInterval(checkReminders, 60 * 1000);
+    }
+})();
+</script>
