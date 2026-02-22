@@ -1,4 +1,6 @@
-<?php include 'config.php'; ?>
+<?php
+ob_start();
+include 'config.php'; ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -403,6 +405,11 @@
             $success = false;
             $error = "";
             $profile_image_path = "";
+            $field_errors = [
+                'first_name' => '', 'last_name' => '', 'dob' => '', 'doj' => '',
+                'phone' => '', 'email' => '', 'profile_image' => '', 'specialisation_id' => '',
+                'username' => '', 'password' => ''
+            ];
             
             // Store submitted values to repopulate form if needed
             $form_data = [
@@ -433,8 +440,6 @@
                     'specialisation_id' => $_POST['specialisation_id'] ?? ''
                 ];
 
-                $errors = [];
-
                 // ---------------- PROFILE IMAGE (JPG ONLY) ----------------
                 if (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] == 0) {
                     $upload_dir = "uploads/";
@@ -444,7 +449,7 @@
 
                     $ext = strtolower(pathinfo($_FILES['profile_image']['name'], PATHINFO_EXTENSION));
                     if ($ext !== 'jpg' && $ext !== 'jpeg' && $ext !== 'png' && $ext !== 'PNG') {
-                        $errors[] = "Profile image must be in JPG or PNG format only.";
+                        $field_errors['profile_image'] = "Profile image must be in JPG or PNG format only.";
                     } else {
                         $file_name = time() . '_' . basename($_FILES['profile_image']['name']);
                         $target_file = $upload_dir . $file_name;
@@ -468,30 +473,28 @@
 
                 // ---------------- DATE VALIDATION ----------------
                 if (empty($dob)) {
-                    $errors[] = "Date of Birth is required.";
+                    $field_errors['dob'] = "Date of Birth is required.";
                 } else {
                     $dob_date = new DateTime($dob);
                     $today = new DateTime();
                     if ($dob_date > $today) {
-                        $errors[] = "Date of Birth cannot be in the future.";
+                        $field_errors['dob'] = "Date of Birth cannot be in the future.";
                     }
                 }
                 
                 if (empty($doj)) {
-                    $errors[] = "Date of Joining is required.";
+                    $field_errors['doj'] = "Date of Joining is required.";
                 } else {
                     $doj_date = new DateTime($doj);
                     $today = new DateTime();
                     if ($doj_date > $today) {
-                        $errors[] = "Date of Joining cannot be in the future.";
-                    }
-                }
-                
-                if (!empty($dob) && !empty($doj)) {
-                    $dob_date = new DateTime($dob);
-                    $doj_date = new DateTime($doj);
-                    if ($doj_date <= $dob_date) {
-                        $errors[] = "Date of Joining must be after Date of Birth.";
+                        $field_errors['doj'] = "Date of Joining cannot be in the future.";
+                    } elseif (!empty($dob)) {
+                        $dob_date = new DateTime($dob);
+                        $doj_date = new DateTime($doj);
+                        if ($doj_date <= $dob_date) {
+                            $field_errors['doj'] = "Date of Joining must be after Date of Birth.";
+                        }
                     }
                 }
 
@@ -501,7 +504,7 @@
                     strlen($username) > 20 ||
                     !preg_match('/\d/', $username)
                 ) {
-                    $errors[] = "Username must start with a capital letter, max 20 chars, no spaces, no consecutive underscores, not end with underscore, and include at least 1 digit (e.g. Dr_rajesh05).";
+                    $field_errors['username'] = "Username must start with a capital letter, max 20 chars, no spaces, no consecutive underscores, not end with underscore, and include at least 1 digit (e.g. Dr_rajesh05).";
                 }
 
                 // ---------------- PASSWORD VALIDATION ----------------
@@ -511,21 +514,31 @@
                     !preg_match('/[0-9]/', $password) ||
                     !preg_match('/[\W]/', $password)
                 ) {
-                    $errors[] = "Password must be at least 8 characters and include 1 uppercase letter, 1 digit, and 1 special character.";
+                    $field_errors['password'] = "Password must be at least 8 characters and include 1 uppercase letter, 1 digit, and 1 special character.";
                 }
 
                 // ---------------- PHONE VALIDATION ----------------
                 if (!preg_match('/^[0-9]{10}$/', $phone)) {
-                    $errors[] = "Phone number must be exactly 10 digits.";
+                    $field_errors['phone'] = "Phone number must be exactly 10 digits.";
                 }
 
                 // ---------------- EMAIL VALIDATION ----------------
                 if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                    $errors[] = "Invalid email format.";
+                    $field_errors['email'] = "Invalid email format.";
+                }
+
+                // ---------------- USERNAME EXISTS CHECK (doctor_tbl) ----------------
+                if (empty($field_errors['username'])) {
+                    $check_username = mysqli_real_escape_string($conn, $username);
+                    $check_sql = "SELECT COUNT(*) as cnt FROM doctor_tbl WHERE USERNAME = '$check_username'";
+                    $check_result = $conn->query($check_sql);
+                    if ($check_result && $check_result->fetch_assoc()['cnt'] > 0) {
+                        $field_errors['username'] = "Username already exist";
+                    }
                 }
 
                 // ---------------- FINAL INSERT ----------------
-                if (empty($errors)) {
+                if (empty(array_filter($field_errors))) {
                     $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
                     $sql = "INSERT INTO doctor_tbl 
@@ -534,24 +547,15 @@
                     ('$specialisation_id','$profile_image_path','$first_name','$last_name','$dob','$doj','$username','$hashed_password','$phone','$email','$gender',NULL,NULL,'$education','pending')";
 
                     if ($conn->query($sql) === TRUE) {
-                        $success = true;
-                        $form_data = [
-                            'first_name' => '',
-                            'last_name' => '',
-                            'dob' => '',
-                            'doj' => '',
-                            'gender' => '',
-                            'phone' => '',
-                            'email' => '',
-                            'education' => '',
-                            'username' => '',
-                            'specialisation_id' => ''
-                        ];
+                        $conn->close();
+                        ob_end_clean();
+                        header("Location: admin.php");
+                        exit;
                     } else {
                         $error = "Database error.";
                     }
                 } else {
-                    $error = implode("<br>", $errors);
+                    // Keep error for database errors only
                 }
 
                 $conn->close();
@@ -579,25 +583,25 @@
                         <div class="form-group">
                             <label for="first_name">First Name <span class="required">*</span></label>
                             <input type="text" id="first_name" name="first_name" placeholder="e.g. John" value="<?php echo htmlspecialchars($form_data['first_name']); ?>" required>
-                            <div class="error-message" id="first_name_error"></div>
+                            <div class="error-message" id="first_name_error"<?php if (!empty($field_errors['first_name'])) echo ' style="display:block"'; ?>><?php echo htmlspecialchars($field_errors['first_name'] ?? ''); ?></div>
                         </div>
                         
                         <div class="form-group">
                             <label for="last_name">Last Name <span class="required">*</span></label>
                             <input type="text" id="last_name" name="last_name" placeholder="e.g. Doe" value="<?php echo htmlspecialchars($form_data['last_name']); ?>" required>
-                            <div class="error-message" id="last_name_error"></div>
+                            <div class="error-message" id="last_name_error"<?php if (!empty($field_errors['last_name'])) echo ' style="display:block"'; ?>><?php echo htmlspecialchars($field_errors['last_name'] ?? ''); ?></div>
                         </div>
                         
                         <div class="form-group">
                             <label for="dob">Date of Birth <span class="required">*</span></label>
                             <input type="date" id="dob" name="dob" placeholder="YYYY-MM-DD" value="<?php echo htmlspecialchars($form_data['dob']); ?>" required>
-                            <div class="error-message" id="dob_error"></div>
+                            <div class="error-message" id="dob_error"<?php if (!empty($field_errors['dob'])) echo ' style="display:block"'; ?>><?php echo htmlspecialchars($field_errors['dob'] ?? ''); ?></div>
                         </div>
                         
                         <div class="form-group">
                             <label for="doj">Date of Joining <span class="required">*</span></label>
                             <input type="date" id="doj" name="doj" placeholder="YYYY-MM-DD" value="<?php echo htmlspecialchars($form_data['doj']); ?>" required>
-                            <div class="error-message" id="doj_error"></div>
+                            <div class="error-message" id="doj_error"<?php if (!empty($field_errors['doj'])) echo ' style="display:block"'; ?>><?php echo htmlspecialchars($field_errors['doj'] ?? ''); ?></div>
                         </div>
                         
                         <div class="form-group">
@@ -626,13 +630,13 @@
                         <div class="form-group">
                             <label for="phone">Phone Number <span class="required">*</span></label>
                             <input type="text" id="phone" name="phone" maxlength="10" placeholder="e.g. 1234567891" value="<?php echo htmlspecialchars($form_data['phone']); ?>" required>
-                            <div class="error-message" id="phone_error"></div>
+                            <div class="error-message" id="phone_error"<?php if (!empty($field_errors['phone'])) echo ' style="display:block"'; ?>><?php echo htmlspecialchars($field_errors['phone'] ?? ''); ?></div>
                         </div>
                         
                         <div class="form-group">
                             <label for="email">Email <span class="required">*</span></label>
                             <input type="email" id="email" name="email" placeholder="e.g. john@example.com" value="<?php echo htmlspecialchars($form_data['email']); ?>" required>
-                            <div class="error-message" id="email_error"></div>
+                            <div class="error-message" id="email_error"<?php if (!empty($field_errors['email'])) echo ' style="display:block"'; ?>><?php echo htmlspecialchars($field_errors['email'] ?? ''); ?></div>
                         </div>
                         
                         <div class="form-group">
@@ -659,7 +663,7 @@
                                 <input type="file" id="profile_image" name="profile_image" accept="image/*" required>
                                 <label for="profile_image" class="file-upload-label" id="file-label">Choose Profile Image (JPG/PNG)*</label>
                             </div>
-                            <div class="error-message" id="profile_image_error"></div>
+                            <div class="error-message" id="profile_image_error"<?php if (!empty($field_errors['profile_image'])) echo ' style="display:block"'; ?>><?php echo htmlspecialchars($field_errors['profile_image'] ?? ''); ?></div>
                         </div>
                     </div>
                     
@@ -670,7 +674,7 @@
                         <div class="form-group">
                             <label for="username">Username <span class="required">*</span></label>
                             <input type="text" id="username" name="username" placeholder="e.g. Dr_rajesh05" value="<?php echo htmlspecialchars($form_data['username']); ?>" required>
-                            <div class="error-message" id="username_error"></div>
+                            <div class="error-message" id="username_error"<?php if (!empty($field_errors['username'])) echo ' style="display:block"'; ?>><?php echo htmlspecialchars($field_errors['username'] ?? ''); ?></div>
                         </div>
                         
                         <div class="form-group">
@@ -679,7 +683,7 @@
                                 <input type="password" id="password" name="password" placeholder="John@123" required>
                                 <i class="fas fa-eye toggle-password" id="togglePassword"></i>
                             </div>
-                            <div class="error-message" id="password_error"></div>
+                            <div class="error-message" id="password_error"<?php if (!empty($field_errors['password'])) echo ' style="display:block"'; ?>><?php echo htmlspecialchars($field_errors['password'] ?? ''); ?></div>
                         </div>
                     </div>
                 </div>

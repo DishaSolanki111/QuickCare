@@ -1,4 +1,6 @@
-<?php include 'config.php'; 
+<?php
+ob_start();
+include 'config.php'; 
 include 'header.php';?>
 <!DOCTYPE html>
 <html lang="en">
@@ -381,8 +383,11 @@ include 'header.php';?>
             // Initialize variables
             $success = false;
             $error = "";
-           
-            
+            $field_errors = [
+                'first_name' => '', 'last_name' => '', 'dob' => '', 'blood_group' => '',
+                'phone' => '', 'email' => '', 'address' => '',
+                'username' => '', 'password' => '', 'medical_history' => ''
+            ];
             
             // Store submitted values to repopulate form if needed
             $form_data = [
@@ -413,8 +418,6 @@ include 'header.php';?>
                     
                 ];
 
-                $errors = [];
-
                 // ---------------- MEDICAL HISTORY FILE UPLOAD (OPTIONAL) ----------------
                 $medical_history_file_path = "";
                 if (isset($_FILES['medical_history']) && $_FILES['medical_history']['error'] == 0) {
@@ -428,12 +431,12 @@ include 'header.php';?>
                     
                     // Validate file extension
                     if (!in_array($ext, $allowed)) {
-                        $errors[] = "Medical history file must be PDF, JPG, JPEG, or PNG format only.";
+                        $field_errors['medical_history'] = "Medical history file must be PDF, JPG, JPEG, or PNG format only.";
                     } else {
                         // Validate file size (max 10MB)
                         $max_file_size = 10 * 1024 * 1024; // 10MB in bytes
                         if ($_FILES['medical_history']['size'] > $max_file_size) {
-                            $errors[] = "Medical history file size must not exceed 10MB.";
+                            $field_errors['medical_history'] = "Medical history file size must not exceed 10MB.";
                         } else {
                             // Additional security: Check MIME type
                             $finfo = finfo_open(FILEINFO_MIME_TYPE);
@@ -448,7 +451,7 @@ include 'header.php';?>
                             ];
                             
                             if (!in_array($mime_type, $allowed_mime_types)) {
-                                $errors[] = "Invalid file type. Medical history file must be PDF, JPG, JPEG, or PNG format.";
+                                $field_errors['medical_history'] = "Invalid file type. Medical history file must be PDF, JPG, JPEG, or PNG format.";
                             } else {
                                 // Generate unique filename
                                 $file_name = 'medical_history_' . time() . '_' . uniqid() . '.' . $ext;
@@ -457,7 +460,7 @@ include 'header.php';?>
                                 if (move_uploaded_file($_FILES['medical_history']['tmp_name'], $target_file)) {
                                     $medical_history_file_path = $target_file;
                                 } else {
-                                    $errors[] = "Failed to upload medical history file.";
+                                    $field_errors['medical_history'] = "Failed to upload medical history file.";
                                 }
                             }
                         }
@@ -467,19 +470,19 @@ include 'header.php';?>
                     switch ($_FILES['medical_history']['error']) {
                         case UPLOAD_ERR_INI_SIZE:
                         case UPLOAD_ERR_FORM_SIZE:
-                            $errors[] = "Medical history file size exceeds the maximum allowed size.";
+                            $field_errors['medical_history'] = "Medical history file size exceeds the maximum allowed size.";
                             break;
                         case UPLOAD_ERR_PARTIAL:
-                            $errors[] = "Medical history file was only partially uploaded.";
+                            $field_errors['medical_history'] = "Medical history file was only partially uploaded.";
                             break;
                         case UPLOAD_ERR_NO_TMP_DIR:
-                            $errors[] = "Missing temporary folder for medical history file upload.";
+                            $field_errors['medical_history'] = "Missing temporary folder for medical history file upload.";
                             break;
                         case UPLOAD_ERR_CANT_WRITE:
-                            $errors[] = "Failed to write medical history file to disk.";
+                            $field_errors['medical_history'] = "Failed to write medical history file to disk.";
                             break;
                         default:
-                            $errors[] = "Unknown error occurred while uploading medical history file.";
+                            $field_errors['medical_history'] = "Unknown error occurred while uploading medical history file.";
                     }
                 }
 
@@ -499,34 +502,31 @@ include 'header.php';?>
 
                 // ---------------- FIRST NAME / LAST NAME - MUST BE CAPITAL ----------------
                 if (!preg_match('/^[A-Z\s]+$/', $first_name)) {
-                    $errors[] = "First name must contain only capital letters.";
+                    $field_errors['first_name'] = "First name must contain only capital letters.";
                 }
                 if (!preg_match('/^[A-Z\s]+$/', $last_name)) {
-                    $errors[] = "Last name must contain only capital letters.";
+                    $field_errors['last_name'] = "Last name must contain only capital letters.";
                 }
 
                 // ---------------- DATE VALIDATION ----------------
                 // DOB must be BEFORE current date (not on or after)
                 if (empty($dob)) {
-                    $errors[] = "Date of Birth is required.";
+                    $field_errors['dob'] = "Date of Birth is required.";
                 } else {
                     $dob_date = new DateTime($dob);
                     $today = new DateTime('today');
                     if ($dob_date >= $today) {
-                        $errors[] = "Date of Birth must be before today (not today or in the future).";
+                        $field_errors['dob'] = "Date of Birth must be before today (not today or in the future).";
                     }
                 }
-                
-                
-                
-                
+
                 // ---------------- USERNAME VALIDATION ----------------
                 if (
                     !preg_match('/^[A-Z][A-Za-z0-9]*(_[A-Za-z0-9]+)*$/', $username) ||
                     strlen($username) > 20 ||
                     !preg_match('/\d/', $username)
                 ) {
-                    $errors[] = "Username must start with a capital letter, max 20 chars, no spaces, no consecutive underscores, not end with underscore, and include at least 1 digit (e.g. Dr_rajesh05).";
+                    $field_errors['username'] = "Username must start with a capital letter, max 20 chars, no spaces, no consecutive underscores, not end with underscore, and include at least 1 digit (e.g. Arjun_m01).";
                 }
 
                 // ---------------- PASSWORD VALIDATION ----------------
@@ -536,21 +536,31 @@ include 'header.php';?>
                     !preg_match('/[0-9]/', $password) ||
                     !preg_match('/[\W]/', $password)
                 ) {
-                    $errors[] = "Password must be at least 8 characters and include 1 uppercase letter, 1 digit, and 1 special character.";
+                    $field_errors['password'] = "Password must be at least 8 characters and include 1 uppercase letter, 1 digit, and 1 special character.";
                 }
 
                 // ---------------- PHONE VALIDATION ----------------
                 if (!preg_match('/^[0-9]{10}$/', $phone)) {
-                    $errors[] = "Phone number must be exactly 10 digits.";
+                    $field_errors['phone'] = "Phone number must be exactly 10 digits.";
                 }
 
                 // ---------------- EMAIL VALIDATION ----------------
                 if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                    $errors[] = "e.g. abc@gmail.com";
+                    $field_errors['email'] = "e.g. abc@gmail.com";
+                }
+
+                // ---------------- USERNAME EXISTS CHECK (patient_tbl) ----------------
+                if (empty($field_errors['username'])) {
+                    $check_username = mysqli_real_escape_string($conn, $username);
+                    $check_sql = "SELECT COUNT(*) as cnt FROM patient_tbl WHERE USERNAME = '$check_username'";
+                    $check_result = $conn->query($check_sql);
+                    if ($check_result && $check_result->fetch_assoc()['cnt'] > 0) {
+                        $field_errors['username'] = "Username already exist";
+                    }
                 }
 
                 // ---------------- FINAL INSERT ----------------
-                if (empty($errors)) {
+                if (empty(array_filter($field_errors))) {
                     $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
                    $blood_val = ($blood_group === '' || $blood_group === null) ? 'NULL' : "'$blood_group'";
@@ -564,22 +574,10 @@ include 'header.php';?>
                  $blood_val,'$phone','$email','$address',$medical_history_val)
             ";
                     if ($conn->query($sql) === TRUE) {
-                        $success = true;
-                        // Reset form data on successful submission
-                        $form_data = [
-                            'first_name' => '',
-                            'last_name' => '',
-                            'dob' => '',
-                   
-                            'gender' => '',
-                            'phone' => '',
-                            'email' => '',
-                           
-
-                            'username' => '',
-                         
-
-                        ];
+                        $conn->close();
+                        ob_end_clean();
+                        header("Location: login_for_all.php");
+                        exit;
                     } else {
                         $error = "Database error: " . mysqli_error($conn);
                         // If database insert fails, delete uploaded file
@@ -588,7 +586,6 @@ include 'header.php';?>
                         }
                     }
                 } else {
-                    $error = implode("<br>", $errors);
                     // If validation fails, delete uploaded file
                     if (!empty($medical_history_file_path) && file_exists($medical_history_file_path)) {
                         unlink($medical_history_file_path);
@@ -620,19 +617,19 @@ include 'header.php';?>
                         <div class="form-group">
                             <label for="first_name">First Name <span class="required">*</span></label>
                             <input type="text" id="first_name" name="first_name" placeholder="e.g. John" value="<?php echo htmlspecialchars($form_data['first_name']); ?>" required>
-                            <div class="error-message" id="first_name_error"></div>
+                            <div class="error-message" id="first_name_error"<?php if (!empty($field_errors['first_name'])) echo ' style="display:block"'; ?>><?php echo htmlspecialchars($field_errors['first_name'] ?? ''); ?></div>
                         </div>
                         
                         <div class="form-group">
                             <label for="last_name">Last Name <span class="required">*</span></label>
                             <input type="text" id="last_name" name="last_name" placeholder="e.g. Doe" value="<?php echo htmlspecialchars($form_data['last_name']); ?>" required>
-                            <div class="error-message" id="last_name_error"></div>
+                            <div class="error-message" id="last_name_error"<?php if (!empty($field_errors['last_name'])) echo ' style="display:block"'; ?>><?php echo htmlspecialchars($field_errors['last_name'] ?? ''); ?></div>
                         </div>
                         
                         <div class="form-group">
                             <label for="dob">Date of Birth <span class="required">*</span></label>
                             <input type="date" id="dob" name="dob" placeholder="YYYY-MM-DD" value="<?php echo htmlspecialchars($form_data['dob']); ?>" required>
-                            <div class="error-message" id="dob_error"></div>
+                            <div class="error-message" id="dob_error"<?php if (!empty($field_errors['dob'])) echo ' style="display:block"'; ?>><?php echo htmlspecialchars($field_errors['dob'] ?? ''); ?></div>
                         </div>
                         
                         <div class="form-group">
@@ -677,13 +674,13 @@ include 'header.php';?>
                         <div class="form-group">
                             <label for="phone">Phone Number <span class="required">*</span></label>
                             <input type="text" id="phone" name="phone" maxlength="10" placeholder="e.g 1234567891" value="<?php echo htmlspecialchars($form_data['phone']); ?>" required>
-                            <div class="error-message" id="phone_error"></div>
+                            <div class="error-message" id="phone_error"<?php if (!empty($field_errors['phone'])) echo ' style="display:block"'; ?>><?php echo htmlspecialchars($field_errors['phone'] ?? ''); ?></div>
                         </div>
                         
                         <div class="form-group">
                             <label for="email">Email <span class="required">*</span></label>
                             <input type="email" id="email" name="email" placeholder="e.g. john@example.com" value="<?php echo htmlspecialchars($form_data['email']); ?>" required>
-                            <div class="error-message" id="email_error"></div>
+                            <div class="error-message" id="email_error"<?php if (!empty($field_errors['email'])) echo ' style="display:block"'; ?>><?php echo htmlspecialchars($field_errors['email'] ?? ''); ?></div>
                         </div>
                         
                         <div class="form-group">
@@ -700,7 +697,7 @@ include 'header.php';?>
                         <div class="form-group">
                             <label for="username">Username <span class="required">*</span></label>
                             <input type="text" id="username" name="username" placeholder="e.g. Arjun_m01" value="<?php echo htmlspecialchars($form_data['username']); ?>" required>
-                            <div class="error-message" id="username_error"></div>
+                            <div class="error-message" id="username_error"<?php if (!empty($field_errors['username'])) echo ' style="display:block"'; ?>><?php echo htmlspecialchars($field_errors['username'] ?? ''); ?></div>
                         </div>
                         
                         <div class="form-group">
@@ -709,7 +706,7 @@ include 'header.php';?>
                                 <input type="password" id="password" name="password" placeholder="John@123" required>
                                 <i class="fas fa-eye toggle-password" id="togglePassword"></i>
                             </div>
-                            <div class="error-message" id="password_error"></div>
+                            <div class="error-message" id="password_error"<?php if (!empty($field_errors['password'])) echo ' style="display:block"'; ?>><?php echo htmlspecialchars($field_errors['password'] ?? ''); ?></div>
                         </div>
                         
                         <div class="form-group">
@@ -720,7 +717,7 @@ include 'header.php';?>
                                     <i class="fas fa-file-upload"></i> Choose File (PDF, JPG, JPEG, PNG - Max 10MB)
                                 </label>
                             </div>
-                            <div class="error-message" id="medical_history_error"></div>
+                            <div class="error-message" id="medical_history_error"<?php if (!empty($field_errors['medical_history'])) echo ' style="display:block"'; ?>><?php echo htmlspecialchars($field_errors['medical_history'] ?? ''); ?></div>
                             <small style="color: #666; display: block; margin-top: 5px; font-size: 12px;">Accepted: PDF, JPG, JPEG, PNG. Max: 10MB</small>
                         </div>
                     </div>
