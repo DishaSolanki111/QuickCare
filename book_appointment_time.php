@@ -11,6 +11,7 @@ if (!isset($_SESSION['booking_doctor_id'])) {
 }
 
 $is_reschedule = !empty($_SESSION['reschedule_appointment_id']);
+$is_patient_reschedule = $is_reschedule && isset($_SESSION['PATIENT_ID']);
 
 // Get doctor details
  $doctor_id = $_SESSION['booking_doctor_id'];
@@ -481,7 +482,7 @@ if ($is_reschedule && empty($selected_date)) {
                         <div class="step" id="step5">5</div>
                     </div>
                     
-                    <form method="POST" action="<?php echo $is_reschedule ? 'reschedule_appointment_doctor.php' : 'book_appointment_login.php'; ?>" id="appointmentForm">
+                    <form method="POST" action="<?php echo $is_patient_reschedule ? 'reschedule_appointment.php' : ($is_reschedule ? 'reschedule_appointment_doctor.php' : 'book_appointment_login.php'); ?>" id="appointmentForm">
                         <div class="form-group">
                             <label>Select Time Slot</label>
                             <div id="timeSlotsContainer" class="time-slots-container">

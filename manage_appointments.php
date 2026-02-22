@@ -736,9 +736,13 @@ html {
                             <div class="appointment-actions">
                                 <span class="status-badge <?php echo $status_class; ?>"><?php echo ucfirst(strtolower($appointment['STATUS'])); ?></span>
                                 <div class="btn-group" style="margin-top: 15px;">
-                                    <button class="btn btn-primary" onclick="openRescheduleModal(<?php echo $appointment['APPOINTMENT_ID']; ?>)">
-                                        <i class="fas fa-edit"></i> Reschedule
-                                    </button>
+                                    <form method="POST" action="book_appointment_date.php" style="display:inline">
+                                        <input type="hidden" name="doctor_id" value="<?php echo $appointment['DOCTOR_ID']; ?>">
+                                        <input type="hidden" name="reschedule_appointment_id" value="<?php echo $appointment['APPOINTMENT_ID']; ?>">
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fas fa-edit"></i> Reschedule
+                                        </button>
+                                    </form>
                                     <?php if ($appointment['STATUS'] == 'SCHEDULED'): ?>
                                     <form method="POST" style="display: inline;">
                                         <input type="hidden" name="appointment_id" value="<?php echo $appointment['APPOINTMENT_ID']; ?>">
@@ -940,42 +944,6 @@ html {
         </div>
     </div>
     
-    <!-- Reschedule Modal -->
-    <div id="rescheduleModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeRescheduleModal()">&times;</span>
-            <h2>Reschedule Appointment</h2>
-            <form method="POST" action="reschedule_appointment.php">
-                <input type="hidden" id="reschedule_appointment_id" name="appointment_id">
-                
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="new_date">New Date</label>
-                        <input type="date" class="form-control" id="new_date" name="new_date" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="new_time">New Time</label>
-                        <input type="time" class="form-control" id="new_time" name="new_time" required>
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label for="reschedule_reason">Reason for Rescheduling</label>
-                    <textarea class="form-control" id="reschedule_reason" name="reschedule_reason" rows="3" placeholder="Please provide a reason for rescheduling"></textarea>
-                </div>
-                
-                <div class="btn-group">
-                    <button type="submit" class="btn btn-success">
-                        <i class="fas fa-check"></i> Update Appointment
-                    </button>
-                    <button type="button" class="btn btn-danger" onclick="closeRescheduleModal()">
-                        <i class="fas fa-times"></i> Cancel
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-    
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Tab functionality
@@ -1010,25 +978,11 @@ html {
             document.getElementById('bookingModal').style.display = 'none';
         }
         
-        function openRescheduleModal(appointmentId) {
-            document.getElementById('reschedule_appointment_id').value = appointmentId;
-            document.getElementById('rescheduleModal').style.display = 'block';
-        }
-        
-        function closeRescheduleModal() {
-            document.getElementById('rescheduleModal').style.display = 'none';
-        }
-        
         // Close modal when clicking outside of it
         window.onclick = function(event) {
             const bookingModal = document.getElementById('bookingModal');
-            const rescheduleModal = document.getElementById('rescheduleModal');
-            
             if (event.target == bookingModal) {
                 bookingModal.style.display = 'none';
-            }
-            if (event.target == rescheduleModal) {
-                rescheduleModal.style.display = 'none';
             }
         }
         

@@ -14,14 +14,22 @@ include 'config.php';
  $patient_query = mysqli_query($conn, "SELECT * FROM patient_tbl WHERE PATIENT_ID = '$patient_id'");
  $patient = mysqli_fetch_assoc($patient_query);
 
+// Filter by name (GET param)
+$filter_name = isset($_GET['filter_name']) ? trim(mysqli_real_escape_string($conn, $_GET['filter_name'])) : '';
+
+$payments_where = "a.PATIENT_ID = '$patient_id'";
+if (!empty($filter_name)) {
+    $payments_where .= " AND (CONCAT(d.FIRST_NAME, ' ', d.LAST_NAME) LIKE '%" . $filter_name . "%' OR d.FIRST_NAME LIKE '%" . $filter_name . "%' OR d.LAST_NAME LIKE '%" . $filter_name . "%')";
+}
+
 // Fetch payments data
- $payments_query = mysqli_query($conn, "
+$payments_query = mysqli_query($conn, "
     SELECT p.*, a.APPOINTMENT_DATE, a.APPOINTMENT_TIME, d.FIRST_NAME as DOC_FNAME, d.LAST_NAME as DOC_LNAME, s.SPECIALISATION_NAME
     FROM payment_tbl p
     JOIN appointment_tbl a ON p.APPOINTMENT_ID = a.APPOINTMENT_ID
     JOIN doctor_tbl d ON a.DOCTOR_ID = d.DOCTOR_ID
     JOIN specialisation_tbl s ON d.SPECIALISATION_ID = s.SPECIALISATION_ID
-    WHERE a.PATIENT_ID = '$patient_id'
+    WHERE $payments_where
     ORDER BY p.PAYMENT_DATE DESC
 ");
 
@@ -58,14 +66,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['process_payment'])) {
     
     if (mysqli_query($conn, $payment_query)) {
         $success_message = "Payment processed successfully!";
-        // Refresh the payments query
+        // Refresh the payments query (with same filters)
         $payments_query = mysqli_query($conn, "
             SELECT p.*, a.APPOINTMENT_DATE, a.APPOINTMENT_TIME, d.FIRST_NAME as DOC_FNAME, d.LAST_NAME as DOC_LNAME, s.SPECIALISATION_NAME
             FROM payment_tbl p
             JOIN appointment_tbl a ON p.APPOINTMENT_ID = a.APPOINTMENT_ID
             JOIN doctor_tbl d ON a.DOCTOR_ID = d.DOCTOR_ID
             JOIN specialisation_tbl s ON d.SPECIALISATION_ID = s.SPECIALISATION_ID
-            WHERE a.PATIENT_ID = '$patient_id'
+            WHERE $payments_where
             ORDER BY p.PAYMENT_DATE DESC
         ");
         
@@ -479,9 +487,21 @@ html {
                 </div>
             <?php endif; ?>
         
-            <!-- <button class="tab" >Payment History</button> -->
-            
-            
+            <!-- Filter by Name and Date -->
+            <form method="GET" action="patient_payments.php" class="filter-form" style="display:flex; gap:15px; flex-wrap:wrap; margin-bottom:20px; align-items:flex-end;">
+                <div class="form-group" style="margin-bottom:0; flex:1; min-width:180px;">
+                    <label for="filter_name" style="margin-bottom:5px; display:block;">Filter by Doctor Name</label>
+                    <input type="text" class="form-control" id="filter_name" name="filter_name" placeholder="Doctor name..." value="<?php echo htmlspecialchars($filter_name); ?>">
+                </div>
+                <div style="display:flex; gap:10px;">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-search"></i> Search
+                    </button>
+                    <a href="patient_payments.php" class="btn btn-danger" style="text-decoration:none;">
+                        <i class="fas fa-times"></i> Clear
+                    </a>
+                </div>
+            </form>
             
             <div>
                 <?php

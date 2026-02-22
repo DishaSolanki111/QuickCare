@@ -49,8 +49,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_feedback'])) {
     }
 }
 
-// Fetch completed appointments for feedback
- $appointments_query = mysqli_query($conn, "
+// Filter by star rating: 1, 2, 3, 4, or 5 stars (empty = All)
+$filter_rating = isset($_GET['filter_rating']) ? (int) $_GET['filter_rating'] : 0;
+// Preserve active tab after filter (your-feedback or all-feedback)
+$active_tab = isset($_GET['tab']) && $_GET['tab'] === 'all-feedback' ? 'all-feedback' : 'your-feedback';
+$rating_where = "";
+if ($filter_rating >= 1 && $filter_rating <= 5) {
+    $rating_where = " AND COALESCE(f.RATING, 0) = " . $filter_rating;
+}
+
+// Fetch completed appointments for feedback (with rating filter)
+$appointments_query = mysqli_query($conn, "
     SELECT a.*, d.FIRST_NAME as DOC_FNAME, d.LAST_NAME as DOC_LNAME, s.SPECIALISATION_NAME,
            f.FEEDBACK_ID, f.RATING, f.COMMENTS as FEEDBACK_COMMENTS
     FROM appointment_tbl a
@@ -59,6 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_feedback'])) {
     LEFT JOIN feedback_tbl f ON a.APPOINTMENT_ID = f.APPOINTMENT_ID
     WHERE a.PATIENT_ID = '$patient_id'
     AND a.STATUS = 'COMPLETED'
+    $rating_where
     ORDER BY a.APPOINTMENT_DATE DESC
 ");
 
@@ -451,9 +461,26 @@ html {
             
             <!-- Tabs Section (same style as manage_appointments.php) -->
             <div class="tabs">
-                <div class="tab active" data-tab="your-feedback">Your Feedback</div>
-                <div class="tab" data-tab="all-feedback">All Feedback</div>
+                <div class="tab <?php echo $active_tab === 'your-feedback' ? 'active' : ''; ?>" data-tab="your-feedback">Your Feedback</div>
+                <div class="tab <?php echo $active_tab === 'all-feedback' ? 'active' : ''; ?>" data-tab="all-feedback">All Feedback</div>
             </div>
+
+            <!-- Filter by Star Rating: 1 to 5 stars -->
+            <form method="GET" action="patient_feedback.php" id="feedbackFilterForm" style="margin-bottom:20px;">
+                <input type="hidden" name="tab" id="filterTabInput" value="<?php echo htmlspecialchars($active_tab); ?>">
+                <label for="filter_rating" style="margin-right:10px;">Filter by rating:</label>
+                <select name="filter_rating" id="filter_rating" class="form-control" style="display:inline-block; width:auto; margin-right:10px;">
+                    <option value="" <?php echo $filter_rating == 0 ? 'selected' : ''; ?>>All</option>
+                    <option value="1" <?php echo $filter_rating == 1 ? 'selected' : ''; ?>>1 Star</option>
+                    <option value="2" <?php echo $filter_rating == 2 ? 'selected' : ''; ?>>2 Stars</option>
+                    <option value="3" <?php echo $filter_rating == 3 ? 'selected' : ''; ?>>3 Stars</option>
+                    <option value="4" <?php echo $filter_rating == 4 ? 'selected' : ''; ?>>4 Stars</option>
+                    <option value="5" <?php echo $filter_rating == 5 ? 'selected' : ''; ?>>5 Stars</option>
+                </select>
+                <button type="submit" class="btn btn-primary" style="vertical-align:middle;">
+                    <i class="fas fa-search"></i> Search
+                </button>
+            </form>
             
             <!-- Success/Error Messages -->
             <?php if (isset($success_message)): ?>
@@ -470,7 +497,7 @@ html {
             
 
             <!-- Tab Content: Your Feedback -->
-            <div class="tab-content active" id="your-feedback">
+            <div class="tab-content <?php echo $active_tab === 'your-feedback' ? 'active' : ''; ?>" id="your-feedback">
                 <?php if ($appointment_details): ?>
                 <div class="feedback-card">
                     <div class="feedback-header">
@@ -571,7 +598,7 @@ html {
             </div>
 
             <!-- Tab Content: All Feedback -->
-            <div class="tab-content" id="all-feedback">
+            <div class="tab-content <?php echo $active_tab === 'all-feedback' ? 'active' : ''; ?>" id="all-feedback">
                 <h3 style="margin-bottom: 20px;">All Patient Feedback</h3>
                 <div style="overflow-x:auto;">
                 <table style="width:100%; border-collapse:collapse; background:white; border-radius:12px; overflow:hidden; box-shadow:0 4px 12px rgba(0,0,0,0.05);">
@@ -583,6 +610,7 @@ html {
                         <th>Comments</th>
                     </tr>
                     <?php
+                    $all_rating_where = ($filter_rating >= 1 && $filter_rating <= 5) ? " AND f.RATING = " . $filter_rating : "";
                     $all_feedback_query = mysqli_query(
                         $conn,
                         "SELECT 
@@ -598,7 +626,8 @@ html {
                          JOIN patient_tbl p ON a.PATIENT_ID = p.PATIENT_ID 
                          JOIN doctor_tbl d ON a.DOCTOR_ID = d.DOCTOR_ID
                          JOIN specialisation_tbl s ON d.SPECIALISATION_ID = s.SPECIALISATION_ID
-                         ORDER BY f.FEEDBACK_ID DESC"
+                         WHERE 1=1 $all_rating_where
+                         ORDER BY f.RATING ASC, f.FEEDBACK_ID DESC"
                     );
                     if ($all_feedback_query && mysqli_num_rows($all_feedback_query) > 0) {
                         while ($row = mysqli_fetch_assoc($all_feedback_query)) {
@@ -674,6 +703,10 @@ html {
                     // Add active class to clicked tab and corresponding content
                     tab.classList.add('active');
                     document.getElementById(tabId).classList.add('active');
+                    
+                    // Update hidden input so filter form preserves active tab on submit
+                    const filterTabInput = document.getElementById('filterTabInput');
+                    if (filterTabInput) filterTabInput.value = tabId;
                 });
             });
 

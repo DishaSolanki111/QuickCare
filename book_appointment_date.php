@@ -19,22 +19,37 @@ if ($doctor_id == 0) {
     exit();
 }
 
-// If reschedule mode: verify doctor is logged in and appointment belongs to them
+// If reschedule mode: verify user and appointment ownership
+$is_patient_reschedule = false;
 if ($is_reschedule) {
-    if (!isset($_SESSION['USER_TYPE']) || $_SESSION['USER_TYPE'] !== 'doctor' || !isset($_SESSION['DOCTOR_ID']) || (int)$_SESSION['DOCTOR_ID'] !== $doctor_id) {
+    if (isset($_SESSION['USER_TYPE']) && $_SESSION['USER_TYPE'] === 'doctor' && isset($_SESSION['DOCTOR_ID']) && (int)$_SESSION['DOCTOR_ID'] === $doctor_id) {
+        $chk = $conn->prepare("SELECT APPOINTMENT_ID FROM appointment_tbl WHERE APPOINTMENT_ID = ? AND DOCTOR_ID = ? AND STATUS = 'SCHEDULED'");
+        $chk->bind_param("ii", $reschedule_appointment_id, $doctor_id);
+        $chk->execute();
+        $chk_res = $chk->get_result();
+        if (!$chk_res || $chk_res->num_rows === 0) {
+            $chk->close();
+            header("Location: appointment_doctor.php");
+            exit();
+        }
+        $chk->close();
+    } elseif (isset($_SESSION['PATIENT_ID'])) {
+        $patient_id = (int) $_SESSION['PATIENT_ID'];
+        $chk = $conn->prepare("SELECT APPOINTMENT_ID FROM appointment_tbl WHERE APPOINTMENT_ID = ? AND PATIENT_ID = ? AND STATUS = 'SCHEDULED'");
+        $chk->bind_param("ii", $reschedule_appointment_id, $patient_id);
+        $chk->execute();
+        $chk_res = $chk->get_result();
+        if (!$chk_res || $chk_res->num_rows === 0) {
+            $chk->close();
+            header("Location: manage_appointments.php");
+            exit();
+        }
+        $chk->close();
+        $is_patient_reschedule = true;
+    } else {
         header("Location: login_for_all.php");
         exit();
     }
-    $chk = $conn->prepare("SELECT APPOINTMENT_ID FROM appointment_tbl WHERE APPOINTMENT_ID = ? AND DOCTOR_ID = ? AND STATUS = 'SCHEDULED'");
-    $chk->bind_param("ii", $reschedule_appointment_id, $doctor_id);
-    $chk->execute();
-    $chk_res = $chk->get_result();
-    if (!$chk_res || $chk_res->num_rows === 0) {
-        $chk->close();
-        header("Location: appointment_doctor.php");
-        exit();
-    }
-    $chk->close();
     $_SESSION['reschedule_appointment_id'] = $reschedule_appointment_id;
 }
 
@@ -499,9 +514,8 @@ if (mysqli_num_rows($doctor_query) == 0) {
                 </div>
 
                 <div class="modal-content">
-                    <form method="POST" action="<?php echo $is_reschedule ? 'appointment_doctor.php' : 'doctors.php'; ?>" style="display:inline">
-                    <?php if ($is_reschedule): ?>
-                    <?php else: ?>
+                    <form method="POST" action="<?php echo $is_patient_reschedule ? 'manage_appointments.php' : ($is_reschedule ? 'appointment_doctor.php' : 'doctors.php'); ?>" style="display:inline">
+                    <?php if (!$is_reschedule): ?>
                     <input type="hidden" name="spec_id" value="<?php echo $doctor['SPECIALISATION_ID']; ?>">
                     <?php endif; ?>
                     <button type="submit" class="close" style="background:none;border:none;font-size:28px;cursor:pointer">&times;</button>
