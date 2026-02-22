@@ -8,7 +8,7 @@ if (
     !isset($_SESSION['USER_TYPE']) ||
     $_SESSION['USER_TYPE'] !== 'doctor'
 ) {
-    header("Location: login.php");
+    header("Location: login_for_all.php");
     exit();
 }
 
@@ -16,7 +16,11 @@ if (
 include 'config.php';
 
 // ================== DOCTOR INFO ==================
- $doctor_id = $_SESSION['DOCTOR_ID'];
+ $doctor_id = isset($_SESSION['DOCTOR_ID']) ? (int) $_SESSION['DOCTOR_ID'] : 0;
+if ($doctor_id <= 0) {
+    header("Location: login_for_all.php");
+    exit();
+}
  $doctor_name = "Doctor";
 
  $doc_sql = "SELECT FIRST_NAME, LAST_NAME FROM doctor_tbl WHERE DOCTOR_ID = ?";
@@ -51,13 +55,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_status'])) {
 // ================== FETCH APPOINTMENTS ==================
  $today = date('Y-m-d');
 
-// Today's appointments
+// Today's appointments (only scheduled - completed ones move to Past tab)
  $today_appointments = [];
  $today_sql = "
     SELECT a.*, p.FIRST_NAME as PAT_FNAME, p.LAST_NAME as PAT_LNAME, p.PHONE as PAT_PHONE, p.EMAIL as PAT_EMAIL
     FROM appointment_tbl a
     JOIN patient_tbl p ON a.PATIENT_ID = p.PATIENT_ID
-    WHERE a.DOCTOR_ID = ? AND DATE(a.APPOINTMENT_DATE) = ?
+    WHERE a.DOCTOR_ID = ? AND a.APPOINTMENT_DATE = ? AND a.STATUS = 'SCHEDULED'
     ORDER BY a.APPOINTMENT_TIME
 ";
  $today_stmt = $conn->prepare($today_sql);
@@ -93,13 +97,13 @@ if ($upcoming_result->num_rows > 0) {
 }
  $upcoming_stmt->close();
 
-// Past appointments (only completed)
+// Past appointments (all completed - includes today's appointments once marked complete)
  $past_appointments = [];
  $past_sql = "
     SELECT a.*, p.FIRST_NAME as PAT_FNAME, p.LAST_NAME as PAT_LNAME, p.PHONE as PAT_PHONE, p.EMAIL as PAT_EMAIL
     FROM appointment_tbl a
     JOIN patient_tbl p ON a.PATIENT_ID = p.PATIENT_ID
-    WHERE a.DOCTOR_ID = ? AND a.APPOINTMENT_DATE < ? AND a.STATUS = 'COMPLETED'
+    WHERE a.DOCTOR_ID = ? AND a.APPOINTMENT_DATE <= ? AND a.STATUS = 'COMPLETED'
     ORDER BY a.APPOINTMENT_DATE DESC, a.APPOINTMENT_TIME DESC
     LIMIT 20
 ";
@@ -584,7 +588,7 @@ if ($past_result->num_rows > 0) {
                                     <form method="POST" style="display: inline;">
                                         <input type="hidden" name="appointment_id" value="<?php echo $appointment['APPOINTMENT_ID']; ?>">
                                         <input type="hidden" name="status" value="COMPLETED">
-                                        <button type="submit" name="update_status" class="btn btn-success">
+                                        <button type="submit" name="update_status" class="btn btn-success" onclick="return confirm('Are you sure you want to mark this appointment as completed?')">
                                             <i class="fas fa-check"></i> Mark as Completed
                                         </button>
                                     </form>
@@ -732,19 +736,16 @@ if ($past_result->num_rows > 0) {
             // Mobile menu toggle
             const menuToggle = document.getElementById('menuToggle');
             const sidebar = document.getElementById('sidebar');
-            
-            menuToggle.addEventListener('click', () => {
-                sidebar.classList.toggle('active');
-            });
-            
-            // Close sidebar when clicking outside on mobile
-            document.addEventListener('click', (e) => {
-                if (window.innerWidth <= 768) {
-                    if (!sidebar.contains(e.target) && !menuToggle.contains(e.target)) {
+            if (menuToggle && sidebar) {
+                menuToggle.addEventListener('click', () => {
+                    sidebar.classList.toggle('active');
+                });
+                document.addEventListener('click', (e) => {
+                    if (window.innerWidth <= 768 && !sidebar.contains(e.target) && !menuToggle.contains(e.target)) {
                         sidebar.classList.remove('active');
                     }
-                }
-            });
+                });
+            }
         });
         
         // View prescription function

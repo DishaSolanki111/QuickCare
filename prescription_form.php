@@ -187,15 +187,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_prescription_i
 }
 
 // --- FETCH EXISTING PRESCRIPTIONS ---
-// Filter prescriptions by doctor_id to ensure doctors only see their own prescriptions
- $sql = "SELECT p.PRESCRIPTION_ID, p.ISSUE_DATE, p.DIAGNOSIS, p.SYMPTOMS, a.APPOINTMENT_DATE, d.FIRST_NAME AS DOC_FNAME, d.LAST_NAME AS DOC_LNAME 
-         FROM prescription_tbl p 
-         JOIN appointment_tbl a ON p.APPOINTMENT_ID = a.APPOINTMENT_ID 
-         JOIN doctor_tbl d ON a.DOCTOR_ID = d.DOCTOR_ID 
-         WHERE a.PATIENT_ID = ? AND a.DOCTOR_ID = ? 
-         ORDER BY a.APPOINTMENT_DATE DESC";
- $stmt = $conn->prepare($sql);
- $stmt->bind_param("ii", $patient_id, $doctor_id);
+// When appointment_id is passed (from View Prescription), show only that appointment's prescription
+if ($filter_appointment_id) {
+    $sql = "SELECT p.PRESCRIPTION_ID, p.ISSUE_DATE, p.DIAGNOSIS, p.SYMPTOMS, a.APPOINTMENT_DATE, d.FIRST_NAME AS DOC_FNAME, d.LAST_NAME AS DOC_LNAME 
+            FROM prescription_tbl p 
+            JOIN appointment_tbl a ON p.APPOINTMENT_ID = a.APPOINTMENT_ID 
+            JOIN doctor_tbl d ON a.DOCTOR_ID = d.DOCTOR_ID 
+            WHERE a.PATIENT_ID = ? AND a.DOCTOR_ID = ? AND p.APPOINTMENT_ID = ? 
+            ORDER BY a.APPOINTMENT_DATE DESC";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("iii", $patient_id, $doctor_id, $filter_appointment_id);
+} else {
+    $sql = "SELECT p.PRESCRIPTION_ID, p.ISSUE_DATE, p.DIAGNOSIS, p.SYMPTOMS, a.APPOINTMENT_DATE, d.FIRST_NAME AS DOC_FNAME, d.LAST_NAME AS DOC_LNAME 
+            FROM prescription_tbl p 
+            JOIN appointment_tbl a ON p.APPOINTMENT_ID = a.APPOINTMENT_ID 
+            JOIN doctor_tbl d ON a.DOCTOR_ID = d.DOCTOR_ID 
+            WHERE a.PATIENT_ID = ? AND a.DOCTOR_ID = ? 
+            ORDER BY a.APPOINTMENT_DATE DESC";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("ii", $patient_id, $doctor_id);
+}
  $stmt->execute();
  $prescriptions_result = $stmt->get_result();
  $prescriptions = $prescriptions_result->fetch_all(MYSQLI_ASSOC);
