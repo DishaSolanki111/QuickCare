@@ -18,16 +18,17 @@ include 'config.php';
 // ================== DOCTOR INFO ==================
  $doctor_id = $_SESSION['DOCTOR_ID'];
  $doctor_name = "Doctor";
+ $doctor_data = null;
 
- $doc_sql = "SELECT FIRST_NAME, LAST_NAME FROM doctor_tbl WHERE DOCTOR_ID = ?";
+ $doc_sql = "SELECT d.*, s.SPECIALISATION_NAME FROM doctor_tbl d JOIN specialisation_tbl s ON d.SPECIALISATION_ID = s.SPECIALISATION_ID WHERE d.DOCTOR_ID = ?";
  $doc_stmt = $conn->prepare($doc_sql);
  $doc_stmt->bind_param("i", $doctor_id);
  $doc_stmt->execute();
  $doc_result = $doc_stmt->get_result();
 
 if ($doc_result->num_rows === 1) {
-    $doc = $doc_result->fetch_assoc();
-    $doctor_name = htmlspecialchars($doc['FIRST_NAME'] . ' ' . $doc['LAST_NAME']);
+    $doctor_data = $doc_result->fetch_assoc();
+    $doctor_name = htmlspecialchars($doctor_data['FIRST_NAME'] . ' ' . $doctor_data['LAST_NAME']);
 }
  $doc_stmt->close();
 
@@ -102,6 +103,7 @@ if (isset($_SESSION['schedule_success_message'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Schedule - QuickCare</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <style>
         :root {
             --primary: #0066cc;
@@ -240,12 +242,157 @@ if (isset($_SESSION['schedule_success_message'])) {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
         }
 
         .schedule-header h2 {
             font-size: 28px;
             color: var(--dark);
+        }
+
+        /* Doctor Profile Section */
+        .doctor-profile-card {
+            background: #f8fafc;
+            border-radius: 16px;
+            padding: 0;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+            overflow: hidden;
+        }
+
+        /* Doctor Header: soft light background */
+        .doctor-header {
+            background: #f8fafc;
+            color: var(--primary-color);
+            padding: 28px 32px;
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .doctor-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 3px solid var(--light-blue);
+            object-fit: cover;
+        }
+
+        .doctor-info h3 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .doctor-specialization {
+            display: inline-block;
+            background: rgba(72, 41, 112, 0.2);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 15px;
+            margin-top: 10px;
+            color: var(--primary);
+        }
+
+        /* Schedule List - Horizontal Bars */
+        .schedule-list-container {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+            border: 1px solid #e9ecef;
+        }
+
+        .schedule-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        /* Schedule row: horizontal rounded card, light grey, blue left accent */
+        .day-schedule {
+            background: #f6f9fb;
+            border-radius: 14px;
+            padding: 20px 26px;
+            border-left: 4px solid var(--secondary-color);
+            box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+
+        .day-schedule:hover {
+            background: #eef4f8;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+
+        .day-name {
+            font-weight: 700;
+            color: var(--dark-blue);
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+
+        .day-name i {
+            color: var(--secondary-color);
+        }
+
+        .time-range {
+            color: #4a5568;
+            font-size: 18px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .time-range i {
+            color: var(--accent-color);
+            font-size: 20px;
+        }
+
+        .schedule-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-shrink: 0;
+        }
+
+        .schedule-actions .btn-edit-schedule {
+            padding: 10px 18px;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #f39c12;
+            color: white;
+        }
+
+        .schedule-actions .btn-edit-schedule:hover {
+            background: #e67e22;
+        }
+
+        .schedule-actions .btn.btn-danger {
+            padding: 10px 18px;
+            font-size: 15px;
+            font-weight: 600;
+            border-radius: 8px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .btn {
@@ -296,67 +443,6 @@ if (isset($_SESSION['schedule_success_message'])) {
             background-color: #e67e22;
         }
 
-        .schedule-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 25px;
-        }
-
-        .schedule-card {
-            background: var(--white);
-            border-radius: 12px;
-            padding: 25px;
-            box-shadow: var(--shadow-md);
-            transition: all 0.3s ease;
-        }
-
-        .schedule-card:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--shadow-xl);
-        }
-
-        .schedule-card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid #eee;
-        }
-
-        .schedule-card-header h3 {
-            font-size: 20px;
-            color: var(--dark);
-            margin: 0;
-        }
-
-        .day-badge {
-            display: inline-block;
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 14px;
-            font-weight: 600;
-            background-color: rgba(0, 102, 204, 0.1);
-            color: var(--primary);
-        }
-
-        .schedule-time {
-            display: flex;
-            align-items: center;
-            margin-bottom: 10px;
-            color: #666;
-        }
-
-        .schedule-time i {
-            margin-right: 10px;
-            color: var(--primary);
-        }
-
-        .schedule-actions {
-            display: flex;
-            gap: 10px;
-            margin-top: 5px;
-        }
 
         .empty-state {
             text-align: center;
@@ -455,39 +541,57 @@ if (isset($_SESSION['schedule_success_message'])) {
             box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.2);
         }
 
+        /* Responsive: Schedule row - stack on mobile */
+        @media (max-width: 576px) {
+            .day-schedule {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 14px;
+                padding: 18px 20px;
+            }
+            .day-name { font-size: 19px; }
+            .time-range { font-size: 17px; }
+            .schedule-actions .btn-edit-schedule,
+            .schedule-actions .btn.btn-danger {
+                padding: 6px 12px;
+                font-size: 15px;
+            }
+            .schedule-actions {
+                width: 100%;
+                justify-content: flex-start;
+            }
+        }
+
         /* Responsive Design */
         @media (max-width: 992px) {
-         
-            
             .main-content {
                 margin-left: 70px;
-            }
-            
-            .schedule-grid {
-                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
             }
         }
 
         @media (max-width: 768px) {
-    
             .main-content {
                 margin-left: 0;
             }
-            
-        
-            
             .schedule-content {
                 padding: 20px;
             }
-            
             .schedule-header {
                 flex-direction: column;
                 align-items: flex-start;
                 gap: 15px;
             }
-            
-            .schedule-grid {
-                grid-template-columns: 1fr;
+            .doctor-header {
+                flex-direction: column;
+                text-align: center;
+                padding: 20px 24px;
+            }
+            .doctor-avatar {
+                width: 72px;
+                height: 72px;
+            }
+            .doctor-info h3 {
+                font-size: 22px;
             }
         }
 
@@ -537,45 +641,53 @@ if (isset($_SESSION['schedule_success_message'])) {
                 </button>
             </div>
             
-            <!-- Schedule Grid -->
+            <?php if ($doctor_data): ?>
+            <!-- Doctor Profile Section -->
+            <div class="doctor-profile-card">
+                <div class="doctor-header">
+                    <img src="<?php echo !empty($doctor_data['PROFILE_IMAGE']) ? htmlspecialchars($doctor_data['PROFILE_IMAGE']) : 'https://picsum.photos/seed/doctor' . $doctor_id . '/80/80.jpg'; ?>" 
+                         alt="Doctor" class="doctor-avatar">
+                    <div class="doctor-info">
+                        <h3>Dr. <?php echo htmlspecialchars($doctor_data['FIRST_NAME'] . ' ' . $doctor_data['LAST_NAME']); ?></h3>
+                        <span class="doctor-specialization">
+                            <i class="bi bi-award"></i> 
+                            <?php echo htmlspecialchars($doctor_data['SPECIALISATION_NAME']); ?>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <?php endif; ?>
+            
+            <!-- Schedule List -->
             <?php if ($schedule_result->num_rows > 0): ?>
-                <div class="schedule-grid">
-                    <?php while ($schedule = $schedule_result->fetch_assoc()): ?>
-                        <div class="schedule-card">
-                            <div class="schedule-card-header">
-                                <h3>
-                                    <?php 
-                                    $day_name = '';
-                                    switch($schedule['AVAILABLE_DAY']) {
-                                        case 'MON': $day_name = 'Monday'; break;
-                                        case 'TUE': $day_name = 'Tuesday'; break;
-                                        case 'WED': $day_name = 'Wednesday'; break;
-                                        case 'THUR': $day_name = 'Thursday'; break;
-                                        case 'FRI': $day_name = 'Friday'; break;
-                                        case 'SAT': $day_name = 'Saturday'; break;
-                                        case 'SUN': $day_name = 'Sunday'; break;
-                                    }
-                                    echo $day_name;
-                                    ?>
-                                </h3>
-                                <span class="day-badge"><?php echo $schedule['AVAILABLE_DAY']; ?></span>
+                <div class="schedule-list-container">
+                    <div class="schedule-grid">
+                        <?php 
+                        $day_icons = ['MON' => 'bi-calendar-week', 'TUE' => 'bi-calendar2-week', 'WED' => 'bi-calendar3', 'THUR' => 'bi-calendar4', 'FRI' => 'bi-calendar5', 'SAT' => 'bi-calendar6', 'SUN' => 'bi-calendar'];
+                        $day_names_map = ['MON' => 'Monday', 'TUE' => 'Tuesday', 'WED' => 'Wednesday', 'THUR' => 'Thursday', 'FRI' => 'Friday', 'SAT' => 'Saturday', 'SUN' => 'Sunday'];
+                        while ($schedule = $schedule_result->fetch_assoc()): 
+                            $day_name = $day_names_map[$schedule['AVAILABLE_DAY']] ?? $schedule['AVAILABLE_DAY'];
+                        ?>
+                            <div class="day-schedule">
+                                <div class="day-name">
+                                    <i class="bi <?php echo $day_icons[$schedule['AVAILABLE_DAY']] ?? 'bi-calendar'; ?>"></i>
+                                    <?php echo $day_name; ?>
+                                </div>
+                                <div class="time-range">
+                                    <i class="bi bi-clock-fill"></i>
+                                    <?php echo date('h:i A', strtotime($schedule['START_TIME'])); ?> - <?php echo date('h:i A', strtotime($schedule['END_TIME'])); ?>
+                                </div>
+                                <div class="schedule-actions">
+                                    <button class="btn-edit-schedule" onclick="openEditModal(<?php echo $schedule['SCHEDULE_ID']; ?>, '<?php echo $schedule['START_TIME']; ?>', '<?php echo $schedule['END_TIME']; ?>', '<?php echo $schedule['AVAILABLE_DAY']; ?>')">
+                                        <i class="bi bi-pencil"></i> Edit
+                                    </button>
+                                    <button type="button" class="btn btn-danger" onclick="openDeleteOptionsModal(<?php echo $schedule['SCHEDULE_ID']; ?>, '<?php echo addslashes($day_name); ?>')">
+                                        <i class="bi bi-trash"></i> Delete
+                                    </button>
+                                </div>
                             </div>
-                            
-                            <div class="schedule-time">
-                                <i class="far fa-clock"></i>
-                                <span><?php echo date('h:i A', strtotime($schedule['START_TIME'])); ?> - <?php echo date('h:i A', strtotime($schedule['END_TIME'])); ?></span>
-                            </div>
-                            
-                            <div class="schedule-actions">
-                                <button class="btn btn-warning" onclick="openEditModal(<?php echo $schedule['SCHEDULE_ID']; ?>, '<?php echo $schedule['START_TIME']; ?>', '<?php echo $schedule['END_TIME']; ?>', '<?php echo $schedule['AVAILABLE_DAY']; ?>')">
-                                    <i class="fas fa-edit"></i> Edit
-                                </button>
-                                <button type="button" class="btn btn-danger" onclick="openDeleteOptionsModal(<?php echo $schedule['SCHEDULE_ID']; ?>, '<?php echo addslashes($day_name); ?>')">
-                                    <i class="fas fa-trash"></i> Delete
-                                </button>
-                            </div>
-                        </div>
-                    <?php endwhile; ?>
+                        <?php endwhile; ?>
+                    </div>
                 </div>
             <?php else: ?>
                 <div class="empty-state">

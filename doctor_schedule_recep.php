@@ -438,33 +438,56 @@ if ($doctors_query && mysqli_num_rows($doctors_query) > 0) {
             transform: translateY(0);
         }
     }
-        .doctor-schedule-card {
+        /* White background container for schedule cards */
+        .schedule-cards-section {
             background: var(--white);
             border-radius: 15px;
+            padding: 35px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        }
+        
+        .schedule-cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(480px, 1fr));
+            gap: 28px;
+            align-items: stretch;
+            justify-items: stretch;
+        }
+        
+        .doctor-schedule-card {
+            background: var(--white);
+            border-radius: 16px;
             padding: 0;
-            margin-bottom: 25px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            margin-bottom: 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
             overflow: hidden;
             transition: all 0.3s ease;
+            border: 1px solid #e9ecef;
+            min-height: 380px;
+            display: flex;
+            flex-direction: column;
         }
         
         .doctor-schedule-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
         }
         
+        /* Doctor Header: soft light background */
         .doctor-header {
-            background: var(--white);
+            background: #f8fafc;
             color: var(--primary-color);
-            padding: 20px 25px;
+            padding: 28px 32px;
             display: flex;
             align-items: center;
-            gap: 20px;
+            gap: 24px;
+            border-radius: 16px 16px 0 0;
         }
         
         .doctor-avatar {
-            width: 70px;
-            height: 70px;
+            width: 80px;
+            height: 80px;
             border-radius: 50%;
             border: 3px solid var(--light-blue);
             object-fit: cover;
@@ -472,52 +495,62 @@ if ($doctors_query && mysqli_num_rows($doctors_query) > 0) {
         
         .doctor-info h3 {
             margin: 0;
-            font-size: 22px;
+            font-size: 24px;
             font-weight: 600;
         }
         
         .doctor-specialization {
             display: inline-block;
             background: rgba(72, 41, 112, 0.2);
-            padding: 5px 12px;
+            padding: 6px 14px;
             border-radius: 20px;
-            font-size: 14px;
-            margin-top: 8px;
+            font-size: 15px;
+            margin-top: 10px;
         }
         
         .schedule-content {
-            padding: 25px;
+            padding: 30px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
         }
         
         .schedule-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-            gap: 15px;
-            margin-bottom: 20px;
-      
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-bottom: 24px;
+            flex: 1;
         }
         
+        /* Schedule row: horizontal rounded card, light grey, blue left accent */
         .day-schedule {
-            background: var(--card-bg);
-            border-radius: 10px;
-            padding: 15px;
+            background: #f6f9fb;
+            border-radius: 14px;
+            padding: 20px 26px;
             border-left: 4px solid var(--secondary-color);
+            box-shadow: 0 1px 4px rgba(0,0,0,0.04);
             transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+            flex-wrap: wrap;
         }
         
         .day-schedule:hover {
-            background: #e8f4f8;
-            transform: scale(1.02);
+            background: #eef4f8;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
         }
         
         .day-name {
-            font-weight: 600;
+            font-weight: 700;
             color: var(--dark-blue);
-            margin-bottom: 10px;
             font-size: 20px;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
+            flex-shrink: 0;
         }
         
         .day-name i {
@@ -525,11 +558,13 @@ if ($doctors_query && mysqli_num_rows($doctors_query) > 0) {
         }
         
         .time-range {
-            color: #555;
+            color: #4a5568;
             font-size: 18px;
+            font-weight: 500;
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 8px;
+            flex-shrink: 0;
         }
         
         .time-range i {
@@ -539,25 +574,31 @@ if ($doctors_query && mysqli_num_rows($doctors_query) > 0) {
         
         .schedule-actions {
             display: flex;
-            gap: 10px;
-            margin-top: 10px;
+            align-items: center;
+            gap: 12px;
+            flex-shrink: 0;
+        }
+        
+        .schedule-actions form {
+            display: inline-flex;
         }
         
         .btn-edit, .btn-delete {
-            padding: 5px 10px;
+            padding: 10px 18px;
             border: none;
-            border-radius: 5px;
-            font-size: 18px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.25s ease;
             display: inline-flex;
             align-items: center;
-            gap: 5px;
+            gap: 8px;
+            color: white;
         }
         
         .btn-edit {
-            background: var(--warning-color);
-            color: var(--white);
+            background: #f39c12;
         }
         
         .btn-edit:hover {
@@ -565,8 +606,7 @@ if ($doctors_query && mysqli_num_rows($doctors_query) > 0) {
         }
         
         .btn-delete {
-            background: var(--danger-color);
-            color: var(--white);
+            background: #e74c3c;
         }
         
         .btn-delete:hover {
@@ -576,15 +616,16 @@ if ($doctors_query && mysqli_num_rows($doctors_query) > 0) {
         .no-schedule {
             background: #f8f9fa;
             border-radius: 10px;
-            padding: 20px;
+            padding: 24px 28px;
             text-align: center;
             color: #6c757d;
             font-style: italic;
+            font-size: 16px;
         }
         
         .no-schedule i {
-            font-size: 24px;
-            margin-bottom: 10px;
+            font-size: 28px;
+            margin-bottom: 12px;
             display: block;
         }
         
@@ -731,7 +772,100 @@ if ($doctors_query && mysqli_num_rows($doctors_query) > 0) {
             color: #6c757d;
         }
         
+        /* Responsive: Tablet - 2 cards per row */
+        @media (min-width: 769px) and (max-width: 1199px) {
+            .schedule-cards-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        /* Responsive: Desktop - wider cards across full width */
+        @media (min-width: 1200px) {
+            .schedule-cards-grid {
+                grid-template-columns: repeat(auto-fill, minmax(460px, 1fr));
+            }
+        }
+        
+        /* Responsive: Schedule row - stack on mobile */
+        @media (max-width: 576px) {
+            .day-schedule {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 14px;
+                padding: 18px 20px;
+            }
+            
+            .day-name {
+                font-size: 19px;
+            }
+            
+            .time-range {
+                font-size: 17px;
+            }
+            
+            .btn-edit, .btn-delete {
+                padding: 6px 12px;
+                font-size: 17px;
+            }
+            
+            .schedule-actions {
+                width: 100%;
+                justify-content: flex-start;
+            }
+        }
+        
+        /* Responsive: Mobile - 1 card per row */
         @media (max-width: 768px) {
+            .schedule-cards-section {
+                padding: 24px;
+            }
+            
+            .schedule-cards-grid {
+                grid-template-columns: 1fr;
+                gap: 22px;
+            }
+            
+            .doctor-schedule-card {
+                min-height: 340px;
+            }
+            
+            .doctor-header {
+                padding: 20px 24px;
+                gap: 20px;
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .doctor-avatar {
+                width: 72px;
+                height: 72px;
+            }
+            
+            .doctor-info h3 {
+                font-size: 22px;
+            }
+            
+            .schedule-content {
+                padding: 24px;
+            }
+            
+            .schedule-grid {
+                gap: 14px;
+            }
+            
+            .day-schedule {
+                padding: 18px 20px;
+                gap: 20px;
+            }
+            
+            .day-name {
+                font-size: 20px;
+            }
+            
+            .time-range {
+                font-size: 18px;
+            }
+            
             .sidebar {
                 width: 70px;
             }
@@ -749,13 +883,6 @@ if ($doctors_query && mysqli_num_rows($doctors_query) > 0) {
             .page-header {
                 flex-direction: column;
                 gap: 15px;
-                text-align: center;
-            }
-            
-            
-            
-            .doctor-header {
-                flex-direction: column;
                 text-align: center;
             }
         }
@@ -856,10 +983,12 @@ if ($doctors_query && mysqli_num_rows($doctors_query) > 0) {
 </div>
         <!-- Doctor Schedules -->
         <?php if (!empty($doctors_with_schedules)): ?>
+        <div class="schedule-cards-section">
+            <div class="schedule-cards-grid">
             <?php foreach ($doctors_with_schedules as $doctor_data): ?>
                 <div class="doctor-schedule-card">
                     <div class="doctor-header">
-                        <img src="<?php echo !empty($doctor_data['doctor']['PROFILE_IMAGE']) ? $doctor_data['doctor']['PROFILE_IMAGE'] : 'https://picsum.photos/seed/doctor' . $doctor_data['doctor']['DOCTOR_ID'] . '/70/70.jpg'; ?>" 
+                        <img src="<?php echo !empty($doctor_data['doctor']['PROFILE_IMAGE']) ? $doctor_data['doctor']['PROFILE_IMAGE'] : 'https://picsum.photos/seed/doctor' . $doctor_data['doctor']['DOCTOR_ID'] . '/80/80.jpg'; ?>" 
                              alt="Doctor" class="doctor-avatar">
                         <div class="doctor-info">
                             <h3>Dr. <?php echo htmlspecialchars($doctor_data['doctor']['FIRST_NAME'] . ' ' . $doctor_data['doctor']['LAST_NAME']); ?></h3>
@@ -927,6 +1056,8 @@ if ($doctors_query && mysqli_num_rows($doctors_query) > 0) {
                     </div>
                 </div>
             <?php endforeach; ?>
+            </div>
+        </div>
         <?php else: ?>
             <div class="empty-state">
                 <i class="bi bi-calendar-x"></i>

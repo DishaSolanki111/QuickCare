@@ -147,20 +147,7 @@ body {
         }
         
         /* Statistics Styles */
-        .stats-card {
-            background-color: var(--white);
-            border-radius: 8px;
-            padding: 20px;
-            text-align: center;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            transition: all 0.3s ease;
-            height: 100%;
-        }
-        
-        .stats-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
+       
         
         .stats-icon {
             font-size: 2rem;
@@ -175,10 +162,7 @@ body {
             margin-bottom: 5px;
         }
         
-        .stats-label {
-            color: var(--gray-dark);
-            font-size: 14px;
-        }
+     
 </style>
 
 </head>
@@ -209,12 +193,7 @@ body {
                         <div class="stats-label">Medicine Reminders</div>
                     </div>
                 </div>
-                <div class="col-md-3 col-sm-6 mb-4">
-                    <div class="stats-card">
-                        <i class="bi bi-capsule stats-icon"></i>
-                        <div class="stats-number"><?php echo $medicine_count; ?></div>
-                        <div class="stats-label">Medicines</div>
-                    </div>
+            
                 </div>
             </div>
         </div>

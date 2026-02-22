@@ -399,7 +399,6 @@ $receptionist_id = $_SESSION['RECEPTIONIST_ID'];
 
     <table>
         <tr>
-            <th>ID</th>
             <th>Name</th>
             <th>Date of Birth</th>
             <th>Gender</th>
@@ -434,7 +433,6 @@ $receptionist_id = $_SESSION['RECEPTIONIST_ID'];
         if ($result && mysqli_num_rows($result) > 0) {
             while ($row = mysqli_fetch_assoc($result)) {
                 echo "<tr>
-                    <td>{$row['PATIENT_ID']}</td>
                     <td>{$row['FIRST_NAME']} {$row['LAST_NAME']}</td>
                     <td>{$row['DOB']}</td>
                     <td>{$row['GENDER']}</td>
@@ -450,7 +448,7 @@ $receptionist_id = $_SESSION['RECEPTIONIST_ID'];
                 </tr>";
             }
         } else {
-            echo "<tr><td colspan='8'>No patients found</td></tr>";
+            echo "<tr><td colspan='7'>No patients found</td></tr>";
         }
 
         mysqli_close($conn);

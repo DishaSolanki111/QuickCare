@@ -109,7 +109,7 @@ body {
 
     <a href="appointment_recep.php" class="<?= ($currentPage == 'appointment_recep.php') ? 'active' : '' ?>">Appointments</a>
 
-    <a href="doctor_schedule_recep.php" class="<?= ($currentPage == 'doctor_schedule_recep.php') ? 'active' : '' ?>">Doctor Schedule</a>
+    <a href="Admin_doctor_schedule.php" class="<?= ($currentPage == 'doctor_schedule_recep.php') ? 'active' : '' ?>">Doctor Schedule</a>
 
     <a href="manage_medicine.php" class="<?= ($currentPage == 'manage_medicine.php') ? 'active' : '' ?>">Medicine</a>
 

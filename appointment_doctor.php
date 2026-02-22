@@ -319,8 +319,8 @@ if ($past_result->num_rows > 0) {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
+            margin-bottom: 6px;
+            padding-bottom: 6px;
             border-bottom: 1px solid #eee;
         }
 
@@ -332,7 +332,11 @@ if ($past_result->num_rows > 0) {
 
         .patient-info p {
             color: var(--text-light);
-            margin-bottom: 5px;
+            margin-bottom: 4px;
+        }
+
+        .patient-info p:last-child {
+            margin-bottom: 0;
         }
 
         .status-badge {
@@ -359,20 +363,22 @@ if ($past_result->num_rows > 0) {
         }
 
         .appointment-details {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-bottom: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 20px;
+            margin-bottom: 16px;
         }
 
         .appointment-detail {
             display: flex;
             align-items: center;
+            gap: 10px;
             color: #666;
         }
 
         .appointment-detail i {
-            margin-right: 10px;
             color: var(--primary);
         }
 
@@ -533,7 +539,7 @@ if ($past_result->num_rows > 0) {
             }
             
             .appointment-details {
-                grid-template-columns: 1fr;
+                gap: 15px;
             }
         }
 
