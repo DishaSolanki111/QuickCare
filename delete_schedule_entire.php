@@ -71,7 +71,7 @@ $today = date('Y-m-d');
 $now = date('H:i:s');
 $ins = $conn->prepare("INSERT INTO medicine_reminder_tbl (MEDICINE_ID, CREATOR_ROLE, CREATOR_ID, PATIENT_ID, START_DATE, END_DATE, REMINDER_TIME, REMARKS) VALUES (?, 'RECEPTIONIST', ?, ?, ?, ?, ?, ?)");
 foreach ($deleted_appointments as $a) {
-    $date_time = date('l, M d, Y', strtotime($a['APPOINTMENT_DATE'])) . ' at ' . date('h:i A', strtotime($a['APPOINTMENT_TIME']));
+    $date_time = date('M d, Y', strtotime($a['APPOINTMENT_DATE'])) . ' at ' . date('h:i A', strtotime($a['APPOINTMENT_TIME']));
     $msg = "[CANCELLED] Your appointment with " . $doctor_name . " on " . $date_time . " was cancelled. Please reschedule your visit.";
     $ins->bind_param("iiissss", $med_id, $rec_id, (int)$a['PATIENT_ID'], $today, $today, $now, $msg);
     $ins->execute();

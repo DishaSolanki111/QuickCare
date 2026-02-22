@@ -138,13 +138,7 @@ $reminder_count += $medicine_reminder_count + $cancellation_count;
                             <?php endwhile; ?>
                         <?php endif; ?>
                         <?php if (isset($cancellation_query) && $cancellation_query): ?>
-                            <?php while ($cn = mysqli_fetch_assoc($cancellation_query)): 
-                                $msg = str_replace('[CANCELLED] ', '', $cn['REMARKS']);
-                                $date_time = '';
-                                if (preg_match('/ on (.+?) was cancelled/', $msg, $m)) {
-                                    $date_time = trim($m[1]);
-                                }
-                            ?>
+                            <?php while ($cn = mysqli_fetch_assoc($cancellation_query)): ?>
                                 <div class="notification-item">
                                     <div class="notification-icon" style="background: #fee2e2; color: #dc2626;">
                                         <i class="fas fa-calendar-times"></i>
@@ -152,13 +146,29 @@ $reminder_count += $medicine_reminder_count + $cancellation_count;
                                     <div class="notification-content">
                                         <div class="notification-title">Appointment Cancelled</div>
                                         <div class="notification-message">
-                                            <?php echo htmlspecialchars($msg); ?>
+                                            <?php echo htmlspecialchars(str_replace('[CANCELLED] ', '', $cn['REMARKS'])); ?>
                                         </div>
-                                        <?php if ($date_time): ?>
-                                        <div class="notification-time" style="font-weight:600; color:#dc2626;">
-                                            <i class="fas fa-calendar-alt"></i> <?php echo htmlspecialchars($date_time); ?>
+                                        <div class="notification-time">
+                                            <?php echo date('M d, Y', strtotime($cn['START_DATE'])); ?>
                                         </div>
-                                        <?php endif; ?>
+                                    </div>
+                                </div>
+                            <?php endwhile; ?>
+                        <?php endif; ?>
+                        <?php if (isset($cancellation_query) && $cancellation_query): ?>
+                            <?php while ($cn = mysqli_fetch_assoc($cancellation_query)): ?>
+                                <div class="notification-item">
+                                    <div class="notification-icon" style="background: #fee2e2; color: #dc2626;">
+                                        <i class="fas fa-calendar-times"></i>
+                                    </div>
+                                    <div class="notification-content">
+                                        <div class="notification-title">Appointment Cancelled</div>
+                                        <div class="notification-message">
+                                            <?php echo htmlspecialchars(str_replace('[CANCELLED] ', '', $cn['REMARKS'])); ?>
+                                        </div>
+                                        <div class="notification-time">
+                                            <?php echo date('M d, Y', strtotime($cn['START_DATE'])); ?>
+                                        </div>
                                     </div>
                                 </div>
                             <?php endwhile; ?>
@@ -300,7 +310,6 @@ $reminder_count += $medicine_reminder_count + $cancellation_count;
 .notification-message {
     font-size: 12px;
     color: #4b5563;
-    white-space: normal;
 }
 
 .notification-time {
@@ -362,5 +371,33 @@ $reminder_count += $medicine_reminder_count + $cancellation_count;
         });
     }
     window.toggleNotifications = toggleNotifications;
+    
+    function checkReminders() {
+        fetch('check_reminders.php')
+            .then(function(r){ return r.json(); })
+            .then(function(data) {
+                if (data.status === 'success' && data.reminders && data.reminders.length > 0) {
+                    data.reminders.forEach(function(rem) {
+                        var el = document.getElementById('notificationPopupMessage');
+                        var pop = document.getElementById('notificationPopup');
+                        if (el && pop) {
+                            el.textContent = rem.message;
+                            pop.classList.add('show');
+                            setTimeout(function(){ pop.classList.remove('show'); }, 5000);
+                        }
+                    });
+                }
+            })
+            .catch(function(e){ console.error('Error checking reminders:', e); });
+    }
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', function() {
+            checkReminders();
+            setInterval(checkReminders, 60 * 1000);
+        });
+    } else {
+        checkReminders();
+        setInterval(checkReminders, 60 * 1000);
+    }
 })();
 </script>
