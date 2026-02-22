@@ -5,13 +5,37 @@ session_start();
 include "config.php";
 include "header.php";
 
-// Get doctor ID from URL
- $doctor_id = isset($_POST['doctor_id']) ? intval($_POST['doctor_id']) : 0;
+// Get doctor ID from POST (or session for reschedule back-navigation)
+$doctor_id = isset($_POST['doctor_id']) ? intval($_POST['doctor_id']) : 0;
+$reschedule_appointment_id = isset($_POST['reschedule_appointment_id']) ? intval($_POST['reschedule_appointment_id']) : (isset($_SESSION['reschedule_appointment_id']) ? (int)$_SESSION['reschedule_appointment_id'] : 0);
+$is_reschedule = ($reschedule_appointment_id > 0);
 
+if ($doctor_id == 0 && $is_reschedule && isset($_SESSION['DOCTOR_ID'])) {
+    $doctor_id = (int) $_SESSION['DOCTOR_ID'];
+}
 // Redirect if no doctor ID is provided
 if ($doctor_id == 0) {
     header("Location: doctors.php");
     exit();
+}
+
+// If reschedule mode: verify doctor is logged in and appointment belongs to them
+if ($is_reschedule) {
+    if (!isset($_SESSION['USER_TYPE']) || $_SESSION['USER_TYPE'] !== 'doctor' || !isset($_SESSION['DOCTOR_ID']) || (int)$_SESSION['DOCTOR_ID'] !== $doctor_id) {
+        header("Location: login_for_all.php");
+        exit();
+    }
+    $chk = $conn->prepare("SELECT APPOINTMENT_ID FROM appointment_tbl WHERE APPOINTMENT_ID = ? AND DOCTOR_ID = ? AND STATUS = 'SCHEDULED'");
+    $chk->bind_param("ii", $reschedule_appointment_id, $doctor_id);
+    $chk->execute();
+    $chk_res = $chk->get_result();
+    if (!$chk_res || $chk_res->num_rows === 0) {
+        $chk->close();
+        header("Location: appointment_doctor.php");
+        exit();
+    }
+    $chk->close();
+    $_SESSION['reschedule_appointment_id'] = $reschedule_appointment_id;
 }
 
 // Fetch the selected doctor's details
@@ -475,11 +499,14 @@ if (mysqli_num_rows($doctor_query) == 0) {
                 </div>
 
                 <div class="modal-content">
-                    <form method="POST" action="doctors.php" style="display:inline">
+                    <form method="POST" action="<?php echo $is_reschedule ? 'appointment_doctor.php' : 'doctors.php'; ?>" style="display:inline">
+                    <?php if ($is_reschedule): ?>
+                    <?php else: ?>
                     <input type="hidden" name="spec_id" value="<?php echo $doctor['SPECIALISATION_ID']; ?>">
+                    <?php endif; ?>
                     <button type="submit" class="close" style="background:none;border:none;font-size:28px;cursor:pointer">&times;</button>
                 </form>
-                    <h2>Select Appointment Date</h2>
+                    <h2><?php echo $is_reschedule ? 'Reschedule: Select New Date' : 'Select Appointment Date'; ?></h2>
                     
                     <!-- Step Indicator -->
                     <div class="step-indicator">

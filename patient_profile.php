@@ -70,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
 }
 
 // Get appointment reminders for notification
- $reminder_query = mysqli_query($conn, "
+$reminder_query = mysqli_query($conn, "
     SELECT ar.REMARKS, a.APPOINTMENT_DATE, a.APPOINTMENT_TIME, d.FIRST_NAME, d.LAST_NAME
     FROM appointment_reminder_tbl ar
     JOIN appointment_tbl a ON ar.APPOINTMENT_ID = a.APPOINTMENT_ID
@@ -82,7 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
     ORDER BY ar.REMINDER_TIME DESC
     LIMIT 5
 ");
- $reminder_count = mysqli_num_rows($reminder_query);
+
 ?>
 
 <!DOCTYPE html>

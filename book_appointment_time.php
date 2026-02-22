@@ -4,11 +4,13 @@ session_start();
 include "config.php";
 include "header.php";
 
-// Check if doctor is selected
+// Check if doctor is selected (or reschedule mode)
 if (!isset($_SESSION['booking_doctor_id'])) {
     header("Location: doctors.php");
     exit();
 }
+
+$is_reschedule = !empty($_SESSION['reschedule_appointment_id']);
 
 // Get doctor details
  $doctor_id = $_SESSION['booking_doctor_id'];
@@ -27,7 +29,13 @@ if (mysqli_num_rows($doctor_query) == 0) {
  $doctor = mysqli_fetch_assoc($doctor_query);
 
 // Get selected date from session
- $selected_date = isset($_SESSION['booking_date']) ? $_SESSION['booking_date'] : '';
+$selected_date = isset($_SESSION['booking_date']) ? $_SESSION['booking_date'] : '';
+
+// Reschedule mode requires date in session
+if ($is_reschedule && empty($selected_date)) {
+    header("Location: book_appointment_date.php");
+    exit();
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -457,9 +465,12 @@ if (mysqli_num_rows($doctor_query) == 0) {
                 <div class="modal-content">
                     <form method="POST" action="book_appointment_date.php" style="display:inline">
                     <input type="hidden" name="doctor_id" value="<?php echo $doctor['DOCTOR_ID']; ?>">
+                    <?php if ($is_reschedule): ?>
+                    <input type="hidden" name="reschedule_appointment_id" value="<?php echo (int)$_SESSION['reschedule_appointment_id']; ?>">
+                    <?php endif; ?>
                     <button type="submit" class="close" style="background:none;border:none;font-size:28px;cursor:pointer">&times;</button>
                 </form>
-                    <h2>Select Time Slot</h2>
+                    <h2><?php echo $is_reschedule ? 'Reschedule: Select New Time' : 'Select Time Slot'; ?></h2>
                     
                     <!-- Step Indicator -->
                     <div class="step-indicator">
@@ -470,7 +481,7 @@ if (mysqli_num_rows($doctor_query) == 0) {
                         <div class="step" id="step5">5</div>
                     </div>
                     
-                    <form method="POST" action="book_appointment_login.php" id="appointmentForm">
+                    <form method="POST" action="<?php echo $is_reschedule ? 'reschedule_appointment_doctor.php' : 'book_appointment_login.php'; ?>" id="appointmentForm">
                         <div class="form-group">
                             <label>Select Time Slot</label>
                             <div id="timeSlotsContainer" class="time-slots-container">
@@ -485,16 +496,26 @@ if (mysqli_num_rows($doctor_query) == 0) {
                                 <span style="display:inline-block;width:16px;height:12px;border-radius:3px;background-color:rgba(243, 156, 18, 0.35);border:1px solid #f39c12;margin:0 6px;vertical-align:middle;"></span>
                                 Yellow = Booked slot
                             </div>
-                            <input type="hidden" id="selected_time" name="appointment_time" required>
+                            <input type="hidden" id="selected_time" name="<?php echo $is_reschedule ? 'new_time' : 'appointment_time'; ?>" required>
+                            <?php if ($is_reschedule): ?>
+                            <input type="hidden" name="appointment_id" value="<?php echo (int)$_SESSION['reschedule_appointment_id']; ?>">
+                            <input type="hidden" name="new_date" value="<?php echo htmlspecialchars($selected_date); ?>">
+                            <?php endif; ?>
                         </div>
                         
                         <div class="btn-group">
                             <button type="button" class="btn btn-danger" onclick="goBack()">
                                 <i class="fas fa-arrow-left" style="margin-right: 5px;"></i> Back
                             </button>
+                            <?php if ($is_reschedule): ?>
+                            <button type="submit" class="btn btn-primary" id="nextToLogin" onclick="var t=document.getElementById('selected_time').value;if(!t){alert('Please select a time slot');return false;}return confirm('Are you sure you want to reschedule this appointment?');">
+                                <i class="fas fa-check"></i> Reschedule Appointment
+                            </button>
+                            <?php else: ?>
                             <button type="button" class="btn btn-primary" onclick="proceedToLogin()" id="nextToLogin">
                                 Next: Login <i class="fas fa-arrow-right" style="margin-left: 5px;"></i>
                             </button>
+                            <?php endif; ?>
                         </div>
                     </form>
                 </div>
@@ -605,6 +626,13 @@ if (mysqli_num_rows($doctor_query) == 0) {
         i.name = 'doctor_id';
         i.value = '<?php echo $doctor['DOCTOR_ID']; ?>';
         f.appendChild(i);
+        <?php if ($is_reschedule): ?>
+        var i2 = document.createElement('input');
+        i2.type = 'hidden';
+        i2.name = 'reschedule_appointment_id';
+        i2.value = '<?php echo (int)$_SESSION['reschedule_appointment_id']; ?>';
+        f.appendChild(i2);
+        <?php endif; ?>
         document.body.appendChild(f);
         f.submit();
     }

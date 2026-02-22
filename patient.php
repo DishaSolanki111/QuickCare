@@ -44,7 +44,7 @@ include 'config.php';
  $upcoming_medicines = $medicine_result['count'];
 
 // Get appointment reminders
- $reminder_query = mysqli_query($conn, "
+$reminder_query = mysqli_query($conn, "
     SELECT ar.REMARKS, a.APPOINTMENT_DATE, a.APPOINTMENT_TIME, d.FIRST_NAME, d.LAST_NAME
     FROM appointment_reminder_tbl ar
     JOIN appointment_tbl a ON ar.APPOINTMENT_ID = a.APPOINTMENT_ID
@@ -56,6 +56,7 @@ include 'config.php';
     ORDER BY ar.REMINDER_TIME DESC
     LIMIT 5
 ");
+
 ?>
 
 <!DOCTYPE html>

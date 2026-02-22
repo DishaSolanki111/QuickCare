@@ -27,13 +27,15 @@ if (!isset($_SESSION['PATIENT_ID'])) {
  $result = mysqli_query($conn, $query);
 
  $reminders = [];
-while ($row = mysqli_fetch_assoc($result)) {
-    $reminders[] = [
-        'message' => $row['REMARKS'],
-        'date' => $row['APPOINTMENT_DATE'],
-        'time' => $row['APPOINTMENT_TIME'],
-        'doctor' => 'Dr. ' . $row['FIRST_NAME'] . ' ' . $row['LAST_NAME']
-    ];
+if ($result) {
+    while ($row = mysqli_fetch_assoc($result)) {
+        $reminders[] = [
+            'message' => $row['REMARKS'],
+            'date' => $row['APPOINTMENT_DATE'],
+            'time' => $row['APPOINTMENT_TIME'],
+            'doctor' => 'Dr. ' . $row['FIRST_NAME'] . ' ' . $row['LAST_NAME']
+        ];
+    }
 }
 
 echo json_encode(['status' => 'success', 'reminders' => $reminders]);

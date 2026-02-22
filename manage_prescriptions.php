@@ -47,33 +47,53 @@ if (isset($_POST['status'])) {
     }
 }
 
+// Filter parameters (GET)
+$filter_name = isset($_GET['filter_name']) ? trim(mysqli_real_escape_string($conn, $_GET['filter_name'])) : '';
+$filter_date = isset($_GET['filter_date']) ? mysqli_real_escape_string($conn, $_GET['filter_date']) : '';
+
 // Fetch only patients who have appointments with this doctor
-// This ensures doctors can only see patients assigned to them
-// Get the most recent appointment date for each patient
- $sql = "SELECT pt.PATIENT_ID, pt.FIRST_NAME, pt.LAST_NAME, pt.PHONE, 
+// Apply name and date filters when provided
+$conditions = ["a.DOCTOR_ID = ?"];
+$types = "i";
+$params = [$doctor_id];
+
+if (!empty($filter_name)) {
+    $conditions[] = "(pt.FIRST_NAME LIKE ? OR pt.LAST_NAME LIKE ? OR CONCAT(pt.FIRST_NAME, ' ', pt.LAST_NAME) LIKE ?)";
+    $types .= "sss";
+    $name_pattern = '%' . $filter_name . '%';
+    $params[] = $name_pattern;
+    $params[] = $name_pattern;
+    $params[] = $name_pattern;
+}
+if (!empty($filter_date)) {
+    $conditions[] = "a.APPOINTMENT_DATE = ?";
+    $types .= "s";
+    $params[] = $filter_date;
+}
+
+$sql = "SELECT pt.PATIENT_ID, pt.FIRST_NAME, pt.LAST_NAME, pt.PHONE, pt.EMAIL,
                 MAX(a.APPOINTMENT_DATE) AS LAST_APPOINTMENT_DATE
          FROM patient_tbl pt
          INNER JOIN appointment_tbl a ON pt.PATIENT_ID = a.PATIENT_ID
-         WHERE a.DOCTOR_ID = ?
-         GROUP BY pt.PATIENT_ID, pt.FIRST_NAME, pt.LAST_NAME, pt.PHONE
+         WHERE " . implode(" AND ", $conditions) . "
+         GROUP BY pt.PATIENT_ID, pt.FIRST_NAME, pt.LAST_NAME, pt.PHONE, pt.EMAIL
          ORDER BY pt.LAST_NAME, pt.FIRST_NAME";
- $stmt = $conn->prepare($sql);
- 
+$stmt = $conn->prepare($sql);
+
 if (!$stmt) {
     die("Error preparing query: " . $conn->error);
 }
+$stmt->bind_param($types, ...$params);
+$stmt->execute();
+$result = $stmt->get_result();
 
- $stmt->bind_param("i", $doctor_id);
- $stmt->execute();
- $result = $stmt->get_result();
-
- $patients = [];
+$patients = [];
 if ($result && $result->num_rows > 0) {
     while($row = $result->fetch_assoc()) {
         $patients[] = $row;
     }
 }
- $stmt->close();
+$stmt->close();
  $conn->close(); // Close connection when done
 ?>
 
@@ -237,6 +257,53 @@ if ($result && $result->num_rows > 0) {
             background-color: #218838;
         }
         
+        .btn-primary {
+            background-color: #007bff;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+        }
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+        
+        .filter-form {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: flex-end;
+            margin-bottom: 25px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+        }
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        .filter-group label {
+            font-weight: 600;
+            color: var(--primary-color);
+            font-size: 14px;
+        }
+        .filter-group input {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            min-width: 180px;
+        }
+        .filter-actions {
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+        }
+        
         /* Footer Styles */
         footer {
             background: var(--dark);
@@ -309,6 +376,24 @@ if ($result && $result->num_rows > 0) {
             <div class="content-card">
          
                 
+                <h1>Manage Prescriptions</h1>
+                <p style="margin-bottom: 20px; color: #666;">Click "Manage Prescriptions" to view all prescriptions (instructions) for that patient.</p>
+                
+                <form method="GET" action="manage_prescriptions.php" class="filter-form">
+                    <div class="filter-group">
+                        <label for="filter_name"><i class="fas fa-user"></i> Patient Name</label>
+                        <input type="text" id="filter_name" name="filter_name" placeholder="Search by name..." value="<?php echo htmlspecialchars($filter_name); ?>">
+                    </div>
+                    <div class="filter-group">
+                        <label for="filter_date"><i class="fas fa-calendar"></i> Appointment Date</label>
+                        <input type="date" id="filter_date" name="filter_date" value="<?php echo htmlspecialchars($filter_date); ?>">
+                    </div>
+                    <div class="filter-actions">
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i> Search</button>
+                        <a href="manage_prescriptions.php" class="btn btn-secondary"><i class="fas fa-times"></i> Clear</a>
+                    </div>
+                </form>
+                
                 <table>
                     <thead>
                         <tr>
@@ -324,26 +409,29 @@ if ($result && $result->num_rows > 0) {
                                 <tr>
                                     <td><?php echo htmlspecialchars($patient['FIRST_NAME'] . ' ' . $patient['LAST_NAME']); ?></td>
                                     <td><?php 
-                                        if (!empty($patient['LAST_APPOINTMENT_DATE'])) {
-                                            // Format the date for display
-                                            $appointment_date = new DateTime($patient['LAST_APPOINTMENT_DATE']);
-                                            echo htmlspecialchars($appointment_date->format('F d, Y'));
-                                        } else {
-                                            echo 'N/A';
-                                        }
+                                        echo !empty($patient['LAST_APPOINTMENT_DATE']) 
+                                            ? htmlspecialchars((new DateTime($patient['LAST_APPOINTMENT_DATE']))->format('F d, Y')) 
+                                            : 'N/A'; 
                                     ?></td>
-                                    <td><?php echo htmlspecialchars($patient['PHONE']); ?></td>
+                                    <td>
+                                        <?php 
+                                        $contact_parts = [];
+                                        if (!empty($patient['PHONE'])) $contact_parts[] = 'Ph: ' . htmlspecialchars($patient['PHONE']);
+                                        if (!empty($patient['EMAIL'])) $contact_parts[] = htmlspecialchars($patient['EMAIL']);
+                                        echo implode(' | ', $contact_parts ?: ['N/A']);
+                                        ?>
+                                    </td>
                                     <td>
                                         <form method="POST" action="prescription_form.php" style="display:inline">
-                                        <input type="hidden" name="patient_id" value="<?php echo $patient['PATIENT_ID']; ?>">
-                                        <button type="submit" class="btn">Manage Prescriptions</button>
-                                    </form>
+                                            <input type="hidden" name="patient_id" value="<?php echo (int)$patient['PATIENT_ID']; ?>">
+                                            <button type="submit" class="btn">Manage Prescriptions</button>
+                                        </form>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>
                         <?php else: ?>
                             <tr>
-                                <td colspan="4" style="text-align: center;">No patients found in the database.</td>
+                                <td colspan="4" style="text-align: center;">No patients found.</td>
                             </tr>
                         <?php endif; ?>
                     </tbody>

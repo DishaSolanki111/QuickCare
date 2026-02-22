@@ -52,6 +52,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_status'])) {
     $update_stmt->close();
 }
 
+// Reschedule flash messages
+if (isset($_SESSION['RESCHEDULE_SUCCESS'])) {
+    $success_message = $_SESSION['RESCHEDULE_SUCCESS'];
+    unset($_SESSION['RESCHEDULE_SUCCESS']);
+}
+if (isset($_SESSION['RESCHEDULE_ERROR'])) {
+    $error_message = $_SESSION['RESCHEDULE_ERROR'];
+    unset($_SESSION['RESCHEDULE_ERROR']);
+}
+
 // ================== FETCH APPOINTMENTS ==================
  $today = date('Y-m-d');
 
@@ -443,6 +453,59 @@ if ($past_result->num_rows > 0) {
             border: 1px solid #f5c6cb;
         }
 
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
+        .modal-box {
+            background: white;
+            padding: 25px 30px;
+            border-radius: 10px;
+            max-width: 450px;
+            width: 90%;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        .modal-box h3 {
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+        .modal-box .form-group {
+            margin-bottom: 15px;
+        }
+        .modal-box label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: #333;
+        }
+        .modal-box input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+        }
+        .modal-box .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        .modal-box .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
         /* Responsive Design */
         @media (max-width: 992px) {
             .sidebar {
@@ -645,6 +708,13 @@ if ($past_result->num_rows > 0) {
                             </div>
                             
                             <div class="appointment-actions">
+                                <form method="POST" action="book_appointment_date.php" style="display:inline">
+                                    <input type="hidden" name="doctor_id" value="<?php echo $doctor_id; ?>">
+                                    <input type="hidden" name="reschedule_appointment_id" value="<?php echo $appointment['APPOINTMENT_ID']; ?>">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-edit"></i> Reschedule
+                                    </button>
+                                </form>
                                 <form method="POST" style="display: inline;">
                                     <input type="hidden" name="appointment_id" value="<?php echo $appointment['APPOINTMENT_ID']; ?>">
                                     <input type="hidden" name="status" value="CANCELLED">
