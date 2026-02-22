@@ -21,7 +21,8 @@ include 'recept_sidebar.php';
 <head>
 <meta charset="UTF-8">
 <title>View Appointments - QuickCare</title>
-
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <style>
     body {
         margin: 0;
@@ -69,7 +70,26 @@ include 'recept_sidebar.php';
     tr:hover {
         background: #F2F9FB;
     }
-
+    .btn-edit {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .btn-edit {
+            background: #f39c12;
+            color: var(--white);
+        }
+        
+        .btn-edit:hover {
+            background: #e67e22;
+        }
     .filter-container {
         background: white;
         padding: 20px;
@@ -167,6 +187,7 @@ $receptionist_id = $_SESSION['RECEPTIONIST_ID'];
             <th>Doctor Name</th>
             <th>Date</th>
             <th>Time</th>
+            <th>Action</th>
             <th>Status</th>
          
         </tr>
@@ -210,6 +231,7 @@ $receptionist_id = $_SESSION['RECEPTIONIST_ID'];
                     <td>{$row['d_first']} {$row['d_last']}</td>
                     <td>{$row['APPOINTMENT_DATE']}</td>
                     <td>{$row['APPOINTMENT_TIME']}</td>
+                    <td><button  class='btn-edit'>Edit</button></td>
                     <td><span class='status-badge $cls'>{$row['STATUS']}</span></td>
                   
                 </tr>";

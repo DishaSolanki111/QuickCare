@@ -167,6 +167,8 @@ $receptionist_id = $_SESSION['RECEPTIONIST_ID'];
 <head>
     <meta charset="UTF-8">
     <title>Manage Doctors - QuickCare</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"></style>
     <style>
         body {
             margin: 0;
