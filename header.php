@@ -400,12 +400,14 @@ if (session_status() === PHP_SESSION_NONE) {
                 <a href="aboutus.php" class="<?= ($currentPage == 'aboutus.php') ? 'active' : '' ?>">About us</a>
             </div>
             
-            <?php if (isset($_SESSION['PATIENT_ID']) || isset($_SESSION['DOCTOR_ID']) || isset($_SESSION['RECEPTIONIST_ID'])): ?>
+            <?php if (isset($_SESSION['PATIENT_ID']) || isset($_SESSION['DOCTOR_ID']) || isset($_SESSION['RECEPTIONIST_ID']) || (isset($_SESSION['LOGGED_IN']) && $_SESSION['LOGGED_IN'] === true && isset($_SESSION['USER_TYPE']) && $_SESSION['USER_TYPE'] === 'admin')): ?>
                 <!-- User Profile Section -->
                 <div class="user-profile">
                     <div class="user-avatar" id="profile-icon">
                         <?php 
-                        if (isset($_SESSION['PATIENT_ID'])) {
+                        if (isset($_SESSION['USER_TYPE']) && $_SESSION['USER_TYPE'] === 'admin') {
+                            echo isset($_SESSION['USER_NAME']) ? strtoupper(substr($_SESSION['USER_NAME'], 0, 2)) : 'AD';
+                        } else if (isset($_SESSION['PATIENT_ID'])) {
                             echo isset($_SESSION['USER_NAME']) ? strtoupper(substr($_SESSION['USER_NAME'], 0, 2)) : 'PA';
                         } else if (isset($_SESSION['DOCTOR_ID'])) {
                             echo isset($_SESSION['USER_NAME']) ? strtoupper(substr($_SESSION['USER_NAME'], 0, 2)) : 'DR';
@@ -417,7 +419,9 @@ if (session_status() === PHP_SESSION_NONE) {
                     <div class="user-info">
                         <div class="user-name">
                             <?php 
-                            if (isset($_SESSION['PATIENT_ID'])) {
+                            if (isset($_SESSION['USER_TYPE']) && $_SESSION['USER_TYPE'] === 'admin') {
+                                echo isset($_SESSION['USER_NAME']) ? htmlspecialchars($_SESSION['USER_NAME']) : 'Administrator';
+                            } else if (isset($_SESSION['PATIENT_ID'])) {
                                 echo isset($_SESSION['USER_NAME']) ? htmlspecialchars($_SESSION['USER_NAME']) : 'Patient';
                             } else if (isset($_SESSION['DOCTOR_ID'])) {
                                 echo isset($_SESSION['USER_NAME']) ? 'Dr. ' . htmlspecialchars($_SESSION['USER_NAME']) : 'Doctor';
@@ -429,7 +433,9 @@ if (session_status() === PHP_SESSION_NONE) {
                         <!-- USER TYPE - ALWAYS VISIBLE -->
                         <div class="user-type">
                             <?php 
-                            if (isset($_SESSION['PATIENT_ID'])) {
+                            if (isset($_SESSION['USER_TYPE']) && $_SESSION['USER_TYPE'] === 'admin') {
+                                echo 'Admin';
+                            } else if (isset($_SESSION['PATIENT_ID'])) {
                                 echo 'Patient';
                             } else if (isset($_SESSION['DOCTOR_ID'])) {
                                 echo 'Doctor';
@@ -446,7 +452,10 @@ if (session_status() === PHP_SESSION_NONE) {
                         $profile_link = '#';
                         $dashboard_link = '#';
                         
-                        if (isset($_SESSION['PATIENT_ID'])) {
+                        if (isset($_SESSION['USER_TYPE']) && $_SESSION['USER_TYPE'] === 'admin') {
+                            $profile_link = 'admin.php';
+                            $dashboard_link = 'admin.php';
+                        } else if (isset($_SESSION['PATIENT_ID'])) {
                             $profile_link = 'patient_profile.php';
                             $dashboard_link = 'patient.php';
                         } else if (isset($_SESSION['DOCTOR_ID'])) {
@@ -494,11 +503,13 @@ if (session_status() === PHP_SESSION_NONE) {
         <a href="aboutus.php">About Us</a>
         <a href="contactus.php">Contact</a>
         
-        <?php if (isset($_SESSION['PATIENT_ID']) || isset($_SESSION['DOCTOR_ID']) || isset($_SESSION['RECEPTIONIST_ID'])): ?>
+        <?php if (isset($_SESSION['PATIENT_ID']) || isset($_SESSION['DOCTOR_ID']) || isset($_SESSION['RECEPTIONIST_ID']) || (isset($_SESSION['LOGGED_IN']) && $_SESSION['LOGGED_IN'] === true && isset($_SESSION['USER_TYPE']) && $_SESSION['USER_TYPE'] === 'admin')): ?>
             <div class="mobile-user-profile">
                 <div class="mobile-user-avatar">
                     <?php 
-                    if (isset($_SESSION['PATIENT_ID'])) {
+                    if (isset($_SESSION['USER_TYPE']) && $_SESSION['USER_TYPE'] === 'admin') {
+                        echo isset($_SESSION['USER_NAME']) ? strtoupper(substr($_SESSION['USER_NAME'], 0, 2)) : 'AD';
+                    } else if (isset($_SESSION['PATIENT_ID'])) {
                         echo isset($_SESSION['USER_NAME']) ? strtoupper(substr($_SESSION['USER_NAME'], 0, 2)) : 'PA';
                     } else if (isset($_SESSION['DOCTOR_ID'])) {
                         echo isset($_SESSION['USER_NAME']) ? strtoupper(substr($_SESSION['USER_NAME'], 0, 2)) : 'DR';
@@ -510,7 +521,9 @@ if (session_status() === PHP_SESSION_NONE) {
                 <div class="mobile-user-info">
                     <div class="mobile-user-name">
                         <?php 
-                        if (isset($_SESSION['PATIENT_ID'])) {
+                        if (isset($_SESSION['USER_TYPE']) && $_SESSION['USER_TYPE'] === 'admin') {
+                            echo isset($_SESSION['USER_NAME']) ? htmlspecialchars($_SESSION['USER_NAME']) : 'Administrator';
+                        } else if (isset($_SESSION['PATIENT_ID'])) {
                             echo isset($_SESSION['USER_NAME']) ? htmlspecialchars($_SESSION['USER_NAME']) : 'Patient';
                         } else if (isset($_SESSION['DOCTOR_ID'])) {
                             echo isset($_SESSION['USER_NAME']) ? 'Dr. ' . htmlspecialchars($_SESSION['USER_NAME']) : 'Doctor';
@@ -521,7 +534,9 @@ if (session_status() === PHP_SESSION_NONE) {
                     </div>
                     <div class="mobile-user-type">
                         <?php 
-                        if (isset($_SESSION['PATIENT_ID'])) {
+                        if (isset($_SESSION['USER_TYPE']) && $_SESSION['USER_TYPE'] === 'admin') {
+                            echo 'Admin';
+                        } else if (isset($_SESSION['PATIENT_ID'])) {
                             echo 'Patient';
                         } else if (isset($_SESSION['DOCTOR_ID'])) {
                             echo 'Doctor';
@@ -533,6 +548,8 @@ if (session_status() === PHP_SESSION_NONE) {
                 </div>
             </div>
             <?php 
+            $profile_link = (isset($_SESSION['USER_TYPE']) && $_SESSION['USER_TYPE'] === 'admin') ? 'admin.php' : (isset($_SESSION['PATIENT_ID']) ? 'patient_profile.php' : (isset($_SESSION['DOCTOR_ID']) ? 'doctor_profile.php' : 'receptionist_profile.php'));
+            $dashboard_link = (isset($_SESSION['USER_TYPE']) && $_SESSION['USER_TYPE'] === 'admin') ? 'admin.php' : (isset($_SESSION['PATIENT_ID']) ? 'patient.php' : (isset($_SESSION['DOCTOR_ID']) ? 'doctor_dashboard.php' : 'receptionist.php'));
             echo '<a href="' . $profile_link . '">My Profile</a>';
             echo '<a href="' . $dashboard_link . '">Dashboard</a>';
             ?>

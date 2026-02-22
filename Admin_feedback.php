@@ -152,8 +152,6 @@ $adminName = $_SESSION['USER_NAME'] ?? 'Admin';
     <!-- TABLE -->
     <table>
         <tr>
-            <th>Feedback ID</th>
-            <th>Appointment ID</th>
             <th>Patient Name</th>
             <th>Doctor Name</th>
             <th>Rating</th>
@@ -190,8 +188,6 @@ $adminName = $_SESSION['USER_NAME'] ?? 'Admin';
                 }
 
                 echo "<tr>
-                    <td>{$row['FEEDBACK_ID']}</td>
-                    <td>{$row['APPOINTMENT_ID']}</td>
                     <td>{$row['p_first']} {$row['p_last']}</td>
                     <td>{$row['d_first']} {$row['d_last']}</td>
                     <td class='rating'>$stars</td>
@@ -199,7 +195,7 @@ $adminName = $_SESSION['USER_NAME'] ?? 'Admin';
                 </tr>";
             }
         } else {
-            echo "<tr><td colspan='6'>No feedback found</td></tr>";
+            echo "<tr><td colspan='5'>No feedback found</td></tr>";
         }
 
         mysqli_close($conn);

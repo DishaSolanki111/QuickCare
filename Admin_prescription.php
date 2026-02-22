@@ -2,7 +2,13 @@
     session_start();
     include 'config.php';
     
-    // Check authentication first
+    // Check if user is logged in and is an admin
+    if (!isset($_SESSION['LOGGED_IN']) || $_SESSION['LOGGED_IN'] !== true || $_SESSION['USER_TYPE'] !== 'admin') {
+        header("Location: admin_login.php");
+        exit();
+    }
+    
+    // Check authentication
    
   
     // ================= DOWNLOAD SINGLE PRESCRIPTION =================
@@ -31,7 +37,7 @@
         ");
 
         if (mysqli_num_rows($detail_q) === 0) {
-            header("Location: view_prescription.php?error=invalid_prescription");
+            header("Location: Admin_prescription.php?error=invalid_prescription");
             exit;
         }
 
@@ -60,7 +66,7 @@
     }
     
     // Only include sidebar and show page if NOT downloading
-    include 'Admin_sidebar.php';
+    include 'admin_sidebar.php';
     
    
 
@@ -878,7 +884,7 @@
                                                             Appointment: <?= date('M d, Y', strtotime($prescription['APPOINTMENT_DATE'])) ?> at <?= $prescription['APPOINTMENT_TIME'] ?>
                                                         </div>
                                                         <div class="prescription-actions">
-                                                            <form method="POST" action="view_prescription.php" style="display:inline">
+                                                            <form method="POST" action="Admin_prescription.php" style="display:inline">
                                                                 <input type="hidden" name="download" value="<?= $prescription['PRESCRIPTION_ID'] ?>">
                                                                 <button type="submit" class="btn-download">
                                                                     <i class="fas fa-download"></i>

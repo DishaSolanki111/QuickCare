@@ -177,8 +177,6 @@ $adminName = $_SESSION['USER_NAME'] ?? 'Admin';
     <!-- TABLE -->
     <table>
         <tr>
-            <th>Payment ID</th>
-            <th>Appointment ID</th>
             <th>Patient Name</th>
             <th>Amount</th>
             <th>Payment Date</th>
@@ -221,8 +219,6 @@ $adminName = $_SESSION['USER_NAME'] ?? 'Admin';
                     ? 'status-completed' : 'status-failed';
 
                 echo "<tr>
-                    <td>{$row['PAYMENT_ID']}</td>
-                    <td>{$row['APPOINTMENT_ID']}</td>
                     <td>{$row['FIRST_NAME']} {$row['LAST_NAME']}</td>
                     <td>₹".number_format($row['AMOUNT'],2)."</td>
                     <td>{$row['PAYMENT_DATE']}</td>
@@ -231,7 +227,7 @@ $adminName = $_SESSION['USER_NAME'] ?? 'Admin';
                 </tr>";
             }
         } else {
-            echo "<tr><td colspan='7'>No payments found</td></tr>";
+            echo "<tr><td colspan='6'>No payments found</td></tr>";
         }
 
         mysqli_close($conn);

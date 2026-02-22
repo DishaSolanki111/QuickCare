@@ -158,7 +158,6 @@ $adminName = $_SESSION['USER_NAME'] ?? 'Admin';
 
     <table>
         <tr>
-            <th>Appointment ID</th>
             <th>Patient Name</th>
             <th>Doctor Name</th>
             <th>Date</th>
@@ -201,7 +200,6 @@ $adminName = $_SESSION['USER_NAME'] ?? 'Admin';
                        (($row['STATUS']=="SCHEDULED") ? "status-scheduled" : "status-cancelled");
 
                 echo "<tr>
-                    <td>{$row['APPOINTMENT_ID']}</td>
                     <td>{$row['p_first']} {$row['p_last']}</td>
                     <td>{$row['d_first']} {$row['d_last']}</td>
                     <td>{$row['APPOINTMENT_DATE']}</td>
@@ -211,7 +209,7 @@ $adminName = $_SESSION['USER_NAME'] ?? 'Admin';
                 </tr>";
             }
         } else {
-            echo "<tr><td colspan='7'>No appointments found</td></tr>";
+            echo "<tr><td colspan='6'>No appointments found</td></tr>";
         }
 
         mysqli_close($conn);

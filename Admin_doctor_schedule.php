@@ -4,23 +4,9 @@ session_start();
 
 include 'config.php';
 
-// Handle schedule operations
+// Handle schedule update and delete (no create)
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    if (isset($_POST['create_schedule'])) {
-        $doctor_id = mysqli_real_escape_string($conn, $_POST['doctor_id']);
-        $start_time = mysqli_real_escape_string($conn, $_POST['start_time']);
-        $end_time = mysqli_real_escape_string($conn, $_POST['end_time']);
-        $available_day = mysqli_real_escape_string($conn, $_POST['available_day']);
-        
-        $insert_query = "INSERT INTO doctor_schedule_tbl (DOCTOR_ID, START_TIME, END_TIME, AVAILABLE_DAY) 
-                        VALUES ('$doctor_id', '$start_time', '$end_time', '$available_day')";
-        
-        if (mysqli_query($conn, $insert_query)) {
-            $success_message = "Schedule created successfully!";
-        } else {
-            $error_message = "Error creating schedule: " . mysqli_error($conn);
-        }
-    } elseif (isset($_POST['update_schedule'])) {
+    if (isset($_POST['update_schedule'])) {
         $schedule_id = mysqli_real_escape_string($conn, $_POST['schedule_id']);
         $doctor_id = mysqli_real_escape_string($conn, $_POST['doctor_id']);
         $start_time = mysqli_real_escape_string($conn, $_POST['start_time']);
@@ -40,10 +26,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } elseif (isset($_POST['delete_schedule'])) {
         $schedule_id = mysqli_real_escape_string($conn, $_POST['schedule_id']);
         
+        // First delete related appointments (and their payments - payment_tbl blocks appointment delete)
+        // feedback, prescription, appointment_reminder have ON DELETE CASCADE from appointment_tbl
+        $appointments = mysqli_query($conn, "SELECT APPOINTMENT_ID FROM appointment_tbl WHERE SCHEDULE_ID = '$schedule_id'");
+        if ($appointments && mysqli_num_rows($appointments) > 0) {
+            $app_ids = [];
+            while ($row = mysqli_fetch_assoc($appointments)) {
+                $app_ids[] = $row['APPOINTMENT_ID'];
+            }
+            $app_ids_str = implode(',', $app_ids);
+            // Delete payments first (no CASCADE on appointment delete)
+            mysqli_query($conn, "DELETE FROM payment_tbl WHERE APPOINTMENT_ID IN ($app_ids_str)");
+            // Delete appointments (CASCADE will handle feedback, prescription, appointment_reminder)
+            mysqli_query($conn, "DELETE FROM appointment_tbl WHERE SCHEDULE_ID = '$schedule_id'");
+        }
+        
         $delete_query = "DELETE FROM doctor_schedule_tbl WHERE SCHEDULE_ID = '$schedule_id'";
         
         if (mysqli_query($conn, $delete_query)) {
-            $success_message = "Schedule deleted successfully!";
+            $success_message = "Schedule and related appointments deleted successfully!";
         } else {
             $error_message = "Error deleting schedule: " . mysqli_error($conn);
         }
@@ -787,13 +788,10 @@ if ($doctors_query && mysqli_num_rows($doctors_query) > 0) {
             <h1 class="page-title">
                 <i class="bi bi-calendar-week"></i> Doctor Schedules
             </h1>
-            <button class="add-schedule-btn" data-bs-toggle="modal" data-bs-target="#createScheduleModal">
-                <i class="bi bi-plus-circle"></i> Create New Schedule
-            </button>
         </div>
         <div class="search-bar-container">
     
-    <form method="GET" action="doctor_schedule_recep.php" class="search-form">
+    <form method="GET" action="Admin_doctor_schedule.php" class="search-form">
         <!-- Doctor Name Search -->
         <div class="search-field">
             <label for="doctor_name" class="field-label">
@@ -845,7 +843,7 @@ if ($doctors_query && mysqli_num_rows($doctors_query) > 0) {
             <button type="submit" class="btn-search">
                 <i class="bi bi-search"></i> Search
             </button>
-            <a href="doctor_schedule_recep.php" class="btn-clear">
+            <a href="Admin_doctor_schedule.php" class="btn-clear">
                 <i class="bi bi-arrow-clockwise"></i> Clear
             </a>
         </div>
@@ -935,82 +933,6 @@ if ($doctors_query && mysqli_num_rows($doctors_query) > 0) {
         <?php endif; ?>
     </div>
     
-    <!-- Create Schedule Modal -->
-    <div class="modal fade" id="createScheduleModal" tabindex="-1" aria-labelledby="createScheduleModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="createScheduleModalLabel">
-                        <i class="bi bi-plus-circle"></i> Create New Schedule
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form method="POST" action="doctor_schedule_recep.php">
-                        <input type="hidden" name="create_schedule" value="1">
-                        
-                        <div class="mb-3">
-                            <label for="doctor_id" class="form-label">Select Doctor</label>
-                            <select class="form-select" id="doctor_id" name="doctor_id" required>
-                                <option value="">Choose a doctor...</option>
-                                <?php
-                                $doctors_dropdown_query = mysqli_query($conn, "
-                                    SELECT d.*, s.SPECIALISATION_NAME 
-                                    FROM doctor_tbl d
-                                    JOIN specialisation_tbl s ON d.SPECIALISATION_ID = s.SPECIALISATION_ID
-                                    ORDER BY s.SPECIALISATION_NAME, d.FIRST_NAME
-                                ");
-                                if (mysqli_num_rows($doctors_dropdown_query) > 0) {
-                                    while ($doctor = mysqli_fetch_assoc($doctors_dropdown_query)) {
-                                        echo '<option value="' . $doctor['DOCTOR_ID'] . '">' . 
-                                             'Dr. ' . htmlspecialchars($doctor['FIRST_NAME'] . ' ' . $doctor['LAST_NAME']) . 
-                                             ' (' . htmlspecialchars($doctor['SPECIALISATION_NAME']) . ')</option>';
-                                    }
-                                }
-                                ?>
-                            </select>
-                        </div>
-                        
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="start_time" class="form-label">Start Time</label>
-                                <input type="time" class="form-control" id="start_time" name="start_time" required>
-                            </div>
-                            
-                            <div class="col-md-6 mb-3">
-                                <label for="end_time" class="form-label">End Time</label>
-                                <input type="time" class="form-control" id="end_time" name="end_time" required>
-                            </div>
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label for="available_day" class="form-label">Available Day</label>
-                            <select class="form-select" id="available_day" name="available_day" required>
-                                <option value="">Select day...</option>
-                                <option value="MON">Monday</option>
-                                <option value="TUE">Tuesday</option>
-                                <option value="WED">Wednesday</option>
-                                <option value="THUR">Thursday</option>
-                                <option value="FRI">Friday</option>
-                                <option value="SAT">Saturday</option>
-                                <option value="SUN">Sunday</option>
-                            </select>
-                        </div>
-                        
-                        <div class="text-end">
-                            <button type="submit" class="btn btn-success me-2">
-                                <i class="bi bi-check-circle"></i> Create Schedule
-                            </button>
-                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
-                                <i class="bi bi-x-circle"></i> Cancel
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-    
     <!-- Edit Schedule Modal -->
     <div class="modal fade" id="editScheduleModal" tabindex="-1" aria-labelledby="editScheduleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -1022,7 +944,7 @@ if ($doctors_query && mysqli_num_rows($doctors_query) > 0) {
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form method="POST" action="doctor_schedule_recep.php">
+                    <form method="POST" action="Admin_doctor_schedule.php">
                         <input type="hidden" id="edit_schedule_id" name="schedule_id">
                         <input type="hidden" name="update_schedule" value="1">
                         
@@ -1090,7 +1012,7 @@ if ($doctors_query && mysqli_num_rows($doctors_query) > 0) {
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        ocument.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function() {
     // Auto-format date input
     const dateInput = document.getElementById('schedule_date');
     if (dateInput) {
@@ -1156,7 +1078,6 @@ if ($doctors_query && mysqli_num_rows($doctors_query) > 0) {
             document.getElementById('edit_end_time').value = endTime;
             document.getElementById('edit_available_day').value = availableDay;
             
-            // Show the modal
             const editModal = new bootstrap.Modal(document.getElementById('editScheduleModal'));
             editModal.show();
         }

@@ -398,7 +398,6 @@ if (isset($_POST['action']) && $_POST['action'] == 'delete' && isset($_POST['id'
 
     <table>
         <tr>
-            <th>ID</th>
             <th>Name</th>
             <th>Date of Birth</th>
             <th>Gender</th>
@@ -433,7 +432,6 @@ if (isset($_POST['action']) && $_POST['action'] == 'delete' && isset($_POST['id'
         if ($result && mysqli_num_rows($result) > 0) {
             while ($row = mysqli_fetch_assoc($result)) {
                 echo "<tr>
-                    <td>{$row['PATIENT_ID']}</td>
                     <td>{$row['FIRST_NAME']} {$row['LAST_NAME']}</td>
                     <td>{$row['DOB']}</td>
                     <td>{$row['GENDER']}</td>
@@ -449,7 +447,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'delete' && isset($_POST['id'
                 </tr>";
             }
         } else {
-            echo "<tr><td colspan='8'>No patients found</td></tr>";
+            echo "<tr><td colspan='7'>No patients found</td></tr>";
         }
 
         mysqli_close($conn);
@@ -462,7 +460,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'delete' && isset($_POST['id'
     <div class="modal-content">
         <span class="close" onclick="closeEditModal()">&times;</span>
         <h2>Edit Patient</h2>
-        <form id="editForm" method="post" action="admin_patient.php">
+        <form id="editForm" method="post" action="Admin_patient.php">
             <input type="hidden" name="action" value="edit_patient">
             <input type="hidden" id="edit_patient_id" name="patient_id">
             

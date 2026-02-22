@@ -130,7 +130,7 @@ body {
 
     <a href="Admin_patient.php" class="<?= ($currentPage == 'Admin_patient.php') ? 'active' : '' ?>">Patients</a>
 
-    <a href="Admin_Doctor_schedule.php" class="<?= ($currentPage == 'Admin_Doctor_schedule.php') ? 'active' : '' ?>">Doctor Schedule</a>
+    <a href="Admin_doctor_schedule.php" class="<?= ($currentPage == 'Admin_doctor_schedule.php') ? 'active' : '' ?>">Doctor Schedule</a>
 
 
 
