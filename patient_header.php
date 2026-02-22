@@ -5,7 +5,7 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 // Fetch reminder queries if not set (so reminders work on every page)
-if ((!isset($reminder_query) || !isset($medicine_reminder_query)) && isset($patient, $conn) && !empty($patient['PATIENT_ID'])) {
+if ((!isset($reminder_query) || !isset($medicine_reminder_query) || !isset($cancellation_query)) && isset($patient, $conn) && !empty($patient['PATIENT_ID'])) {
     $pid = (int) $patient['PATIENT_ID'];
     if (!isset($reminder_query)) {
         $reminder_query = @mysqli_query($conn, "
@@ -34,6 +34,16 @@ if ((!isset($reminder_query) || !isset($medicine_reminder_query)) && isset($pati
             LIMIT 5
         ");
     }
+    // Cancellation notifications (stored in medicine_reminder_tbl with [CANCELLED] prefix)
+    if (!isset($cancellation_query)) {
+        $cancellation_query = @mysqli_query($conn, "
+            SELECT REMARKS, REMINDER_TIME, START_DATE
+            FROM medicine_reminder_tbl
+            WHERE PATIENT_ID = $pid AND REMARKS LIKE '[CANCELLED]%'
+            ORDER BY START_DATE DESC, REMINDER_TIME DESC
+            LIMIT 10
+        ");
+    }
 }
 
 // Expect $patient (and optional $page_title, $reminder_query, $medicine_reminder_query) to be set
@@ -51,10 +61,11 @@ if (!empty($patient['FIRST_NAME']) || !empty($patient['LAST_NAME'])) {
     $initials = 'PT';
 }
 
-// Notification count (appointment + medicine reminders)
+// Notification count (appointment + medicine + cancellation reminders)
 $reminder_count = isset($reminder_query) && $reminder_query ? mysqli_num_rows($reminder_query) : 0;
 $medicine_reminder_count = isset($medicine_reminder_query) && $medicine_reminder_query ? mysqli_num_rows($medicine_reminder_query) : 0;
-$reminder_count += $medicine_reminder_count;
+$cancellation_count = isset($cancellation_query) && $cancellation_query ? mysqli_num_rows($cancellation_query) : 0;
+$reminder_count += $medicine_reminder_count + $cancellation_count;
 ?>
 
 <header class="topbar">
@@ -122,6 +133,32 @@ $reminder_count += $medicine_reminder_count;
                                         <div class="notification-time">
                                             <?php echo date('M d, Y h:i A', strtotime($med['REMINDER_DATE'] . ' ' . $med['REMINDER_TIME'])); ?>
                                         </div>
+                                    </div>
+                                </div>
+                            <?php endwhile; ?>
+                        <?php endif; ?>
+                        <?php if (isset($cancellation_query) && $cancellation_query): ?>
+                            <?php while ($cn = mysqli_fetch_assoc($cancellation_query)): 
+                                $msg = str_replace('[CANCELLED] ', '', $cn['REMARKS']);
+                                $date_time = '';
+                                if (preg_match('/ on (.+?) was cancelled/', $msg, $m)) {
+                                    $date_time = trim($m[1]);
+                                }
+                            ?>
+                                <div class="notification-item">
+                                    <div class="notification-icon" style="background: #fee2e2; color: #dc2626;">
+                                        <i class="fas fa-calendar-times"></i>
+                                    </div>
+                                    <div class="notification-content">
+                                        <div class="notification-title">Appointment Cancelled</div>
+                                        <div class="notification-message">
+                                            <?php echo htmlspecialchars($msg); ?>
+                                        </div>
+                                        <?php if ($date_time): ?>
+                                        <div class="notification-time" style="font-weight:600; color:#dc2626;">
+                                            <i class="fas fa-calendar-alt"></i> <?php echo htmlspecialchars($date_time); ?>
+                                        </div>
+                                        <?php endif; ?>
                                     </div>
                                 </div>
                             <?php endwhile; ?>
@@ -263,6 +300,7 @@ $reminder_count += $medicine_reminder_count;
 .notification-message {
     font-size: 12px;
     color: #4b5563;
+    white-space: normal;
 }
 
 .notification-time {
@@ -286,13 +324,14 @@ $reminder_count += $medicine_reminder_count;
     position: fixed;
     bottom: 20px;
     right: 20px;
-    background: #1a3a5f;
-    color: white;
-    padding: 16px 24px;
+    background: #ffffff;
+    color: #333;
+    padding: 12px 18px;
     border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    border: 1px solid #e5e7eb;
     z-index: 9999;
-    max-width: 320px;
+    max-width: 280px;
 }
 .notification-popup.show {
     display: block;
@@ -301,11 +340,11 @@ $reminder_count += $medicine_reminder_count;
 
 <!-- Notification popup (appointment + medicine reminders) -->
 <div class="notification-popup" id="notificationPopup">
-    <div style="display:flex; align-items:center; gap:12px;">
-        <i class="fas fa-bell" style="font-size:24px;"></i>
-        <div>
-            <div id="notificationPopupMessage" style="font-weight:500;"></div>
-            <button onclick="document.getElementById('notificationPopup').classList.remove('show')" style="margin-top:8px; background:rgba(255,255,255,0.2); border:none; color:white; padding:4px 12px; border-radius:4px; cursor:pointer;">Close</button>
+    <div style="display:flex; align-items:flex-start; gap:10px;">
+        <i class="fas fa-bell" style="font-size:18px; color:#1a3a5f;"></i>
+        <div style="flex:1;">
+            <div id="notificationPopupMessage" style="font-weight:500; font-size:13px; color:#333;"></div>
+            <button onclick="document.getElementById('notificationPopup').classList.remove('show')" style="margin-top:8px; background:#f3f4f6; border:1px solid #e5e7eb; color:#374151; padding:4px 10px; border-radius:4px; cursor:pointer; font-size:12px;">Close</button>
         </div>
     </div>
 </div>
@@ -323,33 +362,5 @@ $reminder_count += $medicine_reminder_count;
         });
     }
     window.toggleNotifications = toggleNotifications;
-    
-    function checkReminders() {
-        fetch('check_reminders.php')
-            .then(function(r){ return r.json(); })
-            .then(function(data) {
-                if (data.status === 'success' && data.reminders && data.reminders.length > 0) {
-                    data.reminders.forEach(function(rem) {
-                        var el = document.getElementById('notificationPopupMessage');
-                        var pop = document.getElementById('notificationPopup');
-                        if (el && pop) {
-                            el.textContent = rem.message;
-                            pop.classList.add('show');
-                            setTimeout(function(){ pop.classList.remove('show'); }, 5000);
-                        }
-                    });
-                }
-            })
-            .catch(function(e){ console.error('Error checking reminders:', e); });
-    }
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', function() {
-            checkReminders();
-            setInterval(checkReminders, 60 * 1000);
-        });
-    } else {
-        checkReminders();
-        setInterval(checkReminders, 60 * 1000);
-    }
 })();
 </script>

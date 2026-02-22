@@ -66,5 +66,19 @@ if ($med_result) {
     }
 }
 
+// Cancellation notifications (medicine_reminder_tbl with [CANCELLED] prefix)
+$cn_query = @mysqli_query($conn, "SELECT REMARKS, START_DATE, REMINDER_TIME FROM medicine_reminder_tbl WHERE PATIENT_ID = $patient_id AND REMARKS LIKE '[CANCELLED]%' ORDER BY START_DATE DESC, REMINDER_TIME DESC LIMIT 5");
+if ($cn_query && mysqli_num_rows($cn_query) > 0) {
+    while ($row = mysqli_fetch_assoc($cn_query)) {
+        $reminders[] = [
+            'message' => str_replace('[CANCELLED] ', '', $row['REMARKS']),
+            'date' => $row['START_DATE'],
+            'time' => $row['REMINDER_TIME'],
+            'doctor' => '',
+            'type' => 'cancellation'
+        ];
+    }
+}
+
 echo json_encode(['status' => 'success', 'reminders' => $reminders]);
 ?>

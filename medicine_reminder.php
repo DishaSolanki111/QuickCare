@@ -599,16 +599,18 @@ if (!empty($prescription_id)) {
             <?php
             if (mysqli_num_rows($reminders_query) > 0) {
                 while ($reminder = mysqli_fetch_assoc($reminders_query)) {
+                    $is_cancelled = !empty($reminder['REMARKS']) && strpos($reminder['REMARKS'], '[CANCELLED]') === 0;
                     ?>
                     <div class="reminder-card">
-                        <div class="reminder-icon">
-                            <i class="fas fa-pills"></i>
+                        <div class="reminder-icon" style="<?php echo $is_cancelled ? 'background: rgba(220, 38, 38, 0.1); color: #dc2626;' : ''; ?>">
+                            <i class="fas <?php echo $is_cancelled ? 'fa-calendar-times' : 'fa-pills'; ?>"></i>
                         </div>
                         <div class="reminder-content">
-                            <h4><?php echo htmlspecialchars($reminder['MED_NAME']); ?></h4>
+                            <h4><?php echo $is_cancelled ? 'Appointment Cancelled' : htmlspecialchars($reminder['MED_NAME']); ?></h4>
                             <?php if (!empty($reminder['REMARKS'])): ?>
-                                <p><strong>Notes:</strong> <?php echo htmlspecialchars($reminder['REMARKS']); ?></p>
+                                <p><?php echo $is_cancelled ? '' : '<strong>Notes:</strong> '; ?><?php echo htmlspecialchars(str_replace('[CANCELLED] ', '', $reminder['REMARKS'])); ?></p>
                             <?php endif; ?>
+                            <?php if (!$is_cancelled): ?>
                             <div class="reminder-time">
                                 <i class="far fa-calendar-alt"></i>
                                 <?php echo $reminder['START_DATE'] ? date('d M Y', strtotime($reminder['START_DATE'])) : '—'; ?>
@@ -618,11 +620,14 @@ if (!empty($prescription_id)) {
                                 <i class="far fa-clock"></i>
                                 <?php echo date('h:i A', strtotime($reminder['REMINDER_TIME'])); ?>
                             </div>
+                            <?php endif; ?>
                         </div>
                         <div class="btn-group">
+                            <?php if (!$is_cancelled): ?>
                             <button class="btn btn-primary" onclick="openEditModal(<?php echo $reminder['MEDICINE_REMINDER_ID']; ?>, <?php echo json_encode($reminder['MED_NAME']); ?>, <?php echo json_encode($reminder['START_DATE']); ?>, <?php echo json_encode($reminder['END_DATE']); ?>, <?php echo json_encode($reminder['REMINDER_TIME']); ?>, <?php echo json_encode($reminder['REMARKS']); ?>)">
                                 <i class="fas fa-edit"></i>
                             </button>
+                            <?php endif; ?>
                             <form method="POST" style="display: inline;">
                                 <input type="hidden" name="reminder_id" value="<?php echo $reminder['MEDICINE_REMINDER_ID']; ?>">
                                 <button type="submit" name="delete_reminder" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this reminder?')">

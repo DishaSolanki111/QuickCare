@@ -80,20 +80,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_schedule'])) {
     $update_stmt->close();
 }
 
-// ================== HANDLE SCHEDULE DELETION ==================
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_schedule'])) {
-    $schedule_id = $_POST['schedule_id'];
-    
-    $delete_sql = "DELETE FROM doctor_schedule_tbl WHERE SCHEDULE_ID = ? AND DOCTOR_ID = ?";
-    $delete_stmt = $conn->prepare($delete_sql);
-    $delete_stmt->bind_param("ii", $schedule_id, $doctor_id);
-    
-    if ($delete_stmt->execute()) {
-        $success_message = "Schedule deleted successfully!";
-    } else {
-        $error_message = "Error deleting schedule: " . $conn->error;
-    }
-    $delete_stmt->close();
+// Show success message from redirect (e.g. after delete)
+if (isset($_SESSION['schedule_success_message'])) {
+    $success_message = $_SESSION['schedule_success_message'];
+    unset($_SESSION['schedule_success_message']);
 }
 
 // ================== FETCH DOCTOR SCHEDULE ==================
@@ -102,7 +92,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_schedule'])) {
  $schedule_stmt->bind_param("i", $doctor_id);
  $schedule_stmt->execute();
  $schedule_result = $schedule_stmt->get_result();
-
  $conn->close();
 ?>
 
@@ -581,12 +570,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_schedule'])) {
                                 <button class="btn btn-warning" onclick="openEditModal(<?php echo $schedule['SCHEDULE_ID']; ?>, '<?php echo $schedule['START_TIME']; ?>', '<?php echo $schedule['END_TIME']; ?>', '<?php echo $schedule['AVAILABLE_DAY']; ?>')">
                                     <i class="fas fa-edit"></i> Edit
                                 </button>
-                                <form method="POST" style="display: inline;">
-                                    <input type="hidden" name="schedule_id" value="<?php echo $schedule['SCHEDULE_ID']; ?>">
-                                    <button type="submit" name="delete_schedule" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this schedule?')">
-                                        <i class="fas fa-trash"></i> Delete
-                                    </button>
-                                </form>
+                                <button type="button" class="btn btn-danger" onclick="openDeleteOptionsModal(<?php echo $schedule['SCHEDULE_ID']; ?>, '<?php echo addslashes($day_name); ?>')">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
                             </div>
                         </div>
                     <?php endwhile; ?>
@@ -598,6 +584,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_schedule'])) {
                     <p>You haven't added any schedule yet. Click the "Add Schedule" button to get started.</p>
                 </div>
             <?php endif; ?>
+        </div>
+    </div>
+    
+    <!-- Delete Schedule Options Modal -->
+    <div id="deleteOptionsModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeDeleteOptionsModal()">&times;</span>
+            <h2><i class="fas fa-trash-alt"></i> Delete Schedule</h2>
+            <p style="margin-bottom: 20px; color: #555;">Choose how you want to delete this schedule:</p>
+            <div style="display: flex; flex-direction: column; gap: 15px;">
+                <div style="border: 1px solid #ddd; border-radius: 8px; padding: 15px; background: #f9f9f9;">
+                    <strong style="color: var(--danger-color);">Option 1: Delete entire schedule</strong>
+                    <p style="margin: 8px 0 12px 0; font-size: 14px; color: #666;">Remove the entire recurring schedule for <span id="deleteDayName"></span> and <strong>all appointments</strong> booked under it. Affected patients will be notified.</p>
+                    <form method="POST" action="delete_schedule_entire.php" style="display: inline;">
+                        <input type="hidden" name="schedule_id" id="delete_schedule_id_entire" value="">
+                        <button type="submit" class="btn btn-danger" onclick="return confirm('This will delete the entire schedule and ALL appointments. Affected patients will be notified. Continue?')">
+                            <i class="fas fa-trash"></i> Delete Entire Schedule
+                        </button>
+                    </form>
+                </div>
+                <div style="border: 1px solid #ddd; border-radius: 8px; padding: 15px; background: #f9f9f9;">
+                    <strong style="color: var(--warning-color);">Option 2: Delete for particular dates & times</strong>
+                    <p style="margin: 8px 0 12px 0; font-size: 14px; color: #666;">Select specific dates and times when you will be unavailable. Only appointments at those slots will be cancelled. Schedule stays active.</p>
+                    <a href="#" id="deleteParticularLink" class="btn btn-warning">
+                        <i class="fas fa-calendar-times"></i> Select Dates & Times to Remove
+                    </a>
+                </div>
+            </div>
+            <button type="button" class="btn btn-secondary" style="margin-top: 15px; background: #6c757d; color: white;" onclick="closeDeleteOptionsModal()">Cancel</button>
         </div>
     </div>
     
@@ -702,6 +717,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_schedule'])) {
             document.getElementById('editModal').style.display = 'none';
         }
         
+        function openDeleteOptionsModal(scheduleId, dayName) {
+            document.getElementById('delete_schedule_id_entire').value = scheduleId;
+            document.getElementById('deleteDayName').textContent = dayName;
+            document.getElementById('deleteParticularLink').href = 'delete_schedule_slots.php?schedule_id=' + scheduleId;
+            document.getElementById('deleteOptionsModal').style.display = 'block';
+        }
+        
+        function closeDeleteOptionsModal() {
+            document.getElementById('deleteOptionsModal').style.display = 'none';
+        }
+        
         // Mobile menu toggle
         document.addEventListener('DOMContentLoaded', function() {
             const menuToggle = document.getElementById('menuToggle');
@@ -724,13 +750,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_schedule'])) {
             window.onclick = function(event) {
                 const addModal = document.getElementById('addModal');
                 const editModal = document.getElementById('editModal');
+                const deleteOptionsModal = document.getElementById('deleteOptionsModal');
                 
-                if (event.target == addModal) {
-                    addModal.style.display = 'none';
-                }
-                if (event.target == editModal) {
-                    editModal.style.display = 'none';
-                }
+                if (event.target == addModal) addModal.style.display = 'none';
+                if (event.target == editModal) editModal.style.display = 'none';
+                if (event.target == deleteOptionsModal) deleteOptionsModal.style.display = 'none';
             }
         });
     </script>
