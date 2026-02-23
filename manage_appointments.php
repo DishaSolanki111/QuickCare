@@ -16,14 +16,30 @@ include 'config.php';
 
 // Handle appointment cancellation
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cancel_appointment'])) {
-    $appointment_id = mysqli_real_escape_string($conn, $_POST['appointment_id']);
-    
-    $cancel_query = "UPDATE appointment_tbl SET STATUS = 'CANCELLED' WHERE APPOINTMENT_ID = '$appointment_id' AND PATIENT_ID = '$patient_id'";
-    
-    if (mysqli_query($conn, $cancel_query)) {
-        $success_message = "Appointment cancelled successfully!";
+    $appointment_id = (int) ($_POST['appointment_id'] ?? 0);
+
+    if ($appointment_id > 0) {
+        $appt_row = mysqli_fetch_assoc(mysqli_query($conn, "SELECT DOCTOR_ID, APPOINTMENT_DATE, APPOINTMENT_TIME FROM appointment_tbl WHERE APPOINTMENT_ID = $appointment_id AND PATIENT_ID = '$patient_id' AND STATUS = 'SCHEDULED' LIMIT 1"));
+        $cancel_query = "UPDATE appointment_tbl SET STATUS = 'CANCELLED' WHERE APPOINTMENT_ID = $appointment_id AND PATIENT_ID = '$patient_id'";
+
+        if (mysqli_query($conn, $cancel_query)) {
+            $success_message = "Appointment cancelled successfully!";
+            if ($appt_row) {
+                $patient_name = trim($patient['FIRST_NAME'] . ' ' . $patient['LAST_NAME']);
+                $date_time = date('M d, Y', strtotime($appt_row['APPOINTMENT_DATE'])) . ' at ' . date('h:i A', strtotime($appt_row['APPOINTMENT_TIME']));
+                $msg = "[CANCELLED_BY_PATIENT] " . $patient_name . " cancelled the appointment for " . $date_time . ".";
+                $recep_id = 1;
+                $reminder_time = date('H:i:s');
+                $ins = $conn->prepare("INSERT INTO appointment_reminder_tbl (RECEPTIONIST_ID, APPOINTMENT_ID, REMINDER_TIME, REMARKS) VALUES (?, ?, ?, ?)");
+                $ins->bind_param("iiss", $recep_id, $appointment_id, $reminder_time, $msg);
+                $ins->execute();
+                $ins->close();
+            }
+        } else {
+            $error_message = "Error cancelling appointment: " . mysqli_error($conn);
+        }
     } else {
-        $error_message = "Error cancelling appointment: " . mysqli_error($conn);
+        $error_message = "Invalid appointment.";
     }
 }
 

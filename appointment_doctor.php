@@ -37,19 +37,48 @@ if ($doc_result->num_rows === 1) {
 
 // ================== HANDLE APPOINTMENT STATUS UPDATE ==================
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_status'])) {
-    $appointment_id = $_POST['appointment_id'];
-    $status = $_POST['status'];
-    
-    $update_sql = "UPDATE appointment_tbl SET STATUS = ? WHERE APPOINTMENT_ID = ? AND DOCTOR_ID = ?";
-    $update_stmt = $conn->prepare($update_sql);
-    $update_stmt->bind_param("sii", $status, $appointment_id, $doctor_id);
-    
-    if ($update_stmt->execute()) {
-        $success_message = "Appointment status updated successfully!";
-    } else {
+    $appointment_id = isset($_POST['appointment_id']) ? (int) $_POST['appointment_id'] : 0;
+    $status = isset($_POST['status']) ? trim($_POST['status']) : '';
+
+    if ($appointment_id > 0 && in_array($status, ['COMPLETED', 'CANCELLED'], true)) {
+        $update_sql = "UPDATE appointment_tbl SET STATUS = ? WHERE APPOINTMENT_ID = ? AND DOCTOR_ID = ?";
+        $update_stmt = $conn->prepare($update_sql);
+        $update_stmt->bind_param("sii", $status, $appointment_id, $doctor_id);
+
+        if ($update_stmt->execute()) {
+            $_SESSION['APPOINTMENT_STATUS_SUCCESS'] = $status === 'COMPLETED'
+                ? "Appointment marked as completed. It now appears under Past Appointments."
+                : "Appointment cancelled.";
+            $update_stmt->close();
+
+            if ($status === 'CANCELLED') {
+                $row = $conn->query("SELECT PATIENT_ID, APPOINTMENT_DATE, APPOINTMENT_TIME FROM appointment_tbl WHERE APPOINTMENT_ID = " . (int)$appointment_id . " AND DOCTOR_ID = " . (int)$doctor_id)->fetch_assoc();
+                if ($row) {
+                    $doc_name_r = $conn->query("SELECT FIRST_NAME, LAST_NAME FROM doctor_tbl WHERE DOCTOR_ID = " . (int)$doctor_id);
+                    $doctor_name_notif = $doc_name_r && ($dn = $doc_name_r->fetch_assoc()) ? 'Dr. ' . trim($dn['FIRST_NAME'] . ' ' . $dn['LAST_NAME']) : 'your doctor';
+                    $date_time = date('M d, Y', strtotime($row['APPOINTMENT_DATE'])) . ' at ' . date('h:i A', strtotime($row['APPOINTMENT_TIME']));
+                    $msg = "[CANCELLED] Your appointment with " . $doctor_name_notif . " on " . $date_time . " was cancelled by the doctor. Please book a new appointment if needed.";
+                    $med_id = 1;
+                    $med_r = $conn->query("SELECT MEDICINE_ID FROM medicine_tbl ORDER BY MEDICINE_ID ASC LIMIT 1");
+                    if ($med_r && ($mr = $med_r->fetch_assoc())) $med_id = (int)$mr['MEDICINE_ID'];
+                    $today = date('Y-m-d');
+                    $now = date('H:i:s');
+                    $ins = $conn->prepare("INSERT INTO medicine_reminder_tbl (MEDICINE_ID, CREATOR_ROLE, CREATOR_ID, PATIENT_ID, START_DATE, END_DATE, REMINDER_TIME, REMARKS) VALUES (?, 'RECEPTIONIST', 1, ?, ?, ?, ?, ?)");
+                    $pat_id = (int) $row['PATIENT_ID'];
+                    $ins->bind_param("iisssss", $med_id, $pat_id, $today, $today, $now, $msg);
+                    $ins->execute();
+                    $ins->close();
+                }
+            }
+
+            header('Location: appointment_doctor.php' . ($status === 'COMPLETED' ? '?tab=past' : ''));
+            exit;
+        }
         $error_message = "Error updating appointment status: " . $conn->error;
+        $update_stmt->close();
+    } else {
+        $error_message = "Invalid request.";
     }
-    $update_stmt->close();
 }
 
 // Reschedule flash messages
@@ -60,6 +89,11 @@ if (isset($_SESSION['RESCHEDULE_SUCCESS'])) {
 if (isset($_SESSION['RESCHEDULE_ERROR'])) {
     $error_message = $_SESSION['RESCHEDULE_ERROR'];
     unset($_SESSION['RESCHEDULE_ERROR']);
+}
+// Status update flash (Mark as Completed / Cancel)
+if (isset($_SESSION['APPOINTMENT_STATUS_SUCCESS'])) {
+    $success_message = $_SESSION['APPOINTMENT_STATUS_SUCCESS'];
+    unset($_SESSION['APPOINTMENT_STATUS_SUCCESS']);
 }
 
 // ================== FETCH APPOINTMENTS ==================
@@ -128,6 +162,8 @@ if ($past_result->num_rows > 0) {
     }
 }
  $past_stmt->close();
+
+$active_tab = (isset($_GET['tab']) && in_array($_GET['tab'], ['today', 'upcoming', 'past'], true)) ? $_GET['tab'] : 'today';
 
  $conn->close();
 ?>
@@ -608,13 +644,13 @@ if ($past_result->num_rows > 0) {
             
             <!-- Tabs -->
             <div class="tabs">
-                <div class="tab active" data-tab="today">Today's Appointments</div>
-                <div class="tab" data-tab="upcoming">Upcoming</div>
-                <div class="tab" data-tab="past">Past Appointments</div>
+                <div class="tab <?= $active_tab === 'today' ? 'active' : '' ?>" data-tab="today">Today's Appointments</div>
+                <div class="tab <?= $active_tab === 'upcoming' ? 'active' : '' ?>" data-tab="upcoming">Upcoming</div>
+                <div class="tab <?= $active_tab === 'past' ? 'active' : '' ?>" data-tab="past">Past Appointments</div>
             </div>
             
             <!-- Tab Content -->
-            <div class="tab-content active" id="today">
+            <div class="tab-content <?= $active_tab === 'today' ? 'active' : '' ?>" id="today">
                 <?php if (count($today_appointments) > 0): ?>
                     <?php foreach ($today_appointments as $appointment): ?>
                         <div class="appointment-card">
@@ -685,7 +721,7 @@ if ($past_result->num_rows > 0) {
                 <?php endif; ?>
             </div>
             
-            <div class="tab-content" id="upcoming">
+            <div class="tab-content <?= $active_tab === 'upcoming' ? 'active' : '' ?>" id="upcoming">
                 <?php if (count($upcoming_appointments) > 0): ?>
                     <?php foreach ($upcoming_appointments as $appointment): ?>
                         <div class="appointment-card">
@@ -740,7 +776,7 @@ if ($past_result->num_rows > 0) {
                 <?php endif; ?>
             </div>
             
-            <div class="tab-content" id="past">
+            <div class="tab-content <?= $active_tab === 'past' ? 'active' : '' ?>" id="past">
                 <?php if (count($past_appointments) > 0): ?>
                     <?php foreach ($past_appointments as $appointment): ?>
                         <div class="appointment-card">

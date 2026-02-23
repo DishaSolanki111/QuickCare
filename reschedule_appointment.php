@@ -108,6 +108,27 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
     if ($update_stmt->execute()) {
         $_SESSION['APPOINTMENT_SUCCESS'] = "Appointment rescheduled successfully.";
+
+        // Notify doctor: insert reschedule notification for doctor dashboard
+        $pat_stmt = $conn->prepare("SELECT FIRST_NAME, LAST_NAME FROM patient_tbl WHERE PATIENT_ID = ?");
+        $pat_stmt->bind_param("i", $patient_id);
+        $pat_stmt->execute();
+        $pat_res = $pat_stmt->get_result();
+        $patient_name = 'A patient';
+        if ($pat_res && $pat_row = $pat_res->fetch_assoc()) {
+            $patient_name = trim($pat_row['FIRST_NAME'] . ' ' . $pat_row['LAST_NAME']);
+        }
+        $pat_stmt->close();
+
+        $new_date_fmt = date('F d, Y', strtotime($new_date));
+        $new_time_fmt = date('g:i A', strtotime($new_time));
+        $reschedule_msg = "[RESCHEDULED_BY_PATIENT] " . $patient_name . " rescheduled this appointment to " . $new_date_fmt . " at " . $new_time_fmt . ".";
+        $recep_id = 1;
+        $reminder_time = date('H:i:s');
+        $ins = $conn->prepare("INSERT INTO appointment_reminder_tbl (RECEPTIONIST_ID, APPOINTMENT_ID, REMINDER_TIME, REMARKS) VALUES (?, ?, ?, ?)");
+        $ins->bind_param("iiss", $recep_id, $appointment_id, $reminder_time, $reschedule_msg);
+        $ins->execute();
+        $ins->close();
     } else {
         $_SESSION['APPOINTMENT_ERROR'] = "Failed to reschedule appointment.";
     }
