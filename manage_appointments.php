@@ -789,11 +789,17 @@ html {
                     // Reset the result pointer to beginning
                     mysqli_data_seek($appointments_query, 0);
                     while ($appointment = mysqli_fetch_assoc($appointments_query)) {
-                        // Past completed appointments only
-                        if ($appointment['APPOINTMENT_DATE'] < date('Y-m-d') && $appointment['STATUS'] === 'COMPLETED') {
+                        // Past = all COMPLETED appointments (including today's when doctor marks as complete)
+                        if ($appointment['STATUS'] === 'COMPLETED') {
                             $past_appointments[] = $appointment;
                         }
                     }
+                    // Sort by date/time descending so most recent first
+                    usort($past_appointments, function ($a, $b) {
+                        $dt_a = $a['APPOINTMENT_DATE'] . ' ' . $a['APPOINTMENT_TIME'];
+                        $dt_b = $b['APPOINTMENT_DATE'] . ' ' . $b['APPOINTMENT_TIME'];
+                        return strcmp($dt_b, $dt_a);
+                    });
                 }
                 
                 // Display past appointments
