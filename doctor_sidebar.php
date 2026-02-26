@@ -25,7 +25,8 @@ $currentPage = basename($_SERVER['PHP_SELF']);
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+        font-family:arial Verdana, Geneva, Tahoma, sans-serif
+    font-weight: bold;
 }
 
 body {
