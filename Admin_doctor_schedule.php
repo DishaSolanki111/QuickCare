@@ -991,13 +991,13 @@ if ($doctors_query && mysqli_num_rows($doctors_query) > 0) {
                                         <div class="day-name">
                                             <?php 
                                             $day_icons = [
-                                                'MON' => 'bi-calendar-week',
-                                                'TUE' => 'bi-calendar2-week',
+                                                'MON' => 'bi-calendar3',
+                                                'TUE' => 'bi-calendar3',
                                                 'WED' => 'bi-calendar3',
-                                                'THUR' => 'bi-calendar4',
-                                                'FRI' => 'bi-calendar5',
-                                                'SAT' => 'bi-calendar6',
-                                                'SUN' => 'bi-calendar'
+                                                'THUR' => 'bi-calendar3',
+                                                'FRI' => 'bi-calendar3',
+                                                'SAT' => 'bi-calendar3',
+                                                'SUN' => 'bi-calendar3'
                                             ];
                                             $day_names = [
                                                 'MON' => 'Monday',

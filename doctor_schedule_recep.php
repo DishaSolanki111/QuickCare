@@ -438,23 +438,6 @@ if ($doctors_query && mysqli_num_rows($doctors_query) > 0) {
             transform: translateY(0);
         }
     }
-        /* White background container for schedule cards */
-        .schedule-cards-section {
-            background: var(--white);
-            border-radius: 15px;
-            padding: 35px;
-            margin-bottom: 30px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-        }
-        
-        .schedule-cards-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(480px, 1fr));
-            gap: 28px;
-            align-items: stretch;
-            justify-items: stretch;
-        }
-        
         .doctor-schedule-card {
             background: var(--white);
             border-radius: 16px;
@@ -463,10 +446,6 @@ if ($doctors_query && mysqli_num_rows($doctors_query) > 0) {
             box-shadow: 0 4px 15px rgba(0,0,0,0.06);
             overflow: hidden;
             transition: all 0.3s ease;
-            border: 1px solid #e9ecef;
-            min-height: 380px;
-            display: flex;
-            flex-direction: column;
         }
         
         .doctor-schedule-card:hover {
@@ -474,7 +453,7 @@ if ($doctors_query && mysqli_num_rows($doctors_query) > 0) {
             box-shadow: 0 8px 25px rgba(0,0,0,0.1);
         }
         
-        /* Doctor Header: soft light background */
+        /* Doctor Header: soft light background, rounded, clean spacing */
         .doctor-header {
             background: #f8fafc;
             color: var(--primary-color);
@@ -543,6 +522,7 @@ if ($doctors_query && mysqli_num_rows($doctors_query) > 0) {
             box-shadow: 0 2px 8px rgba(0,0,0,0.06);
         }
         
+        /* Day: calendar icon, bold, dark blue */
         .day-name {
             font-weight: 700;
             color: var(--dark-blue);
@@ -557,6 +537,7 @@ if ($doctors_query && mysqli_num_rows($doctors_query) > 0) {
             color: var(--secondary-color);
         }
         
+        /* Time: green clock icon, center area */
         .time-range {
             color: #4a5568;
             font-size: 18px;
@@ -583,6 +564,7 @@ if ($doctors_query && mysqli_num_rows($doctors_query) > 0) {
             display: inline-flex;
         }
         
+        /* Edit: orange, Delete: red, rounded, right-aligned */
         .btn-edit, .btn-delete {
             padding: 10px 18px;
             border: none;
@@ -772,10 +754,15 @@ if ($doctors_query && mysqli_num_rows($doctors_query) > 0) {
             color: #6c757d;
         }
         
-        /* Responsive: Tablet - 2 cards per row */
+        /* Responsive: Tablet - 2 cards, reduced spacing */
         @media (min-width: 769px) and (max-width: 1199px) {
             .schedule-cards-grid {
                 grid-template-columns: repeat(2, 1fr);
+                gap: 24px;
+            }
+            .day-schedule {
+                padding: 18px 22px;
+                gap: 20px;
             }
         }
         
@@ -786,35 +773,32 @@ if ($doctors_query && mysqli_num_rows($doctors_query) > 0) {
             }
         }
         
-        /* Responsive: Schedule row - stack on mobile */
+        /* Responsive: Mobile - stack Day/Time, buttons below */
         @media (max-width: 576px) {
             .day-schedule {
                 flex-direction: column;
                 align-items: flex-start;
-                gap: 14px;
-                padding: 18px 20px;
+                gap: 16px;
+                padding: 20px;
             }
-            
             .day-name {
-                font-size: 19px;
+                font-size: 18px;
             }
-            
             .time-range {
-                font-size: 17px;
+                font-size: 16px;
             }
-            
             .btn-edit, .btn-delete {
-                padding: 6px 12px;
-                font-size: 17px;
+                padding: 8px 14px;
+                font-size: 14px;
             }
-            
             .schedule-actions {
                 width: 100%;
                 justify-content: flex-start;
+                margin-top: 4px;
             }
         }
         
-        /* Responsive: Mobile - 1 card per row */
+        /* Responsive: Mobile - 1 card per row, proportionally adjusted */
         @media (max-width: 768px) {
             .schedule-cards-section {
                 padding: 24px;
@@ -832,8 +816,6 @@ if ($doctors_query && mysqli_num_rows($doctors_query) > 0) {
             .doctor-header {
                 padding: 20px 24px;
                 gap: 20px;
-                flex-direction: column;
-                text-align: center;
             }
             
             .doctor-avatar {
@@ -883,6 +865,11 @@ if ($doctors_query && mysqli_num_rows($doctors_query) > 0) {
             .page-header {
                 flex-direction: column;
                 gap: 15px;
+                text-align: center;
+            }
+            
+            .doctor-header {
+                flex-direction: column;
                 text-align: center;
             }
         }
@@ -1008,12 +995,12 @@ if ($doctors_query && mysqli_num_rows($doctors_query) > 0) {
                                             <?php 
                                             $day_icons = [
                                                 'MON' => 'bi-calendar-week',
-                                                'TUE' => 'bi-calendar2-week',
-                                                'WED' => 'bi-calendar3',
-                                                'THUR' => 'bi-calendar4',
-                                                'FRI' => 'bi-calendar5',
-                                                'SAT' => 'bi-calendar6',
-                                                'SUN' => 'bi-calendar'
+                                                'TUE' => 'bi-calendar-week',
+                                                'WED' => 'bi-calendar-week',
+                                                'THUR' => 'bi-calendar-week',
+                                                'FRI' => 'bi-calendar-week',
+                                                'SAT' => 'bi-calendar-week',
+                                                'SUN' => 'bi-calendar-week'
                                             ];
                                             $day_names = [
                                                 'MON' => 'Monday',

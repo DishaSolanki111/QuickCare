@@ -23,7 +23,8 @@ $currentPage = basename($_SERVER['PHP_SELF']);
 
 body {
     margin: 0;
-    font-family: Arial, sans-serif;
+    font-family:arial Verdana, Geneva, Tahoma, sans-serif
+    font-weight: bold;
     background: #F5F8FA;
     display: flex;
 }
