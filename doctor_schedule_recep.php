@@ -900,7 +900,7 @@ if ($doctors_query && mysqli_num_rows($doctors_query) > 0) {
         <!-- Page Header -->
         <div class="page-header">
             <h1 class="page-title">
-                <i class="bi bi-calendar-week"></i> Doctor Schedules
+               Doctor Schedules
             </h1>
             <button class="add-schedule-btn" data-bs-toggle="modal" data-bs-target="#createScheduleModal">
                 <i class="bi bi-plus-circle"></i> Create New Schedule
@@ -912,7 +912,7 @@ if ($doctors_query && mysqli_num_rows($doctors_query) > 0) {
         <!-- Doctor Name Search -->
         <div class="search-field">
             <label for="doctor_name" class="field-label">
-                <i class="bi bi-person"></i> Doctor Name
+              Doctor Name
             </label>
             <input type="text" 
                    class="search-input" 
@@ -925,7 +925,7 @@ if ($doctors_query && mysqli_num_rows($doctors_query) > 0) {
         <!-- Specialization Dropdown -->
         <div class="search-field">
             <label for="specialization" class="field-label">
-                <i class="bi bi-award"></i> Specialization
+                Specialization
             </label>
             <select class="search-select" id="specialization" name="specialization">
                 <option value="">All Specializations</option>
@@ -946,7 +946,7 @@ if ($doctors_query && mysqli_num_rows($doctors_query) > 0) {
         <!-- Date Picker -->
         <div class="search-field">
             <label for="schedule_date" class="field-label">
-                <i class="bi bi-calendar3"></i> Date
+                Date
             </label>
             <input type="date" 
                    class="search-input" 
@@ -958,10 +958,10 @@ if ($doctors_query && mysqli_num_rows($doctors_query) > 0) {
         <!-- Action Buttons -->
         <div class="search-actions">
             <button type="submit" class="btn-search">
-                <i class="bi bi-search"></i> Search
+                Search
             </button>
             <a href="doctor_schedule_recep.php" class="btn-clear">
-                <i class="bi bi-arrow-clockwise"></i> Clear
+                Clear
             </a>
         </div>
     </form>
@@ -980,7 +980,6 @@ if ($doctors_query && mysqli_num_rows($doctors_query) > 0) {
                         <div class="doctor-info">
                             <h3>Dr. <?php echo htmlspecialchars($doctor_data['doctor']['FIRST_NAME'] . ' ' . $doctor_data['doctor']['LAST_NAME']); ?></h3>
                             <span class="doctor-specialization">
-                                <i class="bi bi-award"></i> 
                                 <?php echo htmlspecialchars($doctor_data['doctor']['SPECIALISATION_NAME']); ?>
                             </span>
                         </div>

@@ -358,6 +358,7 @@ include 'header.php';
     <footer>
         <div class="footer-content">
             <p>&copy; <span id="year"></span> QuickCare — Revolutionizing Healthcare Access</p>
+            <p><strong>Contact Us:</strong> <a href="mailto:quickcare012@gmail.com" style="color: white;">quickcare012@gmail.com</a></p>
             <div class="social-links">
                 <a href="#" class="social-link">
                     <span>f</span>

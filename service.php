@@ -509,6 +509,10 @@ footer::before {
                     <li><a href="appointment.php">Book Appointment</a></li>
                 </ul>
             </div>
+            <div class="footer-column">
+                <h3>Contact Us</h3>
+                <p><a href="mailto:quickcare012@gmail.com" style="color: rgba(255,255,255,0.9); text-decoration: none;">quickcare012@gmail.com</a></p>
+            </div>
         </div>
     </footer>
 

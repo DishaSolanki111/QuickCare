@@ -9,15 +9,32 @@ if (!isset($_SESSION['LOGGED_IN']) || $_SESSION['LOGGED_IN'] !== true || !isset(
 include 'config.php';
 $doctor_id = $_SESSION['DOCTOR_ID'];
 
-// Fetch feedback for this doctor's appointments from database
+// Optional filter: patient name (first, last, or full)
+$filter_name = isset($_GET['filter_name']) ? trim($_GET['filter_name']) : '';
+
+// Base query for this doctor's feedback
 $feedback_query = "SELECT f.FEEDBACK_ID, f.RATING, f.COMMENTS, a.APPOINTMENT_DATE, p.FIRST_NAME, p.LAST_NAME 
     FROM feedback_tbl f 
     JOIN appointment_tbl a ON f.APPOINTMENT_ID = a.APPOINTMENT_ID 
     JOIN patient_tbl p ON a.PATIENT_ID = p.PATIENT_ID 
-    WHERE a.DOCTOR_ID = ? 
-    ORDER BY a.APPOINTMENT_DATE DESC";
+    WHERE a.DOCTOR_ID = ?";
+
+// Add name filter if provided
+if ($filter_name !== '') {
+    $feedback_query .= " AND (p.FIRST_NAME LIKE ? OR p.LAST_NAME LIKE ? OR CONCAT(p.FIRST_NAME, ' ', p.LAST_NAME) LIKE ?)";
+}
+
+$feedback_query .= " ORDER BY a.APPOINTMENT_DATE DESC";
+
 $feedback_stmt = $conn->prepare($feedback_query);
-$feedback_stmt->bind_param("i", $doctor_id);
+
+if ($filter_name !== '') {
+    $like = '%' . $filter_name . '%';
+    $feedback_stmt->bind_param("isss", $doctor_id, $like, $like, $like);
+} else {
+    $feedback_stmt->bind_param("i", $doctor_id);
+}
+
 $feedback_stmt->execute();
 $feedback_result = $feedback_stmt->get_result();
 $feedbacks = [];
@@ -147,10 +164,75 @@ $conn->close();
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
             margin-bottom: 20px;
         }
-       
         
-      
-      
+        /* Feedback filter form */
+        .feedback-filter-form {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: flex-end;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+        }
+
+        .feedback-filter-form .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .feedback-filter-form label {
+            font-weight: 600;
+            color: var(--primary-color);
+            font-size: 14px;
+        }
+
+        .feedback-filter-form input[type="text"] {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            min-width: 200px;
+        }
+
+        .feedback-filter-actions {
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary {
+            background-color: var(--secondary-color);
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background-color: #2176bd;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            color: #fff;
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
         
         /* Feedback Card Styles */
         .feedback-card {
@@ -258,6 +340,24 @@ $conn->close();
             <div class="content-card">
                 <div class="feedback-section" style="margin-top: 30px;">
                     <h3 style="margin-bottom: 20px;">Patient Feedback</h3>
+                    
+                    <form method="GET" action="doctor_feedback.php" class="feedback-filter-form">
+                        <div class="filter-group">
+                            <label for="filter_name"><i class="fas fa-user"></i> Patient Name</label>
+                            <input
+                                type="text"
+                                id="filter_name"
+                                name="filter_name"
+                                placeholder="Search by patient name..."
+                                value="<?php echo htmlspecialchars($filter_name); ?>"
+                            >
+                        </div>
+                        <div class="feedback-filter-actions">
+                            <button type="submit" class="btn btn-primary">Search</button>
+                            <button type="button" class="btn btn-secondary" onclick="window.location.href='doctor_feedback.php'">Clear</button>
+                        </div>
+                    </form>
+
                     <?php if (count($feedbacks) > 0): ?>
                         <?php foreach ($feedbacks as $fb): 
                             $initials = strtoupper(substr($fb['FIRST_NAME'], 0, 1) . substr($fb['LAST_NAME'], 0, 1));

@@ -107,12 +107,16 @@ if (mysqli_num_rows($doctor_query) == 0) {
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #f5f8ff 0%, #e6f0ff 100%);
+            background-image: url('book_appoitment_bg_img.jpeg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
             color: var(--text-dark);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            padding-top:100px;
+            padding-top: 100px;
         }
 
         .page-header {
@@ -589,6 +593,10 @@ if (mysqli_num_rows($doctor_query) == 0) {
                     <li><a href="appointment.php">Book Appointment</a></li>
                 </ul>
             </div>
+            <div class="footer-column">
+                <h3>Contact Us</h3>
+                <p><a href="mailto:quickcare012@gmail.com" style="color: rgba(255,255,255,0.9); text-decoration: none;">quickcare012@gmail.com</a></p>
+            </div>
         </div>
     </footer>
 
@@ -690,7 +698,7 @@ if (mysqli_num_rows($doctor_query) == 0) {
                 const dayOfWeek = currentDate.getDay();
                 const dayMap = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
                 
-                if (doctorSchedule.includes(dayMap[dayOfWeek])) {
+            if (doctorSchedule.includes(dayMap[dayOfWeek])) {
                     dayElement.classList.add('available');
 
                     const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
@@ -698,7 +706,7 @@ if (mysqli_num_rows($doctor_query) == 0) {
                         dayElement.classList.add('fully-booked');
                     }
 
-                    dayElement.addEventListener('click', () => selectDate(year, month, day));
+                    dayElement.addEventListener('click', (evt) => selectDate(year, month, day, evt));
                 } else {
                     dayElement.classList.add('disabled');
                 }
@@ -758,14 +766,16 @@ if (mysqli_num_rows($doctor_query) == 0) {
         });
     }
     
-    function selectDate(year, month, day) {
+    function selectDate(year, month, day, evt) {
         const date = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
         document.getElementById('selected_date').value = date;
         
         document.querySelectorAll('.calendar-day').forEach(el => {
             el.classList.remove('selected');
         });
-        event.target.classList.add('selected');
+        if (evt && evt.currentTarget) {
+            evt.currentTarget.classList.add('selected');
+        }
         
         document.getElementById('nextToTime').disabled = false;
     }

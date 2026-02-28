@@ -673,7 +673,6 @@ if (isset($_SESSION['schedule_success_message'])) {
                     <div class="doctor-info">
                         <h3>Dr. <?php echo htmlspecialchars($doctor_data['FIRST_NAME'] . ' ' . $doctor_data['LAST_NAME']); ?></h3>
                         <span class="doctor-specialization">
-                            <i class="bi bi-award"></i> 
                             <?php echo htmlspecialchars($doctor_data['SPECIALISATION_NAME']); ?>
                         </span>
                     </div>
@@ -693,7 +692,6 @@ if (isset($_SESSION['schedule_success_message'])) {
                         ?>
                             <div class="day-schedule">
                                 <div class="day-name">
-                                    <i class="bi <?php echo $day_icons[$schedule['AVAILABLE_DAY']] ?? 'bi-calendar'; ?>"></i>
                                     <?php echo $day_name; ?>
                                 </div>
                                 <div class="time-range">
@@ -702,10 +700,10 @@ if (isset($_SESSION['schedule_success_message'])) {
                                 </div>
                                 <div class="schedule-actions">
                                     <button class="btn-edit-schedule" onclick="openEditModal(<?php echo $schedule['SCHEDULE_ID']; ?>, '<?php echo $schedule['START_TIME']; ?>', '<?php echo $schedule['END_TIME']; ?>', '<?php echo $schedule['AVAILABLE_DAY']; ?>')">
-                                        <i class="bi bi-pencil"></i> Edit
+                                      Edit
                                     </button>
                                     <button type="button" class="btn btn-danger" onclick="openDeleteOptionsModal(<?php echo $schedule['SCHEDULE_ID']; ?>, '<?php echo addslashes($day_name); ?>')">
-                                        <i class="bi bi-trash"></i> Delete
+                                       Delete
                                     </button>
                                 </div>
                             </div>

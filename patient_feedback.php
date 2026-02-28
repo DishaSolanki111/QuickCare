@@ -478,7 +478,7 @@ html {
                     <option value="5" <?php echo $filter_rating == 5 ? 'selected' : ''; ?>>5 Stars</option>
                 </select>
                 <button type="submit" class="btn btn-primary" style="vertical-align:middle;">
-                    <i class="fas fa-search"></i> Search
+                Search
                 </button>
             </form>
             

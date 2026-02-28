@@ -422,12 +422,12 @@ if (!empty($search)) {
                             
                             <div class="medicine-actions">
                                 <button class="btn btn-warning btn-sm" onclick="editMedicine(<?php echo $medicine['MEDICINE_ID']; ?>, '<?php echo htmlspecialchars($medicine['MED_NAME']); ?>', '<?php echo htmlspecialchars($medicine['DESCRIPTION']); ?>')">
-                                    <i class="bi bi-pencil"></i> Edit
+                                  Edit
                                 </button>
                                 <form method="POST" style="display: inline;">
                                     <input type="hidden" name="medicine_id" value="<?php echo $medicine['MEDICINE_ID']; ?>">
                                     <button type="submit" name="delete_medicine" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this medicine?')">
-                                        <i class="bi bi-trash"></i> Delete
+                                        Delete
                                     </button>
                                 </form>
                             </div>

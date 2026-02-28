@@ -72,12 +72,16 @@ if (mysqli_num_rows($doctor_query) == 0) {
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #f5f8ff 0%, #e6f0ff 100%);
+            background-image: url('book_appoitment_bg_img.jpeg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
             color: var(--text-dark);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            padding-top:100px;
+            padding-top: 100px;
         }
 
 
@@ -458,7 +462,7 @@ if (mysqli_num_rows($doctor_query) == 0) {
                         </div>
                         
                         <div class="form-group">
-                            <button type="button" class="btn btn-primary" onclick="loginUser()">
+                            <button type="button" class="btn btn-primary" onclick="loginUser(this)">
                                 Login <i class="fas fa-sign-in-alt" style="margin-left: 5px;"></i>
                             </button>
                         </div>
@@ -495,6 +499,10 @@ if (mysqli_num_rows($doctor_query) == 0) {
                     <li><a href="appointment.php">Book Appointment</a></li>
                 </ul>
             </div>
+            <div class="footer-column">
+                <h3>Contact Us</h3>
+                <p><a href="mailto:quickcare012@gmail.com" style="color: rgba(255,255,255,0.9); text-decoration: none;">quickcare012@gmail.com</a></p>
+            </div>
         </div>
     </footer>
 
@@ -504,7 +512,7 @@ if (mysqli_num_rows($doctor_query) == 0) {
     }
     
     // Login function
-    function loginUser() {
+    function loginUser(buttonEl) {
         const username = document.getElementById('login_username').value;
         const password = document.getElementById('login_password').value;
         
@@ -515,7 +523,7 @@ if (mysqli_num_rows($doctor_query) == 0) {
         }
         
         // Show loading state
-        const loginButton = event.target;
+        const loginButton = buttonEl;
         const originalText = loginButton.innerHTML;
         loginButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging in...';
         loginButton.disabled = true;

@@ -377,7 +377,7 @@ $stmt->close();
          
                 
                 <h1>Manage Prescriptions</h1>
-                <p style="margin-bottom: 20px; color: #666;">Click "Manage Prescriptions" to view all prescriptions (instructions) for that patient.</p>
+                
                 
                 <form method="GET" action="manage_prescriptions.php" class="filter-form">
                     <div class="filter-group">
@@ -389,8 +389,8 @@ $stmt->close();
                         <input type="date" id="filter_date" name="filter_date" value="<?php echo htmlspecialchars($filter_date); ?>">
                     </div>
                     <div class="filter-actions">
-                        <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i> Search</button>
-                        <a href="manage_prescriptions.php" class="btn btn-secondary"><i class="fas fa-times"></i> Clear</a>
+                        <button type="submit" class="btn btn-primary">Search</button>
+                        <button type="button" class="btn btn-secondary" onclick="window.location.href='manage_prescriptions.php'">Clear</button>
                     </div>
                 </form>
                 
