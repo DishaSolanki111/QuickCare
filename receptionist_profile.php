@@ -534,10 +534,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
             
             <div class="btn-group">
                 <button class="btn btn-primary" id="editProfileBtn">
-                    <i class="fas fa-edit"></i> Edit Profile
+                     Edit Profile
                 </button>
                 <button class="btn btn-danger" id="changePasswordBtn">
-                    <i class="fas fa-key"></i> Change Password
+                    Change Password
                 </button>
             </div>
         </div>
@@ -593,10 +593,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
                 
                 <div class="btn-group">
                     <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-save"></i> Save Changes
+                     Save Changes
                     </button>
                     <button type="button" class="btn btn-danger" id="cancelEditBtn">
-                        <i class="fas fa-times"></i> Cancel
+                     Cancel
                     </button>
                 </div>
             </form>

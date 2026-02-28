@@ -200,7 +200,7 @@
 
             .main-content {
                 margin-left: 240px;
-                padding: 30px;
+                padding: 12px 30px 30px 30px;
                 width: calc(100% - 240px);
             }
 
@@ -208,9 +208,9 @@
             .page-header {
                 background: white;
                 border-radius: 20px;
-                padding: 30px;
-                margin-bottom: 30px;
-                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+                padding: 18px 24px;
+                margin-bottom: 20px;
+                box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
                 position: relative;
                 overflow: hidden;
             }
@@ -226,48 +226,48 @@
             }
 
             .page-title {
-                font-size: 2rem;
+                font-size: 1.6rem;
                 font-weight: 700;
                 color: var(--primary);
-                margin-bottom: 10px;
+                margin-bottom: 6px;
                 display: flex;
                 align-items: center;
-                gap: 15px;
+                gap: 12px;
             }
 
             .page-title i {
-                font-size: 1.8rem;
+                font-size: 1.4rem;
                 color: var(--primary-light);
             }
 
             .page-subtitle {
                 color: var(--gray);
-                font-size: 1.1rem;
+                font-size: 0.98rem;
             }
 
             /* Search Section */
             .search-section {
                 background: white;
-                border-radius: 20px;
-                padding: 30px;
-                margin-bottom: 30px;
-                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+                border-radius: 18px;
+                padding: 20px 22px;
+                margin-bottom: 22px;
+                box-shadow: 0 8px 22px rgba(0, 0, 0, 0.08);
             }
 
             .search-header {
                 display: flex;
                 align-items: center;
-                gap: 15px;
-                margin-bottom: 25px;
+                gap: 8px;
+                margin-bottom: 12px;
             }
 
             .search-header i {
-                font-size: 1.5rem;
+                font-size: 1rem;
                 color: var(--primary-light);
             }
 
             .search-header h2 {
-                font-size: 1.5rem;
+                font-size: 1.1rem;
                 font-weight: 600;
                 color: var(--dark);
             }
@@ -275,7 +275,8 @@
             .search-form {
                 display: flex;
                 gap: 15px;
-                align-items: stretch;
+                align-items: flex-end;
+                flex-wrap: wrap;
             }
 
             .search-input-group {
@@ -285,10 +286,10 @@
 
             .search-input {
                 width: 100%;
-                padding: 15px 20px 15px 50px;
+                padding: 10px 16px 10px 44px;
                 border: 2px solid var(--border);
-                border-radius: 12px;
-                font-size: 1rem;
+                border-radius: 10px;
+                font-size: 0.95rem;
                 transition: all 0.3s ease;
                 background: #f8fafc;
             }
@@ -310,12 +311,12 @@
             }
 
             .search-btn {
-                padding: 15px 30px;
+                padding: 10px 20px;
                 background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
                 color: white;
                 border: none;
-                border-radius: 12px;
-                font-size: 1rem;
+                border-radius: 10px;
+                font-size: 0.9rem;
                 font-weight: 600;
                 cursor: pointer;
                 transition: all 0.3s ease;
@@ -331,12 +332,12 @@
             }
 
             .clear-btn {
-                padding: 15px 25px;
+                padding: 10px 18px;
                 background: #f3f4f6;
                 color: var(--gray);
                 border: 2px solid var(--border);
-                border-radius: 12px;
-                font-size: 1rem;
+                border-radius: 10px;
+                font-size: 0.9rem;
                 font-weight: 600;
                 cursor: pointer;
                 transition: all 0.3s ease;
@@ -398,74 +399,120 @@
                 font-weight: 500;
             }
 
+            /* Doctor Filters */
+            .doctor-filters-row {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 15px;
+                margin-top: 15px;
+            }
+
+            .filter-group {
+                flex: 1 1 200px;
+                min-width: 180px;
+            }
+
+            .filter-label {
+                display: block;
+                font-size: 0.85rem;
+                font-weight: 600;
+                color: var(--dark);
+                margin-bottom: 5px;
+            }
+
+            .filter-select {
+                width: 100%;
+                padding: 10px 12px;
+                border-radius: 12px;
+                border: 2px solid var(--border);
+                font-size: 0.95rem;
+                background: #f8fafc;
+                outline: none;
+                transition: all 0.3s ease;
+            }
+
+            .filter-select:focus {
+                border-color: var(--primary-light);
+                background: white;
+                box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+            }
+
+            .filter-actions {
+                display: flex;
+                gap: 10px;
+             
+                align-items: center;
+                margin-top: 10px;
+            }
+
             /* Doctor Cards Container */
             .doctors-container {
                 display: flex;
                 flex-direction: column;
-                gap: 30px;
+                gap: 18px;
             }
 
             /* Doctor Card */
             .doctor-card {
                 background: white;
-                border-radius: 20px;
+                border-radius: 14px;
                 overflow: hidden;
-                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+                box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
                 transition: all 0.3s ease;
             }
 
             .doctor-card:hover {
-                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+                box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
             }
 
             .doctor-header {
                 background: var(--doctor-bg);
-                padding: 25px 30px;
+                padding: 12px 18px;
                 position: relative;
             }
 
             .doctor-info {
                 display: flex;
                 align-items: center;
-                gap: 20px;
+                gap: 14px;
             }
 
             .doctor-avatar {
-                width: 80px;
-                height: 80px;
+                width: 50px;
+                height: 50px;
                 border-radius: 50%;
                 background: white;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                font-size: 2rem;
+                font-size: 1.25rem;
                 color: var(--primary);
-                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+                box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
             }
 
             .doctor-details h2 {
                 color: white;
-                font-size: 1.8rem;
+                font-size: 1.2rem;
                 font-weight: 600;
-                margin-bottom: 8px;
+                margin-bottom: 2px;
             }
 
             .doctor-details .specialization {
                 color: rgba(255, 255, 255, 0.9);
-                font-size: 1.1rem;
-                margin-bottom: 5px;
+                font-size: 0.9rem;
+                margin-bottom: 2px;
             }
 
             .doctor-details .education {
                 color: rgba(255, 255, 255, 0.8);
-                font-size: 0.95rem;
+                font-size: 0.85rem;
             }
 
             .doctor-stats {
                 display: flex;
-                gap: 30px;
-                margin-top: 15px;
-                padding-top: 15px;
+                gap: 20px;
+                margin-top: 10px;
+                padding-top: 10px;
                 border-top: 1px solid rgba(255, 255, 255, 0.2);
             }
 
@@ -486,18 +533,18 @@
 
             /* Patients Section */
             .patients-section {
-                padding: 30px;
+                padding: 18px 20px;
                 background: #fafbfc;
             }
 
             .section-title {
-                font-size: 1.3rem;
+                font-size: 1.1rem;
                 font-weight: 600;
                 color: var(--dark);
-                margin-bottom: 20px;
+                margin-bottom: 14px;
                 display: flex;
                 align-items: center;
-                gap: 10px;
+                gap: 8px;
             }
 
             .section-title i {
@@ -507,15 +554,15 @@
             .patients-grid {
                 display: grid;
                 grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
-                gap: 20px;
+                gap: 14px;
             }
 
             /* Patient Card */
             .patient-card {
                 background: white;
-                border-radius: 15px;
+                border-radius: 12px;
                 overflow: hidden;
-                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
                 transition: all 0.3s ease;
                 border: 1px solid var(--border);
             }
@@ -527,7 +574,7 @@
 
             .patient-header {
                 background: var(--patient-bg);
-                padding: 20px;
+                padding: 14px 16px;
                 border-bottom: 1px solid var(--border);
             }
 
@@ -571,7 +618,7 @@
 
             /* Prescriptions List */
             .prescriptions-list {
-                padding: 20px;
+                padding: 14px 16px;
             }
 
             .prescription-item {
@@ -608,12 +655,7 @@
             }
 
             .prescription-id {
-                background: var(--primary);
-                color: white;
-                padding: 4px 10px;
-                border-radius: 20px;
-                font-size: 0.8rem;
-                font-weight: 600;
+                display: none;
             }
 
             .diagnosis-text {
@@ -755,57 +797,64 @@
             <div class="page-header">
                 <h1 class="page-title">
                     <i class="fas fa-file-medical"></i>
-                    Prescription Management
+                    Prescriptions
                 </h1>
                 <p class="page-subtitle">View and download patient prescriptions organized by doctor</p>
             </div>
 
-            <!-- Search Section -->
-            <!-- <div class="search-section">
+            <!-- Doctor Filter Section -->
+            <div class="search-section">
                 <div class="search-header">
-                    <i class="fas fa-search"></i>
-                    <h2>Search Prescriptions</h2>
+                    <i class="fas fa-filter"></i>
+                    <h2>Filter Doctors</h2>
                 </div>
-                <form method="POST" action="view_prescription.php" id="searchForm" class="search-form">
+                <form id="doctorFilterForm" class="search-form">
                     <div class="search-input-group">
-                        <i class="fas fa-search search-input-icon"></i>
-                        <input type="text" 
-                               name="search" 
-                               id="searchInput" 
-                               class="search-input" 
-                               placeholder="Search by doctor name, patient name, diagnosis, prescription ID..."
-                               value="<?= htmlspecialchars($search_term) ?>">
+                        <i class="fas fa-user-md search-input-icon"></i>
+                        <input
+                            type="text"
+                            id="filterDoctorName"
+                            class="search-input"
+                            placeholder="Search by doctor name...">
                     </div>
-                    <button type="submit" name="submit_search" class="search-btn">
-                        <i class="fas fa-search"></i>
-                        Search
-                    </button>
-                    <button type="submit" name="clear_search" class="clear-btn">
-                        <i class="fas fa-times"></i>
-                        Clear
-                    </button>
+                    <div class="filter-group">
+                        <label for="filterSpecialization" class="filter-label">Specialization</label>
+                        <select id="filterSpecialization" class="filter-select">
+                            <option value="all">All Specializations</option>
+                            <?php
+                            // Build unique list of specializations from grouped data
+                            $specializations = [];
+                            foreach ($grouped_prescriptions as $d) {
+                                $spec = $d['doctor_info']['specialization'];
+                                $specializations[strtolower($spec)] = $spec;
+                            }
+                            foreach ($specializations as $specKey => $specLabel): ?>
+                                <option value="<?= htmlspecialchars(strtolower($specLabel)) ?>">
+                                    <?= htmlspecialchars($specLabel) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="filter-actions">
+                        <button type="submit" id="applyDoctorFilter" class="search-btn">
+                            <i class="fas fa-check"></i>
+                            Apply Filter
+                        </button>
+                        <button type="button" id="resetDoctorFilter" class="clear-btn">
+                            <i class="fas fa-rotate-left"></i>
+                            Reset
+                        </button>
+                    </div>
                 </form>
-                <div class="search-filters">
-                    <span class="filter-chip" onclick="quickSearch('Dr.')">Doctors</span>
-                    <span class="filter-chip" onclick="quickSearch('Diabetes')">Diabetes</span>
-                    <span class="filter-chip" onclick="quickSearch('Hypertension')">Hypertension</span>
-                    <span class="filter-chip" onclick="quickSearch('Cardiology')">Cardiology</span>
-                    <span class="filter-chip" onclick="quickSearch('Pediatrics')">Pediatrics</span>
-                </div>
-                <?php if (!empty($search_results_info)): ?>
-                    <div class="search-results-info show">
-                        <div class="search-results-text">
-                            <?= $search_results_info ?> - Found <?= count($grouped_prescriptions) ?> doctor(s)
-                        </div>
-                    </div>
-                <?php endif; ?>
-            </div> -->
+            </div>
 
             <!-- Doctors Container -->
             <?php if (!empty($grouped_prescriptions)): ?>
                 <div class="doctors-container">
                     <?php foreach ($grouped_prescriptions as $doctor_key => $doctor_data): ?>
-                        <div class="doctor-card">
+                        <div class="doctor-card"
+                             data-doctor-name="<?= htmlspecialchars(strtolower($doctor_data['doctor_info']['name'])) ?>"
+                             data-specialization="<?= htmlspecialchars(strtolower($doctor_data['doctor_info']['specialization'])) ?>">
                             <!-- Doctor Header -->
                             <div class="doctor-header">
                                 <div class="doctor-info">
@@ -913,31 +962,89 @@
         </div>
 
         <script>
-            function quickSearch(term) {
-                document.getElementById('searchInput').value = term;
-                document.getElementById('searchForm').submit();
-            }
-
             document.addEventListener('DOMContentLoaded', function() {
-                // Real-time search feedback
-                let searchTimeout;
-                document.getElementById('searchInput').addEventListener('input', function(e) {
-                    clearTimeout(searchTimeout);
-                    searchTimeout = setTimeout(() => {
-                        console.log('Searching for:', e.target.value);
-                    }, 500);
-                });
+                const doctorCards = Array.from(document.querySelectorAll('.doctor-card'));
 
-                // Filter chips interaction
-                document.querySelectorAll('.filter-chip').forEach(chip => {
-                    chip.addEventListener('click', function() {
-                        // Visual feedback
-                        this.style.transform = 'scale(0.95)';
-                        setTimeout(() => {
-                            this.style.transform = 'scale(1)';
-                        }, 100);
+                const nameInput = document.getElementById('filterDoctorName');
+                const specSelect = document.getElementById('filterSpecialization');
+                const applyBtn = document.getElementById('applyDoctorFilter');
+                const resetBtn = document.getElementById('resetDoctorFilter');
+
+                const filterState = {
+                    name: '',
+                    specialization: 'all'
+                };
+
+                function applyFilters() {
+                    const nameQuery = filterState.name.trim().toLowerCase();
+
+                    let visibleCount = 0;
+
+                    doctorCards.forEach(card => {
+                        const data = card.dataset;
+                        const cardName = (data.doctorName || '').toLowerCase();
+                        const cardSpec = (data.specialization || '').toLowerCase();
+
+                        let matches = true;
+
+                        if (nameQuery && !cardName.includes(nameQuery)) {
+                            matches = false;
+                        }
+
+                        if (matches && filterState.specialization !== 'all' && filterState.specialization !== cardSpec) {
+                            matches = false;
+                        }
+
+                        
+                        if (matches) {
+                            card.style.display = '';
+                            visibleCount++;
+                        } else {
+                            card.style.display = 'none';
+                        }
                     });
-                });
+                }
+
+                function syncStateFromInputs() {
+                    filterState.name = nameInput ? nameInput.value : '';
+                    filterState.specialization = specSelect ? (specSelect.value || 'all').toLowerCase() : 'all';
+                }
+
+                if (applyBtn) {
+                    applyBtn.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        syncStateFromInputs();
+                        applyFilters();
+                    });
+                }
+
+                if (resetBtn) {
+                    resetBtn.addEventListener('click', function () {
+                        if (nameInput) nameInput.value = '';
+                        if (specSelect) specSelect.value = 'all';
+
+                        filterState.name = '';
+                        filterState.specialization = 'all';
+
+                        applyFilters();
+                    });
+                }
+
+                if (nameInput) {
+                    nameInput.addEventListener('input', function () {
+                        filterState.name = nameInput.value;
+                        applyFilters();
+                    });
+                }
+
+                if (specSelect) {
+                    specSelect.addEventListener('change', function () {
+                        filterState.specialization = (specSelect.value || 'all').toLowerCase();
+                        applyFilters();
+                    });
+                }
+
+                
             });
         </script>
     </body>

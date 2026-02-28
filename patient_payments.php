@@ -495,10 +495,10 @@ html {
                 </div>
                 <div style="display:flex; gap:10px;">
                     <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-search"></i> Search
+                        Search
                     </button>
                     <a href="patient_payments.php" class="btn btn-danger" style="text-decoration:none;">
-                        <i class="fas fa-times"></i> Clear
+                         Clear
                     </a>
                 </div>
             </form>

@@ -142,12 +142,6 @@ $medicine_reminder_query = mysqli_query($conn, "
             align-items: center;
         }
 
-        .logo-img {
-            height: 40px;
-            margin-right: 12px;
-            border-radius: 5px;
-        }
-
         /* Notification Bell */
         .notification-bell {
             position: relative;
@@ -237,7 +231,7 @@ $medicine_reminder_query = mysqli_query($conn, "
         /* Cards */
         .card {
             background: white;
-            padding: 25px;
+            padding: 20px;
             border-radius: 12px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.1);
             border-left: 8px solid #5790AB;

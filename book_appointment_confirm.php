@@ -69,12 +69,16 @@ if ($fee_result && $row = mysqli_fetch_assoc($fee_result)) {
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #f5f8ff 0%, #e6f0ff 100%);
+            background-image: url('book_appoitment_bg_img.jpeg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
             color: var(--text-dark);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            padding-top:100px;
+            padding-top: 100px;
         }
 
        
@@ -475,6 +479,10 @@ if ($fee_result && $row = mysqli_fetch_assoc($fee_result)) {
                     <li><a href="doctors.php">Find Doctors</a></li>
                     <li><a href="appointment.php">Book Appointment</a></li>
                 </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Contact Us</h3>
+                <p><a href="mailto:quickcare012@gmail.com" style="color: rgba(255,255,255,0.9); text-decoration: none;">quickcare012@gmail.com</a></p>
             </div>
         </div>
     </footer>

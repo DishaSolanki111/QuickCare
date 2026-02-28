@@ -189,7 +189,7 @@ if (isset($reminder_query) && $reminder_query) {
 <style>
 .topbar {
     background: #ffffff;
-    padding: 18px 30px;
+    padding: 12px 30px;
     display: flex;
     justify-content: space-between;
     align-items: center;
