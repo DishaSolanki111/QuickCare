@@ -496,7 +496,17 @@ if (mysqli_num_rows($doctor_query) == 0) {
         }
     </style>
 </head>
-<body>
+<body style="
+  margin: 0;
+  padding: 0;
+  background-image: url('uploads/background.png');
+  
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  font-family: Arial, sans-serif;">
+
   
 
     <section class="booking-section">
