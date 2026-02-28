@@ -75,6 +75,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_schedule'])) {
     
     if ($update_stmt->execute()) {
         $success_message = "Schedule updated successfully!";
+        $day_names = ['MON' => 'Monday', 'TUE' => 'Tuesday', 'WED' => 'Wednesday', 'THUR' => 'Thursday', 'FRI' => 'Friday', 'SAT' => 'Saturday', 'SUN' => 'Sunday'];
+        $day_label = $day_names[$available_day] ?? $available_day;
+        $rec_msg = "[SCHEDULE_RESCHEDULED_BY_DOCTOR] Dr. " . $doctor_name . " rescheduled " . $day_label . " schedule to " . date('h:i A', strtotime($start_time)) . " - " . date('h:i A', strtotime($end_time)) . ".";
+        $pat_row = null;
+        $pat_q = $conn->query("SELECT PATIENT_ID FROM appointment_tbl WHERE SCHEDULE_ID = " . (int)$schedule_id . " LIMIT 1");
+        if ($pat_q) $pat_row = $pat_q->fetch_assoc();
+        $pat_id = $pat_row ? (int)$pat_row['PATIENT_ID'] : 0;
+        if ($pat_id <= 0) {
+            $p2 = $conn->query("SELECT PATIENT_ID FROM patient_tbl ORDER BY PATIENT_ID ASC LIMIT 1")->fetch_assoc();
+            $pat_id = $p2 ? (int)$p2['PATIENT_ID'] : 1;
+        }
+        $med_id = 1;
+        $med_r = $conn->query("SELECT MEDICINE_ID FROM medicine_tbl ORDER BY MEDICINE_ID ASC LIMIT 1");
+        if ($med_r && ($mr = $med_r->fetch_assoc())) $med_id = (int)$mr['MEDICINE_ID'];
+        $rec_id = 1;
+        $rec_r = $conn->query("SELECT RECEPTIONIST_ID FROM receptionist_tbl ORDER BY RECEPTIONIST_ID ASC LIMIT 1");
+        if ($rec_r && ($rr = $rec_r->fetch_assoc())) $rec_id = (int)$rr['RECEPTIONIST_ID'];
+        $today = date('Y-m-d');
+        $now = date('H:i:s');
+        $ins_rec = $conn->prepare("INSERT INTO medicine_reminder_tbl (MEDICINE_ID, CREATOR_ROLE, CREATOR_ID, PATIENT_ID, START_DATE, END_DATE, REMINDER_TIME, REMARKS) VALUES (?, 'RECEPTIONIST', ?, ?, ?, ?, ?, ?)");
+        $ins_rec->bind_param("iiissss", $med_id, $rec_id, $pat_id, $today, $today, $now, $rec_msg);
+        $ins_rec->execute();
+        $ins_rec->close();
     } else {
         $error_message = "Error updating schedule: " . $conn->error;
     }

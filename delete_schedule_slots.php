@@ -69,6 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirm_delete_slots'
         $today = date('Y-m-d');
         $now = date('H:i:s');
         $ins = $conn->prepare("INSERT INTO medicine_reminder_tbl (MEDICINE_ID, CREATOR_ROLE, CREATOR_ID, PATIENT_ID, START_DATE, END_DATE, REMINDER_TIME, REMARKS) VALUES (?, 'RECEPTIONIST', ?, ?, ?, ?, ?, ?)");
+        $day_label = $day_names[$schedule['AVAILABLE_DAY']] ?? $schedule['AVAILABLE_DAY'];
         foreach ($deleted_list as $a) {
             $date_time = date('M d, Y', strtotime($a['APPOINTMENT_DATE'])) . ' at ' . date('h:i A', strtotime($a['APPOINTMENT_TIME']));
             $msg = "[CANCELLED] Your appointment with " . $doctor_name . " on " . $date_time . " was cancelled. Please reschedule your visit.";
@@ -76,6 +77,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirm_delete_slots'
             $ins->execute();
         }
         $ins->close();
+
+        if (!empty($deleted_list)) {
+            $first_pat = (int)$deleted_list[0]['PATIENT_ID'];
+            $list_txt = implode('; ', array_map(function($a) {
+                return $a['PATIENT_NAME'] . ' - ' . date('M d, Y', strtotime($a['APPOINTMENT_DATE'])) . ' at ' . date('h:i A', strtotime($a['APPOINTMENT_TIME']));
+            }, $deleted_list));
+            $rec_msg = "[SLOTS_DELETED_BY_DOCTOR] " . $doctor_name . " deleted slots from " . $day_label . " schedule. Cancelled: " . $list_txt;
+            $ins_rec = $conn->prepare("INSERT INTO medicine_reminder_tbl (MEDICINE_ID, CREATOR_ROLE, CREATOR_ID, PATIENT_ID, START_DATE, END_DATE, REMINDER_TIME, REMARKS) VALUES (?, 'RECEPTIONIST', ?, ?, ?, ?, ?, ?)");
+            $ins_rec->bind_param("iiissss", $med_id, $rec_id, $first_pat, $today, $today, $now, $rec_msg);
+            $ins_rec->execute();
+            $ins_rec->close();
+        }
 
         $app_ids_str = implode(',', array_column($deleted_list, 'APPOINTMENT_ID'));
         $conn->query("DELETE FROM payment_tbl WHERE APPOINTMENT_ID IN ($app_ids_str)");

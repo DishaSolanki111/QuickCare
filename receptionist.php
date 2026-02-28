@@ -34,8 +34,6 @@ $med_result = mysqli_query($conn, "SELECT COUNT(*) as cnt FROM medicine_tbl");
 if ($med_result && $row = mysqli_fetch_assoc($med_result)) {
     $medicine_count = (int) $row['cnt'];
 }
-
-$conn->close();
 ?>
 <!DOCTYPE html>
 <html lang="en">

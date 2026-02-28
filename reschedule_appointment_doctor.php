@@ -118,6 +118,22 @@ if ($upd->execute()) {
     $ins->bind_param("iiss", $recep_id, $appointment_id, $reminder_time, $msg);
     $ins->execute();
     $ins->close();
+
+    // Notify receptionist
+    $pat_stmt2 = $conn->prepare("SELECT FIRST_NAME, LAST_NAME FROM patient_tbl WHERE PATIENT_ID = ?");
+    $pat_stmt2->bind_param("i", $patient_id);
+    $pat_stmt2->execute();
+    $pat_res2 = $pat_stmt2->get_result();
+    $patient_name = 'A patient';
+    if ($pat_res2 && $prow = $pat_res2->fetch_assoc()) {
+        $patient_name = trim($prow['FIRST_NAME'] . ' ' . $prow['LAST_NAME']);
+    }
+    $pat_stmt2->close();
+    $rec_msg = "[RESCHEDULED_BY_DOCTOR] " . $doc_name . " rescheduled appointment for " . $patient_name . " to " . $new_date_fmt . " at " . $new_time_fmt . ".";
+    $ins2 = $conn->prepare("INSERT INTO appointment_reminder_tbl (RECEPTIONIST_ID, APPOINTMENT_ID, REMINDER_TIME, REMARKS) VALUES (1, ?, ?, ?)");
+    $ins2->bind_param("iss", $appointment_id, $reminder_time, $rec_msg);
+    $ins2->execute();
+    $ins2->close();
 } else {
     $_SESSION['RESCHEDULE_ERROR'] = "Failed to reschedule appointment.";
 }

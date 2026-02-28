@@ -40,10 +40,83 @@ if ($initials === '') {
     $initials = 'RC';
 }
 
+// Auto-fetch appointment cancel/reschedule and schedule delete/reschedule notifications for receptionist when not set
+if (!isset($reminder_query) && isset($conn)) {
+    $receptionist_reminders = [];
+    $ar_q = @mysqli_query($conn, "
+        SELECT ar.APPOINTMENT_REMINDER_ID, ar.REMARKS, a.APPOINTMENT_DATE, a.APPOINTMENT_TIME,
+               CASE
+                   WHEN ar.REMARKS LIKE '[RESCHEDULED_BY_PATIENT]%' THEN 'Rescheduled by Patient'
+                   WHEN ar.REMARKS LIKE '[CANCELLED_BY_PATIENT]%' THEN 'Cancelled by Patient'
+                   WHEN ar.REMARKS LIKE '[RESCHEDULED_BY_DOCTOR]%' THEN 'Rescheduled by Doctor'
+                   WHEN ar.REMARKS LIKE '[CANCELLED_BY_DOCTOR]%' THEN 'Cancelled by Doctor'
+                   ELSE 'Appointment Update'
+               END AS TITLE
+        FROM appointment_reminder_tbl ar
+        JOIN appointment_tbl a ON ar.APPOINTMENT_ID = a.APPOINTMENT_ID
+        WHERE ar.REMARKS LIKE '[RESCHEDULED_BY_PATIENT]%'
+           OR ar.REMARKS LIKE '[CANCELLED_BY_PATIENT]%'
+           OR ar.REMARKS LIKE '[RESCHEDULED_BY_DOCTOR]%'
+           OR ar.REMARKS LIKE '[CANCELLED_BY_DOCTOR]%'
+        ORDER BY ar.APPOINTMENT_REMINDER_ID DESC
+        LIMIT 20
+    ");
+    if ($ar_q) {
+        while ($r = mysqli_fetch_assoc($ar_q)) {
+            $receptionist_reminders[] = $r;
+        }
+    }
+    $mr_q = @mysqli_query($conn, "
+        SELECT REMARKS, START_DATE AS APPOINTMENT_DATE, REMINDER_TIME AS APPOINTMENT_TIME,
+               CASE
+                   WHEN REMARKS LIKE '[SCHEDULE_DELETED_BY_DOCTOR]%' THEN 'Schedule Deleted by Doctor'
+                   WHEN REMARKS LIKE '[SLOTS_DELETED_BY_DOCTOR]%' THEN 'Slots Deleted by Doctor'
+                   WHEN REMARKS LIKE '[SCHEDULE_RESCHEDULED_BY_DOCTOR]%' THEN 'Schedule Rescheduled by Doctor'
+                   ELSE 'Schedule Update'
+               END AS TITLE
+        FROM medicine_reminder_tbl
+        WHERE REMARKS LIKE '[SCHEDULE_DELETED_BY_DOCTOR]%'
+           OR REMARKS LIKE '[SLOTS_DELETED_BY_DOCTOR]%'
+           OR REMARKS LIKE '[SCHEDULE_RESCHEDULED_BY_DOCTOR]%'
+        ORDER BY MEDICINE_REMINDER_ID DESC
+        LIMIT 20
+    ");
+    if ($mr_q) {
+        while ($r = mysqli_fetch_assoc($mr_q)) {
+            $receptionist_reminders[] = $r;
+        }
+    }
+    $rn_q = @mysqli_query($conn, "
+        SELECT MESSAGE AS REMARKS, DATE(CREATED_AT) AS APPOINTMENT_DATE, TIME(CREATED_AT) AS APPOINTMENT_TIME, 'Schedule Deleted by Doctor' AS TITLE
+        FROM receptionist_notifications
+        WHERE MESSAGE LIKE '[SCHEDULE_DELETED_BY_DOCTOR]%'
+        ORDER BY RECEPTIONIST_NOTIFICATION_ID DESC
+        LIMIT 20
+    ");
+    if ($rn_q) {
+        while ($r = mysqli_fetch_assoc($rn_q)) {
+            $receptionist_reminders[] = $r;
+        }
+    }
+    usort($receptionist_reminders, function ($a, $b) {
+        $dt_a = ($a['APPOINTMENT_DATE'] ?? '') . ' ' . ($a['APPOINTMENT_TIME'] ?? '');
+        $dt_b = ($b['APPOINTMENT_DATE'] ?? '') . ' ' . ($b['APPOINTMENT_TIME'] ?? '');
+        return strcmp($dt_b, $dt_a);
+    });
+    $reminder_query = $receptionist_reminders;
+}
+
 // Optional notifications (e.g. reminders or tasks) if a query is provided
- $notif_count = isset($reminder_query) && $reminder_query
-    ? mysqli_num_rows($reminder_query)
+$notif_count = isset($reminder_query)
+    ? (is_array($reminder_query) ? count($reminder_query) : mysqli_num_rows($reminder_query))
     : 0;
+$reminder_items = [];
+if (isset($reminder_query) && $reminder_query) {
+    $reminder_items = is_array($reminder_query) ? $reminder_query : [];
+    if (!is_array($reminder_query)) {
+        while ($r = mysqli_fetch_assoc($reminder_query)) $reminder_items[] = $r;
+    }
+}
 ?>
 
 <header class="topbar">
@@ -76,8 +149,8 @@ if ($initials === '') {
                 <?php endif; ?>
 
                 <div class="notification-dropdown" id="notificationDropdown">
-                    <?php if ($notif_count > 0 && isset($reminder_query) && $reminder_query): ?>
-                        <?php while ($row = mysqli_fetch_assoc($reminder_query)): ?>
+                    <?php if ($notif_count > 0 && !empty($reminder_items)): ?>
+                        <?php foreach ($reminder_items as $row): ?>
                             <div class="notification-item">
                                 <div class="notification-icon">
                                     <i class="fas fa-calendar-check"></i>
@@ -103,7 +176,7 @@ if ($initials === '') {
                                     <?php endif; ?>
                                 </div>
                             </div>
-                        <?php endwhile; ?>
+                        <?php endforeach; ?>
                     <?php else: ?>
                         <div class="no-notifications">No new notifications</div>
                     <?php endif; ?>
@@ -204,6 +277,10 @@ if ($initials === '') {
     z-index: 50;
 }
 
+.notification-dropdown.show {
+    display: block;
+}
+
 .notification-item {
     display: flex;
     padding: 8px 14px;
@@ -255,3 +332,15 @@ if ($initials === '') {
     color: #6b7280;
 }
 </style>
+<script>
+function toggleNotifications() {
+    var d = document.getElementById('notificationDropdown');
+    if (d) d.classList.toggle('show');
+    document.addEventListener('click', function close(e) {
+        if (!e.target.closest('.notification-bell')) {
+            if (d) d.classList.remove('show');
+            document.removeEventListener('click', close);
+        }
+    });
+}
+</script>

@@ -68,6 +68,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_status'])) {
                     $ins->bind_param("iisssss", $med_id, $pat_id, $today, $today, $now, $msg);
                     $ins->execute();
                     $ins->close();
+
+                    // Notify receptionist: insert into appointment_reminder_tbl
+                    $rec_msg = "[CANCELLED_BY_DOCTOR] " . $doctor_name_notif . " cancelled the appointment for " . $date_time . ".";
+                    $ins2 = $conn->prepare("INSERT INTO appointment_reminder_tbl (RECEPTIONIST_ID, APPOINTMENT_ID, REMINDER_TIME, REMARKS) VALUES (1, ?, ?, ?)");
+                    $ins2->bind_param("iss", $appointment_id, date('H:i:s'), $rec_msg);
+                    $ins2->execute();
+                    $ins2->close();
                 }
             }
 

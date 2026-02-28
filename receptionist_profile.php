@@ -81,8 +81,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
         $password_error = "Passwords do not match!";
     }
 }
-
-$conn->close();
 ?>
 
 <!DOCTYPE html>

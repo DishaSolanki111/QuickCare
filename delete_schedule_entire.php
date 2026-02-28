@@ -70,6 +70,8 @@ if ($doc_r && $doc_row = $doc_r->fetch_assoc()) {
 $today = date('Y-m-d');
 $now = date('H:i:s');
 $ins = $conn->prepare("INSERT INTO medicine_reminder_tbl (MEDICINE_ID, CREATOR_ROLE, CREATOR_ID, PATIENT_ID, START_DATE, END_DATE, REMINDER_TIME, REMARKS) VALUES (?, 'RECEPTIONIST', ?, ?, ?, ?, ?, ?)");
+$day_names = ['MON' => 'Monday', 'TUE' => 'Tuesday', 'WED' => 'Wednesday', 'THUR' => 'Thursday', 'FRI' => 'Friday', 'SAT' => 'Saturday', 'SUN' => 'Sunday'];
+$day_name = $day_names[$schedule_row['AVAILABLE_DAY']] ?? $schedule_row['AVAILABLE_DAY'];
 foreach ($deleted_appointments as $a) {
     $date_time = date('M d, Y', strtotime($a['APPOINTMENT_DATE'])) . ' at ' . date('h:i A', strtotime($a['APPOINTMENT_TIME']));
     $msg = "[CANCELLED] Your appointment with " . $doctor_name . " on " . $date_time . " was cancelled. Please reschedule your visit.";
@@ -78,9 +80,27 @@ foreach ($deleted_appointments as $a) {
 }
 $ins->close();
 
-// Delete payments for appointments in date range (current to 1 month ahead)
-$all_apt = $conn->query("SELECT APPOINTMENT_ID FROM appointment_tbl WHERE SCHEDULE_ID = " . (int)$schedule_id . " 
-    AND APPOINTMENT_DATE >= CURDATE() AND APPOINTMENT_DATE <= DATE_ADD(CURDATE(), INTERVAL 1 MONTH)");
+// Always notify receptionist via receptionist_notifications (no dependency on patient/medicine)
+$conn->query("CREATE TABLE IF NOT EXISTS receptionist_notifications (
+    RECEPTIONIST_NOTIFICATION_ID int(11) NOT NULL AUTO_INCREMENT,
+    MESSAGE text NOT NULL,
+    TYPE varchar(50) DEFAULT 'schedule_deleted',
+    CREATED_AT timestamp NULL DEFAULT current_timestamp(),
+    PRIMARY KEY (RECEPTIONIST_NOTIFICATION_ID)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci");
+$list_txt = !empty($deleted_appointments)
+    ? implode('; ', array_map(function($a) {
+        return trim($a['FIRST_NAME'] . ' ' . $a['LAST_NAME']) . ' - ' . date('M d, Y', strtotime($a['APPOINTMENT_DATE'])) . ' at ' . date('h:i A', strtotime($a['APPOINTMENT_TIME']));
+    }, $deleted_appointments))
+    : 'None';
+$rec_msg = "[SCHEDULE_DELETED_BY_DOCTOR] " . $doctor_name . "'s " . $day_name . " schedule was deleted. Cancelled appointments: " . $list_txt;
+$ins_rec = $conn->prepare("INSERT INTO receptionist_notifications (MESSAGE, TYPE) VALUES (?, 'schedule_deleted')");
+$ins_rec->bind_param("s", $rec_msg);
+$ins_rec->execute();
+$ins_rec->close();
+
+// Delete payments for ALL appointments under this schedule
+$all_apt = $conn->query("SELECT APPOINTMENT_ID FROM appointment_tbl WHERE SCHEDULE_ID = " . (int)$schedule_id);
 if ($all_apt && $all_apt->num_rows > 0) {
     $app_ids = [];
     while ($r = $all_apt->fetch_assoc()) {
@@ -90,9 +110,11 @@ if ($all_apt && $all_apt->num_rows > 0) {
     $conn->query("DELETE FROM payment_tbl WHERE APPOINTMENT_ID IN ($app_ids_str)");
 }
 
-// Delete only appointments in date range (current to 1 month ahead); schedule is kept
-$conn->query("DELETE FROM appointment_tbl WHERE SCHEDULE_ID = " . (int)$schedule_id . " 
-    AND APPOINTMENT_DATE >= CURDATE() AND APPOINTMENT_DATE <= DATE_ADD(CURDATE(), INTERVAL 1 MONTH)");
+// Delete ALL appointments for this schedule
+$conn->query("DELETE FROM appointment_tbl WHERE SCHEDULE_ID = " . (int)$schedule_id);
+
+// Delete the schedule itself (whole schedule for that day is removed)
+$conn->query("DELETE FROM doctor_schedule_tbl WHERE SCHEDULE_ID = " . (int)$schedule_id . " AND DOCTOR_ID = " . (int)$doctor_id);
 
 $conn->close();
 
@@ -102,7 +124,7 @@ $list = [];
 foreach ($deleted_appointments as $a) {
     $list[] = $a['FIRST_NAME'] . ' ' . $a['LAST_NAME'] . ' - ' . date('M d, Y', strtotime($a['APPOINTMENT_DATE'])) . ' at ' . date('h:i A', strtotime($a['APPOINTMENT_TIME']));
 }
-$success_msg = "Appointments for " . $day_name . " (current date to 1 month ahead) cancelled successfully. Affected patients have been notified.";
+$success_msg = "Entire schedule for " . $day_name . " has been deleted. Affected patients have been notified and receptionist has been informed.";
 if (!empty($list)) {
     $success_msg .= " Cancelled appointments: " . implode("; ", $list);
 } else {
