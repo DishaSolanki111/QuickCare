@@ -104,53 +104,52 @@ if (isset($_SESSION['APPOINTMENT_STATUS_SUCCESS'])) {
 }
 
 // ================== FETCH APPOINTMENTS ==================
- $today = date('Y-m-d');
+// All queries filter by DOCTOR_ID so the doctor sees only their appointments.
+$today_php = date('Y-m-d');
 
-// Today's appointments (only scheduled - completed ones move to Past tab)
- $today_appointments = [];
- $today_sql = "
+// Today's appointments = current date only (SCHEDULED), ordered by time
+$today_appointments = [];
+$today_sql = "
     SELECT a.*, p.FIRST_NAME as PAT_FNAME, p.LAST_NAME as PAT_LNAME, p.PHONE as PAT_PHONE, p.EMAIL as PAT_EMAIL
     FROM appointment_tbl a
     JOIN patient_tbl p ON a.PATIENT_ID = p.PATIENT_ID
-    WHERE a.DOCTOR_ID = ? AND a.APPOINTMENT_DATE = ? AND a.STATUS = 'SCHEDULED'
+    WHERE a.DOCTOR_ID = ? AND a.APPOINTMENT_DATE = CURDATE() AND a.STATUS = 'SCHEDULED'
     ORDER BY a.APPOINTMENT_TIME
 ";
- $today_stmt = $conn->prepare($today_sql);
- $today_stmt->bind_param("is", $doctor_id, $today);
- $today_stmt->execute();
- $today_result = $today_stmt->get_result();
-
-if ($today_result->num_rows > 0) {
+$today_stmt = $conn->prepare($today_sql);
+$today_stmt->bind_param("i", $doctor_id);
+$today_stmt->execute();
+$today_result = $today_stmt->get_result();
+if ($today_result) {
     while ($row = $today_result->fetch_assoc()) {
         $today_appointments[] = $row;
     }
 }
- $today_stmt->close();
+$today_stmt->close();
 
-// Upcoming appointments (only scheduled)
- $upcoming_appointments = [];
- $upcoming_sql = "
+// Upcoming appointments = future dates only (strictly after today), excluding current day
+$upcoming_appointments = [];
+$upcoming_sql = "
     SELECT a.*, p.FIRST_NAME as PAT_FNAME, p.LAST_NAME as PAT_LNAME, p.PHONE as PAT_PHONE, p.EMAIL as PAT_EMAIL
     FROM appointment_tbl a
     JOIN patient_tbl p ON a.PATIENT_ID = p.PATIENT_ID
-    WHERE a.DOCTOR_ID = ? AND a.APPOINTMENT_DATE > ? AND a.STATUS = 'SCHEDULED'
-    ORDER BY a.APPOINTMENT_DATE, a.APPOINTMENT_TIME
+    WHERE a.DOCTOR_ID = ? AND a.APPOINTMENT_DATE > CURDATE() AND a.STATUS = 'SCHEDULED'
+    ORDER BY a.APPOINTMENT_DATE ASC, a.APPOINTMENT_TIME ASC
 ";
- $upcoming_stmt = $conn->prepare($upcoming_sql);
- $upcoming_stmt->bind_param("is", $doctor_id, $today);
- $upcoming_stmt->execute();
- $upcoming_result = $upcoming_stmt->get_result();
-
-if ($upcoming_result->num_rows > 0) {
+$upcoming_stmt = $conn->prepare($upcoming_sql);
+$upcoming_stmt->bind_param("i", $doctor_id);
+$upcoming_stmt->execute();
+$upcoming_result = $upcoming_stmt->get_result();
+if ($upcoming_result) {
     while ($row = $upcoming_result->fetch_assoc()) {
         $upcoming_appointments[] = $row;
     }
 }
- $upcoming_stmt->close();
+$upcoming_stmt->close();
 
-// Past appointments (all completed - includes today's appointments once marked complete)
- $past_appointments = [];
- $past_sql = "
+// Past appointments = on or before current date, COMPLETED only (logic left as-is)
+$past_appointments = [];
+$past_sql = "
     SELECT a.*, p.FIRST_NAME as PAT_FNAME, p.LAST_NAME as PAT_LNAME, p.PHONE as PAT_PHONE, p.EMAIL as PAT_EMAIL
     FROM appointment_tbl a
     JOIN patient_tbl p ON a.PATIENT_ID = p.PATIENT_ID
@@ -158,17 +157,16 @@ if ($upcoming_result->num_rows > 0) {
     ORDER BY a.APPOINTMENT_DATE DESC, a.APPOINTMENT_TIME DESC
     LIMIT 20
 ";
- $past_stmt = $conn->prepare($past_sql);
- $past_stmt->bind_param("is", $doctor_id, $today);
- $past_stmt->execute();
- $past_result = $past_stmt->get_result();
-
-if ($past_result->num_rows > 0) {
+$past_stmt = $conn->prepare($past_sql);
+$past_stmt->bind_param("is", $doctor_id, $today_php);
+$past_stmt->execute();
+$past_result = $past_stmt->get_result();
+if ($past_result) {
     while ($row = $past_result->fetch_assoc()) {
         $past_appointments[] = $row;
     }
 }
- $past_stmt->close();
+$past_stmt->close();
 
 $active_tab = (isset($_GET['tab']) && in_array($_GET['tab'], ['today', 'upcoming', 'past'], true)) ? $_GET['tab'] : 'today';
 
