@@ -74,25 +74,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_prescription'])) 
     try {
         $appointment_id = intval($_POST['appointment_id']);
         $conn->begin_transaction();
-        
-        // 1. Insert into prescription_tbl
-        $sql = "INSERT INTO prescription_tbl (APPOINTMENT_ID, ISSUE_DATE, HEIGHT_CM, WEIGHT_KG, BLOOD_PRESSURE, DIABETES, SYMPTOMS, DIAGNOSIS, ADDITIONAL_NOTES) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        $stmt = $conn->prepare($sql);
         $height = !empty($_POST['height_cm']) ? $_POST['height_cm'] : null;
         $weight = !empty($_POST['weight_kg']) ? $_POST['weight_kg'] : null;
         $bp = !empty($_POST['blood_pressure']) ? $_POST['blood_pressure'] : null;
-        
-        $stmt->bind_param("isissssss", $appointment_id, $_POST['issue_date'], $height, $weight, $bp, $_POST['diabetes'], $_POST['symptoms'], $_POST['diagnosis'], $_POST['additional_notes']);
-        $stmt->execute();
-        $prescription_id = $conn->insert_id;
-        $stmt->close();
 
-        // 2. Insert into prescription_medicine_tbl (LOOP)
+        $existing = $conn->query("SELECT PRESCRIPTION_ID FROM prescription_tbl WHERE APPOINTMENT_ID = $appointment_id LIMIT 1");
+        $prescription_id = null;
+        if ($existing && $existing->num_rows > 0) {
+            $prescription_id = (int) $existing->fetch_assoc()['PRESCRIPTION_ID'];
+            $upd = $conn->prepare("UPDATE prescription_tbl SET ISSUE_DATE=?, HEIGHT_CM=?, WEIGHT_KG=?, BLOOD_PRESSURE=?, DIABETES=?, SYMPTOMS=?, DIAGNOSIS=?, ADDITIONAL_NOTES=? WHERE PRESCRIPTION_ID=?");
+            $upd->bind_param("ssssssssi", $_POST['issue_date'], $height, $weight, $bp, $_POST['diabetes'], $_POST['symptoms'], $_POST['diagnosis'], $_POST['additional_notes'], $prescription_id);
+            $upd->execute();
+            $upd->close();
+            $conn->query("DELETE FROM prescription_medicine_tbl WHERE PRESCRIPTION_ID = $prescription_id");
+        } else {
+            $sql = "INSERT INTO prescription_tbl (APPOINTMENT_ID, ISSUE_DATE, HEIGHT_CM, WEIGHT_KG, BLOOD_PRESSURE, DIABETES, SYMPTOMS, DIAGNOSIS, ADDITIONAL_NOTES) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param("isissssss", $appointment_id, $_POST['issue_date'], $height, $weight, $bp, $_POST['diabetes'], $_POST['symptoms'], $_POST['diagnosis'], $_POST['additional_notes']);
+            $stmt->execute();
+            $prescription_id = $conn->insert_id;
+            $stmt->close();
+        }
+
         if (isset($_POST['medicine_id']) && is_array($_POST['medicine_id'])) {
             $med_sql = "INSERT INTO prescription_medicine_tbl (PRESCRIPTION_ID, MEDICINE_ID, DOSAGE, DURATION, FREQUENCY) VALUES (?, ?, ?, ?, ?)";
             $med_stmt = $conn->prepare($med_sql);
-
             foreach ($_POST['medicine_id'] as $key => $mid) {
                 if (!empty($mid)) {
                     $dos = $_POST['dosage'][$key];
@@ -149,6 +156,13 @@ $prescriptions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
  $appointment_stmt->execute();
  $completed_appointments = $appointment_stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 
+ // Fetch vitals from prescription_tbl (receptionist may have added them in view_prescription) for pre-fill
+ $appointment_vitals = [];
+ if (!empty($completed_appointments)) {
+     $apt_ids = array_column($completed_appointments, 'APPOINTMENT_ID');
+     $vq = @$conn->query("SELECT APPOINTMENT_ID, BLOOD_PRESSURE, WEIGHT_KG, HEIGHT_CM FROM prescription_tbl WHERE APPOINTMENT_ID IN (" . implode(',', array_map('intval', $apt_ids)) . ")");
+     if ($vq) while ($v = $vq->fetch_assoc()) $appointment_vitals[$v['APPOINTMENT_ID']] = $v;
+ }
  $conn->close();
 ?>
 
@@ -238,9 +252,9 @@ $prescriptions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                         </div>
                         <div class="form-grid">
                             <div class="form-group"><label>Issue Date:</label><input type="date" name="issue_date" required value="<?php echo date('Y-m-d'); ?>"></div>
-                            <div class="form-group"><label>Blood Pressure:</label><input type="text" name="blood_pressure" placeholder="120/80"></div>
-                            <div class="form-group"><label>Height (cm):</label><input type="number" name="height_cm"></div>
-                            <div class="form-group"><label>Weight (kg):</label><input type="number" step="0.1" name="weight_kg"></div>
+                            <div class="form-group"><label>Blood Pressure (BP):</label><input type="text" name="blood_pressure" id="form_blood_pressure" placeholder="120/80"></div>
+                            <div class="form-group"><label>Height (cm):</label><input type="number" name="height_cm" id="form_height_cm" step="0.1"></div>
+                            <div class="form-group"><label>Weight (kg):</label><input type="number" step="0.1" name="weight_kg" id="form_weight_kg"></div>
                             <div class="form-group">
                                 <label>Diabetes:</label>
                                 <select name="diabetes">
@@ -251,6 +265,7 @@ $prescriptions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                                 </select>
                             </div>
                         </div>
+                        <p style="font-size:0.85rem; color:#666; margin-bottom:12px;"><i class="fas fa-info-circle"></i> BP, Height and Weight are added by the receptionist in <strong>View Prescription → Add vitals</strong>. When you select an appointment above, those vitals are loaded here automatically.</p>
                         <div class="form-group"><label>Symptoms:</label><textarea name="symptoms" rows="3"></textarea></div>
                         <div class="form-group"><label>Diagnosis:</label><textarea name="diagnosis" rows="3" required></textarea></div>
 
@@ -299,6 +314,17 @@ $prescriptions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
         </div>
     </div>
     <script>
+        var appointmentVitals = <?= json_encode($appointment_vitals); ?>;
+        var aptSelect = document.querySelector('select[name="appointment_id"]');
+        if (aptSelect) {
+            aptSelect.addEventListener('change', function() {
+                var aptId = this.value;
+                var v = appointmentVitals[aptId];
+                document.getElementById('form_blood_pressure').value = v && v.BLOOD_PRESSURE ? v.BLOOD_PRESSURE : '';
+                document.getElementById('form_height_cm').value = v && v.HEIGHT_CM != null && v.HEIGHT_CM !== '' ? v.HEIGHT_CM : '';
+                document.getElementById('form_weight_kg').value = v && v.WEIGHT_KG != null && v.WEIGHT_KG !== '' ? v.WEIGHT_KG : '';
+            });
+        }
         function addMedRow() {
             const area = document.getElementById('medicine-area');
             const row = document.querySelector('.medicine-block').cloneNode(true);

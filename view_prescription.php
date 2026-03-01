@@ -43,9 +43,69 @@
         generatePrescriptionPDF($prescription, $medicines, $conn);
         exit;
     }
+
+    // ================= SAVE VITALS: Receptionist adds BP, Height, Weight → stored in prescription_tbl → shown in prescription_form.php when doctor selects this appointment =================
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_vitals'])) {
+        $aid = (int) $_POST['appointment_id'];
+        $bp = isset($_POST['blood_pressure']) ? mysqli_real_escape_string($conn, trim($_POST['blood_pressure'])) : '';
+        $weight = isset($_POST['weight_kg']) && $_POST['weight_kg'] !== '' ? floatval($_POST['weight_kg']) : null;
+        $height = isset($_POST['height_cm']) && $_POST['height_cm'] !== '' ? floatval($_POST['height_cm']) : null;
+        $vitals_saved = false;
+        if ($aid > 0) {
+            $exist = $conn->query("SELECT PRESCRIPTION_ID FROM prescription_tbl WHERE APPOINTMENT_ID = $aid LIMIT 1");
+            if ($exist && $exist->num_rows > 0) {
+                $stmt = $conn->prepare("UPDATE prescription_tbl SET HEIGHT_CM=?, WEIGHT_KG=?, BLOOD_PRESSURE=? WHERE APPOINTMENT_ID=?");
+                if ($stmt) {
+                    $stmt->bind_param("ddsi", $height, $weight, $bp, $aid);
+                    $stmt->execute();
+                    $vitals_saved = true;
+                    $stmt->close();
+                }
+            } else {
+                $apt_row = $conn->query("SELECT APPOINTMENT_DATE FROM appointment_tbl WHERE APPOINTMENT_ID = $aid LIMIT 1");
+                $issue_date = date('Y-m-d');
+                if ($apt_row && $a = $apt_row->fetch_assoc()) $issue_date = $a['APPOINTMENT_DATE'];
+                $stmt = $conn->prepare("INSERT INTO prescription_tbl (APPOINTMENT_ID, ISSUE_DATE, HEIGHT_CM, WEIGHT_KG, BLOOD_PRESSURE, DIABETES, SYMPTOMS, DIAGNOSIS, ADDITIONAL_NOTES) VALUES (?, ?, ?, ?, ?, 'NO', '', '', '')");
+                if ($stmt) {
+                    $stmt->bind_param("isdds", $aid, $issue_date, $height, $weight, $bp);
+                    $stmt->execute();
+                    $vitals_saved = true;
+                    $stmt->close();
+                }
+            }
+        }
+        $_SESSION['vitals_saved_msg'] = $vitals_saved ? 'Vitals (BP, Height, Weight) saved. They will appear in the prescription form when the doctor selects this appointment.' : 'Could not save vitals. Please try again.';
+        header('Location: view_prescription.php');
+        exit;
+    }
     
     include 'recept_sidebar.php';
     $receptionist_id = $_SESSION['RECEPTIONIST_ID'];
+
+    // ================= SCHEDULED APPOINTMENTS (for Add vitals) =================
+    $scheduled_appointments = [];
+    $sched_q = mysqli_query($conn, "
+        SELECT a.APPOINTMENT_ID, a.APPOINTMENT_DATE, a.APPOINTMENT_TIME,
+               pat.PATIENT_ID, pat.FIRST_NAME AS PAT_FNAME, pat.LAST_NAME AS PAT_LNAME,
+               d.DOCTOR_ID, d.FIRST_NAME AS DOC_FNAME, d.LAST_NAME AS DOC_LNAME, s.SPECIALISATION_NAME
+        FROM appointment_tbl a
+        JOIN patient_tbl pat ON a.PATIENT_ID = pat.PATIENT_ID
+        JOIN doctor_tbl d ON a.DOCTOR_ID = d.DOCTOR_ID
+        JOIN specialisation_tbl s ON d.SPECIALISATION_ID = s.SPECIALISATION_ID
+        WHERE a.STATUS = 'SCHEDULED'
+          AND a.APPOINTMENT_DATE >= CURDATE()
+          AND a.APPOINTMENT_DATE <= DATE_ADD(CURDATE(), INTERVAL 7 DAY)
+        ORDER BY a.APPOINTMENT_DATE, a.APPOINTMENT_TIME
+    ");
+    if ($sched_q) {
+        while ($r = mysqli_fetch_assoc($sched_q)) $scheduled_appointments[] = $r;
+    }
+    $vitals_by_apt = [];
+    if (!empty($scheduled_appointments)) {
+        $ids = array_map(function($a) { return $a['APPOINTMENT_ID']; }, $scheduled_appointments);
+        $vq = @mysqli_query($conn, "SELECT APPOINTMENT_ID, BLOOD_PRESSURE, WEIGHT_KG, HEIGHT_CM FROM prescription_tbl WHERE APPOINTMENT_ID IN (" . implode(',', array_map('intval', $ids)) . ")");
+        if ($vq) while ($v = mysqli_fetch_assoc($vq)) $vitals_by_apt[$v['APPOINTMENT_ID']] = $v;
+    }
 
     // ================= SEARCH & FILTER LOGIC (POST) =================
     $doc_search = isset($_POST['doc_search']) ? mysqli_real_escape_string($conn, $_POST['doc_search']) : '';
@@ -127,12 +187,67 @@
         .prescription-detail-card { background: #fff; border: 1px solid #eef2f7; border-radius: 10px; padding: 15px; margin-bottom: 10px; border-left: 4px solid var(--soft); }
         .detail-row { font-size: 0.9rem; margin-bottom: 6px; color: #333; line-height: 1.4; }
         .detail-row strong { color: var(--mid); min-width: 100px; display: inline-block; }
-        .btn-pdf { background: var(--soft); color: #fff; border: none; padding: 6px 12px; border-radius: 4px; font-size: 0.8rem; cursor: pointer; float: right; }
+        .card-actions { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; margin-bottom: 8px; }
+        .btn-pdf { background: var(--soft); color: #fff; border: none; padding: 6px 12px; border-radius: 4px; font-size: 0.8rem; cursor: pointer; }
+        .btn-vitals-inline { background: var(--mid); color: #fff; border: none; padding: 6px 12px; border-radius: 4px; font-size: 0.8rem; cursor: pointer; white-space: nowrap; }
+        .btn-vitals-inline:hover { background: var(--dark); }
+        .vitals-section { background: #fff; padding: 20px; border-radius: 12px; margin-bottom: 25px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); border-left: 4px solid var(--soft); }
+        .vitals-section h3 { color: var(--dark); margin: 0 0 15px 0; font-size: 1.1rem; }
+        .vitals-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+        .vitals-table th, .vitals-table td { padding: 10px 12px; text-align: left; border-bottom: 1px solid #eee; }
+        .vitals-table th { background: var(--mid); color: #fff; }
+        .btn-vitals { background: var(--soft); color: #fff; border: none; padding: 6px 12px; border-radius: 4px; font-size: 0.8rem; cursor: pointer; }
+        .btn-vitals:hover { background: var(--mid); }
+        .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 9999; align-items: center; justify-content: center; }
+        .modal-overlay.show { display: flex; }
+        .modal-box { background: #fff; padding: 25px; border-radius: 12px; min-width: 320px; max-width: 420px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); }
+        .modal-box h4 { margin: 0 0 15px 0; color: var(--dark); }
+        .modal-box .form-group { margin-bottom: 12px; }
+        .modal-box label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 4px; color: #555; }
+        .modal-box input { width: 100%; padding: 8px 10px; border: 1px solid #ddd; border-radius: 6px; }
+        .modal-box .btn-row { display: flex; gap: 10px; margin-top: 18px; }
+        .modal-box .btn-row button { padding: 8px 16px; border-radius: 6px; border: none; cursor: pointer; font-weight: 600; }
+        .modal-box .btn-save { background: var(--soft); color: #fff; }
+        .modal-box .btn-cancel { background: #e0e0e0; color: #333; }
+        .vitals-badge { font-size: 0.8rem; color: var(--mid); margin-top: 4px; }
     </style>
 </head>
 <body>
 <div class="main">
     <?php include 'receptionist_header.php'; ?>
+
+    <?php if (isset($_SESSION['vitals_saved_msg'])) { echo '<div class="alert alert-success" style="background:#d4edda;color:#155724;padding:12px 20px;border-radius:8px;margin-bottom:20px;">' . htmlspecialchars($_SESSION['vitals_saved_msg']) . '</div>'; unset($_SESSION['vitals_saved_msg']); } ?>
+    <?php if (!empty($scheduled_appointments)): ?>
+    <div class="vitals-section">
+        <h3><i class="fa-solid fa-heart-pulse"></i> Add vitals for appointment (Receptionist)</h3>
+        <p style="margin-bottom:12px; color:#666; font-size:0.9rem;">Add <strong>Blood Pressure (BP)</strong>, <strong>Height (cm)</strong> and <strong>Weight (kg)</strong> here before the patient sees the doctor. These are stored in the same prescription record and will appear <strong>pre-filled in the prescription form</strong> when the doctor opens it and selects this appointment.</p>
+        <table class="vitals-table">
+            <thead><tr><th>Date & Time</th><th>Patient</th><th>Doctor</th><th>Vitals</th><th>Action</th></tr></thead>
+            <tbody>
+            <?php foreach ($scheduled_appointments as $sapt): 
+                $vid = $sapt['APPOINTMENT_ID'];
+                $vitals = isset($vitals_by_apt[$vid]) ? $vitals_by_apt[$vid] : null;
+            ?>
+                <tr>
+                    <td><?= date('M d, Y', strtotime($sapt['APPOINTMENT_DATE'])) ?> <?= date('h:i A', strtotime($sapt['APPOINTMENT_TIME'])) ?></td>
+                    <td><?= htmlspecialchars($sapt['PAT_FNAME'] . ' ' . $sapt['PAT_LNAME']) ?></td>
+                    <td>Dr. <?= htmlspecialchars($sapt['DOC_FNAME'] . ' ' . $sapt['DOC_LNAME']) ?> (<?= htmlspecialchars($sapt['SPECIALISATION_NAME']) ?>)</td>
+                    <td class="vitals-badge">
+                        <?php if ($vitals): ?>
+                            BP: <?= htmlspecialchars($vitals['BLOOD_PRESSURE'] ?: '–') ?> | W: <?= $vitals['WEIGHT_KG'] !== null ? $vitals['WEIGHT_KG'] : '–' ?> kg | H: <?= $vitals['HEIGHT_CM'] !== null ? $vitals['HEIGHT_CM'] : '–' ?> cm
+                        <?php else: ?>
+                            <span style="color:#999;">Not recorded</span>
+                        <?php endif; ?>
+                    </td>
+                    <td>
+                        <button type="button" class="btn-vitals" onclick="openVitalsModal(<?= $vid ?>, '<?= date('M d, Y', strtotime($sapt['APPOINTMENT_DATE'])) ?> <?= date('h:i A', strtotime($sapt['APPOINTMENT_TIME'])) ?>', '<?= htmlspecialchars(addslashes($sapt['PAT_FNAME'] . ' ' . $sapt['PAT_LNAME'])) ?>', <?= $vitals ? json_encode($vitals) : 'null' ?>)">Add vitals</button>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+    <?php endif; ?>
     
     <div class="filter-bar">
         <form method="POST" action="view_prescription.php">
@@ -170,11 +285,21 @@
                             <span class="patient-name"><i class="fa-solid fa-user"></i> <?= $pat['name'] ?></span>
                             <?php foreach ($pat['prescriptions'] as $pres): ?>
                                 <div class="prescription-detail-card">
-                                    <form method="POST">
-                                        <input type="hidden" name="download" value="<?= $pres['PRESCRIPTION_ID'] ?>">
-                                        <button type="submit" class="btn-pdf"><i class="fa-solid fa-file-pdf"></i> PDF</button>
-                                    </form>
+                                    <div class="card-actions">
+                                        <form method="POST" style="display:inline;">
+                                            <input type="hidden" name="download" value="<?= $pres['PRESCRIPTION_ID'] ?>">
+                                            <button type="submit" class="btn-pdf"><i class="fa-solid fa-file-pdf"></i> PDF</button>
+                                        </form>
+                                        <button type="button" class="btn-vitals-inline" onclick="openVitalsModal(<?= (int)$pres['APPOINTMENT_ID'] ?>, '<?= date('M d, Y', strtotime($pres['APPOINTMENT_DATE'])) ?>', '<?= htmlspecialchars(addslashes($pat['name'])) ?>', <?= htmlspecialchars(json_encode(['BLOOD_PRESSURE' => $pres['BLOOD_PRESSURE'] ?? '', 'WEIGHT_KG' => $pres['WEIGHT_KG'] ?? null, 'HEIGHT_CM' => $pres['HEIGHT_CM'] ?? null])) ?>)">Add vitals</button>
+                                    </div>
                                     <div class="detail-row"><strong>Appt. Date:</strong> <?= date('M d, Y', strtotime($pres['APPOINTMENT_DATE'])) ?></div>
+                                    <?php
+                                    $has_vitals = !empty($pres['BLOOD_PRESSURE']) || ($pres['WEIGHT_KG'] !== null && $pres['WEIGHT_KG'] !== '') || ($pres['HEIGHT_CM'] !== null && $pres['HEIGHT_CM'] !== '');
+                                    $is_past_appointment = strtotime($pres['APPOINTMENT_DATE']) < strtotime(date('Y-m-d'));
+                                    if ($has_vitals && $is_past_appointment):
+                                    ?>
+                                    <div class="detail-row"><strong>Vitals:</strong> BP: <?= htmlspecialchars($pres['BLOOD_PRESSURE'] ?? '–') ?> | Weight: <?= $pres['WEIGHT_KG'] !== null && $pres['WEIGHT_KG'] !== '' ? $pres['WEIGHT_KG'] : '–' ?> kg | Height: <?= $pres['HEIGHT_CM'] !== null && $pres['HEIGHT_CM'] !== '' ? $pres['HEIGHT_CM'] : '–' ?> cm</div>
+                                    <?php endif; ?>
                                     <div class="detail-row"><strong>Symptoms:</strong> <?= htmlspecialchars($pres['SYMPTOMS']) ?></div>
                                     <div class="detail-row"><strong>Diagnosis:</strong> <?= htmlspecialchars($pres['DIAGNOSIS']) ?></div>
                                     <div class="detail-row"><strong>Medicines:</strong> <?= htmlspecialchars($pres['MEDICINES_LIST'] ?: 'None') ?></div>
@@ -191,6 +316,46 @@
             </div>
         <?php endif; ?>
     </div>
+
+    <div class="modal-overlay" id="vitalsModal">
+        <div class="modal-box">
+            <h4 id="vitalsModalTitle">Add vitals (BP, Height, Weight)</h4>
+            <p style="font-size:0.8rem; color:#666; margin-bottom:12px;">Stored for this appointment and pre-filled in the prescription form when the doctor selects it.</p>
+            <form method="POST" action="view_prescription.php">
+                <input type="hidden" name="save_vitals" value="1">
+                <input type="hidden" name="appointment_id" id="vitalsAppointmentId" value="">
+                <div class="form-group">
+                    <label>Blood Pressure (BP)</label>
+                    <input type="text" name="blood_pressure" id="vitalsBP" placeholder="e.g. 120/80">
+                </div>
+                <div class="form-group">
+                    <label>Height (cm)</label>
+                    <input type="number" name="height_cm" id="vitalsHeight" step="0.1" placeholder="e.g. 170" min="0">
+                </div>
+                <div class="form-group">
+                    <label>Weight (kg)</label>
+                    <input type="number" name="weight_kg" id="vitalsWeight" step="0.1" placeholder="e.g. 65" min="0">
+                </div>
+                <div class="btn-row">
+                    <button type="submit" class="btn-save">Save</button>
+                    <button type="button" class="btn-cancel" onclick="closeVitalsModal()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
+<script>
+function openVitalsModal(aptId, dateTime, patientName, existing) {
+    document.getElementById('vitalsAppointmentId').value = aptId;
+    document.getElementById('vitalsModalTitle').textContent = 'Add vitals – ' + dateTime + ' – ' + patientName;
+    document.getElementById('vitalsBP').value = existing && existing.BLOOD_PRESSURE ? existing.BLOOD_PRESSURE : '';
+    document.getElementById('vitalsWeight').value = existing && existing.WEIGHT_KG != null ? existing.WEIGHT_KG : '';
+    document.getElementById('vitalsHeight').value = existing && existing.HEIGHT_CM != null ? existing.HEIGHT_CM : '';
+    document.getElementById('vitalsModal').classList.add('show');
+}
+function closeVitalsModal() {
+    document.getElementById('vitalsModal').classList.remove('show');
+}
+</script>
 </body>
 </html>
