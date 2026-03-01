@@ -1,3 +1,7 @@
+<?php
+session_start();
+include 'config.php';
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -228,8 +232,6 @@
         <div class="card">
             <h3>Total Patients</h3>
             <p><?php 
-            // PHP code to count total patients
-            include 'config.php';
             $patients_query = "SELECT COUNT(*) as count FROM patient_tbl";
             $patients_result = mysqli_query($conn, $patients_query);
             $patients_row = mysqli_fetch_assoc($patients_result);
@@ -283,7 +285,7 @@
                 <option value="CANCELLED" <?php echo (isset($_POST['status_filter']) && $_POST['status_filter'] == 'CANCELLED') ? 'selected' : ''; ?>>Cancelled</option>
             </select>
             <button type="submit">Generate Report</button>
-            <button type="button" class="export-btn" onclick="exportAppointmentReport()">Export</button>
+            <button type="button" class="export-btn" onclick="exportAppointmentReport()">Export PDF</button>
         </form>
         
         <table class="report-table">
@@ -367,7 +369,7 @@
             <input type="date" name="revenue_start_date" placeholder="Start Date" value="<?php echo isset($_POST['revenue_start_date']) ? $_POST['revenue_start_date'] : date('Y-m-01'); ?>">
             <input type="date" name="revenue_end_date" placeholder="End Date" value="<?php echo isset($_POST['revenue_end_date']) ? $_POST['revenue_end_date'] : date('Y-m-d'); ?>">
             <button type="submit">Generate Report</button>
-            <button type="button" class="export-btn" onclick="exportRevenueReport()">Export</button>
+            <button type="button" class="export-btn" onclick="exportRevenueReport()">Export PDF</button>
         </form>
         
         <table class="report-table">
@@ -418,7 +420,7 @@
             <input type="date" name="doctor_start_date" placeholder="Start Date" value="<?php echo isset($_POST['doctor_start_date']) ? $_POST['doctor_start_date'] : date('Y-m-01'); ?>">
             <input type="date" name="doctor_end_date" placeholder="End Date" value="<?php echo isset($_POST['doctor_end_date']) ? $_POST['doctor_end_date'] : date('Y-m-d'); ?>">
             <button type="submit">Generate Report</button>
-            <button type="button" class="export-btn" onclick="exportDoctorReport()">Export</button>
+            <button type="button" class="export-btn" onclick="exportDoctorReport()">Export PDF</button>
         </form>
         
         <table class="report-table">
@@ -471,62 +473,61 @@
 
 <script>
 function exportAppointmentReport() {
-    var form = document.createElement('form');
-    form.method = 'POST';
-    form.action = 'export_appointments_report.php';
-    var startDateInput = document.createElement('input');
-    startDateInput.type = 'hidden';
-    startDateInput.name = 'start_date';
-    startDateInput.value = '<?php echo isset($_POST['start_date']) ? $_POST['start_date'] : date('Y-m-01'); ?>';
-    form.appendChild(startDateInput);
-    var endDateInput = document.createElement('input');
-    endDateInput.type = 'hidden';
-    endDateInput.name = 'end_date';
-    endDateInput.value = '<?php echo isset($_POST['end_date']) ? $_POST['end_date'] : date('Y-m-d'); ?>';
-    form.appendChild(endDateInput);
-    var statusInput = document.createElement('input');
-    statusInput.type = 'hidden';
-    statusInput.name = 'status_filter';
-    statusInput.value = '<?php echo isset($_POST['status_filter']) ? $_POST['status_filter'] : ''; ?>';
-    form.appendChild(statusInput);
-    document.body.appendChild(form);
-    form.submit();
+    var form = document.querySelector('input[name="start_date"]');
+    form = form ? form.closest('form') : null;
+    var f = document.createElement('form');
+    f.method = 'POST';
+    f.action = 'export_appointments_report.php';
+    var startDate = form ? form.querySelector('input[name="start_date"]') : null;
+    var endDate = form ? form.querySelector('input[name="end_date"]') : null;
+    var statusSel = form ? form.querySelector('select[name="status_filter"]') : null;
+    var inp1 = document.createElement('input'); inp1.type = 'hidden'; inp1.name = 'start_date';
+    inp1.value = startDate ? startDate.value : '<?php echo date('Y-m-01'); ?>';
+    f.appendChild(inp1);
+    var inp2 = document.createElement('input'); inp2.type = 'hidden'; inp2.name = 'end_date';
+    inp2.value = endDate ? endDate.value : '<?php echo date('Y-m-d'); ?>';
+    f.appendChild(inp2);
+    var inp3 = document.createElement('input'); inp3.type = 'hidden'; inp3.name = 'status_filter';
+    inp3.value = statusSel ? statusSel.value : '';
+    f.appendChild(inp3);
+    document.body.appendChild(f);
+    f.submit();
 }
 
 function exportRevenueReport() {
-    var form = document.createElement('form');
-    form.method = 'POST';
-    form.action = 'export_revenue_report.php';
-    var startDateInput = document.createElement('input');
-    startDateInput.type = 'hidden';
-    startDateInput.name = 'start_date';
-    startDateInput.value = '<?php echo isset($_POST['revenue_start_date']) ? $_POST['revenue_start_date'] : date('Y-m-01'); ?>';
-    form.appendChild(startDateInput);
-    var endDateInput = document.createElement('input');
-    endDateInput.type = 'hidden';
-    endDateInput.name = 'end_date';
-    endDateInput.value = '<?php echo isset($_POST['revenue_end_date']) ? $_POST['revenue_end_date'] : date('Y-m-d'); ?>';
-    form.appendChild(endDateInput);
-    document.body.appendChild(form);
-    form.submit();
+    var form = document.querySelector('input[name="revenue_start_date"]');
+    form = form ? form.closest('form') : null;
+    var f = document.createElement('form');
+    f.method = 'POST';
+    f.action = 'export_revenue_report.php';
+    var startDate = form ? form.querySelector('input[name="revenue_start_date"]') : null;
+    var endDate = form ? form.querySelector('input[name="revenue_end_date"]') : null;
+    var inp1 = document.createElement('input'); inp1.type = 'hidden'; inp1.name = 'start_date';
+    inp1.value = startDate ? startDate.value : '<?php echo date('Y-m-01'); ?>';
+    f.appendChild(inp1);
+    var inp2 = document.createElement('input'); inp2.type = 'hidden'; inp2.name = 'end_date';
+    inp2.value = endDate ? endDate.value : '<?php echo date('Y-m-d'); ?>';
+    f.appendChild(inp2);
+    document.body.appendChild(f);
+    f.submit();
 }
 
 function exportDoctorReport() {
-    var form = document.createElement('form');
-    form.method = 'POST';
-    form.action = 'export_doctor_report.php';
-    var startDateInput = document.createElement('input');
-    startDateInput.type = 'hidden';
-    startDateInput.name = 'start_date';
-    startDateInput.value = '<?php echo isset($_POST['doctor_start_date']) ? $_POST['doctor_start_date'] : date('Y-m-01'); ?>';
-    form.appendChild(startDateInput);
-    var endDateInput = document.createElement('input');
-    endDateInput.type = 'hidden';
-    endDateInput.name = 'end_date';
-    endDateInput.value = '<?php echo isset($_POST['doctor_end_date']) ? $_POST['doctor_end_date'] : date('Y-m-d'); ?>';
-    form.appendChild(endDateInput);
-    document.body.appendChild(form);
-    form.submit();
+    var form = document.querySelector('input[name="doctor_start_date"]');
+    form = form ? form.closest('form') : null;
+    var f = document.createElement('form');
+    f.method = 'POST';
+    f.action = 'export_doctor_report.php';
+    var startDate = form ? form.querySelector('input[name="doctor_start_date"]') : null;
+    var endDate = form ? form.querySelector('input[name="doctor_end_date"]') : null;
+    var inp1 = document.createElement('input'); inp1.type = 'hidden'; inp1.name = 'start_date';
+    inp1.value = startDate ? startDate.value : '<?php echo date('Y-m-01'); ?>';
+    f.appendChild(inp1);
+    var inp2 = document.createElement('input'); inp2.type = 'hidden'; inp2.name = 'end_date';
+    inp2.value = endDate ? endDate.value : '<?php echo date('Y-m-d'); ?>';
+    f.appendChild(inp2);
+    document.body.appendChild(f);
+    f.submit();
 }
 </script>
 
