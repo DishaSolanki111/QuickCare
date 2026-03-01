@@ -127,17 +127,17 @@ if ($today_result) {
 }
 $today_stmt->close();
 
-// Upcoming appointments = future dates only (strictly after today), excluding current day
+// Upcoming appointments = future dates only (strictly after today), SCHEDULED only; use same date as PHP
 $upcoming_appointments = [];
 $upcoming_sql = "
     SELECT a.*, p.FIRST_NAME as PAT_FNAME, p.LAST_NAME as PAT_LNAME, p.PHONE as PAT_PHONE, p.EMAIL as PAT_EMAIL
     FROM appointment_tbl a
     JOIN patient_tbl p ON a.PATIENT_ID = p.PATIENT_ID
-    WHERE a.DOCTOR_ID = ? AND a.APPOINTMENT_DATE > CURDATE() AND a.STATUS = 'SCHEDULED'
+    WHERE a.DOCTOR_ID = ? AND a.APPOINTMENT_DATE > ? AND a.STATUS = 'SCHEDULED'
     ORDER BY a.APPOINTMENT_DATE ASC, a.APPOINTMENT_TIME ASC
 ";
 $upcoming_stmt = $conn->prepare($upcoming_sql);
-$upcoming_stmt->bind_param("i", $doctor_id);
+$upcoming_stmt->bind_param("is", $doctor_id, $today_php);
 $upcoming_stmt->execute();
 $upcoming_result = $upcoming_stmt->get_result();
 if ($upcoming_result) {
@@ -147,15 +147,15 @@ if ($upcoming_result) {
 }
 $upcoming_stmt->close();
 
-// Past appointments = on or before current date, COMPLETED only (logic left as-is)
+// Past appointments = on or before current date, only COMPLETED or CANCELLED (excludes SCHEDULED/no-show)
 $past_appointments = [];
 $past_sql = "
     SELECT a.*, p.FIRST_NAME as PAT_FNAME, p.LAST_NAME as PAT_LNAME, p.PHONE as PAT_PHONE, p.EMAIL as PAT_EMAIL
     FROM appointment_tbl a
     JOIN patient_tbl p ON a.PATIENT_ID = p.PATIENT_ID
-    WHERE a.DOCTOR_ID = ? AND a.APPOINTMENT_DATE <= ? AND a.STATUS = 'COMPLETED'
+    WHERE a.DOCTOR_ID = ? AND a.APPOINTMENT_DATE <= ? AND a.STATUS IN ('COMPLETED', 'CANCELLED')
     ORDER BY a.APPOINTMENT_DATE DESC, a.APPOINTMENT_TIME DESC
-    LIMIT 20
+    LIMIT 100
 ";
 $past_stmt = $conn->prepare($past_sql);
 $past_stmt->bind_param("is", $doctor_id, $today_php);
@@ -808,6 +808,7 @@ $active_tab = (isset($_GET['tab']) && in_array($_GET['tab'], ['today', 'upcoming
                                 
                             </div>
                             
+                            <?php if ($appointment['STATUS'] !== 'CANCELLED'): ?>
                             <div class="appointment-actions">
                                 <button class="btn btn-primary" onclick="viewPrescription(<?php echo $appointment['APPOINTMENT_ID']; ?>)">
                                     <i class="fas fa-file-medical"></i> View Prescription
@@ -817,6 +818,7 @@ $active_tab = (isset($_GET['tab']) && in_array($_GET['tab'], ['today', 'upcoming
                                     <i class="fas fa-star"></i> View Feedback
                                 </button>
                             </div>
+                            <?php endif; ?>
                         </div>
                     <?php endforeach; ?>
                 <?php else: ?>
