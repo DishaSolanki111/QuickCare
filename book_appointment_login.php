@@ -72,11 +72,16 @@ if (mysqli_num_rows($doctor_query) == 0) {
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-image: url('book_appoitment_bg_img.jpeg');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
+  margin: 0;
+  padding: 0;
+  background-image: url('uploads/background.png');
+  
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+
+            
             color: var(--text-dark);
             min-height: 100vh;
             display: flex;
