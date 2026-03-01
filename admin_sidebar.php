@@ -141,6 +141,8 @@ body {
 
     <a href="Admin_feedback.php" class="<?= ($currentPage == 'Admin_feedback.php') ? 'active' : '' ?>">Feedback</a>
 
+    <a href="Admin_report.php" class="<?= ($currentPage == 'Admin_report.php') ? 'active' : '' ?>">Reports</a>
+
     <a href="logout.php" class="logout-btn">Logout</a>
 </div>
 
