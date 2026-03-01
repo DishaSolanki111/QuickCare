@@ -143,7 +143,7 @@ body {
 
     <a href="Admin_report.php" class="<?= ($currentPage == 'Admin_report.php') ? 'active' : '' ?>">Reports</a>
 
-    <a href="logout.php" class="logout-btn">Logout</a>
+    <a href="logout.php" class="logout-btn" style="border:none;">Logout</a>
 </div>
 
 </body>

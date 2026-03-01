@@ -220,7 +220,7 @@ include 'config.php';
     <a href="Admin_payment.php">View Payments</a>
     <a href="Admin_feedback.php">View Feedback</a>
     <a href="Admin_report.php" class="active">Reports</a>
-    <button class="logout-btn">logout</button>
+    <a href="logout.php" class="logout-btn">Logout</a>
 </div>
 
 <!-- Main Content -->
