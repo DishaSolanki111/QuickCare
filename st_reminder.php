@@ -35,8 +35,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create_prescription_r
     $duration_days = (int)$duration;
     $reminder_date = date('Y-m-d', strtotime("+$duration_days days", strtotime($appointment_date)));
     
-    // Combine duration info with remarks
-    $full_remarks = "Duration: $duration days after appointment. " . ($remarks ? $remarks : '');
+    // Combine duration info with remarks (store PRESCRIPTION_ID for linking)
+    $full_remarks = "PRESCRIPTION_ID:{$prescription_id}. Duration: $duration days after appointment. " . ($remarks ? $remarks : '');
     
     // Insert into medicine_reminder_tbl
     $create_query = "INSERT INTO medicine_reminder_tbl (MEDICINE_ID, CREATOR_ROLE, CREATOR_ID, PATIENT_ID, REMINDER_TIME, REMARKS) 
@@ -57,29 +57,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_medicine_remin
     $remarks = mysqli_real_escape_string($conn, $_POST['remarks']);
     
     // Get appointment date from reminder (need to find associated appointment)
-    $reminder_query = mysqli_query($conn, "SELECT mr.PATIENT_ID FROM medicine_reminder_tbl mr WHERE mr.MEDICINE_REMINDER_ID = '$reminder_id'");
+    $reminder_query = mysqli_query($conn, "SELECT mr.PATIENT_ID, mr.REMARKS FROM medicine_reminder_tbl mr WHERE mr.MEDICINE_REMINDER_ID = '$reminder_id'");
     $reminder_data = mysqli_fetch_assoc($reminder_query);
     
     if ($reminder_data) {
         $patient_id = $reminder_data['PATIENT_ID'];
-        // Get latest appointment date for this patient
-        $appointment_query = mysqli_query($conn, "SELECT APPOINTMENT_DATE FROM appointment_tbl WHERE PATIENT_ID = '$patient_id' AND STATUS = 'COMPLETED' ORDER BY APPOINTMENT_DATE DESC LIMIT 1");
-        $appointment_data = mysqli_fetch_assoc($appointment_query);
+        $existing_remarks = $reminder_data['REMARKS'] ?? '';
+        $prescription_id_prefix = '';
+        if (preg_match('/PRESCRIPTION_ID:\s*(\d+)/', $existing_remarks, $m)) {
+            $prescription_id_prefix = 'PRESCRIPTION_ID:' . $m[1] . '. ';
+        }
+        $duration_days = (int)$duration;
+        $full_remarks = $prescription_id_prefix . "Duration: $duration days after appointment. " . ($remarks ? $remarks : '');
         
-        if ($appointment_data) {
-            $appointment_date = $appointment_data['APPOINTMENT_DATE'];
-            $duration_days = (int)$duration;
-            $full_remarks = "Duration: $duration days after appointment. " . ($remarks ? $remarks : '');
+        $update_query = "UPDATE medicine_reminder_tbl SET REMINDER_TIME = '$reminder_time', REMARKS = '$full_remarks' WHERE MEDICINE_REMINDER_ID = '$reminder_id'";
             
-            $update_query = "UPDATE medicine_reminder_tbl SET REMINDER_TIME = '$reminder_time', REMARKS = '$full_remarks' WHERE MEDICINE_REMINDER_ID = '$reminder_id'";
-            
-            if (mysqli_query($conn, $update_query)) {
-                $success_message = "Medicine reminder updated successfully!";
-            } else {
-                $error_message = "Error updating reminder: " . mysqli_error($conn);
-            }
+        if (mysqli_query($conn, $update_query)) {
+            $success_message = "Medicine reminder updated successfully!";
         } else {
-            $error_message = "Could not find associated appointment for this reminder.";
+            $error_message = "Error updating reminder: " . mysqli_error($conn);
         }
     } else {
         $error_message = "Reminder not found.";
@@ -99,9 +95,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_medicine_remin
     }
 }
 
-// Fetch completed appointments with prescription details
- $completed_appointments_query = mysqli_query($conn, "
-    SELECT a.APPOINTMENT_ID, a.APPOINTMENT_DATE, a.APPOINTMENT_TIME, 
+// Search filters (from header form)
+$search_type = isset($_GET['search_type']) ? mysqli_real_escape_string($conn, $_GET['search_type']) : '';
+$search_term = isset($_GET['search_term']) ? mysqli_real_escape_string($conn, trim($_GET['search_term'])) : '';
+$search_where = '';
+if ($search_term !== '') {
+    if ($search_type === 'patient') {
+        $search_where = " AND (p.FIRST_NAME LIKE '%$search_term%' OR p.LAST_NAME LIKE '%$search_term%')";
+    } elseif ($search_type === 'doctor') {
+        $search_where = " AND (d.FIRST_NAME LIKE '%$search_term%' OR d.LAST_NAME LIKE '%$search_term%')";
+    } elseif ($search_type === 'specialization') {
+        $search_where = " AND s.SPECIALISATION_NAME LIKE '%$search_term%'";
+    }
+}
+
+// Fetch completed appointments with prescription details (with search filter)
+$completed_appointments_query = mysqli_query($conn, "
+    SELECT a.APPOINTMENT_ID, a.APPOINTMENT_DATE, a.APPOINTMENT_TIME, a.DOCTOR_ID,
            p.PATIENT_ID, p.FIRST_NAME as PAT_FNAME, p.LAST_NAME as PAT_LNAME, p.PHONE, p.EMAIL,
            d.FIRST_NAME as DOC_FNAME, d.LAST_NAME as DOC_LNAME, s.SPECIALISATION_NAME,
            pr.PRESCRIPTION_ID, pr.ISSUE_DATE, pr.HEIGHT_CM, pr.WEIGHT_KG, pr.BLOOD_PRESSURE, 
@@ -112,11 +122,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_medicine_remin
     JOIN specialisation_tbl s ON d.SPECIALISATION_ID = s.SPECIALISATION_ID
     LEFT JOIN prescription_tbl pr ON a.APPOINTMENT_ID = pr.APPOINTMENT_ID
     WHERE a.STATUS = 'COMPLETED' AND pr.PRESCRIPTION_ID IS NOT NULL
-    ORDER BY a.APPOINTMENT_DATE DESC
+    $search_where
+    ORDER BY d.DOCTOR_ID, p.PATIENT_ID, a.APPOINTMENT_DATE DESC
 ");
 
 // Fetch medicine reminders with appointment info
- $medicine_reminders_query = mysqli_query($conn, "
+$medicine_reminders_query = mysqli_query($conn, "
     SELECT mr.*, p.FIRST_NAME as PAT_FNAME, p.LAST_NAME as PAT_LNAME,
            (SELECT MAX(a.APPOINTMENT_DATE) 
             FROM appointment_tbl a 
@@ -128,6 +139,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_medicine_remin
     WHERE mr.CREATOR_ROLE = 'RECEPTIONIST'
     ORDER BY mr.REMINDER_TIME
 ");
+
+// Build map: prescription_id => reminder row (for reminders that have PRESCRIPTION_ID in REMARKS)
+$reminder_by_prescription = [];
+$reminders_list = [];
+while ($mr = mysqli_fetch_assoc($medicine_reminders_query)) {
+    $reminders_list[] = $mr;
+    if (!empty($mr['REMARKS']) && preg_match('/PRESCRIPTION_ID:\s*(\d+)/', $mr['REMARKS'], $m)) {
+        $reminder_by_prescription[(int)$m[1]] = $mr;
+    }
+}
+
+// Group appointments by Doctor -> Patient -> Appointments (for card layout)
+$by_doctor = [];
+while ($row = mysqli_fetch_assoc($completed_appointments_query)) {
+    $did = (int)$row['DOCTOR_ID'];
+    $pid = (int)$row['PATIENT_ID'];
+    if (!isset($by_doctor[$did])) {
+        $by_doctor[$did] = [
+            'doc_name' => $row['DOC_FNAME'] . ' ' . $row['DOC_LNAME'],
+            'specialization' => $row['SPECIALISATION_NAME'],
+            'patients' => []
+        ];
+    }
+    if (!isset($by_doctor[$did]['patients'][$pid])) {
+        $by_doctor[$did]['patients'][$pid] = [
+            'name' => $row['PAT_FNAME'] . ' ' . $row['PAT_LNAME'],
+            'phone' => $row['PHONE'],
+            'email' => $row['EMAIL'],
+            'appointments' => []
+        ];
+    }
+    $by_doctor[$did]['patients'][$pid]['appointments'][] = $row;
+}
 
 // Get reminder data for editing
 $edit_reminder_data = null;
@@ -559,6 +603,46 @@ if (isset($_POST['edit_reminder_id'])) {
             border-bottom-color: #eee;
         }
         
+        .doctor-card-header {
+            font-size: 1.1rem;
+        }
+        .doctor-card .patient-block {
+            border-left: 3px solid var(--soft-blue);
+            padding-left: 15px;
+            margin-left: 5px;
+        }
+        .patient-name-row {
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+        .appointment-block {
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 12px 15px;
+            margin-bottom: 12px;
+        }
+        .appointment-date-row {
+            font-size: 0.95rem;
+            color: #555;
+        }
+        .medicine-list-label {
+            font-weight: 600;
+            color: var(--primary-color);
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+        }
+        .reminder-action-row {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .reminder-set-badge {
+            font-size: 0.85rem;
+            color: var(--accent-color);
+            font-weight: 500;
+        }
+        
         @media (max-width: 768px) {
             .sidebar {
                 width: 70px;
@@ -625,172 +709,107 @@ if (isset($_POST['edit_reminder_id'])) {
                 
                 <!-- Tab Content -->
                 <div class="tab-content" id="reminderTabContent">
-                    <!-- Completed Prescriptions Tab -->
+                    <!-- Completed Prescriptions Tab: Doctor → Patient → Appointment → Medicine → Reminder -->
                     <div class="tab-pane fade show active" id="prescriptions" role="tabpanel" aria-labelledby="prescriptions-tab">
                         <?php
-                        if (mysqli_num_rows($completed_appointments_query) > 0) {
-                            while ($appointment = mysqli_fetch_assoc($completed_appointments_query)) {
-                                // Fetch medicines for this prescription
-                                $medicines_query = mysqli_query($conn, "
-                                    SELECT m.MED_NAME, pm.DOSAGE, pm.DURATION, pm.FREQUENCY
-                                    FROM prescription_medicine_tbl pm
-                                    JOIN medicine_tbl m ON pm.MEDICINE_ID = m.MEDICINE_ID
-                                    WHERE pm.PRESCRIPTION_ID = '" . $appointment['PRESCRIPTION_ID'] . "'
-                                ");
-                                
-                                // Calculate prescription duration (extract max days from medicine durations)
-                                $prescription_duration_days = 0;
-                                $prescription_duration_text = 'Not specified';
-                                $temp_query = mysqli_query($conn, "
-                                    SELECT pm.DURATION
-                                    FROM prescription_medicine_tbl pm
-                                    WHERE pm.PRESCRIPTION_ID = '" . $appointment['PRESCRIPTION_ID'] . "'
-                                ");
-                                
-                                if ($temp_query && mysqli_num_rows($temp_query) > 0) {
-                                    $max_days = 0;
-                                    while ($dur_row = mysqli_fetch_assoc($temp_query)) {
-                                        // Extract number from duration string (e.g., "5 days" -> 5, "30 days" -> 30)
-                                        if (preg_match('/(\d+)/', $dur_row['DURATION'], $matches)) {
-                                            $days = (int)$matches[1];
-                                            if ($days > $max_days) {
-                                                $max_days = $days;
-                                            }
-                                        }
-                                    }
-                                    if ($max_days > 0) {
-                                        $prescription_duration_days = $max_days;
-                                        $prescription_duration_text = $max_days . ' day' . ($max_days > 1 ? 's' : '');
-                                    }
-                                }
+                        if (!empty($by_doctor)) {
+                            foreach ($by_doctor as $doctor_id => $doctor_data) {
                                 ?>
-                                <div class="patient-card">
-                                    <div class="patient-header">
-                                        <div class="patient-name">
-                                            <?php echo htmlspecialchars($appointment['PAT_FNAME'] . ' ' . $appointment['PAT_LNAME']); ?>
-                                        </div>
-                                        <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#createPrescriptionReminderModal" 
-                                                data-patient-id="<?php echo $appointment['PATIENT_ID']; ?>"
-                                                data-patient-name="<?php echo htmlspecialchars($appointment['PAT_FNAME'] . ' ' . $appointment['PAT_LNAME']); ?>"
-                                                data-prescription-id="<?php echo $appointment['PRESCRIPTION_ID']; ?>"
-                                                data-appointment-date="<?php echo $appointment['APPOINTMENT_DATE']; ?>"
-                                                data-prescription-duration="<?php echo $prescription_duration_days; ?>">
-                                            <i class="bi bi-bell-fill me-1"></i> Set Reminder
-                                        </button>
+                                <div class="doctor-card card mb-4">
+                                    <div class="card-header doctor-card-header">
+                                        <i class="bi bi-person-badge me-2"></i>
+                                        <strong>Dr. <?php echo htmlspecialchars($doctor_data['doc_name']); ?></strong>
+                                        <span class="badge bg-primary ms-2"><?php echo htmlspecialchars($doctor_data['specialization']); ?></span>
                                     </div>
-                                    
-                                    <div class="patient-details">
-                                        
-                                        <div class="patient-detail">
-                                            <i class="bi bi-telephone"></i>
-                                            <span><?php echo htmlspecialchars($appointment['PHONE']); ?></span>
-                                        </div>
-                                        <div class="patient-detail">
-                                            <i class="bi bi-envelope"></i>
-                                            <span><?php echo htmlspecialchars($appointment['EMAIL']); ?></span>
-                                        </div>
-                                        <div class="patient-detail">
-                                            <i class="bi bi-calendar"></i>
-                                            <span>Appointment: <?php echo date('F d, Y', strtotime($appointment['APPOINTMENT_DATE'])); ?> at <?php echo date('h:i A', strtotime($appointment['APPOINTMENT_TIME'])); ?></span>
-                                        </div>
-                                        <div class="patient-detail">
-                                            <i class="bi bi-person-badge"></i>
-                                            <span>Dr. <?php echo htmlspecialchars($appointment['DOC_FNAME'] . ' ' . $appointment['DOC_LNAME']); ?> (<?php echo htmlspecialchars($appointment['SPECIALISATION_NAME']); ?>)</span>
-                                        </div>
-                                    </div>
-                                    
-                                    <?php if ($appointment['PRESCRIPTION_ID']): ?>
-                                    <div class="prescription-section">
-                                        <div class="prescription-header">
-                                            <div class="prescription-title">
-                                                Prescription Details (ID: <?php echo $appointment['PRESCRIPTION_ID']; ?>)
+                                    <div class="card-body">
+                                        <?php foreach ($doctor_data['patients'] as $patient_id => $patient_data): ?>
+                                        <div class="patient-block mb-4">
+                                            <div class="patient-name-row">
+                                                <i class="bi bi-person me-2"></i>
+                                                <strong><?php echo htmlspecialchars($patient_data['name']); ?></strong>
+                                                <span class="text-muted small ms-2"><?php echo htmlspecialchars($patient_data['phone']); ?> · <?php echo htmlspecialchars($patient_data['email']); ?></span>
                                             </div>
-                                        </div>
-                                        
-                                        <div class="prescription-details">
-                                            <div class="prescription-detail">
-                                                <i class="bi bi-calendar-check"></i>
-                                                <span>Issue Date: <?php echo date('F d, Y', strtotime($appointment['ISSUE_DATE'])); ?></span>
-                                            </div>
-                                            <?php if ($appointment['HEIGHT_CM']): ?>
-                                            <div class="prescription-detail">
-                                                <i class="bi bi-rulers"></i>
-                                                <span>Height: <?php echo $appointment['HEIGHT_CM']; ?> cm</span>
-                                            </div>
-                                            <?php endif; ?>
-                                            <?php if ($appointment['WEIGHT_KG']): ?>
-                                            <div class="prescription-detail">
-                                                <i class="bi bi-speedometer2"></i>
-                                                <span>Weight: <?php echo $appointment['WEIGHT_KG']; ?> kg</span>
-                                            </div>
-                                            <?php endif; ?>
-                                            <?php if ($appointment['BLOOD_PRESSURE']): ?>
-                                            <div class="prescription-detail">
-                                                <i class="bi bi-heart-pulse"></i>
-                                                <span>Blood Pressure: <?php echo $appointment['BLOOD_PRESSURE']; ?></span>
-                                            </div>
-                                            <?php endif; ?>
-                                            <?php if ($appointment['DIABETES']): ?>
-                                            <div class="prescription-detail">
-                                                <i class="bi bi-droplet"></i>
-                                                <span>Diabetes: <?php echo $appointment['DIABETES']; ?></span>
-                                            </div>
-                                            <?php endif; ?>
-                                            <div class="prescription-detail">
-                                                <i class="bi bi-calendar-range"></i>
-                                                <span>Duration: <?php echo htmlspecialchars($prescription_duration_text); ?></span>
-                                            </div>
-                                        </div>
-                                        
-                                        <?php if ($appointment['SYMPTOMS']): ?>
-                                        <div class="mb-2">
-                                            <strong>Symptoms:</strong> <?php echo htmlspecialchars($appointment['SYMPTOMS']); ?>
-                                        </div>
-                                        <?php endif; ?>
-                                        
-                                        <?php if ($appointment['DIAGNOSIS']): ?>
-                                        <div class="mb-2">
-                                            <strong>Diagnosis:</strong> <?php echo htmlspecialchars($appointment['DIAGNOSIS']); ?>
-                                        </div>
-                                        <?php endif; ?>
-                                        
-                                        <?php if ($appointment['ADDITIONAL_NOTES']): ?>
-                                        <div class="mb-2">
-                                            <strong>Additional Notes:</strong> <?php echo htmlspecialchars($appointment['ADDITIONAL_NOTES']); ?>
-                                        </div>
-                                        <?php endif; ?>
-                                        
-                                        <div class="medicines-list">
-                                            <h5>Prescribed Medicines:</h5>
-                                            <?php
-                                            if (mysqli_num_rows($medicines_query) > 0) {
-                                                while ($medicine = mysqli_fetch_assoc($medicines_query)) {
-                                                    ?>
-                                                    <div class="medicine-item">
-                                                        <div class="medicine-info">
-                                                            <div class="medicine-name"><?php echo htmlspecialchars($medicine['MED_NAME']); ?></div>
-                                                            <div class="medicine-dosage">
-                                                                Dosage: <?php echo htmlspecialchars($medicine['DOSAGE']); ?> | 
-                                                                Duration: <?php echo htmlspecialchars($medicine['DURATION']); ?> | 
-                                                                Frequency: <?php echo htmlspecialchars($medicine['FREQUENCY']); ?>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <?php
+                                            <?php foreach ($patient_data['appointments'] as $apt): 
+                                                $prescription_id = (int)$apt['PRESCRIPTION_ID'];
+                                                $medicines_query = mysqli_query($conn, "
+                                                    SELECT m.MED_NAME, pm.DOSAGE, pm.DURATION, pm.FREQUENCY
+                                                    FROM prescription_medicine_tbl pm
+                                                    JOIN medicine_tbl m ON pm.MEDICINE_ID = m.MEDICINE_ID
+                                                    WHERE pm.PRESCRIPTION_ID = '$prescription_id'
+                                                ");
+                                                $prescription_duration_days = 0;
+                                                $dur_query = mysqli_query($conn, "SELECT pm.DURATION FROM prescription_medicine_tbl pm WHERE pm.PRESCRIPTION_ID = '$prescription_id'");
+                                                if ($dur_query && mysqli_num_rows($dur_query) > 0) {
+                                                    while ($dur_row = mysqli_fetch_assoc($dur_query)) {
+                                                        if (preg_match('/(\d+)/', $dur_row['DURATION'], $matches)) {
+                                                            $d = (int)$matches[1];
+                                                            if ($d > $prescription_duration_days) $prescription_duration_days = $d;
+                                                        }
+                                                    }
                                                 }
-                                                // Reset the result pointer
-                                                mysqli_data_seek($medicines_query, 0);
-                                            } else {
-                                                echo '<p>No medicines prescribed.</p>';
-                                            }
+                                                $reminder_row = isset($reminder_by_prescription[$prescription_id]) ? $reminder_by_prescription[$prescription_id] : null;
                                             ?>
+                                            <div class="appointment-block">
+                                                <div class="appointment-date-row">
+                                                    <i class="bi bi-calendar-event me-2"></i>
+                                                    <strong>Appointment:</strong> <?php echo date('F d, Y', strtotime($apt['APPOINTMENT_DATE'])); ?> at <?php echo date('h:i A', strtotime($apt['APPOINTMENT_TIME'])); ?>
+                                                </div>
+                                                <div class="medicines-list mt-2">
+                                                    <div class="medicine-list-label">Medicines:</div>
+                                                    <?php
+                                                    if ($medicines_query && mysqli_num_rows($medicines_query) > 0) {
+                                                        while ($med = mysqli_fetch_assoc($medicines_query)) {
+                                                            ?>
+                                                            <div class="medicine-item">
+                                                                <div class="medicine-info">
+                                                                    <div class="medicine-name"><?php echo htmlspecialchars($med['MED_NAME']); ?></div>
+                                                                    <div class="medicine-dosage">
+                                                                        Dosage: <?php echo htmlspecialchars($med['DOSAGE']); ?> ·
+                                                                        Duration: <?php echo htmlspecialchars($med['DURATION']); ?> ·
+                                                                        Frequency: <?php echo htmlspecialchars($med['FREQUENCY']); ?>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <?php
+                                                        }
+                                                    } else {
+                                                        echo '<p class="small text-muted">No medicines prescribed.</p>';
+                                                    }
+                                                    ?>
+                                                </div>
+                                                <div class="reminder-action-row mt-2">
+                                                    <?php if ($reminder_row): ?>
+                                                    <span class="reminder-set-badge me-2"><i class="bi bi-bell-fill me-1"></i>Reminder set</span>
+                                                    <button type="button" class="btn btn-warning btn-sm" onclick="openEditReminderModal(
+                                                        <?php echo (int)$reminder_row['MEDICINE_REMINDER_ID']; ?>,
+                                                        '<?php echo addslashes($reminder_row['REMINDER_TIME']); ?>',
+                                                        '<?php echo addslashes($reminder_row['REMARKS']); ?>',
+                                                        '<?php echo isset($reminder_row['APPOINTMENT_DATE']) ? addslashes($reminder_row['APPOINTMENT_DATE']) : ''; ?>'
+                                                    )">
+                                                        <i class="bi bi-pencil me-1"></i> Edit
+                                                    </button>
+                                                    <form method="POST" class="d-inline">
+                                                        <input type="hidden" name="reminder_id" value="<?php echo (int)$reminder_row['MEDICINE_REMINDER_ID']; ?>">
+                                                        <button type="submit" name="delete_medicine_reminder" class="btn btn-danger btn-sm" onclick="return confirm('Delete this reminder?');">
+                                                            <i class="bi bi-trash me-1"></i> Delete
+                                                        </button>
+                                                    </form>
+                                                    <?php else: ?>
+                                                    <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#createPrescriptionReminderModal" 
+                                                            data-patient-id="<?php echo (int)$apt['PATIENT_ID']; ?>"
+                                                            data-patient-name="<?php echo htmlspecialchars($apt['PAT_FNAME'] . ' ' . $apt['PAT_LNAME']); ?>"
+                                                            data-prescription-id="<?php echo $prescription_id; ?>"
+                                                            data-appointment-date="<?php echo htmlspecialchars($apt['APPOINTMENT_DATE']); ?>"
+                                                            data-prescription-duration="<?php echo $prescription_duration_days; ?>">
+                                                        <i class="bi bi-bell-fill me-1"></i> Set Reminder
+                                                    </button>
+                                                    <?php endif; ?>
+                                                </div>
+                                            </div>
+                                            <?php endforeach; ?>
                                         </div>
+                                        <?php endforeach; ?>
                                     </div>
-                                    <?php else: ?>
-                                    <div class="alert alert-info">
-                                        <i class="bi bi-info-circle-fill me-2"></i>No prescription details available for this appointment.
-                                    </div>
-                                    <?php endif; ?>
                                 </div>
                                 <?php
                             }
@@ -798,7 +817,7 @@ if (isset($_POST['edit_reminder_id'])) {
                             echo '<div class="empty-state">
                                 <i class="bi bi-clipboard-x"></i>
                                 <h4>No completed appointments found</h4>
-                                <p>No patients with completed appointments and prescriptions found.</p>
+                                <p>No patients with completed appointments and prescriptions found.' . ($search_term ? ' Try a different search.' : '') . '</p>
                             </div>';
                         }
                         ?>
@@ -807,8 +826,8 @@ if (isset($_POST['edit_reminder_id'])) {
                     <!-- Active Reminders Tab -->
                     <div class="tab-pane fade" id="reminders" role="tabpanel" aria-labelledby="reminders-tab">
                         <?php
-                        if (mysqli_num_rows($medicine_reminders_query) > 0) {
-                            while ($reminder = mysqli_fetch_assoc($medicine_reminders_query)) {
+                        if (!empty($reminders_list)) {
+                            foreach ($reminders_list as $reminder) {
                                 ?>
                                 <div class="reminder-card">
                                     <div class="reminder-header">

@@ -119,8 +119,30 @@ if (isset($reminder_query) && $reminder_query) {
 }
 ?>
 
+<?php
+$current_script = basename($_SERVER['PHP_SELF'] ?? '');
+$show_reminder_search = ($current_script === 'st_reminder.php');
+?>
 <header class="topbar">
     <h2>Welcome back</h2>
+
+    <?php if ($show_reminder_search): ?>
+    <div class="reminder-search-bar">
+        <form method="get" action="st_reminder.php" class="reminder-search-form">
+            <select name="search_type" class="form-select search-type-select" required>
+                <option value="">Search by...</option>
+                <option value="patient" <?php echo (isset($_GET['search_type']) && $_GET['search_type'] === 'patient') ? 'selected' : ''; ?>>By Patient</option>
+                <option value="doctor" <?php echo (isset($_GET['search_type']) && $_GET['search_type'] === 'doctor') ? 'selected' : ''; ?>>By Doctor</option>
+                <option value="specialization" <?php echo (isset($_GET['search_type']) && $_GET['search_type'] === 'specialization') ? 'selected' : ''; ?>>By Specialization</option>
+            </select>
+            <input type="text" name="search_term" class="form-control search-term-input" placeholder="Search..." value="<?php echo isset($_GET['search_term']) ? htmlspecialchars($_GET['search_term']) : ''; ?>">
+            <button type="submit" class="btn btn-search"><i class="fas fa-search"></i> Search</button>
+            <?php if (!empty($_GET['search_type']) || !empty($_GET['search_term'])): ?>
+            <a href="st_reminder.php" class="btn btn-clear">Clear</a>
+            <?php endif; ?>
+        </form>
+    </div>
+    <?php endif; ?>
 
     <div class="topbar-right">
         <div class="user-info">
@@ -191,10 +213,73 @@ if (isset($reminder_query) && $reminder_query) {
     background: #ffffff;
     padding: 12px 30px;
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
     align-items: center;
+    gap: 12px;
     box-shadow: 0 2px 6px rgba(0,0,0,0.06);
     margin-bottom: 10px;
+}
+
+.reminder-search-bar {
+    flex: 1;
+    min-width: 280px;
+    max-width: 520px;
+}
+
+.reminder-search-form {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.reminder-search-form .search-type-select {
+    width: 160px;
+    border-radius: 8px;
+    border: 1px solid #d1d5db;
+    padding: 8px 12px;
+    font-size: 14px;
+}
+
+.reminder-search-form .search-term-input {
+    flex: 1;
+    min-width: 120px;
+    max-width: 200px;
+    border-radius: 8px;
+    border: 1px solid #d1d5db;
+    padding: 8px 12px;
+    font-size: 14px;
+}
+
+.reminder-search-form .btn-search {
+    background: #1a3a5f;
+    color: #fff;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.reminder-search-form .btn-search:hover {
+    background: #064469;
+    color: #fff;
+}
+
+.reminder-search-form .btn-clear {
+    background: #f3f4f6;
+    color: #4b5563;
+    border: 1px solid #d1d5db;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 14px;
+    text-decoration: none;
+}
+
+.reminder-search-form .btn-clear:hover {
+    background: #e5e7eb;
+    color: #111;
 }
 
 .topbar-right {
