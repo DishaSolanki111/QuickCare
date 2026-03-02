@@ -128,21 +128,8 @@ if (isset($_POST['action']) && $_POST['action'] == 'edit_doctor') {
     }
 }
 
-// Handle delete
-if (isset($_POST['delete'])) {
-    $id = (int) $_POST['delete'];
-    if ($id > 0) {
-        $check = mysqli_query($conn, "SELECT COUNT(*) as c FROM appointment_tbl WHERE DOCTOR_ID = $id");
-        $row = mysqli_fetch_assoc($check);
-        if ((int) $row['c'] > 0) {
-            header("Location: recep_doctor.php?error=Cannot delete doctor with appointments");
-        } else {
-            mysqli_query($conn, "DELETE FROM doctor_tbl WHERE DOCTOR_ID = $id");
-            header("Location: recep_doctor.php");
-        }
-        exit;
-    }
-}
+
+
 
 // Get doctor data for editing
  $doctor_data = null;
@@ -258,7 +245,7 @@ $receptionist_id = $_SESSION['RECEPTIONIST_ID'];
         }
 
         .edit-btn { background-color: #f39c12; }
-        .delete-btn { background-color: #e74c3c; }
+       
 
         .add-btn {
             background: #2ecc71;
@@ -579,10 +566,7 @@ $receptionist_id = $_SESSION['RECEPTIONIST_ID'];
                     Edit
                 </button>
 
-                <button type="button" class="action-btn delete-btn"
-                    onclick="confirmDelete(<?php echo $row['DOCTOR_ID']; ?>)">
-                    Delete
-                </button>
+           
             </td>
         </tr>
         <?php
@@ -694,20 +678,7 @@ window.onclick = function(event) {
     }
 }
 
-function confirmDelete(id) {
-    if (confirm("Are you sure you want to delete this doctor?")) {
-        var form = document.createElement('form');
-        form.method = 'POST';
-        form.action = 'recep_doctor.php';
-        var input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = 'delete';
-        input.value = id;
-        form.appendChild(input);
-        document.body.appendChild(form);
-        form.submit();
-    }
-}
+
 
 // Toast notification function
 function showToast(message, isSuccess = false) {

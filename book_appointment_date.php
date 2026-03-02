@@ -106,18 +106,37 @@ if (mysqli_num_rows($doctor_query) == 0) {
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-image: url('book_appoitment_bg_img.jpeg');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
-            color: var(--text-dark);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            padding-top: 100px;
-        }
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: white; /* Make sure text stands out */
+  min-height: 100vh;
+  position: relative;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1; /* Puts it behind everything */
+  
+  /* Your Image Settings */
+  background-image: url('uploads/background.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  
+  /* The Blur and Opacity */
+  filter: blur(3px); /* Adjust pixels for more/less blur */
+  opacity: 0.8;      /* Adjust for transparency */
+  
+  /* Darken effect */
+  background-color: rgba(0, 0, 0, 0.4); 
+  background-blend-mode: overlay;
+}
 
         .page-header {
             background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
@@ -500,7 +519,8 @@ if (mysqli_num_rows($doctor_query) == 0) {
         }
     </style>
 </head>
-<body>
+<body >
+
   
 
     <section class="booking-section">
