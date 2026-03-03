@@ -659,7 +659,8 @@ if (isset($_POST['edit_reminder_id'])) {
             margin-top: 2px;
         }
         .appointment-block {
-            background: var(--card-bg);
+            background: #eff6ff;
+            border: 1px solid #dbeafe;
             border-radius: 8px;
             padding: 12px 15px;
             margin-bottom: 12px;
@@ -821,13 +822,10 @@ if (isset($_POST['edit_reminder_id'])) {
                                     <div class="card-body">
                                         <?php foreach ($doctor_data['patients'] as $patient_id => $patient_data): ?>
                                         <div class="patient-block mb-4">
-                                            <div class="patient-name-row">
-                                                <i class="bi bi-person me-2"></i>
-                                                <div class="patient-info-stack">
-                                                    <strong><?php echo htmlspecialchars($patient_data['name']); ?></strong>
-                                                    <div class="patient-contact"><?php echo htmlspecialchars($patient_data['phone']); ?></div>
-                                                    <div class="patient-contact"><?php echo htmlspecialchars($patient_data['email']); ?></div>
-                                                </div>
+                                            <div class="patient-name-row" style="background-color: #e0f2fe; padding: 15px; border-radius: 8px;">
+                                                <div style="font-size: 1.1rem;"><i class="bi bi-person me-2"></i><strong><?php echo htmlspecialchars($patient_data['name']); ?></strong></div>
+                                                <div class="text-muted small ms-4 mt-2"><i class="bi bi-telephone me-2"></i><?php echo htmlspecialchars($patient_data['phone']); ?></div>
+                                                <div class="text-muted small ms-4 mt-1"><i class="bi bi-envelope me-2"></i><?php echo htmlspecialchars($patient_data['email']); ?></div>
                                             </div>
                                             <?php foreach ($patient_data['appointments'] as $apt): 
                                                 $prescription_id = (int)$apt['PRESCRIPTION_ID'];
