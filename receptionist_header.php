@@ -119,30 +119,8 @@ if (isset($reminder_query) && $reminder_query) {
 }
 ?>
 
-<?php
-$current_script = basename($_SERVER['PHP_SELF'] ?? '');
-$show_reminder_search = ($current_script === 'st_reminder.php');
-?>
 <header class="topbar">
     <h2>Welcome back</h2>
-
-    <?php if ($show_reminder_search): ?>
-    <div class="reminder-search-bar">
-        <form method="get" action="st_reminder.php" class="reminder-search-form">
-            <select name="search_type" class="form-select search-type-select" required>
-                <option value="">Search by...</option>
-                <option value="patient" <?php echo (isset($_GET['search_type']) && $_GET['search_type'] === 'patient') ? 'selected' : ''; ?>>By Patient</option>
-                <option value="doctor" <?php echo (isset($_GET['search_type']) && $_GET['search_type'] === 'doctor') ? 'selected' : ''; ?>>By Doctor</option>
-                <option value="specialization" <?php echo (isset($_GET['search_type']) && $_GET['search_type'] === 'specialization') ? 'selected' : ''; ?>>By Specialization</option>
-            </select>
-            <input type="text" name="search_term" class="form-control search-term-input" placeholder="Search..." value="<?php echo isset($_GET['search_term']) ? htmlspecialchars($_GET['search_term']) : ''; ?>">
-            <button type="submit" class="btn btn-search"><i class="fas fa-search"></i> Search</button>
-            <?php if (!empty($_GET['search_type']) || !empty($_GET['search_term'])): ?>
-            <a href="st_reminder.php" class="btn btn-clear">Clear</a>
-            <?php endif; ?>
-        </form>
-    </div>
-    <?php endif; ?>
 
     <div class="topbar-right">
         <div class="user-info">

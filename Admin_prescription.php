@@ -180,7 +180,6 @@
                 --border: #e5e7eb;
                 --shadow: rgba(0, 0, 0, 0.1);
                 --gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                --doctor-bg: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
                 --patient-bg: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
             }
 
@@ -206,10 +205,10 @@
             /* Header Section */
             .page-header {
                 background: white;
-                border-radius: 20px;
-                padding: 30px;
-                margin-bottom: 30px;
-                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+                border-radius: 12px;
+                padding: 16px 20px;
+                margin-bottom: 18px;
+                box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
                 position: relative;
                 overflow: hidden;
             }
@@ -225,23 +224,23 @@
             }
 
             .page-title {
-                font-size: 2rem;
+                font-size: 1.4rem;
                 font-weight: 700;
                 color: var(--primary);
-                margin-bottom: 10px;
+                margin-bottom: 6px;
                 display: flex;
                 align-items: center;
-                gap: 15px;
+                gap: 10px;
             }
 
             .page-title i {
-                font-size: 1.8rem;
+                font-size: 1.4rem;
                 color: var(--primary-light);
             }
 
             .page-subtitle {
                 color: var(--gray);
-                font-size: 1.1rem;
+                font-size: 0.95rem;
             }
 
             /* Search Section */
@@ -418,7 +417,7 @@
             }
 
             .doctor-header {
-                background: var(--doctor-bg);
+                background: #072D44;
                 padding: 25px 30px;
                 position: relative;
             }
@@ -743,6 +742,129 @@
             .doctor-card:nth-child(1) { animation-delay: 0.1s; }
             .doctor-card:nth-child(2) { animation-delay: 0.2s; }
             .doctor-card:nth-child(3) { animation-delay: 0.3s; }
+            /* Admin prescription list UI aligned with receptionist view */
+            .ap-doctor-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
+                gap: 25px;
+            }
+
+            .ap-doctor-card {
+                background: #ffffff;
+                border-radius: 15px;
+                overflow: hidden;
+                box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+                border: 1px solid var(--border);
+            }
+
+            .ap-doctor-header {
+                background: #072D44;
+                color: #ffffff;
+                padding: 15px 20px;
+                font-weight: 600;
+                font-size: 1rem;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+
+            .ap-doctor-header i {
+                font-size: 1.1rem;
+            }
+
+            .ap-patient-group {
+                padding: 15px 20px;
+                border-top: 1px solid #f0f0f0;
+                background: #fafafa;
+            }
+
+            .ap-patient-name {
+                font-weight: 600;
+                color: var(--primary);
+                margin-bottom: 10px;
+                display: block;
+            }
+
+            .ap-patient-name i {
+                margin-right: 6px;
+            }
+
+            .ap-prescription-detail-card {
+                background: #ffffff;
+                border: 1px solid #eef2f7;
+                border-radius: 10px;
+                padding: 12px 14px;
+                margin-bottom: 10px;
+                border-left: 4px solid var(--primary-light);
+                display: flex;
+                align-items: flex-start;
+                justify-content: space-between;
+                gap: 10px;
+            }
+
+            .ap-detail-row {
+                font-size: 0.9rem;
+                margin-bottom: 4px;
+                color: #333333;
+                line-height: 1.4;
+            }
+
+            .ap-detail-row strong {
+                color: var(--primary);
+                min-width: 100px;
+                display: inline-block;
+            }
+
+            .ap-prescription-info {
+                flex: 1;
+            }
+
+            .ap-card-actions {
+                display: flex;
+                flex-direction: column;
+                align-items: flex-end;
+                gap: 6px;
+                flex-shrink: 0;
+                min-width: 110px;
+            }
+
+            .ap-btn-pdf {
+                background: var(--primary-light);
+                color: #ffffff;
+                border: none;
+                padding: 6px 12px;
+                border-radius: 4px;
+                font-size: 0.8rem;
+                font-weight: 600;
+                cursor: pointer;
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+            }
+
+            .ap-btn-pdf i {
+                font-size: 0.9rem;
+            }
+
+            .ap-btn-pdf:hover {
+                background: #2563eb;
+            }
+
+            @media (max-width: 768px) {
+                .ap-doctor-grid {
+                    grid-template-columns: 1fr;
+                }
+
+                .ap-prescription-detail-card {
+                    flex-direction: column;
+                    align-items: stretch;
+                }
+
+                .ap-card-actions {
+                    align-items: flex-start;
+                    margin-top: 6px;
+                }
+            }
         </style>
     </head>
     <body>
@@ -800,105 +922,52 @@
                 <?php endif; ?>
             </div> -->
 
-            <!-- Doctors Container -->
+            <!-- Doctors Container - UI aligned with receptionist view_prescription -->
             <?php if (!empty($grouped_prescriptions)): ?>
-                <div class="doctors-container">
+                <div class="ap-doctor-grid">
                     <?php foreach ($grouped_prescriptions as $doctor_key => $doctor_data): ?>
-                        <div class="doctor-card">
-                            <!-- Doctor Header -->
-                            <div class="doctor-header">
-                                <div class="doctor-info">
-                                    <div class="doctor-avatar">
-                                        <i class="fas fa-user-md"></i>
-                                    </div>
-                                    <div class="doctor-details">
-                                        <h2><?= htmlspecialchars($doctor_data['doctor_info']['name']) ?></h2>
-                                        <div class="specialization"><?= htmlspecialchars($doctor_data['doctor_info']['specialization']) ?></div>
-                                        <div class="education"><?= htmlspecialchars($doctor_data['doctor_info']['education']) ?></div>
-                                    </div>
-                                </div>
-                                <div class="doctor-stats">
-                                    <div class="doctor-stat">
-                                        <i class="fas fa-users"></i>
-                                        <span><?= count($doctor_data['patients']) ?> Patients</span>
-                                    </div>
-                                    <div class="doctor-stat">
-                                        <i class="fas fa-file-prescription"></i>
-                                        <span>
-                                            <?php 
-                                                $doc_prescriptions = 0;
-                                                foreach ($doctor_data['patients'] as $patient) {
-                                                    $doc_prescriptions += count($patient['prescriptions']);
-                                                }
-                                                echo $doc_prescriptions;
-                                            ?> Prescriptions
-                                        </span>
-                                    </div>
-                                </div>
+                        <div class="ap-doctor-card">
+                            <div class="ap-doctor-header">
+                                <i class="fas fa-user-md"></i>
+                                <span>
+                                    <?= htmlspecialchars($doctor_data['doctor_info']['name']) ?>
+                                    (<?= htmlspecialchars($doctor_data['doctor_info']['specialization']) ?>)
+                                </span>
                             </div>
-
-                            <!-- Patients Section -->
-                            <div class="patients-section">
-                                <h3 class="section-title">
-                                    <i class="fas fa-users"></i>
-                                    Patients under Dr. <?= htmlspecialchars($doctor_data['doctor_info']['name']) ?>
-                                </h3>
-                                <div class="patients-grid">
-                                    <?php foreach ($doctor_data['patients'] as $patient_key => $patient_data): ?>
-                                        <div class="patient-card">
-                                            <!-- Patient Header -->
-                                            <div class="patient-header">
-                                                <div class="patient-info">
-                                                    <div class="patient-avatar">
-                                                        <i class="fas fa-user"></i>
-                                                    </div>
-                                                    <div class="patient-details">
-                                                        <h3><?= htmlspecialchars($patient_data['patient_info']['name']) ?></h3>
-                                                        <div class="patient-meta">
-                                                            <span><i class="fas fa-birthday-cake"></i> <?= date('M d, Y', strtotime($patient_data['patient_info']['dob'])) ?></span>
-                                                            <span><i class="fas fa-venus-mars"></i> <?= htmlspecialchars($patient_data['patient_info']['gender']) ?></span>
-                                                            <span><i class="fas fa-tint"></i> <?= htmlspecialchars($patient_data['patient_info']['blood_group']) ?></span>
-                                                        </div>
-                                                    </div>
+                            <?php foreach ($doctor_data['patients'] as $patient_key => $patient_data): ?>
+                                <div class="ap-patient-group">
+                                    <span class="ap-patient-name">
+                                        <i class="fas fa-user"></i>
+                                        <?= htmlspecialchars($patient_data['patient_info']['name']) ?>
+                                    </span>
+                                    <?php foreach ($patient_data['prescriptions'] as $prescription): ?>
+                                        <div class="ap-prescription-detail-card">
+                                            <div class="ap-prescription-info">
+                                                <div class="ap-detail-row">
+                                                    <strong>Appt. Date:</strong>
+                                                    <?= date('M d, Y', strtotime($prescription['APPOINTMENT_DATE'])) ?>
+                                                </div>
+                                                <div class="ap-detail-row">
+                                                    <strong>Diagnosis:</strong>
+                                                    <?= htmlspecialchars($prescription['DIAGNOSIS']) ?>
+                                                </div>
+                                                <div class="ap-detail-row">
+                                                    <strong>Notes:</strong>
+                                                    <?= htmlspecialchars($prescription['ADDITIONAL_NOTES']) ?>
                                                 </div>
                                             </div>
-
-                                            <!-- Prescriptions List -->
-                                            <div class="prescriptions-list">
-                                                <?php foreach ($patient_data['prescriptions'] as $prescription): ?>
-                                                    <div class="prescription-item">
-                                                        <div class="prescription-header">
-                                                            <div class="prescription-date">
-                                                                <i class="fas fa-calendar"></i>
-                                                                <?= date('M d, Y', strtotime($prescription['ISSUE_DATE'])) ?>
-                                                            </div>
-                                                            <div class="prescription-id">
-                                                                #<?= str_pad($prescription['PRESCRIPTION_ID'], 5, '0', STR_PAD_LEFT) ?>
-                                                            </div>
-                                                        </div>
-                                                        <div class="diagnosis-text">
-                                                            <strong>Diagnosis:</strong> <?= htmlspecialchars($prescription['DIAGNOSIS']) ?>
-                                                        </div>
-                                                        <div class="appointment-info">
-                                                            <i class="fas fa-clock"></i>
-                                                            Appointment: <?= date('M d, Y', strtotime($prescription['APPOINTMENT_DATE'])) ?> at <?= $prescription['APPOINTMENT_TIME'] ?>
-                                                        </div>
-                                                        <div class="prescription-actions">
-                                                            <form method="POST" action="Admin_prescription.php" style="display:inline">
-                                                                <input type="hidden" name="download" value="<?= $prescription['PRESCRIPTION_ID'] ?>">
-                                                                <button type="submit" class="btn-download">
-                                                                    <i class="fas fa-download"></i>
-                                                                    Download
-                                                                </button>
-                                                            </form>
-                                                        </div>
-                                                    </div>
-                                                <?php endforeach; ?>
+                                            <div class="ap-card-actions">
+                                                <form method="POST" action="Admin_prescription.php">
+                                                    <input type="hidden" name="download" value="<?= $prescription['PRESCRIPTION_ID'] ?>">
+                                                    <button type="submit" class="ap-btn-pdf">
+                                                        <i class="fas fa-file-pdf"></i> PDF
+                                                    </button>
+                                                </form>
                                             </div>
                                         </div>
                                     <?php endforeach; ?>
                                 </div>
-                            </div>
+                            <?php endforeach; ?>
                         </div>
                     <?php endforeach; ?>
                 </div>

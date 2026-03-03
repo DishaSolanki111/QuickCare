@@ -301,6 +301,37 @@ if (isset($_POST['edit_reminder_id'])) {
             box-shadow: 0 4px 8px rgba(0,0,0,0.15);
         }
         
+        /* Set Reminder button - modern medical style */
+        .btn-set-reminder {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px 18px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: white;
+            background: linear-gradient(135deg, #0d7a9c 0%, #064469 100%);
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 14px rgba(6, 68, 105, 0.35);
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+        .btn-set-reminder i {
+            font-size: 1rem;
+            line-height: 1;
+        }
+        .btn-set-reminder:hover {
+            background: linear-gradient(135deg, #0e8fb5 0%, #072D44 100%);
+            box-shadow: 0 6px 20px rgba(6, 68, 105, 0.45);
+            transform: translateY(-1px);
+        }
+        .btn-set-reminder:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 8px rgba(6, 68, 105, 0.3);
+        }
+        
         .btn-sm {
             padding: 6px 12px;
             font-size: 0.875rem;
@@ -483,8 +514,10 @@ if (isset($_POST['edit_reminder_id'])) {
         }
         
         .medicine-name {
+            font-size: 1.1rem;
             font-weight: 600;
             color: var(--primary-color);
+            margin-bottom: 4px;
         }
         
         .medicine-dosage {
@@ -605,9 +638,6 @@ if (isset($_POST['edit_reminder_id'])) {
         
         .doctor-card-header {
             font-size: 1.1rem;
-            background-color: var(--dark-blue) !important;
-            color: white !important;
-            border-radius: 10px 10px 0 0 !important;
         }
         .doctor-card .patient-block {
             border-left: 3px solid var(--soft-blue);
@@ -615,8 +645,18 @@ if (isset($_POST['edit_reminder_id'])) {
             margin-left: 5px;
         }
         .patient-name-row {
+            display: flex;
+            align-items: flex-start;
             margin-bottom: 10px;
             color: var(--primary-color);
+        }
+        .patient-info-stack {
+            display: block;
+        }
+        .patient-info-stack .patient-contact {
+            font-size: 0.9rem;
+            color: #6b7280;
+            margin-top: 2px;
         }
         .appointment-block {
             background: #eff6ff;
@@ -630,37 +670,58 @@ if (isset($_POST['edit_reminder_id'])) {
             color: #555;
         }
         .medicine-list-label {
-            font-weight: bold;
-            color: #1e3a8a;
             font-size: 1.4rem;
+            font-weight: bold;
+            color: var(--primary-color);
             margin-bottom: 8px;
         }
         .reminder-action-row {
             display: flex;
             align-items: center;
-            justify-content: flex-end;
             flex-wrap: wrap;
             gap: 8px;
-        }
-        .btn-reminder-blue {
-            background-color: #1e3a8a;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 6px;
-            font-weight: 500;
-            transition: all 0.3s ease;
-        }
-        .btn-reminder-blue:hover {
-            background-color: #172554;
-            color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 10px rgba(30, 58, 138, 0.2);
         }
         .reminder-set-badge {
             font-size: 0.85rem;
             color: var(--accent-color);
             font-weight: 500;
+        }
+        
+        /* Search bar - same design as recep_doctor.php filter-container */
+        .reminder-search-section {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .reminder-search-form {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        .reminder-search-form .search-type-select,
+        .reminder-search-form .search-term-input {
+            padding: 10px;
+            border: 1px solid #D0D7E1;
+            border-radius: 5px;
+        }
+        .reminder-search-form .btn-search {
+            padding: 10px 15px;
+            background: #5790AB;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .reminder-search-form .btn-clear {
+            padding: 10px 15px;
+            background: #D0D7E1;
+            color: #1a3a5f;
+            border: 1px solid #D0D7E1;
+            border-radius: 5px;
+            text-decoration: none;
+            display: inline-block;
         }
         
         @media (max-width: 768px) {
@@ -699,6 +760,23 @@ if (isset($_POST['edit_reminder_id'])) {
     <!-- Main Content -->
     <div class="main-content">
     <?php include 'receptionist_header.php'; ?>
+        
+        <!-- Search Bar Section (same design as recep_doctor.php filter) -->
+        <div class="reminder-search-section">
+            <form method="get" action="st_reminder.php" class="reminder-search-form">
+                <select name="search_type" class="search-type-select" required>
+                    <option value="">Search by...</option>
+                    <option value="patient" <?php echo (isset($_GET['search_type']) && $_GET['search_type'] === 'patient') ? 'selected' : ''; ?>>By Patient</option>
+                    <option value="doctor" <?php echo (isset($_GET['search_type']) && $_GET['search_type'] === 'doctor') ? 'selected' : ''; ?>>By Doctor</option>
+                    <option value="specialization" <?php echo (isset($_GET['search_type']) && $_GET['search_type'] === 'specialization') ? 'selected' : ''; ?>>By Specialization</option>
+                </select>
+                <input type="text" name="search_term" class="search-term-input" placeholder="Search..." value="<?php echo isset($_GET['search_term']) ? htmlspecialchars($_GET['search_term']) : ''; ?>">
+                <button type="submit" class="btn-search">Search</button>
+                <?php if (!empty($_GET['search_type']) || !empty($_GET['search_term'])): ?>
+                <a href="st_reminder.php" class="btn-clear">Clear</a>
+                <?php endif; ?>
+            </form>
+        </div>
         
         <!-- Success/Error Messages -->
         <?php if (isset($success_message)): ?>
@@ -815,13 +893,13 @@ if (isset($_POST['edit_reminder_id'])) {
                                                         </button>
                                                     </form>
                                                     <?php else: ?>
-                                                    <button class="btn-reminder-blue" data-bs-toggle="modal" data-bs-target="#createPrescriptionReminderModal" 
+                                                    <button class="btn-set-reminder" data-bs-toggle="modal" data-bs-target="#createPrescriptionReminderModal" 
                                                             data-patient-id="<?php echo (int)$apt['PATIENT_ID']; ?>"
                                                             data-patient-name="<?php echo htmlspecialchars($apt['PAT_FNAME'] . ' ' . $apt['PAT_LNAME']); ?>"
                                                             data-prescription-id="<?php echo $prescription_id; ?>"
                                                             data-appointment-date="<?php echo htmlspecialchars($apt['APPOINTMENT_DATE']); ?>"
                                                             data-prescription-duration="<?php echo $prescription_duration_days; ?>">
-                                                        <i class="bi bi-bell-fill me-1"></i> Set Reminder
+                                                        <i class="bi bi-bell-fill"></i><span>Set Reminder</span>
                                                     </button>
                                                     <?php endif; ?>
                                                 </div>

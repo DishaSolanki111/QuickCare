@@ -263,7 +263,6 @@ $search = isset($_POST['search']) ? mysqli_real_escape_string($conn, $_POST['sea
 
     <table>
         <tr>
-            <
             <th width="30%">Medicine Name</th>
             <th width="40%">Description</th>
             <th width="20%">Actions</th>

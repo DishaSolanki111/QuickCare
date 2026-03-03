@@ -206,27 +206,58 @@ if ($doctors_query && mysqli_num_rows($doctors_query) > 0) {
         
         .page-header {
             background: var(--white);
-            border-radius: 15px;
-            padding: 25px;
-            margin-bottom: 30px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            border-radius: 10px;
+            padding: 14px 18px;
+            margin-bottom: 18px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.06);
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
-        
+
+        .filter-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .filter-container form {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .filter-container input,
+        .filter-container select {
+            padding: 10px;
+            border: 1px solid #D0D7E1;
+            border-radius: 5px;
+        }
+
+        .filter-container button {
+            padding: 10px 15px;
+            background: var(--dark-blue);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
         .page-title {
-            font-size: 28px;
+            font-size: 22px;
             font-weight: 600;
             color: var(--dark-blue);
             margin: 0;
         }
         .search-bar-container {
         background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-        border-radius: 20px;
-        padding: 30px;
-        margin-bottom: 30px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        border-radius: 12px;
+        padding: 18px 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 6px 18px rgba(0,0,0,0.08);
         border: 1px solid #e9ecef;
     }
     
@@ -441,55 +472,55 @@ if ($doctors_query && mysqli_num_rows($doctors_query) > 0) {
     }
         .doctor-schedule-card {
             background: var(--white);
-            border-radius: 16px;
+            border-radius: 12px;
             padding: 0;
             margin-bottom: 0;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
             overflow: hidden;
             transition: all 0.3s ease;
         }
         
         .doctor-schedule-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(0,0,0,0.08);
         }
         
         /* Doctor Header: soft light background, rounded, clean spacing */
         .doctor-header {
-            background: #f8fafc;
-            color: var(--primary-color);
-            padding: 28px 32px;
+            background: var(--dark-blue);
+            color: var(--white);
+            padding: 18px 22px;
             display: flex;
             align-items: center;
-            gap: 24px;
-            border-radius: 16px 16px 0 0;
+            gap: 18px;
+            border-radius: 12px 12px 0 0;
         }
         
         .doctor-avatar {
-            width: 80px;
-            height: 80px;
+            width: 64px;
+            height: 64px;
             border-radius: 50%;
-            border: 3px solid var(--light-blue);
+            border: 2px solid var(--light-blue);
             object-fit: cover;
         }
         
         .doctor-info h3 {
             margin: 0;
-            font-size: 24px;
+            font-size: 20px;
             font-weight: 600;
         }
         
         .doctor-specialization {
             display: inline-block;
-            background: rgba(72, 41, 112, 0.2);
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 15px;
-            margin-top: 10px;
+            background: rgba(72, 41, 112, 0.12);
+            padding: 4px 10px;
+            border-radius: 16px;
+            font-size: 13px;
+            margin-top: 6px;
         }
         
         .schedule-content {
-            padding: 30px;
+            padding: 20px;
             flex: 1;
             display: flex;
             flex-direction: column;
@@ -498,39 +529,39 @@ if ($doctors_query && mysqli_num_rows($doctors_query) > 0) {
         .schedule-grid {
             display: flex;
             flex-direction: column;
-            gap: 16px;
-            margin-bottom: 24px;
+            gap: 10px;
+            margin-bottom: 16px;
             flex: 1;
         }
         
         /* Schedule row: horizontal rounded card, light grey, blue left accent */
         .day-schedule {
             background: #f6f9fb;
-            border-radius: 14px;
-            padding: 20px 26px;
-            border-left: 4px solid var(--secondary-color);
-            box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+            border-radius: 10px;
+            padding: 14px 18px;
+            border-left: 3px solid var(--secondary-color);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
             transition: all 0.3s ease;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 24px;
+            gap: 18px;
             flex-wrap: wrap;
         }
         
         .day-schedule:hover {
             background: #eef4f8;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.06);
         }
         
         /* Day: calendar icon, bold, dark blue */
         .day-name {
-            font-weight: 700;
+            font-weight: 600;
             color: var(--dark-blue);
-            font-size: 20px;
+            font-size: 16px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
             flex-shrink: 0;
         }
         
@@ -541,17 +572,17 @@ if ($doctors_query && mysqli_num_rows($doctors_query) > 0) {
         /* Time: green clock icon, center area */
         .time-range {
             color: #4a5568;
-            font-size: 18px;
+            font-size: 15px;
             font-weight: 500;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             flex-shrink: 0;
         }
         
         .time-range i {
             color: var(--accent-color);
-            font-size: 20px;
+            font-size: 18px;
         }
         
         .schedule-actions {
@@ -567,16 +598,16 @@ if ($doctors_query && mysqli_num_rows($doctors_query) > 0) {
         
         /* Edit: orange, Delete: red, rounded, right-aligned */
         .btn-edit, .btn-delete {
-            padding: 10px 18px;
+            padding: 8px 14px;
             border: none;
             border-radius: 8px;
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.25s ease;
             display: inline-flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             color: white;
         }
         
@@ -770,7 +801,7 @@ if ($doctors_query && mysqli_num_rows($doctors_query) > 0) {
         /* Responsive: Desktop - wider cards across full width */
         @media (min-width: 1200px) {
             .schedule-cards-grid {
-                grid-template-columns: repeat(auto-fill, minmax(460px, 1fr));
+                grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
             }
         }
         
@@ -807,46 +838,46 @@ if ($doctors_query && mysqli_num_rows($doctors_query) > 0) {
             
             .schedule-cards-grid {
                 grid-template-columns: 1fr;
-                gap: 22px;
+                gap: 18px;
             }
             
             .doctor-schedule-card {
-                min-height: 340px;
+                min-height: 260px;
             }
             
             .doctor-header {
-                padding: 20px 24px;
-                gap: 20px;
+                padding: 16px 18px;
+                gap: 16px;
             }
             
             .doctor-avatar {
-                width: 72px;
-                height: 72px;
+                width: 60px;
+                height: 60px;
             }
             
             .doctor-info h3 {
-                font-size: 22px;
+                font-size: 18px;
             }
             
             .schedule-content {
-                padding: 24px;
+                padding: 18px;
             }
             
             .schedule-grid {
-                gap: 14px;
+                gap: 10px;
             }
             
             .day-schedule {
-                padding: 18px 20px;
-                gap: 20px;
+                padding: 14px 16px;
+                gap: 16px;
             }
             
             .day-name {
-                font-size: 20px;
+                font-size: 16px;
             }
             
             .time-range {
-                font-size: 18px;
+                font-size: 15px;
             }
             
             .sidebar {
@@ -904,68 +935,39 @@ if ($doctors_query && mysqli_num_rows($doctors_query) > 0) {
                 <i class="bi bi-calendar-week"></i> Doctor Schedules
             </h1>
         </div>
-        <div class="search-bar-container">
-    
-    <form method="GET" action="Admin_doctor_schedule.php" class="search-form">
-        <!-- Doctor Name Search -->
-        <div class="search-field">
-            <label for="doctor_name" class="field-label">
-                <i class="bi bi-person"></i> Doctor Name
-            </label>
-            <input type="text" 
-                   class="search-input" 
-                   id="doctor_name" 
-                   name="doctor_name" 
-                   placeholder="Enter doctor name..."
-                   value="<?php echo isset($_GET['doctor_name']) ? htmlspecialchars($_GET['doctor_name']) : ''; ?>">
-        </div>
-        
-        <!-- Specialization Dropdown -->
-        <div class="search-field">
-            <label for="specialization" class="field-label">
-                <i class="bi bi-award"></i> Specialization
-            </label>
-            <select class="search-select" id="specialization" name="specialization">
-                <option value="">All Specializations</option>
-                <?php
-                // Fetch specializations from database
-                $spec_query = mysqli_query($conn, "SELECT SPECIALISATION_ID, SPECIALISATION_NAME FROM specialisation_tbl ORDER BY SPECIALISATION_NAME");
-                if (mysqli_num_rows($spec_query) > 0) {
-                    while ($spec = mysqli_fetch_assoc($spec_query)) {
-                        $selected = (isset($_GET['specialization']) && $_GET['specialization'] == $spec['SPECIALISATION_ID']) ? 'selected' : '';
-                        echo '<option value="' . $spec['SPECIALISATION_ID'] . '" ' . $selected . '>' . 
-                             htmlspecialchars($spec['SPECIALISATION_NAME']) . '</option>';
+
+        <div class="filter-container">
+            <form method="GET" action="Admin_doctor_schedule.php">
+                <input
+                    type="text"
+                    name="doctor_name"
+                    placeholder="Filter by Doctor Name"
+                    value="<?php echo isset($_GET['doctor_name']) ? htmlspecialchars($_GET['doctor_name']) : ''; ?>"
+                >
+
+                <select name="specialization">
+                    <option value="">All Specializations</option>
+                    <?php
+                    $spec_query = mysqli_query($conn, "SELECT SPECIALISATION_ID, SPECIALISATION_NAME FROM specialisation_tbl ORDER BY SPECIALISATION_NAME");
+                    if (mysqli_num_rows($spec_query) > 0) {
+                        while ($spec = mysqli_fetch_assoc($spec_query)) {
+                            $selected = (isset($_GET['specialization']) && $_GET['specialization'] == $spec['SPECIALISATION_ID']) ? 'selected' : '';
+                            echo '<option value="' . $spec['SPECIALISATION_ID'] . '" ' . $selected . '>' . 
+                                 htmlspecialchars($spec['SPECIALISATION_NAME']) . '</option>';
+                        }
                     }
-                }
-                ?>
-            </select>
+                    ?>
+                </select>
+
+                <input
+                    type="date"
+                    name="schedule_date"
+                    value="<?php echo isset($_GET['schedule_date']) ? htmlspecialchars($_GET['schedule_date']) : ''; ?>"
+                >
+
+                <button type="submit">Filter</button>
+            </form>
         </div>
-        
-        <!-- Date Picker -->
-        <div class="search-field">
-            <label for="schedule_date" class="field-label">
-                <i class="bi bi-calendar3"></i> Date
-            </label>
-            <input type="date" 
-                   class="search-input" 
-                   id="schedule_date" 
-                   name="schedule_date"
-                   value="<?php echo isset($_GET['schedule_date']) ? htmlspecialchars($_GET['schedule_date']) : ''; ?>">
-        </div>
-        
-        <!-- Action Buttons -->
-        <div class="search-actions">
-            <button type="submit" class="btn-search">
-                <i class="bi bi-search"></i> Search
-            </button>
-            <a href="Admin_doctor_schedule.php" class="btn-clear">
-                <i class="bi bi-arrow-clockwise"></i> Clear
-            </a>
-        </div>
-    </form>
-    
-    
-</div>
         <!-- Doctor Schedules -->
         <?php if (!empty($doctors_with_schedules)): ?>
         <div class="schedule-cards-section">

@@ -59,7 +59,7 @@ $adminName = $_SESSION['USER_NAME'] ?? 'Admin';
     }
 
     th {
-        background: #5790AB;
+        background: #072D44;
         color: white;
         text-align: left;
     }
@@ -87,7 +87,7 @@ $adminName = $_SESSION['USER_NAME'] ?? 'Admin';
 
     .filter-container button {
         padding: 10px 15px;
-        background: #5790AB;
+        background: var(--dark-blue);
         color: white;
         border: none;
         border-radius: 5px;
@@ -127,6 +127,75 @@ $adminName = $_SESSION['USER_NAME'] ?? 'Admin';
         margin-bottom: 20px;
         box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         border-left: 8px solid #2ecc71;
+    }
+
+    .payment-groups {
+        margin-top: 10px;
+    }
+
+    .doctor-group {
+        margin-bottom: 28px;
+        background: #f8fafc;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        overflow: hidden;
+    }
+
+    .doctor-header-bar {
+        background: var(--dark-blue);
+        color: #ffffff;
+        padding: 14px 18px;
+        border-radius: 10px 10px 0 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .doctor-header-title {
+        font-weight: 600;
+        font-size: 1rem;
+    }
+
+    .doctor-header-subtitle {
+        font-size: 0.9rem;
+        opacity: 0.95;
+    }
+
+    .payment-list {
+        margin-top: 0;
+        padding: 10px 16px 12px;
+    }
+
+    .payment-card {
+        padding: 10px 0;
+        border-bottom: 1px solid #e1e7ef;
+    }
+
+    .payment-card:last-child {
+        border-bottom: none;
+    }
+
+    .payment-meta {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 8px;
+        font-size: 0.9rem;
+        color: #555;
+        margin-bottom: 4px;
+    }
+
+    .payment-meta .payment-patient {
+        font-weight: 600;
+        font-size: 1.05rem;
+    }
+
+    .payment-meta .payment-date {
+        font-style: italic;
+    }
+
+    .payment-amount {
+        font-weight: 600;
     }
 </style>
 </head>
@@ -174,23 +243,27 @@ $adminName = $_SESSION['USER_NAME'] ?? 'Admin';
         </form>
     </div>
 
-    <!-- TABLE -->
-    <table>
-        <tr>
-            <th>Patient Name</th>
-            <th>Amount</th>
-            <th>Payment Date</th>
-            <th>Payment Mode</th>
-            <th>Status</th>
-        </tr>
-
+    <!-- PAYMENTS GROUPED BY DOCTOR -->
+    <div class="payment-groups">
         <?php
         include 'config.php';
 
-        $query = "SELECT p.*, pt.FIRST_NAME, pt.LAST_NAME
+        $query = "SELECT
+                    p.PAYMENT_ID,
+                    p.AMOUNT,
+                    p.PAYMENT_DATE,
+                    p.PAYMENT_MODE,
+                    p.STATUS,
+                    pt.FIRST_NAME AS p_first,
+                    pt.LAST_NAME AS p_last,
+                    d.FIRST_NAME AS d_first,
+                    d.LAST_NAME AS d_last,
+                    s.SPECIALISATION_NAME
                   FROM payment_tbl p
-                  JOIN appointment_tbl a ON p.APPOINTMENT_ID=a.APPOINTMENT_ID
-                  JOIN patient_tbl pt ON a.PATIENT_ID=pt.PATIENT_ID
+                  JOIN appointment_tbl a ON p.APPOINTMENT_ID = a.APPOINTMENT_ID
+                  JOIN patient_tbl pt ON a.PATIENT_ID = pt.PATIENT_ID
+                  JOIN doctor_tbl d ON a.DOCTOR_ID = d.DOCTOR_ID
+                  JOIN specialisation_tbl s ON d.SPECIALISATION_ID = s.SPECIALISATION_ID
                   WHERE 1=1";
 
         if (!empty($_POST['date_filter'])) {
@@ -208,31 +281,70 @@ $adminName = $_SESSION['USER_NAME'] ?? 'Admin';
             $query .= " AND p.PAYMENT_MODE = '$mode'";
         }
 
-        $query .= " ORDER BY p.PAYMENT_DATE DESC";
+        $query .= " ORDER BY d.LAST_NAME, d.FIRST_NAME, p.PAYMENT_DATE DESC, p.PAYMENT_ID DESC";
 
         $result = mysqli_query($conn, $query);
 
         if ($result && mysqli_num_rows($result) > 0) {
+            $currentDoctorKey = '';
+
             while ($row = mysqli_fetch_assoc($result)) {
+                $doctorName = 'Dr. ' . $row['d_first'] . ' ' . $row['d_last'];
+                $specialisation = $row['SPECIALISATION_NAME'];
+                $doctorKey = $doctorName . '|' . $specialisation;
 
-                $statusClass = $row['STATUS']=='COMPLETED'
-                    ? 'status-completed' : 'status-failed';
+                if ($doctorKey !== $currentDoctorKey) {
+                    if ($currentDoctorKey !== '') {
+                        // Close previous group
+                        echo '</div></div>';
+                    }
 
-                echo "<tr>
-                    <td>{$row['FIRST_NAME']} {$row['LAST_NAME']}</td>
-                    <td>₹".number_format($row['AMOUNT'],2)."</td>
-                    <td>{$row['PAYMENT_DATE']}</td>
-                    <td><span class='payment-mode-badge'>{$row['PAYMENT_MODE']}</span></td>
-                    <td><span class='status-badge {$statusClass}'>{$row['STATUS']}</span></td>
-                </tr>";
+                    $currentDoctorKey = $doctorKey;
+
+                    echo '<div class="doctor-group">';
+                    echo '  <div class="doctor-header-bar">';
+                    echo '      <div class="doctor-header-title">' . htmlspecialchars($doctorName) . '</div>';
+                    echo '      <div class="doctor-header-subtitle">' . htmlspecialchars($specialisation) . '</div>';
+                    echo '  </div>';
+                    echo '  <div class="payment-list">';
+                }
+
+                $statusClass = $row['STATUS'] == 'COMPLETED'
+                    ? 'status-completed'
+                    : 'status-failed';
+
+                $patientName = $row['p_first'] . ' ' . $row['p_last'];
+                $dateText = !empty($row['PAYMENT_DATE'])
+                    ? date('F d, Y', strtotime($row['PAYMENT_DATE']))
+                    : '';
+                $amountText = '₹' . number_format($row['AMOUNT'], 2);
+
+                echo '      <div class="payment-card">';
+                echo '          <div class="payment-meta">';
+                echo '              <span class="payment-patient">' . htmlspecialchars($patientName) . '</span>';
+                if ($dateText !== '') {
+                    echo '          <span class="payment-date">' . htmlspecialchars($dateText) . '</span>';
+                }
+                echo '              <span class="payment-amount">' . htmlspecialchars($amountText) . '</span>';
+                echo '          </div>';
+                echo '          <div>';
+                echo '              <span class="payment-mode-badge">' . htmlspecialchars($row['PAYMENT_MODE']) . '</span> ';
+                echo '              <span class="status-badge ' . $statusClass . '">' . htmlspecialchars($row['STATUS']) . '</span>';
+                echo '          </div>';
+                echo '      </div>';
+            }
+
+            if ($currentDoctorKey !== '') {
+                // Close last group
+                echo '  </div></div>';
             }
         } else {
-            echo "<tr><td colspan='6'>No payments found</td></tr>";
+            echo "<p>No payments found</p>";
         }
 
         mysqli_close($conn);
         ?>
-    </table>
+    </div>
 </div>
 
 </body>
