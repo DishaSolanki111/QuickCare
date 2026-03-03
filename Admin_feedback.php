@@ -97,12 +97,72 @@ $adminName = $_SESSION['USER_NAME'] ?? 'Admin';
     }
 
     .feedback-card {
-        background: white;
-        padding: 8px;
-        border-radius: 12px;
-        margin-bottom: 20px;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        border-left: 8px solid #5790AB;
+        padding: 10px 0;
+        margin-bottom: 0;
+    }
+
+    .feedback-groups {
+        margin-top: 10px;
+    }
+
+    .doctor-group {
+        margin-bottom: 28px;
+        background: #f8fafc;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        overflow: hidden;
+    }
+
+    .doctor-header-bar {
+        background: var(--dark-blue);
+        color: #ffffff;
+        padding: 14px 18px;
+        border-radius: 10px 10px 0 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .doctor-header-title {
+        font-weight: 600;
+        font-size: 1rem;
+    }
+
+    .doctor-header-subtitle {
+        font-size: 0.9rem;
+        opacity: 0.95;
+    }
+
+    .feedback-list {
+        margin-top: 0;
+        padding: 10px 16px 12px;
+    }
+
+    .feedback-meta {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 8px;
+        font-size: 0.9rem;
+        color: #555;
+        margin-bottom: 6px;
+    }
+
+    .feedback-meta .feedback-patient {
+        font-weight: 600;
+    }
+
+    .feedback-meta .feedback-date {
+        font-style: italic;
+    }
+
+    .feedback-meta .feedback-stars {
+        color: #f39c12;
+    }
+
+    .feedback-comment {
+        font-size: 0.95rem;
+        color: #333;
     }
 </style>
 </head>
@@ -149,25 +209,27 @@ $adminName = $_SESSION['USER_NAME'] ?? 'Admin';
         </form>
     </div>
 
-    <!-- TABLE -->
-    <table>
-        <tr>
-            <th>Patient Name</th>
-            <th>Doctor Name</th>
-            <th>Rating</th>
-            <th>Comments</th>
-        </tr>
-
+    <!-- FEEDBACK GROUPED BY DOCTOR -->
+    <div class="feedback-groups">
         <?php
         include 'config.php';
 
-        $query = "SELECT f.FEEDBACK_ID, f.APPOINTMENT_ID, f.RATING, f.COMMENTS,
-                  p.FIRST_NAME p_first, p.LAST_NAME p_last,
-                  d.FIRST_NAME d_first, d.LAST_NAME d_last
+        $query = "SELECT 
+                    f.FEEDBACK_ID,
+                    f.APPOINTMENT_ID,
+                    f.RATING,
+                    f.COMMENTS,
+                    a.APPOINTMENT_DATE,
+                    p.FIRST_NAME AS p_first,
+                    p.LAST_NAME AS p_last,
+                    d.FIRST_NAME AS d_first,
+                    d.LAST_NAME AS d_last,
+                    s.SPECIALISATION_NAME
                   FROM feedback_tbl f
-                  JOIN appointment_tbl a ON f.APPOINTMENT_ID=a.APPOINTMENT_ID
-                  JOIN patient_tbl p ON a.PATIENT_ID=p.PATIENT_ID
-                  JOIN doctor_tbl d ON a.DOCTOR_ID=d.DOCTOR_ID
+                  JOIN appointment_tbl a ON f.APPOINTMENT_ID = a.APPOINTMENT_ID
+                  JOIN patient_tbl p ON a.PATIENT_ID = p.PATIENT_ID
+                  JOIN doctor_tbl d ON a.DOCTOR_ID = d.DOCTOR_ID
+                  JOIN specialisation_tbl s ON d.SPECIALISATION_ID = s.SPECIALISATION_ID
                   WHERE 1=1";
 
         if (!empty($_POST['rating_filter'])) {
@@ -175,32 +237,68 @@ $adminName = $_SESSION['USER_NAME'] ?? 'Admin';
             $query .= " AND f.RATING = $rating";
         }
 
-        $query .= " ORDER BY f.FEEDBACK_ID DESC";
+        $query .= " ORDER BY d.LAST_NAME, d.FIRST_NAME, a.APPOINTMENT_DATE DESC, f.FEEDBACK_ID DESC";
 
         $result = mysqli_query($conn, $query);
 
         if ($result && mysqli_num_rows($result) > 0) {
-            while ($row = mysqli_fetch_assoc($result)) {
+            $currentDoctorKey = '';
 
-                $stars = "";
-                for ($i = 1; $i <= 5; $i++) {
-                    $stars .= ($i <= $row['RATING']) ? "★" : "☆";
+            while ($row = mysqli_fetch_assoc($result)) {
+                $doctorName = 'Dr. ' . $row['d_first'] . ' ' . $row['d_last'];
+                $specialisation = $row['SPECIALISATION_NAME'];
+                $doctorKey = $doctorName . '|' . $specialisation;
+
+                if ($doctorKey !== $currentDoctorKey) {
+                    if ($currentDoctorKey !== '') {
+                        // Close previous group
+                        echo '</div></div>';
+                    }
+
+                    $currentDoctorKey = $doctorKey;
+
+                    echo '<div class="doctor-group">';
+                    echo '  <div class="doctor-header-bar">';
+                    echo '      <div class="doctor-header-title">' . htmlspecialchars($doctorName) . '</div>';
+                    echo '      <div class="doctor-header-subtitle">' . htmlspecialchars($specialisation) . '</div>';
+                    echo '  </div>';
+                    echo '  <div class="feedback-list">';
                 }
 
-                echo "<tr>
-                    <td>{$row['p_first']} {$row['p_last']}</td>
-                    <td>{$row['d_first']} {$row['d_last']}</td>
-                    <td class='rating'>$stars</td>
-                    <td>{$row['COMMENTS']}</td>
-                </tr>";
+                $stars = '';
+                for ($i = 1; $i <= 5; $i++) {
+                    $stars .= ($i <= (int)$row['RATING']) ? '★' : '☆';
+                }
+
+                $patientName = $row['p_first'] . ' ' . $row['p_last'];
+                $dateText = !empty($row['APPOINTMENT_DATE'])
+                    ? date('F d, Y', strtotime($row['APPOINTMENT_DATE']))
+                    : '';
+                $comment = htmlspecialchars($row['COMMENTS']);
+
+                echo '      <div class="feedback-card">';
+                echo '          <div class="feedback-meta">';
+                echo '              <span class="feedback-patient">' . htmlspecialchars($patientName) . '</span>';
+                if ($dateText !== '') {
+                    echo '          <span class="feedback-date">' . htmlspecialchars($dateText) . '</span>';
+                }
+                echo '              <span class="feedback-stars">' . $stars . '</span>';
+                echo '          </div>';
+                echo '          <div class="feedback-comment">' . $comment . '</div>';
+                echo '      </div>';
+            }
+
+            if ($currentDoctorKey !== '') {
+                // Close last group
+                echo '  </div></div>';
             }
         } else {
-            echo "<tr><td colspan='5'>No feedback found</td></tr>";
+            echo "<p>No feedback found</p>";
         }
 
         mysqli_close($conn);
         ?>
-    </table>
+    </div>
 
 </div>
 
