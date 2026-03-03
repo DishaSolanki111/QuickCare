@@ -627,8 +627,8 @@ $active_tab = (isset($_GET['tab']) && in_array($_GET['tab'], ['today', 'upcoming
             <!-- Tabs -->
             <div class="tabs">
                 <div class="tab <?= $active_tab === 'today' ? 'active' : '' ?>" data-tab="today">Today's Appointments</div>
-                <div class="tab <?= $active_tab === 'upcoming' ? 'active' : '' ?>" data-tab="upcoming">Upcoming</div>
-                <div class="tab <?= $active_tab === 'past' ? 'active' : '' ?>" data-tab="past">Past Appointments</div>
+                <div class="tab <?= $active_tab === 'upcoming' ? 'active' : '' ?>" data-tab="upcoming">Past Appointments</div>
+                <div class="tab <?= $active_tab === 'past' ? 'active' : '' ?>" data-tab="past">Upcoming Appointments</div>
             </div>
             
             <!-- Tab Content -->
