@@ -15,7 +15,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
 :root {
     --dark-blue: #072D44;
     --mid-blue: #064469;
-    --soft-blue: #5790AB;
+    --soft-blue: #072D44;
     --light-blue: #9CCDD8;
     --gray-blue: #D0D7E1;
     --white: #ffffff;

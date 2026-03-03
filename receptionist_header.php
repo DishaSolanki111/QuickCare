@@ -119,9 +119,14 @@ if (isset($reminder_query) && $reminder_query) {
 }
 ?>
 
+<?php
+$current_script = basename($_SERVER['PHP_SELF'] ?? '');
+$show_reminder_search = ($current_script === 'st_reminder.php');
+?>
 <header class="topbar">
     <h2>Welcome back</h2>
 
+    
     <div class="topbar-right">
         <div class="user-info">
             <div class="user-avatar">

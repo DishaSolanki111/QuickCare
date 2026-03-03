@@ -1,8 +1,27 @@
 <?php
 session_start();
+if (
+    !isset($_SESSION['LOGGED_IN']) ||
+    $_SESSION['LOGGED_IN'] !== true ||
+    $_SESSION['USER_TYPE'] !== 'receptionist'
+) {
+    header("Location: login_for_all.php");
+    exit();
+}
+
 
 
 include 'config.php';
+
+// Fetch receptionist data for header (used by receptionist_header.php)
+$receptionist = null;
+if (isset($_SESSION['RECEPTIONIST_ID'])) {
+    $rid = (int) $_SESSION['RECEPTIONIST_ID'];
+    $receptionist_res = mysqli_query($conn, "SELECT FIRST_NAME, LAST_NAME FROM receptionist_tbl WHERE RECEPTIONIST_ID = $rid LIMIT 1");
+    if ($receptionist_res && mysqli_num_rows($receptionist_res) > 0) {
+        $receptionist = mysqli_fetch_assoc($receptionist_res);
+    }
+}
 
 // Handle schedule operations
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -125,7 +144,7 @@ if ($doctors_query && mysqli_num_rows($doctors_query) > 0) {
         :root {
             --dark-blue: #072D44;
             --mid-blue: #064469;
-            --soft-blue: #5790AB;
+            --soft-blue: #072D44;
             --light-blue: #9CCDD8;
             --gray-blue: #D0D7E1;
             --white: #ffffff;
@@ -220,14 +239,39 @@ if ($doctors_query && mysqli_num_rows($doctors_query) > 0) {
             color: var(--dark-blue);
             margin: 0;
         }
-        .search-bar-container {
-        background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-        border-radius: 12px;
-        padding: 18px 20px;
-        margin-bottom: 20px;
-        box-shadow: 0 6px 18px rgba(0,0,0,0.08);
-        border: 1px solid #e9ecef;
-    }
+
+        .filter-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .filter-container form {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .filter-container input,
+        .filter-container select {
+            padding: 10px;
+            border: 1px solid #D0D7E1;
+            border-radius: 5px;
+        }
+
+        .filter-container button {
+            padding: 10px 15px;
+            background: var(--dark-blue);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
     
     .search-header {
         margin-bottom: 16px;
@@ -455,8 +499,8 @@ if ($doctors_query && mysqli_num_rows($doctors_query) > 0) {
         
         /* Doctor Header: soft light background, rounded, clean spacing */
         .doctor-header {
-            background: #f8fafc;
-            color: var(--primary-color);
+            background: var(--dark-blue);
+            color: white;
             padding: 18px 22px;
             display: flex;
             align-items: center;
@@ -906,68 +950,42 @@ if ($doctors_query && mysqli_num_rows($doctors_query) > 0) {
                 <i class="bi bi-plus-circle"></i> Create New Schedule
             </button>
         </div>
-        <div class="search-bar-container">
-    
-    <form method="GET" action="doctor_schedule_recep.php" class="search-form">
-        <!-- Doctor Name Search -->
-        <div class="search-field">
-            <label for="doctor_name" class="field-label">
-              Doctor Name
-            </label>
-            <input type="text" 
-                   class="search-input" 
-                   id="doctor_name" 
-                   name="doctor_name" 
-                   placeholder="Enter doctor name..."
-                   value="<?php echo isset($_GET['doctor_name']) ? htmlspecialchars($_GET['doctor_name']) : ''; ?>">
-        </div>
-        
-        <!-- Specialization Dropdown -->
-        <div class="search-field">
-            <label for="specialization" class="field-label">
-                Specialization
-            </label>
-            <select class="search-select" id="specialization" name="specialization">
-                <option value="">All Specializations</option>
-                <?php
-                // Fetch specializations from database
-                $spec_query = mysqli_query($conn, "SELECT SPECIALISATION_ID, SPECIALISATION_NAME FROM specialisation_tbl ORDER BY SPECIALISATION_NAME");
-                if (mysqli_num_rows($spec_query) > 0) {
-                    while ($spec = mysqli_fetch_assoc($spec_query)) {
-                        $selected = (isset($_GET['specialization']) && $_GET['specialization'] == $spec['SPECIALISATION_ID']) ? 'selected' : '';
-                        echo '<option value="' . $spec['SPECIALISATION_ID'] . '" ' . $selected . '>' . 
-                             htmlspecialchars($spec['SPECIALISATION_NAME']) . '</option>';
+
+        <div class="filter-container">
+            <form method="GET" action="doctor_schedule_recep.php">
+                <input
+                    type="text"
+                    name="doctor_name"
+                    placeholder="Filter by Doctor Name"
+                    value="<?php echo isset($_GET['doctor_name']) ? htmlspecialchars($_GET['doctor_name']) : ''; ?>"
+                >
+
+                <select name="specialization">
+                    <option value="">All Specializations</option>
+                    <?php
+                    $spec_query = mysqli_query($conn, "SELECT SPECIALISATION_ID, SPECIALISATION_NAME FROM specialisation_tbl ORDER BY SPECIALISATION_NAME");
+                    if (mysqli_num_rows($spec_query) > 0) {
+                        while ($spec = mysqli_fetch_assoc($spec_query)) {
+                            $selected = (isset($_GET['specialization']) && $_GET['specialization'] == $spec['SPECIALISATION_ID']) ? 'selected' : '';
+                            echo '<option value="' . $spec['SPECIALISATION_ID'] . '" ' . $selected . '>' . 
+                                 htmlspecialchars($spec['SPECIALISATION_NAME']) . '</option>';
+                        }
                     }
-                }
-                ?>
-            </select>
+                    ?>
+                </select>
+
+                <input
+                    type="date"
+                    name="schedule_date"
+                    value="<?php echo isset($_GET['schedule_date']) ? htmlspecialchars($_GET['schedule_date']) : ''; ?>"
+                >
+
+                <button type="submit">
+                    <i class="bi bi-funnel"></i>
+                    Filter
+                </button>
+            </form>
         </div>
-        
-        <!-- Date Picker -->
-        <div class="search-field">
-            <label for="schedule_date" class="field-label">
-                Date
-            </label>
-            <input type="date" 
-                   class="search-input" 
-                   id="schedule_date" 
-                   name="schedule_date"
-                   value="<?php echo isset($_GET['schedule_date']) ? htmlspecialchars($_GET['schedule_date']) : ''; ?>">
-        </div>
-        
-        <!-- Action Buttons -->
-        <div class="search-actions">
-            <button type="submit" class="btn-search">
-                Search
-            </button>
-            <a href="doctor_schedule_recep.php" class="btn-clear">
-                Clear
-            </a>
-        </div>
-    </form>
-    
-    
-</div>
         <!-- Doctor Schedules -->
         <?php if (!empty($doctors_with_schedules)): ?>
         <div class="schedule-cards-section">

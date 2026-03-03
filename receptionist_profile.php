@@ -102,7 +102,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
             --info-color: #17a2b8;
             --dark-blue: #072D44;
             --mid-blue: #064469;
-            --soft-blue: #5790AB;
+            --soft-blue: #072D44;
             --light-blue: #9CCDD8;
             --gray-blue: #D0D7E1;
             --white: #ffffff;
@@ -408,7 +408,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
     </style>
 </head>
 <body>
-    <div class="container">
+    
         <?php include 'recept_sidebar.php'; ?>
 
         <div class="main">
@@ -537,7 +537,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
                 </div>
             </div>
         </div>
-    </div>
 
     <?php if (isset($password_success)): ?>
         <div class="alert alert-success" style="margin: 0 20px 10px 20px;">

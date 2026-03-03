@@ -83,6 +83,15 @@
     include 'recept_sidebar.php';
     $receptionist_id = $_SESSION['RECEPTIONIST_ID'];
 
+    // Fetch receptionist data for header (used by receptionist_header.php)
+    $receptionist = null;
+    if (!empty($receptionist_id)) {
+        $receptionist_res = mysqli_query($conn, "SELECT FIRST_NAME, LAST_NAME FROM receptionist_tbl WHERE RECEPTIONIST_ID = " . intval($receptionist_id) . " LIMIT 1");
+        if ($receptionist_res && mysqli_num_rows($receptionist_res) > 0) {
+            $receptionist = mysqli_fetch_assoc($receptionist_res);
+        }
+    }
+
     // ================= SCHEDULED APPOINTMENTS (for Add vitals) =================
     $scheduled_appointments = [];
     $sched_q = mysqli_query($conn, "

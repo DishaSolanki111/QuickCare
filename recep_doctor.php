@@ -167,7 +167,7 @@ $receptionist_id = $_SESSION['RECEPTIONIST_ID'];
         :root {
             --dark-blue: #072D44;
             --mid-blue: #064469;
-            --soft-blue: #5790AB;
+            --soft-blue: #072D44;
             --light-blue: #9CCDD8;
             --gray-blue: #D0D7E1;
             --white: #ffffff;
@@ -200,7 +200,7 @@ $receptionist_id = $_SESSION['RECEPTIONIST_ID'];
         }
 
         th {
-            background: #5790AB;
+            background: #072D44;
             color: white;
             text-align: left;
         }
@@ -228,11 +228,14 @@ $receptionist_id = $_SESSION['RECEPTIONIST_ID'];
 
         .filter-container button {
             padding: 10px 15px;
-            background: #5790AB;
+            background: var(--dark-blue);
             color: white;
             border: none;
             border-radius: 5px;
             cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
         }
 
         .action-btn {
@@ -242,6 +245,9 @@ $receptionist_id = $_SESSION['RECEPTIONIST_ID'];
             border-radius: 4px;
             cursor: pointer;
             color: white;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
         }
 
         .edit-btn { background-color: #f39c12; }
@@ -334,7 +340,7 @@ $receptionist_id = $_SESSION['RECEPTIONIST_ID'];
         }
         
         .form-group input:focus, .form-group select:focus {
-            border-color: #5790AB;
+            border-color: #072D44;
             outline: none;
         }
         
@@ -448,7 +454,7 @@ $receptionist_id = $_SESSION['RECEPTIONIST_ID'];
         .image-upload-label {
             display: inline-block;
             padding: 8px 15px;
-            background: #5790AB;
+            background: #072D44;
             color: white;
             border-radius: 5px;
             cursor: pointer;
@@ -496,7 +502,10 @@ $receptionist_id = $_SESSION['RECEPTIONIST_ID'];
                 ?>
             </select>
 
-            <button type="submit">Filter</button>
+            <button type="submit">
+                <i class="bi bi-funnel"></i>
+                Filter
+            </button>
         </form>
     </div>
 
@@ -563,10 +572,9 @@ $receptionist_id = $_SESSION['RECEPTIONIST_ID'];
                     '<?php echo $row['EMAIL']; ?>', 
                     '<?php echo $row['SPECIALISATION_ID']; ?>', 
                     '<?php echo $row['PROFILE_IMAGE']; ?>')">
+                    <i class="bi bi-pencil"></i>
                     Edit
                 </button>
-
-           
             </td>
         </tr>
         <?php

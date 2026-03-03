@@ -10,6 +10,15 @@ if (!isset($_SESSION['RECEPTIONIST_ID'])) {
 include 'config.php';
 $receptionist_id = $_SESSION['RECEPTIONIST_ID'];
 
+// Fetch receptionist data for header (used by receptionist_header.php)
+$receptionist = null;
+if (!empty($receptionist_id)) {
+    $receptionist_res = mysqli_query($conn, "SELECT FIRST_NAME, LAST_NAME FROM receptionist_tbl WHERE RECEPTIONIST_ID = " . intval($receptionist_id) . " LIMIT 1");
+    if ($receptionist_res && mysqli_num_rows($receptionist_res) > 0) {
+        $receptionist = mysqli_fetch_assoc($receptionist_res);
+    }
+}
+
 // Initialize messages
 $success_message = "";
 $error_message = "";
@@ -88,7 +97,7 @@ $search = isset($_POST['search']) ? mysqli_real_escape_string($conn, $_POST['sea
     :root {
         --dark-blue: #072D44;
         --mid-blue: #064469;
-        --soft-blue: #5790AB;
+        --soft-blue: #072D44;
         --light-blue: #9CCDD8;
         --gray-blue: #D0D7E1;
         --white: #ffffff;
@@ -116,7 +125,7 @@ $search = isset($_POST['search']) ? mysqli_real_escape_string($conn, $_POST['sea
     }
 
     th {
-        background: #5790AB;
+        background: #072D44;
         color: white;
         text-align: left;
     }
@@ -146,7 +155,7 @@ $search = isset($_POST['search']) ? mysqli_real_escape_string($conn, $_POST['sea
 
     .btn-action-primary {
         padding: 10px 15px;
-        background: #5790AB;
+        background: #072D44;
         color: white;
         border: none;
         border-radius: 5px;
@@ -163,6 +172,9 @@ $search = isset($_POST['search']) ? mysqli_real_escape_string($conn, $_POST['sea
         margin-right: 5px;
         text-decoration: none;
         font-size: 13px;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
     }
 
     .edit-btn { background: #f39c12; }
@@ -284,9 +296,15 @@ $search = isset($_POST['search']) ? mysqli_real_escape_string($conn, $_POST['sea
                     <td>{$row['DESCRIPTION']}</td>
                     <td>
                         <button class='action-btn edit-btn' 
-                            onclick=\"openEditModal({$row['MEDICINE_ID']}, '" . addslashes($row['MED_NAME']) . "', '" . addslashes($row['DESCRIPTION']) . "')\">Edit</button>
+                            onclick=\"openEditModal({$row['MEDICINE_ID']}, '" . addslashes($row['MED_NAME']) . "', '" . addslashes($row['DESCRIPTION']) . "')\">
+                            <i class='bi bi-pencil'></i>
+                            Edit
+                        </button>
                         <button class='action-btn delete-btn' 
-                            onclick=\"deleteMedicine({$row['MEDICINE_ID']})\">Delete</button>
+                            onclick=\"deleteMedicine({$row['MEDICINE_ID']})\">
+                            <i class='bi bi-trash'></i>
+                            Delete
+                        </button>
                     </td>
                 </tr>";
             }

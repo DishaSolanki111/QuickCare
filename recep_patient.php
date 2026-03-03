@@ -89,7 +89,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'delete' && isset($_POST['id'
     :root {
         --dark-blue: #072D44;
         --mid-blue: #064469;
-        --soft-blue: #5790AB;
+        --soft-blue: #072D44;
         --light-blue: #9CCDD8;
         --gray-blue: #D0D7E1;
         --white: #ffffff;
@@ -117,7 +117,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'delete' && isset($_POST['id'
     }
 
     th {
-        background: #5790AB;
+        background: #072D44;
         color: white;
         text-align: left;
     }
@@ -145,11 +145,14 @@ if (isset($_POST['action']) && $_POST['action'] == 'delete' && isset($_POST['id'
 
     .filter-container button {
         padding: 10px 15px;
-        background: #5790AB;
+        background: var(--dark-blue);
         color: white;
         border: none;
         border-radius: 5px;
         cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
     }
 
     .action-btn {
@@ -159,6 +162,9 @@ if (isset($_POST['action']) && $_POST['action'] == 'delete' && isset($_POST['id'
         cursor: pointer;
         color: white;
         margin-right: 5px;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
     }
 
     .edit-btn { background: #f39c12; }
@@ -393,7 +399,10 @@ $receptionist_id = $_SESSION['RECEPTIONIST_ID'];
                 <option value="OTHER" <?php if(isset($_POST['gender_filter']) && $_POST['gender_filter']=='OTHER') echo 'selected'; ?>>Other</option>
             </select>
 
-            <button type="submit">Filter</button>
+            <button type="submit">
+                <i class="bi bi-funnel"></i>
+                Filter
+            </button>
         </form>
     </div>
 
@@ -441,9 +450,15 @@ $receptionist_id = $_SESSION['RECEPTIONIST_ID'];
                     <td>{$row['EMAIL']}</td>
                     <td>
                         <button class='action-btn edit-btn'
-                            onclick=\"openEditModal({$row['PATIENT_ID']}, '" . addslashes($row['FIRST_NAME']) . "', '" . addslashes($row['LAST_NAME']) . "', '{$row['DOB']}', '{$row['GENDER']}', '{$row['BLOOD_GROUP']}', '{$row['PHONE']}', '{$row['EMAIL']}')\">Edit</button>
+                            onclick=\"openEditModal({$row['PATIENT_ID']}, '" . addslashes($row['FIRST_NAME']) . "', '" . addslashes($row['LAST_NAME']) . "', '{$row['DOB']}', '{$row['GENDER']}', '{$row['BLOOD_GROUP']}', '{$row['PHONE']}', '{$row['EMAIL']}')\">
+                            <i class='bi bi-pencil'></i>
+                            Edit
+                        </button>
                         <button class='action-btn delete-btn'
-                            onclick=\"deletePatient({$row['PATIENT_ID']})\">Delete</button>
+                            onclick=\"deletePatient({$row['PATIENT_ID']})\">
+                            <i class='bi bi-trash'></i>
+                            Delete
+                        </button>
                     </td>
                 </tr>";
             }

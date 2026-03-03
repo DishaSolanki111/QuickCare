@@ -48,17 +48,10 @@ if ($med_result && $row = mysqli_fetch_assoc($med_result)) {
 :root {
     --dark-blue: #072D44;     /* Sidebar */
     --mid-blue: #064469;      /* Top Navbar */
-    --soft-blue: #5790AB;     /* Hover / Active */
+    --soft-blue: #072D44;     /* Hover / Active */
     --light-blue: #9CCDD8;    /* Cards */
     --gray-blue: #D0D7E1;     /* Text/Icons */
     --white: #ffffff;
-    --dark-blue: #072D44;
-    --mid-blue: #064469;
-    --soft-blue: #5790AB;
-    --light-blue: #9CCDD8;
-    --gray-blue: #D0D7E1;
-    --white: #ffffff;
-    
 }
 
 /* ---------------- GLOBAL STYLES ---------------- */
