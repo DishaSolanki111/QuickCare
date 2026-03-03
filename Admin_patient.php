@@ -120,7 +120,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'delete' && isset($_POST['id'
     }
 
     th {
-        background: #5790AB;
+        background: #072D44;
         color: white;
         text-align: left;
     }
@@ -148,7 +148,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'delete' && isset($_POST['id'
 
     .filter-container button {
         padding: 10px 15px;
-        background: #5790AB;
+        background: var(--dark-blue);
         color: white;
         border: none;
         border-radius: 5px;

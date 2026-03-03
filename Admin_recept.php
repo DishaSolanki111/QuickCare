@@ -155,7 +155,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'delete' && isset($_POST['id'
     }
 
     :root {
-        --dark-blue: #072D44;
+                                                
         --mid-blue: #064469;
         --soft-blue: #5790AB;
         --light-blue: #9CCDD8;
@@ -191,7 +191,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'delete' && isset($_POST['id'
     }
 
     th {
-        background: #5790AB;
+        background: #072D44;
         color: white;
         text-align: left;
     }
@@ -217,7 +217,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'delete' && isset($_POST['id'
 
     .filter-container button {
         padding: 10px 15px;
-        background: #5790AB;
+        background: var(--dark-blue);
         color: white;
         border: none;
         border-radius: 5px;
@@ -434,7 +434,6 @@ if (isset($_POST['action']) && $_POST['action'] == 'delete' && isset($_POST['id'
 
     <table>
         <tr>
-            <th>ID</th>
             <th>Name</th>
             <th>Date of Birth</th>
             <th>Date of Joining</th>
@@ -460,7 +459,6 @@ if (isset($_POST['action']) && $_POST['action'] == 'delete' && isset($_POST['id'
             while ($row = mysqli_fetch_assoc($result)) {
                 ?>
                 <tr>
-                    <td><?php echo $row['RECEPTIONIST_ID']; ?></td>
                     <td><?php echo $row['FIRST_NAME']." ".$row['LAST_NAME']; ?></td>
                     <td><?php echo $row['DOB']; ?></td>
                     <td><?php echo $row['DOJ']; ?></td>

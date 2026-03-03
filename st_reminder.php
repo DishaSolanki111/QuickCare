@@ -301,6 +301,37 @@ if (isset($_POST['edit_reminder_id'])) {
             box-shadow: 0 4px 8px rgba(0,0,0,0.15);
         }
         
+        /* Set Reminder button - modern medical style */
+        .btn-set-reminder {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px 18px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: white;
+            background: linear-gradient(135deg, #0d7a9c 0%, #064469 100%);
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 14px rgba(6, 68, 105, 0.35);
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+        .btn-set-reminder i {
+            font-size: 1rem;
+            line-height: 1;
+        }
+        .btn-set-reminder:hover {
+            background: linear-gradient(135deg, #0e8fb5 0%, #072D44 100%);
+            box-shadow: 0 6px 20px rgba(6, 68, 105, 0.45);
+            transform: translateY(-1px);
+        }
+        .btn-set-reminder:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 8px rgba(6, 68, 105, 0.3);
+        }
+        
         .btn-sm {
             padding: 6px 12px;
             font-size: 0.875rem;
@@ -483,8 +514,10 @@ if (isset($_POST['edit_reminder_id'])) {
         }
         
         .medicine-name {
+            font-size: 1.1rem;
             font-weight: 600;
             color: var(--primary-color);
+            margin-bottom: 4px;
         }
         
         .medicine-dosage {
@@ -612,8 +645,18 @@ if (isset($_POST['edit_reminder_id'])) {
             margin-left: 5px;
         }
         .patient-name-row {
+            display: flex;
+            align-items: flex-start;
             margin-bottom: 10px;
             color: var(--primary-color);
+        }
+        .patient-info-stack {
+            display: block;
+        }
+        .patient-info-stack .patient-contact {
+            font-size: 0.9rem;
+            color: #6b7280;
+            margin-top: 2px;
         }
         .appointment-block {
             background: var(--card-bg);
@@ -626,9 +669,9 @@ if (isset($_POST['edit_reminder_id'])) {
             color: #555;
         }
         .medicine-list-label {
-            font-weight: 600;
+            font-size: 1.4rem;
+            font-weight: bold;
             color: var(--primary-color);
-            font-size: 0.9rem;
             margin-bottom: 8px;
         }
         .reminder-action-row {
@@ -641,6 +684,43 @@ if (isset($_POST['edit_reminder_id'])) {
             font-size: 0.85rem;
             color: var(--accent-color);
             font-weight: 500;
+        }
+        
+        /* Search bar - same design as recep_doctor.php filter-container */
+        .reminder-search-section {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .reminder-search-form {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        .reminder-search-form .search-type-select,
+        .reminder-search-form .search-term-input {
+            padding: 10px;
+            border: 1px solid #D0D7E1;
+            border-radius: 5px;
+        }
+        .reminder-search-form .btn-search {
+            padding: 10px 15px;
+            background: #5790AB;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .reminder-search-form .btn-clear {
+            padding: 10px 15px;
+            background: #D0D7E1;
+            color: #1a3a5f;
+            border: 1px solid #D0D7E1;
+            border-radius: 5px;
+            text-decoration: none;
+            display: inline-block;
         }
         
         @media (max-width: 768px) {
@@ -679,6 +759,23 @@ if (isset($_POST['edit_reminder_id'])) {
     <!-- Main Content -->
     <div class="main-content">
     <?php include 'receptionist_header.php'; ?>
+        
+        <!-- Search Bar Section (same design as recep_doctor.php filter) -->
+        <div class="reminder-search-section">
+            <form method="get" action="st_reminder.php" class="reminder-search-form">
+                <select name="search_type" class="search-type-select" required>
+                    <option value="">Search by...</option>
+                    <option value="patient" <?php echo (isset($_GET['search_type']) && $_GET['search_type'] === 'patient') ? 'selected' : ''; ?>>By Patient</option>
+                    <option value="doctor" <?php echo (isset($_GET['search_type']) && $_GET['search_type'] === 'doctor') ? 'selected' : ''; ?>>By Doctor</option>
+                    <option value="specialization" <?php echo (isset($_GET['search_type']) && $_GET['search_type'] === 'specialization') ? 'selected' : ''; ?>>By Specialization</option>
+                </select>
+                <input type="text" name="search_term" class="search-term-input" placeholder="Search..." value="<?php echo isset($_GET['search_term']) ? htmlspecialchars($_GET['search_term']) : ''; ?>">
+                <button type="submit" class="btn-search">Search</button>
+                <?php if (!empty($_GET['search_type']) || !empty($_GET['search_term'])): ?>
+                <a href="st_reminder.php" class="btn-clear">Clear</a>
+                <?php endif; ?>
+            </form>
+        </div>
         
         <!-- Success/Error Messages -->
         <?php if (isset($success_message)): ?>
@@ -726,8 +823,11 @@ if (isset($_POST['edit_reminder_id'])) {
                                         <div class="patient-block mb-4">
                                             <div class="patient-name-row">
                                                 <i class="bi bi-person me-2"></i>
-                                                <strong><?php echo htmlspecialchars($patient_data['name']); ?></strong>
-                                                <span class="text-muted small ms-2"><?php echo htmlspecialchars($patient_data['phone']); ?> · <?php echo htmlspecialchars($patient_data['email']); ?></span>
+                                                <div class="patient-info-stack">
+                                                    <strong><?php echo htmlspecialchars($patient_data['name']); ?></strong>
+                                                    <div class="patient-contact"><?php echo htmlspecialchars($patient_data['phone']); ?></div>
+                                                    <div class="patient-contact"><?php echo htmlspecialchars($patient_data['email']); ?></div>
+                                                </div>
                                             </div>
                                             <?php foreach ($patient_data['appointments'] as $apt): 
                                                 $prescription_id = (int)$apt['PRESCRIPTION_ID'];
@@ -795,13 +895,13 @@ if (isset($_POST['edit_reminder_id'])) {
                                                         </button>
                                                     </form>
                                                     <?php else: ?>
-                                                    <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#createPrescriptionReminderModal" 
+                                                    <button class="btn-set-reminder" data-bs-toggle="modal" data-bs-target="#createPrescriptionReminderModal" 
                                                             data-patient-id="<?php echo (int)$apt['PATIENT_ID']; ?>"
                                                             data-patient-name="<?php echo htmlspecialchars($apt['PAT_FNAME'] . ' ' . $apt['PAT_LNAME']); ?>"
                                                             data-prescription-id="<?php echo $prescription_id; ?>"
                                                             data-appointment-date="<?php echo htmlspecialchars($apt['APPOINTMENT_DATE']); ?>"
                                                             data-prescription-duration="<?php echo $prescription_duration_days; ?>">
-                                                        <i class="bi bi-bell-fill me-1"></i> Set Reminder
+                                                        <i class="bi bi-bell-fill"></i><span>Set Reminder</span>
                                                     </button>
                                                     <?php endif; ?>
                                                 </div>

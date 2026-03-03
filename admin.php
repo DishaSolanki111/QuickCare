@@ -186,6 +186,12 @@ $conn->close();
         box-shadow: 0 2px 4px rgba(6, 68, 105, 0.2);
     }
 
+    /* Hide Recent Appointments section (heading + table) */
+    .main > h2:last-of-type,
+    .main > h2:last-of-type + table {
+        display: none !important;
+    }
+
 </style>
 </head>
 
