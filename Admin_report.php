@@ -1,533 +1,542 @@
 <?php
 session_start();
 include 'config.php';
+
+// Secure admin session check
+if(!isset($_SESSION['admin_username']) && !isset($_SESSION['admin'])) {
+    // Just a placeholder check; adapt to exact session variable used.
+    // If not set, could redirect.
+    // header("Location: admin_login.php"); 
+    // exit();
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Reports - QuickCare</title>
+<title>Reports - QuickCare Admin</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
     body {
         margin: 0;
-        font-family: Arial, sans-serif;
+        font-family: 'Segoe UI', Arial, sans-serif;
         background: #D0D7E1;
         display: flex;
     }
-     :root {
-           --dark-blue: #072D44;
-    --mid-blue: #064469;
-    --soft-blue: #5790AB;
-    --light-blue: #9CCDD8;
-    --gray-blue: #D0D7E1;
-    --white: #ffffff;
-    --card-bg: #F6F9FB;
-    --primary-color: #1a3a5f;
-    --secondary-color: #3498db;
-    --accent-color: #2ecc71;
-    --danger-color: #e74c3c;
-    --warning-color: #f39c12;
-    --info-color: #17a2b8;
-        }
-
+    :root {
+        --dark-blue: #072D44;
+        --mid-blue: #064469;
+        --soft-blue: #5790AB;
+        --light-blue: #9CCDD8;
+        --gray-blue: #D0D7E1;
+        --white: #ffffff;
+    }
     /* Sidebar */
     .sidebar {
-            width: 250px;
-            background: #072D44;
-            min-height: 100vh;
-            color: white;
-            padding-top: 30px;
-            position: fixed;
-        }
-
-        .sidebar h2 {
-            text-align: center;
-            margin-bottom: 40px;
-            color: #9CCDD8;
-        }
-
-        .sidebar a {
-            display: block;
-            padding: 15px 25px;
-            color: #D0D7E1;
-            text-decoration: none;
-            font-size: 17px;
-            border-left: 4px solid transparent;
-        }
-
-        .sidebar a:hover, .sidebar a.active {
-            background: #064469;
-            border-left: 4px solid #9CCDD8;
-            color: white;
-        }
-
-        .logout-btn:hover{
-            background-color: var(--light-blue);
-        }
-        .logout-btn {
-            
-            display: block;
-            width: 80%;
-            margin: 20px auto 0 auto;
-            padding: 10px;
-            background-color: var(--soft-blue);
-            color: var(--white);    
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            text-align: center;
-            transition: background-color 0.3s;
-        }
-    /* Main content */
+        width: 250px;
+        background: var(--dark-blue);
+        min-height: 100vh;
+        color: white;
+        padding-top: 30px;
+        position: fixed;
+    }
+    .sidebar h2 {
+        text-align: center;
+        margin-bottom: 40px;
+        color: var(--light-blue);
+    }
+    .sidebar a {
+        display: block;
+        padding: 15px 25px;
+        color: var(--gray-blue);
+        text-decoration: none;
+        font-size: 17px;
+        border-left: 4px solid transparent;
+    }
+    .sidebar a:hover, .sidebar a.active {
+        background: var(--mid-blue);
+        border-left: 4px solid var(--light-blue);
+        color: white;
+    }
+    .logout-btn {
+        display: block;
+        width: 80%;
+        margin: 20px auto 0 auto;
+        padding: 10px;
+        background-color: var(--soft-blue);
+        color: var(--white);    
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+        text-align: center;
+        text-decoration: none;
+    }
     .main {
         margin-left: 250px;
         padding: 20px;
         width: calc(100% - 250px);
+        box-sizing: border-box;
     }
-
-    
-    /* Cards */
+    /* Dashboard Cards */
     .cards {
         display: flex;
         gap: 20px;
         margin-bottom: 20px;
         flex-wrap: wrap;
     }
-
     .card {
         background: white;
         padding: 20px;
         border-radius: 12px;
         flex: 1;
-        min-width: 250px;
+        min-width: 200px;
         box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        border-left: 8px solid #5790AB;
+        border-left: 8px solid var(--soft-blue);
     }
-
     .card h3 {
         margin: 0;
-        color: #072D44;
+        color: var(--dark-blue);
+        font-size: 16px;
     }
-
     .card p {
         margin-top: 10px;
-        font-size: 22px;
-        color: #064469;
+        font-size: 24px;
+        color: var(--mid-blue);
         font-weight: bold;
     }
-    
-    .logo-img {
-            height: 40px;
-            margin-right: 12px;
-            border-radius: 5px;
-        }
-    
-    .report-container {
+    /* Report Section */
+    .report-tabs {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+    .tab-btn {
+        padding: 10px 20px;
+        background: white;
+        border: 2px solid var(--soft-blue);
+        color: var(--mid-blue);
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: 0.3s;
+    }
+    .tab-btn.active, .tab-btn:hover {
+        background: var(--soft-blue);
+        color: white;
+    }
+    .report-content {
+        display: none;
         background: white;
         padding: 20px;
         border-radius: 10px;
-        margin-bottom: 20px;
         box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     }
-    
-    .report-container h2 {
-        color: #064469;
-        margin-top: 0;
+    .report-content.active {
+        display: block;
     }
-    
-    .report-container form {
+    .filter-bar {
         display: flex;
         gap: 15px;
-        flex-wrap: wrap;
         margin-bottom: 20px;
+        align-items: center;
+        flex-wrap: wrap;
     }
-    
-    .report-container input, .report-container select {
-        padding: 10px;
-        border: 1px solid #D0D7E1;
+    .filter-bar input, .filter-bar select {
+        padding: 8px;
+        border: 1px solid #ccc;
         border-radius: 5px;
     }
-    
-    .report-container button {
-        padding: 10px 15px;
-        background: #5790AB;
+    .btn-apply {
+        padding: 8px 15px;
+        background: var(--mid-blue);
         color: white;
         border: none;
         border-radius: 5px;
         cursor: pointer;
     }
-    
-    .report-container button:hover {
-        background: #064469;
+    .btn-export {
+        padding: 8px 15px;
+        background: #2ecc71;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-left: auto;
     }
-    
+    .charts-row {
+        display: flex;
+        gap: 20px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+    }
+    .chart-box {
+        flex: 1;
+        min-width: 300px;
+        background: #f9f9f9;
+        border: 1px solid #eee;
+        border-radius: 8px;
+        padding: 15px;
+    }
     .report-table {
         width: 100%;
         border-collapse: collapse;
         margin-top: 20px;
     }
-    
     .report-table th, .report-table td {
-        padding: 10px;
-        border-bottom: 1px solid #D0D7E1;
+        padding: 12px;
+        border-bottom: 1px solid #eee;
         text-align: left;
     }
-    
     .report-table th {
-        background: #5790AB;
-        color: white;
+        background: var(--light-blue);
+        color: var(--dark-blue);
     }
-    
     .report-table tr:hover {
-        background: #F2F9FB;
-    }
-    
-    .chart-container {
-        height: 300px;
-        margin-top: 20px;
-    }
-    
-    .export-btn {
-        background: #2ecc71;
-        color: white;
-        padding: 8px 15px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        margin-left: 10px;
-    }
-    
-    .export-btn:hover {
-        background: #27ae60;
+        background: #f5f5f5;
     }
 </style>
 </head>
 <body>
 
-<!-- Sidebar -->
 <div class="sidebar">
-  <img src="uploads/logo.JPG" alt="QuickCare Logo" class="logo-img" style="display:block; margin: 0 auto 10px auto; width:80px; height:80px; border-radius:50%;">  
-        <h2>QuickCare</h2>
-
-  
-    <a href="admin.php">Dashboard</a>
-    <a href="Admin_appoitment.php" >View Appointments</a>
-    <a href="Admin_doctor.php">Manage Doctors</a>
-    <a href="Admin_recept.php">Manage Receptionist</a>
-    <a href="Admin_patient.php">Manage Patients</a>
-    <a href="Admin_medicine.php">View Medicine</a>
-    <a href="Admin_payment.php">View Payments</a>
-    <a href="Admin_feedback.php">View Feedback</a>
-    <a href="Admin_report.php" class="active">Reports</a>
-    <a href="logout.php" class="logout-btn">Logout</a>
+  <img src="uploads/logo.JPG" alt="QuickCare Logo" style="display:block; margin: 0 auto 10px auto; width:80px; height:80px; border-radius:50%;" onerror="this.src=''; this.style.display='none';">  
+  <h2>QuickCare</h2>
+  <a href="admin.php">Dashboard</a>
+  <a href="Admin_appoitment.php" >View Appointments</a>
+  <a href="Admin_doctor.php">Manage Doctors</a>
+  <a href="Admin_recept.php">Manage Receptionist</a>
+  <a href="Admin_patient.php">Manage Patients</a>
+  <a href="Admin_medicine.php">View Medicine</a>
+  <a href="Admin_payment.php">View Payments</a>
+  <a href="Admin_feedback.php">View Feedback</a>
+  <a href="Admin_report.php" class="active">Reports</a>
+  <a href="logout.php" class="logout-btn">Logout</a>
 </div>
 
-<!-- Main Content -->
 <div class="main">
-    <?php include 'admin_header.php'; ?>
+    <?php 
+    // Fetch Summary Data
+    $patients = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as count FROM patient_tbl"))['count'];
+    $doctors = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as count FROM doctor_tbl"))['count'];
+    $appointments = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as count FROM appointment_tbl"))['count'];
+    $revenue_res = mysqli_query($conn, "SELECT SUM(AMOUNT) as total FROM payment_tbl WHERE STATUS = 'COMPLETED'");
+    $revenue = mysqli_fetch_assoc($revenue_res)['total'];
+    
+    // Fetch Doctors for dropdown
+    $doctors_list = mysqli_query($conn, "SELECT DOCTOR_ID, FIRST_NAME, LAST_NAME FROM doctor_tbl");
+    ?>
 
-    <!-- Statistics Cards -->
+    <h2>Reporting Module</h2>
+
+    <!-- Summary Cards -->
     <div class="cards">
         <div class="card">
             <h3>Total Patients</h3>
-            <p><?php 
-            $patients_query = "SELECT COUNT(*) as count FROM patient_tbl";
-            $patients_result = mysqli_query($conn, $patients_query);
-            $patients_row = mysqli_fetch_assoc($patients_result);
-            echo $patients_row['count'];
-            ?></p>
+            <p><?= $patients ?></p>
         </div>
-
-        <div class="card">
-            <h3>Total Appointments</h3>
-            <p><?php 
-            // PHP code to count total appointments
-            $appointments_query = "SELECT COUNT(*) as count FROM appointment_tbl";
-            $appointments_result = mysqli_query($conn, $appointments_query);
-            $appointments_row = mysqli_fetch_assoc($appointments_result);
-            echo $appointments_row['count'];
-            ?></p>
-        </div>
-
         <div class="card">
             <h3>Total Doctors</h3>
-            <p><?php 
-            // PHP code to count total doctors
-            $doctors_query = "SELECT COUNT(*) as count FROM doctor_tbl";
-            $doctors_result = mysqli_query($conn, $doctors_query);
-            $doctors_row = mysqli_fetch_assoc($doctors_result);
-            echo $doctors_row['count'];
-            ?></p>
+            <p><?= $doctors ?></p>
+        </div>
+        <div class="card">
+            <h3>Total Appointments</h3>
+            <p><?= $appointments ?></p>
         </div>
         <div class="card">
             <h3>Total Revenue</h3>
-            <p>₹<?php 
-            // PHP code to calculate total revenue
-            $revenue_query = "SELECT SUM(AMOUNT) as total FROM payment_tbl WHERE STATUS = 'COMPLETED'";
-            $revenue_result = mysqli_query($conn, $revenue_query);
-            $revenue_row = mysqli_fetch_assoc($revenue_result);
-            echo number_format($revenue_row['total'], 2);
-            ?></p>
+            <p>₹<?= number_format($revenue ?: 0, 2) ?></p>
         </div>
     </div>
 
-    <!-- Appointments Report -->
-    <div class="report-container">
-        <h2>Appointments Report</h2>
-        <form method="POST" action="Admin_report.php">
-            <input type="date" name="start_date" placeholder="Start Date" value="<?php echo isset($_POST['start_date']) ? $_POST['start_date'] : date('Y-m-01'); ?>">
-            <input type="date" name="end_date" placeholder="End Date" value="<?php echo isset($_POST['end_date']) ? $_POST['end_date'] : date('Y-m-d'); ?>">
-            <select name="status_filter">
-                <option value="">All Status</option>
-                <option value="SCHEDULED" <?php echo (isset($_POST['status_filter']) && $_POST['status_filter'] == 'SCHEDULED') ? 'selected' : ''; ?>>Scheduled</option>
-                <option value="COMPLETED" <?php echo (isset($_POST['status_filter']) && $_POST['status_filter'] == 'COMPLETED') ? 'selected' : ''; ?>>Completed</option>
-                <option value="CANCELLED" <?php echo (isset($_POST['status_filter']) && $_POST['status_filter'] == 'CANCELLED') ? 'selected' : ''; ?>>Cancelled</option>
+    <!-- Report Tabs -->
+    <div class="report-tabs">
+        <button class="tab-btn active" onclick="openTab('patient')">Patient Reports</button>
+        <button class="tab-btn" onclick="openTab('appointment')">Appointment Reports</button>
+        <button class="tab-btn" onclick="openTab('revenue')">Revenue Reports</button>
+    </div>
+
+    <!-- Patient Report -->
+    <div id="patient" class="report-content active">
+        <div class="filter-bar">
+            <input type="date" id="pat_start" value="<?= date('Y-m-d', strtotime('-6 months')) ?>">
+            <input type="date" id="pat_end" value="<?= date('Y-m-d') ?>">
+            <button class="btn-apply" onclick="loadPatientReport()">Apply</button>
+            <button class="btn-export" onclick="exportCSV('pat_table', 'Patient_Report')">Export CSV</button>
+        </div>
+        <div class="charts-row">
+            <div class="chart-box"><canvas id="patBarChart"></canvas></div>
+            <div class="chart-box"><canvas id="patPieChart"></canvas></div>
+        </div>
+        <table class="report-table" id="pat_table">
+            <thead>
+                <tr>
+                    <th>Patient ID</th>
+                    <th>Name</th>
+                    <th>Gender</th>
+                    <th>Phone</th>
+                    <th>Registration Date</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <!-- Appointment Report -->
+    <div id="appointment" class="report-content">
+        <div class="filter-bar">
+            <input type="date" id="app_start" value="<?= date('Y-m-01') ?>">
+            <input type="date" id="app_end" value="<?= date('Y-m-d') ?>">
+            <select id="app_doc">
+                <option value="">All Doctors</option>
+                <?php while($d = mysqli_fetch_assoc($doctors_list)) { ?>
+                    <option value="<?= $d['DOCTOR_ID'] ?>">Dr. <?= $d['FIRST_NAME'] ?> <?= $d['LAST_NAME'] ?></option>
+                <?php } ?>
             </select>
-            <button type="submit">Generate Report</button>
-            <button type="button" class="export-btn" onclick="exportAppointmentReport()">Export PDF</button>
-        </form>
-        
-        <table class="report-table">
-            <tr>
-                <th>Date</th>
-                <th>Total Appointments</th>
-                <th>Completed</th>
-                <th>Cancelled</th>
-                <th>Scheduled</th>
-            </tr>
-            <?php
-            // PHP code to generate appointments report
-            $start_date = isset($_POST['start_date']) ? $_POST['start_date'] : date('Y-m-01');
-            $end_date = isset($_POST['end_date']) ? $_POST['end_date'] : date('Y-m-d');
-            $status_filter = isset($_POST['status_filter']) ? $_POST['status_filter'] : '';
-            
-            // Build query based on filters
-            $query = "SELECT APPOINTMENT_DATE, STATUS, COUNT(*) as count 
-                      FROM appointment_tbl 
-                      WHERE APPOINTMENT_DATE BETWEEN '$start_date' AND '$end_date'";
-            
-            if(!empty($status_filter)) {
-                $query .= " AND STATUS = '$status_filter'";
-            }
-            
-            $query .= " GROUP BY APPOINTMENT_DATE, STATUS 
-                        ORDER BY APPOINTMENT_DATE DESC";
-            
-            $result = mysqli_query($conn, $query);
-            
-            // Store results in an array
-            $appointments_data = array();
-            while($row = mysqli_fetch_assoc($result)) {
-                $date = $row['APPOINTMENT_DATE'];
-                $status = $row['STATUS'];
-                $count = $row['count'];
-                
-                if(!isset($appointments_data[$date])) {
-                    $appointments_data[$date] = array(
-                        'total' => 0,
-                        'completed' => 0,
-                        'cancelled' => 0,
-                        'scheduled' => 0
-                    );
-                }
-                
-                $appointments_data[$date]['total'] += $count;
-                
-                if($status == 'COMPLETED') {
-                    $appointments_data[$date]['completed'] = $count;
-                } else if($status == 'CANCELLED') {
-                    $appointments_data[$date]['cancelled'] = $count;
-                } else if($status == 'SCHEDULED') {
-                    $appointments_data[$date]['scheduled'] = $count;
-                }
-            }
-            
-            // Display the data
-            foreach($appointments_data as $date => $data) {
-                echo "<tr>
-                    <td>$date</td>
-                    <td>".$data['total']."</td>
-                    <td>".$data['completed']."</td>
-                    <td>".$data['cancelled']."</td>
-                    <td>".$data['scheduled']."</td>
-                </tr>";
-            }
-            
-            // If no data found
-            if(empty($appointments_data)) {
-                echo "<tr><td colspan='5'>No appointments found in the selected date range</td></tr>";
-            }
-            ?>
+            <button class="btn-apply" onclick="loadAppointmentReport()">Apply</button>
+            <button class="btn-export" onclick="exportCSV('app_table', 'Appointment_Report')">Export CSV</button>
+        </div>
+        <div class="charts-row">
+            <div class="chart-box"><canvas id="appLineChart"></canvas></div>
+            <div class="chart-box"><canvas id="appBarChart"></canvas></div>
+        </div>
+        <div class="charts-row" style="justify-content:center;">
+            <div class="chart-box" style="max-width: 400px;"><canvas id="appPieChart"></canvas></div>
+        </div>
+        <table class="report-table" id="app_table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Patient Name</th>
+                    <th>Doctor Name</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
         </table>
     </div>
 
     <!-- Revenue Report -->
-    <div class="report-container">
-        <h2>Revenue Report</h2>
-        <form method="POST" action="Admin_report.php">
-            <input type="date" name="revenue_start_date" placeholder="Start Date" value="<?php echo isset($_POST['revenue_start_date']) ? $_POST['revenue_start_date'] : date('Y-m-01'); ?>">
-            <input type="date" name="revenue_end_date" placeholder="End Date" value="<?php echo isset($_POST['revenue_end_date']) ? $_POST['revenue_end_date'] : date('Y-m-d'); ?>">
-            <button type="submit">Generate Report</button>
-            <button type="button" class="export-btn" onclick="exportRevenueReport()">Export PDF</button>
-        </form>
-        
-        <table class="report-table">
-            <tr>
-                <th>Payment Mode</th>
-                <th>Count</th>
-                <th>Total Amount</th>
-            </tr>
-            <?php
-            // PHP code to generate revenue report
-            $revenue_start_date = isset($_POST['revenue_start_date']) ? $_POST['revenue_start_date'] : date('Y-m-01');
-            $revenue_end_date = isset($_POST['revenue_end_date']) ? $_POST['revenue_end_date'] : date('Y-m-d');
-            
-            $query = "SELECT PAYMENT_MODE, COUNT(*) as count, SUM(AMOUNT) as total 
-                      FROM payment_tbl 
-                      WHERE PAYMENT_DATE BETWEEN '$revenue_start_date' AND '$revenue_end_date' AND STATUS = 'COMPLETED'
-                      GROUP BY PAYMENT_MODE";
-            
-            $result = mysqli_query($conn, $query);
-            
-            $total_count = 0;
-            $total_amount = 0;
-            
-            while($row = mysqli_fetch_assoc($result)) {
-                echo "<tr>
-                    <td>".$row['PAYMENT_MODE']."</td>
-                    <td>".$row['count']."</td>
-                    <td>$".number_format($row['total'], 2)."</td>
-                </tr>";
-                
-                $total_count += $row['count'];
-                $total_amount += $row['total'];
-            }
-            
-            echo "<tr style='font-weight:bold; background:#F2F9FB;'>
-                <td>Total</td>
-                <td>$total_count</td>
-                <td>$".number_format($total_amount, 2)."</td>
-            </tr>";
-            ?>
-        </table>
-    </div>
-
-    <!-- Doctor Performance Report -->
-    <div class="report-container">
-        <h2>Doctor Performance Report</h2>
-        <form method="POST" action="Admin_report.php">
-            <input type="date" name="doctor_start_date" placeholder="Start Date" value="<?php echo isset($_POST['doctor_start_date']) ? $_POST['doctor_start_date'] : date('Y-m-01'); ?>">
-            <input type="date" name="doctor_end_date" placeholder="End Date" value="<?php echo isset($_POST['doctor_end_date']) ? $_POST['doctor_end_date'] : date('Y-m-d'); ?>">
-            <button type="submit">Generate Report</button>
-            <button type="button" class="export-btn" onclick="exportDoctorReport()">Export PDF</button>
-        </form>
-        
-        <table class="report-table">
-            <tr>
-                <th>Doctor Name</th>
-                <th>Specialization</th>
-                <th>Total Appointments</th>
-                <th>Completed</th>
-                <th>Cancelled</th>
-                <th>Completion Rate</th>
-            </tr>
-            <?php
-            // PHP code to generate doctor performance report
-            $doctor_start_date = isset($_POST['doctor_start_date']) ? $_POST['doctor_start_date'] : date('Y-m-01');
-            $doctor_end_date = isset($_POST['doctor_end_date']) ? $_POST['doctor_end_date'] : date('Y-m-d');
-            
-            $query = "SELECT d.DOCTOR_ID, d.FIRST_NAME, d.LAST_NAME, s.SPECIALISATION_NAME,
-                      COUNT(a.APPOINTMENT_ID) as total_appointments,
-                      SUM(CASE WHEN a.STATUS = 'COMPLETED' THEN 1 ELSE 0 END) as completed,
-                      SUM(CASE WHEN a.STATUS = 'CANCELLED' THEN 1 ELSE 0 END) as cancelled
-                      FROM doctor_tbl d
-                      JOIN specialisation_tbl s ON d.SPECIALISATION_ID = s.SPECIALISATION_ID
-                      LEFT JOIN appointment_tbl a ON d.DOCTOR_ID = a.DOCTOR_ID 
-                        AND a.APPOINTMENT_DATE BETWEEN '$doctor_start_date' AND '$doctor_end_date'
-                      GROUP BY d.DOCTOR_ID
-                      ORDER BY total_appointments DESC";
-            
-            $result = mysqli_query($conn, $query);
-            
-            while($row = mysqli_fetch_assoc($result)) {
-                $total = $row['total_appointments'];
-                $completed = $row['completed'];
-                $cancelled = $row['cancelled'];
-                
-                $completion_rate = $total > 0 ? round(($completed / $total) * 100, 2) : 0;
-                
-                echo "<tr>
-                    <td>".$row['FIRST_NAME']." ".$row['LAST_NAME']."</td>
-                    <td>".$row['SPECIALISATION_NAME']."</td>
-                    <td>".$total."</td>
-                    <td>".$completed."</td>
-                    <td>".$cancelled."</td>
-                    <td>".$completion_rate."%</td>
-                </tr>";
-            }
-            ?>
+    <div id="revenue" class="report-content">
+        <div class="filter-bar">
+            <input type="date" id="rev_start" value="<?= date('Y-m-01', strtotime('-3 months')) ?>">
+            <input type="date" id="rev_end" value="<?= date('Y-m-d') ?>">
+            <button class="btn-apply" onclick="loadRevenueReport()">Apply</button>
+            <button class="btn-export" onclick="exportCSV('rev_table', 'Revenue_Report')">Export CSV</button>
+        </div>
+        <div class="charts-row">
+            <div class="chart-box"><canvas id="revBarChart"></canvas></div>
+            <div class="chart-box"><canvas id="revPieChart"></canvas></div>
+        </div>
+        <table class="report-table" id="rev_table">
+            <thead>
+                <tr>
+                    <th>Payment Date</th>
+                    <th>Amount</th>
+                    <th>Payment Mode</th>
+                    <th>Transaction ID</th>
+                    <th>Patient Name</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
         </table>
     </div>
 </div>
 
 <script>
-function exportAppointmentReport() {
-    var form = document.querySelector('input[name="start_date"]');
-    form = form ? form.closest('form') : null;
-    var f = document.createElement('form');
-    f.method = 'POST';
-    f.action = 'export_appointments_report.php';
-    var startDate = form ? form.querySelector('input[name="start_date"]') : null;
-    var endDate = form ? form.querySelector('input[name="end_date"]') : null;
-    var statusSel = form ? form.querySelector('select[name="status_filter"]') : null;
-    var inp1 = document.createElement('input'); inp1.type = 'hidden'; inp1.name = 'start_date';
-    inp1.value = startDate ? startDate.value : '<?php echo date('Y-m-01'); ?>';
-    f.appendChild(inp1);
-    var inp2 = document.createElement('input'); inp2.type = 'hidden'; inp2.name = 'end_date';
-    inp2.value = endDate ? endDate.value : '<?php echo date('Y-m-d'); ?>';
-    f.appendChild(inp2);
-    var inp3 = document.createElement('input'); inp3.type = 'hidden'; inp3.name = 'status_filter';
-    inp3.value = statusSel ? statusSel.value : '';
-    f.appendChild(inp3);
-    document.body.appendChild(f);
-    f.submit();
+// Tab Switching
+function openTab(tabName) {
+    document.querySelectorAll('.report-content').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+    document.getElementById(tabName).classList.add('active');
+    event.currentTarget.classList.add('active');
+
+    // Trigger loading if empty
+    if(tabName === 'patient') loadPatientReport();
+    if(tabName === 'appointment') loadAppointmentReport();
+    if(tabName === 'revenue') loadRevenueReport();
 }
 
-function exportRevenueReport() {
-    var form = document.querySelector('input[name="revenue_start_date"]');
-    form = form ? form.closest('form') : null;
-    var f = document.createElement('form');
-    f.method = 'POST';
-    f.action = 'export_revenue_report.php';
-    var startDate = form ? form.querySelector('input[name="revenue_start_date"]') : null;
-    var endDate = form ? form.querySelector('input[name="revenue_end_date"]') : null;
-    var inp1 = document.createElement('input'); inp1.type = 'hidden'; inp1.name = 'start_date';
-    inp1.value = startDate ? startDate.value : '<?php echo date('Y-m-01'); ?>';
-    f.appendChild(inp1);
-    var inp2 = document.createElement('input'); inp2.type = 'hidden'; inp2.name = 'end_date';
-    inp2.value = endDate ? endDate.value : '<?php echo date('Y-m-d'); ?>';
-    f.appendChild(inp2);
-    document.body.appendChild(f);
-    f.submit();
+// Chart Instances
+let charts = {};
+
+function initChart(canvasId, type, data, options) {
+    if(charts[canvasId]) {
+        charts[canvasId].destroy();
+    }
+    const ctx = document.getElementById(canvasId).getContext('2d');
+    charts[canvasId] = new Chart(ctx, {
+        type: type,
+        data: data,
+        options: options
+    });
 }
 
-function exportDoctorReport() {
-    var form = document.querySelector('input[name="doctor_start_date"]');
-    form = form ? form.closest('form') : null;
-    var f = document.createElement('form');
-    f.method = 'POST';
-    f.action = 'export_doctor_report.php';
-    var startDate = form ? form.querySelector('input[name="doctor_start_date"]') : null;
-    var endDate = form ? form.querySelector('input[name="doctor_end_date"]') : null;
-    var inp1 = document.createElement('input'); inp1.type = 'hidden'; inp1.name = 'start_date';
-    inp1.value = startDate ? startDate.value : '<?php echo date('Y-m-01'); ?>';
-    f.appendChild(inp1);
-    var inp2 = document.createElement('input'); inp2.type = 'hidden'; inp2.name = 'end_date';
-    inp2.value = endDate ? endDate.value : '<?php echo date('Y-m-d'); ?>';
-    f.appendChild(inp2);
-    document.body.appendChild(f);
-    f.submit();
+// Patient Report
+async function loadPatientReport() {
+    let start = document.getElementById('pat_start').value;
+    let end = document.getElementById('pat_end').value;
+    
+    let res = await fetch(`api_report_patient.php?start_date=${start}&end_date=${end}`);
+    let data = await res.json();
+    
+    // Bar Chart
+    initChart('patBarChart', 'bar', {
+        labels: data.monthly_registration.labels,
+        datasets: [{
+            label: 'Monthly Registrations',
+            data: data.monthly_registration.data,
+            backgroundColor: '#5790AB'
+        }]
+    }, { responsive: true });
+
+    // Pie Chart
+    initChart('patPieChart', 'pie', {
+        labels: data.gender_distribution.labels,
+        datasets: [{
+            data: data.gender_distribution.data,
+            backgroundColor: ['#3498db', '#e74c3c', '#2ecc71']
+        }]
+    }, { responsive: true, plugins: { title: { display: true, text: 'Gender Distribution' } } });
+
+    // Table
+    let tbody = document.querySelector('#pat_table tbody');
+    tbody.innerHTML = '';
+    data.table_data.forEach(row => {
+        tbody.innerHTML += `<tr>
+            <td>${row.PATIENT_ID}</td>
+            <td>${row.FIRST_NAME} ${row.LAST_NAME}</td>
+            <td>${row.GENDER || 'N/A'}</td>
+            <td>${row.PHONE || ''}</td>
+            <td>${row.CREATED_AT ? row.CREATED_AT.substring(0,10) : ''}</td>
+        </tr>`;
+    });
+}
+
+// Appointment Report
+async function loadAppointmentReport() {
+    let start = document.getElementById('app_start').value;
+    let end = document.getElementById('app_end').value;
+    let did = document.getElementById('app_doc').value;
+    
+    let res = await fetch(`api_report_appointment.php?start_date=${start}&end_date=${end}&doctor_id=${did}`);
+    let data = await res.json();
+    
+    // Line Chart
+    initChart('appLineChart', 'line', {
+        labels: data.daily_trend.labels,
+        datasets: [{
+            label: 'Daily Appointments',
+            data: data.daily_trend.data,
+            borderColor: '#5790AB',
+            fill: false
+        }]
+    }, { responsive: true });
+
+    // Bar Chart
+    initChart('appBarChart', 'bar', {
+        labels: data.doctor_wise.labels,
+        datasets: [{
+            label: 'Appointments by Doctor',
+            data: data.doctor_wise.data,
+            backgroundColor: '#9CCDD8'
+        }]
+    }, { responsive: true });
+
+    // Pie Chart
+    initChart('appPieChart', 'pie', {
+        labels: data.status_distribution.labels,
+        datasets: [{
+            data: data.status_distribution.data,
+            backgroundColor: ['#f1c40f', '#2ecc71', '#e74c3c'] // Scheduled, Completed, Cancelled roughly
+        }]
+    }, { responsive: true, plugins: { title: { display: true, text: 'Appointment Status' } } });
+
+    // Table
+    let tbody = document.querySelector('#app_table tbody');
+    tbody.innerHTML = '';
+    data.table_data.forEach(row => {
+        let statusColor = row.status === 'COMPLETED' ? 'green' : (row.status === 'CANCELLED' ? 'red' : 'orange');
+        tbody.innerHTML += `<tr>
+            <td>${row.date}</td>
+            <td>${row.time}</td>
+            <td>${row.patient}</td>
+            <td>${row.doctor}</td>
+            <td style="color:${statusColor}; font-weight:bold;">${row.status}</td>
+        </tr>`;
+    });
+}
+
+// Revenue Report
+async function loadRevenueReport() {
+    let start = document.getElementById('rev_start').value;
+    let end = document.getElementById('rev_end').value;
+    
+    let res = await fetch(`api_report_revenue.php?start_date=${start}&end_date=${end}`);
+    let data = await res.json();
+    
+    // Bar Chart
+    initChart('revBarChart', 'bar', {
+        labels: data.monthly_revenue.labels,
+        datasets: [{
+            label: 'Monthly Revenue (₹)',
+            data: data.monthly_revenue.data,
+            backgroundColor: '#2ecc71'
+        }]
+    }, { responsive: true });
+
+    // Pie Chart
+    initChart('revPieChart', 'pie', {
+        labels: data.payment_method.labels,
+        datasets: [{
+            data: data.payment_method.data,
+            backgroundColor: ['#3498db', '#9b59b6', '#f1c40f', '#e67e22']
+        }]
+    }, { responsive: true, plugins: { title: { display: true, text: 'Payment Methods' } } });
+
+    // Table
+    let tbody = document.querySelector('#rev_table tbody');
+    tbody.innerHTML = '';
+    data.table_data.forEach(row => {
+        tbody.innerHTML += `<tr>
+            <td>${row.date}</td>
+            <td>₹${parseFloat(row.amount).toFixed(2)}</td>
+            <td>${row.mode}</td>
+            <td>${row.transaction || 'N/A'}</td>
+            <td>${row.patient}</td>
+        </tr>`;
+    });
+}
+
+// Initial Load
+window.onload = () => {
+    loadPatientReport();
+};
+
+// CSV Export Logic
+function exportCSV(tableId, filename) {
+    let csv = [];
+    let rows = document.querySelectorAll(`#${tableId} tr`);
+    
+    for (let i = 0; i < rows.length; i++) {
+        let row = [], cols = rows[i].querySelectorAll("td, th");
+        for (let j = 0; j < cols.length; j++) {
+            // sanitize text
+            let data = cols[j].innerText.replace(/"/g, '""');
+            row.push('"' + data + '"');
+        }
+        csv.push(row.join(","));
+    }
+    
+    let csvFile = new Blob([csv.join("\n")], {type: "text/csv"});
+    let downloadLink = document.createElement("a");
+    downloadLink.download = filename + "_" + new Date().toISOString().split('T')[0] + ".csv";
+    downloadLink.href = window.URL.createObjectURL(csvFile);
+    downloadLink.style.display = "none";
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+    document.body.removeChild(downloadLink);
 }
 </script>
 
