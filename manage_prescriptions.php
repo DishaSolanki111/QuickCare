@@ -233,7 +233,7 @@ $stmt->close();
         }
         
         thead {
-            background-color: #007bff;
+            background-color: #072d44;
             color: white;
         }
         
