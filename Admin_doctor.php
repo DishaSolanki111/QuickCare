@@ -213,7 +213,7 @@ include 'admin_sidebar.php';
         }
 
         th {
-            background: #5790AB;
+            background: #072D44;
             color: white;
             text-align: left;
         }
@@ -241,7 +241,7 @@ include 'admin_sidebar.php';
 
         .filter-container button {
             padding: 10px 15px;
-            background: #5790AB;
+            background: var(--dark-blue);
             color: white;
             border: none;
             border-radius: 5px;

@@ -130,33 +130,35 @@ CREATE TABLE `appointment_tbl` (
 -- Dumping data for table `appointment_tbl`
 --
 
+-- Replace the original appointment_tbl INSERT with this updated block
 INSERT INTO `appointment_tbl` (`APPOINTMENT_ID`, `PATIENT_ID`, `DOCTOR_ID`, `SCHEDULE_ID`, `CREATED_AT`, `APPOINTMENT_DATE`, `APPOINTMENT_TIME`, `STATUS`) VALUES
-(1, 1, 1, 1, '2026-11-01 09:00:00', '2026-11-03', '10:00:00', 'COMPLETED'),
-(2, 1, 1, 2, '2026-11-03 10:15:00', '2026-11-07', '10:00:00', 'COMPLETED'),
-(3, 2, 2, 4, '2026-11-01 11:30:00', '2026-11-04', '11:00:00', 'COMPLETED'),
-(4, 2, 2, 5, '2026-11-05 12:00:00', '2026-11-10', '11:00:00', 'COMPLETED'),
-(5, 3, 3, 7, '2026-11-04 13:20:00', '2026-11-09', '09:00:00', 'COMPLETED'),
-(6, 3, 3, 8, '2026-11-06 14:45:00', '2026-11-12', '09:00:00', 'COMPLETED'),
-(7, 4, 4, 10, '2026-11-07 08:30:00', '2026-11-14', '10:00:00', 'COMPLETED'),
-(8, 4, 4, 11, '2026-11-08 09:10:00', '2026-11-15', '10:00:00', 'COMPLETED'),
-(9, 5, 5, 13, '2026-11-09 10:00:00', '2026-11-17', '11:00:00', 'COMPLETED'),
-(10, 5, 5, 14, '2026-11-10 11:30:00', '2026-11-20', '11:00:00', 'COMPLETED'),
-(11, 6, 6, 16, '2026-11-11 12:15:00', '2026-11-22', '09:00:00', 'COMPLETED'),
-(12, 6, 6, 17, '2026-11-12 13:00:00', '2026-11-25', '09:00:00', 'COMPLETED'),
-(13, 7, 7, 19, '2026-11-02 14:00:00', '2026-11-06', '10:00:00', 'COMPLETED'),
-(14, 7, 7, 20, '2026-11-05 15:30:00', '2026-11-11', '10:00:00', 'COMPLETED'),
-(15, 8, 8, 22, '2026-11-08 16:00:00', '2026-11-16', '11:00:00', 'COMPLETED'),
-(16, 8, 8, 23, '2026-11-10 17:20:00', '2026-11-18', '11:00:00', 'COMPLETED'),
-(17, 9, 9, 25, '2026-11-12 09:45:00', '2026-11-21', '09:00:00', 'COMPLETED'),
-(18, 9, 9, 26, '2026-11-15 10:30:00', '2026-11-24', '09:00:00', 'COMPLETED'),
-(19, 10, 10, 28, '2026-11-18 11:00:00', '2026-11-28', '10:00:00', 'COMPLETED'),
-(20, 10, 10, 29, '2026-11-20 12:00:00', '2026-11-30', '10:00:00', 'COMPLETED'),
+(1, 1, 1, 1, '2026-03-01 09:00:00', '2026-03-03', '10:00:00', 'COMPLETED'),
+(2, 1, 1, 2, '2026-03-03 10:15:00', '2026-03-07', '10:00:00', 'COMPLETED'),
+(3, 2, 2, 4, '2026-03-01 11:30:00', '2026-03-04', '11:00:00', 'COMPLETED'),
+(4, 2, 2, 5, '2026-03-05 12:00:00', '2026-03-10', '11:00:00', 'COMPLETED'),
+(5, 3, 3, 7, '2026-03-04 13:20:00', '2026-03-09', '09:00:00', 'COMPLETED'),
+(6, 3, 3, 8, '2026-03-06 14:45:00', '2026-03-12', '09:00:00', 'COMPLETED'),
+(7, 4, 4, 10, '2026-03-07 08:30:00', '2026-03-14', '10:00:00', 'COMPLETED'),
+(8, 4, 4, 11, '2026-03-08 09:10:00', '2026-03-15', '10:00:00', 'COMPLETED'),
+(9, 5, 5, 13, '2026-03-09 10:00:00', '2026-03-17', '11:00:00', 'COMPLETED'),
+(10, 5, 5, 14, '2026-03-10 11:30:00', '2026-03-20', '11:00:00', 'COMPLETED'),
+(11, 6, 6, 16, '2026-04-11 12:15:00', '2026-04-22', '09:00:00', 'COMPLETED'),
+(12, 6, 6, 17, '2026-04-12 13:00:00', '2026-04-25', '09:00:00', 'COMPLETED'),
+(13, 7, 7, 19, '2026-04-02 14:00:00', '2026-04-06', '10:00:00', 'COMPLETED'),
+(14, 7, 7, 20, '2026-04-05 15:30:00', '2026-04-11', '10:00:00', 'COMPLETED'),
+(15, 8, 8, 22, '2026-04-08 16:00:00', '2026-04-16', '11:00:00', 'COMPLETED'),
+(16, 8, 8, 23, '2026-04-10 17:20:00', '2026-04-18', '11:00:00', 'COMPLETED'),
+(17, 9, 9, 25, '2026-04-12 09:45:00', '2026-04-21', '09:00:00', 'COMPLETED'),
+(18, 9, 9, 26, '2026-04-15 10:30:00', '2026-04-24', '09:00:00', 'COMPLETED'),
+(19, 10, 10, 28, '2026-04-18 11:00:00', '2026-04-28', '10:00:00', 'COMPLETED'),
+(20, 10, 10, 29, '2026-04-20 12:00:00', '2026-04-30', '10:00:00', 'COMPLETED'),
 (21, 7, 2, 18, '2026-01-09 10:38:09', '2026-02-10', '10:30:00', 'SCHEDULED'),
 (22, 8, 3, 19, '2026-01-09 10:38:09', '2026-02-15', '11:00:00', 'SCHEDULED'),
 (23, 9, 1, 20, '2026-01-09 10:38:09', '2026-02-20', '09:30:00', 'SCHEDULED'),
 (24, 1, 1, 1, '2026-01-09 11:11:14', '2026-02-12', '10:00:00', 'SCHEDULED'),
 (25, 1, 1, 1, '2026-01-09 14:44:14', '2026-02-25', '13:00:00', 'SCHEDULED'),
 (26, 1, 1, 1, '2026-01-10 08:00:25', '2026-02-08', '12:00:00', 'SCHEDULED');
+
 
 -- --------------------------------------------------------
 
@@ -443,34 +445,48 @@ CREATE TABLE `medicine_reminder_tbl` (
 --
 
 INSERT INTO `medicine_reminder_tbl` (`MEDICINE_REMINDER_ID`, `MEDICINE_ID`, `CREATOR_ROLE`, `CREATOR_ID`, `PATIENT_ID`, `START_DATE`, `END_DATE`, `REMINDER_TIME`, `REMARKS`) VALUES
-(1, 1, 'RECEPTIONIST', 1, 1, '2026-11-03', '2026-12-03', '08:00:00', 'Morning dose'),
-(2, 1, 'RECEPTIONIST', 1, 1, '2026-11-03', '2026-12-03', '20:00:00', 'Evening dose'),
-(3, 2, 'RECEPTIONIST', 1, 1, '2026-11-03', '2026-12-03', '08:00:00', 'Morning dose'),
-(4, 2, 'RECEPTIONIST', 1, 1, '2026-11-03', '2026-12-03', '14:00:00', 'Afternoon dose'),
-(5, 2, 'RECEPTIONIST', 1, 1, '2026-11-03', '2026-12-03', '20:00:00', 'Evening dose'),
-(6, 4, 'RECEPTIONIST', 1, 1, '2026-11-04', '2026-12-04', '09:00:00', 'Morning dose'),
-(7, 5, 'RECEPTIONIST', 1, 2, '2026-11-05', '2026-12-05', '08:00:00', 'Morning dose'),
-(8, 6, 'RECEPTIONIST', 1, 2, '2026-11-05', '2026-12-05', '09:00:00', 'Morning dose'),
-(9, 3, 'RECEPTIONIST', 2, 3, '2026-11-04', '2026-12-04', '08:00:00', 'Morning dose'),
-(10, 3, 'RECEPTIONIST', 2, 3, '2026-11-04', '2026-12-04', '20:00:00', 'Evening dose'),
-(11, 7, 'RECEPTIONIST', 2, 4, '2026-11-10', '2026-12-10', '08:00:00', 'Morning dose'),
-(12, 8, 'RECEPTIONIST', 2, 4, '2026-11-10', '2026-12-10', '21:00:00', 'Night dose'),
-(13, 9, 'RECEPTIONIST', 3, 5, '2026-11-09', '2026-12-09', '08:00:00', 'Morning dose'),
-(14, 9, 'RECEPTIONIST', 3, 5, '2026-11-09', '2026-12-09', '14:00:00', 'Afternoon dose'),
-(15, 9, 'RECEPTIONIST', 3, 5, '2026-11-09', '2026-12-09', '20:00:00', 'Evening dose'),
-(16, 10, 'RECEPTIONIST', 3, 5, '2026-11-10', '2026-12-10', '09:00:00', 'Morning dose'),
-(17, 10, 'RECEPTIONIST', 3, 5, '2026-11-10', '2026-12-10', '21:00:00', 'Night dose'),
-(18, 11, 'RECEPTIONIST', 3, 6, '2026-11-11', '2026-12-11', '08:00:00', 'Morning dose'),
-(19, 11, 'RECEPTIONIST', 3, 6, '2026-11-11', '2026-12-11', '14:00:00', 'Afternoon dose'),
-(20, 11, 'RECEPTIONIST', 3, 6, '2026-11-11', '2026-12-11', '20:00:00', 'Evening dose'),
-(21, 13, 'RECEPTIONIST', 1, 9, '2026-11-21', '2026-12-21', '08:00:00', 'Morning dose'),
-(22, 13, 'RECEPTIONIST', 1, 9, '2026-11-21', '2026-12-21', '20:00:00', 'Evening dose'),
-(23, 14, 'RECEPTIONIST', 1, 9, '2026-11-21', '2026-12-21', '21:00:00', 'Night dose'),
-(24, 15, 'RECEPTIONIST', 1, 10, '2026-11-28', '2026-12-28', '08:00:00', 'Morning dose'),
-(25, 15, 'RECEPTIONIST', 1, 10, '2026-11-28', '2026-12-28', '14:00:00', 'Afternoon dose'),
-(26, 15, 'RECEPTIONIST', 1, 10, '2026-11-28', '2026-12-28', '20:00:00', 'Evening dose'),
-(27, 16, 'RECEPTIONIST', 1, 10, '2026-11-28', '2026-12-28', '21:00:00', 'Night dose');
+-- Patient 1 (latest prescription issue_date = 2026-03-07 → base = 2026-03-08)
+(1, 1, 'RECEPTIONIST', 1, 1, '2026-03-08', '2026-04-08', '08:00:00', 'Morning dose'),
+(2, 1, 'RECEPTIONIST', 1, 1, '2026-03-08', '2026-04-08', '20:00:00', 'Evening dose'),
+(3, 2, 'RECEPTIONIST', 1, 1, '2026-03-08', '2026-04-08', '08:00:00', 'Morning dose'),
+(4, 2, 'RECEPTIONIST', 1, 1, '2026-03-08', '2026-04-08', '14:00:00', 'Afternoon dose'),
+(5, 2, 'RECEPTIONIST', 1, 1, '2026-03-08', '2026-04-08', '20:00:00', 'Evening dose'),
+(6, 4, 'RECEPTIONIST', 1, 1, '2026-03-09', '2026-04-09', '09:00:00', 'Morning dose'),
 
+-- Patient 2 (latest prescription issue_date = 2026-03-10 → base = 2026-03-11)
+(7, 5, 'RECEPTIONIST', 1, 2, '2026-03-11', '2026-04-11', '08:00:00', 'Morning dose'),
+(8, 6, 'RECEPTIONIST', 1, 2, '2026-03-11', '2026-04-11', '09:00:00', 'Morning dose'),
+
+-- Patient 3 (latest prescription issue_date = 2026-03-12 → base = 2026-03-13)
+(9, 3, 'RECEPTIONIST', 2, 3, '2026-03-13', '2026-04-13', '08:00:00', 'Morning dose'),
+(10, 3, 'RECEPTIONIST', 2, 3, '2026-03-13', '2026-04-13', '20:00:00', 'Evening dose'),
+
+-- Patient 4 (latest prescription issue_date = 2026-03-15 → base = 2026-03-16)
+(11, 7, 'RECEPTIONIST', 2, 4, '2026-03-16', '2026-04-16', '08:00:00', 'Morning dose'),
+(12, 8, 'RECEPTIONIST', 2, 4, '2026-03-16', '2026-04-16', '21:00:00', 'Night dose'),
+
+-- Patient 5 (latest prescription issue_date = 2026-03-20 → base = 2026-03-21)
+(13, 9, 'RECEPTIONIST', 3, 5, '2026-03-21', '2026-04-21', '08:00:00', 'Morning dose'),
+(14, 9, 'RECEPTIONIST', 3, 5, '2026-03-21', '2026-04-21', '14:00:00', 'Afternoon dose'),
+(15, 9, 'RECEPTIONIST', 3, 5, '2026-03-21', '2026-04-21', '20:00:00', 'Evening dose'),
+(16, 10, 'RECEPTIONIST', 3, 5, '2026-03-22', '2026-04-22', '09:00:00', 'Morning dose'),
+(17, 10, 'RECEPTIONIST', 3, 5, '2026-03-22', '2026-04-22', '21:00:00', 'Night dose'),
+
+-- Patient 6 (latest prescription issue_date = 2026-04-25 → base = 2026-04-26)
+(18, 11, 'RECEPTIONIST', 3, 6, '2026-04-26', '2026-05-26', '08:00:00', 'Morning dose'),
+(19, 11, 'RECEPTIONIST', 3, 6, '2026-04-26', '2026-05-26', '14:00:00', 'Afternoon dose'),
+(20, 11, 'RECEPTIONIST', 3, 6, '2026-04-26', '2026-05-26', '20:00:00', 'Evening dose'),
+
+-- Patient 9 (latest prescription issue_date = 2026-04-24 → base = 2026-04-25)
+(21, 13, 'RECEPTIONIST', 1, 9, '2026-04-25', '2026-05-25', '08:00:00', 'Morning dose'),
+(22, 13, 'RECEPTIONIST', 1, 9, '2026-04-25', '2026-05-25', '20:00:00', 'Evening dose'),
+(23, 14, 'RECEPTIONIST', 1, 9, '2026-04-25', '2026-05-25', '21:00:00', 'Night dose'),
+
+-- Patient 10 (latest prescription issue_date = 2026-04-30 → base = 2026-05-01)
+(24, 15, 'RECEPTIONIST', 1, 10, '2026-05-01', '2026-05-31', '08:00:00', 'Morning dose'),
+(25, 15, 'RECEPTIONIST', 1, 10, '2026-05-01', '2026-05-31', '14:00:00', 'Afternoon dose'),
+(26, 15, 'RECEPTIONIST', 1, 10, '2026-05-01', '2026-05-31', '20:00:00', 'Evening dose'),
+(27, 16, 'RECEPTIONIST', 1, 10, '2026-05-01', '2026-05-31', '21:00:00', 'Night dose');
 -- --------------------------------------------------------
 
 --
@@ -564,30 +580,29 @@ CREATE TABLE `payment_tbl` (
 -- Dumping data for table `payment_tbl`
 --
 
+-- Replace the original payment_tbl INSERT with this updated block
 INSERT INTO `payment_tbl` (`PAYMENT_ID`, `APPOINTMENT_ID`, `AMOUNT`, `PAYMENT_DATE`, `PAYMENT_MODE`, `STATUS`, `TRANSACTION_ID`, `CREATED_AT`) VALUES
-(1, 1, 300.00, '2026-11-01', 'CREDIT CARD', 'COMPLETED', 'TXN123456789', '2026-11-01 09:00:00'),
-(2, 2, 300.00, '2026-11-03', 'GOOGLE PAY', 'COMPLETED', 'TXN123456790', '2026-11-03 10:15:00'),
-(3, 3, 300.00, '2026-11-01', 'UPI', 'COMPLETED', 'TXN123456791', '2026-11-01 11:30:00'),
-(4, 4, 300.00, '2026-11-05', 'NET BANKING', 'COMPLETED', 'TXN123456792', '2026-11-05 12:00:00'),
-(5, 5, 300.00, '2026-11-04', 'CREDIT CARD', 'COMPLETED', 'TXN123456793', '2026-11-04 13:20:00'),
-(6, 6, 300.00, '2026-11-06', 'GOOGLE PAY', 'COMPLETED', 'TXN123456794', '2026-11-06 14:45:00'),
-(7, 7, 300.00, '2026-11-07', 'UPI', 'COMPLETED', 'TXN123456795', '2026-11-07 08:30:00'),
-(8, 8, 300.00, '2026-11-08', 'NET BANKING', 'COMPLETED', 'TXN123456796', '2026-11-08 09:10:00'),
-(9, 9, 300.00, '2026-11-09', 'CREDIT CARD', 'COMPLETED', 'TXN123456797', '2026-11-09 10:00:00'),
-(10, 10, 300.00, '2026-11-10', 'GOOGLE PAY', 'COMPLETED', 'TXN123456798', '2026-11-10 11:30:00'),
-(11, 11, 300.00, '2026-11-11', 'UPI', 'COMPLETED', 'TXN123456799', '2026-11-11 12:15:00'),
-(12, 12, 300.00, '2026-11-12', 'NET BANKING', 'COMPLETED', 'TXN123456800', '2026-11-12 13:00:00'),
-(13, 13, 300.00, '2026-11-02', 'CREDIT CARD', 'COMPLETED', 'TXN123456801', '2026-11-02 14:00:00'),
-(14, 14, 300.00, '2026-11-05', 'GOOGLE PAY', 'COMPLETED', 'TXN123456802', '2026-11-05 15:30:00'),
-(15, 15, 300.00, '2026-11-08', 'UPI', 'COMPLETED', 'TXN123456803', '2026-11-08 16:00:00'),
-(16, 16, 300.00, '2026-11-10', 'NET BANKING', 'COMPLETED', 'TXN123456804', '2026-11-10 17:20:00'),
-(17, 17, 300.00, '2026-11-12', 'CREDIT CARD', 'COMPLETED', 'TXN123456805', '2026-11-12 09:45:00'),
-(18, 18, 300.00, '2026-11-15', 'GOOGLE PAY', 'COMPLETED', 'TXN123456806', '2026-11-15 10:30:00'),
-(19, 19, 300.00, '2026-11-18', 'UPI', 'COMPLETED', 'TXN123456807', '2026-11-18 11:00:00'),
-(20, 20, 300.00, '2026-11-20', 'NET BANKING', 'COMPLETED', 'TXN123456808', '2026-11-20 12:00:00');
-
+(1, 1, 300.00, '2026-03-01', 'CREDIT CARD', 'COMPLETED', 'TXN123456789', '2026-03-01 09:00:00'),
+(2, 2, 300.00, '2026-03-03', 'GOOGLE PAY', 'COMPLETED', 'TXN123456790', '2026-03-03 10:15:00'),
+(3, 3, 300.00, '2026-03-01', 'UPI', 'COMPLETED', 'TXN123456791', '2026-03-01 11:30:00'),
+(4, 4, 300.00, '2026-03-05', 'NET BANKING', 'COMPLETED', 'TXN123456792', '2026-03-05 12:00:00'),
+(5, 5, 300.00, '2026-03-04', 'CREDIT CARD', 'COMPLETED', 'TXN123456793', '2026-03-04 13:20:00'),
+(6, 6, 300.00, '2026-03-06', 'GOOGLE PAY', 'COMPLETED', 'TXN123456794', '2026-03-06 14:45:00'),
+(7, 7, 300.00, '2026-03-07', 'UPI', 'COMPLETED', 'TXN123456795', '2026-03-07 08:30:00'),
+(8, 8, 300.00, '2026-03-08', 'NET BANKING', 'COMPLETED', 'TXN123456796', '2026-03-08 09:10:00'),
+(9, 9, 300.00, '2026-03-09', 'CREDIT CARD', 'COMPLETED', 'TXN123456797', '2026-03-09 10:00:00'),
+(10, 10, 300.00, '2026-03-10', 'GOOGLE PAY', 'COMPLETED', 'TXN123456798', '2026-03-10 11:30:00'),
+(11, 11, 300.00, '2026-04-11', 'UPI', 'COMPLETED', 'TXN123456799', '2026-04-11 12:15:00'),
+(12, 12, 300.00, '2026-04-12', 'NET BANKING', 'COMPLETED', 'TXN123456800', '2026-04-12 13:00:00'),
+(13, 13, 300.00, '2026-04-02', 'CREDIT CARD', 'COMPLETED', 'TXN123456801', '2026-04-02 14:00:00'),
+(14, 14, 300.00, '2026-04-05', 'GOOGLE PAY', 'COMPLETED', 'TXN123456802', '2026-04-05 15:30:00'),
+(15, 15, 300.00, '2026-04-08', 'UPI', 'COMPLETED', 'TXN123456803', '2026-04-08 16:00:00'),
+(16, 16, 300.00, '2026-04-10', 'NET BANKING', 'COMPLETED', 'TXN123456804', '2026-04-10 17:20:00'),
+(17, 17, 300.00, '2026-04-12', 'CREDIT CARD', 'COMPLETED', 'TXN123456805', '2026-04-12 09:45:00'),
+(18, 18, 300.00, '2026-04-15', 'GOOGLE PAY', 'COMPLETED', 'TXN123456806', '2026-04-15 10:30:00'),
+(19, 19, 300.00, '2026-04-18', 'UPI', 'COMPLETED', 'TXN123456807', '2026-04-18 11:00:00'),
+(20, 20, 300.00, '2026-04-20', 'NET BANKING', 'COMPLETED', 'TXN123456808', '2026-04-20 12:00:00');
 -- --------------------------------------------------------
-
 --
 -- Table structure for table `prescription_medicine_tbl`
 --
@@ -606,47 +621,46 @@ CREATE TABLE `prescription_medicine_tbl` (
 --
 
 INSERT INTO `prescription_medicine_tbl` (`PRESCRIPTION_ID`, `MEDICINE_ID`, `DOSAGE`, `DURATION`, `FREQUENCY`, `CREATED_AT`) VALUES
-(1, 1, '5ml', '5 days', 'Twice daily', '2026-11-03 10:00:00'),
-(1, 2, '125mg', '7 days', 'Three times daily', '2026-11-03 10:00:00'),
-(2, 1, '5ml', '3 days', 'As needed', '2026-11-07 10:00:00'),
-(2, 4, '1ml', '30 days', 'Once daily', '2026-11-07 10:00:00'),
-(3, 5, '50mg', '30 days', 'Once daily', '2026-11-04 11:00:00'),
-(3, 6, '75mg', '30 days', 'Once daily', '2026-11-04 11:00:00'),
-(4, 5, '50mg', '30 days', 'Once daily', '2026-11-10 11:00:00'),
-(4, 7, '10mg', '30 days', 'Once daily', '2026-11-10 11:00:00'),
-(5, 1, '5ml', '3 days', 'As needed for fever', '2026-11-09 09:00:00'),
-(5, 3, '2 puffs', '30 days', 'As needed', '2026-11-09 09:00:00'),
-(6, 3, '2 puffs', '30 days', 'As needed', '2026-11-12 09:00:00'),
-(6, 4, '1ml', '30 days', 'Once daily', '2026-11-12 09:00:00'),
-(7, 7, '10mg', '30 days', 'Once daily', '2026-11-14 10:00:00'),
-(7, 8, '20mg', '30 days', 'Once daily at night', '2026-11-14 10:00:00'),
-(8, 7, '10mg', '30 days', 'Once daily', '2026-11-15 10:00:00'),
-(8, 8, '20mg', '30 days', 'Once daily at night', '2026-11-15 10:00:00'),
-(9, 5, '50mg', '30 days', 'Once daily', '2026-11-17 11:00:00'),
-(9, 7, '10mg', '30 days', 'Once daily', '2026-11-17 11:00:00'),
-(10, 5, '50mg', '30 days', 'Once daily', '2026-11-20 11:00:00'),
-(10, 7, '10mg', '30 days', 'Once daily', '2026-11-20 11:00:00'),
-(11, 5, '25mg', '30 days', 'Twice daily', '2026-11-22 09:00:00'),
-(11, 6, '75mg', '30 days', 'Once daily', '2026-11-22 09:00:00'),
-(12, 5, '25mg', '30 days', 'Twice daily', '2026-11-25 09:00:00'),
-(12, 6, '75mg', '30 days', 'Once daily', '2026-11-25 09:00:00'),
-(13, 9, '400mg', '30 days', 'Three times daily', '2026-11-06 10:00:00'),
-(13, 10, '500mg', '30 days', 'Twice daily', '2026-11-06 10:00:00'),
-(14, 9, '400mg', '30 days', 'As needed', '2026-11-11 10:00:00'),
-(14, 10, '500mg', '30 days', 'Twice daily', '2026-11-11 10:00:00'),
-(15, 11, '300mg', '30 days', 'Three times daily', '2026-11-16 11:00:00'),
-(15, 12, '50mg', '15 days', 'As needed for pain', '2026-11-16 11:00:00'),
-(16, 11, '300mg', '30 days', 'Three times daily', '2026-11-18 11:00:00'),
-(16, 12, '50mg', '15 days', 'As needed for pain', '2026-11-18 11:00:00'),
-(17, 13, '500mg', '30 days', 'Twice daily', '2026-11-21 09:00:00'),
-(17, 14, '25mg', '30 days', 'Once daily at night', '2026-11-21 09:00:00'),
-(18, 13, '500mg', '30 days', 'Twice daily', '2026-11-24 09:00:00'),
-(18, 14, '25mg', '30 days', 'Once daily at night', '2026-11-24 09:00:00'),
-(19, 15, '2mg', '30 days', 'Three times daily', '2026-11-28 10:00:00'),
-(19, 16, '100mg', '30 days', 'Once daily at night', '2026-11-28 10:00:00'),
-(20, 15, '2mg', '30 days', 'Three times daily', '2026-11-30 10:00:00'),
-(20, 16, '100mg', '30 days', 'Once daily at night', '2026-11-30 10:00:00');
-
+(1, 1, '5ml', '5 days', 'Twice daily', '2026-03-03 10:00:00'),
+(1, 2, '125mg', '7 days', 'Three times daily', '2026-03-03 10:00:00'),
+(2, 1, '5ml', '3 days', 'As needed', '2026-03-07 10:00:00'),
+(2, 4, '1ml', '30 days', 'Once daily', '2026-03-07 10:00:00'),
+(3, 5, '50mg', '30 days', 'Once daily', '2026-03-04 11:00:00'),
+(3, 6, '75mg', '30 days', 'Once daily', '2026-03-04 11:00:00'),
+(4, 5, '50mg', '30 days', 'Once daily', '2026-03-10 11:00:00'),
+(4, 7, '10mg', '30 days', 'Once daily', '2026-03-10 11:00:00'),
+(5, 1, '5ml', '3 days', 'As needed for fever', '2026-03-09 09:00:00'),
+(5, 3, '2 puffs', '30 days', 'As needed', '2026-03-09 09:00:00'),
+(6, 3, '2 puffs', '30 days', 'As needed', '2026-03-12 09:00:00'),
+(6, 4, '1ml', '30 days', 'Once daily', '2026-03-12 09:00:00'),
+(7, 7, '10mg', '30 days', 'Once daily', '2026-03-14 10:00:00'),
+(7, 8, '20mg', '30 days', 'Once daily at night', '2026-03-14 10:00:00'),
+(8, 7, '10mg', '30 days', 'Once daily', '2026-03-15 10:00:00'),
+(8, 8, '20mg', '30 days', 'Once daily at night', '2026-03-15 10:00:00'),
+(9, 5, '50mg', '30 days', 'Once daily', '2026-03-17 11:00:00'),
+(9, 7, '10mg', '30 days', 'Once daily', '2026-03-17 11:00:00'),
+(10, 5, '50mg', '30 days', 'Once daily', '2026-03-20 11:00:00'),
+(10, 7, '10mg', '30 days', 'Once daily', '2026-03-20 11:00:00'),
+(11, 5, '25mg', '30 days', 'Twice daily', '2026-04-22 09:00:00'),
+(11, 6, '75mg', '30 days', 'Once daily', '2026-04-22 09:00:00'),
+(12, 5, '25mg', '30 days', 'Twice daily', '2026-04-25 09:00:00'),
+(12, 6, '75mg', '30 days', 'Once daily', '2026-04-25 09:00:00'),
+(13, 9, '400mg', '30 days', 'Three times daily', '2026-04-06 10:00:00'),
+(13, 10, '500mg', '30 days', 'Twice daily', '2026-04-06 10:00:00'),
+(14, 9, '400mg', '30 days', 'As needed', '2026-04-11 10:00:00'),
+(14, 10, '500mg', '30 days', 'Twice daily', '2026-04-11 10:00:00'),
+(15, 11, '300mg', '30 days', 'Three times daily', '2026-04-16 11:00:00'),
+(15, 12, '50mg', '15 days', 'As needed for pain', '2026-04-16 11:00:00'),
+(16, 11, '300mg', '30 days', 'Three times daily', '2026-04-18 11:00:00'),
+(16, 12, '50mg', '15 days', 'As needed for pain', '2026-04-18 11:00:00'),
+(17, 13, '500mg', '30 days', 'Twice daily', '2026-04-21 09:00:00'),
+(17, 14, '25mg', '30 days', 'Once daily at night', '2026-04-21 09:00:00'),
+(18, 13, '500mg', '30 days', 'Twice daily', '2026-04-24 09:00:00'),
+(18, 14, '25mg', '30 days', 'Once daily at night', '2026-04-24 09:00:00'),
+(19, 15, '2mg', '30 days', 'Three times daily', '2026-04-28 10:00:00'),
+(19, 16, '100mg', '30 days', 'Once daily at night', '2026-04-28 10:00:00'),
+(20, 15, '2mg', '30 days', 'Three times daily', '2026-04-30 10:00:00'),
+(20, 16, '100mg', '30 days', 'Once daily at night', '2026-04-30 10:00:00');
 -- --------------------------------------------------------
 
 --
@@ -672,26 +686,26 @@ CREATE TABLE `prescription_tbl` (
 --
 
 INSERT INTO `prescription_tbl` (`PRESCRIPTION_ID`, `APPOINTMENT_ID`, `ISSUE_DATE`, `HEIGHT_CM`, `WEIGHT_KG`, `BLOOD_PRESSURE`, `DIABETES`, `SYMPTOMS`, `DIAGNOSIS`, `ADDITIONAL_NOTES`, `CREATED_AT`) VALUES
-(1, 1, '2026-11-03', 120, 25.00, 110, 'NO', 'Fever, cough, and cold', 'Upper respiratory tract infection', 'Advise plenty of rest and fluids', '2026-11-03 10:00:00'),
-(2, 2, '2026-11-07', 120, 25.00, 110, 'NO', 'Follow-up check', 'Recovering well', 'Continue prescribed medication', '2026-11-07 10:00:00'),
-(3, 3, '2026-11-04', 160, 55.00, 120, 'NO', 'Chest pain, shortness of breath', 'Angina', 'Stress management recommended', '2026-11-04 11:00:00'),
-(4, 4, '2026-11-10', 160, 55.00, 120, 'NO', 'Follow-up check', 'Stable condition', 'Continue medication as prescribed', '2026-11-10 11:00:00'),
-(5, 5, '2026-11-09', 110, 20.00, 100, 'NO', 'Wheezing, difficulty breathing', 'Asthma exacerbation', 'Avoid triggers like dust and pollen', '2026-11-09 09:00:00'),
-(6, 6, '2026-11-12', 110, 20.00, 100, 'NO', 'Follow-up check', 'Asthma under control', 'Continue inhaler as needed', '2026-11-12 09:00:00'),
-(7, 7, '2026-11-14', 165, 60.00, 130, 'TYPE-2', 'Chest discomfort, palpitations', 'Hypertension with diabetes', 'Strict diet control required', '2026-11-14 10:00:00'),
-(8, 8, '2026-11-15', 165, 60.00, 130, 'TYPE-2', 'Follow-up check', 'Blood sugar levels improving', 'Continue medication and exercise', '2026-11-15 10:00:00'),
-(9, 9, '2026-11-17', 170, 75.00, 140, 'PRE-DIABTIC', 'High blood pressure, dizziness', 'Hypertension', 'Reduce salt intake', '2026-11-17 11:00:00'),
-(10, 10, '2026-11-20', 170, 75.00, 140, 'PRE-DIABTIC', 'Follow-up check', 'Blood pressure controlled', 'Continue lifestyle changes', '2026-11-20 11:00:00'),
-(11, 11, '2026-11-22', 155, 50.00, 120, 'NO', 'Irregular heartbeat', 'Arrhythmia', 'Avoid caffeine and stress', '2026-11-22 09:00:00'),
-(12, 12, '2026-11-25', 155, 50.00, 120, 'NO', 'Follow-up check', 'Heart rhythm normal', 'Continue medication as prescribed', '2026-11-25 09:00:00'),
-(13, 13, '2026-11-06', 175, 80.00, 125, 'NO', 'Knee pain, difficulty walking', 'Osteoarthritis', 'Physical therapy recommended', '2026-11-06 10:00:00'),
-(14, 14, '2026-11-11', 175, 80.00, 125, 'NO', 'Follow-up check', 'Pain management effective', 'Continue exercises', '2026-11-11 10:00:00'),
-(15, 15, '2026-11-16', 160, 65.00, 115, 'NO', 'Back pain, numbness in legs', 'Herniated disc', 'Surgery may be considered if no improvement', '2026-11-16 11:00:00'),
-(16, 16, '2026-11-18', 160, 65.00, 115, 'NO', 'Follow-up check', 'Symptoms improving', 'Continue physiotherapy', '2026-11-18 11:00:00'),
-(17, 17, '2026-11-21', 172, 70.00, 130, 'NO', 'Frequent headaches, dizziness', 'Migraine', 'Identify and avoid triggers', '2026-11-21 09:00:00'),
-(18, 18, '2026-11-24', 172, 70.00, 130, 'NO', 'Follow-up check', 'Migraine frequency reduced', 'Continue preventive medication', '2026-11-24 09:00:00'),
-(19, 19, '2026-11-28', 165, 60.00, 120, 'NO', 'Seizures, loss of consciousness', 'Epilepsy', 'Regular medication essential', '2026-11-28 10:00:00'),
-(20, 20, '2026-11-30', 165, 60.00, 120, 'NO', 'Follow-up check', 'Seizure controlled', 'Never skip medication', '2026-11-30 10:00:00');
+(1, 1, '2026-03-03', 120, 25.00, 110, 'NO', 'Fever, cough, and cold', 'Upper respiratory tract infection', 'Advise plenty of rest and fluids', '2026-03-03 10:00:00'),
+(2, 2, '2026-03-07', 120, 25.00, 110, 'NO', 'Follow-up check', 'Recovering well', 'Continue prescribed medication', '2026-03-07 10:00:00'),
+(3, 3, '2026-03-04', 160, 55.00, 120, 'NO', 'Chest pain, shortness of breath', 'Angina', 'Stress management recommended', '2026-03-04 11:00:00'),
+(4, 4, '2026-03-10', 160, 55.00, 120, 'NO', 'Follow-up check', 'Stable condition', 'Continue medication as prescribed', '2026-03-10 11:00:00'),
+(5, 5, '2026-03-09', 110, 20.00, 100, 'NO', 'Wheezing, difficulty breathing', 'Asthma exacerbation', 'Avoid triggers like dust and pollen', '2026-03-09 09:00:00'),
+(6, 6, '2026-03-12', 110, 20.00, 100, 'NO', 'Follow-up check', 'Asthma under control', 'Continue inhaler as needed', '2026-03-12 09:00:00'),
+(7, 7, '2026-03-14', 165, 60.00, 130, 'TYPE-2', 'Chest discomfort, palpitations', 'Hypertension with diabetes', 'Strict diet control required', '2026-03-14 10:00:00'),
+(8, 8, '2026-03-15', 165, 60.00, 130, 'TYPE-2', 'Follow-up check', 'Blood sugar levels improving', 'Continue medication and exercise', '2026-03-15 10:00:00'),
+(9, 9, '2026-03-17', 170, 75.00, 140, 'PRE-DIABTIC', 'High blood pressure, dizziness', 'Hypertension', 'Reduce salt intake', '2026-03-17 11:00:00'),
+(10, 10, '2026-03-20', 170, 75.00, 140, 'PRE-DIABTIC', 'Follow-up check', 'Blood pressure controlled', 'Continue lifestyle changes', '2026-03-20 11:00:00'),
+(11, 11, '2026-04-22', 155, 50.00, 120, 'NO', 'Irregular heartbeat', 'Arrhythmia', 'Avoid caffeine and stress', '2026-04-22 09:00:00'),
+(12, 12, '2026-04-25', 155, 50.00, 120, 'NO', 'Follow-up check', 'Heart rhythm normal', 'Continue medication as prescribed', '2026-04-25 09:00:00'),
+(13, 13, '2026-04-06', 175, 80.00, 125, 'NO', 'Knee pain, difficulty walking', 'Osteoarthritis', 'Physical therapy recommended', '2026-04-06 10:00:00'),
+(14, 14, '2026-04-11', 175, 80.00, 125, 'NO', 'Follow-up check', 'Pain management effective', 'Continue exercises', '2026-04-11 10:00:00'),
+(15, 15, '2026-04-16', 160, 65.00, 115, 'NO', 'Back pain, numbness in legs', 'Herniated disc', 'Surgery may be considered if no improvement', '2026-04-16 11:00:00'),
+(16, 16, '2026-04-18', 160, 65.00, 115, 'NO', 'Follow-up check', 'Symptoms improving', 'Continue physiotherapy', '2026-04-18 11:00:00'),
+(17, 17, '2026-04-21', 172, 70.00, 130, 'NO', 'Frequent headaches, dizziness', 'Migraine', 'Identify and avoid triggers', '2026-04-21 09:00:00'),
+(18, 18, '2026-04-24', 172, 70.00, 130, 'NO', 'Follow-up check', 'Migraine frequency reduced', 'Continue preventive medication', '2026-04-24 09:00:00'),
+(19, 19, '2026-04-28', 165, 60.00, 120, 'NO', 'Seizures, loss of consciousness', 'Epilepsy', 'Regular medication essential', '2026-04-28 10:00:00'),
+(20, 20, '2026-04-30', 165, 60.00, 120, 'NO', 'Follow-up check', 'Seizure controlled', 'Never skip medication', '2026-04-30 10:00:00');
 
 -- --------------------------------------------------------
 
