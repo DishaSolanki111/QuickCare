@@ -605,6 +605,9 @@ if (isset($_POST['edit_reminder_id'])) {
         
         .doctor-card-header {
             font-size: 1.1rem;
+            background-color: var(--dark-blue) !important;
+            color: white !important;
+            border-radius: 10px 10px 0 0 !important;
         }
         .doctor-card .patient-block {
             border-left: 3px solid var(--soft-blue);
@@ -616,7 +619,8 @@ if (isset($_POST['edit_reminder_id'])) {
             color: var(--primary-color);
         }
         .appointment-block {
-            background: var(--card-bg);
+            background: #eff6ff;
+            border: 1px solid #dbeafe;
             border-radius: 8px;
             padding: 12px 15px;
             margin-bottom: 12px;
@@ -626,16 +630,32 @@ if (isset($_POST['edit_reminder_id'])) {
             color: #555;
         }
         .medicine-list-label {
-            font-weight: 600;
-            color: var(--primary-color);
-            font-size: 0.9rem;
+            font-weight: bold;
+            color: #1e3a8a;
+            font-size: 1.4rem;
             margin-bottom: 8px;
         }
         .reminder-action-row {
             display: flex;
             align-items: center;
+            justify-content: flex-end;
             flex-wrap: wrap;
             gap: 8px;
+        }
+        .btn-reminder-blue {
+            background-color: #1e3a8a;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .btn-reminder-blue:hover {
+            background-color: #172554;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(30, 58, 138, 0.2);
         }
         .reminder-set-badge {
             font-size: 0.85rem;
@@ -724,10 +744,10 @@ if (isset($_POST['edit_reminder_id'])) {
                                     <div class="card-body">
                                         <?php foreach ($doctor_data['patients'] as $patient_id => $patient_data): ?>
                                         <div class="patient-block mb-4">
-                                            <div class="patient-name-row">
-                                                <i class="bi bi-person me-2"></i>
-                                                <strong><?php echo htmlspecialchars($patient_data['name']); ?></strong>
-                                                <span class="text-muted small ms-2"><?php echo htmlspecialchars($patient_data['phone']); ?> · <?php echo htmlspecialchars($patient_data['email']); ?></span>
+                                            <div class="patient-name-row" style="background-color: #e0f2fe; padding: 15px; border-radius: 8px;">
+                                                <div style="font-size: 1.1rem;"><i class="bi bi-person me-2"></i><strong><?php echo htmlspecialchars($patient_data['name']); ?></strong></div>
+                                                <div class="text-muted small ms-4 mt-2"><i class="bi bi-telephone me-2"></i><?php echo htmlspecialchars($patient_data['phone']); ?></div>
+                                                <div class="text-muted small ms-4 mt-1"><i class="bi bi-envelope me-2"></i><?php echo htmlspecialchars($patient_data['email']); ?></div>
                                             </div>
                                             <?php foreach ($patient_data['appointments'] as $apt): 
                                                 $prescription_id = (int)$apt['PRESCRIPTION_ID'];
@@ -795,7 +815,7 @@ if (isset($_POST['edit_reminder_id'])) {
                                                         </button>
                                                     </form>
                                                     <?php else: ?>
-                                                    <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#createPrescriptionReminderModal" 
+                                                    <button class="btn-reminder-blue" data-bs-toggle="modal" data-bs-target="#createPrescriptionReminderModal" 
                                                             data-patient-id="<?php echo (int)$apt['PATIENT_ID']; ?>"
                                                             data-patient-name="<?php echo htmlspecialchars($apt['PAT_FNAME'] . ' ' . $apt['PAT_LNAME']); ?>"
                                                             data-prescription-id="<?php echo $prescription_id; ?>"
