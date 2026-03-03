@@ -175,7 +175,7 @@ $prescriptions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --dark-blue: #072D44; --mid-blue: #064469; --soft-blue: #5790AB; --light-blue: #9CCDD8;
+            --dark-blue: #072D44; --mid-blue: #064469; --soft-blue: #072D44; --light-blue: #9CCDD8;
             --gray-blue: #D0D7E1; --white: #ffffff; --card-bg: #F6F9FB; --primary-color: #1a3a5f;
             --secondary-color: #3498db; --accent-color: #2ecc71; --danger-color: #e74c3c;
         }
@@ -191,7 +191,7 @@ $prescriptions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
         .patient-details-card { background: white; border-radius: 12px; padding: 30px; margin-bottom: 30px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08); border: 1px solid #e0e0e0; }
         .patient-details-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 25px; }
         .patient-detail-item { display: flex; align-items: flex-start; gap: 12px; }
-        .patient-detail-icon { width: 40px; height: 40px; background: var(--secondary-color); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; }
+        .patient-detail-icon { width: 40px; height: 40px; background: var(--primary-color); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; }
         .form-container { margin-top: 30px; padding: 20px; border: 1px solid #ddd; border-radius: 8px; }
         .form-group { margin-bottom: 15px; }
         .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
@@ -199,7 +199,7 @@ $prescriptions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
         .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         .medicine-block { background: #f9f9f9; padding: 15px; border: 1px solid #eee; border-radius: 5px; margin-bottom: 10px; position: relative; }
         .btn { padding: 10px 15px; border-radius: 5px; color: #fff; border: none; cursor: pointer; }
-        .btn-submit { background-color: #007bff; width: 100%; font-size: 16px; margin-top: 10px; }
+        .btn-submit { background-color: #072d44; width: 100%; font-size: 16px; margin-top: 10px; }
         .btn-add { background-color: var(--accent-color); margin-bottom: 15px; }
         .btn-delete { background-color: #dc3545; float: right; }
         .prescription-item { border: 1px solid #eee; padding: 15px; margin-bottom: 15px; background-color: #fafafa; }
@@ -211,12 +211,12 @@ $prescriptions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
         <div class="main-content">
             <?php include 'doctor_header.php'; ?>
             <div class="content-card">
-                <a href="manage_prescriptions.php" style="display:inline-block; margin-bottom:20px; color:#0056b3; text-decoration:none; font-weight:bold; padding:8px 16px; border:1px solid #0056b3; border-radius:5px;">&larr; Back to Patient List</a>
+                <a href="manage_prescriptions.php" style="display:inline-block; margin-bottom:20px; background-color: var(--primary-color); color:#fff; text-decoration:none; font-weight:bold; padding:8px 16px; border:1px solid var(--primary-color); border-radius:5px;">&larr; Back to Patient List</a>
                 
                 <?php echo $message; ?>
 
                 <div class="patient-details-card">
-                    <h2 style="color:var(--primary-color); border-bottom:2px solid #f0f0f0; padding-bottom:10px; margin-bottom:20px;"><i class="fas fa-user-md"></i> Patient Information</h2>
+                    <h2 style="color:var(--soft-blue); border-bottom:2px solid #f0f0f0; padding-bottom:10px; margin-bottom:20px;"><i class="fas fa-user-md"></i> Patient Information</h2>
                     <div class="patient-details-grid">
                         <div class="patient-detail-item">
                             <div class="patient-detail-icon"><i class="fas fa-user"></i></div>
@@ -238,7 +238,7 @@ $prescriptions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                 </div>
 
                 <div class="form-container">
-                    <h2 style="color:#0056b3; border-bottom:2px solid #eee; padding-bottom:10px; margin-bottom:20px;">Add New Prescription</h2>
+                    <h2 style="color:var(--soft-blue); border-bottom:2px solid #f0f0f0; padding-bottom:10px; margin-bottom:20px;">Add New Prescription</h2>
                     <form action="prescription_form.php" method="POST" id="prescriptionForm">
                         <input type="hidden" name="patient_id" value="<?php echo $patient_id; ?>">
                         <div class="form-group">
@@ -269,7 +269,7 @@ $prescriptions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                         <div class="form-group"><label>Symptoms:</label><textarea name="symptoms" rows="3"></textarea></div>
                         <div class="form-group"><label>Diagnosis:</label><textarea name="diagnosis" rows="3" required></textarea></div>
 
-                        <h3 style="color:#0056b3; border-bottom:1px solid #eee; margin: 20px 0 10px 0;">Medicine Details</h3>
+                        <h3 style="color:var(--soft-blue); border-bottom:2px solid #f0f0f0; padding-bottom:10px; margin-bottom:20px;">Medicine Details</h3>
                         <div id="medicine-area">
                             <div class="medicine-block">
                                 <div class="form-grid">
@@ -294,7 +294,7 @@ $prescriptions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                 </div>
 
                 <div class="prescription-list" style="margin-top:40px;">
-                    <h2 style="color:#0056b3; border-bottom:2px solid #eee; padding-bottom:10px; margin-bottom:20px;">Existing Prescriptions</h2>
+                    <h2 style="color:var(--soft-blue); border-bottom:2px solid #f0f0f0; padding-bottom:10px; margin-bottom:20px;">Existing Prescriptions</h2>
                     <?php foreach ($prescriptions as $p): ?>
                         <div class="prescription-item">
                             <div style="display:flex; justify-content:space-between; align-items:center;">

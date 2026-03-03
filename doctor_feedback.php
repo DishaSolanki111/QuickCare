@@ -217,7 +217,7 @@ $conn->close();
         }
 
         .btn-primary {
-            background-color: var(--secondary-color);
+            background-color: var(--primary-color);
             color: #fff;
         }
 
@@ -258,7 +258,7 @@ $conn->close();
             width: 50px;
             height: 50px;
             border-radius: 50%;
-            background-color: #007BFF;
+            background-color: #072d44;
             color: #fff;
             display: flex;
             justify-content: center;
@@ -338,7 +338,7 @@ $conn->close();
             
             <!-- Content Card -->
             <div class="content-card">
-                <div class="feedback-section" style="margin-top: 30px;">
+                <div class="feedback-section" >
                     <h3 style="margin-bottom: 20px;">Patient Feedback</h3>
                     
                     <form method="GET" action="doctor_feedback.php" class="feedback-filter-form">

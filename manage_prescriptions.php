@@ -214,7 +214,7 @@ $stmt->close();
         }
         
         h1 {
-            color: #0056b3;
+            color: #072d44;
             border-bottom: 2px solid #eee;
             padding-bottom: 10px;
             margin-bottom: 20px;
@@ -258,7 +258,7 @@ $stmt->close();
         }
         
         .btn-primary {
-            background-color: #007bff;
+            background-color: #072d44;
         }
         .btn-primary:hover {
             background-color: #0056b3;

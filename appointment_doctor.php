@@ -307,7 +307,7 @@ $active_tab = (isset($_GET['tab']) && in_array($_GET['tab'], ['today', 'upcoming
         }
 
         .tab.active {
-            background: var(--primary);
+            background: var(--dark-blue);
             color: var(--white);
         }
 
@@ -418,7 +418,7 @@ $active_tab = (isset($_GET['tab']) && in_array($_GET['tab'], ['today', 'upcoming
         }
 
         .btn-primary {
-            background-color: var(--primary);
+            background-color: var(--dark-blue);
             color: white;
         }
 

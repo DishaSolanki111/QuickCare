@@ -275,7 +275,7 @@ if (isset($_SESSION['schedule_success_message'])) {
 
         /* Doctor Profile Section */
         .doctor-profile-card {
-            background: #f8fafc;
+            background: var(--white);
             border-radius: 16px;
             padding: 0;
             margin-bottom: 25px;
@@ -285,8 +285,8 @@ if (isset($_SESSION['schedule_success_message'])) {
 
         /* Doctor Header: soft light background */
         .doctor-header {
-            background: #f8fafc;
-            color: var(--primary-color);
+            background: #1a3a5f;;
+            color: white;
             padding: 28px 32px;
             display: flex;
             align-items: center;
@@ -305,17 +305,17 @@ if (isset($_SESSION['schedule_success_message'])) {
             margin: 0;
             font-size: 24px;
             font-weight: 600;
-            color: var(--dark);
+            color: white;
         }
 
         .doctor-specialization {
             display: inline-block;
-            background: rgba(72, 41, 112, 0.2);
+            background: var(--secondary-color);
             padding: 6px 14px;
             border-radius: 20px;
             font-size: 15px;
             margin-top: 10px;
-            color: var(--primary);
+            color:white;
         }
 
         /* Schedule List - Horizontal Bars */
