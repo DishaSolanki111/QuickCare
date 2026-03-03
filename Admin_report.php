@@ -262,7 +262,7 @@ if(!isset($_SESSION['admin_username']) && !isset($_SESSION['admin'])) {
             <input type="date" id="pat_start" value="<?= date('Y-m-d', strtotime('-6 months')) ?>">
             <input type="date" id="pat_end" value="<?= date('Y-m-d') ?>">
             <button class="btn-apply" onclick="loadPatientReport()">Apply</button>
-            <button class="btn-export" onclick="exportCSV('pat_table', 'Patient_Report')">Export CSV</button>
+            <button class="btn-export" onclick="exportPDF('patient')">Export PDF</button>
         </div>
         <div class="charts-row">
             <div class="chart-box"><canvas id="patBarChart"></canvas></div>
@@ -294,7 +294,7 @@ if(!isset($_SESSION['admin_username']) && !isset($_SESSION['admin'])) {
                 <?php } ?>
             </select>
             <button class="btn-apply" onclick="loadAppointmentReport()">Apply</button>
-            <button class="btn-export" onclick="exportCSV('app_table', 'Appointment_Report')">Export CSV</button>
+            <button class="btn-export" onclick="exportPDF('appointment')">Export PDF</button>
         </div>
         <div class="charts-row">
             <div class="chart-box"><canvas id="appLineChart"></canvas></div>
@@ -323,7 +323,7 @@ if(!isset($_SESSION['admin_username']) && !isset($_SESSION['admin'])) {
             <input type="date" id="rev_start" value="<?= date('Y-m-01', strtotime('-3 months')) ?>">
             <input type="date" id="rev_end" value="<?= date('Y-m-d') ?>">
             <button class="btn-apply" onclick="loadRevenueReport()">Apply</button>
-            <button class="btn-export" onclick="exportCSV('rev_table', 'Revenue_Report')">Export CSV</button>
+            <button class="btn-export" onclick="exportPDF('revenue')">Export PDF</button>
         </div>
         <div class="charts-row">
             <div class="chart-box"><canvas id="revBarChart"></canvas></div>
@@ -514,29 +514,30 @@ window.onload = () => {
     loadPatientReport();
 };
 
-// CSV Export Logic
-function exportCSV(tableId, filename) {
-    let csv = [];
-    let rows = document.querySelectorAll(`#${tableId} tr`);
-    
-    for (let i = 0; i < rows.length; i++) {
-        let row = [], cols = rows[i].querySelectorAll("td, th");
-        for (let j = 0; j < cols.length; j++) {
-            // sanitize text
-            let data = cols[j].innerText.replace(/"/g, '""');
-            row.push('"' + data + '"');
-        }
-        csv.push(row.join(","));
+// PDF Export: open printable table-only view for current filters
+function exportPDF(type) {
+    let url = 'Admin_report_pdf.php?type=' + encodeURIComponent(type);
+
+    if (type === 'patient') {
+        const start = document.getElementById('pat_start').value;
+        const end   = document.getElementById('pat_end').value;
+        url += '&start_date=' + encodeURIComponent(start) +
+               '&end_date=' + encodeURIComponent(end);
+    } else if (type === 'appointment') {
+        const start = document.getElementById('app_start').value;
+        const end   = document.getElementById('app_end').value;
+        const did   = document.getElementById('app_doc').value;
+        url += '&start_date=' + encodeURIComponent(start) +
+               '&end_date=' + encodeURIComponent(end) +
+               '&doctor_id=' + encodeURIComponent(did);
+    } else if (type === 'revenue') {
+        const start = document.getElementById('rev_start').value;
+        const end   = document.getElementById('rev_end').value;
+        url += '&start_date=' + encodeURIComponent(start) +
+               '&end_date=' + encodeURIComponent(end);
     }
-    
-    let csvFile = new Blob([csv.join("\n")], {type: "text/csv"});
-    let downloadLink = document.createElement("a");
-    downloadLink.download = filename + "_" + new Date().toISOString().split('T')[0] + ".csv";
-    downloadLink.href = window.URL.createObjectURL(csvFile);
-    downloadLink.style.display = "none";
-    document.body.appendChild(downloadLink);
-    downloadLink.click();
-    document.body.removeChild(downloadLink);
+
+    window.open(url, '_blank');
 }
 </script>
 
