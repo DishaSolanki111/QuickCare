@@ -82,6 +82,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'delete' && isset($_POST['id'
 <head>
 <meta charset="UTF-8">
 <title>Manage Patients - QuickCare</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
 <style>
     body {
         margin: 0;
@@ -153,6 +154,9 @@ if (isset($_POST['action']) && $_POST['action'] == 'delete' && isset($_POST['id'
         border: none;
         border-radius: 5px;
         cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
     }
 
     .action-btn {
@@ -162,6 +166,9 @@ if (isset($_POST['action']) && $_POST['action'] == 'delete' && isset($_POST['id'
         cursor: pointer;
         color: white;
         margin-right: 5px;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
     }
 
     .edit-btn { background: #f39c12; }
@@ -392,7 +399,10 @@ if (isset($_POST['action']) && $_POST['action'] == 'delete' && isset($_POST['id'
                 <option value="OTHER" <?php if(isset($_POST['gender_filter']) && $_POST['gender_filter']=='OTHER') echo 'selected'; ?>>Other</option>
             </select>
 
-            <button type="submit">Filter</button>
+            <button type="submit">
+                <i class="bi bi-funnel"></i>
+                Filter
+            </button>
         </form>
     </div>
 
@@ -440,9 +450,15 @@ if (isset($_POST['action']) && $_POST['action'] == 'delete' && isset($_POST['id'
                     <td>{$row['EMAIL']}</td>
                     <td>
                         <button class='action-btn edit-btn'
-                            onclick=\"openEditModal({$row['PATIENT_ID']}, '" . addslashes($row['FIRST_NAME']) . "', '" . addslashes($row['LAST_NAME']) . "', '{$row['DOB']}', '{$row['GENDER']}', '{$row['BLOOD_GROUP']}', '{$row['PHONE']}', '{$row['EMAIL']}')\">Edit</button>
+                            onclick=\"openEditModal({$row['PATIENT_ID']}, '" . addslashes($row['FIRST_NAME']) . "', '" . addslashes($row['LAST_NAME']) . "', '{$row['DOB']}', '{$row['GENDER']}', '{$row['BLOOD_GROUP']}', '{$row['PHONE']}', '{$row['EMAIL']}')\">
+                            <i class='bi bi-pencil'></i>
+                            Edit
+                        </button>
                         <button class='action-btn delete-btn'
-                            onclick=\"deletePatient({$row['PATIENT_ID']})\">Delete</button>
+                            onclick=\"deletePatient({$row['PATIENT_ID']})\">
+                            <i class='bi bi-trash'></i>
+                            Delete
+                        </button>
                     </td>
                 </tr>";
             }

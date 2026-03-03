@@ -169,6 +169,7 @@ include 'admin_sidebar.php';
 <head>
     <meta charset="UTF-8">
     <title>Manage Doctors - QuickCare</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <style>
         body {
             margin: 0;
@@ -246,8 +247,11 @@ include 'admin_sidebar.php';
             border: none;
             border-radius: 5px;
             cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
         }
-
+        
         .action-btn {
             padding: 6px 12px;
             margin: 0 3px;
@@ -255,6 +259,9 @@ include 'admin_sidebar.php';
             border-radius: 4px;
             cursor: pointer;
             color: white;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
         }
 
         .edit-btn { background-color: #f39c12; }
@@ -510,7 +517,10 @@ include 'admin_sidebar.php';
                 ?>
             </select>
 
-            <button type="submit">Filter</button>
+            <button type="submit">
+                <i class="bi bi-funnel"></i>
+                Filter
+            </button>
         </form>
     </div>
 
@@ -577,11 +587,13 @@ include 'admin_sidebar.php';
                     '<?php echo $row['EMAIL']; ?>', 
                     '<?php echo $row['SPECIALISATION_ID']; ?>', 
                     '<?php echo $row['PROFILE_IMAGE']; ?>')">
+                    <i class="bi bi-pencil"></i>
                     Edit
                 </button>
 
                 <button type="button" class="action-btn delete-btn"
                     onclick="confirmDelete(<?php echo $row['DOCTOR_ID']; ?>)">
+                    <i class="bi bi-trash"></i>
                     Delete
                 </button>
             </td>

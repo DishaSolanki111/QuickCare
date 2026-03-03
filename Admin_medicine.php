@@ -20,6 +20,7 @@ $adminName = $_SESSION['USER_NAME'] ?? 'Admin';
 <meta charset="UTF-8">
 <title>View Medicine - QuickCare</title>
 <?php include 'admin_sidebar.php'; ?>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
 <style>
     body {
         margin: 0;
@@ -91,6 +92,9 @@ $adminName = $_SESSION['USER_NAME'] ?? 'Admin';
         border: none;
         border-radius: 5px;
         cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
     }
 </style>
 </head>
@@ -107,7 +111,10 @@ $adminName = $_SESSION['USER_NAME'] ?? 'Admin';
             <input type="text" name="name_filter"
                    placeholder="Filter by Medicine Name"
                    value="<?php echo isset($_POST['name_filter']) ? htmlspecialchars($_POST['name_filter']) : ''; ?>">
-            <button type="submit">Filter</button>
+            <button type="submit">
+                <i class="bi bi-funnel"></i>
+                Filter
+            </button>
         </form>
     </div>
 

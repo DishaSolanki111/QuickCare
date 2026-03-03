@@ -965,7 +965,10 @@ if ($doctors_query && mysqli_num_rows($doctors_query) > 0) {
                     value="<?php echo isset($_GET['schedule_date']) ? htmlspecialchars($_GET['schedule_date']) : ''; ?>"
                 >
 
-                <button type="submit">Filter</button>
+                <button type="submit">
+                    <i class="bi bi-funnel"></i>
+                    Filter
+                </button>
             </form>
         </div>
         <!-- Doctor Schedules -->
