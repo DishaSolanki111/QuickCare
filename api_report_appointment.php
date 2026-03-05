@@ -3,7 +3,13 @@ session_start();
 include 'config.php';
 header('Content-Type: application/json');
 
-$start_date = isset($_GET['start_date']) ? $_GET['start_date'] : date('Y-m-01');
+// Session check
+if (!isset($_SESSION['LOGGED_IN']) || $_SESSION['LOGGED_IN'] !== true || $_SESSION['USER_TYPE'] !== 'admin') {
+    echo json_encode(['error' => 'Unauthorized']);
+    exit;
+}
+
+$start_date = isset($_GET['start_date']) ? $_GET['start_date'] : date('Y-m-d', strtotime('-6 months'));
 $end_date = isset($_GET['end_date']) ? $_GET['end_date'] : date('Y-m-d');
 $doctor_id = isset($_GET['doctor_id']) ? $_GET['doctor_id'] : '';
 
@@ -24,7 +30,7 @@ $response = [
 ];
 
 $doc_filter = "";
-if(!empty($doctor_id)) {
+if (!empty($doctor_id)) {
     $doc_filter = " AND a.DOCTOR_ID = '$doctor_id'";
 }
 
@@ -35,8 +41,8 @@ $q1 = "SELECT APPOINTMENT_DATE, COUNT(*) as count
        GROUP BY APPOINTMENT_DATE 
        ORDER BY APPOINTMENT_DATE ASC";
 $r1 = mysqli_query($conn, $q1);
-if($r1) {
-    while($row = mysqli_fetch_assoc($r1)) {
+if ($r1) {
+    while ($row = mysqli_fetch_assoc($r1)) {
         $response['daily_trend']['labels'][] = $row['APPOINTMENT_DATE'];
         $response['daily_trend']['data'][] = $row['count'];
     }
@@ -51,8 +57,8 @@ $q2 = "SELECT d.FIRST_NAME, d.LAST_NAME, COUNT(a.APPOINTMENT_ID) as count
        ORDER BY count DESC
        LIMIT 10";
 $r2 = mysqli_query($conn, $q2);
-if($r2) {
-    while($row = mysqli_fetch_assoc($r2)) {
+if ($r2) {
+    while ($row = mysqli_fetch_assoc($r2)) {
         $name = "Dr. " . $row['FIRST_NAME'] . " " . $row['LAST_NAME'];
         $response['doctor_wise']['labels'][] = $name;
         $response['doctor_wise']['data'][] = $row['count'];
@@ -65,8 +71,8 @@ $q3 = "SELECT STATUS, COUNT(*) as count
        WHERE APPOINTMENT_DATE BETWEEN '$start_date' AND '$end_date' $doc_filter
        GROUP BY STATUS";
 $r3 = mysqli_query($conn, $q3);
-if($r3) {
-    while($row = mysqli_fetch_assoc($r3)) {
+if ($r3) {
+    while ($row = mysqli_fetch_assoc($r3)) {
         $response['status_distribution']['labels'][] = $row['STATUS'];
         $response['status_distribution']['data'][] = $row['count'];
     }
@@ -82,8 +88,8 @@ $q4 = "SELECT a.APPOINTMENT_DATE, a.APPOINTMENT_TIME, a.STATUS,
        WHERE a.APPOINTMENT_DATE BETWEEN '$start_date' AND '$end_date' $doc_filter
        ORDER BY a.APPOINTMENT_DATE DESC, a.APPOINTMENT_TIME DESC";
 $r4 = mysqli_query($conn, $q4);
-if($r4) {
-    while($row = mysqli_fetch_assoc($r4)) {
+if ($r4) {
+    while ($row = mysqli_fetch_assoc($r4)) {
         $response['table_data'][] = [
             'date' => $row['APPOINTMENT_DATE'],
             'time' => $row['APPOINTMENT_TIME'],

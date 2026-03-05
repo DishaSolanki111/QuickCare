@@ -2,24 +2,23 @@
 session_start();
 include 'config.php';
 
-// Basic admin check (reuse the same logic style as Admin_report.php)
-if (!isset($_SESSION['admin_username']) && !isset($_SESSION['admin'])) {
-    // Optionally enforce login:
-    // header("Location: admin_login.php");
-    // exit();
+// Basic admin check
+if (!isset($_SESSION['LOGGED_IN']) || $_SESSION['LOGGED_IN'] !== true || $_SESSION['USER_TYPE'] !== 'admin') {
+    header("Location: admin_login.php");
+    exit();
 }
 
-$type       = isset($_GET['type']) ? $_GET['type'] : 'patient';
+$type = isset($_GET['type']) ? $_GET['type'] : 'patient';
 $start_date = isset($_GET['start_date']) ? $_GET['start_date'] : date('Y-m-d');
-$end_date   = isset($_GET['end_date']) ? $_GET['end_date'] : date('Y-m-d');
-$doctor_id  = isset($_GET['doctor_id']) ? $_GET['doctor_id'] : '';
+$end_date = isset($_GET['end_date']) ? $_GET['end_date'] : date('Y-m-d');
+$doctor_id = isset($_GET['doctor_id']) ? $_GET['doctor_id'] : '';
 
-$title   = '';
+$title = '';
 $columns = [];
-$rows    = [];
+$rows = [];
 
 if ($type === 'patient') {
-    $title   = 'Patient Report';
+    $title = 'Patient Report';
     $columns = ['Patient ID', 'Name', 'Gender', 'Phone', 'Registration Date'];
 
     $q = "SELECT PATIENT_ID, FIRST_NAME, LAST_NAME, GENDER, PHONE, CREATED_AT
@@ -39,12 +38,12 @@ if ($type === 'patient') {
         }
     }
 } elseif ($type === 'appointment') {
-    $title   = 'Appointment Report';
+    $title = 'Appointment Report';
     $columns = ['Date', 'Time', 'Patient Name', 'Doctor Name', 'Status'];
 
     $doc_filter = '';
     if (!empty($doctor_id)) {
-        $doctor_id  = mysqli_real_escape_string($conn, $doctor_id);
+        $doctor_id = mysqli_real_escape_string($conn, $doctor_id);
         $doc_filter = " AND a.DOCTOR_ID = '$doctor_id'";
     }
 
@@ -68,10 +67,10 @@ if ($type === 'patient') {
             ];
         }
     }
-} else {
+} elseif ($type === 'revenue') {
     // revenue
-    $type    = 'revenue';
-    $title   = 'Revenue Report';
+    $type = 'revenue';
+    $title = 'Revenue Report';
     $columns = ['Payment Date', 'Amount (₹)', 'Payment Mode', 'Transaction ID', 'Patient Name'];
 
     $q = "SELECT p.PAYMENT_DATE, p.AMOUNT, p.PAYMENT_MODE, p.TRANSACTION_ID,
@@ -87,7 +86,7 @@ if ($type === 'patient') {
         while ($r = mysqli_fetch_assoc($res)) {
             $rows[] = [
                 $r['PAYMENT_DATE'],
-                number_format((float)$r['AMOUNT'], 2),
+                number_format((float) $r['AMOUNT'], 2),
                 $r['PAYMENT_MODE'],
                 $r['TRANSACTION_ID'],
                 trim($r['FIRST_NAME'] . ' ' . $r['LAST_NAME']),
@@ -108,6 +107,7 @@ header('Expires: Sat, 26 Jul 1997 05:00:00 GMT');
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title><?= htmlspecialchars($title) ?> - QuickCare</title>
@@ -117,35 +117,43 @@ header('Expires: Sat, 26 Jul 1997 05:00:00 GMT');
             margin: 20px;
             color: #1f2933;
         }
+
         h1 {
             margin: 0 0 5px 0;
             font-size: 22px;
         }
+
         .meta {
             font-size: 13px;
             color: #6b7280;
             margin-bottom: 15px;
         }
+
         table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 10px;
             font-size: 13px;
         }
-        th, td {
+
+        th,
+        td {
             border: 1px solid #e5e7eb;
             padding: 8px 10px;
             text-align: left;
         }
+
         th {
             background: #072D44;
             color: #ffffff;
         }
+
         tr:nth-child(even) {
             background: #f9fafb;
         }
     </style>
 </head>
+
 <body>
     <h1><?= htmlspecialchars($title) ?></h1>
     <div class="meta">
@@ -163,19 +171,19 @@ header('Expires: Sat, 26 Jul 1997 05:00:00 GMT');
             </tr>
         </thead>
         <tbody>
-        <?php if (!empty($rows)): ?>
-            <?php foreach ($rows as $r): ?>
+            <?php if (!empty($rows)): ?>
+                    <?php foreach ($rows as $r): ?>
+                    <tr>
+                                <?php foreach ($r as $cell): ?>
+                            <td><?= htmlspecialchars((string) $cell) ?></td>
+                      <?php endforeach; ?>
+                    </tr>
+              <?php endforeach; ?>
+          <?php else: ?>
                 <tr>
-                    <?php foreach ($r as $cell): ?>
-                        <td><?= htmlspecialchars((string)$cell) ?></td>
-                    <?php endforeach; ?>
+                    <td colspan="<?= count($columns) ?>">No records found for the selected filters.</td>
                 </tr>
-            <?php endforeach; ?>
-        <?php else: ?>
-            <tr>
-                <td colspan="<?= count($columns) ?>">No records found for the selected filters.</td>
-            </tr>
-        <?php endif; ?>
+          <?php endif; ?>
         </tbody>
     </table>
 
@@ -186,5 +194,5 @@ header('Expires: Sat, 26 Jul 1997 05:00:00 GMT');
         };
     </script>
 </body>
-</html>
 
+</html>

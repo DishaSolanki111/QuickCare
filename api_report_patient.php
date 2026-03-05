@@ -4,15 +4,14 @@ include 'config.php';
 header('Content-Type: application/json');
 
 // Session check
-if (!isset($_SESSION['admin_logged_in']) && !isset($_SESSION['admin'])) {
-    // Uncomment for strict security
-    // echo json_encode(['error' => 'Unauthorized']);
-    // exit;
+if (!isset($_SESSION['LOGGED_IN']) || $_SESSION['LOGGED_IN'] !== true || $_SESSION['USER_TYPE'] !== 'admin') {
+    echo json_encode(['error' => 'Unauthorized']);
+    exit;
 }
 
 // Add CREATED_AT to patient_tbl if it doesn't exist (Migration)
 $check_col = mysqli_query($conn, "SHOW COLUMNS FROM `patient_tbl` LIKE 'CREATED_AT'");
-if(mysqli_num_rows($check_col) == 0) {
+if (mysqli_num_rows($check_col) == 0) {
     mysqli_query($conn, "ALTER TABLE `patient_tbl` ADD `CREATED_AT` TIMESTAMP DEFAULT CURRENT_TIMESTAMP");
 }
 
@@ -38,8 +37,8 @@ $query1 = "SELECT DATE_FORMAT(CREATED_AT, '%Y-%m') as month_year, COUNT(*) as co
            GROUP BY month_year 
            ORDER BY month_year ASC";
 $res1 = mysqli_query($conn, $query1);
-if($res1) {
-    while($row = mysqli_fetch_assoc($res1)) {
+if ($res1) {
+    while ($row = mysqli_fetch_assoc($res1)) {
         $response['monthly_registration']['labels'][] = $row['month_year'];
         $response['monthly_registration']['data'][] = $row['count'];
     }
@@ -52,8 +51,8 @@ $query2 = "SELECT GENDER, COUNT(*) as count
            WHERE DATE(CREATED_AT) BETWEEN '$start_date' AND '$end_date' 
            GROUP BY GENDER";
 $res2 = mysqli_query($conn, $query2);
-if($res2) {
-    while($row = mysqli_fetch_assoc($res2)) {
+if ($res2) {
+    while ($row = mysqli_fetch_assoc($res2)) {
         $gender = $row['GENDER'] ? $row['GENDER'] : 'Unknown';
         $response['gender_distribution']['labels'][] = $gender;
         $response['gender_distribution']['data'][] = $row['count'];
@@ -66,8 +65,8 @@ $query3 = "SELECT PATIENT_ID, FIRST_NAME, LAST_NAME, GENDER, PHONE, CREATED_AT
            WHERE DATE(CREATED_AT) BETWEEN '$start_date' AND '$end_date' 
            ORDER BY CREATED_AT DESC";
 $res3 = mysqli_query($conn, $query3);
-if($res3) {
-    while($row = mysqli_fetch_assoc($res3)) {
+if ($res3) {
+    while ($row = mysqli_fetch_assoc($res3)) {
         $response['table_data'][] = $row;
     }
 }

@@ -30,8 +30,8 @@ CREATE TABLE `appointment_reminder_tbl` (
   `APPOINTMENT_REMINDER_ID` int(11) NOT NULL,
   `RECEPTIONIST_ID` int(11) NOT NULL,
   `APPOINTMENT_ID` int(11) NOT NULL,
-  `REMINDER_TIME` time NOT NULL,
-  `REMARKS` text NOT NULL
+  `REMINDER_TIME` time DEFAULT NULL,
+  `REMARKS` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -121,8 +121,8 @@ CREATE TABLE `appointment_tbl` (
   `DOCTOR_ID` int(11) NOT NULL,
   `SCHEDULE_ID` int(11) NOT NULL,
   `CREATED_AT` timestamp NULL DEFAULT current_timestamp(),
-  `APPOINTMENT_DATE` date NOT NULL,
-  `APPOINTMENT_TIME` time NOT NULL,
+  `APPOINTMENT_DATE` date DEFAULT NULL,
+  `APPOINTMENT_TIME` time DEFAULT NULL,
   `STATUS` enum('SCHEDULED','COMPLETED','CANCELLED') DEFAULT 'SCHEDULED'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -170,9 +170,9 @@ CREATE TABLE `doctor_schedule_tbl` (
   `SCHEDULE_ID` int(11) NOT NULL,
   `DOCTOR_ID` int(11) NOT NULL,
   `RECEPTIONIST_ID` int(11) NOT NULL,
-  `START_TIME` time NOT NULL,
-  `END_TIME` time NOT NULL,
-  `AVAILABLE_DAY` enum('MON','TUE','WED','THUR','FRI','SAT','SUN') NOT NULL
+  `START_TIME` time DEFAULT NULL,
+  `END_TIME` time DEFAULT NULL,
+  `AVAILABLE_DAY` enum('MON','TUE','WED','THUR','FRI','SAT','SUN') DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -224,7 +224,82 @@ INSERT INTO `doctor_schedule_tbl` (`SCHEDULE_ID`, `DOCTOR_ID`, `RECEPTIONIST_ID`
 (42, 14, 2, '09:00:00', '17:00:00', 'SAT'),
 (43, 15, 3, '10:00:00', '18:00:00', 'MON'),
 (44, 15, 3, '10:00:00', '18:00:00', 'WED'),
-(45, 15, 3, '10:00:00', '18:00:00', 'FRI');
+(45, 15, 3, '10:00:00', '18:00:00', 'FRI'),
+(46, 16, 3, '08:00:00', '16:00:00', 'TUE'),
+(47, 16, 3, '08:00:00', '16:00:00', 'THUR'),
+(48, 16, 3, '08:00:00', '16:00:00', 'SAT'),
+(49, 17, 4, '09:00:00', '17:00:00', 'MON'),
+(50, 17, 4, '09:00:00', '17:00:00', 'WED'),
+(51, 17, 4, '09:00:00', '17:00:00', 'FRI'),
+(52, 18, 1, '09:00:00', '17:00:00', 'TUE'),
+(53, 18, 1, '09:00:00', '17:00:00', 'THUR'),
+(54, 18, 1, '09:00:00', '17:00:00', 'SAT'),
+(55, 19, 1, '10:00:00', '18:00:00', 'MON'),
+(56, 19, 1, '10:00:00', '18:00:00', 'WED'),
+(57, 19, 1, '10:00:00', '18:00:00', 'FRI'),
+(58, 20, 2, '08:00:00', '16:00:00', 'TUE'),
+(59, 20, 2, '08:00:00', '16:00:00', 'THUR'),
+(60, 20, 2, '08:00:00', '16:00:00', 'SAT'),
+(61, 21, 2, '09:00:00', '17:00:00', 'MON'),
+(62, 21, 2, '09:00:00', '17:00:00', 'WED'),
+(63, 21, 2, '09:00:00', '17:00:00', 'FRI'),
+(64, 22, 3, '10:00:00', '18:00:00', 'TUE'),
+(65, 22, 3, '10:00:00', '18:00:00', 'THUR'),
+(66, 22, 3, '10:00:00', '18:00:00', 'SAT'),
+(67, 23, 3, '08:00:00', '16:00:00', 'MON'),
+(68, 23, 3, '08:00:00', '16:00:00', 'WED'),
+(69, 23, 3, '08:00:00', '16:00:00', 'FRI'),
+(70, 24, 4, '09:00:00', '17:00:00', 'TUE'),
+(71, 24, 4, '09:00:00', '17:00:00', 'THUR'),
+(72, 24, 4, '09:00:00', '17:00:00', 'SAT'),
+(73, 25, 1, '10:00:00', '18:00:00', 'MON'),
+(74, 25, 1, '10:00:00', '18:00:00', 'WED'),
+(75, 25, 1, '10:00:00', '18:00:00', 'FRI'),
+(76, 26, 1, '09:00:00', '17:00:00', 'TUE'),
+(77, 26, 1, '09:00:00', '17:00:00', 'THUR'),
+(78, 26, 1, '09:00:00', '17:00:00', 'SAT'),
+(79, 27, 2, '08:00:00', '16:00:00', 'MON'),
+(80, 27, 2, '08:00:00', '16:00:00', 'WED'),
+(81, 27, 2, '08:00:00', '16:00:00', 'FRI'),
+(82, 28, 2, '10:00:00', '18:00:00', 'TUE'),
+(83, 28, 2, '10:00:00', '18:00:00', 'THUR'),
+(84, 28, 2, '10:00:00', '18:00:00', 'SAT'),
+(85, 29, 3, '09:00:00', '17:00:00', 'MON'),
+(86, 29, 3, '09:00:00', '17:00:00', 'WED'),
+(87, 29, 3, '09:00:00', '17:00:00', 'FRI'),
+(88, 30, 3, '08:00:00', '16:00:00', 'TUE'),
+(89, 30, 3, '08:00:00', '16:00:00', 'THUR'),
+(90, 30, 3, '08:00:00', '16:00:00', 'SAT'),
+(91, 31, 4, '10:00:00', '18:00:00', 'MON'),
+(92, 31, 4, '10:00:00', '18:00:00', 'WED'),
+(93, 31, 4, '10:00:00', '18:00:00', 'FRI'),
+(94, 32, 4, '09:00:00', '17:00:00', 'TUE'),
+(95, 32, 4, '09:00:00', '17:00:00', 'THUR'),
+(96, 32, 4, '09:00:00', '17:00:00', 'SAT'),
+(97, 33, 1, '08:00:00', '16:00:00', 'MON'),
+(98, 33, 1, '08:00:00', '16:00:00', 'WED'),
+(99, 33, 1, '08:00:00', '16:00:00', 'FRI'),
+(100, 34, 1, '09:00:00', '17:00:00', 'TUE'),
+(101, 34, 1, '09:00:00', '17:00:00', 'THUR'),
+(102, 34, 1, '09:00:00', '17:00:00', 'SAT'),
+(103, 35, 2, '10:00:00', '18:00:00', 'MON'),
+(104, 35, 2, '10:00:00', '18:00:00', 'WED'),
+(105, 35, 2, '10:00:00', '18:00:00', 'FRI'),
+(106, 36, 2, '08:00:00', '16:00:00', 'TUE'),
+(107, 36, 2, '08:00:00', '16:00:00', 'THUR'),
+(108, 36, 2, '08:00:00', '16:00:00', 'SAT'),
+(109, 37, 3, '09:00:00', '17:00:00', 'MON'),
+(110, 37, 3, '09:00:00', '17:00:00', 'WED'),
+(111, 37, 3, '09:00:00', '17:00:00', 'FRI'),
+(112, 38, 3, '10:00:00', '18:00:00', 'TUE'),
+(113, 38, 3, '10:00:00', '18:00:00', 'THUR'),
+(114, 38, 3, '10:00:00', '18:00:00', 'SAT'),
+(115, 39, 4, '08:00:00', '16:00:00', 'MON'),
+(116, 39, 4, '08:00:00', '16:00:00', 'WED'),
+(117, 39, 4, '08:00:00', '16:00:00', 'FRI'),
+(118, 40, 4, '09:00:00', '17:00:00', 'TUE'),
+(119, 40, 4, '09:00:00', '17:00:00', 'THUR'),
+(120, 40, 4, '09:00:00', '17:00:00', 'SAT');
 
 -- --------------------------------------------------------
 
@@ -235,18 +310,18 @@ INSERT INTO `doctor_schedule_tbl` (`SCHEDULE_ID`, `DOCTOR_ID`, `RECEPTIONIST_ID`
 CREATE TABLE `doctor_tbl` (
   `DOCTOR_ID` int(11) NOT NULL,
   `SPECIALISATION_ID` int(11) NOT NULL,
-  `PROFILE_IMAGE` varchar(255) NOT NULL,
-  `FIRST_NAME` varchar(20) NOT NULL,
-  `LAST_NAME` varchar(20) NOT NULL,
-  `DOB` date NOT NULL,
-  `DOJ` date NOT NULL,
-  `USERNAME` varchar(20) NOT NULL,
-  `PSWD` varchar(60) NOT NULL,
-  `PHONE` bigint(20) NOT NULL,
-  `EMAIL` varchar(50) NOT NULL,
-  `GENDER` enum('MALE','FEMALE','OTHER') NOT NULL,
-
-  `EDUCATION` varchar(50) NOT NULL,
+  `PROFILE_IMAGE` varchar(255) DEFAULT NULL,
+  `FIRST_NAME` varchar(20) DEFAULT NULL,
+  `LAST_NAME` varchar(20) DEFAULT NULL,
+  `DOB` date DEFAULT NULL,
+  `DOJ` date DEFAULT NULL,
+  `USERNAME` varchar(20) DEFAULT NULL,
+  `PSWD` varchar(60) DEFAULT NULL,
+  `PHONE` bigint(20) DEFAULT NULL,
+  `EMAIL` varchar(50) DEFAULT NULL,
+  `GENDER` enum('MALE','FEMALE','OTHER') DEFAULT NULL,
+  
+  `EDUCATION` varchar(50) DEFAULT NULL,
   `STATUS` enum('pending','approved','rejected') DEFAULT 'pending'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 --
@@ -282,7 +357,32 @@ INSERT INTO doctor_tbl (DOCTOR_ID, SPECIALISATION_ID, PROFILE_IMAGE, FIRST_NAME,
 (12, 1, 'uploads/lakshmi.jpeg', 'Lakshmi', 'Iyer', '1983-09-05', '2014-02-20', 'Dr_lakshmi12', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543221, 'lakshmi.iyer@gmail.com', 'FEMALE',   'MBBS, DCH' ,'approved'),
 (13, 1,  'uploads/arun.jpeg', 'Arun', 'Shah', '1979-12-22', '2013-08-15', 'Dr_arun13', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543222, 'arun.shah@gmail.com', 'MALE',    'MBBS, DNB (Pediatrics)','approved' ),
 (14, 1,  'uploads/Deepa.jpeg', 'Deepa', 'Nair', '1981-04-08', '2016-11-01', 'Dr_deepa14', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543223, 'deepa.nair@gmail.com', 'FEMALE',     'MBBS, MD (Pediatrics)' ,'approved'),
-(15, 1, 'uploads/karthik.jpeg', 'Karthik', 'Pillai', '1977-07-30', '2010-03-12', 'Dr_karthik15', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543224, 'karthik.pillai@gmail.com', 'MALE',     'MBBS, DCH' ,'approved');
+(15, 1, 'uploads/karthik.jpeg', 'Karthik', 'Pillai', '1977-07-30', '2010-03-12', 'Dr_karthik15', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543224, 'karthik.pillai@gmail.com', 'MALE',     'MBBS, DCH' ,'approved'),
+(16, 1, 'uploads/divya.jpeg', 'Divya', 'Krishnan', '1984-02-14', '2015-06-25', 'Dr_divya16', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543225, 'divya.krishnan@gmail.com', 'FEMALE',     'MBBS, DNB (Pediatrics)','approved' ),
+(17, 1,  'uploads/ramesh.jpeg', 'Ramesh', 'Bose', '1974-10-28', '2009-09-08', 'Dr_ramesh17', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543226, 'ramesh.bose@gmail.com', 'MALE',    'MBBS, MD (Pediatrics)' ,'approved'),
+(18, 2, 'uploads/manoj.jpeg', 'Manoj', 'Desai', '1978-06-12', '2012-04-18', 'Dr_manoj18', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543230, 'manoj.desai@gmail.com', 'MALE',    'MBBS, DM (Cardiology)' ,'approved'),
+(19, 2, 'uploads/preeti.jpeg', 'Preeti', 'Shah', '1980-11-03', '2015-01-22', 'Dr_preeti19', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543231, 'preeti.shah@gmail.com', 'FEMALE',    'MBBS, MD (Cardiology)' ,'approved'),
+(20, 2, 'uploads/rohit.jpeg', 'Rohit', 'Kapoor', '1975-03-25', '2010-10-05', 'Dr_rohit20', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543232, 'rohit.kapoor@gmail.com', 'MALE',    'MBBS, DM (Cardiology)' ,'approved'),
+(21, 2, 'uploads/swati.jpeg', 'Swati', 'Bhatia', '1982-08-17', '2013-07-14', 'Dr_swati21', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543233, 'swati.bhatia@gmail.com', 'FEMALE',     'MBBS, MD (Cardiology)' ,'approved'),
+(22, 2, 'uploads/nikhil.jpeg', 'Nikhil', 'Agarwal', '1979-01-30', '2016-05-28', 'Dr_nikhil22', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543234, 'nikhil.agarwal@gmail.com', 'MALE',    'MBBS, DNB (Cardiology)' ,'approved'),
+(23, 2, 'uploads/pooja.jpeg', 'Pooja', 'Mehta', '1983-05-08', '2014-12-10', 'Dr_pooja23', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543235, 'pooja.mehta@gmail.com', 'FEMALE',   'MBBS, MD (Cardiology)' ,'approved'),
+(24, 2, 'uploads/ajay.jpeg', 'Ajay', 'Sethi', '1976-09-20', '2011-02-15', 'Dr_ajay24', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543236, 'ajay.sethi@gmail.com', 'MALE',     'MBBS, DM (Cardiology)' ,'approved'),
+(25, 2, 'uploads/tanuja.jpeg', 'Tanuja', 'Verma', '1981-04-05', '2012-08-20', 'Dr_tanuja25', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543237, 'tanuja.verma@gmail.com', 'FEMALE',     'MBBS, MD (Cardiology)' ,'approved'),
+(26, 3, 'uploads/vishal.jpeg', 'Vishal', 'Jain', '1974-04-18', '2010-08-22', 'Dr_vishal26', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543240, 'vishal.jain@gmail.com', 'MALE','MBBS, MS (Orthopedics)' ,'approved'),
+(27, 3, 'uploads/neha.jpeg', 'Neha', 'Aggarwal', '1982-07-09', '2014-03-05', 'Dr_neha27', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543241, 'neha.aggarwal@gmail.com', 'FEMALE',    'MBBS, DNB (Orthopedics)' ,'approved'),
+(28, 3, 'uploads/rajvi.jpeg', 'Rajvi', 'Chopra', '1978-02-28', '2012-11-18', 'Dr_rajvi28', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543242, 'rajvi.chopra@gmail.com', 'FEMALE',   'MBBS, MS (Orthopedics)' ,'approved'),
+(29, 3, 'uploads/kavita.jpeg', 'Kavita', 'Srinivasan', '1980-10-14', '2015-06-30', 'Dr_kavita29', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543243, 'kavita.srinivasan@gmail.com', 'FEMALE',    'MBBS, DNB (Orthopedics)' ,'approved'),
+(30, 3, 'uploads/sandeep.jpeg', 'Sandeep', 'Rao', '1976-12-05', '2011-09-12', 'Dr_sandeep30', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543244, 'sandeep.rao@gmail.com', 'MALE',    'MBBS, MS (Orthopedics)' ,'approved'),
+(31, 3, 'uploads/anita.jpeg', 'Anita', 'Malhotra', '1983-05-22', '2016-04-08', 'Dr_anita31', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543245, 'anita.malhotra@gmail.com', 'FEMALE',     'MBBS, DNB (Orthopedics)' ,'approved'),
+(32, 3, 'uploads/prakash.jpeg', 'Prakash', 'Tiwari', '1975-08-03', '2009-07-20', 'Dr_prakash32', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543246, 'prakash.tiwari@gmail.com', 'MALE',     'MBBS, MS (Orthopedics)' ,'approved'),
+(33, 3, 'uploads/shalini.jpeg', 'Shalini', 'Venkatesh', '1981-01-16', '2013-10-25', 'Dr_shalini33', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543247, 'shalini.venkatesh@gmail.com', 'FEMALE',     'MBBS, DNB (Orthopedics)' ,'approved'),
+(34, 4, 'uploads/ashok.jpeg', 'Ashok', 'Bhatt', '1977-11-08', '2012-02-14', 'Dr_ashok34', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543250, 'ashok.bhatt@gmail.com', 'MALE',     'MBBS, DM (Neurology)','approved' ),
+(35, 4, 'uploads/rekha.jpeg', 'Rekha', 'Subramanian', '1982-03-25', '2014-09-18', 'Dr_rekha35', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543251, 'rekha.subramanian@gmail.com', 'FEMALE',    'MBBS, MD (Neurology)','approved' ),
+(36, 4, 'uploads/ganesh.jpeg', 'Ganesh', 'Murthy', '1976-07-12', '2011-05-30', 'Dr_ganesh36', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543252, 'ganesh.murthy@gmail.com', 'MALE',     'MBBS, DM (Neurology)' ,'approved'),
+(37, 4, 'uploads/smita.jpeg', 'Smita', 'Dixit', '1980-12-03', '2015-11-22', 'Dr_smita37', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543253, 'smita.dixit@gmail.com', 'FEMALE',     'MBBS, DNB (Neurology)','approved' ),
+(38, 4, 'uploads/venkat.jpeg', 'Venkat', 'Rao', '1978-05-18', '2013-08-05', 'Dr_venkat38', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543254, 'venkat.rao@gmail.com', 'MALE',    'MBBS, MD, DM (Neurology)' ,'approved'),
+(39, 4, 'uploads/mamta.jpeg', 'Mamta', 'Singh', '1983-09-28', '2016-01-15', 'Dr_mamta39', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543255, 'mamta.singh@gmail.com', 'FEMALE',     'MBBS, MD (Neurology)' ,'approved'),
+(40, 4, 'uploads/harish.jpeg', 'Harish', 'Sidha', '1975-02-14', '2010-04-28', 'Dr_harish40', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543256, 'harish.sidha@gmail.com', 'MALE',  'MBBS, DM (Neurology)' ,'approved');
 -- --------------------------------------------------------
 
 --
@@ -292,8 +392,8 @@ INSERT INTO doctor_tbl (DOCTOR_ID, SPECIALISATION_ID, PROFILE_IMAGE, FIRST_NAME,
 CREATE TABLE `feedback_tbl` (
   `FEEDBACK_ID` int(11) NOT NULL,
   `APPOINTMENT_ID` int(11) NOT NULL,
-  `RATING` int(11) NOT NULL,
-  `COMMENTS` varchar(255) NOT NULL
+  `RATING` int(11) DEFAULT NULL,
+  `COMMENTS` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -331,13 +431,13 @@ INSERT INTO `feedback_tbl` (`FEEDBACK_ID`, `APPOINTMENT_ID`, `RATING`, `COMMENTS
 CREATE TABLE `medicine_reminder_tbl` (
   `MEDICINE_REMINDER_ID` int(11) NOT NULL,
   `MEDICINE_ID` int(11) NOT NULL,
-  `CREATOR_ROLE` enum('PATIENT','RECEPTIONIST') NOT NULL,
+  `CREATOR_ROLE` enum('PATIENT','RECEPTIONIST') DEFAULT NULL,
   `CREATOR_ID` int(11) NOT NULL,
   `PATIENT_ID` int(11) NOT NULL,
-  `START_DATE` date NOT NULL,
-  `END_DATE` date NOT NULL,
-  `REMINDER_TIME` time NOT NULL,
-  `REMARKS` text NOT NULL
+  `START_DATE` date DEFAULT NULL,
+  `END_DATE` date DEFAULT NULL,
+  `REMINDER_TIME` time DEFAULT NULL,
+  `REMARKS` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -396,8 +496,8 @@ INSERT INTO `medicine_reminder_tbl` (`MEDICINE_REMINDER_ID`, `MEDICINE_ID`, `CRE
 CREATE TABLE `medicine_tbl` (
   `MEDICINE_ID` int(11) NOT NULL,
   `RECEPTIONIST_ID` int(11) NOT NULL,
-  `MED_NAME` varchar(25) NOT NULL,
-  `DESCRIPTION` text NOT NULL
+  `MED_NAME` varchar(25) DEFAULT NULL,
+  `DESCRIPTION` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -430,36 +530,34 @@ INSERT INTO `medicine_tbl` (`MEDICINE_ID`, `RECEPTIONIST_ID`, `MED_NAME`, `DESCR
 
 CREATE TABLE `patient_tbl` (
   `PATIENT_ID` int(11) NOT NULL,
-  `FIRST_NAME` varchar(20) NOT NULL,
-  `LAST_NAME` varchar(20) NOT NULL,
-  `USERNAME` varchar(20) NOT NULL,
-  `PSWD` varchar(60) NOT NULL,
-  `DOB` date NOT NULL,
-  `GENDER` enum('MALE','FEMALE','OTHER') NOT NULL,
-  `BLOOD_GROUP` enum('A+','A-','B+','B-','O+','O-','AB+','AB-') NOT NULL,
-  `PHONE` bigint(20) NOT NULL,
-  `EMAIL` varchar(50) NOT NULL,
-  `ADDRESS` text NOT NULL,
-  `MEDICAL_HISTORY_FILE` varchar(255) NOT NULL,
-  `SECURITY_QUESTION` varchar(255) NOT NULL,
-  `SECURITY_ANSWER` varchar(255) NOT NULL
+  `FIRST_NAME` varchar(20) DEFAULT NULL,
+  `LAST_NAME` varchar(20) DEFAULT NULL,
+  `USERNAME` varchar(20) DEFAULT NULL,
+  `PSWD` varchar(60) DEFAULT NULL,
+  `DOB` date DEFAULT NULL,
+  `GENDER` enum('MALE','FEMALE','OTHER') DEFAULT NULL,
+  `BLOOD_GROUP` enum('A+','A-','B+','B-','O+','O-','AB+','AB-') DEFAULT NULL,
+  `PHONE` bigint(20) DEFAULT NULL,
+  `EMAIL` varchar(50) DEFAULT NULL,
+  `ADDRESS` text DEFAULT NULL,
+  `MEDICAL_HISTORY_FILE` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `patient_tbl`
 --
 
-INSERT INTO `patient_tbl` (`PATIENT_ID`, `FIRST_NAME`, `LAST_NAME`, `USERNAME`, `PSWD`, `DOB`, `GENDER`, `BLOOD_GROUP`, `PHONE`, `EMAIL`, `ADDRESS`, `SECURITY_QUESTION`, `SECURITY_ANSWER`) VALUES
-(1, 'Arjun', 'Mishra', 'Arjun_m01', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', '1990-05-15', 'MALE', 'B+', 9876543201, 'arjun.mishra@gmail.com', '123, Park Street, Mumbai', 'What was the name of your first school?', 'Sunrise Public School'),
-(2, 'Pooja', 'Sharma', 'Pooja_s02', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', '1985-08-22', 'FEMALE', 'A+', 9876543202, 'pooja.sharma@gmail.com', '456, MG Road, Delhi', 'What is your favorite food from childhood?', 'Mango ice cream'),
-(3, 'Rohan', 'Patel', 'Rohan_p03', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', '1992-12-10', 'MALE', 'O+', 9876543203, 'rohan.patel@gmail.com', '789, Brigade Road, Bangalore', 'Where did you go for your first school trip?', 'Mysore'),
-(4, 'Neha', 'Gupta', 'Neha_g04', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', '1988-03-18', 'FEMALE', 'AB+', 9876543204, 'neha.gupta@gmail.com', '321, FC Road, Pune', 'What was the nickname your family calls you?', 'Nehu'),
-(5, 'Amit', 'Kumar', 'Amit_k05', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', '1987-07-25', 'MALE', 'A-', 9876543205, 'amit.kumar@gmail.com', '654, Jubilee Hills, Hyderabad', 'What was the name of your first school?', 'St. Mary''s High School'),
-(6, 'Sneha', 'Reddy', 'Sneha_r06', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', '1991-11-30', 'FEMALE', 'B-', 9876543206, 'sneha.reddy@gmail.com', '987, Banjara Hills, Hyderabad', 'What is your favorite food from childhood?', 'Dosa'),
-(7, 'Vikas', 'Singh', 'Vikas_s07', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', '1986-09-14', 'MALE', 'O-', 9876543207, 'vikas.singh@gmail.com', '147, Connaught Place, Delhi', 'Where did you go for your first school trip?', 'Shimla'),
-(8, 'Anjali', 'Desai', 'Anjali_d08', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', '1993-02-05', 'FEMALE', 'AB-', 9876543208, 'anjali.desai@gmail.com', '258, Marine Drive, Mumbai', 'What was the nickname your family calls you?', 'Anju'),
-(9, 'Rahul', 'Verma', 'Rahul_v09', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', '1989-06-20', 'MALE', 'A+', 9876543209, 'rahul.verma@gmail.com', '369, Park Street, Kolkata', 'What was the name of your first school?', 'Green Valley School'),
-(10, 'Kavita', 'Sharma', 'Kavita_s10', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', '1994-04-12', 'FEMALE', 'B+', 9876543210, 'kavita.sharma@gmail.com', '741, MG Road, Bangalore', 'What is your favorite food from childhood?', 'Pani puri');
+INSERT INTO `patient_tbl` (`PATIENT_ID`, `FIRST_NAME`, `LAST_NAME`, `USERNAME`, `PSWD`, `DOB`, `GENDER`, `BLOOD_GROUP`, `PHONE`, `EMAIL`, `ADDRESS`) VALUES
+(1, 'Arjun', 'Mishra', 'Arjun_m01', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', '1990-05-15', 'MALE', 'B+', 9876543201, 'arjun.mishra@gmail.com', '123, Park Street, Mumbai'),
+(2, 'Pooja', 'Sharma', 'Pooja_s02', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', '1985-08-22', 'FEMALE', 'A+', 9876543202, 'pooja.sharma@gmail.com', '456, MG Road, Delhi'),
+(3, 'Rohan', 'Patel', 'Rohan_p03', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', '1992-12-10', 'MALE', 'O+', 9876543203, 'rohan.patel@gmail.com', '789, Brigade Road, Bangalore'),
+(4, 'Neha', 'Gupta', 'Neha_g04', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', '1988-03-18', 'FEMALE', 'AB+', 9876543204, 'neha.gupta@gmail.com', '321, FC Road, Pune'),
+(5, 'Amit', 'Kumar', 'Amit_k05', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', '1987-07-25', 'MALE', 'A-', 9876543205, 'amit.kumar@gmail.com', '654, Jubilee Hills, Hyderabad'),
+(6, 'Sneha', 'Reddy', 'Sneha_r06', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', '1991-11-30', 'FEMALE', 'B-', 9876543206, 'sneha.reddy@gmail.com', '987, Banjara Hills, Hyderabad'),
+(7, 'Vikas', 'Singh', 'Vikas_s07', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', '1986-09-14', 'MALE', 'O-', 9876543207, 'vikas.singh@gmail.com', '147, Connaught Place, Delhi'),
+(8, 'Anjali', 'Desai', 'Anjali_d08', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', '1993-02-05', 'FEMALE', 'AB-', 9876543208, 'anjali.desai@gmail.com', '258, Marine Drive, Mumbai'),
+(9, 'Rahul', 'Verma', 'Rahul_v09', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', '1989-06-20', 'MALE', 'A+', 9876543209, 'rahul.verma@gmail.com', '369, Park Street, Kolkata'),
+(10, 'Kavita', 'Sharma', 'Kavita_s10', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', '1994-04-12', 'FEMALE', 'B+', 9876543210, 'kavita.sharma@gmail.com', '741, MG Road, Bangalore');
 
 -- --------------------------------------------------------
 
@@ -470,11 +568,11 @@ INSERT INTO `patient_tbl` (`PATIENT_ID`, `FIRST_NAME`, `LAST_NAME`, `USERNAME`, 
 CREATE TABLE `payment_tbl` (
   `PAYMENT_ID` int(11) NOT NULL,
   `APPOINTMENT_ID` int(11) NOT NULL,
-  `AMOUNT` decimal(10,2) NOT NULL,
-  `PAYMENT_DATE` date NOT NULL,
-  `PAYMENT_MODE` enum('CREDIT CARD','GOOGLE PAY','UPI','NET BANKING') NOT NULL,
-  `STATUS` enum('COMPLETED','FAILED') NOT NULL,
-  `TRANSACTION_ID` varchar(36) NOT NULL,
+  `AMOUNT` decimal(10,2) DEFAULT NULL,
+  `PAYMENT_DATE` date DEFAULT NULL,
+  `PAYMENT_MODE` enum('CREDIT CARD','GOOGLE PAY','UPI','NET BANKING') DEFAULT NULL,
+  `STATUS` enum('COMPLETED','FAILED') DEFAULT NULL,
+  `TRANSACTION_ID` varchar(36) DEFAULT NULL,
   `CREATED_AT` timestamp NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -512,9 +610,9 @@ INSERT INTO `payment_tbl` (`PAYMENT_ID`, `APPOINTMENT_ID`, `AMOUNT`, `PAYMENT_DA
 CREATE TABLE `prescription_medicine_tbl` (
   `PRESCRIPTION_ID` int(11) NOT NULL,
   `MEDICINE_ID` int(11) NOT NULL,
-  `DOSAGE` varchar(30) NOT NULL,
-  `DURATION` varchar(30) NOT NULL,
-  `FREQUENCY` varchar(30) NOT NULL,
+  `DOSAGE` varchar(30) DEFAULT NULL,
+  `DURATION` varchar(30) DEFAULT NULL,
+  `FREQUENCY` varchar(30) DEFAULT NULL,
   `CREATED_AT` timestamp NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -572,14 +670,14 @@ INSERT INTO `prescription_medicine_tbl` (`PRESCRIPTION_ID`, `MEDICINE_ID`, `DOSA
 CREATE TABLE `prescription_tbl` (
   `PRESCRIPTION_ID` int(11) NOT NULL,
   `APPOINTMENT_ID` int(11) NOT NULL,
-  `ISSUE_DATE` date NOT NULL,
-  `HEIGHT_CM` int(11) NOT NULL,
-  `WEIGHT_KG` decimal(5,2) NOT NULL,
-  `BLOOD_PRESSURE` smallint(6) NOT NULL,
-  `DIABETES` enum('NO','TYPE-1','TYPE-2','PRE-DIABTIC') NOT NULL,
-  `SYMPTOMS` text NOT NULL,
-  `DIAGNOSIS` text NOT NULL,
-  `ADDITIONAL_NOTES` text NOT NULL,
+  `ISSUE_DATE` date DEFAULT NULL,
+  `HEIGHT_CM` int(11) DEFAULT NULL,
+  `WEIGHT_KG` decimal(5,2) DEFAULT NULL,
+  `BLOOD_PRESSURE` smallint(6) DEFAULT NULL,
+  `DIABETES` enum('NO','TYPE-1','TYPE-2','PRE-DIABTIC') DEFAULT NULL,
+  `SYMPTOMS` text DEFAULT NULL,
+  `DIAGNOSIS` text DEFAULT NULL,
+  `ADDITIONAL_NOTES` text DEFAULT NULL,
   `CREATED_AT` timestamp NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -617,16 +715,16 @@ INSERT INTO `prescription_tbl` (`PRESCRIPTION_ID`, `APPOINTMENT_ID`, `ISSUE_DATE
 
 CREATE TABLE `receptionist_tbl` (
   `RECEPTIONIST_ID` int(11) NOT NULL,
-  `FIRST_NAME` varchar(20) NOT NULL,
-  `LAST_NAME` varchar(20) NOT NULL,
-  `DOB` date NOT NULL,
-  `DOJ` date NOT NULL,
-  `GENDER` enum('MALE','FEMALE','OTHER') NOT NULL,
-  `PHONE` bigint(20) NOT NULL,
-  `EMAIL` varchar(50) NOT NULL,
-  `ADDRESS` text NOT NULL,
-  `USERNAME` varchar(20) NOT NULL,
-  `PSWD` varchar(60) NOT NULL
+  `FIRST_NAME` varchar(20) DEFAULT NULL,
+  `LAST_NAME` varchar(20) DEFAULT NULL,
+  `DOB` date DEFAULT NULL,
+  `DOJ` date DEFAULT NULL,
+  `GENDER` enum('MALE','FEMALE','OTHER') DEFAULT NULL,
+  `PHONE` bigint(20) DEFAULT NULL,
+  `EMAIL` varchar(50) DEFAULT NULL,
+  `ADDRESS` text DEFAULT NULL,
+  `USERNAME` varchar(20) DEFAULT NULL,
+  `PSWD` varchar(60) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -781,13 +879,13 @@ ALTER TABLE `appointment_tbl`
 -- AUTO_INCREMENT for table `doctor_schedule_tbl`
 --
 ALTER TABLE `doctor_schedule_tbl`
-  MODIFY `SCHEDULE_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=46;
+  MODIFY `SCHEDULE_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=121;
 
 --
 -- AUTO_INCREMENT for table `doctor_tbl`
 --
 ALTER TABLE `doctor_tbl`
-  MODIFY `DOCTOR_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `DOCTOR_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
 
 --
 -- AUTO_INCREMENT for table `feedback_tbl`
