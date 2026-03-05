@@ -229,22 +229,7 @@ if (!isset($_SESSION['LOGGED_IN']) || $_SESSION['LOGGED_IN'] !== true || $_SESSI
 
 <body>
 
-    <div class="sidebar">
-        <img src="uploads/logo.JPG" alt="QuickCare Logo"
-            style="display:block; margin: 0 auto 10px auto; width:80px; height:80px; border-radius:50%;"
-            onerror="this.src=''; this.style.display='none';">
-        <h2>QuickCare</h2>
-        <a href="admin.php">Dashboard</a>
-        <a href="Admin_appoitment.php">View Appointments</a>
-        <a href="Admin_doctor.php">Manage Doctors</a>
-        <a href="Admin_recept.php">Manage Receptionist</a>
-        <a href="Admin_patient.php">Manage Patients</a>
-        <a href="Admin_medicine.php">View Medicine</a>
-        <a href="Admin_payment.php">View Payments</a>
-        <a href="Admin_feedback.php">View Feedback</a>
-        <a href="Admin_report.php" class="active">Reports</a>
-        <a href="logout.php" class="logout-btn">Logout</a>
-    </div>
+    <?php include 'admin_sidebar.php'; ?>
 
     <div class="main">
         <?php
