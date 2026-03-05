@@ -86,128 +86,137 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Receptionist Profile - QuickCare</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
+<meta charset="UTF-8">
+<title>Receptionist Profile</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+ <style>
         :root {
-            --primary-color: #1a3a5f;
-            --secondary-color: #3498db;
-            --accent-color: #2ecc71;
-            --light-color: #f8f9fa;
-            --dark-color: #343a40;
-            --danger-color: #e74c3c;
-            --warning-color: #f39c12;
-            --info-color: #17a2b8;
+            --primary: #0066cc;
+            --primary-dark: #0052a3;
+            --primary-light: #e6f2ff;
+            --secondary: #00a8cc;
+            --accent: #00a86b;
+            --warning: #ff6b6b;
+            --dark: #1a3a5f;
+            --light: #f8fafc;
+            --white: #ffffff;
+            --text: #2c5282;
+            --text-light: #4a6fa5;
+            --gradient-1: linear-gradient(135deg, #0066cc 0%, #00a8cc 100%);
+            --gradient-2: linear-gradient(135deg, #00a8cc 0%, #00a86b 100%);
+            --gradient-3: linear-gradient(135deg, #0066cc 0%, #0052a3 100%);
+            --shadow-sm: 0 2px 4px rgba(0,0,0,0.06);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
+            --shadow-xl: 0 20px 25px rgba(0,0,0,0.1);
+            --shadow-2xl: 0 25px 50px rgba(0,0,0,0.25);
             --dark-blue: #072D44;
             --mid-blue: #064469;
-            --soft-blue: #072D44;
+            --soft-blue: #5790AB;
             --light-blue: #9CCDD8;
             --gray-blue: #D0D7E1;
             --white: #ffffff;
             --card-bg: #F6F9FB;
+            --primary-color: #1a3a5f;
+            --secondary-color: #3498db;
+         
+            --info-color: #17a2b8;
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
         }
 
         body {
-            font-family: Arial, sans-serif;
-            background: #D0D7E1;
-            display: flex;
-            min-height: 100vh;
+            background-color: #f5f8fa;
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
         }
-
-        .container {
+      
+        /* Main Content */
+        .main-content {
             margin-left: 260px;
             padding: 20px;
             transition: margin-left 0.3s ease;
             width: 1500px;
-        }
-
-        .main {
-            margin-left: 250px;
-            padding: 20px;
-            width: calc(100% - 250px);
-            flex: 1;
-        }
-
-        .profile-section {
-            display: flex;
-            gap: 25px;
-            margin-bottom: 30px;
-        }
-
-        .profile-card {
-            flex: 1;
-            background-color: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            padding: 25px;
+            min-height: 100vh;
         }
 
         .profile-header {
             display: flex;
             align-items: center;
-            margin-bottom: 25px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid #eee;
+            margin-bottom: 30px;
+            padding: 10px;
+            background: var(--white);
+            border-radius: 12px;
+            box-shadow: var(--shadow-md);
         }
 
         .profile-avatar {
             width: 100px;
             height: 100px;
             border-radius: 50%;
-            background-color: var(--secondary-color);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 36px;
-            font-weight: bold;
-            margin-right: 20px;
+            object-fit: cover;
+            margin-right: 25px;
+            border: 4px solid var(--primary-light);
         }
 
-        .profile-title h2 {
+        .profile-info h2 {
             font-size: 28px;
-            color: var(--primary-color);
+            color: var(--dark);
             margin-bottom: 5px;
         }
 
-        .profile-title p {
-            color: #777;
-            font-size: 16px;
+        .profile-info p {
+            color: var(--text-light);
+            margin-bottom: 10px;
         }
 
-        .info-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
+
+        .form-group {
+            margin-bottom: 20px;
         }
 
-        .info-item {
-            margin-bottom: 15px;
-        }
-
-        .info-label {
-            font-weight: 600;
-            color: var(--dark-color);
-            margin-bottom: 5px;
+        .form-group label {
             display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark);
         }
 
-        .info-value {
-            color: #555;
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.2);
+        }
+
+        .form-control.error {
+            border-color: var(--warning);
+            box-shadow: 0 0 0 2px rgba(255, 107, 107, 0.2);
+        }
+
+        .form-control.valid {
+            border-color: var(--accent);
         }
 
         .btn {
-            padding: 10px 20px;
+            padding: 12px 20px;
             border: none;
-            border-radius: 5px;
+            border-radius: 6px;
             cursor: pointer;
             font-weight: 600;
             transition: all 0.3s ease;
@@ -217,21 +226,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
         }
 
         .btn-primary {
-            background-color: var(--secondary-color);
+            background-color: var(--primary);
             color: white;
         }
 
         .btn-primary:hover {
-            background-color: #2980b9;
-        }
-
-        .btn-success {
-            background-color: var(--accent-color);
-            color: white;
-        }
-
-        .btn-success:hover {
-            background-color: #27ae60;
+            background-color: var(--primary-dark);
         }
 
         .btn-danger {
@@ -243,23 +243,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
             background-color: #c0392b;
         }
 
-        .btn-group {
+        .alert {
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            border-radius: 6px;
             display: flex;
+            align-items: center;
             gap: 10px;
-            margin-top: 20px;
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
         }
 
         .edit-profile-form {
             display: none;
         }
 
-        .error-message {
-            color: var(--danger-color);
-            font-size: 13px;
-            margin-top: 5px;
-            display: none;
-        }
-
+        /* Password modal popup */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -278,25 +293,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
         }
 
         .modal-content {
-            background: #ffffff;
+            background: linear-gradient(135deg, #ffffff 0%, #f0f7ff 100%);
             border-radius: 10px;
             padding: 25px 30px;
             width: 100%;
             max-width: 450px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+            box-shadow: var(--shadow-xl);
+            border: 2px solid var(--primary-light);
         }
 
         .modal-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--primary-light);
         }
 
         .modal-header h3 {
             margin: 0;
-            font-size: 20px;
-            color: var(--primary-color);
+            font-size: 22px;
+            color: var(--primary);
+            font-weight: 600;
         }
 
         .modal-close {
@@ -304,9 +323,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
             border: none;
             font-size: 22px;
             cursor: pointer;
-            color: var(--dark-color);
+            color: var(--text-light);
         }
 
+        .error-message {
+            color: var(--warning);
+            font-size: 13px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        /* Password toggle in modal */
         .password-wrapper {
             position: relative;
         }
@@ -317,445 +344,570 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
             right: 12px;
             transform: translateY(-50%);
             cursor: pointer;
-            color: var(--secondary-color);
+            color: var(--primary);
             font-size: 14px;
         }
 
-        .form-group {
-            margin-bottom: 20px;
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
         }
 
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
+        .info-item {
+            margin-bottom: 15px;
+        }
+
+        .info-label {
             font-weight: 600;
-            color: var(--dark-color);
+            color: var(--dark);
+            margin-bottom: 5px;
+            display: block;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
-        .form-control {
-            width: 100%;
-            padding: 10px 15px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
+        .info-value {
+            color: #555;
             font-size: 16px;
-            transition: border-color 0.3s;
         }
 
-        .form-control:focus {
-            border-color: var(--secondary-color);
-            outline: none;
-            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        .info-item {
+            margin-bottom: 15px;
         }
 
-        .form-control.error {
-            border-color: var(--danger-color);
+        .info-label {
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 5px;
+            display: block;
         }
 
-        .form-row {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
+        .info-value {
+            color: #555;
         }
 
-        .alert {
-            padding: 15px;
-            margin-bottom: 20px;
-            border-radius: 5px;
-        }
-
-        .alert-success {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-
-        .alert-danger {
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-
+        /* Responsive Design */
         @media (max-width: 992px) {
-            .main {
-                margin-left: 200px;
+            .sidebar {
+                width: 70px;
             }
-
-            .info-grid, .form-row {
+            
+            .sidebar-header h2 {
+                display: none;
+            }
+            
+            .sidebar-nav a span {
+                display: none;
+            }
+            
+            .sidebar-nav a {
+                justify-content: center;
+            }
+            
+            .sidebar-nav a i {
+                margin: 0;
+            }
+            
+            .main-content {
+                margin-left: 70px;
+            }
+            
+            .info-grid {
                 grid-template-columns: 1fr;
             }
         }
 
         @media (max-width: 768px) {
-            .profile-section {
-                flex-direction: column;
+            .sidebar {
+                transform: translateX(-100%);
             }
-
-            .main {
+            
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            
+            .main-content {
                 margin-left: 0;
-                width: 100%;
             }
-
+            
+            .topbar {
+                padding: 15px 20px;
+            }
+            
+            .profile-content {
+                padding: 20px;
+            }
+            
             .profile-header {
                 flex-direction: column;
                 text-align: center;
             }
-
+            
             .profile-avatar {
                 margin-right: 0;
-                margin-bottom: 15px;
+                margin-bottom: 20px;
+            }
+        }
+
+        /* Mobile Menu Toggle */
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: var(--dark);
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .menu-toggle {
+                display: block;
             }
         }
     </style>
 </head>
+
 <body>
-    
-        <?php include 'recept_sidebar.php'; ?>
 
-        <div class="main">
-            <?php include 'receptionist_header.php'; ?>
+<?php include 'recept_sidebar.php'; ?>
 
-            <?php if (isset($success_message)): ?>
-                <div class="alert alert-success">
-                    <i class="fas fa-check-circle"></i>
-                    <?php echo $success_message; ?>
+
+<div class="main-content">
+    <!-- Header -->
+    <?php include 'receptionist_header.php'; ?>
+  
+<div class="profile-content">
+    <!-- Combined Information Section (Personal + Security) -->
+    <div id="personal-info">
+        <?php if (isset($success_message)): ?>
+            <div class="alert alert-success">
+                <i class="fas fa-check-circle"></i>
+                <?php echo $success_message; ?>
+            </div>
+        <?php endif; ?>
+        
+        <?php if (isset($error_message)): ?>
+            <div class="alert alert-danger">
+                <i class="fas fa-exclamation-circle"></i>
+                <?php echo $error_message; ?>
+            </div>
+        <?php endif; ?>
+        
+        <!-- Profile View -->
+        <div id="profileView">
+            <div class="info-grid">
+                <div class="info-item">
+                    <span class="info-label">First Name</span>
+                    <span class="info-value"><?php echo htmlspecialchars($receptionist['FIRST_NAME']); ?></span>
                 </div>
-            <?php endif; ?>
-
-            <?php if (isset($error_message)): ?>
-                <div class="alert alert-danger">
-                    <i class="fas fa-exclamation-circle"></i>
-                    <?php echo $error_message; ?>
+                
+                <div class="info-item">
+                    <span class="info-label">Last Name</span>
+                    <span class="info-value"><?php echo htmlspecialchars($receptionist['LAST_NAME']); ?></span>
                 </div>
-            <?php endif; ?>
-
-            <div class="profile-section">
-                <div class="profile-card">
-                    <div class="profile-header">
-                        <div class="profile-avatar"><?php echo strtoupper(substr($receptionist['FIRST_NAME'], 0, 1) . substr($receptionist['LAST_NAME'], 0, 1)); ?></div>
-                        <div class="profile-title">
-                            <h2><?php echo htmlspecialchars($receptionist['FIRST_NAME'] . ' ' . $receptionist['LAST_NAME']); ?></h2>
-                            <p>Receptionist</p>
-                        </div>
-                    </div>
-
-                    <div id="profileView">
-                        <div class="info-grid">
-                            <div class="info-item">
-                                <span class="info-label">First Name</span>
-                                <span class="info-value"><?php echo htmlspecialchars($receptionist['FIRST_NAME']); ?></span>
-                            </div>
-                            <div class="info-item">
-                                <span class="info-label">Last Name</span>
-                                <span class="info-value"><?php echo htmlspecialchars($receptionist['LAST_NAME']); ?></span>
-                            </div>
-                            <div class="info-item">
-                                <span class="info-label">Date of Birth</span>
-                                <span class="info-value"><?php echo date('F d, Y', strtotime($receptionist['DOB'])); ?></span>
-                            </div>
-                            <div class="info-item">
-                                <span class="info-label">Date of Joining</span>
-                                <span class="info-value"><?php echo date('F d, Y', strtotime($receptionist['DOJ'])); ?></span>
-                            </div>
-                            <div class="info-item">
-                                <span class="info-label">Gender</span>
-                                <span class="info-value"><?php echo htmlspecialchars($receptionist['GENDER']); ?></span>
-                            </div>
-                            <div class="info-item">
-                                <span class="info-label">Phone Number</span>
-                                <span class="info-value"><?php echo htmlspecialchars($receptionist['PHONE']); ?></span>
-                            </div>
-                            <div class="info-item">
-                                <span class="info-label">Email Address</span>
-                                <span class="info-value"><?php echo htmlspecialchars($receptionist['EMAIL']); ?></span>
-                            </div>
-                        </div>
-
-                        <div class="btn-group">
-                            <button class="btn btn-primary" id="editProfileBtn">
-                                <i class="fas fa-edit"></i> Edit Profile
-                            </button>
-                            <button class="btn btn-danger" id="changePasswordBtn">
-                                <i class="fas fa-key"></i> Change Password
-                            </button>
-                        </div>
-                    </div>
-
-                    <div id="editProfileForm" class="edit-profile-form">
-                        <form method="POST" action="receptionist_profile.php" id="editProfileFormElement">
-                            <input type="hidden" name="update_profile" value="1">
-
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="firstName">First Name</label>
-                                    <input type="text" class="form-control" id="firstName" name="firstName" value="<?php echo htmlspecialchars($receptionist['FIRST_NAME']); ?>" disabled>
-                                </div>
-                                <div class="form-group">
-                                    <label for="lastName">Last Name</label>
-                                    <input type="text" class="form-control" id="lastName" name="lastName" value="<?php echo htmlspecialchars($receptionist['LAST_NAME']); ?>" disabled>
-                                </div>
-                            </div>
-
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="dob">Date of Birth</label>
-                                    <input type="date" class="form-control" id="dob" name="dob" value="<?php echo htmlspecialchars($receptionist['DOB']); ?>" disabled>
-                                </div>
-                                <div class="form-group">
-                                    <label for="doj">Date of Joining</label>
-                                    <input type="date" class="form-control" id="doj" name="doj" value="<?php echo htmlspecialchars($receptionist['DOJ']); ?>" disabled>
-                                </div>
-                            </div>
-
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="gender">Gender</label>
-                                    <input type="text" class="form-control" id="gender" name="gender" value="<?php echo htmlspecialchars($receptionist['GENDER']); ?>" disabled>
-                                </div>
-                                <div class="form-group">
-                                    <label for="phone">Phone Number</label>
-                                    <input type="tel" class="form-control" id="phone" name="phone" value="<?php echo htmlspecialchars($receptionist['PHONE']); ?>" required maxlength="10">
-                                    <div class="error-message" id="phone_error"></div>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="email">Email Address</label>
-                                <input type="email" class="form-control" id="email" name="email" value="<?php echo htmlspecialchars($receptionist['EMAIL']); ?>" required>
-                                <div class="error-message" id="email_error"></div>
-                            </div>
-
-                            <div class="btn-group">
-                                <button type="submit" class="btn btn-success">
-                                    <i class="fas fa-save"></i> Save Changes
-                                </button>
-                                <button type="button" class="btn btn-danger" id="cancelEditBtn">
-                                    <i class="fas fa-times"></i> Cancel
-                                </button>
-                            </div>
-                        </form>
-                    </div>
+                
+                <div class="info-item">
+                    <span class="info-label">Date of Birth</span>
+                    <span class="info-value"><?php echo date('F d, Y', strtotime($receptionist['DOB'])); ?></span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Date of Joining</span>
+                    <span class="info-value"><?php echo date('F d, Y', strtotime($receptionist['DOJ'])); ?></span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Gender</span>
+                    <span class="info-value"><?php echo htmlspecialchars($receptionist['GENDER']); ?></span>
+                </div>
+                
+                <div class="info-item">
+                    <span class="info-label">Phone Number</span>
+                    <span class="info-value"><?php echo htmlspecialchars($receptionist['PHONE']); ?></span>
+                </div>
+                
+                <div class="info-item">
+                    <span class="info-label">Email Address</span>
+                    <span class="info-value"><?php echo htmlspecialchars($receptionist['EMAIL']); ?></span>
                 </div>
             </div>
-        </div>
-
-    <?php if (isset($password_success)): ?>
-        <div class="alert alert-success" style="margin: 0 20px 10px 20px;">
-            <i class="fas fa-check-circle"></i>
-            <?php echo $password_success; ?>
-        </div>
-    <?php endif; ?>
-
-    <?php if (isset($password_error)): ?>
-        <div class="alert alert-danger" style="margin: 0 20px 10px 20px;">
-            <i class="fas fa-exclamation-circle"></i>
-            <?php echo $password_error; ?>
-        </div>
-    <?php endif; ?>
-
-    <div id="passwordModal" class="modal-overlay">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Change Password</h3>
-                <button type="button" class="modal-close" id="closePasswordModal">&times;</button>
+            
+            <div class="btn-group">
+                <button class="btn btn-primary" id="editProfileBtn">
+                     Edit Profile
+                </button>
+                <button class="btn btn-danger" id="changePasswordBtn">
+                    Change Password
+                </button>
             </div>
-            <form method="POST" action="receptionist_profile.php" id="receptionistPasswordForm">
-                <input type="hidden" name="change_password" value="1">
-
-                <div class="form-group">
-                    <label for="current_password">Current Password</label>
-                    <div class="password-wrapper">
-                        <input type="password" class="form-control" id="current_password" name="current_password" required>
-                        <i class="fas fa-eye toggle-password" data-target="current_password"></i>
+        </div>
+        
+        <!-- Edit Profile Form -->
+        <div id="editProfileForm" class="edit-profile-form">
+            <form method="POST" action="receptionist_profile.php" id="editProfileFormElement">
+                <input type="hidden" name="update_profile" value="1">
+                
+                <div class="info-grid">
+                    <div class="form-group">
+                        <label for="firstName">First Name</label>
+                        <input type="text" class="form-control" id="firstName" name="firstName" value="<?php echo htmlspecialchars($receptionist['FIRST_NAME']); ?>" disabled>
                     </div>
-                    <div class="error-message" id="current_password_error"></div>
-                </div>
-
-                <div class="form-group">
-                    <label for="new_password">New Password</label>
-                    <div class="password-wrapper">
-                        <input type="password" class="form-control" id="new_password" name="new_password" required>
-                        <i class="fas fa-eye toggle-password" data-target="new_password"></i>
+                    <div class="form-group">
+                        <label for="lastName">Last Name</label>
+                        <input type="text" class="form-control" id="lastName" name="lastName" value="<?php echo htmlspecialchars($receptionist['LAST_NAME']); ?>" disabled>
                     </div>
-                    <div class="error-message" id="new_password_error"></div>
                 </div>
-
-                <div class="form-group">
-                    <label for="confirm_password">Confirm New Password</label>
-                    <div class="password-wrapper">
-                        <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
-                        <i class="fas fa-eye toggle-password" data-target="confirm_password"></i>
+                
+                <div class="info-grid">
+                    <div class="form-group">
+                        <label for="dob">Date of Birth</label>
+                        <input type="date" class="form-control" id="dob" name="dob" value="<?php echo htmlspecialchars($receptionist['DOB']); ?>" disabled>
                     </div>
-                    <div class="error-message" id="confirm_password_error"></div>
+                    <div class="form-group">
+                        <label for="dob">Date of Joining</label>
+                        <input type="date" class="form-control" id="dob" name="dob" value="<?php echo htmlspecialchars($receptionist['DOJ']); ?>" disabled>
+                    </div>
+                    
                 </div>
+                
+                <div class="info-grid">
+                    <div class="form-group">
+                        <label for="gender">Gender</label>
+                        <input type="text" class="form-control" id="gender" name="gender" value="<?php echo htmlspecialchars($receptionist['GENDER']); ?>" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" class="form-control" id="phone" name="phone" value="<?php echo htmlspecialchars($receptionist['PHONE']); ?>" required maxlength="10">
+                        <div class="error-message" id="phone_error"></div>
+                    </div>
+                </div>
+                <div class="info-grid">
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" class="form-control" id="email" name="email" value="<?php echo htmlspecialchars($receptionist['EMAIL']); ?>" required>
+                        <div class="error-message" id="email_error"></div>
+                    </div>
 
+                </div>
+                
+                
                 <div class="btn-group">
                     <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-key"></i> Change Password
+                     Save Changes
+                    </button>
+                    <button type="button" class="btn btn-danger" id="cancelEditBtn">
+                     Cancel
                     </button>
                 </div>
             </form>
         </div>
+
+        <!-- Security: Change Password (popup modal) -->
+        <?php if (isset($password_success)): ?>
+            <div class="alert alert-success">
+                <i class="fas fa-check-circle"></i>
+                <?php echo $password_success; ?>
+            </div>
+        <?php endif; ?>
+        
+        <?php if (isset($password_error)): ?>
+            <div class="alert alert-danger">
+                <i class="fas fa-exclamation-circle"></i>
+                <?php echo $password_error; ?>
+            </div>
+        <?php endif; ?>
+        
+        <div id="passwordModal" class="modal-overlay">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Change Password</h3>
+                    <button type="button" class="modal-close" id="closePasswordModal">&times;</button>
+                </div>
+                <form method="POST" action="receptionist_profile.php" id="receptionistPasswordForm">
+                    <input type="hidden" name="change_password" value="1">
+                    
+                    <div class="form-group">
+                        <label for="current_password">Current Password</label>
+                        <div class="password-wrapper">
+                            <input type="password" class="form-control" id="current_password" name="current_password" required>
+                            <i class="fas fa-eye toggle-password" data-target="current_password"></i>
+                        </div>
+                        <div class="error-message" id="current_password_error"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="new_password">New Password</label>
+                        <div class="password-wrapper">
+                            <input type="password" class="form-control" id="new_password" name="new_password" required>
+                            <i class="fas fa-eye toggle-password" data-target="new_password"></i>
+                        </div>
+                        <div class="error-message" id="new_password_error"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="confirm_password">Confirm New Password</label>
+                        <div class="password-wrapper">
+                            <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
+                            <i class="fas fa-eye toggle-password" data-target="confirm_password"></i>
+                        </div>
+                        <div class="error-message" id="confirm_password_error"></div>
+                    </div>
+                    
+                    <div class="btn-group">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-key"></i> Change Password
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
+</div>
+</div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const editProfileBtn = document.getElementById('editProfileBtn');
-            const cancelEditBtn = document.getElementById('cancelEditBtn');
-            const profileView = document.getElementById('profileView');
-            const editProfileForm = document.getElementById('editProfileForm');
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Edit profile functionality
+    const editProfileBtn = document.getElementById('editProfileBtn');
+    const cancelEditBtn = document.getElementById('cancelEditBtn');
+    const profileView = document.getElementById('profileView');
+    const editProfileForm = document.getElementById('editProfileForm');
 
-            const changePasswordBtn = document.getElementById('changePasswordBtn');
-            const passwordModal = document.getElementById('passwordModal');
-            const closePasswordModal = document.getElementById('closePasswordModal');
-            const receptionistPasswordForm = document.getElementById('receptionistPasswordForm');
+    // Change password modal functionality
+    const changePasswordBtn = document.getElementById('changePasswordBtn');
+    const passwordModal = document.getElementById('passwordModal');
+    const closePasswordModal = document.getElementById('closePasswordModal');
+    const receptionistPasswordForm = document.getElementById('receptionistPasswordForm');
+    
+    if (editProfileBtn) {
+        editProfileBtn.addEventListener('click', () => {
+            profileView.style.display = 'none';
+            editProfileForm.style.display = 'block';
+            // Clear any previous validation errors when opening edit form
+            hideError('phone');
+            hideError('email');
+        });
+    }
+    
+    if (cancelEditBtn) {
+        cancelEditBtn.addEventListener('click', () => {
+            profileView.style.display = 'block';
+            editProfileForm.style.display = 'none';
+            // Clear validation errors when canceling
+            hideError('phone');
+            hideError('email');
+        });
+    }
 
-            if (editProfileBtn && profileView && editProfileForm) {
-                editProfileBtn.addEventListener('click', () => {
-                    profileView.style.display = 'none';
-                    editProfileForm.style.display = 'block';
-                });
-            }
+    if (changePasswordBtn && passwordModal) {
+        changePasswordBtn.addEventListener('click', () => {
+            passwordModal.classList.add('active');
+        });
+    }
 
-            if (cancelEditBtn && profileView && editProfileForm) {
-                cancelEditBtn.addEventListener('click', () => {
-                    profileView.style.display = 'block';
-                    editProfileForm.style.display = 'none';
-                });
-            }
+    if (closePasswordModal && passwordModal) {
+        closePasswordModal.addEventListener('click', () => {
+            passwordModal.classList.remove('active');
+        });
+    }
 
-            function hideError(id) {
-                const el = document.getElementById(id + '_error');
-                if (el) {
-                    el.style.display = 'none';
-                    el.textContent = '';
-                }
-            }
-
-            function showError(id, msg) {
-                const el = document.getElementById(id + '_error');
-                if (el) {
-                    el.textContent = msg;
-                    el.style.display = 'block';
-                }
-            }
-
-            const phoneInput = document.getElementById('phone');
-            const emailInput = document.getElementById('email');
-            const editForm = document.getElementById('editProfileFormElement');
-
-            if (phoneInput) {
-                phoneInput.addEventListener('input', function () {
-                    this.value = this.value.replace(/[^0-9]/g, '');
-                    if (/^\d{10}$/.test(this.value)) {
-                        hideError('phone');
-                    }
-                });
-            }
-
-            if (emailInput) {
-                emailInput.addEventListener('input', function () {
-                    if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.value.trim())) {
-                        hideError('email');
-                    }
-                });
-            }
-
-            if (editForm) {
-                editForm.addEventListener('submit', function (e) {
-                    let valid = true;
-
-                    if (phoneInput && !/^\d{10}$/.test(phoneInput.value.trim())) {
-                        showError('phone', 'Phone number must be exactly 10 digits.');
-                        valid = false;
-                    }
-
-                    if (emailInput && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailInput.value.trim())) {
-                        showError('email', 'e.g. abc@gmail.com');
-                        valid = false;
-                    }
-
-                    if (!valid) {
-                        e.preventDefault();
-                    }
-                });
-            }
-
-            if (changePasswordBtn && passwordModal) {
-                changePasswordBtn.addEventListener('click', () => {
-                    passwordModal.classList.add('active');
-                });
-            }
-
-            if (closePasswordModal && passwordModal) {
-                closePasswordModal.addEventListener('click', () => {
-                    passwordModal.classList.remove('active');
-                });
-            }
-
-            if (passwordModal) {
-                passwordModal.addEventListener('click', (e) => {
-                    if (e.target === passwordModal) {
-                        passwordModal.classList.remove('active');
-                    }
-                });
-            }
-
-            const toggleIcons = document.querySelectorAll('.toggle-password');
-            toggleIcons.forEach(icon => {
-                icon.addEventListener('click', () => {
-                    const targetId = icon.getAttribute('data-target');
-                    const input = document.getElementById(targetId);
-                    if (!input) return;
-                    const isPassword = input.getAttribute('type') === 'password';
-                    input.setAttribute('type', isPassword ? 'text' : 'password');
-                    icon.classList.toggle('fa-eye');
-                    icon.classList.toggle('fa-eye-slash');
-                });
-            });
-
-            if (receptionistPasswordForm) {
-                receptionistPasswordForm.addEventListener('submit', function (e) {
-                    let validPwd = true;
-
-                    const currentPassword = document.getElementById('current_password');
-                    const newPassword = document.getElementById('new_password');
-                    const confirmPassword = document.getElementById('confirm_password');
-
-                    hideError('current_password');
-                    hideError('new_password');
-                    hideError('confirm_password');
-
-                    if (!currentPassword.value.trim()) {
-                        showError('current_password', 'Current password is required.');
-                        validPwd = false;
-                    }
-
-                    const pwd = newPassword.value;
-                    if (pwd.length < 8) {
-                        showError('new_password', 'Password must be at least 8 characters long.');
-                        validPwd = false;
-                    } else if (!/[A-Z]/.test(pwd)) {
-                        showError('new_password', 'Password must contain at least one uppercase letter.');
-                        validPwd = false;
-                    } else if (!/[0-9]/.test(pwd)) {
-                        showError('new_password', 'Password must contain at least one digit.');
-                        validPwd = false;
-                    } else if (!/[\W_]/.test(pwd)) {
-                        showError('new_password', 'Password must contain at least one special character.');
-                        validPwd = false;
-                    }
-
-                    if (confirmPassword.value !== pwd) {
-                        showError('confirm_password', 'Confirm password must match new password.');
-                        validPwd = false;
-                    }
-
-                    if (!validPwd) {
-                        e.preventDefault();
-                    }
-                });
+    // Close modal when clicking outside the content
+    if (passwordModal) {
+        passwordModal.addEventListener('click', (e) => {
+            if (e.target === passwordModal) {
+                passwordModal.classList.remove('active');
             }
         });
-    </script>
+    }
+
+    // Show/hide password toggles in modal
+    const toggleIcons = document.querySelectorAll('.toggle-password');
+    toggleIcons.forEach(icon => {
+        icon.addEventListener('click', () => {
+            const targetId = icon.getAttribute('data-target');
+            const input = document.getElementById(targetId);
+            if (!input) return;
+            const isPassword = input.getAttribute('type') === 'password';
+            input.setAttribute('type', isPassword ? 'text' : 'password');
+            icon.classList.toggle('fa-eye');
+            icon.classList.toggle('fa-eye-slash');
+        });
+    });
+
+    // Validation helpers
+    function hideError(id) {
+        const el = document.getElementById(id + '_error');
+        const input = document.getElementById(id);
+        if (el) {
+            el.style.display = 'none';
+            el.textContent = '';
+        }
+        if (input) {
+            input.classList.remove('error');
+            input.classList.add('valid');
+        }
+    }
+
+    function showError(id, message) {
+        const el = document.getElementById(id + '_error');
+        const input = document.getElementById(id);
+        if (el) {
+            el.textContent = message;
+            el.style.display = 'block';
+        }
+        if (input) {
+            input.classList.remove('valid');
+            input.classList.add('error');
+        }
+    }
+
+    // Edit Profile Form Validation
+    const editProfileFormElement = document.getElementById('editProfileFormElement');
+    const phoneInput = document.getElementById('phone');
+    const emailInput = document.getElementById('email');
+
+    // Phone validation (10 digits) - real-time
+    if (phoneInput) {
+        phoneInput.addEventListener('input', function () {
+            this.value = this.value.replace(/[^0-9]/g, '');
+            const phoneValue = this.value.trim();
+            
+            if (phoneValue === '') {
+                showError('phone', 'Phone number is required.');
+            } else if (!/^\d{10}$/.test(phoneValue)) {
+                showError('phone', 'Phone number must be exactly 10 digits.');
+            } else {
+                hideError('phone');
+            }
+        });
+
+        phoneInput.addEventListener('blur', function () {
+            const phoneValue = this.value.trim();
+            if (phoneValue === '') {
+                showError('phone', 'Phone number is required.');
+            } else if (!/^\d{10}$/.test(phoneValue)) {
+                showError('phone', 'Phone number must be exactly 10 digits.');
+            } else {
+                hideError('phone');
+            }
+        });
+    }
+
+    // Email validation - real-time
+    if (emailInput) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        
+        emailInput.addEventListener('input', function () {
+            const emailValue = this.value.trim();
+            
+            if (emailValue === '') {
+                showError('email', 'Email address is required.');
+            } else if (!emailRegex.test(emailValue)) {
+                showError('email', 'Please enter a valid email address.');
+            } else {
+                hideError('email');
+            }
+        });
+
+        emailInput.addEventListener('blur', function () {
+            const emailValue = this.value.trim();
+            if (emailValue === '') {
+                showError('email', 'Email address is required.');
+            } else if (!emailRegex.test(emailValue)) {
+                showError('email', 'Please enter a valid email address.');
+            } else {
+                hideError('email');
+            }
+        });
+    }
+
+    // Form submit validation
+    if (editProfileFormElement) {
+        editProfileFormElement.addEventListener('submit', function (e) {
+            let valid = true;
+
+            // Clear previous errors
+            hideError('phone');
+            hideError('email');
+
+            // Validate phone
+            const phoneValue = phoneInput ? phoneInput.value.trim() : '';
+            if (phoneValue === '') {
+                showError('phone', 'Phone number is required.');
+                valid = false;
+            } else if (!/^\d{10}$/.test(phoneValue)) {
+                showError('phone', 'Phone number must be exactly 10 digits.');
+                valid = false;
+            }
+
+            // Validate email
+            const emailValue = emailInput ? emailInput.value.trim() : '';
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (emailValue === '') {
+                showError('email', 'Email address is required.');
+                valid = false;
+            } else if (!emailRegex.test(emailValue)) {
+                showError('email', 'Please enter a valid email address.');
+                valid = false;
+            }
+
+            if (!valid) {
+                e.preventDefault();
+                // Scroll to first error
+                const firstError = document.querySelector('.error-message[style*="block"]');
+                if (firstError) {
+                    firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }
+        });
+    }
+
+    // Password validation on submit
+    if (receptionistPasswordForm) {
+        receptionistPasswordForm.addEventListener('submit', function (e) {
+            let valid = true;
+
+            const currentPassword = document.getElementById('current_password');
+            const newPassword = document.getElementById('new_password');
+            const confirmPassword = document.getElementById('confirm_password');
+
+            // Clear old errors
+            hideError('current_password');
+            hideError('new_password');
+            hideError('confirm_password');
+
+            if (!currentPassword.value.trim()) {
+                showError('current_password', 'Current password is required.');
+                valid = false;
+            }
+
+            const pwd = newPassword.value;
+            if (pwd.length < 8) {
+                showError('new_password', 'Password must be at least 8 characters long.');
+                valid = false;
+            } else if (!/[A-Z]/.test(pwd)) {
+                showError('new_password', 'Password must contain at least one uppercase letter.');
+                valid = false;
+            } else if (!/[0-9]/.test(pwd)) {
+                showError('new_password', 'Password must contain at least one digit.');
+                valid = false;
+            } else if (!/[\W_]/.test(pwd)) {
+                showError('new_password', 'Password must contain at least one special character.');
+                valid = false;
+            }
+
+            if (confirmPassword.value !== pwd) {
+                showError('confirm_password', 'Confirm password must match new password.');
+                valid = false;
+            }
+
+            if (!valid) {
+                e.preventDefault();
+            }
+        });
+    }
+});
+</script>
+
 </body>
 </html>

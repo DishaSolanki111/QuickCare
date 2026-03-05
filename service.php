@@ -352,12 +352,9 @@ footer::before {
 
         <ul class="service-features">
             <li>Easy online booking system</li>
-            <li>Real-time availability check</li>
-            <li>Instant confirmation</li>
-            <li>Appointment history tracking</li>
             <li>Doctor & specialization selection</li>
             <li>Date and time slot availability</li>
-            <li>Instant confirmation</li>
+            <li>Appointment history tracking</li>
         </ul>
 
         <div class="workflow">
@@ -375,6 +372,10 @@ footer::before {
             </div>
             <div class="workflow-step">
                 <div class="workflow-circle">4</div>
+                <p>Payment</p>
+            </div>
+            <div class="workflow-step">
+                <div class="workflow-circle">5</div>
                 <p>Confirm</p>
             </div>
         </div>
@@ -393,7 +394,7 @@ footer::before {
         <ul class="service-features">
             <li>Digital prescriptions</li>
             <li>Complete medical history</li>                
-            <li>Easy sharing with doctors</li>
+            <li>Easy sharing with doctors and receptionistx</li>
         </ul>
 
         <div class="workflow">
@@ -407,7 +408,7 @@ footer::before {
             </div>
             <div class="workflow-step">
                 <div class="workflow-circle">3</div>
-                <p>Stored Securely</p>
+                <p>Stored prescription</p>
             </div>
             <div class="workflow-step">
                 <div class="workflow-circle">4</div>
@@ -424,20 +425,18 @@ footer::before {
     </div>
     <div class="service-content">
         <h2>Medicine & Appointment Reminders</h2>
-        <p>Set reminders for your appointments and medication schedules.</p>
+        <p>Set reminders for your appointments and medicine.</p>
 
         <ul class="service-features">
             <li>Appointment reminders</li>
-            <li>Medicine schedule alerts</li>
-            <li>Smart reminders</li>
-            <li>SMS alerts</li>           
+            <li>Medicine reminder</li>
             <li>Customizable reminders</li>
         </ul>
 
         <div class="workflow">
             <div class="workflow-step">
                 <div class="workflow-circle">1</div>
-                <p>Appointment Scheduled</p>
+                <p>Appointment reminder</p>
             </div>
             <div class="workflow-step">
                 <div class="workflow-circle">2</div>
@@ -467,7 +466,6 @@ footer::before {
 
         <ul class="service-features">
             <li>Rate your experience</li>
-            <li>Phone support</li>
             <li>Feedback tracking</li>
         </ul>
 
@@ -482,7 +480,7 @@ footer::before {
             </div>
             <div class="workflow-step">
                 <div class="workflow-circle">3</div>
-                <p>Give Feedback</p>
+                <p>Give Comment</p>
             </div>
             <div class="workflow-step">
                 <div class="workflow-circle">4</div>
@@ -494,7 +492,7 @@ footer::before {
 
 </div>
 
-    <!-- Footer (same as appointment.php) -->
+    <!-- Footer -->
     <footer>
         <div class="footer-content">
             <div class="footer-column">

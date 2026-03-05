@@ -589,6 +589,12 @@ $medicine_reminder_query = mysqli_query($conn, "
                                 <span class="info-label">Address</span>
                                 <span class="info-value"><?php echo htmlspecialchars($patient['ADDRESS']); ?></span>
                             </div>
+                            <?php if (!empty($patient['MEDICAL_HISTORY'])): ?>
+                            <div class="info-item" style="grid-column: 1 / -1;">
+                                <span class="info-label">Medical History</span>
+                                <span class="info-value"><?php echo nl2br(htmlspecialchars($patient['MEDICAL_HISTORY'])); ?></span>
+                            </div>
+                            <?php endif; ?>
                         </div>
                         
                         <!-- Medical History File Display -->
@@ -698,6 +704,10 @@ $medicine_reminder_query = mysqli_query($conn, "
                                 <textarea class="form-control" id="address" name="address" rows="3"><?php echo htmlspecialchars($patient['ADDRESS']); ?></textarea>
                             </div>
                             
+                            <div class="form-group">
+                                <label for="address">Address</label>
+                                <textarea class="form-control" id="address" name="address" rows="3"><?php echo htmlspecialchars($patient['ADDRESS']); ?></textarea>
+                            </div>
                             <div class="btn-group">
                                 <button type="submit" class="btn btn-success">
                                     <i class="fas fa-save"></i> Save Changes

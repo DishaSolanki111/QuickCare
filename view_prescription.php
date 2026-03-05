@@ -1,4 +1,3 @@
-<!-- hello moxa -->
 <?php
     session_start();
     include 'config.php';
@@ -82,15 +81,6 @@
     
     include 'recept_sidebar.php';
     $receptionist_id = $_SESSION['RECEPTIONIST_ID'];
-
-    // Fetch receptionist data for header (used by receptionist_header.php)
-    $receptionist = null;
-    if (!empty($receptionist_id)) {
-        $receptionist_res = mysqli_query($conn, "SELECT FIRST_NAME, LAST_NAME FROM receptionist_tbl WHERE RECEPTIONIST_ID = " . intval($receptionist_id) . " LIMIT 1");
-        if ($receptionist_res && mysqli_num_rows($receptionist_res) > 0) {
-            $receptionist = mysqli_fetch_assoc($receptionist_res);
-        }
-    }
 
     // ================= SCHEDULED APPOINTMENTS (for Add vitals) =================
     $scheduled_appointments = [];
@@ -194,11 +184,10 @@
         .patient-group { padding: 15px 20px; border-bottom: 1px solid #f0f0f0; background: #fafafa; }
         .patient-name { font-weight: bold; color: var(--mid); margin-bottom: 10px; display: block; }
         
-        .prescription-detail-card { background: #fff; border: 1px solid #eef2f7; border-radius: 10px; padding: 15px; margin-bottom: 10px; border-left: 4px solid var(--soft); display:flex; align-items:flex-start; gap:12px; justify-content:space-between; }
+        .prescription-detail-card { background: #fff; border: 1px solid #eef2f7; border-radius: 10px; padding: 15px; margin-bottom: 10px; border-left: 4px solid var(--soft); }
         .detail-row { font-size: 0.9rem; margin-bottom: 6px; color: #333; line-height: 1.4; }
         .detail-row strong { color: var(--mid); min-width: 100px; display: inline-block; }
-        .card-actions { display: flex; flex-direction: row; align-items: flex-start; justify-content:flex-end; gap: 8px; flex-shrink:0; min-width:110px; order:2; }
-        .prescription-info { flex:1; order:1; }
+        .card-actions { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; margin-bottom: 8px; }
         .btn-pdf { background: var(--soft); color: #fff; border: none; padding: 6px 12px; border-radius: 4px; font-size: 0.8rem; cursor: pointer; }
         .btn-vitals-inline { background: var(--mid); color: #fff; border: none; padding: 6px 12px; border-radius: 4px; font-size: 0.8rem; cursor: pointer; white-space: nowrap; }
         .btn-vitals-inline:hover { background: var(--dark); }
@@ -221,11 +210,6 @@
         .modal-box .btn-save { background: var(--soft); color: #fff; }
         .modal-box .btn-cancel { background: #e0e0e0; color: #333; }
         .vitals-badge { font-size: 0.8rem; color: var(--mid); margin-top: 4px; }
-
-        @media (max-width: 768px) {
-            .prescription-detail-card { flex-direction: column; align-items: stretch; }
-            .card-actions { align-items:flex-start; justify-content:flex-start; flex-wrap:wrap; }
-        }
     </style>
 </head>
 <body>
@@ -308,19 +292,17 @@
                                         </form>
                                         <button type="button" class="btn-vitals-inline" onclick="openVitalsModal(<?= (int)$pres['APPOINTMENT_ID'] ?>, '<?= date('M d, Y', strtotime($pres['APPOINTMENT_DATE'])) ?>', '<?= htmlspecialchars(addslashes($pat['name'])) ?>', <?= htmlspecialchars(json_encode(['BLOOD_PRESSURE' => $pres['BLOOD_PRESSURE'] ?? '', 'WEIGHT_KG' => $pres['WEIGHT_KG'] ?? null, 'HEIGHT_CM' => $pres['HEIGHT_CM'] ?? null])) ?>)">Add vitals</button>
                                     </div>
-                                    <div class="prescription-info">
-                                        <div class="detail-row"><strong>Appt. Date:</strong> <?= date('M d, Y', strtotime($pres['APPOINTMENT_DATE'])) ?></div>
-                                        <?php
-                                        $has_vitals = !empty($pres['BLOOD_PRESSURE']) || ($pres['WEIGHT_KG'] !== null && $pres['WEIGHT_KG'] !== '') || ($pres['HEIGHT_CM'] !== null && $pres['HEIGHT_CM'] !== '');
-                                        $is_past_appointment = strtotime($pres['APPOINTMENT_DATE']) < strtotime(date('Y-m-d'));
-                                        if ($has_vitals && $is_past_appointment):
-                                        ?>
-                                        <div class="detail-row"><strong>Vitals:</strong> BP: <?= htmlspecialchars($pres['BLOOD_PRESSURE'] ?? '–') ?> | Weight: <?= $pres['WEIGHT_KG'] !== null && $pres['WEIGHT_KG'] !== '' ? $pres['WEIGHT_KG'] : '–' ?> kg | Height: <?= $pres['HEIGHT_CM'] !== null && $pres['HEIGHT_CM'] !== '' ? $pres['HEIGHT_CM'] : '–' ?> cm</div>
-                                        <?php endif; ?>
-                                        <div class="detail-row"><strong>Symptoms:</strong> <?= htmlspecialchars($pres['SYMPTOMS']) ?></div>
-                                        <div class="detail-row"><strong>Diagnosis:</strong> <?= htmlspecialchars($pres['DIAGNOSIS']) ?></div>
-                                        <div class="detail-row"><strong>Medicines:</strong> <?= htmlspecialchars($pres['MEDICINES_LIST'] ?: 'None') ?></div>
-                                    </div>
+                                    <div class="detail-row"><strong>Appt. Date:</strong> <?= date('M d, Y', strtotime($pres['APPOINTMENT_DATE'])) ?></div>
+                                    <?php
+                                    $has_vitals = !empty($pres['BLOOD_PRESSURE']) || ($pres['WEIGHT_KG'] !== null && $pres['WEIGHT_KG'] !== '') || ($pres['HEIGHT_CM'] !== null && $pres['HEIGHT_CM'] !== '');
+                                    $is_past_appointment = strtotime($pres['APPOINTMENT_DATE']) < strtotime(date('Y-m-d'));
+                                    if ($has_vitals && $is_past_appointment):
+                                    ?>
+                                    <div class="detail-row"><strong>Vitals:</strong> BP: <?= htmlspecialchars($pres['BLOOD_PRESSURE'] ?? '–') ?> | Weight: <?= $pres['WEIGHT_KG'] !== null && $pres['WEIGHT_KG'] !== '' ? $pres['WEIGHT_KG'] : '–' ?> kg | Height: <?= $pres['HEIGHT_CM'] !== null && $pres['HEIGHT_CM'] !== '' ? $pres['HEIGHT_CM'] : '–' ?> cm</div>
+                                    <?php endif; ?>
+                                    <div class="detail-row"><strong>Symptoms:</strong> <?= htmlspecialchars($pres['SYMPTOMS']) ?></div>
+                                    <div class="detail-row"><strong>Diagnosis:</strong> <?= htmlspecialchars($pres['DIAGNOSIS']) ?></div>
+                                    <div class="detail-row"><strong>Medicines:</strong> <?= htmlspecialchars($pres['MEDICINES_LIST'] ?: 'None') ?></div>
                                 </div>
                             <?php endforeach; ?>
                         </div>
