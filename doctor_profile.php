@@ -821,7 +821,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
                                     <label for="current_password">Current Password</label>
                                     <div class="password-wrapper">
                                         <input type="password" class="form-control" id="current_password" name="current_password" required>
-                                        <i class="fas fa-eye toggle-password" data-target="current_password"></i>
+                                        <i class="fas fa-eye-slash toggle-password" data-target="current_password"></i>
                                     </div>
                                     <div class="error-message" id="current_password_error"></div>
                                 </div>
@@ -830,7 +830,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
                                     <label for="new_password">New Password</label>
                                     <div class="password-wrapper">
                                         <input type="password" class="form-control" id="new_password" name="new_password" required>
-                                        <i class="fas fa-eye toggle-password" data-target="new_password"></i>
+                                        <i class="fas fa-eye-slash toggle-password" data-target="new_password"></i>
                                     </div>
                                     <div class="error-message" id="new_password_error"></div>
                                 </div>
@@ -839,7 +839,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
                                     <label for="confirm_password">Confirm New Password</label>
                                     <div class="password-wrapper">
                                         <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
-                                        <i class="fas fa-eye toggle-password" data-target="confirm_password"></i>
+                                        <i class="fas fa-eye-slash toggle-password" data-target="confirm_password"></i>
                                     </div>
                                     <div class="error-message" id="confirm_password_error"></div>
                                 </div>
@@ -906,17 +906,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
                 });
             }
 
-            // Show/hide password toggles in modal
+            // Show/hide password toggles in modal: eye = visible, eye-slash = hidden
             const toggleIcons = document.querySelectorAll('.toggle-password');
             toggleIcons.forEach(icon => {
                 icon.addEventListener('click', () => {
                     const targetId = icon.getAttribute('data-target');
                     const input = document.getElementById(targetId);
                     if (!input) return;
-                    const isPassword = input.getAttribute('type') === 'password';
-                    input.setAttribute('type', isPassword ? 'text' : 'password');
-                    icon.classList.toggle('fa-eye');
-                    icon.classList.toggle('fa-eye-slash');
+                    const isHidden = input.getAttribute('type') === 'password';
+                    if (isHidden) {
+                        input.setAttribute('type', 'text');
+                        icon.classList.remove('fa-eye-slash');
+                        icon.classList.add('fa-eye');
+                    } else {
+                        input.setAttribute('type', 'password');
+                        icon.classList.remove('fa-eye');
+                        icon.classList.add('fa-eye-slash');
+                    }
                 });
             });
 

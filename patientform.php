@@ -386,7 +386,8 @@ include 'header.php';?>
             $field_errors = [
                 'first_name' => '', 'last_name' => '', 'dob' => '', 'blood_group' => '',
                 'phone' => '', 'email' => '', 'address' => '',
-                'username' => '', 'password' => '', 'medical_history' => ''
+                'username' => '', 'password' => '', 'medical_history' => '',
+                'security_question' => '', 'security_answer' => ''
             ];
             
             // Store submitted values to repopulate form if needed
@@ -394,13 +395,14 @@ include 'header.php';?>
                 'first_name' => '',
                 'last_name' => '',
                 'dob' => '',
-               'blood_group' => '',
+                'blood_group' => '',
                 'gender' => '',
                 'phone' => '',
                 'email' => '',
-               'address' => '',
+                'address' => '',
                 'username' => '',
-               
+                'security_question' => '',
+                'security_answer' => ''
             ];
             
             if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -409,13 +411,14 @@ include 'header.php';?>
                     'first_name' => $_POST['first_name'] ?? '',
                     'last_name' => $_POST['last_name'] ?? '',
                     'dob' => $_POST['dob'] ?? '',
-               'blood_group' => $_POST['blood_group'] ?? '',
+                    'blood_group' => $_POST['blood_group'] ?? '',
                     'gender' => $_POST['gender'] ?? '',
                     'phone' => $_POST['phone'] ?? '',
                     'email' => $_POST['email'] ?? '',
-                  'address' => $_POST['address'] ?? '',
+                    'address' => $_POST['address'] ?? '',
                     'username' => $_POST['username'] ?? '',
-                    
+                    'security_question' => $_POST['security_question'] ?? '',
+                    'security_answer' => $_POST['security_answer'] ?? ''
                 ];
 
                 // ---------------- MEDICAL HISTORY FILE UPLOAD (OPTIONAL) ----------------
@@ -492,13 +495,13 @@ include 'header.php';?>
                 $dob        = $_POST['dob'];
                 $blood_group = $_POST['blood_group'] ?? '';
                 $address    = mysqli_real_escape_string($conn, $_POST['address']);
-                $gender     = $_POST['gender'] ?? '';
-                $phone      = $_POST['phone'];
-                $email      = $_POST['email'];
-               
-                $username   = $_POST['username'];
-                $password   = $_POST['password'];
-              
+                $gender            = $_POST['gender'] ?? '';
+                $phone             = $_POST['phone'];
+                $email             = $_POST['email'];
+                $username          = $_POST['username'];
+                $password          = $_POST['password'];
+                $security_question = $_POST['security_question'] ?? '';
+                $security_answer   = trim($_POST['security_answer'] ?? '');
 
                 // ---------------- FIRST NAME / LAST NAME - MUST BE CAPITAL ----------------
                 if (!preg_match('/^[A-Z\s]+$/', $first_name)) {
@@ -549,6 +552,14 @@ include 'header.php';?>
                     $field_errors['email'] = "e.g. abc@gmail.com";
                 }
 
+                // ---------------- SECURITY QUESTION / ANSWER VALIDATION ----------------
+                if (empty($security_question)) {
+                    $field_errors['security_question'] = "Please select a security question.";
+                }
+                if ($security_answer === '') {
+                    $field_errors['security_answer'] = "Please provide an answer to the security question.";
+                }
+
                 // ---------------- USERNAME EXISTS CHECK (patient_tbl) ----------------
                 if (empty($field_errors['username'])) {
                     $check_username = mysqli_real_escape_string($conn, $username);
@@ -565,13 +576,15 @@ include 'header.php';?>
 
                    $blood_val = ($blood_group === '' || $blood_group === null) ? 'NULL' : "'$blood_group'";
                    $medical_history_val = ($medical_history_file_path === '') ? 'NULL' : "'" . mysqli_real_escape_string($conn, $medical_history_file_path) . "'";
+                   $sec_q = mysqli_real_escape_string($conn, $security_question);
+                   $sec_a = mysqli_real_escape_string($conn, $security_answer);
                    
                    $sql = "
                 INSERT INTO patient_tbl
-                (FIRST_NAME, LAST_NAME, USERNAME, PSWD, DOB, GENDER, BLOOD_GROUP, PHONE, EMAIL, ADDRESS, MEDICAL_HISTORY_FILE)
+                (FIRST_NAME, LAST_NAME, USERNAME, PSWD, DOB, GENDER, BLOOD_GROUP, PHONE, EMAIL, ADDRESS, MEDICAL_HISTORY_FILE, SECURITY_QUESTION, SECURITY_ANSWER)
                 VALUES
                 ('$first_name','$last_name','$username','$hashed_password','$dob','$gender',
-                 $blood_val,'$phone','$email','$address',$medical_history_val)
+                 $blood_val,'$phone','$email','$address',$medical_history_val,'$sec_q','$sec_a')
             ";
                     if ($conn->query($sql) === TRUE) {
                         $conn->close();
@@ -704,9 +717,27 @@ include 'header.php';?>
                             <label for="password">Password <span class="required">*</span></label>
                             <div class="password-wrapper">
                                 <input type="password" id="password" name="password" placeholder="John@123" required>
-                                <i class="fas fa-eye toggle-password" id="togglePassword"></i>
+                                <i class="fas fa-eye-slash toggle-password" id="togglePassword"></i>
                             </div>
                             <div class="error-message" id="password_error"<?php if (!empty($field_errors['password'])) echo ' style="display:block"'; ?>><?php echo htmlspecialchars($field_errors['password'] ?? ''); ?></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="security_question">Security Question <span class="required">*</span></label>
+                            <select id="security_question" name="security_question" required>
+                                <option value="">Select a security question</option>
+                                <option value="What was the name of your first school?" <?php echo ($form_data['security_question'] == 'What was the name of your first school?') ? 'selected' : ''; ?>>What was the name of your first school?</option>
+                                <option value="What is your favorite food from childhood?" <?php echo ($form_data['security_question'] == 'What is your favorite food from childhood?') ? 'selected' : ''; ?>>What is your favorite food from childhood?</option>
+                                <option value="Where did you go for your first school trip?" <?php echo ($form_data['security_question'] == 'Where did you go for your first school trip?') ? 'selected' : ''; ?>>Where did you go for your first school trip?</option>
+                                <option value="What was the nickname your family calls you?" <?php echo ($form_data['security_question'] == 'What was the nickname your family calls you?') ? 'selected' : ''; ?>>What was the nickname your family calls you?</option>
+                            </select>
+                            <div class="error-message" id="security_question_error"<?php if (!empty($field_errors['security_question'])) echo ' style="display:block"'; ?>><?php echo htmlspecialchars($field_errors['security_question'] ?? ''); ?></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="security_answer">Security Answer <span class="required">*</span></label>
+                            <input type="text" id="security_answer" name="security_answer" placeholder="Your answer" value="<?php echo htmlspecialchars($form_data['security_answer']); ?>" required>
+                            <div class="error-message" id="security_answer_error"<?php if (!empty($field_errors['security_answer'])) echo ' style="display:block"'; ?>><?php echo htmlspecialchars($field_errors['security_answer'] ?? ''); ?></div>
                         </div>
                         
                         <div class="form-group">
@@ -738,15 +769,20 @@ include 'header.php';?>
     const togglePassword = document.querySelector('#togglePassword');
     const passwordInput = document.querySelector('#password');
 
-    togglePassword.addEventListener('click', function (e) {
-        // Toggle the type attribute
-        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-        passwordInput.setAttribute('type', type);
-        
-        // Toggle the eye slash icon
-        this.classList.toggle('fa-eye');
-        this.classList.toggle('fa-eye-slash');
-    });
+    if (togglePassword && passwordInput) {
+        togglePassword.addEventListener('click', function () {
+            const isHidden = passwordInput.getAttribute('type') === 'password';
+            if (isHidden) {
+                passwordInput.setAttribute('type', 'text');
+                this.classList.remove('fa-eye-slash');
+                this.classList.add('fa-eye');
+            } else {
+                passwordInput.setAttribute('type', 'password');
+                this.classList.remove('fa-eye');
+                this.classList.add('fa-eye-slash');
+            }
+        });
+    }
 
     // --- Real-time Error Clearing Helper Functions ---
     
@@ -862,6 +898,12 @@ include 'header.php';?>
     document.getElementById('email').addEventListener('input', function() { validateEmail(this); });
     document.getElementById('username').addEventListener('input', function() { validateUsername(this); });
     document.getElementById('password').addEventListener('input', function() { validatePassword(this); });
+    document.getElementById('security_question').addEventListener('change', function() { 
+        if (this.value !== '') hideError('security_question'); 
+    });
+    document.getElementById('security_answer').addEventListener('input', function() { 
+        if (this.value.trim() !== '') hideError('security_answer'); 
+    });
 
 
     // --- Main Form Submission Validation ---
@@ -967,6 +1009,24 @@ include 'header.php';?>
             isValid = false;
         } else {
             hideError('password');
+        }
+
+        // 9. Validate Security Question
+        const secQ = document.getElementById('security_question');
+        if (secQ.value === '') {
+            showError('security_question', "Please select a security question.");
+            isValid = false;
+        } else {
+            hideError('security_question');
+        }
+
+        // 10. Validate Security Answer
+        const secA = document.getElementById('security_answer');
+        if (secA.value.trim() === '') {
+            showError('security_answer', "Please provide an answer to the security question.");
+            isValid = false;
+        } else {
+            hideError('security_answer');
         }
 
         // Prevent form submission if validation fails

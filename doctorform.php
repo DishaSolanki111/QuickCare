@@ -681,7 +681,7 @@ include 'config.php'; ?>
                             <label for="password">Password <span class="required">*</span></label>
                             <div class="password-wrapper">
                                 <input type="password" id="password" name="password" placeholder="John@123" required>
-                                <i class="fas fa-eye toggle-password" id="togglePassword"></i>
+                                <i class="fas fa-eye-slash toggle-password" id="togglePassword"></i>
                             </div>
                             <div class="error-message" id="password_error"<?php if (!empty($field_errors['password'])) echo ' style="display:block"'; ?>><?php echo htmlspecialchars($field_errors['password'] ?? ''); ?></div>
                         </div>
@@ -703,12 +703,20 @@ include 'config.php'; ?>
     const togglePassword = document.querySelector('#togglePassword');
     const passwordInput = document.querySelector('#password');
 
-    togglePassword.addEventListener('click', function (e) {
-        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-        passwordInput.setAttribute('type', type);
-        this.classList.toggle('fa-eye');
-        this.classList.toggle('fa-eye-slash');
-    });
+    if (togglePassword && passwordInput) {
+        togglePassword.addEventListener('click', function () {
+            const isHidden = passwordInput.getAttribute('type') === 'password';
+            if (isHidden) {
+                passwordInput.setAttribute('type', 'text');
+                this.classList.remove('fa-eye-slash');
+                this.classList.add('fa-eye');
+            } else {
+                passwordInput.setAttribute('type', 'password');
+                this.classList.remove('fa-eye');
+                this.classList.add('fa-eye-slash');
+            }
+        });
+    }
 
     // --- Real-time Error Clearing Helper Functions ---
     
