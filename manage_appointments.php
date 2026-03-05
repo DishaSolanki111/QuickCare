@@ -715,8 +715,8 @@ html {
                     // Reset the result pointer to beginning
                     mysqli_data_seek($appointments_query, 0);
                     while ($appointment = mysqli_fetch_assoc($appointments_query)) {
-                        // Only show SCHEDULED appointments (exclude CANCELLED/COMPLETED)
-                        if ($appointment['APPOINTMENT_DATE'] >= date('Y-m-d') && $appointment['STATUS'] === 'SCHEDULED') {
+                        // Upcoming = SCHEDULED appointments with date strictly greater than today
+                        if ($appointment['APPOINTMENT_DATE'] > date('Y-m-d') && $appointment['STATUS'] === 'SCHEDULED') {
                             $upcoming_appointments[] = $appointment;
                         }
                     }
