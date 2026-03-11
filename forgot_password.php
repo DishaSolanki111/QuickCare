@@ -214,12 +214,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->close();
         }
     } elseif ($step === 'set') {
-        // User submits a new password after OTP verification
+        // User submits a new password after OTP verification / security question
         $user_type = $_SESSION['reset_user_type']  ?? null;
         $user_id   = $_SESSION['reset_user_id']    ?? null;
         $reset_id  = $_SESSION['reset_request_id'] ?? null;
 
-        $password        = trim($_POST['password'] ?? '');
+        $password         = trim($_POST['password'] ?? '');
         $confirm_password = trim($_POST['confirm_password'] ?? '');
 
         // For patients using security question, there is no reset_id required
@@ -276,7 +276,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -284,106 +283,232 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <title>Forgot Password - Hospital Management System</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        :root {
+            --bg-gradient-start: #BEE3F8;
+            --bg-gradient-end:   #EBF8FF;
+            --dark-blue: #1A365D;
+            --primary-blue: #0077b6;
+            --primary-blue-2: #00b4d8;
+            --text-main: #0f172a;
+            --text-muted: #4A5568;
+            --border-light: #cbd5f5;
+            --error-bg: #fee2e2;
+            --error-text: #b91c1c;
+            --info-bg: #dbeafe;
+            --info-text: #1d4ed8;
+            --card-bg: rgba(255, 255, 255, 0.7);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background: linear-gradient(135deg, #f0f7ff 0%, #ffffff 100%);
+            margin: 0;
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 20px;
+            padding: 24px;
+            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+            background:
+                radial-gradient(circle at top left, rgba(59, 130, 246, 0.12), transparent 55%),
+                radial-gradient(circle at bottom right, rgba(56, 189, 248, 0.12), transparent 55%),
+                linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
         }
+
+        /* subtle abstract medical waves overlay */
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg width='1600' height='900' viewBox='0 0 1600 900' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop stop-color='%23ffffff' stop-opacity='0.15' offset='0%25'/%3E%3Cstop stop-color='%23ffffff' stop-opacity='0.05' offset='100%25'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M0 600 Q400 520 800 580 T1600 560 L1600 900 L0 900 Z' fill='url(%23g)'/%3E%3Cpath d='M0 260 Q500 340 900 300 T1600 320 L1600 900 L0 900 Z' fill='url(%23g)'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-size: cover;
+            opacity: 0.35;
+            pointer-events: none;
+            z-index: -1;
+        }
+
         .reset-card {
-            background: #ffffff;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(15, 23, 42, 0.12);
             width: 100%;
-            max-width: 420px;
+            max-width: 460px;
+            padding: 32px 30px 26px;
+            border-radius: 24px;
+            background: var(--card-bg);
+            box-shadow:
+                0 28px 65px rgba(15, 23, 42, 0.35),
+                0 0 0 1px rgba(255, 255, 255, 0.35);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
         }
+
         h2 {
-            margin-top: 0;
-            margin-bottom: 10px;
-            color: #1a3a5f;
+            margin: 0 0 8px 0;
+            color: var(--dark-blue);
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: 0.02em;
         }
+
         p.sub {
-            margin-top: 0;
-            margin-bottom: 20px;
-            color: #4b5563;
+            margin: 0 0 20px 0;
+            color: var(--text-muted);
             font-size: 14px;
+            line-height: 1.6;
         }
+
         label {
             display: block;
             font-size: 14px;
             margin-bottom: 6px;
-            color: #374151;
+            color: #1f2933;
             font-weight: 500;
         }
-        input, select {
+
+        .field-with-icon {
+            position: relative;
+            margin-bottom: 14px;
+        }
+
+        .field-with-icon i {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+            font-size: 0.9rem;
+            pointer-events: none;
+        }
+
+        .input-icon {
+            padding-left: 36px !important;
+        }
+
+        input,
+        select {
             width: 100%;
-            padding: 10px 12px;
-            border-radius: 8px;
-            border: 1px solid #d1d5db;
+            padding: 11px 12px;
+            border-radius: 12px;
+            border: 1px solid var(--border-light);
             font-size: 14px;
             margin-bottom: 14px;
-            box-sizing: border-box;
+            background: #ffffff;
+            color: var(--text-main);
+            transition:
+                border-color 0.18s ease,
+                box-shadow 0.18s ease,
+                transform 0.18s ease,
+                background-color 0.18s ease;
         }
-        input:focus, select:focus {
+
+        input::placeholder {
+            color: #9ca3af;
+        }
+
+        input:focus,
+        select:focus {
             outline: none;
-            border-color: #2563eb;
-            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 2px rgba(0, 119, 182, 0.25);
+            transform: translateY(-1px);
         }
+
         button {
             width: 100%;
-            padding: 11px 14px;
-            border-radius: 8px;
+            padding: 12px 16px;
+            border-radius: 999px;
             border: none;
-            background: #2563eb;
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-blue-2) 100%);
             color: #ffffff;
             font-weight: 600;
             cursor: pointer;
             font-size: 15px;
+            letter-spacing: 0.5px;
+            transition:
+                background-color 0.18s ease,
+                transform 0.2s ease,
+                box-shadow 0.18s ease;
         }
+
         button:hover {
-            background: #1d4ed8;
+            box-shadow: 0 12px 24px rgba(0, 119, 182, 0.35);
+            transform: translateY(-1px);
         }
+
+        button:active {
+            transform: scale(0.98);
+            box-shadow: 0 6px 14px rgba(0, 119, 182, 0.25);
+        }
+
         .error {
-            background: #fee2e2;
-            color: #b91c1c;
+            background: var(--error-bg);
+            color: var(--error-text);
             padding: 10px 12px;
-            border-radius: 8px;
+            border-radius: 12px;
             margin-bottom: 12px;
             font-size: 13px;
         }
+
         .info {
-            background: #dbeafe;
-            color: #1d4ed8;
+            background: var(--info-bg);
+            color: var(--info-text);
             padding: 10px 12px;
-            border-radius: 8px;
+            border-radius: 12px;
             margin-bottom: 12px;
             font-size: 13px;
         }
+
         .new-password-box {
             background: #ecfdf3;
             border: 1px dashed #16a34a;
             padding: 12px;
-            border-radius: 8px;
+            border-radius: 10px;
             margin-top: 16px;
             font-size: 14px;
             color: #166534;
         }
+
         .back-link {
-            margin-top: 16px;
+            margin-top: 18px;
             text-align: center;
             font-size: 13px;
         }
+
         .back-link a {
-            color: #2563eb;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 8px 14px;
+            border-radius: 999px;
+            border: 1px solid rgba(15, 23, 42, 0.15);
+            color: #1f2933;
             text-decoration: none;
             font-weight: 500;
+            background: rgba(255, 255, 255, 0.9);
+            transition: all 0.18s ease;
         }
+
+        .back-link a i {
+            font-size: 0.9rem;
+        }
+
         .back-link a:hover {
-            text-decoration: underline;
+            background: rgba(15, 23, 42, 0.85);
+            color: #ffffff;
+            box-shadow: 0 8px 18px rgba(15, 23, 42, 0.25);
+            transform: translateY(-1px);
+        }
+
+        .security-question-box {
+            padding: 10px 12px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.9);
+            font-size: 14px;
+            margin-bottom: 12px;
+            border: 1px solid rgba(209, 213, 219, 0.8);
         }
     </style>
 </head>
@@ -411,13 +536,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </select>
 
                 <label for="username">Username</label>
-                <input type="text" name="username" id="username" required>
+                <div class="field-with-icon">
+                    <i class="fas fa-user-md"></i>
+                    <input type="text" name="username" id="username" class="input-icon" required>
+                </div>
 
                 <button type="submit">Continue</button>
             </form>
 
             <div class="back-link">
-                <a href="login_for_all.php">Back to login</a>
+                <a href="login_for_all.php">
+                    <i class="fas fa-arrow-left"></i>
+                    Back to login
+                </a>
             </div>
 
         <?php elseif ($stage === 'security'): ?>
@@ -439,18 +570,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <input type="hidden" name="step" value="security">
 
                 <label>Security Question</label>
-                <div style="padding: 10px 12px; border-radius: 8px; background:#f3f4f6; font-size:14px; margin-bottom:12px;">
+                <div class="security-question-box">
                     <?php echo htmlspecialchars($security_question ?: 'Security question not available.'); ?>
                 </div>
 
                 <label for="security_answer">Your Answer</label>
                 <input type="text" name="security_answer" id="security_answer" required>
 
-                <button type="submit">Verify & Reset Password</button>
+                <button type="submit">Verify &amp; Reset Password</button>
             </form>
 
             <div class="back-link">
-                <a href="forgot_password.php">Start over</a>
+                <a href="forgot_password.php">
+                    <i class="fas fa-rotate-left"></i>
+                    Start over
+                </a>
             </div>
 
         <?php elseif ($stage === 'verify'): ?>
@@ -470,11 +604,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <label for="otp">OTP</label>
                 <input type="text" name="otp" id="otp" maxlength="6" required>
 
-                <button type="submit">Verify OTP & Reset Password</button>
+                <button type="submit">Verify OTP &amp; Reset Password</button>
             </form>
 
             <div class="back-link">
-                <a href="forgot_password.php">Start over</a>
+                <a href="forgot_password.php">
+                    <i class="fas fa-rotate-left"></i>
+                    Start over
+                </a>
             </div>
 
         <?php elseif ($stage === 'set'): ?>
@@ -498,7 +635,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </form>
 
             <div class="back-link">
-                <a href="forgot_password.php">Start over</a>
+                <a href="forgot_password.php">
+                    <i class="fas fa-rotate-left"></i>
+                    Start over
+                </a>
             </div>
 
         <?php elseif ($stage === 'done'): ?>
@@ -506,7 +646,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <p class="sub">Your password has been reset. You can now log in with your new password.</p>
 
             <div class="back-link">
-                <a href="login_for_all.php">Go to login</a>
+                <a href="login_for_all.php">
+                    <i class="fas fa-sign-in-alt"></i>
+                    Go to login
+                </a>
             </div>
 
         <?php endif; ?>

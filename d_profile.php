@@ -23,7 +23,8 @@ if (!isset($_POST['id'])) {
         d.DOJ,
         d.GENDER,
         d.EDUCATION,
-        s.SPECIALISATION_NAME
+        s.SPECIALISATION_NAME,
+        s.SPECIALISATION_ID
     FROM doctor_tbl d
     JOIN specialisation_tbl s 
         ON d.SPECIALISATION_ID = s.SPECIALISATION_ID
@@ -36,6 +37,8 @@ if (!isset($_POST['id'])) {
 if (!$doctor) {
     die("Doctor not found.");
 }
+
+$spec_back_id = (int)($doctor['SPECIALISATION_ID'] ?? 0);
 
 /* =========================
    FETCH DOCTOR SCHEDULE
@@ -272,6 +275,34 @@ if (!$doctor) {
             font-weight: 500;
         }
 
+        /* Back button */
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            margin-bottom: 15px;
+            border-radius: 999px;
+            border: 1px solid var(--primary-blue);
+            background: transparent;
+            color: var(--primary-blue);
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .back-btn i {
+            font-size: 0.95rem;
+        }
+
+        .back-btn:hover {
+            background: var(--primary-blue);
+            color: #fff;
+            box-shadow: 0 4px 10px rgba(26, 115, 232, 0.35);
+            transform: translateY(-1px);
+        }
+
         /* CALENDAR POPUP STYLES */
         #calendarModal {
             display: none;
@@ -433,6 +464,13 @@ if (!$doctor) {
         
         <div class="content-wrapper">
             <div class="container">
+                <form id="backDoctorsForm" method="POST" action="doctors.php" style="display:inline;">
+                    <input type="hidden" name="spec_id" value="<?php echo $spec_back_id; ?>">
+                </form>
+                <button type="button" class="back-btn" onclick="document.getElementById('backDoctorsForm').submit()">
+                    <i class="fas fa-arrow-left"></i>
+                    Back
+                </button>
                 <div class="profile-card">
                     <!-- LEFT -->
                     <div class="left">

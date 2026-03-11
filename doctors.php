@@ -44,6 +44,7 @@ $spec_id = intval($_POST['spec_id']);
             --primary-dark: #0f2640;
             --medium-blue: #4f8fb5;
             --white: #ffffff;
+            --header-gradient-1: linear-gradient(135deg, #0066cc 0%, #00a8cc 100%);
         }
 
         * {
@@ -111,6 +112,37 @@ $spec_id = intval($_POST['spec_id']);
         .doctors-section {
             padding: 4rem 0;
             flex-grow: 1;
+        }
+
+        .back-bar {
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 14px;
+            border-radius: 999px;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.9);
+            transition: all 0.2s ease;
+        }
+
+        .back-link i {
+            font-size: 0.95rem;
+        }
+
+        .back-link:hover {
+            background: var(--primary);
+            color: #fff;
+            box-shadow: 0 4px 10px rgba(0, 102, 204, 0.35);
+            transform: translateY(-1px);
         }
 
         .grid-container {
@@ -246,7 +278,7 @@ $spec_id = intval($_POST['spec_id']);
 
         /* Footer with Wave Effect */
         footer {
-            background: linear-gradient(135deg, var(--dark-blue) 0%, var(--mid-blue) 100%);
+            background: var(--header-gradient-1);
             color: white;
             padding: 3rem 5%;
             position: relative;
@@ -377,6 +409,12 @@ $spec_id = intval($_POST['spec_id']);
 
     <section class="doctors-section">
         <div class="container">
+            <div class="back-bar">
+                <a href="appointment.php" class="back-link">
+                    <i class="fas fa-arrow-left"></i>
+                    Back
+                </a>
+            </div>
             <div class="grid-container">
                 <?php while($row = mysqli_fetch_assoc($res)){ 
                     $img = !empty($row['PROFILE_IMAGE']) 
