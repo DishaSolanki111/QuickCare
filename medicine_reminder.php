@@ -179,32 +179,32 @@ if (!empty($prescription_id)) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --primary-color: #1a3a5f;
-            --secondary-color: #3498db;
-            --accent-color: #2ecc71;
+            --primary-color: #0077b6;
+            --secondary-color: #0077b6;
+            --accent-color: #0077b6;
             --danger-color: #e74c3c;
-            --dark-blue: #072D44;
+            --dark-blue: #1A365D;
             --mid-blue: #064469;
             --soft-blue: #5790AB;
-            --light-blue: #9CCDD8;
+            --light-blue: #caf0f8;
             --gray-blue: #D0D7E1;
             --white: #ffffff;
-            --card-bg: #F6F9FB;
+            --card-bg: rgba(255, 255, 255, 0.95);
         }
         
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
         }
         
         body {
-            font-family: Arial, sans-serif;
-            background: #D0D7E1;
+            background-color: #f7fafc;
             display: flex;
             height: 100vh;
             overflow: hidden;
+            color: #1A365D;
         }
 
         /* Container for the entire layout */
@@ -218,10 +218,40 @@ if (!empty($prescription_id)) {
         .main-content {
             flex: 1;
             margin-left: 250px;
-            padding: 20px;
+            padding: 24px;
             width: calc(100% - 250px);
             height: 100vh;
             overflow-y: auto;
+        }
+
+        .back-bar {
+            margin-bottom: 15px;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 14px;
+            border-radius: 999px;
+            border: 1px solid var(--dark-blue);
+            color: var(--dark-blue);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.9);
+            transition: all 0.2s ease;
+        }
+
+        .back-link i {
+            font-size: 0.95rem;
+        }
+
+        .back-link:hover {
+            background: var(--dark-blue);
+            color: #fff;
+            box-shadow: 0 4px 10px rgba(7,45,68,0.35);
+            transform: translateY(-1px);
         }
         
         /* Custom scrollbar for main content */
@@ -320,12 +350,15 @@ if (!empty($prescription_id)) {
         }
         
         .btn-success {
-            background-color: var(--accent-color);
+            background: #072D44;
             color: white;
+            border-radius: 999px;
+            letter-spacing: 0.5px;
         }
         
         .btn-success:hover {
-            background-color: #27ae60;
+            transform: scale(1.03) translateY(-1px);
+            box-shadow: 0 10px 22px rgba(7,45,68,0.35);
         }
         
         .btn-danger {
@@ -343,43 +376,55 @@ if (!empty($prescription_id)) {
         }
         
         .add-reminder-section {
-            background-color: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            padding: 20px;
-            margin-bottom: 25px;
+            background-color: var(--card-bg);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 119, 182, 0.1);
+            padding: 24px 24px 22px;
+            margin-bottom: 28px;
+        }
+        
+        .add-reminder-section h3 {
+            color: var(--dark-blue);
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 16px;
         }
         
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 22px;
         }
         
         .form-group label {
             display: block;
             margin-bottom: 8px;
             font-weight: 600;
-            color: var(--dark-color);
+            color: var(--dark-blue);
         }
         
         .form-control {
             width: 100%;
-            padding: 10px 15px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 16px;
-            transition: border-color 0.3s;
+            padding: 12px 14px;
+            border: 1px solid #d0e4f8;
+            border-radius: 10px;
+            font-size: 15px;
+            background: #ffffff;
+            transition:
+                border-color 0.2s ease,
+                box-shadow 0.2s ease,
+                background-color 0.2s ease;
         }
         
         .form-control:focus {
-            border-color: var(--secondary-color);
+            border-color: var(--primary-color);
             outline: none;
-            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+            box-shadow: 0 0 0 2px rgba(0, 119, 182, 0.25);
         }
         
         .form-row {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 20px;
+            margin-bottom: 10px;
         }
         
         .alert {
@@ -455,25 +500,38 @@ if (!empty($prescription_id)) {
         
         .medicine-chip {
             display: inline-block;
-            padding: 5px 10px;
+            padding: 6px 12px;
             margin: 5px;
-            background-color: rgba(52, 152, 219, 0.1);
-            color: var(--secondary-color);
-            border-radius: 20px;
+            background-color: #caf0f8;
+            color: #0077b6;
+            border-radius: 999px;
             font-size: 14px;
             cursor: pointer;
+            border: 1px solid rgba(0, 119, 182, 0.2);
+            box-shadow: 0 2px 4px rgba(0, 119, 182, 0.12);
+            transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+        }
+        
+        .medicine-chip::before {
+            content: "💊 ";
         }
         
         .medicine-chip:hover {
-            background-color: rgba(52, 152, 219, 0.2);
+            background-color: #b3e5fc;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0, 119, 182, 0.22);
         }
         
         .info-note {
-            background-color: rgba(52, 152, 219, 0.1);
-            border-left: 4px solid var(--secondary-color);
-            padding: 10px 15px;
-            margin-bottom: 20px;
-            border-radius: 0 5px 5px 0;
+            background-color: #caf0f8;
+            border: 1px solid rgba(0, 119, 182, 0.25);
+            padding: 12px 15px;
+            margin-bottom: 22px;
+            border-radius: 12px;
+            color: #0077b6;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
         }
         
         @media (max-width: 992px) {
@@ -508,6 +566,13 @@ if (!empty($prescription_id)) {
         <div class="main-content">
             <!-- Header -->
             <?php include 'patient_header.php'; ?>
+            
+            <div class="back-bar">
+                <a href="patinet_prescriptions.php" class="back-link">
+                    <i class="fas fa-arrow-left"></i>
+                    Back to Prescriptions
+                </a>
+            </div>
             
             <!-- Success/Error Messages -->
             <?php if (isset($success_message)): ?>

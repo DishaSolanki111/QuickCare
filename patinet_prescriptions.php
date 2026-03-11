@@ -93,164 +93,308 @@ if (isset($_POST['download']) && !empty($_POST['download'])) {
             --light-blue: #9CCDD8;
             --gray-blue: #D0D7E1;
             --white: #ffffff;
-            --card-bg: #F6F9FB;
+            --card-bg: rgba(255, 255, 255, 0.8);
         }
         
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
         }
         
-          body {
-    background-color: #f5f7fa;
-    color: #333;
-    line-height: 1.6;
-    margin: 0;
-    padding: 0;
-    height: 100vh;
-    overflow-y: scroll;
-}
-
-html {
-    height: 100%;
-  
-}
-
-.container {
-    display: flex;
-    min-height: 100vh;
-    height: 100%;
-}
-
-.main-content {
-    flex: 1;
-    margin-left: 250px;
-    padding: 20px;
-    height: 100%;
-    overflow-y: auto;
-}
-        
-        .user-actions {
-            display: flex;
-            align-items: center;
+        html, body {
+            height: 100%;
         }
-        
-        .user-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background-color: var(--secondary-color);
-            color: white;
+
+        body {
+            color: #1f2933;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f7fafc;
+        }
+
+        .container {
             display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 10px;
-            font-weight: bold;
+            min-height: 100vh;
+        }
+
+        .main-content {
+            flex: 1;
+            margin-left: 250px;
+            padding: 24px;
         }
         
         .prescription-card {
-            background-color: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            padding: 20px;
-            margin-bottom: 20px;
+            background: var(--card-bg);
+            border-radius: 24px;
+            box-shadow:
+                0 24px 60px rgba(15, 23, 42, 0.25),
+                0 0 0 1px rgba(255,255,255,0.4);
+            border: 1px solid rgba(255,255,255,0.35);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 22px 22px 18px;
+            margin-bottom: 24px;
         }
         
         .prescription-header {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #eee;
+            align-items: flex-start;
+            gap: 16px;
+            margin-bottom: 18px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.25);
         }
-        
-        .prescription-header h3 {
-            color: var(--primary-color);
+
+        .doctor-block {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .doctor-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #072D44 0%, #0b3a60 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 1.2rem;
+        }
+
+        .doctor-meta h3 {
+            margin: 0;
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #1f2937;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .doctor-meta h3 .doc-badge {
+            font-size: 0.7rem;
+            padding: 3px 8px;
+            border-radius: 999px;
+            background: rgba(37,99,235,0.12);
+            color: #1d4ed8;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .doctor-meta .subline {
+            margin-top: 2px;
+            font-size: 0.8rem;
+            color: #6b7280;
         }
         
         .prescription-date {
-            color: #777;
-            font-size: 14px;
+            padding: 4px 10px;
+            border-radius: 999px;
+            background: rgba(148,163,184,0.15);
+            color: #4b5563;
+            font-size: 0.8rem;
+            font-weight: 500;
+            white-space: nowrap;
         }
         
-        .prescription-details {
-            margin-bottom: 15px;
+        .prescription-body {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .vitals-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 10px;
+        }
+
+        .vital-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            border-radius: 12px;
+            background: rgba(255,255,255,0.9);
+            border: 1px solid rgba(226,232,240,0.9);
+        }
+
+        .vital-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 999px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(37, 99, 235, 0.08);
+            color: #1d4ed8;
+            font-size: 0.9rem;
+        }
+
+        .vital-label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #4b5563;
+        }
+
+        .vital-value {
+            font-size: 0.9rem;
+            color: #111827;
+        }
+
+        .detail-block {
+            margin-top: 2px;
+        }
+
+        .detail-row {
+            margin-bottom: 6px;
+            font-size: 1rem;
+        }
+
+        .detail-row strong {
+            color: #1f2937;
+            font-size: 1.02rem;
+        }
+
+        .notes-text {
+            margin-top: 4px;
+            font-size: 1rem;
+            color: #111827;
+            line-height: 1.8;
         }
         
-        .prescription-details p {
-            margin-bottom: 5px;
+        .section-title {
+            margin: 18px 0 10px;
+            font-size: 0.98rem;
+            font-weight: 700;
+            color: #1f2937;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-title i {
+            color: #1d4ed8;
         }
         
         .medicine-list {
-            margin-top: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
         }
         
         .medicine-item {
             display: flex;
             justify-content: space-between;
-            padding: 10px 0;
-            border-bottom: 1px solid #f0f0f0;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            border-radius: 12px;
+            background: rgba(255,255,255,0.95);
+            border: 1px solid rgba(226,232,240,0.9);
         }
         
         .medicine-name {
-            font-weight: 600;
-            color: var(--dark-color);
+            font-weight: 700;
+            color: #111827;
+            font-size: 0.95rem;
         }
         
         .medicine-details {
-            color: #666;
-            font-size: 14px;
+            color: #4b5563;
+            font-size: 0.85rem;
+        }
+
+        .medicine-details em {
+            font-style: italic;
+        }
+
+        .duration-pill {
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            background: rgba(16,185,129,0.12);
+            color: #047857;
+            white-space: nowrap;
         }
         
         .btn {
-            padding: 10px 20px;
+            padding: 10px 18px;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             cursor: pointer;
             font-weight: 600;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
             display: inline-flex;
             align-items: center;
             justify-content: center;
+            font-size: 0.9rem;
+            letter-spacing: 0.4px;
         }
         
         .btn-primary {
-            background-color: var(--secondary-color);
-            color: white;
+            background: linear-gradient(135deg, #072D44 0%, #0b3a60 100%);
+            color: #ffffff;
+            box-shadow: 0 8px 18px rgba(7,45,68,0.45);
         }
         
         .btn-primary:hover {
-            background-color: #2980b9;
+            transform: translateY(-1px);
+            box-shadow: 0 10px 22px rgba(37,99,235,0.4);
+        }
+
+        .btn-primary:active {
+            transform: scale(0.98);
+            box-shadow: 0 6px 15px rgba(37,99,235,0.35);
         }
         
         .btn-success {
-            background-color: var(--accent-color);
-            color: white;
+            background: linear-gradient(135deg, #059669 0%, #22C55E 100%);
+            color: #ffffff;
+            box-shadow: 0 8px 18px rgba(16,185,129,0.35);
         }
         
         .btn-success:hover {
-            background-color: #27ae60;
+            transform: translateY(-1px);
+            box-shadow: 0 10px 22px rgba(16,185,129,0.4);
+        }
+
+        .btn-success:active {
+            transform: scale(0.98);
+            box-shadow: 0 6px 15px rgba(16,185,129,0.35);
         }
         
         .btn-group {
             display: flex;
+            flex-wrap: wrap;
             gap: 10px;
-            margin-top: 15px;
+            margin-top: 16px;
         }
         
         .empty-state {
             text-align: center;
             padding: 40px;
-            color: #777;
+            color: #6b7280;
         }
         
         .empty-state i {
             font-size: 48px;
             margin-bottom: 15px;
-            color: #ddd;
+            color: #cbd5f5;
+        }
+        
+        @media (max-width: 1100px) {
+            .vitals-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
         }
         
         @media (max-width: 992px) {
@@ -260,14 +404,24 @@ html {
         }
         
         @media (max-width: 768px) {
+            .main-content {
+                margin-left: 0;
+                padding: 16px;
+            }
+
             .prescription-header {
                 flex-direction: column;
                 align-items: flex-start;
+                gap: 10px;
             }
             
             .medicine-item {
                 flex-direction: column;
-                gap: 5px;
+                align-items: flex-start;
+            }
+            
+            .vitals-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
             }
         }
     </style>
@@ -296,36 +450,92 @@ html {
                     ?>
                     <div class="prescription-card">
                         <div class="prescription-header">
-                            <h3>Dr. <?php echo htmlspecialchars($prescription['DOC_FNAME'] . ' ' . $prescription['DOC_LNAME']); ?></h3>
-                            <span class="prescription-date"><?php echo date('F d, Y', strtotime($prescription['ISSUE_DATE'])); ?></span>
+                            <div class="doctor-block">
+                                <div class="doctor-avatar">
+                                    <i class="fas fa-user-md"></i>
+                                </div>
+                                <div class="doctor-meta">
+                                    <h3>
+                                        Dr. <?php echo htmlspecialchars($prescription['DOC_FNAME'] . ' ' . $prescription['DOC_LNAME']); ?>
+                                        <span class="doc-badge"><i class="fas fa-stethoscope"></i> Doctor</span>
+                                    </h3>
+                                    <div class="subline">
+                                        Patient: <?php echo htmlspecialchars($patient['FIRST_NAME'] . ' ' . $patient['LAST_NAME']); ?>
+                                    </div>
+                                </div>
+                            </div>
+                            <span class="prescription-date">
+                                <?php echo date('F d, Y', strtotime($prescription['ISSUE_DATE'])); ?>
+                            </span>
                         </div>
                         
-                        <div class="prescription-details">
-                            <p><strong>Diagnosis:</strong> <?php echo htmlspecialchars($prescription['DIAGNOSIS']); ?></p>
-                            <p><strong>Symptoms:</strong> <?php echo htmlspecialchars($prescription['SYMPTOMS']); ?></p>
-                            
-                            <?php if (!empty($prescription['HEIGHT_CM'])): ?>
-                                <p><strong>Height:</strong> <?php echo $prescription['HEIGHT_CM']; ?> cm</p>
-                            <?php endif; ?>
-                            
-                            <?php if (!empty($prescription['WEIGHT_KG'])): ?>
-                                <p><strong>Weight:</strong> <?php echo $prescription['WEIGHT_KG']; ?> kg</p>
-                            <?php endif; ?>
-                            
-                            <?php if (!empty($prescription['BLOOD_PRESSURE'])): ?>
-                                <p><strong>Blood Pressure:</strong> <?php echo $prescription['BLOOD_PRESSURE']; ?> mmHg</p>
-                            <?php endif; ?>
-                            
-                            <?php if (!empty($prescription['DIABETES'])): ?>
-                                <p><strong>Diabetes:</strong> <?php echo $prescription['DIABETES']; ?></p>
-                            <?php endif; ?>
-                            
-                            <?php if (!empty($prescription['ADDITIONAL_NOTES'])): ?>
-                                <p><strong>Additional Notes:</strong> <?php echo htmlspecialchars($prescription['ADDITIONAL_NOTES']); ?></p>
-                            <?php endif; ?>
+                        <div class="prescription-body">
+                            <div class="vitals-grid">
+                                <?php if (!empty($prescription['HEIGHT_CM'])): ?>
+                                <div class="vital-item">
+                                    <div class="vital-icon">
+                                        <i class="fas fa-ruler-vertical"></i>
+                                    </div>
+                                    <div>
+                                        <div class="vital-label">Height</div>
+                                        <div class="vital-value"><?php echo $prescription['HEIGHT_CM']; ?> cm</div>
+                                    </div>
+                                </div>
+                                <?php endif; ?>
+
+                                <?php if (!empty($prescription['WEIGHT_KG'])): ?>
+                                <div class="vital-item">
+                                    <div class="vital-icon">
+                                        <i class="fas fa-weight"></i>
+                                    </div>
+                                    <div>
+                                        <div class="vital-label">Weight</div>
+                                        <div class="vital-value"><?php echo $prescription['WEIGHT_KG']; ?> kg</div>
+                                    </div>
+                                </div>
+                                <?php endif; ?>
+
+                                <?php if (!empty($prescription['BLOOD_PRESSURE'])): ?>
+                                <div class="vital-item">
+                                    <div class="vital-icon">
+                                        <i class="fas fa-heartbeat"></i>
+                                    </div>
+                                    <div>
+                                        <div class="vital-label">Blood Pressure</div>
+                                        <div class="vital-value"><?php echo $prescription['BLOOD_PRESSURE']; ?> mmHg</div>
+                                    </div>
+                                </div>
+                                <?php endif; ?>
+
+                                <?php if (!empty($prescription['DIABETES'])): ?>
+                                <div class="vital-item">
+                                    <div class="vital-icon">
+                                        <i class="fas fa-droplet"></i>
+                                    </div>
+                                    <div>
+                                        <div class="vital-label">Diabetes</div>
+                                        <div class="vital-value"><?php echo htmlspecialchars($prescription['DIABETES']); ?></div>
+                                    </div>
+                                </div>
+                                <?php endif; ?>
+                            </div>
+
+                            <div class="detail-block">
+                                <div class="detail-row">
+                                    <strong>Diagnosis:</strong>
+                                    <?php echo htmlspecialchars($prescription['DIAGNOSIS']); ?>
+                                </div>
+                                <div class="detail-row">
+                                    <strong>Symptoms:</strong>
+                                    <?php echo htmlspecialchars($prescription['SYMPTOMS']); ?>
+                                </div>
+                            </div>
                         </div>
                         
-                        <h4 style="margin: 15px 0 10px;">Medications</h4>
+                        <div class="section-title">
+                            <i class="fas fa-pills"></i>
+                            <span>Medications</span>
+                        </div>
                         <div class="medicine-list">
                             <?php
                             if (mysqli_num_rows($medicines_query) > 0) {
@@ -334,9 +544,13 @@ html {
                                     <div class="medicine-item">
                                         <div>
                                             <div class="medicine-name"><?php echo htmlspecialchars($medicine['MED_NAME']); ?></div>
-                                            <div class="medicine-details"><?php echo htmlspecialchars($medicine['DOSAGE']); ?> - <?php echo htmlspecialchars($medicine['FREQUENCY']); ?></div>
+                                            <div class="medicine-details">
+                                                <em><?php echo htmlspecialchars($medicine['DOSAGE']); ?> - <?php echo htmlspecialchars($medicine['FREQUENCY']); ?></em>
+                                            </div>
                                         </div>
-                                        <div class="medicine-details"><?php echo htmlspecialchars($medicine['DURATION']); ?></div>
+                                        <div>
+                                            <span class="duration-pill"><?php echo htmlspecialchars($medicine['DURATION']); ?></span>
+                                        </div>
                                     </div>
                                     <?php
                                 }

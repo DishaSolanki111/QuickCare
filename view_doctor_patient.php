@@ -202,13 +202,13 @@ justify-content: center;
 }
 
 .btn-primary {
-background-color: var(--secondary-color);
-color: white;
-}
-
-.btn-primary:hover {
-background-color: #2980b9;
-}
+        background-color: #072D44;
+        color: #ffffff;
+        }
+        
+        .btn-primary:hover {
+        background-color: #051b2b;
+        }
 
 .btn-success {
 background-color: var(--accent-color);

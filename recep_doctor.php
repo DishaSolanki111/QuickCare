@@ -10,12 +10,12 @@ include 'config.php';
 
 // Handle edit form submission
 if (isset($_POST['action']) && $_POST['action'] == 'edit_doctor') {
-    $doctor_id = $_POST['doctor_id'];
-    $first_name = trim($_POST['first_name']);
-    $last_name = trim($_POST['last_name']);
-    $education = trim($_POST['education']);
-    $phone = trim($_POST['phone']);
-    $email = trim($_POST['email']);
+    $doctor_id        = $_POST['doctor_id'];
+    $first_name       = trim($_POST['first_name']);
+    $last_name        = trim($_POST['last_name']);
+    $education        = trim($_POST['education']);
+    $phone            = trim($_POST['phone']);
+    $email            = trim($_POST['email']);
     $specialization_id = $_POST['specialization_id'];
     
     // Handle profile image upload
@@ -103,7 +103,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'edit_doctor') {
     }
     
     if (empty($errors)) {
-        // Update doctor data
+        // Update doctor data (keep original behaviour)
         $query = "UPDATE doctor_tbl SET 
                  FIRST_NAME = ?, 
                  LAST_NAME = ?, 
@@ -115,7 +115,18 @@ if (isset($_POST['action']) && $_POST['action'] == 'edit_doctor') {
                  WHERE DOCTOR_ID = ?";
         
         $stmt = mysqli_prepare($conn, $query);
-        mysqli_stmt_bind_param($stmt, "sssssssi", $first_name, $last_name, $education, $phone, $email, $specialization_id, $profile_image, $doctor_id);
+        mysqli_stmt_bind_param(
+            $stmt,
+            "sssssssi",
+            $first_name,
+            $last_name,
+            $education,
+            $phone,
+            $email,
+            $specialization_id,
+            $profile_image,
+            $doctor_id
+        );
         
         if (mysqli_stmt_execute($stmt)) {
             $success_message = "Doctor information updated successfully.";
@@ -454,15 +465,17 @@ $receptionist_id = $_SESSION['RECEPTIONIST_ID'];
         .image-upload-label {
             display: inline-block;
             padding: 8px 15px;
-            background: #072D44;
-            color: white;
+            background: #ffffff;
+            color: #072D44;
             border-radius: 5px;
             cursor: pointer;
             margin-bottom: 10px;
+            border: 1px solid #072D44;
         }
         
         .image-upload-label:hover {
-            background: #064469;
+            background: #072D44;
+            color: #ffffff;
         }
         
         #profile_image {
@@ -521,9 +534,15 @@ $receptionist_id = $_SESSION['RECEPTIONIST_ID'];
 
         <?php
         $query = "
-            SELECT d.DOCTOR_ID, d.FIRST_NAME, d.LAST_NAME, d.PROFILE_IMAGE,
-                   d.EDUCATION, d.PHONE, d.EMAIL,
-                   s.SPECIALISATION_NAME, s.SPECIALISATION_ID
+            SELECT d.DOCTOR_ID,
+                   d.FIRST_NAME,
+                   d.LAST_NAME,
+                   d.PROFILE_IMAGE,
+                   d.EDUCATION,
+                   d.PHONE,
+                   d.EMAIL,
+                   s.SPECIALISATION_NAME,
+                   s.SPECIALISATION_ID
             FROM doctor_tbl d
             LEFT JOIN specialisation_tbl s
             ON d.SPECIALISATION_ID = s.SPECIALISATION_ID
@@ -660,6 +679,7 @@ function openEditModal(id, firstName, lastName, education, phone, email, special
     document.getElementById('edit_education').value = education;
     document.getElementById('edit_phone').value = phone;
     document.getElementById('edit_email').value = email;
+    // specializationId is preserved to maintain original behaviour if needed later
     
     document.getElementById('current_image').value = profileImage;
     

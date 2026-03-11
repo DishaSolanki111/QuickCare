@@ -16,20 +16,23 @@ include 'config.php';
 
 // Handle edit form submission
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['action'] == 'edit_patient') {
-    $patient_id = $_POST['patient_id'];
-    $first_name = mysqli_real_escape_string($conn, $_POST['first_name']);
-    $last_name = mysqli_real_escape_string($conn, $_POST['last_name']);
-    $dob = mysqli_real_escape_string($conn, $_POST['dob']);
-    $gender = mysqli_real_escape_string($conn, $_POST['gender']);
+    $patient_id  = $_POST['patient_id'];
+    $first_name  = mysqli_real_escape_string($conn, $_POST['first_name']);
+    $last_name   = mysqli_real_escape_string($conn, $_POST['last_name']);
+    $dob         = mysqli_real_escape_string($conn, $_POST['dob']);
+    $gender      = mysqli_real_escape_string($conn, $_POST['gender']);
     $blood_group = mysqli_real_escape_string($conn, $_POST['blood_group']);
-    $phone = mysqli_real_escape_string($conn, $_POST['phone']);
-    $email = mysqli_real_escape_string($conn, $_POST['email']);
+    $phone       = mysqli_real_escape_string($conn, $_POST['phone']);
+    $email       = mysqli_real_escape_string($conn, $_POST['email']);
+    $address     = isset($_POST['address'])
+        ? mysqli_real_escape_string($conn, $_POST['address'])
+        : '';
     
-    // Validate required fields
+    // Validate required fields (same as registration basics)
     if (empty($first_name) || empty($last_name) || empty($dob) || empty($gender) || empty($blood_group) || empty($phone) || empty($email)) {
         $error_message = "All fields are required.";
     } else {
-        // Update patient data
+        // Update patient data (including address)
         $query = "UPDATE patient_tbl SET 
                  FIRST_NAME = ?, 
                  LAST_NAME = ?, 
@@ -37,11 +40,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
                  GENDER = ?, 
                  BLOOD_GROUP = ?, 
                  PHONE = ?, 
-                 EMAIL = ? 
+                 EMAIL = ?,
+                 ADDRESS = ?
                  WHERE PATIENT_ID = ?";
         
         $stmt = mysqli_prepare($conn, $query);
-        mysqli_stmt_bind_param($stmt, "sssssssi", $first_name, $last_name, $dob, $gender, $blood_group, $phone, $email, $patient_id);
+        mysqli_stmt_bind_param($stmt, "ssssssssi", $first_name, $last_name, $dob, $gender, $blood_group, $phone, $email, $address, $patient_id);
         
         if (mysqli_stmt_execute($stmt)) {
             $success_message = "Patient information updated successfully.";
@@ -225,7 +229,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'delete' && isset($_POST['id'
         color: var(--dark-blue);
     }
     
-    .form-group input, .form-group select {
+    .form-group input, .form-group select, .form-group textarea {
         width: 100%;
         padding: 10px;
         border: 1px solid #D0D7E1;
@@ -450,7 +454,7 @@ $receptionist_id = $_SESSION['RECEPTIONIST_ID'];
                     <td>{$row['EMAIL']}</td>
                     <td>
                         <button class='action-btn edit-btn'
-                            onclick=\"openEditModal({$row['PATIENT_ID']}, '" . addslashes($row['FIRST_NAME']) . "', '" . addslashes($row['LAST_NAME']) . "', '{$row['DOB']}', '{$row['GENDER']}', '{$row['BLOOD_GROUP']}', '{$row['PHONE']}', '{$row['EMAIL']}')\">
+                            onclick=\"openEditModal({$row['PATIENT_ID']}, '" . addslashes($row['FIRST_NAME']) . "', '" . addslashes($row['LAST_NAME']) . "', '{$row['DOB']}', '{$row['GENDER']}', '{$row['BLOOD_GROUP']}', '{$row['PHONE']}', '{$row['EMAIL']}', '" . addslashes($row['ADDRESS']) . "')\">
                             <i class='bi bi-pencil'></i>
                             Edit
                         </button>
@@ -540,6 +544,12 @@ $receptionist_id = $_SESSION['RECEPTIONIST_ID'];
                 <div class="error-message" id="edit_email_error"></div>
             </div>
             
+            <div class="form-group">
+                <label for="edit_address">Address</label>
+                <textarea id="edit_address" name="address" rows="3"></textarea>
+                <div class="error-message" id="edit_address_error"></div>
+            </div>
+
             <div style="margin-top: 20px;">
                 <button type="submit" class="btn-save">Save Changes</button>
                 <button type="button" class="btn-cancel" onclick="closeEditModal()">Cancel</button>
@@ -553,7 +563,7 @@ $receptionist_id = $_SESSION['RECEPTIONIST_ID'];
 
 <script>
 // Modal functions
-function openEditModal(id, firstName, lastName, dob, gender, bloodGroup, phone, email) {
+function openEditModal(id, firstName, lastName, dob, gender, bloodGroup, phone, email, address) {
     document.getElementById('edit_patient_id').value = id;
     document.getElementById('edit_first_name').value = firstName;
     document.getElementById('edit_last_name').value = lastName;
@@ -562,6 +572,7 @@ function openEditModal(id, firstName, lastName, dob, gender, bloodGroup, phone, 
     document.getElementById('edit_blood_group').value = bloodGroup;
     document.getElementById('edit_phone').value = phone;
     document.getElementById('edit_email').value = email;
+    document.getElementById('edit_address').value = address;
     
     // Clear any previous error messages
     const errorElements = document.querySelectorAll('.error-message');
