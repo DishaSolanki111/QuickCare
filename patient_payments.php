@@ -198,23 +198,38 @@ html {
         
         .payment-card {
             background-color: white;
-            border-radius: 10px;
+            border-radius: 12px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            padding: 20px;
-            margin-bottom: 20px;
+            padding: 18px 20px;
+            margin-bottom: 18px;
         }
         
         .payment-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             padding-bottom: 10px;
-            border-bottom: 1px solid #eee;
+            border-bottom: 1px solid #edf2f7;
+            gap: 16px;
         }
         
         .payment-header h3 {
             color: var(--primary-color);
+            font-size: 1.05rem;
+            margin-bottom: 4px;
+        }
+
+        .payment-subtitle {
+            font-size: 0.85rem;
+            color: #6b7280;
+        }
+
+        .payment-entry {
+            padding-top: 8px;
+            padding-bottom: 10px;
+            border-top: 1px solid #edf2f7;
+            margin-top: 8px;
         }
         
         .payment-details {
@@ -233,6 +248,10 @@ html {
             margin-right: 10px;
             color: var(--secondary-color);
             font-size: 18px;
+        }
+
+        .payment-appointment-date {
+            font-weight: 600;
         }
         
         .status-badge {
@@ -506,43 +525,73 @@ html {
             <div>
                 <?php
                 if (mysqli_num_rows($payments_query) > 0) {
+                    // Group payments by doctor so each doctor has a single card
+                    $doctorPayments = [];
                     while ($payment = mysqli_fetch_assoc($payments_query)) {
-                        $status_class = ($payment['STATUS'] == 'COMPLETED') ? 'status-completed' : 'status-failed';
+                        $doctorName = $payment['DOC_FNAME'] . ' ' . $payment['DOC_LNAME'];
+                        $specName   = $payment['SPECIALISATION_NAME'];
+                        $groupKey   = $doctorName . '|' . $specName;
+
+                        if (!isset($doctorPayments[$groupKey])) {
+                            $doctorPayments[$groupKey] = [
+                                'doctor_name'   => $doctorName,
+                                'specialisation'=> $specName,
+                                'entries'       => []
+                            ];
+                        }
+                        $doctorPayments[$groupKey]['entries'][] = $payment;
+                    }
+
+                    foreach ($doctorPayments as $group) {
+                        // All entries share same doctor/specialisation; status badge is still per entry
                         ?>
                         <div class="payment-card">
                             <div class="payment-header">
-                                <h3>Dr. <?php echo htmlspecialchars($payment['DOC_FNAME'] . ' ' . $payment['DOC_LNAME']); ?></h3>
-                                <span class="status-badge <?php echo $status_class; ?>"><?php echo $payment['STATUS']; ?></span>
-                            </div>
-                            
-                            <div class="payment-details">
-                                <div class="payment-item">
-                                    <i class="far fa-calendar"></i>
-                                    <span><?php echo date('F d, Y', strtotime($payment['APPOINTMENT_DATE'])); ?></span>
-                                </div>
-                                <div class="payment-item">
-                                    <i class="far fa-clock"></i>
-                                    <span><?php echo date('h:i A', strtotime($payment['APPOINTMENT_TIME'])); ?></span>
-                                </div>
-                                <div class="payment-item">
-                                    <i class="fas fa-rupee-sign"></i>
-                                    <span>Booking Fee: ₹<?php echo number_format($payment['AMOUNT'], 2); ?></span>
-                                </div>
-                                <div class="payment-item">
-                                    <i class="fas fa-credit-card"></i>
-                                    <span>Mode: <?php echo $payment['PAYMENT_MODE']; ?></span>
-                                </div>
-                                <div class="payment-item">
-                                    <i class="far fa-calendar-alt"></i>
-                                    <span>Payment Date: <?php echo date('F d, Y', strtotime($payment['PAYMENT_DATE'])); ?></span>
-                                </div>
-                                <div class="payment-item">
-                                    <i class="fas fa-receipt"></i>
-                                    <span>Transaction ID: <?php echo $payment['TRANSACTION_ID']; ?></span>
+                                <div>
+                                    <h3>Dr. <?php echo htmlspecialchars($group['doctor_name']); ?></h3>
+                                    <div class="payment-subtitle">
+                                        <?php echo htmlspecialchars($group['specialisation']); ?>
+                                    </div>
                                 </div>
                             </div>
-                            
-                            
+
+                            <?php foreach ($group['entries'] as $payment): ?>
+                                <?php $status_class = ($payment['STATUS'] == 'COMPLETED') ? 'status-completed' : 'status-failed'; ?>
+                                <div class="payment-entry">
+                                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; font-style:bold;">
+                                    <div class="payment-details">
+                                        <div class="payment-item">
+                                            <i class="far fa-calendar"></i>
+                                            <span class="payment-appointment-date"><?php echo date('F d, Y', strtotime($payment['APPOINTMENT_DATE'])); ?></span>
+                                        </div>
+                                            <div class="payment-item">
+                                                <i class="far fa-clock"></i>
+                                                <span><?php echo date('h:i A', strtotime($payment['APPOINTMENT_TIME'])); ?></span>
+                                            </div>
+                                        </div>
+                                        <span class="status-badge <?php echo $status_class; ?>"><?php echo $payment['STATUS']; ?></span>
+                                    </div>
+
+                                    <div class="payment-details">
+                                        <div class="payment-item">
+                                            <i class="fas fa-rupee-sign"></i>
+                                            <span>Booking Fee: ₹<?php echo number_format($payment['AMOUNT'], 2); ?></span>
+                                        </div>
+                                        <div class="payment-item">
+                                            <i class="fas fa-credit-card"></i>
+                                            <span>Mode: <?php echo $payment['PAYMENT_MODE']; ?></span>
+                                        </div>
+                                        <div class="payment-item">
+                                            <i class="far fa-calendar-alt"></i>
+                                            <span>Payment Date: <?php echo date('F d, Y', strtotime($payment['PAYMENT_DATE'])); ?></span>
+                                        </div>
+                                        <div class="payment-item">
+                                            <i class="fas fa-receipt"></i>
+                                            <span>Transaction ID: <?php echo $payment['TRANSACTION_ID']; ?></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
                         </div>
                         <?php
                     }

@@ -703,11 +703,7 @@ $medicine_reminder_query = mysqli_query($conn, "
                                 <label for="address">Address</label>
                                 <textarea class="form-control" id="address" name="address" rows="3"><?php echo htmlspecialchars($patient['ADDRESS']); ?></textarea>
                             </div>
-                            
-                            <div class="form-group">
-                                <label for="address">Address</label>
-                                <textarea class="form-control" id="address" name="address" rows="3"><?php echo htmlspecialchars($patient['ADDRESS']); ?></textarea>
-                            </div>
+                          
                             <div class="btn-group">
                                 <button type="submit" class="btn btn-success">
                                     <i class="fas fa-save"></i> Save Changes

@@ -176,24 +176,45 @@ html {
         }
         
         .feedback-card {
-            background-color: white;
-            border-radius: 10px;
+            background-color: #ffffff;
+            border-radius: 12px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            padding: 20px;
-            margin-bottom: 20px;
+            padding: 18px 20px;
+            margin-bottom: 18px;
         }
         
         .feedback-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             padding-bottom: 10px;
-            border-bottom: 1px solid #eee;
+            border-bottom: 1px solid #edf2f7;
+            gap: 16px;
         }
         
         .feedback-header h3 {
             color: var(--primary-color);
+            font-size: 1.05rem;
+            margin-bottom: 4px;
+        }
+
+        .feedback-subtitle {
+            font-size: 0.85rem;
+            color: #6b7280;
+        }
+
+        .feedback-patient {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.9rem;
+            color: #4b5563;
+            white-space: nowrap;
+        }
+
+        .feedback-patient i {
+            color: var(--secondary-color);
         }
         
         .feedback-details {
@@ -218,6 +239,10 @@ html {
             display: flex;
             align-items: center;
             margin: 15px 0;
+        }
+
+        .rating-inline {
+            margin: 0 0 8px;
         }
         
         .rating-stars {
@@ -379,6 +404,10 @@ html {
             font-weight: 600;
             color: #777;
             transition: all 0.3s ease;
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
         }
         
         .tab.active {
@@ -544,47 +573,72 @@ html {
                 <h3 style="margin-bottom: 20px;">Your Completed Appointments</h3>
                 <?php
                 if (mysqli_num_rows($appointments_query) > 0) {
+                    // Group appointments by doctor so each doctor has a single card
+                    $doctorFeedbackGroups = [];
                     while ($appointment = mysqli_fetch_assoc($appointments_query)) {
+                        $doctorName = $appointment['DOC_FNAME'] . ' ' . $appointment['DOC_LNAME'];
+                        $specName   = $appointment['SPECIALISATION_NAME'];
+                        $groupKey   = $doctorName . '|' . $specName;
+
+                        if (!isset($doctorFeedbackGroups[$groupKey])) {
+                            $doctorFeedbackGroups[$groupKey] = [
+                                'doctor_name' => $doctorName,
+                                'specialisation' => $specName,
+                                'entries' => []
+                            ];
+                        }
+                        $doctorFeedbackGroups[$groupKey]['entries'][] = $appointment;
+                    }
+
+                    foreach ($doctorFeedbackGroups as $group) {
                         ?>
                         <div class="feedback-card">
                             <div class="feedback-header">
-                                <h3>Dr. <?php echo htmlspecialchars($appointment['DOC_FNAME'] . ' ' . $appointment['DOC_LNAME']); ?></h3>
-                                <span><?php echo htmlspecialchars($appointment['SPECIALISATION_NAME']); ?></span>
-                            </div>
-                            <div class="feedback-details">
-                                <div class="feedback-item">
-                                    <i class="far fa-calendar"></i>
-                                    <span><?php echo date('F d, Y', strtotime($appointment['APPOINTMENT_DATE'])); ?></span>
-                                </div>
-                                <div class="feedback-item">
-                                    <i class="far fa-clock"></i>
-                                    <span><?php echo date('h:i A', strtotime($appointment['APPOINTMENT_TIME'])); ?></span>
-                                </div>
-                            </div>
-                            <?php if ($appointment['FEEDBACK_ID']): ?>
-                                <div class="rating">
-                                    <div class="rating-stars">
-                                        <?php for ($i = 1; $i <= 5; $i++): ?>
-                                            <i class="fas fa-star star-display <?php echo $i <= $appointment['RATING'] ? 'active' : ''; ?>"></i>
-                                        <?php endfor; ?>
+                                <div>
+                                    <h3>Dr. <?php echo htmlspecialchars($group['doctor_name']); ?></h3>
+                                    <div class="feedback-subtitle">
+                                        <?php echo htmlspecialchars($group['specialisation']); ?>
                                     </div>
-                                    <span class="rating-value"><?php echo $appointment['RATING']; ?>/5</span>
                                 </div>
-                                <div class="feedback-text">
-                                    <?php echo htmlspecialchars($appointment['FEEDBACK_COMMENTS']); ?>
+                            </div>
+                            <?php foreach ($group['entries'] as $appointment): ?>
+                                <div style="padding-top:8px; padding-bottom:10px; border-top:1px solid #edf2f7; margin-top:8px;">
+                                    <div class="feedback-details">
+                                        <div class="feedback-item">
+                                            <i class="far fa-calendar"></i>
+                                            <span><?php echo date('F d, Y', strtotime($appointment['APPOINTMENT_DATE'])); ?></span>
+                                        </div>
+                                        <div class="feedback-item">
+                                            <i class="far fa-clock"></i>
+                                            <span><?php echo date('h:i A', strtotime($appointment['APPOINTMENT_TIME'])); ?></span>
+                                        </div>
+                                    </div>
+                                    <?php if ($appointment['FEEDBACK_ID']): ?>
+                                        <div class="rating rating-inline">
+                                            <div class="rating-stars">
+                                                <?php for ($i = 1; $i <= 5; $i++): ?>
+                                                    <i class="fas fa-star star-display <?php echo $i <= $appointment['RATING'] ? 'active' : ''; ?>"></i>
+                                                <?php endfor; ?>
+                                            </div>
+                                            <span class="rating-value"><?php echo $appointment['RATING']; ?>/5</span>
+                                        </div>
+                                        <div class="feedback-text">
+                                            <?php echo htmlspecialchars($appointment['FEEDBACK_COMMENTS']); ?>
+                                        </div>
+                                        <div class="btn-group">
+                                            <button class="btn btn-primary" onclick="openFeedbackModal(<?php echo $appointment['APPOINTMENT_ID']; ?>, <?php echo $appointment['RATING']; ?>, '<?php echo htmlspecialchars($appointment['FEEDBACK_COMMENTS']); ?>')">
+                                                <i class="fas fa-edit"></i> Edit Feedback
+                                            </button>
+                                        </div>
+                                    <?php else: ?>
+                                        <div class="btn-group">
+                                            <button class="btn btn-success" onclick="openFeedbackModal(<?php echo $appointment['APPOINTMENT_ID']; ?>)">
+                                                <i class="fas fa-star"></i> Leave Feedback
+                                            </button>
+                                        </div>
+                                    <?php endif; ?>
                                 </div>
-                                <div class="btn-group">
-                                    <button class="btn btn-primary" onclick="openFeedbackModal(<?php echo $appointment['APPOINTMENT_ID']; ?>, <?php echo $appointment['RATING']; ?>, '<?php echo htmlspecialchars($appointment['FEEDBACK_COMMENTS']); ?>')">
-                                        <i class="fas fa-edit"></i> Edit Feedback
-                                    </button>
-                                </div>
-                            <?php else: ?>
-                                <div class="btn-group">
-                                    <button class="btn btn-success" onclick="openFeedbackModal(<?php echo $appointment['APPOINTMENT_ID']; ?>)">
-                                        <i class="fas fa-star"></i> Leave Feedback
-                                    </button>
-                                </div>
-                            <?php endif; ?>
+                            <?php endforeach; ?>
                         </div>
                         <?php
                     }
@@ -600,55 +654,84 @@ html {
             <!-- Tab Content: All Feedback -->
             <div class="tab-content <?php echo $active_tab === 'all-feedback' ? 'active' : ''; ?>" id="all-feedback">
                 <h3 style="margin-bottom: 20px;">All Patient Feedback</h3>
-                <div style="overflow-x:auto;">
-                <table style="width:100%; border-collapse:collapse; background:white; border-radius:12px; overflow:hidden; box-shadow:0 4px 12px rgba(0,0,0,0.05);">
-                    <tr style="background:#5790AB; color:white;">
-                        <th>Patient Name</th>
-                        <th>Doctor Name</th>
-                        <th>Specialization</th>
-                        <th>Rating</th>
-                        <th>Comments</th>
-                    </tr>
-                    <?php
-                    $all_rating_where = ($filter_rating >= 1 && $filter_rating <= 5) ? " AND f.RATING = " . $filter_rating : "";
-                    $all_feedback_query = mysqli_query(
-                        $conn,
-                        "SELECT 
-                            f.RATING, 
-                            f.COMMENTS, 
-                            p.FIRST_NAME AS P_FNAME, 
-                            p.LAST_NAME AS P_LNAME, 
-                            d.FIRST_NAME AS D_FNAME, 
-                            d.LAST_NAME AS D_LNAME,
-                            s.SPECIALISATION_NAME
-                         FROM feedback_tbl f 
-                         JOIN appointment_tbl a ON f.APPOINTMENT_ID = a.APPOINTMENT_ID 
-                         JOIN patient_tbl p ON a.PATIENT_ID = p.PATIENT_ID 
-                         JOIN doctor_tbl d ON a.DOCTOR_ID = d.DOCTOR_ID
-                         JOIN specialisation_tbl s ON d.SPECIALISATION_ID = s.SPECIALISATION_ID
-                         WHERE 1=1 $all_rating_where
-                         ORDER BY f.RATING ASC, f.FEEDBACK_ID DESC"
-                    );
-                    if ($all_feedback_query && mysqli_num_rows($all_feedback_query) > 0) {
-                        while ($row = mysqli_fetch_assoc($all_feedback_query)) {
-                            echo '<tr>';
-                            echo '<td>' . htmlspecialchars($row['P_FNAME'] . ' ' . $row['P_LNAME']) . '</td>';
-                            echo '<td>' . htmlspecialchars($row['D_FNAME'] . ' ' . $row['D_LNAME']) . '</td>';
-                            echo '<td>' . htmlspecialchars($row['SPECIALISATION_NAME']) . '</td>';
-                            echo '<td class="rating">';
-                            for ($i = 1; $i <= 5; $i++) {
-                                echo ($i <= $row['RATING']) ? '★' : '☆';
-                            }
-                            echo ' ' . $row['RATING'] . '/5</td>';
-                            echo '<td>' . htmlspecialchars($row['COMMENTS']) . '</td>';
-                            echo '</tr>';
+                <?php
+                $all_rating_where = ($filter_rating >= 1 && $filter_rating <= 5) ? " AND f.RATING = " . $filter_rating : "";
+                $all_feedback_query = mysqli_query(
+                    $conn,
+                    "SELECT 
+                        f.RATING, 
+                        f.COMMENTS, 
+                        p.FIRST_NAME AS P_FNAME, 
+                        p.LAST_NAME AS P_LNAME, 
+                        d.FIRST_NAME AS D_FNAME, 
+                        d.LAST_NAME AS D_LNAME,
+                        s.SPECIALISATION_NAME
+                     FROM feedback_tbl f 
+                     JOIN appointment_tbl a ON f.APPOINTMENT_ID = a.APPOINTMENT_ID 
+                     JOIN patient_tbl p ON a.PATIENT_ID = p.PATIENT_ID 
+                     JOIN doctor_tbl d ON a.DOCTOR_ID = d.DOCTOR_ID
+                     JOIN specialisation_tbl s ON d.SPECIALISATION_ID = s.SPECIALISATION_ID
+                     WHERE 1=1 $all_rating_where
+                     ORDER BY f.RATING ASC, f.FEEDBACK_ID DESC"
+                );
+                if ($all_feedback_query && mysqli_num_rows($all_feedback_query) > 0) {
+                    // Group all feedback rows by doctor so each doctor has one card
+                    $allDoctorGroups = [];
+                    while ($row = mysqli_fetch_assoc($all_feedback_query)) {
+                        $doctorName = $row['D_FNAME'] . ' ' . $row['D_LNAME'];
+                        $specName   = $row['SPECIALISATION_NAME'];
+                        $groupKey   = $doctorName . '|' . $specName;
+
+                        if (!isset($allDoctorGroups[$groupKey])) {
+                            $allDoctorGroups[$groupKey] = [
+                                'doctor_name'   => $doctorName,
+                                'specialisation'=> $specName,
+                                'entries'       => []
+                            ];
                         }
-                    } else {
-                        echo '<tr><td colspan="5">No feedback found</td></tr>';
+                        $allDoctorGroups[$groupKey]['entries'][] = $row;
                     }
-                    ?>
-                </table>
-                </div>
+
+                    foreach ($allDoctorGroups as $group) {
+                        ?>
+                        <div class="feedback-card">
+                            <div class="feedback-header">
+                                <div>
+                                    <h3>Dr. <?php echo htmlspecialchars($group['doctor_name']); ?></h3>
+                                    <div class="feedback-subtitle">
+                                        <?php echo htmlspecialchars($group['specialisation']); ?>
+                                    </div>
+                                </div>
+                            </div>
+                            <?php foreach ($group['entries'] as $entry): ?>
+                                <div style="padding-top:8px; padding-bottom:10px; border-top:1px solid #edf2f7; margin-top:8px;">
+                                    <div class="feedback-patient">
+                                        <i class="fas fa-user"></i>
+                                        <span><?php echo htmlspecialchars($entry['P_FNAME'] . ' ' . $entry['P_LNAME']); ?></span>
+                                    </div>
+                                    <div class="rating rating-inline">
+                                        <div class="rating-stars">
+                                            <?php for ($i = 1; $i <= 5; $i++): ?>
+                                                <i class="fas fa-star star-display <?php echo $i <= $entry['RATING'] ? 'active' : ''; ?>"></i>
+                                            <?php endfor; ?>
+                                        </div>
+                                        <span class="rating-value"><?php echo $entry['RATING']; ?>/5</span>
+                                    </div>
+                                    <div class="feedback-text">
+                                        <?php echo htmlspecialchars($entry['COMMENTS']); ?>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                        <?php
+                    }
+                } else {
+                    echo '<div class="empty-state">
+                        <i class="fas fa-comment-slash"></i>
+                        <p>No feedback found</p>
+                    </div>';
+                }
+                ?>
             </div>
 
             <!-- Feedback Modal -->
