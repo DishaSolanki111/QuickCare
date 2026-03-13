@@ -228,6 +228,11 @@ html {
             align-items: center;
             justify-content: center;
         }
+
+        /* Ensure button icons don’t overlap text */
+        .btn i {
+            margin-right: 6px;
+        }
         
         .btn-primary {
             background-color: var(--secondary-color);
@@ -715,8 +720,10 @@ html {
                     // Reset the result pointer to beginning
                     mysqli_data_seek($appointments_query, 0);
                     while ($appointment = mysqli_fetch_assoc($appointments_query)) {
-                        // Upcoming = SCHEDULED appointments with date strictly greater than today
-                        if ($appointment['APPOINTMENT_DATE'] > date('Y-m-d') && $appointment['STATUS'] === 'SCHEDULED') {
+                        // Normalize status to handle different capitalizations / legacy values
+                        $status_upper = strtoupper(trim($appointment['STATUS']));
+                        // Upcoming = future-dated, not cancelled appointments
+                        if ($appointment['APPOINTMENT_DATE'] > date('Y-m-d') && $status_upper !== 'CANCELLED') {
                             $upcoming_appointments[] = $appointment;
                         }
                     }
@@ -726,11 +733,12 @@ html {
                 if (count($upcoming_appointments) > 0) {
                     foreach ($upcoming_appointments as $appointment) {
                         $status_class = '';
-                        if ($appointment['STATUS'] == 'SCHEDULED') {
+                        $status_upper = strtoupper(trim($appointment['STATUS']));
+                        if ($status_upper === 'SCHEDULED' || $status_upper === 'CONFIRMED') {
                             $status_class = 'status-scheduled';
-                        } elseif ($appointment['STATUS'] == 'COMPLETED') {
+                        } elseif ($status_upper === 'COMPLETED') {
                             $status_class = 'status-completed';
-                        } elseif ($appointment['STATUS'] == 'CANCELLED') {
+                        } elseif ($status_upper === 'CANCELLED') {
                             $status_class = 'status-cancelled';
                         }
                         ?>
@@ -750,7 +758,7 @@ html {
                                 </div>
                             </div>
                             <div class="appointment-actions">
-                                <span class="status-badge <?php echo $status_class; ?>"><?php echo ucfirst(strtolower($appointment['STATUS'])); ?></span>
+                                <span class="status-badge <?php echo $status_class; ?>"><?php echo ucfirst(strtolower($status_upper)); ?></span>
                                 <div class="btn-group" style="margin-top: 15px;">
                                     <form method="POST" action="book_appointment_date.php" style="display:inline">
                                         <input type="hidden" name="doctor_id" value="<?php echo $appointment['DOCTOR_ID']; ?>">
@@ -759,7 +767,7 @@ html {
                                             <i class="fas fa-edit"></i> Reschedule
                                         </button>
                                     </form>
-                                    <?php if ($appointment['STATUS'] == 'SCHEDULED'): ?>
+                                    <?php if ($status_upper !== 'CANCELLED' && $appointment['APPOINTMENT_DATE'] > date('Y-m-d')): ?>
                                     <form method="POST" style="display: inline;">
                                         <input type="hidden" name="appointment_id" value="<?php echo $appointment['APPOINTMENT_ID']; ?>">
                                         <button type="submit" name="cancel_appointment" class="btn btn-danger" onclick="return confirm('Are you sure you want to cancel this appointment?')">
@@ -790,7 +798,8 @@ html {
                     mysqli_data_seek($appointments_query, 0);
                     while ($appointment = mysqli_fetch_assoc($appointments_query)) {
                         // Past = all COMPLETED appointments (including today's when doctor marks as complete)
-                        if ($appointment['STATUS'] === 'COMPLETED') {
+                        $status_upper = strtoupper(trim($appointment['STATUS']));
+                        if ($status_upper === 'COMPLETED') {
                             $past_appointments[] = $appointment;
                         }
                     }
