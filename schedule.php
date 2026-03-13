@@ -635,17 +635,16 @@ if ($result->num_rows > 0) {
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Initial load of doctor schedules
+            // Initial load of doctor schedules for today's date
             loadDoctorSchedules();
 
             // Event listeners for filters
-            document.getElementById('date-picker').addEventListener('change', function() {
+            // Do NOT auto-load when user changes filters; only load on explicit Search click
+            document.getElementById('filter-btn').addEventListener('click', function (e) {
+                e.preventDefault();
                 updateDateDisplay();
                 loadDoctorSchedules();
             });
-
-            document.getElementById('specialization').addEventListener('change', loadDoctorSchedules);
-            document.getElementById('filter-btn').addEventListener('click', loadDoctorSchedules);
 
             // Function to update the date display
             function updateDateDisplay() {
