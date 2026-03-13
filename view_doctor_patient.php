@@ -704,10 +704,11 @@ while ($doctor = mysqli_fetch_assoc($doctors_result)) {
 </div>
 </div>
 <div class="doctor-actions">
-<form method="POST" action="d_profile.php" style="display:inline">
-<input type="hidden" name="id" value="<?php echo $doctor['DOCTOR_ID']; ?>">
-<button type="submit" class="btn btn-primary"><i class="fas fa-user-md"></i> View Profile</button>
-</form>
+            <form method="POST" action="d_profile.php" style="display:inline">
+            <input type="hidden" name="id" value="<?php echo $doctor['DOCTOR_ID']; ?>">
+            <input type="hidden" name="source" value="view_doctor_patient">
+            <button type="submit" class="btn btn-primary"><i class="fas fa-user-md"></i> View Profile</button>
+            </form>
 <form method="POST" action="book_appointment_date.php" style="display:inline">
 <input type="hidden" name="doctor_id" value="<?php echo $doctor['DOCTOR_ID']; ?>">
 <button type="submit" class="btn btn-success">

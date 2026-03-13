@@ -7,6 +7,7 @@ if (!isset($_POST['id'])) {
 }
 
  $doctor_id = intval($_POST['id']);
+ $source    = isset($_POST['source']) ? $_POST['source'] : '';
 
 /* =========================
    FETCH DOCTOR DETAILS
@@ -464,7 +465,7 @@ $spec_back_id = (int)($doctor['SPECIALISATION_ID'] ?? 0);
         
         <div class="content-wrapper">
             <div class="container">
-                <form id="backDoctorsForm" method="POST" action="doctors.php" style="display:inline;">
+                <form id="backDoctorsForm" method="POST" action="<?php echo ($source === 'view_doctor_patient') ? 'view_doctor_patient.php' : 'doctors.php'; ?>" style="display:inline;">
                     <input type="hidden" name="spec_id" value="<?php echo $spec_back_id; ?>">
                 </form>
                 <button type="button" class="back-btn" onclick="document.getElementById('backDoctorsForm').submit()">
