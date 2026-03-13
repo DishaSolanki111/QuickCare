@@ -205,11 +205,11 @@ if (!($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_reminder']))) {
     ORDER BY m.MED_NAME
 ");
 
-// Fetch medicine reminders
+// Fetch medicine reminders (use LEFT JOIN so reminders still appear even if medicine record was removed)
 $reminders_query = mysqli_query($conn, "
     SELECT mr.*, m.MED_NAME
     FROM medicine_reminder_tbl mr
-    JOIN medicine_tbl m ON mr.MEDICINE_ID = m.MEDICINE_ID
+    LEFT JOIN medicine_tbl m ON mr.MEDICINE_ID = m.MEDICINE_ID
     WHERE mr.PATIENT_ID = '$patient_id'
     ORDER BY mr.START_DATE, mr.REMINDER_TIME
 ");
@@ -769,7 +769,7 @@ if (!empty($prescription_id)) {
                             <i class="fas fa-pills"></i>
                         </div>
                         <div class="reminder-content">
-                            <h4><?php echo htmlspecialchars($reminder['MED_NAME']); ?></h4>
+                            <h4><?php echo htmlspecialchars($reminder['MED_NAME'] ?? 'Medicine'); ?></h4>
                             <?php if (!empty($reminder['REMARKS'])): ?>
                                 <p><strong>Notes:</strong> <?php echo htmlspecialchars($reminder['REMARKS']); ?></p>
                             <?php endif; ?>

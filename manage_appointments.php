@@ -54,11 +54,18 @@ if (isset($_SESSION['APPOINTMENT_ERROR'])) {
 }
 
 // Fetch appointments data (GROUP BY prevents duplicate rows from joins)
- $appointments_query = mysqli_query($conn, "
-    SELECT a.*, d.FIRST_NAME as DOC_FNAME, d.LAST_NAME as DOC_LNAME, s.SPECIALISATION_NAME as SPECIALIZATION 
+// Also LEFT JOIN prescription_tbl to know if a prescription (and its ID) exists for an appointment
+$appointments_query = mysqli_query($conn, "
+    SELECT 
+        a.*, 
+        d.FIRST_NAME as DOC_FNAME, 
+        d.LAST_NAME as DOC_LNAME, 
+        s.SPECIALISATION_NAME as SPECIALIZATION,
+        p.PRESCRIPTION_ID
     FROM appointment_tbl a
     JOIN doctor_tbl d ON a.DOCTOR_ID = d.DOCTOR_ID
     JOIN specialisation_tbl s ON d.SPECIALISATION_ID = s.SPECIALISATION_ID
+    LEFT JOIN prescription_tbl p ON p.APPOINTMENT_ID = a.APPOINTMENT_ID
     WHERE a.PATIENT_ID = '" . mysqli_real_escape_string($conn, $patient_id) . "'
     GROUP BY a.APPOINTMENT_ID
     ORDER BY a.APPOINTMENT_DATE DESC
@@ -838,9 +845,14 @@ html {
                             <div class="appointment-actions">
                                 <span class="status-badge status-completed">Completed</span>
                                 <div class="btn-group" style="margin-top: 15px;">
-                                    <button class="btn btn-primary">
-                                        <i class="fas fa-file-medical"></i> View Prescription
-                                    </button>
+                                    <?php if (!empty($appointment['PRESCRIPTION_ID'])): ?>
+                                    <form method="POST" action="patinet_prescriptions.php" style="display:inline">
+                                        <input type="hidden" name="download" value="<?php echo $appointment['PRESCRIPTION_ID']; ?>">
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fas fa-file-medical"></i> View Prescription
+                                        </button>
+                                    </form>
+                                    <?php endif; ?>
                                     <button class="btn btn-success">
                                         <i class="fas fa-star"></i> Leave Feedback
                                     </button>
