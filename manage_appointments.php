@@ -725,13 +725,11 @@ html {
                 $upcoming_appointments = [];
                 
                 if (mysqli_num_rows($appointments_query) > 0) {
-                    // Reset the result pointer to beginning
                     mysqli_data_seek($appointments_query, 0);
                     while ($appointment = mysqli_fetch_assoc($appointments_query)) {
-                        // Normalize status to handle different capitalizations / legacy values
                         $status_upper = strtoupper(trim($appointment['STATUS']));
-                        // Upcoming = future-dated, not cancelled appointments
-                        if ($appointment['APPOINTMENT_DATE'] > date('Y-m-d') && $status_upper !== 'CANCELLED') {
+                        // Upcoming: show records whose STATUS in DB is SCHEDULED
+                        if ($status_upper === 'SCHEDULED') {
                             $upcoming_appointments[] = $appointment;
                         }
                     }
@@ -775,7 +773,7 @@ html {
                                             <i class="fas fa-edit"></i> Reschedule
                                         </button>
                                     </form>
-                                    <?php if ($status_upper !== 'CANCELLED' && $appointment['APPOINTMENT_DATE'] > date('Y-m-d')): ?>
+                                    <?php if ($status_upper === 'SCHEDULED'): ?>
                                     <form method="POST" style="display: inline;">
                                         <input type="hidden" name="appointment_id" value="<?php echo $appointment['APPOINTMENT_ID']; ?>">
                                         <button type="submit" name="cancel_appointment" class="btn btn-danger" onclick="return confirm('Are you sure you want to cancel this appointment?')">
@@ -802,11 +800,10 @@ html {
                 $past_appointments = [];
                 
                 if (mysqli_num_rows($appointments_query) > 0) {
-                    // Reset the result pointer to beginning
                     mysqli_data_seek($appointments_query, 0);
                     while ($appointment = mysqli_fetch_assoc($appointments_query)) {
-                        // Past = all COMPLETED appointments (including today's when doctor marks as complete)
                         $status_upper = strtoupper(trim($appointment['STATUS']));
+                        // Past: show records whose STATUS in DB is COMPLETED
                         if ($status_upper === 'COMPLETED') {
                             $past_appointments[] = $appointment;
                         }

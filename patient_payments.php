@@ -556,20 +556,18 @@ html {
                             </div>
 
                             <?php foreach ($group['entries'] as $payment): ?>
-                                <?php $status_class = ($payment['STATUS'] == 'COMPLETED') ? 'status-completed' : 'status-failed'; ?>
                                 <div class="payment-entry">
                                     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; font-style:bold;">
-                                    <div class="payment-details">
-                                        <div class="payment-item">
-                                            <i class="far fa-calendar"></i>
-                                            <span class="payment-appointment-date"><?php echo date('F d, Y', strtotime($payment['APPOINTMENT_DATE'])); ?></span>
-                                        </div>
+                                        <div class="payment-details">
+                                            <div class="payment-item">
+                                                <i class="far fa-calendar"></i>
+                                                <span class="payment-appointment-date"><?php echo date('F d, Y', strtotime($payment['APPOINTMENT_DATE'])); ?></span>
+                                            </div>
                                             <div class="payment-item">
                                                 <i class="far fa-clock"></i>
                                                 <span><?php echo date('h:i A', strtotime($payment['APPOINTMENT_TIME'])); ?></span>
                                             </div>
                                         </div>
-                                        <span class="status-badge <?php echo $status_class; ?>"><?php echo $payment['STATUS']; ?></span>
                                     </div>
 
                                     <div class="payment-details">
