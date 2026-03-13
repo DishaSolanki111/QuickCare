@@ -531,12 +531,14 @@ include 'header.php';?>
                 }
 
                 // ---------------- USERNAME VALIDATION ----------------
-        if (
-                    !preg_match('/^[A-Z][A-Za-z0-9]*(_[A-Za-z0-9]+)*$/', $username) ||
-                    strlen($username) > 20 ||
-                    !preg_match('/\d/', $username)
-                ) {
-                    $field_errors['username'] = "Username must start with a capital letter, max 20 chars, no spaces, no consecutive underscores, not end with underscore, and include at least 1 digit (e.g. Vinod_Sharma01).";
+                // Rules:
+                // - Must start with a letter
+                // - Length 3–20 characters
+                // - Only letters, numbers, and underscore
+                // - No character can repeat more than 2 times consecutively
+                $username = trim($username);
+                if (!preg_match('/^(?!.*([A-Za-z0-9_])\1\1)[A-Za-z][A-Za-z0-9_]{2,19}$/', $username)) {
+                    $field_errors['username'] = "Username must start with a letter, be 3–20 characters, use only letters, numbers and underscore (_), and not repeat any character more than 2 times in a row.";
                 }
 
                 // ---------------- PASSWORD VALIDATION ----------------
@@ -573,7 +575,7 @@ include 'header.php';?>
                     $check_sql = "SELECT COUNT(*) as cnt FROM patient_tbl WHERE USERNAME = '$check_username'";
                     $check_result = $conn->query($check_sql);
                     if ($check_result && $check_result->fetch_assoc()['cnt'] > 0) {
-                        $field_errors['username'] = "Username already exist";
+                        $field_errors['username'] = "Username already exists. Please choose another one.";
                     }
                 }
 
@@ -843,10 +845,9 @@ include 'header.php';?>
     }
 
     function validateUsername(input) {
-        const usernameRegex = /^[A-Z][A-Za-z0-9]*(_[A-Za-z0-9]+)*$/;
-        const val = input.value;
-        const hasDigit = /\d/.test(val);
-        if (val.trim() !== '' && val.length <= 20 && usernameRegex.test(val) && hasDigit) {
+        const val = input.value.trim();
+        const usernameRegex = /^(?!.*([A-Za-z0-9_])\1\1)[A-Za-z][A-Za-z0-9_]{2,19}$/;
+        if (val !== '' && usernameRegex.test(val)) {
             hideError('username');
         }
     }
@@ -973,18 +974,13 @@ include 'header.php';?>
 
         // 7. Validate Username
         const username = document.getElementById('username');
-        const usernameRegex = /^[A-Z][A-Za-z0-9]*(_[A-Za-z0-9]+)*$/;
-        if (username.value.trim() === '') {
+        const usernameRegex = /^(?!.*([A-Za-z0-9_])\1\1)[A-Za-z][A-Za-z0-9_]{2,19}$/;
+        const unameVal = username.value.trim();
+        if (unameVal === '') {
             showError('username', "Username is required.");
             isValid = false;
-        } else if (username.value.length > 20) {
-            showError('username', "Username must be at most 20 characters.");
-            isValid = false;
-        } else if (!usernameRegex.test(username.value)) {
-            showError('username', "Username must start with capital, no spaces, no consecutive underscores, not end with underscore.");
-            isValid = false;
-        } else if (!/\d/.test(username.value)) {
-            showError('username', "Username must include at least 1 digit (e.g. Vinod_Sharma01).");
+        } else if (!usernameRegex.test(unameVal)) {
+            showError('username', "Username must start with a letter, be 3–20 characters, use only letters, numbers and underscore (_), and not repeat any character more than 2 times in a row.");
             isValid = false;
         } else {
             hideError('username');
