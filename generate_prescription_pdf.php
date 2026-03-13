@@ -41,9 +41,9 @@ function generatePDFWithTCPDF($prescription, $medicines) {
     $pdf->setPrintHeader(false);
     $pdf->setPrintFooter(false);
     
-    // Set margins
-    $pdf->SetMargins(15, 15, 15);
-    $pdf->SetAutoPageBreak(TRUE, 15);
+    // Set tighter margins to reduce empty space
+    $pdf->SetMargins(10, 10, 10);
+    $pdf->SetAutoPageBreak(TRUE, 10);
     
     // Add a page
     $pdf->AddPage();
@@ -197,7 +197,7 @@ function generatePDFAsHTML($prescription, $medicines) {
         }
         @media print {
             @page { 
-                margin: 1.5cm; 
+                margin: 1cm; 
                 size: A4;
             }
             .no-print { 
@@ -215,7 +215,7 @@ function generatePDFAsHTML($prescription, $medicines) {
         body { 
             font-family: "Segoe UI", Arial, sans-serif; 
             margin: 0;
-            padding: 20px;
+            padding: 10px;
             line-height: 1.6;
             background-color: #f5f5f5;
             color: #333;
@@ -225,7 +225,7 @@ function generatePDFAsHTML($prescription, $medicines) {
             max-width: 210mm;
             margin: 0 auto;
             background: white;
-            padding: 30px;
+            padding: 20px;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
             width: 100%;
             box-sizing: border-box;

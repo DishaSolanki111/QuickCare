@@ -96,27 +96,51 @@ include 'header.php'; // Include the header
         100% { transform: rotate(360deg); }
     }
 
-    /* ================= HERO SECTION ================= */
+    /* ================= HERO SECTION (match service.php header) ================= */
     .hero {
         height: 200px;
-        background: var(--gradient-1);
+        background: linear-gradient(135deg, #1a73e8 0%, #4285f4 100%);
         display: flex;
         justify-content: center;
         align-items: center;
         text-align: center;
         color: white;
         padding: 20px;
-        /* Kept margin-top for header alignment */
-      
-
+        position: relative;
+        overflow: hidden;
     }
+
+    .hero::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%23ffffff' fill-opacity='0.1' d='M0,224L48,213.3C96,203,192,181,288,181.3C384,181,480,203,576,224C672,245,768,267,864,261.3C960,256,1056,224,1152,213.3C1248,203,1344,213,1392,218.7L1440,224L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z'%3E%3C/path%3E%3C/svg%3E") no-repeat bottom;
+        background-size: cover;
+    }
+
+    .hero-content {
+        position: relative;
+        z-index: 2;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
+
     .hero h1 {
-        font-size: 3.8rem;
+        font-size: 2.8rem;
         font-weight: 700;
+        margin-bottom: 0.8rem;
     }
     .hero p {
-        margin-top: 10px;
+        margin-top: 0;
         font-size: 1.2rem;
+        max-width: 700px;
+        margin-left: auto;
+        margin-right: auto;
+        opacity: 0.9;
     }
 
     @keyframes fadeInDown {
@@ -343,7 +367,7 @@ include 'header.php'; // Include the header
     <div class="bg-animation"></div>
     <!-- ================= HERO SECTION ================= -->
     <section class="hero">
-        <div>
+        <div class="hero-content">
             <h1>About Quick Care</h1>
             <p>Your Trusted Healthcare Partner</p>
         </div>

@@ -154,8 +154,8 @@ $medicine_reminder_query = mysqli_query($conn, "
     LIMIT 5
 ");
 
-// If prescription ID is provided, get medicines from that prescription
- $prescription_medicines = [];
+// If prescription ID is provided, get medicines from that prescription; otherwise fall back to all prescribed medicines
+$prescription_medicines = [];
 if (!empty($prescription_id)) {
     $prescription_medicines_query = mysqli_query($conn, "
         SELECT pm.MEDICINE_ID, m.MED_NAME
@@ -166,6 +166,17 @@ if (!empty($prescription_id)) {
     
     while ($medicine = mysqli_fetch_assoc($prescription_medicines_query)) {
         $prescription_medicines[] = $medicine;
+    }
+} else {
+    if ($prescribed_medicines_query && mysqli_num_rows($prescribed_medicines_query) > 0) {
+        while ($medicine = mysqli_fetch_assoc($prescribed_medicines_query)) {
+            $prescription_medicines[] = [
+                'MEDICINE_ID' => $medicine['MEDICINE_ID'],
+                'MED_NAME'    => $medicine['MED_NAME'],
+            ];
+        }
+        // reset pointer for later select options usage
+        mysqli_data_seek($prescribed_medicines_query, 0);
     }
 }
 ?>
@@ -566,13 +577,6 @@ if (!empty($prescription_id)) {
         <div class="main-content">
             <!-- Header -->
             <?php include 'patient_header.php'; ?>
-            
-            <div class="back-bar">
-                <a href="patinet_prescriptions.php" class="back-link">
-                    <i class="fas fa-arrow-left"></i>
-                    Back to Prescriptions
-                </a>
-            </div>
             
             <!-- Success/Error Messages -->
             <?php if (isset($success_message)): ?>

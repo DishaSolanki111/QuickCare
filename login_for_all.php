@@ -45,9 +45,9 @@ include 'header.php';
             background: linear-gradient(135deg, #f0f7ff 0%, #ffffff 100%);
             display: flex;
             justify-content: center;
-            align-items: center;
+            align-items: flex-start;
             min-height: 100vh;
-            padding: 20px;
+            padding: 40px 20px 20px;
         }
 
         .login-footer {
@@ -85,7 +85,7 @@ include 'header.php';
             grid-template-columns: 1fr 450px;
             gap: 40px;
             align-items: center;
-            margin-top: 120px;
+            margin-top: 40px;
             background: rgba(255, 255, 255, 0.95);
             padding: 3rem;
             border-radius: 20px;
@@ -120,12 +120,14 @@ include 'header.php';
         .container {
             position: relative;
             width: 450px;
+            align-self: flex-start;
+            margin-top: 10px;
         }
 
         .tabs {
             display: flex;
             justify-content: space-between;
-            margin-top: 20px;
+            margin-top: 8px;
             background: var(--primary-light);
             border-radius: 15px;
             padding: 5px;
@@ -155,15 +157,15 @@ include 'header.php';
         .slider {
             position: relative;
             width: 450px;
-            min-height: 350px;
-            overflow: hidden;
+            min-height: 360px;
+            overflow: visible;
         }
-
+        
         .form {
             width: 450px;
-            min-height: 350px;
+            min-height: 360px;
             background: white;
-            padding: 30px;
+            padding: 22px 26px 30px;
             border-radius: 15px;
             position: absolute;
             top: 0;
@@ -179,16 +181,16 @@ include 'header.php';
         }
 
         .form h3 {
-            font-size: 1.8rem;
+            font-size: 1.7rem;
             color: var(--dark);
-            margin-bottom: 25px;
+            margin-bottom: 18px;
             font-weight: 700;
         }
-
+        
         input {
             width: 100%;
-            padding: 15px;
-            margin-bottom: 20px;
+            padding: 13px;
+            margin-bottom: 14px;
             border-radius: 10px;
             border: 2px solid #e1e5e9;
             font-size: 1rem;
@@ -203,13 +205,13 @@ include 'header.php';
 
         button {
             width: 100%;
-            padding: 15px;
+            padding: 13px;
             background: var(--primary);
             color: white;
             border: none;
             border-radius: 10px;
             cursor: pointer;
-            margin-top: 10px;
+            margin-top: 6px;
             font-weight: 600;
             font-size: 1.1rem;
             transition: all 0.3s ease;

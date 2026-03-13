@@ -276,26 +276,26 @@ if (isset($_SESSION['schedule_success_message'])) {
         /* Doctor Profile Section */
         .doctor-profile-card {
             background: var(--white);
-            border-radius: 16px;
+            border-radius: 12px;
             padding: 0;
-            margin-bottom: 25px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+            margin-bottom: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
             overflow: hidden;
         }
 
         /* Doctor Header: soft light background */
         .doctor-header {
-            background: #1a3a5f;;
+            background: #1a3a5f;
             color: white;
-            padding: 28px 32px;
+            padding: 18px 22px;
             display: flex;
             align-items: center;
-            gap: 24px;
+            gap: 18px;
         }
 
         .doctor-avatar {
-            width: 80px;
-            height: 80px;
+            width: 68px;
+            height: 68px;
             border-radius: 50%;
             border: 3px solid var(--light-blue);
             object-fit: cover;
@@ -303,7 +303,7 @@ if (isset($_SESSION['schedule_success_message'])) {
 
         .doctor-info h3 {
             margin: 0;
-            font-size: 24px;
+            font-size: 20px;
             font-weight: 600;
             color: white;
         }
@@ -311,40 +311,40 @@ if (isset($_SESSION['schedule_success_message'])) {
         .doctor-specialization {
             display: inline-block;
             background: var(--secondary-color);
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 15px;
-            margin-top: 10px;
+            padding: 4px 12px;
+            border-radius: 18px;
+            font-size: 13px;
+            margin-top: 6px;
             color:white;
         }
 
         /* Schedule List - Horizontal Bars */
         .schedule-list-container {
             background: var(--white);
-            border-radius: 16px;
-            padding: 30px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+            border-radius: 12px;
+            padding: 16px 18px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
             border: 1px solid #e9ecef;
         }
 
         .schedule-grid {
             display: flex;
             flex-direction: column;
-            gap: 16px;
+            gap: 10px;
         }
 
         /* Schedule row: horizontal rounded card, light grey, blue left accent */
         .day-schedule {
             background: #f6f9fb;
-            border-radius: 14px;
-            padding: 20px 26px;
+            border-radius: 10px;
+            padding: 10px 14px;
             border-left: 4px solid var(--secondary-color);
-            box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.03);
             transition: all 0.3s ease;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 24px;
+            gap: 14px;
             flex-wrap: wrap;
         }
 

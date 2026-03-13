@@ -86,49 +86,51 @@ body {
 
 /* ===== SERVICES ===== */
 .services-container {
-    max-width: 1100px;
-    margin: auto;
-    padding: 20px 20px 80px;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 30px 24px 80px;
 }
 
 .service-card {
-    display: flex;
-    background: #fff;
-    border-radius: 18px;
-    box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.4fr);
+    background: #f4f8ff;
+    border-radius: 20px;
+    box-shadow: 0 16px 40px rgba(0,0,0,0.08);
     margin-bottom: 50px;
     overflow: hidden;
+    gap: 32px;
+    padding: 28px 28px 26px;
 }
 
 /* IMAGE */
 .service-image {
-    flex: 1;
     background: linear-gradient(135deg, #e6f0ff, #f4f9ff);
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 40px;
+    padding: 32px;
 }
 
 .service-image img {
     width: 100%;
-    max-height: 1000px;
-    
+    max-width: 380px;
+    height: auto;
 }
 
 /* CONTENT */
 .service-content {
-    flex: 1;
-    padding: 45px 40px;
+    padding: 10px 4px;
 }
 
 .service-content h2 {
-    color: var(--primary);
-    margin-bottom: 15px;
+    color: var(--dark);
+    margin-bottom: 14px;
+    font-size: 1.6rem;
 }
 
 .service-content p {
-    margin-bottom: 20px;
+    margin-bottom: 18px;
 }
 
 /* FEATURES */
@@ -152,26 +154,29 @@ body {
 .workflow {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    margin-top: 35px;
+    align-items: flex-start;
+    margin-top: 30px;
     position: relative;
+    gap: 8px;
 }
 
 .workflow::before {
     content: "";
     position: absolute;
-    top: 18px;
-    left: 8%;
-    right: 8%;
+    top: 20px;
+    left: 4%;
+    right: 4%;
     height: 3px;
     background: #d6e4ff;
+    z-index: 0;
 }
 
 .workflow-step {
+    flex: 1;
     text-align: center;
-    width: 25%;
     position: relative;
     z-index: 1;
+    min-width: 0;
 }
 
 .workflow-circle {
@@ -305,7 +310,9 @@ footer::before {
 
 @media(max-width: 900px) {
     .service-card {
+        display: flex;
         flex-direction: column;
+        padding: 20px;
     }
 
     .workflow {

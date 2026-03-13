@@ -36,17 +36,18 @@ include 'header.php';?>
             background: linear-gradient(135deg, var(--light-blue) 0%, var(--card-bg) 100%);
             min-height: 100vh;
             display: flex;
-            padding-top: 80px;
+            padding-top: 40px;
+            padding-bottom: 30px;
         }
 
         /* Main Content */
         .main-content {
             margin-left: 150px;
             width: calc(100% - 250px);
-            padding: 30px;
+            padding: 20px;
             display: flex;
             justify-content: center;
-            align-items: center;
+            align-items: flex-start;
         }
 
         /* Form Container */
@@ -56,7 +57,7 @@ include 'header.php';?>
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
             width: 100%;
             max-width: 1400px;
-            padding: 30px 40px;
+            padding: 20px 30px 22px 30px;
             position: relative;
         }
 
@@ -73,8 +74,8 @@ include 'header.php';?>
         h1 {
             color: var(--dark-blue);
             text-align: center;
-            margin-bottom: 25px;
-            font-size: 28px;
+            margin-bottom: 16px;
+            font-size: 24px;
             position: relative;
         }
 
@@ -93,8 +94,8 @@ include 'header.php';?>
         .form-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-            margin-bottom: 20px;
+            gap: 16px;
+            margin-bottom: 16px;
         }
 
         .form-section {
@@ -102,12 +103,14 @@ include 'header.php';?>
         }
 
         .form-section-title {
-            font-size: 16px;
-            font-weight: 600;
+            font-size: 20px;
+            font-weight: 700;
             color: var(--primary-blue);
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             padding-bottom: 8px;
             border-bottom: 2px solid var(--light-blue);
+            letter-spacing: 0.5px;
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
         }
 
         .form-row {
@@ -121,16 +124,16 @@ include 'header.php';?>
         }
 
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 10px;
             position: relative;
         }
 
         label {
             display: block;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
             color: var(--primary-blue);
             font-weight: 600;
-            font-size: 14px;
+            font-size: 13px;
         }
 
         .required {
@@ -165,12 +168,16 @@ include 'header.php';?>
         select,
         textarea {
             width: 100%;
-            padding: 10px 12px;
+            padding: 8px 10px;
             border: 1px solid var(--gray-blue);
             border-radius: 6px;
-            font-size: 14px;
+            font-size: 13px;
             transition: all 0.3s ease;
             background-color: var(--white);
+        }
+
+        textarea {
+            resize: none;
         }
 
         input[type="text"]:focus,
@@ -227,7 +234,7 @@ include 'header.php';?>
         .btn-container {
             display: flex;
             justify-content: center;
-            margin-top: 20px;
+            margin-top: 10px;
             grid-column: 1 / -1;
         }
 
@@ -524,12 +531,12 @@ include 'header.php';?>
                 }
 
                 // ---------------- USERNAME VALIDATION ----------------
-                if (
+        if (
                     !preg_match('/^[A-Z][A-Za-z0-9]*(_[A-Za-z0-9]+)*$/', $username) ||
                     strlen($username) > 20 ||
                     !preg_match('/\d/', $username)
                 ) {
-                    $field_errors['username'] = "Username must start with a capital letter, max 20 chars, no spaces, no consecutive underscores, not end with underscore, and include at least 1 digit (e.g. Arjun_m01).";
+                    $field_errors['username'] = "Username must start with a capital letter, max 20 chars, no spaces, no consecutive underscores, not end with underscore, and include at least 1 digit (e.g. Vinod_Sharma01).";
                 }
 
                 // ---------------- PASSWORD VALIDATION ----------------
@@ -549,7 +556,7 @@ include 'header.php';?>
 
                 // ---------------- EMAIL VALIDATION ----------------
                 if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                    $field_errors['email'] = "e.g. abc@gmail.com";
+                    $field_errors['email'] = "e.g. vinod.sharma@example.com";
                 }
 
                 // ---------------- SECURITY QUESTION / ANSWER VALIDATION ----------------
@@ -629,13 +636,13 @@ include 'header.php';?>
                         
                         <div class="form-group">
                             <label for="first_name">First Name <span class="required">*</span></label>
-                            <input type="text" id="first_name" name="first_name" placeholder="e.g. John" value="<?php echo htmlspecialchars($form_data['first_name']); ?>" required>
+                            <input type="text" id="first_name" name="first_name" placeholder="e.g. Vinod" value="<?php echo htmlspecialchars($form_data['first_name']); ?>" required>
                             <div class="error-message" id="first_name_error"<?php if (!empty($field_errors['first_name'])) echo ' style="display:block"'; ?>><?php echo htmlspecialchars($field_errors['first_name'] ?? ''); ?></div>
                         </div>
                         
                         <div class="form-group">
                             <label for="last_name">Last Name <span class="required">*</span></label>
-                            <input type="text" id="last_name" name="last_name" placeholder="e.g. Doe" value="<?php echo htmlspecialchars($form_data['last_name']); ?>" required>
+                            <input type="text" id="last_name" name="last_name" placeholder="e.g. Sharma" value="<?php echo htmlspecialchars($form_data['last_name']); ?>" required>
                             <div class="error-message" id="last_name_error"<?php if (!empty($field_errors['last_name'])) echo ' style="display:block"'; ?>><?php echo htmlspecialchars($field_errors['last_name'] ?? ''); ?></div>
                         </div>
                         
@@ -686,13 +693,13 @@ include 'header.php';?>
                         
                         <div class="form-group">
                             <label for="phone">Phone Number <span class="required">*</span></label>
-                            <input type="text" id="phone" name="phone" maxlength="10" placeholder="e.g 1234567891" value="<?php echo htmlspecialchars($form_data['phone']); ?>" required>
+                            <input type="text" id="phone" name="phone" maxlength="10" placeholder="e.g. 9876543210" value="<?php echo htmlspecialchars($form_data['phone']); ?>" required>
                             <div class="error-message" id="phone_error"<?php if (!empty($field_errors['phone'])) echo ' style="display:block"'; ?>><?php echo htmlspecialchars($field_errors['phone'] ?? ''); ?></div>
                         </div>
                         
                         <div class="form-group">
                             <label for="email">Email <span class="required">*</span></label>
-                            <input type="email" id="email" name="email" placeholder="e.g. john@example.com" value="<?php echo htmlspecialchars($form_data['email']); ?>" required>
+                            <input type="email" id="email" name="email" placeholder="e.g. vinod.sharma@example.com" value="<?php echo htmlspecialchars($form_data['email']); ?>" required>
                             <div class="error-message" id="email_error"<?php if (!empty($field_errors['email'])) echo ' style="display:block"'; ?>><?php echo htmlspecialchars($field_errors['email'] ?? ''); ?></div>
                         </div>
                         
@@ -709,7 +716,7 @@ include 'header.php';?>
                         
                         <div class="form-group">
                             <label for="username">Username <span class="required">*</span></label>
-                            <input type="text" id="username" name="username" placeholder="e.g. Arjun_m01" value="<?php echo htmlspecialchars($form_data['username']); ?>" required>
+                            <input type="text" id="username" name="username" placeholder="e.g. Vinod_Sharma01" value="<?php echo htmlspecialchars($form_data['username']); ?>" required>
                             <div class="error-message" id="username_error"<?php if (!empty($field_errors['username'])) echo ' style="display:block"'; ?>><?php echo htmlspecialchars($field_errors['username'] ?? ''); ?></div>
                         </div>
                         
@@ -740,17 +747,7 @@ include 'header.php';?>
                             <div class="error-message" id="security_answer_error"<?php if (!empty($field_errors['security_answer'])) echo ' style="display:block"'; ?>><?php echo htmlspecialchars($field_errors['security_answer'] ?? ''); ?></div>
                         </div>
                         
-                        <div class="form-group">
-                            <label for="medical_history">Medical History <span style="color:#888;">(Optional)</span></label>
-                            <div class="file-upload">
-                                <input type="file" id="medical_history" name="medical_history" accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png">
-                                <label for="medical_history" class="file-upload-label" id="medical-history-label">
-                                    <i class="fas fa-file-upload"></i> Choose File (PDF, JPG, JPEG, PNG - Max 10MB)
-                                </label>
-                            </div>
-                            <div class="error-message" id="medical_history_error"<?php if (!empty($field_errors['medical_history'])) echo ' style="display:block"'; ?>><?php echo htmlspecialchars($field_errors['medical_history'] ?? ''); ?></div>
-                            <small style="color: #666; display: block; margin-top: 5px; font-size: 12px;">Accepted: PDF, JPG, JPEG, PNG. Max: 10MB</small>
-                        </div>
+                        
                     </div>
                 </div>
                 
@@ -968,7 +965,7 @@ include 'header.php';?>
         // 6. Validate Email
         const email = document.getElementById('email');
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim())) {
-            showError('email', "e.g. abc@gmail.com");
+            showError('email', "e.g. vinod.sharma@example.com");
             isValid = false;
         } else {
             hideError('email');
@@ -987,7 +984,7 @@ include 'header.php';?>
             showError('username', "Username must start with capital, no spaces, no consecutive underscores, not end with underscore.");
             isValid = false;
         } else if (!/\d/.test(username.value)) {
-            showError('username', "Username must include at least 1 digit (e.g. Arjun_m01).");
+            showError('username', "Username must include at least 1 digit (e.g. Vinod_Sharma01).");
             isValid = false;
         } else {
             hideError('username');

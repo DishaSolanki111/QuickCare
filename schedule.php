@@ -91,23 +91,44 @@ if ($result->num_rows > 0) {
         }
 
         .page-header {
-            height: 200px; /* Same as .hero in aboutus.php */
-            background: var(--gradient-1);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
             color: white;
+            height: 200px;
             padding: 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-
+        
+        .page-header::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%23ffffff' fill-opacity='0.1' d='M0,224L48,213.3C96,203,192,181,288,181.3C384,181,480,203,576,224C672,245,768,267,864,261.3C960,256,1056,224,1152,213.3C1248,203,1344,213,1392,218.7L1440,224L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z'%3E%3C/path%3E%3C/svg%3E") no-repeat bottom;
+            background-size: cover;
+        }
+        
+        .page-header .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            position: relative;
+            z-index: 2;
+        }
+        
         .page-header h1 {
             font-size: 2.8rem;
             margin-bottom: 1rem;
             position: relative;
             z-index: 2;
         }
-
+        
         .page-header p {
             font-size: 1.2rem;
             max-width: 700px;
@@ -148,36 +169,36 @@ if ($result->num_rows > 0) {
 
         .filters {
             background-color: white;
-            padding: 1.5rem;
+            padding: 1.25rem 1.5rem;
             border-radius: 10px;
             box-shadow: var(--shadow);
             margin: 2rem auto;
             display: flex;
-            flex-wrap: wrap;
+            flex-wrap: nowrap;
             gap: 1rem;
-            align-items: center;
+            align-items: flex-end;
             max-width: 1200px;
         }
-
+        
         .filter-group {
             display: flex;
             flex-direction: column;
             flex: 1;
-            min-width: 200px;
+            min-width: 0;
         }
 
         .filter-group label {
             font-weight: 600;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.35rem;
             color: var(--dark-color);
         }
-
+        
         .filter-group input,
         .filter-group select {
-            padding: 0.75rem;
+            padding: 0.65rem 0.75rem;
             border: 1px solid #ddd;
             border-radius: 5px;
-            font-size: 1rem;
+            font-size: 0.95rem;
             transition: border-color 0.3s;
         }
 
@@ -202,18 +223,18 @@ if ($result->num_rows > 0) {
         .doctors-container {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 1.5rem;
-            margin: 2rem auto 2rem;
+            gap: 2rem;
+            margin: 2rem auto 2.5rem;
             max-width: 1200px;
             padding: 0 20px;
         }
 
         .doctor-card {
             background-color: white;
-            border-radius: 10px;
+            border-radius: 12px;
             overflow: hidden;
             box-shadow: var(--shadow);
-            transition: transform 0.3s, box-shadow 0.3s;
+            transition: transform 0.25s, box-shadow 0.25s;
             animation: fadeIn 0.5s ease-in-out;
         }
 
@@ -229,7 +250,7 @@ if ($result->num_rows > 0) {
         }
 
         .doctor-card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-6px);
             box-shadow: var(--shadow-hover);
         }
 
@@ -251,13 +272,15 @@ if ($result->num_rows > 0) {
         }
 
         .doctor-info h3 {
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.35rem;
             color: var(--primary-color);
+            font-weight: 700;
         }
-
+        
         .doctor-specialization {
-            color: #6c757d;
+            color: var(--primary-blue);
             font-size: 0.9rem;
+            font-weight: 600;
         }
 
         .doctor-schedule {
@@ -273,7 +296,7 @@ if ($result->num_rows > 0) {
         .time-slots {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
-            gap: 0.5rem;
+            gap: 0.6rem;
         }
 
         .time-slot {
@@ -296,6 +319,10 @@ if ($result->num_rows > 0) {
             color: white;
         }
 
+        .time-slot.available:hover {
+            background-color: #218838;
+        }
+
         .time-slot.available.selected {
             background-color: var(--primary-color);
             color: white;
@@ -309,9 +336,10 @@ if ($result->num_rows > 0) {
         }
 
         .unavailable {
-            background-color: var(--light-color);
-            color: #6c757d;
+            background-color: #f1f3f5;
+            color: #9ca3af;
             cursor: not-allowed;
+            text-decoration: line-through;
         }
 
         .tooltip {
@@ -369,18 +397,21 @@ if ($result->num_rows > 0) {
             background-color: var(--primary-color);
             color: white;
             border: none;
-            padding: 0.5rem 1rem;
+            padding: 0.6rem 1rem;
             border-radius: 5px;
             cursor: pointer;
             font-size: 0.9rem;
-            transition: background-color 0.3s;
+            transition: background-color 0.3s, transform 0.2s, box-shadow 0.2s;
             margin-top: 1rem;
             display: block;
             width: 100%;
+            text-align: center;
         }
-
+        
         .btn-book:hover {
             background-color: #3a5bc9;
+            transform: translateY(-1px);
+            box-shadow: 0 3px 8px rgba(0,0,0,0.15);
         }
 
         .btn-book:disabled {
@@ -559,9 +590,12 @@ if ($result->num_rows > 0) {
                     <?php endforeach; ?>
                 </select>
             </div>
-            <div class="filter-group">
+            <div class="filter-group" style="max-width: 160px;">
                 <label>&nbsp;</label>
-                <button id="filter-btn" class="btn-book">Search</button>
+                <button id="filter-btn" class="btn-book" style="background-color: var(--primary-blue); display:flex; align-items:center; justify-content:center; gap:6px; margin-top:0;">
+                    <i class="fas fa-search"></i>
+                    Search
+                </button>
             </div>
         </div>
 
