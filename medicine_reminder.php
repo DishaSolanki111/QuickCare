@@ -11,21 +11,95 @@ include 'config.php';
  $patient_id = $_SESSION['PATIENT_ID'];
 
 // Fetch patient data from database
- $patient_query = mysqli_query($conn, "SELECT * FROM patient_tbl WHERE PATIENT_ID = '$patient_id'");
- $patient = mysqli_fetch_assoc($patient_query);
+$patient_query = mysqli_query($conn, "SELECT * FROM patient_tbl WHERE PATIENT_ID = '$patient_id'");
+$patient = mysqli_fetch_assoc($patient_query);
+
+// Preserve form values on validation error
+$form_data = [
+    'medicine_id'   => '',
+    'start_date'    => '',
+    'end_date'      => '',
+    'reminder_time' => '',
+    'remarks'       => '',
+];
+
+// Determine if this page is linked to a specific prescription
+$prescription_id = '';
+if (isset($_POST['prescription_id']) && $_POST['prescription_id'] !== '') {
+    $prescription_id = mysqli_real_escape_string($conn, $_POST['prescription_id']);
+} elseif (isset($_POST['prescription']) && $_POST['prescription'] !== '') {
+    // Coming directly from prescriptions page
+    $prescription_id = mysqli_real_escape_string($conn, $_POST['prescription']);
+}
+
+// Preload prescription medicine meta (duration, issue date) for auto dates
+$prescription_medicine_meta = [];
+if (!empty($prescription_id)) {
+    $prescription_meta_q = mysqli_query($conn, "
+        SELECT pm.MEDICINE_ID, pm.DURATION, p.ISSUE_DATE
+        FROM prescription_medicine_tbl pm
+        JOIN prescription_tbl p ON pm.PRESCRIPTION_ID = p.PRESCRIPTION_ID
+        WHERE pm.PRESCRIPTION_ID = '$prescription_id'
+    ");
+    if ($prescription_meta_q && mysqli_num_rows($prescription_meta_q) > 0) {
+        while ($row = mysqli_fetch_assoc($prescription_meta_q)) {
+            $prescription_medicine_meta[$row['MEDICINE_ID']] = [
+                'duration'   => $row['DURATION'],
+                'issue_date' => $row['ISSUE_DATE'],
+            ];
+        }
+    }
+}
 
 // Handle form submission for adding new reminder
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_reminder'])) {
-    $medicine_id   = isset($_POST['medicine_id'])   ? mysqli_real_escape_string($conn, trim($_POST['medicine_id']))   : '';
-    $start_date    = isset($_POST['start_date'])    ? mysqli_real_escape_string($conn, trim($_POST['start_date']))    : '';
-    $end_date      = isset($_POST['end_date'])      ? mysqli_real_escape_string($conn, trim($_POST['end_date']))      : '';
-    $reminder_time = isset($_POST['reminder_time']) ? mysqli_real_escape_string($conn, trim($_POST['reminder_time'])) : '';
-    $remarks       = isset($_POST['remarks'])       ? mysqli_real_escape_string($conn, trim($_POST['remarks']))       : '';
+    $medicine_id_raw   = isset($_POST['medicine_id'])   ? trim($_POST['medicine_id'])   : '';
+    $start_date_raw    = isset($_POST['start_date'])    ? trim($_POST['start_date'])    : '';
+    $end_date_raw      = isset($_POST['end_date'])      ? trim($_POST['end_date'])      : '';
+    $reminder_time_raw = isset($_POST['reminder_time']) ? trim($_POST['reminder_time']) : '';
+    $remarks_raw       = isset($_POST['remarks'])       ? trim($_POST['remarks'])       : '';
+
+    // Update form_data so that user input is preserved on error
+    $form_data = [
+        'medicine_id'   => $medicine_id_raw,
+        'start_date'    => $start_date_raw,
+        'end_date'      => $end_date_raw,
+        'reminder_time' => $reminder_time_raw,
+        'remarks'       => $remarks_raw,
+    ];
+
+    // Sanitized copies for DB use
+    $medicine_id   = $medicine_id_raw   !== '' ? mysqli_real_escape_string($conn, $medicine_id_raw)   : '';
+    $start_date    = $start_date_raw    !== '' ? mysqli_real_escape_string($conn, $start_date_raw)    : '';
+    $end_date      = $end_date_raw      !== '' ? mysqli_real_escape_string($conn, $end_date_raw)      : '';
+    $reminder_time = $reminder_time_raw !== '' ? mysqli_real_escape_string($conn, $reminder_time_raw) : '';
+    $remarks       = $remarks_raw       !== '' ? mysqli_real_escape_string($conn, $remarks_raw)       : '';
     
     // Validate required fields
     if (empty($medicine_id) || empty($start_date) || empty($end_date) || empty($reminder_time)) {
         $error_message = "Please fill in Medicine, Start Date, End Date, and Reminder Time.";
     } else {
+        // If linked to a specific prescription, enforce date range:
+        // start date cannot be before prescription issue date
+        // end date cannot be after (issue date + duration - 1 day)
+        if (!empty($prescription_id) && !empty($medicine_id) && isset($prescription_medicine_meta[$medicine_id])) {
+            $issue_date_raw   = $prescription_medicine_meta[$medicine_id]['issue_date'];
+            $duration_str     = (string) $prescription_medicine_meta[$medicine_id]['duration'];
+            if (!empty($issue_date_raw) && preg_match('/(\d+)\s*day/i', $duration_str, $m)) {
+                $days = (int) $m[1];
+                if ($days > 0) {
+                    $issue_date = date('Y-m-d', strtotime($issue_date_raw));
+                    // Example: issue 7 March + 30 days → last allowed day = 6 April
+                    $max_date  = date('Y-m-d', strtotime($issue_date . ' + ' . ($days - 1) . ' days'));
+
+                    if ($start_date < $issue_date || $start_date > $max_date || $end_date < $issue_date || $end_date > $max_date || $end_date < $start_date) {
+                        $error_message = "For this medicine, start date must be on or after the prescription date and end date cannot go beyond the prescribed duration.";
+                    }
+                }
+            }
+        }
+
+        if (empty($error_message)) {
         // Verify that this medicine is prescribed to the patient
         $verify_query = mysqli_query($conn, "
             SELECT COUNT(*) as count
@@ -50,13 +124,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_reminder'])) {
                           VALUES ('$next_id', '$medicine_id', 'PATIENT', '$patient_id', '$patient_id', '$start_date', '$end_date', '$reminder_time', '$remarks')";
             
             if (mysqli_query($conn, $add_query)) {
-                header("Location: medicine_reminder.php?added=1");
-                exit;
+                // On success, clear form fields and show message;
+                // reminders list below will include the newly added record.
+                $success_message = "Medicine reminder added successfully!";
+                $form_data = [
+                    'medicine_id'   => '',
+                    'start_date'    => '',
+                    'end_date'      => '',
+                    'reminder_time' => '',
+                    'remarks'       => '',
+                ];
             } else {
                 $error_message = "Error adding reminder: " . mysqli_error($conn);
             }
         } else {
             $error_message = "You can only set reminders for medicines prescribed to you.";
+        }
         }
     }
 }
@@ -96,13 +179,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_reminder'])) {
     }
 }
 
-// Show success message after redirect following add
-if (isset($_GET['added']) && $_GET['added'] == '1') {
-    $success_message = "Medicine reminder added successfully!";
+// Clean up expired reminders (past their end date) for this patient.
+// Run this only on non-add-reminder requests so freshly added records
+// (even with past dates) are still visible to the user.
+if (!($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_reminder']))) {
+    mysqli_query(
+        $conn,
+        "DELETE FROM medicine_reminder_tbl 
+         WHERE PATIENT_ID = '" . mysqli_real_escape_string($conn, $patient_id) . "'
+           AND END_DATE < CURDATE()"
+    );
 }
-
-// Get prescription ID from URL if coming from prescriptions page
- $prescription_id = isset($_POST['prescription']) ? mysqli_real_escape_string($conn, $_POST['prescription']) : '';
 
 // Fetch ONLY medicines prescribed to this patient (all prescriptions)
  $prescribed_medicines_query = mysqli_query($conn, "
@@ -613,6 +700,9 @@ if (!empty($prescription_id)) {
                 <?php endif; ?>
                 
                 <form method="POST" action="medicine_reminder.php">
+                    <?php if (!empty($prescription_id)): ?>
+                        <input type="hidden" name="prescription_id" value="<?php echo htmlspecialchars($prescription_id); ?>">
+                    <?php endif; ?>
                     <div class="form-row">
                         <div class="form-group">
                             <label for="medicine_id">Medicine</label>
@@ -622,14 +712,16 @@ if (!empty($prescription_id)) {
                                 // If coming from a specific prescription, only show medicines from that prescription
                                 if (!empty($prescription_medicines)) {
                                     foreach ($prescription_medicines as $medicine) {
-                                        echo '<option value="' . $medicine['MEDICINE_ID'] . '">' . 
+                                        $selected = ($form_data['medicine_id'] == $medicine['MEDICINE_ID']) ? 'selected' : '';
+                                        echo '<option value="' . $medicine['MEDICINE_ID'] . '" ' . $selected . '>' . 
                                              htmlspecialchars($medicine['MED_NAME']) . '</option>';
                                     }
                                 } else {
                                     // Otherwise, show all medicines ever prescribed to this patient
                                     if ($prescribed_medicines_query && mysqli_num_rows($prescribed_medicines_query) > 0) {
                                         while ($medicine = mysqli_fetch_assoc($prescribed_medicines_query)) {
-                                            echo '<option value="' . $medicine['MEDICINE_ID'] . '">' . 
+                                            $selected = ($form_data['medicine_id'] == $medicine['MEDICINE_ID']) ? 'selected' : '';
+                                            echo '<option value="' . $medicine['MEDICINE_ID'] . '" ' . $selected . '>' . 
                                                  htmlspecialchars($medicine['MED_NAME']) . '</option>';
                                         }
                                     }
@@ -639,21 +731,24 @@ if (!empty($prescription_id)) {
                         </div>
                         <div class="form-group">
                             <label for="start_date">Start Date</label>
-                            <input type="date" class="form-control" id="start_date" name="start_date" required>
+                            <input type="date" class="form-control" id="start_date" name="start_date" required
+                                   value="<?php echo htmlspecialchars($form_data['start_date']); ?>">
                         </div>
                         <div class="form-group">
                             <label for="end_date">End Date</label>
-                            <input type="date" class="form-control" id="end_date" name="end_date" required>
+                            <input type="date" class="form-control" id="end_date" name="end_date" required
+                                   value="<?php echo htmlspecialchars($form_data['end_date']); ?>">
                         </div>
                         <div class="form-group">
                             <label for="reminder_time">Reminder Time</label>
-                            <input type="time" class="form-control" id="reminder_time" name="reminder_time" required>
+                            <input type="time" class="form-control" id="reminder_time" name="reminder_time" required
+                                   value="<?php echo htmlspecialchars($form_data['reminder_time']); ?>">
                         </div>
                     </div>
                     
                     <div class="form-group">
                         <label for="remarks">Additional Notes</label>
-                        <textarea class="form-control" id="remarks" name="remarks" rows="3" placeholder="Add any additional notes or dosage instructions"></textarea>
+                        <textarea class="form-control" id="remarks" name="remarks" rows="3" placeholder="Add any additional notes or dosage instructions"><?php echo htmlspecialchars($form_data['remarks']); ?></textarea>
                     </div>
                     
                     <button type="submit" name="add_reminder" class="btn btn-success">
@@ -663,7 +758,7 @@ if (!empty($prescription_id)) {
             </div>
             
             <!-- Existing Reminders -->
-            <h3 style="margin-bottom: 20px;">Your Medicine Reminders</h3>
+            <h3 id="reminders" style="margin-bottom: 20px;">Your Medicine Reminders</h3>
             
             <?php
             if (mysqli_num_rows($reminders_query) > 0) {
@@ -718,6 +813,9 @@ if (!empty($prescription_id)) {
             <span class="close" onclick="closeEditModal()">&times;</span>
             <h2>Edit Medicine Reminder</h2>
             <form method="POST" action="medicine_reminder.php">
+                <?php if (!empty($prescription_id)): ?>
+                    <input type="hidden" name="prescription_id" value="<?php echo htmlspecialchars($prescription_id); ?>">
+                <?php endif; ?>
                 <input type="hidden" id="edit_reminder_id" name="reminder_id">
                 
                 <div class="form-group">
