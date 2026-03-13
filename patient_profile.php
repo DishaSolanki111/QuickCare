@@ -15,18 +15,29 @@ include 'config.php';
  $patient = mysqli_fetch_assoc($patient_query);
 
 // Handle form submission for profile update
-// First name and last name are not editable in this form (disabled in UI),
-// so only update contact details.
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_profile'])) {
-    $phone   = mysqli_real_escape_string($conn, $_POST['phone']);
-    $email   = mysqli_real_escape_string($conn, $_POST['email']);
-    $address = mysqli_real_escape_string($conn, $_POST['address']);
-    
-    $update_query = "UPDATE patient_tbl SET 
-                       PHONE   = '$phone',
-                       EMAIL   = '$email',
-                       ADDRESS = '$address'
-                     WHERE PATIENT_ID = '$patient_id'";
+    $first_name = strtoupper(trim(mysqli_real_escape_string($conn, $_POST['firstName'] ?? $patient['FIRST_NAME'])));
+    $last_name  = strtoupper(trim(mysqli_real_escape_string($conn, $_POST['lastName'] ?? $patient['LAST_NAME'])));
+    $dob        = mysqli_real_escape_string($conn, $_POST['dob'] ?? $patient['DOB']);
+    $gender     = mysqli_real_escape_string($conn, $_POST['gender'] ?? $patient['GENDER']);
+    $blood_group = mysqli_real_escape_string($conn, $_POST['bloodGroup'] ?? $patient['BLOOD_GROUP']);
+    $address    = mysqli_real_escape_string($conn, $_POST['address'] ?? $patient['ADDRESS']);
+
+    // Normalize empty blood group to NULL
+    $blood_group_value = ($blood_group === '' || $blood_group === null)
+        ? "NULL"
+        : "'" . $blood_group . "'";
+
+    $update_query = "
+        UPDATE patient_tbl SET 
+            FIRST_NAME  = '$first_name',
+            LAST_NAME   = '$last_name',
+            DOB         = '$dob',
+            GENDER      = '$gender',
+            BLOOD_GROUP = $blood_group_value,
+            ADDRESS     = '$address'
+        WHERE PATIENT_ID = '$patient_id'
+    ";
     
     if (mysqli_query($conn, $update_query)) {
         // Refresh patient data
@@ -342,6 +353,11 @@ $medicine_reminder_query = mysqli_query($conn, "
             align-items: center;
             justify-content: center;
         }
+
+        /* Ensure button icons don’t overlap text */
+        .btn i {
+            margin-right: 6px;
+        }
         
         .btn-primary {
             background-color: var(--secondary-color);
@@ -649,22 +665,22 @@ $medicine_reminder_query = mysqli_query($conn, "
                             <div class="form-row">
                                 <div class="form-group">
                                     <label for="firstName">First Name</label>
-                                    <input type="text" class="form-control" id="firstName" name="firstName" value="<?php echo htmlspecialchars($patient['FIRST_NAME']); ?>" disabled>
+                                    <input type="text" class="form-control" id="firstName" name="firstName" value="<?php echo htmlspecialchars($patient['FIRST_NAME']); ?>">
                                 </div>
                                 <div class="form-group">
                                     <label for="lastName">Last Name</label>
-                                    <input type="text" class="form-control" id="lastName" name="lastName" value="<?php echo htmlspecialchars($patient['LAST_NAME']); ?>" disabled>
+                                    <input type="text" class="form-control" id="lastName" name="lastName" value="<?php echo htmlspecialchars($patient['LAST_NAME']); ?>">
                                 </div>
                             </div>
                             
                             <div class="form-row">
                                 <div class="form-group">
                                     <label for="dob">Date of Birth</label>
-                                    <input type="date" class="form-control" id="dob" name="dob" value="<?php echo htmlspecialchars($patient['DOB']); ?>" disabled>
+                                    <input type="date" class="form-control" id="dob" name="dob" value="<?php echo htmlspecialchars($patient['DOB']); ?>">
                                 </div>
                                 <div class="form-group">
                                     <label for="gender">Gender</label>
-                                    <select class="form-control" id="gender" name="gender" disabled>
+                                    <select class="form-control" id="gender" name="gender">
                                         <option value="MALE" <?php echo $patient['GENDER'] == 'MALE' ? 'selected' : ''; ?>>Male</option>
                                         <option value="FEMALE" <?php echo $patient['GENDER'] == 'FEMALE' ? 'selected' : ''; ?>>Female</option>
                                         <option value="OTHER" <?php echo $patient['GENDER'] == 'OTHER' ? 'selected' : ''; ?>>Other</option>
@@ -675,7 +691,7 @@ $medicine_reminder_query = mysqli_query($conn, "
                             <div class="form-row">
                                 <div class="form-group">
                                     <label for="bloodGroup">Blood Group</label>
-                                    <select class="form-control" id="bloodGroup" name="bloodGroup" disabled>
+                                    <select class="form-control" id="bloodGroup" name="bloodGroup">
                                         <option value="A+" <?php echo $patient['BLOOD_GROUP'] == 'A+' ? 'selected' : ''; ?>>A+</option>
                                         <option value="A-" <?php echo $patient['BLOOD_GROUP'] == 'A-' ? 'selected' : ''; ?>>A-</option>
                                         <option value="B+" <?php echo $patient['BLOOD_GROUP'] == 'B+' ? 'selected' : ''; ?>>B+</option>
@@ -688,15 +704,13 @@ $medicine_reminder_query = mysqli_query($conn, "
                                 </div>
                                 <div class="form-group">
                                     <label for="phone">Phone Number</label>
-                                    <input type="tel" class="form-control" id="phone" name="phone" value="<?php echo htmlspecialchars($patient['PHONE']); ?>" required maxlength="10">
-                                    <div class="error-message" id="phone_error"></div>
+                                    <input type="tel" class="form-control" id="phone" value="<?php echo htmlspecialchars($patient['PHONE']); ?>" disabled>
                                 </div>
                             </div>
                             
                             <div class="form-group">
                                 <label for="email">Email Address</label>
-                                <input type="email" class="form-control" id="email" name="email" value="<?php echo htmlspecialchars($patient['EMAIL']); ?>" required>
-                                <div class="error-message" id="email_error"></div>
+                                <input type="email" class="form-control" id="email" value="<?php echo htmlspecialchars($patient['EMAIL']); ?>" disabled>
                             </div>
                             
                             <div class="form-group">
@@ -705,11 +719,11 @@ $medicine_reminder_query = mysqli_query($conn, "
                             </div>
                           
                             <div class="btn-group">
-                                <button type="submit" class="btn btn-success">
-                                    <i class="fas fa-save"></i> Save Changes
+                                <button type="submit" class="btn btn-success" style="font-size: 16px;">
+                                    Save Changes
                                 </button>
-                                <button type="button" class="btn btn-danger" id="cancelEditBtn">
-                                    <i class="fas fa-times"></i> Cancel
+                                <button type="button" class="btn btn-danger" id="cancelEditBtn" style="font-size: 16px;">
+                                    Cancel
                                 </button>
                             </div>
                         </form>
@@ -801,63 +815,8 @@ $medicine_reminder_query = mysqli_query($conn, "
                 });
             }
 
-            // Phone & email validation on edit form
-            const phoneInput = document.getElementById('phone');
-            const emailInput = document.getElementById('email');
+            // Edit form reference (no extra validation needed for hidden phone/email)
             const editForm = document.querySelector('#editProfileForm form');
-
-            function hideError(id) {
-                const el = document.getElementById(id + '_error');
-                if (el) {
-                    el.style.display = 'none';
-                    el.textContent = '';
-                }
-            }
-
-            function showError(id, msg) {
-                const el = document.getElementById(id + '_error');
-                if (el) {
-                    el.textContent = msg;
-                    el.style.display = 'block';
-                }
-            }
-
-            if (phoneInput) {
-                phoneInput.addEventListener('input', function () {
-                    this.value = this.value.replace(/[^0-9]/g, '');
-                    if (/^\d{10}$/.test(this.value)) {
-                        hideError('phone');
-                    }
-                });
-            }
-
-            if (emailInput) {
-                emailInput.addEventListener('input', function () {
-                    if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.value.trim())) {
-                        hideError('email');
-                    }
-                });
-            }
-
-            if (editForm) {
-                editForm.addEventListener('submit', function (e) {
-                    let valid = true;
-
-                    if (phoneInput && !/^\d{10}$/.test(phoneInput.value.trim())) {
-                        showError('phone', 'Phone number must be exactly 10 digits.');
-                        valid = false;
-                    }
-
-                    if (emailInput && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailInput.value.trim())) {
-                        showError('email', 'e.g. abc@gmail.com');
-                        valid = false;
-                    }
-
-                    if (!valid) {
-                        e.preventDefault();
-                    }
-                });
-            }
 
             // Change password modal functionality (same as doctor_profile)
             const changePasswordBtn = document.getElementById('changePasswordBtn');
