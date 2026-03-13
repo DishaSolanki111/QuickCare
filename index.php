@@ -1,7 +1,45 @@
 <?php
 session_start();
+// Show all PHP errors during development
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
+
+// Database connection
+require_once 'config.php';
+
+// Default stats
+$doctor_count        = 0;
+$patient_count       = 0;
+$specialisation_count = 0;
+
+if (isset($conn) && $conn instanceof mysqli) {
+    // Count approved doctors
+    $sql = "SELECT COUNT(*) AS cnt FROM doctor_tbl WHERE STATUS = 'approved'";
+    if ($res = $conn->query($sql)) {
+        if ($row = $res->fetch_assoc()) {
+            $doctor_count = (int)$row['cnt'];
+        }
+        $res->free();
+    }
+
+    // Count patients
+    $sql = "SELECT COUNT(*) AS cnt FROM patient_tbl";
+    if ($res = $conn->query($sql)) {
+        if ($row = $res->fetch_assoc()) {
+            $patient_count = (int)$row['cnt'];
+        }
+        $res->free();
+    }
+
+    // Count specialisations
+    $sql = "SELECT COUNT(*) AS cnt FROM specialisation_tbl";
+    if ($res = $conn->query($sql)) {
+        if ($row = $res->fetch_assoc()) {
+            $specialisation_count = (int)$row['cnt'];
+        }
+        $res->free();
+    }
+}
 
 include 'header.php';
 ?>
@@ -608,15 +646,15 @@ include 'header.php';
 
                 <div class="stats">
                     <div class="stat-item">
-                        <span class="stat-number">15+</span>
+                        <span class="stat-number"><?php echo (int)$doctor_count; ?>+</span>
                         <span class="stat-label">Doctors</span>
                     </div>
                     <div class="stat-item">
-                        <span class="stat-number">250+</span>
+                        <span class="stat-number"><?php echo (int)$patient_count; ?>+</span>
                         <span class="stat-label">Patients</span>
                     </div>
                     <div class="stat-item">
-                        <span class="stat-number">3+</span>
+                        <span class="stat-number"><?php echo (int)$specialisation_count; ?></span>
                         <span class="stat-label">Specialists</span>
                     </div>
                 </div>
