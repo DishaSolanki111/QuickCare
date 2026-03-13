@@ -557,6 +557,14 @@ html {
             background-color: var(--accent-color);
             color: white;
         }
+
+        /* Booked slots: yellow, not clickable */
+        .time-slot.booked {
+            background-color: rgba(243, 156, 18, 0.35);
+            border-color: var(--warning-color);
+            color: #b36b00;
+            cursor: not-allowed;
+        }
         
         .time-slot.selected {
             background-color: var(--secondary-color);
@@ -1276,16 +1284,26 @@ html {
                         timeSlotsContainer.innerHTML = '';
                         
                         if (data.time_slots.length > 0) {
-                            data.time_slots.forEach(timeSlot => {
+                            data.time_slots.forEach(slot => {
+                                const label = slot.time || slot;
+                                const isBooked = !!slot.booked;
                                 const timeSlotElement = document.createElement('div');
-                                timeSlotElement.className = 'time-slot available';
-                                timeSlotElement.textContent = timeSlot;
-                                timeSlotElement.addEventListener('click', () => selectTimeSlot(timeSlot));
+                                timeSlotElement.textContent = label;
+
+                                if (isBooked) {
+                                    // Mark booked slots: yellow and not clickable
+                                    timeSlotElement.className = 'time-slot booked';
+                                } else {
+                                    timeSlotElement.className = 'time-slot available';
+                                    timeSlotElement.addEventListener('click', () => selectTimeSlot(label));
+                                }
+
                                 timeSlotsContainer.appendChild(timeSlotElement);
                             });
                             
-                            // Enable next button
-                            document.getElementById('nextToStep3').disabled = false;
+                            // Enable next button only if at least one slot is available
+                            const hasAvailable = data.time_slots.some(s => !s.booked);
+                            document.getElementById('nextToStep3').disabled = !hasAvailable;
                         } else {
                             timeSlotsContainer.innerHTML = `
                                 <div class="alert alert-warning">
