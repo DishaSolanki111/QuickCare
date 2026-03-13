@@ -394,7 +394,7 @@ include 'header.php';
                 <button type="submit">Login</button>
                 <div class="login-footer auth-links">
                     <a href="patientform.php" class="left-link">Create account</a>
-                    <a href="forgot_password.php" class="right-link">Forgot password?</a>
+                    <a href="forgot_password.php?role=patient" class="right-link">Forgot password?</a>
                 </div>
             </form>
 
@@ -430,7 +430,7 @@ include 'header.php';
                 </div>
                 <button type="submit">Login</button>
                 <div class="login-footer auth-links">
-                    <a href="forgot_password.php" class="right-link">Forgot password?</a>
+                    <a href="forgot_password.php?role=doctor" class="right-link">Forgot password?</a>
                 </div>
             </form>
 
@@ -466,7 +466,7 @@ include 'header.php';
                 </div>
                 <button type="submit">Login</button>
                 <div class="login-footer auth-links">
-                    <a href="forgot_password.php" class="right-link">Forgot password?</a>
+                    <a href="forgot_password.php?role=receptionist" class="right-link">Forgot password?</a>
                 </div>
             </form>
         </div>

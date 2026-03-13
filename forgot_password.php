@@ -13,6 +13,14 @@ $info_message       = '';
 $new_password       = '';
 $security_question  = '';
 
+// Optional pre-selected role from login_for_all.php (?role=patient|doctor|receptionist)
+$prefilled_role = isset($_GET['role']) ? strtolower(trim($_GET['role'])) : '';
+if (!in_array($prefilled_role, ['patient', 'doctor', 'receptionist'], true)) {
+    $prefilled_role = '';
+}
+// Helper for re-using role in links/forms
+$role_query = $prefilled_role ? ('?role=' . urlencode($prefilled_role)) : '';
+
 // If we already started a reset, keep user context in session
 if (!isset($_SESSION['reset_user_type'])) {
     $_SESSION['reset_user_type'] = null;
@@ -23,112 +31,76 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $step = $_POST['step'] ?? 'request';
 
     if ($step === 'request') {
+        // If role is pre-selected via query, trust the hidden field; otherwise dropdown value
         $user_type = $_POST['user_type'] ?? '';
         $username  = trim($_POST['username'] ?? '');
 
         if ($user_type === '' || $username === '') {
             $error_message = 'Please select user type and enter username.';
         } else {
-            // For patients, use security question instead of OTP
+            // For ALL roles (patient, doctor, receptionist) use security question
             if ($user_type === 'patient') {
                 $stmt = $conn->prepare("SELECT PATIENT_ID AS id, SECURITY_QUESTION FROM patient_tbl WHERE USERNAME = ?");
-                if (!$stmt) {
-                    $error_message = 'Unable to process your request. Please try again.';
-                } else {
-                    $stmt->bind_param("s", $username);
-                    $stmt->execute();
-                    $res = $stmt->get_result();
-
-                    if ($res && $row = $res->fetch_assoc()) {
-                        $user_id           = (int)$row['id'];
-                        $security_question = $row['SECURITY_QUESTION'] ?? '';
-
-                        $_SESSION['reset_user_type']          = 'patient';
-                        $_SESSION['reset_user_id']            = $user_id;
-                        $_SESSION['reset_security_question']  = $security_question;
-
-                        if ($security_question === '' || $security_question === null) {
-                            $error_message = 'No security question is set for this account. Please contact support.';
-                            $stage = 'request';
-                        } else {
-                            $stage = 'security';
-                        }
-                    } else {
-                        // Generic message to avoid username enumeration
-                        $error_message = 'If the username exists, you will be able to reset your password.';
-                    }
-                    $stmt->close();
-                }
+            } elseif ($user_type === 'doctor') {
+                $stmt = $conn->prepare("SELECT DOCTOR_ID AS id, SECURITY_QUESTION FROM doctor_tbl WHERE USERNAME = ?");
+            } elseif ($user_type === 'receptionist') {
+                $stmt = $conn->prepare("SELECT RECEPTIONIST_ID AS id, SECURITY_QUESTION FROM receptionist_tbl WHERE USERNAME = ?");
             } else {
-                // For doctor & receptionist, keep existing OTP-based flow
-                if ($user_type === 'doctor') {
-                    $stmt = $conn->prepare("SELECT DOCTOR_ID AS id, PHONE FROM doctor_tbl WHERE USERNAME = ?");
-                } elseif ($user_type === 'receptionist') {
-                    $stmt = $conn->prepare("SELECT RECEPTIONIST_ID AS id, PHONE FROM receptionist_tbl WHERE USERNAME = ?");
-                } else {
-                    $stmt = null;
-                }
+                $stmt = null;
+            }
 
-                if (!$stmt) {
-                    $error_message = 'Invalid user type.';
-                } else {
-                    $stmt->bind_param("s", $username);
-                    $stmt->execute();
-                    $res = $stmt->get_result();
+            if (!$stmt) {
+                $error_message = 'Invalid user type.';
+            } else {
+                $stmt->bind_param("s", $username);
+                $stmt->execute();
+                $res = $stmt->get_result();
 
-                    if ($res && $row = $res->fetch_assoc()) {
-                        $user_id = (int) $row['id'];
-                        $phone   = $row['PHONE'];
+                if ($res && $row = $res->fetch_assoc()) {
+                    $user_id           = (int)$row['id'];
+                    $security_question = $row['SECURITY_QUESTION'] ?? '';
 
-                        // Generate 6-digit OTP
-                        $otp      = random_int(100000, 999999);
-                        $otp_hash = password_hash((string)$otp, PASSWORD_DEFAULT);
-                        $expires  = date('Y-m-d H:i:s', time() + 600); // 10 minutes
+                    $_SESSION['reset_user_type']          = $user_type;
+                    $_SESSION['reset_user_id']            = $user_id;
+                    $_SESSION['reset_security_question']  = $security_question;
 
-                        // Store in password_resets
-                        $insert = $conn->prepare("
-                            INSERT INTO password_resets (user_type, user_id, phone, otp_hash, expires_at, attempts)
-                            VALUES (?, ?, ?, ?, ?, 0)
-                        ");
-                        if ($insert) {
-                            $insert->bind_param("sisss", $user_type, $user_id, $phone, $otp_hash, $expires);
-                            $insert->execute();
-                            $insert->close();
-
-                            // Save context for verification step
-                            $_SESSION['reset_user_type'] = $user_type;
-                            $_SESSION['reset_user_id']   = $user_id;
-
-                            // NOTE: In production, send $otp via SMS/Email.
-                            // For development/demo, we show it on screen.
-                            $info_message = "An OTP has been sent to your registered phone. (For demo: OTP is {$otp})";
-                            $stage = 'verify';
-                        } else {
-                            $error_message = 'Unable to create reset request. Please try again.';
-                        }
+                    if ($security_question === '' || $security_question === null) {
+                        $error_message = 'No security question is set for this account. Please contact support.';
+                        $stage = 'request';
                     } else {
-                        // Use a generic error message to prevent user enumeration
-                        $error_message = 'If the username exists, an OTP will be sent.';
+                        $stage = 'security';
                     }
-
-                    $stmt->close();
+                } else {
+                    // Generic message to avoid username enumeration
+                    $error_message = 'Username does not exist.';
                 }
+                $stmt->close();
             }
         }
     } elseif ($step === 'security') {
-        // Patient answers security question
+        // All roles answer security question
         $user_type = $_SESSION['reset_user_type'] ?? null;
         $user_id   = $_SESSION['reset_user_id'] ?? null;
         $answer    = trim($_POST['security_answer'] ?? '');
 
-        if ($user_type !== 'patient' || !$user_id) {
+        if (!in_array($user_type, ['patient', 'doctor', 'receptionist'], true) || !$user_id) {
             $error_message = 'Reset session expired. Please start again.';
             $stage = 'request';
         } elseif ($answer === '') {
             $error_message = 'Please enter your answer.';
             $stage = 'security';
         } else {
-            $stmt = $conn->prepare("SELECT SECURITY_ANSWER FROM patient_tbl WHERE PATIENT_ID = ?");
+            // Pick correct table/column for role
+            if ($user_type === 'patient') {
+                $stmt = $conn->prepare("SELECT SECURITY_ANSWER FROM patient_tbl WHERE PATIENT_ID = ?");
+            } elseif ($user_type === 'doctor') {
+                $stmt = $conn->prepare("SELECT SECURITY_ANSWER FROM doctor_tbl WHERE DOCTOR_ID = ?");
+            } elseif ($user_type === 'receptionist') {
+                $stmt = $conn->prepare("SELECT SECURITY_ANSWER FROM receptionist_tbl WHERE RECEPTIONIST_ID = ?");
+            } else {
+                $stmt = null;
+            }
+
             if ($stmt) {
                 $stmt->bind_param("i", $user_id);
                 $stmt->execute();
@@ -222,8 +194,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $password         = trim($_POST['password'] ?? '');
         $confirm_password = trim($_POST['confirm_password'] ?? '');
 
-        // For patients using security question, there is no reset_id required
-        if (!$user_type || !$user_id || ($user_type !== 'patient' && !$reset_id)) {
+        // For security-question based reset, there is no reset_id required
+        if (!$user_type || !$user_id) {
             $error_message = 'Reset session expired. Please start again.';
             $stage = 'request';
         } elseif ($password === '' || $confirm_password === '') {
@@ -352,12 +324,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             letter-spacing: 0.02em;
         }
 
-        p.sub {
-            margin: 0 0 20px 0;
-            color: var(--text-muted);
-            font-size: 14px;
-            line-height: 1.6;
-        }
 
         label {
             display: block;
@@ -516,24 +482,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="reset-card">
         <?php if ($stage === 'request'): ?>
             <h2>Forgot Password</h2>
-            <p class="sub">
-                Patients will verify using their security question. Doctors and receptionists will receive an OTP on their registered phone.
-            </p>
+
 
             <?php if ($error_message): ?>
                 <div class="error"><?php echo htmlspecialchars($error_message); ?></div>
             <?php endif; ?>
 
-            <form method="POST" action="forgot_password.php">
+            <form method="POST" action="forgot_password.php<?php echo $role_query; ?>">
                 <input type="hidden" name="step" value="request">
 
-                <label for="user_type">I am a</label>
-                <select name="user_type" id="user_type" required>
-                    <option value="">-- Select Role --</option>
-                    <option value="patient">Patient</option>
-                    <option value="doctor">Doctor</option>
-                    <option value="receptionist">Receptionist</option>
-                </select>
+                <?php if ($prefilled_role): ?>
+                    <input type="hidden" name="user_type" value="<?php echo htmlspecialchars($prefilled_role); ?>">
+                <?php else: ?>
+                    <label for="user_type">I am a</label>
+                    <select name="user_type" id="user_type" required>
+                        <option value="">-- Select Role --</option>
+                        <option value="patient">Patient</option>
+                        <option value="doctor">Doctor</option>
+                        <option value="receptionist">Receptionist</option>
+                    </select>
+                <?php endif; ?>
 
                 <label for="username">Username</label>
                 <div class="field-with-icon">
@@ -581,7 +549,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </form>
 
             <div class="back-link">
-                <a href="forgot_password.php">
+                <a href="forgot_password.php<?php echo $role_query; ?>">
                     <i class="fas fa-rotate-left"></i>
                     Start over
                 </a>
@@ -608,7 +576,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </form>
 
             <div class="back-link">
-                <a href="forgot_password.php">
+                <a href="forgot_password.php<?php echo $role_query; ?>">
                     <i class="fas fa-rotate-left"></i>
                     Start over
                 </a>
@@ -635,7 +603,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </form>
 
             <div class="back-link">
-                <a href="forgot_password.php">
+                <a href="forgot_password.php<?php echo $role_query; ?>">
                     <i class="fas fa-rotate-left"></i>
                     Start over
                 </a>
