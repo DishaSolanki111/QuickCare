@@ -13,6 +13,7 @@ if (!isset($_SESSION['booking_doctor_id'])) {
 
 $is_reschedule = !empty($_SESSION['reschedule_appointment_id']);
 $is_patient_reschedule = $is_reschedule && isset($_SESSION['PATIENT_ID']);
+$is_logged_in_patient = isset($_SESSION['PATIENT_ID']);
 
 // Get doctor details
  $doctor_id = $_SESSION['booking_doctor_id'];
@@ -538,7 +539,8 @@ body::before {
                             </button>
                             <?php else: ?>
                             <button type="button" class="btn btn-primary" onclick="proceedToLogin()" id="nextToLogin">
-                                Next: Login <i class="fas fa-arrow-right" style="margin-left: 5px;"></i>
+                                <?php echo $is_logged_in_patient ? 'Next: Confirm Appointment' : 'Next: Login'; ?>
+                                <i class="fas fa-arrow-right" style="margin-left: 5px;"></i>
                             </button>
                             <?php endif; ?>
                         </div>
