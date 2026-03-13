@@ -425,8 +425,8 @@ session_start();
                 </div>
                 
                 <div class="btn-group">
-                    <a href="index.php" class="btn btn-success">
-                        <i class="fas fa-home" style="margin-right: 8px;"></i> Go Home
+                    <a href="patient.php" class="btn btn-success">
+                        <i class="fas fa-tachometer-alt" style="margin-right: 8px;"></i> Go to Dashboard
                     </a>
                     <a href="manage_appointments.php" class="btn btn-success">
                         <i class="fas fa-calendar-check" style="margin-right: 8px;"></i> My Appointments

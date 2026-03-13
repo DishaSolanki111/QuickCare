@@ -110,12 +110,12 @@ $spec_id = intval($_POST['spec_id']);
         }
 
         .doctors-section {
-            padding: 4rem 0;
+            padding: 1.25rem 0 4rem 0;
             flex-grow: 1;
         }
-
+        
         .back-bar {
-            margin-top: 1.5rem;
+            margin-top: 0;
             margin-bottom: 1rem;
         }
 
@@ -147,18 +147,18 @@ $spec_id = intval($_POST['spec_id']);
 
         .grid-container {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 30px;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 24px;
             width: 100%;
             margin: 0 auto;
         }
-
+        
         .card {
             background: white;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border-radius: 14px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
             text-align: center;
-            padding: 1.5rem;
+            padding: 1.25rem;
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
@@ -185,15 +185,16 @@ $spec_id = intval($_POST['spec_id']);
 
         .doctor-image-container {
             position: relative;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1.1rem;
         }
-
+        
         .doctor-image {
-             width: 140px;
-            height: 140px;
+            width: 120px;
+            height: 120px;
             border-radius: 8px;
             object-fit: cover;
-            border: 4px solid var(--light-blue);
+            object-position: top center;
+            border: 3px solid var(--light-blue);
             transition: all 0.3s ease;
         }
 
@@ -203,22 +204,22 @@ $spec_id = intval($_POST['spec_id']);
         }
 
         .card h3 {
-            font-size: 1.5rem;
-            margin-bottom: 0.5rem;
+            font-size: 1.3rem;
+            margin-bottom: 0.4rem;
             color: var(--text-dark);
         }
-
+        
         .card-title {
             color: var(--primary);
-           font-size: 1rem;
-            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
             font-weight: 600;
         }
 
         .card-rating {
             display: flex;
             justify-content: center;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1rem;
             color: #ffc107;
         }
 
@@ -240,19 +241,19 @@ $spec_id = intval($_POST['spec_id']);
         .card-actions a {
             flex: 1;
             width: 100%;
-            padding: 12px 0;
+            padding: 8px 0;
             border: none;
-            border-radius: 8px;
-            font-weight: 600;
+            border-radius: 7px;
+            font-weight: 500;
             cursor: pointer;
             transition: all 0.3s ease;
             text-align: center;
             text-decoration: none;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 6px;
+            gap: 5px;
         }
 
         .btn-primary {

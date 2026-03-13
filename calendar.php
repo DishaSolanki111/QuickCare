@@ -204,6 +204,10 @@ while ($row = mysqli_fetch_assoc($bookedQuery)) {
             transition: all 0.3s ease;
             position: relative;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
         }
 
         .available {
