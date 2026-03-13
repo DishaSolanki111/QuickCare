@@ -17,13 +17,13 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database:quick_care
+-- Database: `quick_care`
 --
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table appointment_reminder_tbl
+-- Table structure for table `appointment_reminder_tbl`
 --
 
 CREATE TABLE `appointment_reminder_tbl` (
@@ -130,7 +130,6 @@ CREATE TABLE `appointment_tbl` (
 -- Dumping data for table `appointment_tbl`
 --
 
--- Replace the original appointment_tbl INSERT with this updated block
 INSERT INTO `appointment_tbl` (`APPOINTMENT_ID`, `PATIENT_ID`, `DOCTOR_ID`, `SCHEDULE_ID`, `CREATED_AT`, `APPOINTMENT_DATE`, `APPOINTMENT_TIME`, `STATUS`) VALUES
 (1, 1, 1, 1, '2026-03-01 09:00:00', '2026-03-03', '10:00:00', 'COMPLETED'),
 (2, 1, 1, 2, '2026-03-03 10:15:00', '2026-03-07', '10:00:00', 'COMPLETED'),
@@ -158,7 +157,6 @@ INSERT INTO `appointment_tbl` (`APPOINTMENT_ID`, `PATIENT_ID`, `DOCTOR_ID`, `SCH
 (24, 1, 1, 1, '2026-01-09 11:11:14', '2026-02-12', '10:00:00', 'SCHEDULED'),
 (25, 1, 1, 1, '2026-01-09 14:44:14', '2026-02-25', '13:00:00', 'SCHEDULED'),
 (26, 1, 1, 1, '2026-01-10 08:00:25', '2026-02-08', '12:00:00', 'SCHEDULED');
-
 
 -- --------------------------------------------------------
 
@@ -245,10 +243,12 @@ CREATE TABLE `doctor_tbl` (
   `PHONE` bigint(20) NOT NULL,
   `EMAIL` varchar(50) NOT NULL,
   `GENDER` enum('MALE','FEMALE','OTHER') NOT NULL,
-
   `EDUCATION` varchar(50) NOT NULL,
-  `STATUS` enum('pending','approved','rejected') DEFAULT 'pending'
+  `STATUS` enum('pending','approved','rejected') DEFAULT 'pending',
+  `SECURITY_QUESTION` varchar(255) NOT NULL,
+  `SECURITY_ANSWER` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 --
 -- otp table
 --
@@ -267,22 +267,23 @@ CREATE TABLE password_resets (
 -- Dumping data for table `doctor_tbl`
 --
 
-INSERT INTO doctor_tbl (DOCTOR_ID, SPECIALISATION_ID, PROFILE_IMAGE, FIRST_NAME, LAST_NAME, DOB, DOJ, USERNAME, PSWD, PHONE, EMAIL, GENDER, EDUCATION,STATUS) VALUES
-(1, 1, 'uploads/rajesh.jpeg', 'Rajesh', 'Kumar', '1975-03-15', '2010-06-20', 'Dr_rajesh01', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543210, 'rajesh.kumar@gmail.com', 'MALE', 'MBBS, MD (Pediatrics)','approved'),
-(2, 1, 'uploads/priya.jpeg', 'Priya', 'Sharma', '1980-07-22', '2012-09-15', 'Dr_priya02', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543211, 'priya.sharma@gmail.com', 'FEMALE', 'MBBS, DCH','approved'),
-(3, 1, 'uploads/amit.jpeg', 'Amit', 'Patel', '1978-11-10', '2015-03-25', 'Dr_amit03', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543212, 'amit.patel@gmail.com', 'MALE',  'MBBS, DNB (Pediatrics)','approved'),
-(4, 2, 'uploads/sunita1.jpeg', 'Sunita', 'Reddy', '1976-05-18', '2011-07-10', 'Dr_sunita04', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543213, 'sunita.reddy@gmail.com', 'FEMALE',  'MBBS, MD (Cardiology)','approved'),
-(5, 2, 'uploads/vikram1.jpeg', 'Vikram', 'Singh', '1973-09-25', '2009-12-05', 'Dr_vikram05', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543214, 'vikram.singh@gmail.com', 'MALE',    'MBBS, DM (Cardiology)','approved'),
-(6, 2, 'uploads/anjali.jpeg', 'Anjali', 'Gupta', '1982-02-14', '2014-08-20', 'Dr_anjali06', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543215, 'anjali.gupta@gmail.com', 'FEMALE',     'MBBS, MD (Cardiology)','approved'),
-(7, 3, 'uploads/rahul.jpeg', 'Rahul', 'Verma', '1977-08-30', '2013-04-15', 'Dr_rahul07', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543216, 'rahul.verma@gmail.com', 'MALE',   'MBBS, MS (Orthopedics)','approved'),
-(8, 3, 'uploads/meera.jpeg', 'Meera', 'Joshi', '1981-12-05', '2016-01-10', 'Dr_meera08', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543217, 'meera.joshi@gmail.com', 'FEMALE',     'MBBS, DNB (Orthopedics)' ,'approved'),
-(9, 4, 'uploads/sanjay.jpeg', 'Sanjay', 'Malhotra', '1974-06-20', '2010-11-30', 'Dr_sanjay09', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543218, 'sanjay.malhotra@gmail.com', 'MALE',    'MBBS, MD, DM (Neurology)','approved' ),
-(10, 4, 'uploads/kavita1.jpeg',   'Kavita', 'Nair', '1979-04-12', '2015-07-25', 'Dr_kavita10', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543219, 'kavita.nair@gmail.com', 'FEMALE',     'MBBS, MD (Neurology)','approved' ),
-(11, 1, 'uploads/suresh.jpeg', 'Suresh', 'Reddy', '1976-01-18', '2011-05-10', 'Dr_suresh11', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543220, 'suresh.reddy@gmail.com', 'MALE',     'MBBS, MD (Pediatrics)','approved' ),
-(12, 1, 'uploads/lakshmi.jpeg', 'Lakshmi', 'Iyer', '1983-09-05', '2014-02-20', 'Dr_lakshmi12', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543221, 'lakshmi.iyer@gmail.com', 'FEMALE',   'MBBS, DCH' ,'approved'),
-(13, 1,  'uploads/arun.jpeg', 'Arun', 'Shah', '1979-12-22', '2013-08-15', 'Dr_arun13', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543222, 'arun.shah@gmail.com', 'MALE',    'MBBS, DNB (Pediatrics)','approved' ),
-(14, 1,  'uploads/Deepa.jpeg', 'Deepa', 'Nair', '1981-04-08', '2016-11-01', 'Dr_deepa14', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543223, 'deepa.nair@gmail.com', 'FEMALE',     'MBBS, MD (Pediatrics)' ,'approved'),
-(15, 1, 'uploads/karthik.jpeg', 'Karthik', 'Pillai', '1977-07-30', '2010-03-12', 'Dr_karthik15', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543224, 'karthik.pillai@gmail.com', 'MALE',     'MBBS, DCH' ,'approved');
+INSERT INTO `doctor_tbl` (`DOCTOR_ID`, `SPECIALISATION_ID`, `PROFILE_IMAGE`, `FIRST_NAME`, `LAST_NAME`, `DOB`, `DOJ`, `USERNAME`, `PSWD`, `PHONE`, `EMAIL`, `GENDER`, `EDUCATION`, `STATUS`, `SECURITY_QUESTION`, `SECURITY_ANSWER`) VALUES
+(1, 1, 'uploads/rajesh.jpeg', 'Rajesh', 'Kumar', '1975-03-15', '2010-06-20', 'Dr_rajesh01', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543210, 'rajesh.kumar@gmail.com', 'MALE', 'MBBS, MD (Pediatrics)', 'approved', 'What was the name of your first school?', 'St. Xavier School'),
+(2, 1, 'uploads/priya.jpeg', 'Priya', 'Sharma', '1980-07-22', '2012-09-15', 'Dr_priya02', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543211, 'priya.sharma@gmail.com', 'FEMALE', 'MBBS, DCH', 'approved', 'What is your favorite food from childhood?', 'Khichdi'),
+(3, 1, 'uploads/amit.jpeg', 'Amit', 'Patel', '1978-11-10', '2015-03-25', 'Dr_amit03', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543212, 'amit.patel@gmail.com', 'MALE', 'MBBS, DNB (Pediatrics)', 'approved', 'Where did you go for your first school trip?', 'Ahmedabad'),
+(4, 2, 'uploads/sunita1.jpeg', 'Sunita', 'Reddy', '1976-05-18', '2011-07-10', 'Dr_sunita04', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543213, 'sunita.reddy@gmail.com', 'FEMALE', 'MBBS, MD (Cardiology)', 'approved', 'What was the nickname your family calls you?', 'Suni'),
+(5, 2, 'uploads/vikram1.jpeg', 'Vikram', 'Singh', '1973-09-25', '2009-12-05', 'Dr_vikram05', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543214, 'vikram.singh@gmail.com', 'MALE', 'MBBS, DM (Cardiology)', 'approved', 'What was the name of your first school?', 'Army Public School'),
+(6, 2, 'uploads/anjali.jpeg', 'Anjali', 'Gupta', '1982-02-14', '2014-08-20', 'Dr_anjali06', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543215, 'anjali.gupta@gmail.com', 'FEMALE', 'MBBS, MD (Cardiology)', 'approved', 'What is your favorite food from childhood?', 'Rajma chawal'),
+(7, 3, 'uploads/rahul.jpeg', 'Rahul', 'Verma', '1977-08-30', '2013-04-15', 'Dr_rahul07', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543216, 'rahul.verma@gmail.com', 'MALE', 'MBBS, MS (Orthopedics)', 'approved', 'Where did you go for your first school trip?', 'Agra'),
+(8, 3, 'uploads/meera.jpeg', 'Meera', 'Joshi', '1981-12-05', '2016-01-10', 'Dr_meera08', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543217, 'meera.joshi@gmail.com', 'FEMALE', 'MBBS, DNB (Orthopedics)', 'approved', 'What was the nickname your family calls you?', 'Meeru'),
+(9, 4, 'uploads/sanjay.jpeg', 'Sanjay', 'Malhotra', '1974-06-20', '2010-11-30', 'Dr_sanjay09', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543218, 'sanjay.malhotra@gmail.com', 'MALE', 'MBBS, MD, DM (Neurology)', 'approved', 'What was the name of your first school?', 'Kendriya Vidyalaya'),
+(10, 4, 'uploads/kavita1.jpeg', 'Kavita', 'Nair', '1979-04-12', '2015-07-25', 'Dr_kavita10', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543219, 'kavita.nair@gmail.com', 'FEMALE', 'MBBS, MD (Neurology)', 'approved', 'What is your favorite food from childhood?', 'Appam'),
+(11, 1, 'uploads/suresh.jpeg', 'Suresh', 'Reddy', '1976-01-18', '2011-05-10', 'Dr_suresh11', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543220, 'suresh.reddy@gmail.com', 'MALE', 'MBBS, MD (Pediatrics)', 'approved', 'Where did you go for your first school trip?', 'Tirupati'),
+(12, 1, 'uploads/lakshmi.jpeg', 'Lakshmi', 'Iyer', '1983-09-05', '2014-02-20', 'Dr_lakshmi12', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543221, 'lakshmi.iyer@gmail.com', 'FEMALE', 'MBBS, DCH', 'approved', 'What was the nickname your family calls you?', 'Lakku'),
+(13, 1, 'uploads/arun.jpeg', 'Arun', 'Shah', '1979-12-22', '2013-08-15', 'Dr_arun13', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543222, 'arun.shah@gmail.com', 'MALE', 'MBBS, DNB (Pediatrics)', 'approved', 'What was the name of your first school?', 'Shree Ram School'),
+(14, 1, 'uploads/Deepa.jpeg', 'Deepa', 'Nair', '1981-04-08', '2016-11-01', 'Dr_deepa14', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543223, 'deepa.nair@gmail.com', 'FEMALE', 'MBBS, MD (Pediatrics)', 'approved', 'What is your favorite food from childhood?', 'Pav bhaji'),
+(15, 1, 'uploads/karthik.jpeg', 'Karthik', 'Pillai', '1977-07-30', '2010-03-12', 'Dr_karthik15', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543224, 'karthik.pillai@gmail.com', 'MALE', 'MBBS, DCH', 'approved', 'Where did you go for your first school trip?', 'Munnar');
+
 -- --------------------------------------------------------
 
 --
@@ -345,48 +346,34 @@ CREATE TABLE `medicine_reminder_tbl` (
 --
 
 INSERT INTO `medicine_reminder_tbl` (`MEDICINE_REMINDER_ID`, `MEDICINE_ID`, `CREATOR_ROLE`, `CREATOR_ID`, `PATIENT_ID`, `START_DATE`, `END_DATE`, `REMINDER_TIME`, `REMARKS`) VALUES
--- Patient 1 (latest prescription issue_date = 2026-03-07 → base = 2026-03-08)
 (1, 1, 'RECEPTIONIST', 1, 1, '2026-03-08', '2026-04-08', '08:00:00', 'Morning dose'),
 (2, 1, 'RECEPTIONIST', 1, 1, '2026-03-08', '2026-04-08', '20:00:00', 'Evening dose'),
 (3, 2, 'RECEPTIONIST', 1, 1, '2026-03-08', '2026-04-08', '08:00:00', 'Morning dose'),
 (4, 2, 'RECEPTIONIST', 1, 1, '2026-03-08', '2026-04-08', '14:00:00', 'Afternoon dose'),
 (5, 2, 'RECEPTIONIST', 1, 1, '2026-03-08', '2026-04-08', '20:00:00', 'Evening dose'),
 (6, 4, 'RECEPTIONIST', 1, 1, '2026-03-09', '2026-04-09', '09:00:00', 'Morning dose'),
-
--- Patient 2 (latest prescription issue_date = 2026-03-10 → base = 2026-03-11)
 (7, 5, 'RECEPTIONIST', 1, 2, '2026-03-11', '2026-04-11', '08:00:00', 'Morning dose'),
 (8, 6, 'RECEPTIONIST', 1, 2, '2026-03-11', '2026-04-11', '09:00:00', 'Morning dose'),
-
--- Patient 3 (latest prescription issue_date = 2026-03-12 → base = 2026-03-13)
 (9, 3, 'RECEPTIONIST', 2, 3, '2026-03-13', '2026-04-13', '08:00:00', 'Morning dose'),
 (10, 3, 'RECEPTIONIST', 2, 3, '2026-03-13', '2026-04-13', '20:00:00', 'Evening dose'),
-
--- Patient 4 (latest prescription issue_date = 2026-03-15 → base = 2026-03-16)
 (11, 7, 'RECEPTIONIST', 2, 4, '2026-03-16', '2026-04-16', '08:00:00', 'Morning dose'),
 (12, 8, 'RECEPTIONIST', 2, 4, '2026-03-16', '2026-04-16', '21:00:00', 'Night dose'),
-
--- Patient 5 (latest prescription issue_date = 2026-03-20 → base = 2026-03-21)
 (13, 9, 'RECEPTIONIST', 3, 5, '2026-03-21', '2026-04-21', '08:00:00', 'Morning dose'),
 (14, 9, 'RECEPTIONIST', 3, 5, '2026-03-21', '2026-04-21', '14:00:00', 'Afternoon dose'),
 (15, 9, 'RECEPTIONIST', 3, 5, '2026-03-21', '2026-04-21', '20:00:00', 'Evening dose'),
 (16, 10, 'RECEPTIONIST', 3, 5, '2026-03-22', '2026-04-22', '09:00:00', 'Morning dose'),
 (17, 10, 'RECEPTIONIST', 3, 5, '2026-03-22', '2026-04-22', '21:00:00', 'Night dose'),
-
--- Patient 6 (latest prescription issue_date = 2026-04-25 → base = 2026-04-26)
 (18, 11, 'RECEPTIONIST', 3, 6, '2026-04-26', '2026-05-26', '08:00:00', 'Morning dose'),
 (19, 11, 'RECEPTIONIST', 3, 6, '2026-04-26', '2026-05-26', '14:00:00', 'Afternoon dose'),
 (20, 11, 'RECEPTIONIST', 3, 6, '2026-04-26', '2026-05-26', '20:00:00', 'Evening dose'),
-
--- Patient 9 (latest prescription issue_date = 2026-04-24 → base = 2026-04-25)
 (21, 13, 'RECEPTIONIST', 1, 9, '2026-04-25', '2026-05-25', '08:00:00', 'Morning dose'),
 (22, 13, 'RECEPTIONIST', 1, 9, '2026-04-25', '2026-05-25', '20:00:00', 'Evening dose'),
 (23, 14, 'RECEPTIONIST', 1, 9, '2026-04-25', '2026-05-25', '21:00:00', 'Night dose'),
-
--- Patient 10 (latest prescription issue_date = 2026-04-30 → base = 2026-05-01)
 (24, 15, 'RECEPTIONIST', 1, 10, '2026-05-01', '2026-05-31', '08:00:00', 'Morning dose'),
 (25, 15, 'RECEPTIONIST', 1, 10, '2026-05-01', '2026-05-31', '14:00:00', 'Afternoon dose'),
 (26, 15, 'RECEPTIONIST', 1, 10, '2026-05-01', '2026-05-31', '20:00:00', 'Evening dose'),
 (27, 16, 'RECEPTIONIST', 1, 10, '2026-05-01', '2026-05-31', '21:00:00', 'Night dose');
+
 -- --------------------------------------------------------
 
 --
@@ -449,17 +436,17 @@ CREATE TABLE `patient_tbl` (
 -- Dumping data for table `patient_tbl`
 --
 
-INSERT INTO `patient_tbl` (`PATIENT_ID`, `FIRST_NAME`, `LAST_NAME`, `USERNAME`, `PSWD`, `DOB`, `GENDER`, `BLOOD_GROUP`, `PHONE`, `EMAIL`, `ADDRESS`, `SECURITY_QUESTION`, `SECURITY_ANSWER`) VALUES
-(1, 'Arjun', 'Mishra', 'Arjun_m01', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', '1990-05-15', 'MALE', 'B+', 9876543201, 'arjun.mishra@gmail.com', '123, Park Street, Mumbai', 'What was the name of your first school?', 'Sunrise Public School'),
-(2, 'Pooja', 'Sharma', 'Pooja_s02', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', '1985-08-22', 'FEMALE', 'A+', 9876543202, 'pooja.sharma@gmail.com', '456, MG Road, Delhi', 'What is your favorite food from childhood?', 'Mango ice cream'),
-(3, 'Rohan', 'Patel', 'Rohan_p03', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', '1992-12-10', 'MALE', 'O+', 9876543203, 'rohan.patel@gmail.com', '789, Brigade Road, Bangalore', 'Where did you go for your first school trip?', 'Mysore'),
-(4, 'Neha', 'Gupta', 'Neha_g04', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', '1988-03-18', 'FEMALE', 'AB+', 9876543204, 'neha.gupta@gmail.com', '321, FC Road, Pune', 'What was the nickname your family calls you?', 'Nehu'),
-(5, 'Amit', 'Kumar', 'Amit_k05', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', '1987-07-25', 'MALE', 'A-', 9876543205, 'amit.kumar@gmail.com', '654, Jubilee Hills, Hyderabad', 'What was the name of your first school?', 'St. Mary''s High School'),
-(6, 'Sneha', 'Reddy', 'Sneha_r06', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', '1991-11-30', 'FEMALE', 'B-', 9876543206, 'sneha.reddy@gmail.com', '987, Banjara Hills, Hyderabad', 'What is your favorite food from childhood?', 'Dosa'),
-(7, 'Vikas', 'Singh', 'Vikas_s07', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', '1986-09-14', 'MALE', 'O-', 9876543207, 'vikas.singh@gmail.com', '147, Connaught Place, Delhi', 'Where did you go for your first school trip?', 'Shimla'),
-(8, 'Anjali', 'Desai', 'Anjali_d08', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', '1993-02-05', 'FEMALE', 'AB-', 9876543208, 'anjali.desai@gmail.com', '258, Marine Drive, Mumbai', 'What was the nickname your family calls you?', 'Anju'),
-(9, 'Rahul', 'Verma', 'Rahul_v09', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', '1989-06-20', 'MALE', 'A+', 9876543209, 'rahul.verma@gmail.com', '369, Park Street, Kolkata', 'What was the name of your first school?', 'Green Valley School'),
-(10, 'Kavita', 'Sharma', 'Kavita_s10', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', '1994-04-12', 'FEMALE', 'B+', 9876543210, 'kavita.sharma@gmail.com', '741, MG Road, Bangalore', 'What is your favorite food from childhood?', 'Pani puri');
+INSERT INTO `patient_tbl` (`PATIENT_ID`, `FIRST_NAME`, `LAST_NAME`, `USERNAME`, `PSWD`, `DOB`, `GENDER`, `BLOOD_GROUP`, `PHONE`, `EMAIL`, `ADDRESS`, `MEDICAL_HISTORY_FILE`, `SECURITY_QUESTION`, `SECURITY_ANSWER`) VALUES
+(1, 'Arjun', 'Mishra', 'Arjun_m01', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', '1990-05-15', 'MALE', 'B+', 9876543201, 'arjun.mishra@gmail.com', '123, Park Street, Mumbai', '', 'What was the name of your first school?', 'Sunrise Public School'),
+(2, 'Pooja', 'Sharma', 'Pooja_s02', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', '1985-08-22', 'FEMALE', 'A+', 9876543202, 'pooja.sharma@gmail.com', '456, MG Road, Delhi', '', 'What is your favorite food from childhood?', 'Mango ice cream'),
+(3, 'Rohan', 'Patel', 'Rohan_p03', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', '1992-12-10', 'MALE', 'O+', 9876543203, 'rohan.patel@gmail.com', '789, Brigade Road, Bangalore', '', 'Where did you go for your first school trip?', 'Mysore'),
+(4, 'Neha', 'Gupta', 'Neha_g04', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', '1988-03-18', 'FEMALE', 'AB+', 9876543204, 'neha.gupta@gmail.com', '321, FC Road, Pune', '', 'What was the nickname your family calls you?', 'Nehu'),
+(5, 'Amit', 'Kumar', 'Amit_k05', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', '1987-07-25', 'MALE', 'A-', 9876543205, 'amit.kumar@gmail.com', '654, Jubilee Hills, Hyderabad', '', 'What was the name of your first school?', 'St. Mary''s High School'),
+(6, 'Sneha', 'Reddy', 'Sneha_r06', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', '1991-11-30', 'FEMALE', 'B-', 9876543206, 'sneha.reddy@gmail.com', '987, Banjara Hills, Hyderabad', '', 'What is your favorite food from childhood?', 'Dosa'),
+(7, 'Vikas', 'Singh', 'Vikas_s07', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', '1986-09-14', 'MALE', 'O-', 9876543207, 'vikas.singh@gmail.com', '147, Connaught Place, Delhi', '', 'Where did you go for your first school trip?', 'Shimla'),
+(8, 'Anjali', 'Desai', 'Anjali_d08', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', '1993-02-05', 'FEMALE', 'AB-', 9876543208, 'anjali.desai@gmail.com', '258, Marine Drive, Mumbai', '', 'What was the nickname your family calls you?', 'Anju'),
+(9, 'Rahul', 'Verma', 'Rahul_v09', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', '1989-06-20', 'MALE', 'A+', 9876543209, 'rahul.verma@gmail.com', '369, Park Street, Kolkata', '', 'What was the name of your first school?', 'Green Valley School'),
+(10, 'Kavita', 'Sharma', 'Kavita_s10', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', '1994-04-12', 'FEMALE', 'B+', 9876543210, 'kavita.sharma@gmail.com', '741, MG Road, Bangalore', '', 'What is your favorite food from childhood?', 'Pani puri');
 
 -- --------------------------------------------------------
 
@@ -482,7 +469,6 @@ CREATE TABLE `payment_tbl` (
 -- Dumping data for table `payment_tbl`
 --
 
--- Replace the original payment_tbl INSERT with this updated block
 INSERT INTO `payment_tbl` (`PAYMENT_ID`, `APPOINTMENT_ID`, `AMOUNT`, `PAYMENT_DATE`, `PAYMENT_MODE`, `STATUS`, `TRANSACTION_ID`, `CREATED_AT`) VALUES
 (1, 1, 300.00, '2026-03-01', 'CREDIT CARD', 'COMPLETED', 'TXN123456789', '2026-03-01 09:00:00'),
 (2, 2, 300.00, '2026-03-03', 'GOOGLE PAY', 'COMPLETED', 'TXN123456790', '2026-03-03 10:15:00'),
@@ -504,7 +490,9 @@ INSERT INTO `payment_tbl` (`PAYMENT_ID`, `APPOINTMENT_ID`, `AMOUNT`, `PAYMENT_DA
 (18, 18, 300.00, '2026-04-15', 'GOOGLE PAY', 'COMPLETED', 'TXN123456806', '2026-04-15 10:30:00'),
 (19, 19, 300.00, '2026-04-18', 'UPI', 'COMPLETED', 'TXN123456807', '2026-04-18 11:00:00'),
 (20, 20, 300.00, '2026-04-20', 'NET BANKING', 'COMPLETED', 'TXN123456808', '2026-04-20 12:00:00');
+
 -- --------------------------------------------------------
+
 --
 -- Table structure for table `prescription_medicine_tbl`
 --
@@ -563,6 +551,7 @@ INSERT INTO `prescription_medicine_tbl` (`PRESCRIPTION_ID`, `MEDICINE_ID`, `DOSA
 (19, 16, '100mg', '30 days', 'Once daily at night', '2026-04-28 10:00:00'),
 (20, 15, '2mg', '30 days', 'Three times daily', '2026-04-30 10:00:00'),
 (20, 16, '100mg', '30 days', 'Once daily at night', '2026-04-30 10:00:00');
+
 -- --------------------------------------------------------
 
 --
@@ -626,18 +615,20 @@ CREATE TABLE `receptionist_tbl` (
   `EMAIL` varchar(50) NOT NULL,
   `ADDRESS` text NOT NULL,
   `USERNAME` varchar(20) NOT NULL,
-  `PSWD` varchar(60) NOT NULL
+  `PSWD` varchar(60) NOT NULL,
+  `SECURITY_QUESTION` varchar(255) NOT NULL,
+  `SECURITY_ANSWER` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `receptionist_tbl`
 --
 
-INSERT INTO `receptionist_tbl` (`RECEPTIONIST_ID`, `FIRST_NAME`, `LAST_NAME`, `DOB`, `DOJ`, `GENDER`, `PHONE`, `EMAIL`, `ADDRESS`, `USERNAME`, `PSWD`) VALUES
-(1, 'Meena', 'Kumari', '1985-03-15', '2018-06-20', 'FEMALE', 9876543301, 'meena.k@gmail.com', '123, Staff Quarters, Mumbai', 'Meena_k01', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K'),
-(2, 'Ramesh', 'Kumar', '1987-07-22', '2019-09-15', 'MALE', 9876543302, 'ramesh.k@gmail.com', '456, Staff Quarters, Delhi', 'Ramesh_k02', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K'),
-(3, 'Sunita', 'Devi', '1990-11-10', '2020-03-25', 'FEMALE', 9876543303, 'sunita.d@gmail.com', '789, Staff Quarters, Bangalore', 'Sunita_d03', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K'),
-(4, 'Anil', 'Sharma', '1988-05-18', '2021-07-10', 'MALE', 9876543304, 'anil.s@gmail.com', '321, Staff Quarters, Pune', 'Anil_s04', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K');
+INSERT INTO `receptionist_tbl` (`RECEPTIONIST_ID`, `FIRST_NAME`, `LAST_NAME`, `DOB`, `DOJ`, `GENDER`, `PHONE`, `EMAIL`, `ADDRESS`, `USERNAME`, `PSWD`, `SECURITY_QUESTION`, `SECURITY_ANSWER`) VALUES
+(1, 'Meena', 'Kumari', '1985-03-15', '2018-06-20', 'FEMALE', 9876543301, 'meena.k@gmail.com', '123, Staff Quarters, Mumbai', 'Meena_k01', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 'What was the name of your first school?', 'Delhi Public School'),
+(2, 'Ramesh', 'Kumar', '1987-07-22', '2019-09-15', 'MALE', 9876543302, 'ramesh.k@gmail.com', '456, Staff Quarters, Delhi', 'Ramesh_k02', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 'What is your favorite food from childhood?', 'Idli sambar'),
+(3, 'Sunita', 'Devi', '1990-11-10', '2020-03-25', 'FEMALE', 9876543303, 'sunita.d@gmail.com', '789, Staff Quarters, Bangalore', 'Sunita_d03', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 'Where did you go for your first school trip?', 'Ooty'),
+(4, 'Anil', 'Sharma', '1988-05-18', '2021-07-10', 'MALE', 9876543304, 'anil.s@gmail.com', '321, Staff Quarters, Pune', 'Anil_s04', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 'What was the nickname your family calls you?', 'Anu');
 
 -- --------------------------------------------------------
 
@@ -906,6 +897,7 @@ ALTER TABLE `prescription_medicine_tbl`
 --
 ALTER TABLE `prescription_tbl`
   ADD CONSTRAINT `prescription_tbl_ibfk_1` FOREIGN KEY (`APPOINTMENT_ID`) REFERENCES `appointment_tbl` (`APPOINTMENT_ID`) ON DELETE CASCADE ON UPDATE CASCADE;
+
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
