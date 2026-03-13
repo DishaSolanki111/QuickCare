@@ -17,14 +17,21 @@ include 'config.php';
  $doctor = mysqli_fetch_assoc($doctor_query);
 
 // Handle form submission for profile update
+// NOTE: Certain verified fields must NOT be editable by the doctor:
+// Specialization, Education, Years of Experience (DOJ-based), Email, Phone.
+// Only basic personal details (name, DOB, gender) are updatable here.
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_profile'])) {
-    $phone = mysqli_real_escape_string($conn, $_POST['phone']);
-    $email = mysqli_real_escape_string($conn, $_POST['email']);
-    
+    $first_name = mysqli_real_escape_string($conn, $_POST['firstName']);
+    $last_name  = mysqli_real_escape_string($conn, $_POST['lastName']);
+    $dob        = mysqli_real_escape_string($conn, $_POST['dob']);
+    $gender     = mysqli_real_escape_string($conn, $_POST['gender']);
+
     $update_query = "UPDATE doctor_tbl SET 
-                   PHONE = '$phone',
-                   EMAIL = '$email'
-                   WHERE DOCTOR_ID = '$doctor_id'";
+                        FIRST_NAME = '$first_name',
+                        LAST_NAME  = '$last_name',
+                        DOB        = '$dob',
+                        GENDER     = '$gender'
+                    WHERE DOCTOR_ID = '$doctor_id'";
     
     if (mysqli_query($conn, $update_query)) {
         // Refresh doctor data
@@ -724,22 +731,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
                             <div class="form-row">
                                 <div class="form-group">
                                     <label for="firstName">First Name</label>
-                                    <input type="text" class="form-control" id="firstName" name="firstName" value="<?php echo htmlspecialchars($doctor['FIRST_NAME']); ?>" disabled>
+                                    <input type="text" class="form-control" id="firstName" name="firstName" value="<?php echo htmlspecialchars($doctor['FIRST_NAME']); ?>" required>
                                 </div>
                                 <div class="form-group">
                                     <label for="lastName">Last Name</label>
-                                    <input type="text" class="form-control" id="lastName" name="lastName" value="<?php echo htmlspecialchars($doctor['LAST_NAME']); ?>" disabled>
+                                    <input type="text" class="form-control" id="lastName" name="lastName" value="<?php echo htmlspecialchars($doctor['LAST_NAME']); ?>" required>
                                 </div>
                             </div>
                             
                             <div class="form-row">
                                 <div class="form-group">
                                     <label for="dob">Date of Birth</label>
-                                    <input type="date" class="form-control" id="dob" name="dob" value="<?php echo htmlspecialchars($doctor['DOB']); ?>" disabled>
+                                    <input type="date" class="form-control" id="dob" name="dob" value="<?php echo htmlspecialchars($doctor['DOB']); ?>" required>
                                 </div>
                                 <div class="form-group">
                                     <label for="gender">Gender</label>
-                                    <select class="form-control" id="gender" name="gender" disabled>
+                                    <select class="form-control" id="gender" name="gender" required>
                                         <option value="MALE" <?php echo $doctor['GENDER'] == 'MALE' ? 'selected' : ''; ?>>Male</option>
                                         <option value="FEMALE" <?php echo $doctor['GENDER'] == 'FEMALE' ? 'selected' : ''; ?>>Female</option>
                                         <option value="OTHER" <?php echo $doctor['GENDER'] == 'OTHER' ? 'selected' : ''; ?>>Other</option>
@@ -750,12 +757,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
                             <div class="form-row">
                             <div class="form-group">
                                 <label for="phone">Phone Number</label>
-                                <input type="tel" class="form-control" id="phone" name="phone" value="<?php echo htmlspecialchars($doctor['PHONE']); ?>" required maxlength="10">
+                                <input type="tel" class="form-control" id="phone" name="phone" value="<?php echo htmlspecialchars($doctor['PHONE']); ?>" disabled>
                                 <div class="error-message" id="phone_error"></div>
                             </div>
                                 <div class="form-group">
                                     <label for="email">Email Address</label>
-                                    <input type="email" class="form-control" id="email" name="email" value="<?php echo htmlspecialchars($doctor['EMAIL']); ?>" required>
+                                    <input type="email" class="form-control" id="email" name="email" value="<?php echo htmlspecialchars($doctor['EMAIL']); ?>" disabled>
                                 </div>
                             </div>
 
