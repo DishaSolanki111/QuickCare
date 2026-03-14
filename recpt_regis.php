@@ -473,6 +473,19 @@ include 'config.php';
                     $field_errors['password'] = "Password must be at least 8 characters and include 1 uppercase letter, 1 digit, and 1 special character.";
                 }
 
+                // ---------------- AGE (DOB vs DOJ) VALIDATION ----------------
+                if ($dob && $doj) {
+                    $dob_dt = DateTime::createFromFormat('Y-m-d', $dob);
+                    $doj_dt = DateTime::createFromFormat('Y-m-d', $doj);
+                    if ($dob_dt && $doj_dt) {
+                        $age_diff = $dob_dt->diff($doj_dt)->y;
+                        if ($age_diff < 23) {
+                            $field_errors['dob'] = "Receptionist must be at least 23 years old at date of joining.";
+                            $field_errors['doj'] = "Receptionist must be at least 23 years old at date of joining.";
+                        }
+                    }
+                }
+
                 // ---------------- PHONE VALIDATION ----------------
                 if (!preg_match('/^[0-9]{10}$/', $phone)) {
                     $field_errors['phone'] = "Phone number must be exactly 10 digits.";
@@ -684,37 +697,53 @@ include 'config.php';
     }
 
     function validateDOB(input) {
-        const value = input.value;
-        if (value !== '') {
-            const dobDate = new Date(value);
-            const today = new Date();
-            if (dobDate <= today) {
-                hideError('dob');
+        const dobVal = input.value;
+        const dojVal = document.getElementById('doj').value;
+        if (!dobVal) return;
+
+        const dobDate = new Date(dobVal);
+        const today = new Date();
+        if (dobDate > today) {
+            showError('dob', 'Date of birth cannot be in the future.');
+            return;
+        }
+
+        if (dojVal) {
+            const dojDate = new Date(dojVal);
+            const ageYears = (dojDate.getFullYear() - dobDate.getFullYear()) -
+                ((dojDate.getMonth() < dobDate.getMonth()) || (dojDate.getMonth() === dobDate.getMonth() && dojDate.getDate() < dobDate.getDate()) ? 1 : 0);
+            if (ageYears < 23) {
+                showError('dob', 'DOB and DOJ must have at least 23 years gap.');
+                showError('doj', 'DOB and DOJ must have at least 23 years gap.');
+                return;
             }
         }
+        hideError('dob');
     }
 
     function validateDOJ(input) {
         const dojVal = input.value;
         const dobVal = document.getElementById('dob').value;
-        
-        if (dojVal === '') return;
+        if (!dojVal) return;
 
         const dojDate = new Date(dojVal);
         const today = new Date();
-        
-        if (dojDate > today) return;
+        if (dojDate > today) {
+            showError('doj', 'Date of joining cannot be in the future.');
+            return;
+        }
 
-        if (dobVal !== '') {
+        if (dobVal) {
             const dobDate = new Date(dobVal);
-            if (dojDate > dobDate) {
-                hideError('doj');
-            }
-        } else {
-            if (dojDate <= today) {
-                hideError('doj');
+            const ageYears = (dojDate.getFullYear() - dobDate.getFullYear()) -
+                ((dojDate.getMonth() < dobDate.getMonth()) || (dojDate.getMonth() === dobDate.getMonth() && dojDate.getDate() < dobDate.getDate()) ? 1 : 0);
+            if (ageYears < 23) {
+                showError('dob', 'DOB and DOJ must have at least 23 years gap.');
+                showError('doj', 'DOB and DOJ must have at least 23 years gap.');
+                return;
             }
         }
+        hideError('doj');
     }
 
     function validatePhone(input) {
