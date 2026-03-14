@@ -41,7 +41,16 @@ if ($initials === '') {
 }
 
 // Auto-fetch appointment cancel/reschedule and schedule delete/reschedule notifications for receptionist when not set
+// Show reminders only once per login session to avoid constant repetition.
 if (!isset($reminder_query) && isset($conn)) {
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
+
+    // If reminders have already been shown in this session, skip fetching again.
+    if (!empty($_SESSION['RECEP_REMINDERS_SEEN'] ?? false)) {
+        $reminder_query = [];
+    } else {
     $receptionist_reminders = [];
     $ar_q = @mysqli_query($conn, "
         SELECT ar.APPOINTMENT_REMINDER_ID, ar.REMARKS, a.APPOINTMENT_DATE, a.APPOINTMENT_TIME,
@@ -131,6 +140,8 @@ if (!isset($reminder_query) && isset($conn)) {
         return strcmp($dt_b, $dt_a);
     });
     $reminder_query = $receptionist_reminders;
+    $_SESSION['RECEP_REMINDERS_SEEN'] = true;
+    }
 }
 
 // Optional notifications (e.g. reminders or tasks) if a query is provided
