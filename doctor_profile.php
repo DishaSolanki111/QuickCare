@@ -709,7 +709,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
 
                             <div class="info-item">
                                 <span class="info-label">Years of Experience</span>
-                                <span class="info-value"><?php echo date('Y') - date('Y', strtotime($doctor['DOJ'])); ?> years</span>
+                                <span class="info-value"><?php 
+$years_exp = 0;
+if (!empty($doctor['DOJ'])) {
+    $doj = new DateTime($doctor['DOJ']);
+    $today = new DateTime();
+    $years_exp = $doj->diff($today)->y;
+}
+echo $years_exp; 
+?> years</span>
                             </div>
                         </div>
                         
@@ -785,7 +793,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
                                 </div>
                                 <div class="form-group">
                                     <label for="experience">Years of Experience</label>
-                                    <input type="text" class="form-control" id="experience" value="<?php echo date('Y') - date('Y', strtotime($doctor['DOJ'])); ?> years" disabled>
+                                    <input type="text" class="form-control" id="experience" value="<?php echo $years_exp; ?> years" disabled>
                                 </div>
                             </div>
                             
