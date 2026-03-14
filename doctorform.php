@@ -8,6 +8,9 @@ include 'config.php'; ?>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Doctor Registration | QuickCare</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@700&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary-blue: #0a4d68;
@@ -101,12 +104,14 @@ include 'config.php'; ?>
         }
 
         .form-section-title {
-            font-size: 16px;
-            font-weight: 600;
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 700;
             color: var(--primary-blue);
-            margin-bottom: 15px;
-            padding-bottom: 8px;
-            border-bottom: 2px solid var(--light-blue);
+            letter-spacing: 0.5px;
+            margin-bottom: 16px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid var(--light-blue);
         }
 
         .form-row {
@@ -582,13 +587,13 @@ include 'config.php'; ?>
                         
                         <div class="form-group">
                             <label for="first_name">First Name <span class="required">*</span></label>
-                            <input type="text" id="first_name" name="first_name" placeholder="e.g. John" value="<?php echo htmlspecialchars($form_data['first_name']); ?>" required>
+                            <input type="text" id="first_name" name="first_name" placeholder="e.g. Vinod" value="<?php echo htmlspecialchars($form_data['first_name']); ?>" required>
                             <div class="error-message" id="first_name_error"<?php if (!empty($field_errors['first_name'])) echo ' style="display:block"'; ?>><?php echo htmlspecialchars($field_errors['first_name'] ?? ''); ?></div>
                         </div>
                         
                         <div class="form-group">
                             <label for="last_name">Last Name <span class="required">*</span></label>
-                            <input type="text" id="last_name" name="last_name" placeholder="e.g. Doe" value="<?php echo htmlspecialchars($form_data['last_name']); ?>" required>
+                            <input type="text" id="last_name" name="last_name" placeholder="e.g. Sharma" value="<?php echo htmlspecialchars($form_data['last_name']); ?>" required>
                             <div class="error-message" id="last_name_error"<?php if (!empty($field_errors['last_name'])) echo ' style="display:block"'; ?>><?php echo htmlspecialchars($field_errors['last_name'] ?? ''); ?></div>
                         </div>
                         
@@ -629,13 +634,13 @@ include 'config.php'; ?>
                         
                         <div class="form-group">
                             <label for="phone">Phone Number <span class="required">*</span></label>
-                            <input type="text" id="phone" name="phone" maxlength="10" placeholder="e.g. 1234567891" value="<?php echo htmlspecialchars($form_data['phone']); ?>" required>
+                            <input type="text" id="phone" name="phone" maxlength="10" placeholder="e.g. 9876543210" value="<?php echo htmlspecialchars($form_data['phone']); ?>" required>
                             <div class="error-message" id="phone_error"<?php if (!empty($field_errors['phone'])) echo ' style="display:block"'; ?>><?php echo htmlspecialchars($field_errors['phone'] ?? ''); ?></div>
                         </div>
                         
                         <div class="form-group">
                             <label for="email">Email <span class="required">*</span></label>
-                            <input type="email" id="email" name="email" placeholder="e.g. john@example.com" value="<?php echo htmlspecialchars($form_data['email']); ?>" required>
+                            <input type="email" id="email" name="email" placeholder="e.g. vinod.sharma@example.com" value="<?php echo htmlspecialchars($form_data['email']); ?>" required>
                             <div class="error-message" id="email_error"<?php if (!empty($field_errors['email'])) echo ' style="display:block"'; ?>><?php echo htmlspecialchars($field_errors['email'] ?? ''); ?></div>
                         </div>
                         
@@ -673,14 +678,14 @@ include 'config.php'; ?>
                         
                         <div class="form-group">
                             <label for="username">Username <span class="required">*</span></label>
-                            <input type="text" id="username" name="username" placeholder="e.g. Dr_rajesh05" value="<?php echo htmlspecialchars($form_data['username']); ?>" required>
+                            <input type="text" id="username" name="username" placeholder="e.g. Dr_Vinod01" value="<?php echo htmlspecialchars($form_data['username']); ?>" required>
                             <div class="error-message" id="username_error"<?php if (!empty($field_errors['username'])) echo ' style="display:block"'; ?>><?php echo htmlspecialchars($field_errors['username'] ?? ''); ?></div>
                         </div>
                         
                         <div class="form-group">
                             <label for="password">Password <span class="required">*</span></label>
                             <div class="password-wrapper">
-                                <input type="password" id="password" name="password" placeholder="John@123" required>
+                                <input type="password" id="password" name="password" placeholder="Vinod@123" required>
                                 <i class="fas fa-eye-slash toggle-password" id="togglePassword"></i>
                             </div>
                             <div class="error-message" id="password_error"<?php if (!empty($field_errors['password'])) echo ' style="display:block"'; ?>><?php echo htmlspecialchars($field_errors['password'] ?? ''); ?></div>

@@ -411,7 +411,7 @@ $spec_id = intval($_POST['spec_id']);
     <section class="doctors-section">
         <div class="container">
             <div class="back-bar">
-                <a href="appointment.php" class="back-link">
+                <a href="book_appointment_date.php" class="back-link">
                     <i class="fas fa-arrow-left"></i>
                     Back
                 </a>

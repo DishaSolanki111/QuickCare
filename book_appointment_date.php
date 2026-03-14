@@ -542,7 +542,6 @@ body::before {
                     <?php if (!$is_reschedule): ?>
                     <input type="hidden" name="spec_id" value="<?php echo $doctor['SPECIALISATION_ID']; ?>">
                     <?php endif; ?>
-                    <button type="submit" class="close" style="background:none;border:none;font-size:28px;cursor:pointer">&times;</button>
                 </form>
                     <h2><?php echo $is_reschedule ? 'Reschedule: Select New Date' : 'Select Appointment Date'; ?></h2>
                     
@@ -578,6 +577,9 @@ body::before {
                         </div>
                         
                         <div class="btn-group">
+                            <button a href="doctors.php" type="button" class="btn btn-danger" onclick="goBackFromDate()">
+                                <i class="fas fa-arrow-left" style="margin-right: 5px;"></i> Back
+                            </button>
                             <button type="button" class="btn btn-primary" onclick="proceedToTime()" id="nextToTime">
                                 Next: Select Time <i class="fas fa-arrow-right" style="margin-left: 5px;"></i>
                             </button>
@@ -611,6 +613,10 @@ body::before {
     </footer>
 
     <script>
+    function goBackFromDate() {
+        window.history.back();
+    }
+
     // Initialize the page
     document.addEventListener('DOMContentLoaded', function() {
         // Initialize calendar
