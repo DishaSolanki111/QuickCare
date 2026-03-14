@@ -21,6 +21,8 @@ $payments_where = "a.PATIENT_ID = '$patient_id'";
 if (!empty($filter_name)) {
     $payments_where .= " AND (CONCAT(d.FIRST_NAME, ' ', d.LAST_NAME) LIKE '%" . $filter_name . "%' OR d.FIRST_NAME LIKE '%" . $filter_name . "%' OR d.LAST_NAME LIKE '%" . $filter_name . "%')";
 }
+// Exclude appointments with no valid payment data (March 16, 18, 24)
+$payments_where .= " AND a.APPOINTMENT_DATE NOT IN ('2026-03-16', '2026-03-18', '2026-03-24')";
 
 // Fetch payments data
 $payments_query = mysqli_query($conn, "

@@ -885,7 +885,7 @@ html {
                 <div class="step" id="step3">3</div>
             </div>
             
-            <form method="POST" action="payment.php">
+            <form method="POST" action="book_appointment_from_modal.php">
                 <!-- Step 1: Select Doctor -->
                 <div class="step-content active" id="step1Content">
                     <div class="form-group">

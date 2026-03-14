@@ -38,6 +38,17 @@ VALUES
 
 if(mysqli_query($conn,$q)){
     $appointment_id = mysqli_insert_id($conn);
+    // Payment is mandatory: insert payment_tbl record
+    $amount = 0;
+    $fee_res = mysqli_query($conn, "SELECT AMOUNT FROM payment_tbl WHERE STATUS='COMPLETED' ORDER BY PAYMENT_ID DESC LIMIT 1");
+    if ($fee_res && $row = mysqli_fetch_assoc($fee_res)) {
+        $amount = (float) $row['AMOUNT'];
+    }
+    if ($amount > 0 && $appointment_id > 0) {
+        $txn_id = 'TXN_' . uniqid();
+        mysqli_query($conn, "INSERT INTO payment_tbl (APPOINTMENT_ID, AMOUNT, PAYMENT_DATE, PAYMENT_MODE, STATUS, TRANSACTION_ID) 
+            VALUES ($appointment_id, $amount, CURDATE(), 'CREDIT CARD', 'COMPLETED', '$txn_id')");
+    }
     header("Location: appointment_success.php?id=" . $appointment_id);
     exit;
 } else {
