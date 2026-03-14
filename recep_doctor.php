@@ -669,21 +669,13 @@ $receptionist_id = $_SESSION['RECEPTIONIST_ID'];
             </div>
 
             <div class="form-group">
-                <label>Gender</label>
-                <div class="radio-group">
-                    <div class="radio-option">
-                        <input type="radio" id="edit_gender_male" name="gender" value="MALE">
-                        <label for="edit_gender_male">Male</label>
-                    </div>
-                    <div class="radio-option">
-                        <input type="radio" id="edit_gender_female" name="gender" value="FEMALE">
-                        <label for="edit_gender_female">Female</label>
-                    </div>
-                    <div class="radio-option">
-                        <input type="radio" id="edit_gender_other" name="gender" value="OTHER">
-                        <label for="edit_gender_other">Other</label>
-                    </div>
-                </div>
+                <label for="edit_gender">Gender</label>
+                <select id="edit_gender" name="gender">
+                    <option value="">Select Gender</option>
+                    <option value="MALE">Male</option>
+                    <option value="FEMALE">Female</option>
+                    <option value="OTHER">Other</option>
+                </select>
                 <div class="error-message" id="edit_gender_error"></div>
             </div>
 
@@ -737,12 +729,9 @@ function openEditModal(id, firstName, lastName, dob, doj, gender, education, pho
     document.getElementById('edit_last_name').value = lastName;
     document.getElementById('edit_dob').value = dob || '';
     document.getElementById('edit_doj').value = doj || '';
-    
-    // Set gender radio buttons
-    document.getElementById('edit_gender_male').checked = (gender === 'MALE');
-    document.getElementById('edit_gender_female').checked = (gender === 'FEMALE');
-    document.getElementById('edit_gender_other').checked = (gender === 'OTHER');
 
+    // Set gender dropdown
+    document.getElementById('edit_gender').value = gender || '';
     document.getElementById('edit_education').value = education;
     document.getElementById('edit_phone').value = phone;
     document.getElementById('edit_email').value = email;

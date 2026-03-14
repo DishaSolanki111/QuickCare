@@ -610,21 +610,14 @@ include 'config.php'; ?>
                         </div>
                         
                         <div class="form-group">
-                            <label>Gender</label>
-                            <div class="radio-group">
-                                <div class="radio-option">
-                                    <input type="radio" id="male" name="gender" value="MALE" <?php echo ($form_data['gender'] == 'MALE') ? 'checked' : ''; ?>>
-                                    <label for="male">Male</label>
-                                </div>
-                                <div class="radio-option">
-                                    <input type="radio" id="female" name="gender" value="FEMALE" <?php echo ($form_data['gender'] == 'FEMALE') ? 'checked' : ''; ?>>
-                                    <label for="female">Female</label>
-                                </div>
-                                <div class="radio-option">
-                                    <input type="radio" id="other" name="gender" value="OTHER" <?php echo ($form_data['gender'] == 'OTHER') ? 'checked' : ''; ?>>
-                                    <label for="other">Other</label>
-                                </div>
-                            </div>
+                            <label for="gender">Gender</label>
+                            <select id="gender" name="gender">
+                                <option value="">Select Gender</option>
+                                <option value="MALE" <?php echo ($form_data['gender'] == 'MALE') ? 'selected' : ''; ?>>Male</option>
+                                <option value="FEMALE" <?php echo ($form_data['gender'] == 'FEMALE') ? 'selected' : ''; ?>>Female</option>
+                                <option value="OTHER" <?php echo ($form_data['gender'] == 'OTHER') ? 'selected' : ''; ?>>Other</option>
+                            </select>
+                            <div class="error-message" id="gender_error"<?php if (!empty($field_errors['gender'])) echo ' style="display:block"'; ?>><?php echo htmlspecialchars($field_errors['gender'] ?? ''); ?></div>
                         </div>
                     </div>
                     
