@@ -30,15 +30,19 @@ if ($result->num_rows === 1) {
 $stmt->close();
 
 // ================== UPDATE PROFILE ==================
+// Only basic details (NOT phone/email) are editable by receptionist.
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_profile'])) {
-    $phone = $_POST['phone'];
-    $email = $_POST['email'];
+    $first_name = $_POST['firstName'] ?? $receptionist['FIRST_NAME'];
+    $last_name  = $_POST['lastName'] ?? $receptionist['LAST_NAME'];
+    $dob        = $_POST['dob'] ?? $receptionist['DOB'];
+    $doj        = $_POST['doj'] ?? $receptionist['DOJ'];
+    $gender     = $_POST['gender'] ?? $receptionist['GENDER'];
 
     $update_sql = "UPDATE receptionist_tbl 
-                   SET PHONE = ?, EMAIL = ? 
+                   SET FIRST_NAME = ?, LAST_NAME = ?, DOB = ?, DOJ = ?, GENDER = ?
                    WHERE RECEPTIONIST_ID = ?";
     $update_stmt = $conn->prepare($update_sql);
-    $update_stmt->bind_param("ssi", $phone, $email, $receptionist_id);
+    $update_stmt->bind_param("sssssi", $first_name, $last_name, $dob, $doj, $gender, $receptionist_id);
 
     if ($update_stmt->execute()) {
         // Refresh receptionist data
@@ -550,22 +554,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
                 <div class="info-grid">
                     <div class="form-group">
                         <label for="firstName">First Name</label>
-                        <input type="text" class="form-control" id="firstName" name="firstName" value="<?php echo htmlspecialchars($receptionist['FIRST_NAME']); ?>" disabled>
+                        <input type="text" class="form-control" id="firstName" name="firstName" value="<?php echo htmlspecialchars($receptionist['FIRST_NAME']); ?>" required>
                     </div>
                     <div class="form-group">
                         <label for="lastName">Last Name</label>
-                        <input type="text" class="form-control" id="lastName" name="lastName" value="<?php echo htmlspecialchars($receptionist['LAST_NAME']); ?>" disabled>
+                        <input type="text" class="form-control" id="lastName" name="lastName" value="<?php echo htmlspecialchars($receptionist['LAST_NAME']); ?>" required>
                     </div>
                 </div>
                 
                 <div class="info-grid">
                     <div class="form-group">
                         <label for="dob">Date of Birth</label>
-                        <input type="date" class="form-control" id="dob" name="dob" value="<?php echo htmlspecialchars($receptionist['DOB']); ?>" disabled>
+                        <input type="date" class="form-control" id="dob" name="dob" value="<?php echo htmlspecialchars($receptionist['DOB']); ?>" required>
                     </div>
                     <div class="form-group">
-                        <label for="dob">Date of Joining</label>
-                        <input type="date" class="form-control" id="dob" name="dob" value="<?php echo htmlspecialchars($receptionist['DOJ']); ?>" disabled>
+                        <label for="doj">Date of Joining</label>
+                        <input type="date" class="form-control" id="doj" name="doj" value="<?php echo htmlspecialchars($receptionist['DOJ']); ?>" required>
                     </div>
                     
                 </div>
@@ -573,19 +577,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
                 <div class="info-grid">
                     <div class="form-group">
                         <label for="gender">Gender</label>
-                        <input type="text" class="form-control" id="gender" name="gender" value="<?php echo htmlspecialchars($receptionist['GENDER']); ?>" disabled>
+                        <input type="text" class="form-control" id="gender" name="gender" value="<?php echo htmlspecialchars($receptionist['GENDER']); ?>" required>
                     </div>
                     <div class="form-group">
-                        <label for="phone">Phone Number</label>
-                        <input type="tel" class="form-control" id="phone" name="phone" value="<?php echo htmlspecialchars($receptionist['PHONE']); ?>" required maxlength="10">
-                        <div class="error-message" id="phone_error"></div>
+                        <label>Phone Number</label>
+                        <input type="text" class="form-control" value="<?php echo htmlspecialchars($receptionist['PHONE']); ?>" disabled style="background:#f5f5f5; cursor:not-allowed;">
                     </div>
                 </div>
                 <div class="info-grid">
                     <div class="form-group">
-                        <label for="email">Email Address</label>
-                        <input type="email" class="form-control" id="email" name="email" value="<?php echo htmlspecialchars($receptionist['EMAIL']); ?>" required>
-                        <div class="error-message" id="email_error"></div>
+                        <label>Email Address</label>
+                        <input type="text" class="form-control" value="<?php echo htmlspecialchars($receptionist['EMAIL']); ?>" disabled style="background:#f5f5f5; cursor:not-allowed;">
                     </div>
 
                 </div>
@@ -763,63 +765,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Edit Profile Form Validation
     const editProfileFormElement = document.getElementById('editProfileFormElement');
-    const phoneInput = document.getElementById('phone');
-    const emailInput = document.getElementById('email');
+    const phoneInput = null; // phone/email are not editable by receptionist
+    const emailInput = null;
 
     // Phone validation (10 digits) - real-time
-    if (phoneInput) {
-        phoneInput.addEventListener('input', function () {
-            this.value = this.value.replace(/[^0-9]/g, '');
-            const phoneValue = this.value.trim();
-            
-            if (phoneValue === '') {
-                showError('phone', 'Phone number is required.');
-            } else if (!/^\d{10}$/.test(phoneValue)) {
-                showError('phone', 'Phone number must be exactly 10 digits.');
-            } else {
-                hideError('phone');
-            }
-        });
-
-        phoneInput.addEventListener('blur', function () {
-            const phoneValue = this.value.trim();
-            if (phoneValue === '') {
-                showError('phone', 'Phone number is required.');
-            } else if (!/^\d{10}$/.test(phoneValue)) {
-                showError('phone', 'Phone number must be exactly 10 digits.');
-            } else {
-                hideError('phone');
-            }
-        });
-    }
+    // phone/email are read-only now; no runtime validation needed
 
     // Email validation - real-time
-    if (emailInput) {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        
-        emailInput.addEventListener('input', function () {
-            const emailValue = this.value.trim();
-            
-            if (emailValue === '') {
-                showError('email', 'Email address is required.');
-            } else if (!emailRegex.test(emailValue)) {
-                showError('email', 'Please enter a valid email address.');
-            } else {
-                hideError('email');
-            }
-        });
-
-        emailInput.addEventListener('blur', function () {
-            const emailValue = this.value.trim();
-            if (emailValue === '') {
-                showError('email', 'Email address is required.');
-            } else if (!emailRegex.test(emailValue)) {
-                showError('email', 'Please enter a valid email address.');
-            } else {
-                hideError('email');
-            }
-        });
-    }
+    // email read-only: skip validation
 
     // Form submit validation
     if (editProfileFormElement) {
@@ -830,26 +783,7 @@ document.addEventListener('DOMContentLoaded', function() {
             hideError('phone');
             hideError('email');
 
-            // Validate phone
-            const phoneValue = phoneInput ? phoneInput.value.trim() : '';
-            if (phoneValue === '') {
-                showError('phone', 'Phone number is required.');
-                valid = false;
-            } else if (!/^\d{10}$/.test(phoneValue)) {
-                showError('phone', 'Phone number must be exactly 10 digits.');
-                valid = false;
-            }
-
-            // Validate email
-            const emailValue = emailInput ? emailInput.value.trim() : '';
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (emailValue === '') {
-                showError('email', 'Email address is required.');
-                valid = false;
-            } else if (!emailRegex.test(emailValue)) {
-                showError('email', 'Please enter a valid email address.');
-                valid = false;
-            }
+            // Phone and email are read-only; no validation required here
 
             if (!valid) {
                 e.preventDefault();

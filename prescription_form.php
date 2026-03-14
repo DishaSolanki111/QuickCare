@@ -71,8 +71,18 @@ if (!empty($patient['LAST_APPOINTMENT_DATE']) && $patient['LAST_APPOINTMENT_DATE
 
 // --- HANDLE FORM SUBMISSION (MULTIPLE MEDICINES) ---
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_prescription'])) {
+    $appointment_id = intval($_POST['appointment_id']);
+    // Block adding another prescription if this appointment already has a completed one (doctor already submitted)
+    $chk = $conn->query("SELECT PRESCRIPTION_ID, DIAGNOSIS FROM prescription_tbl WHERE APPOINTMENT_ID = $appointment_id LIMIT 1");
+    if ($chk && $chk->num_rows > 0) {
+        $row = $chk->fetch_assoc();
+        if (!empty(trim($row['DIAGNOSIS'] ?? ''))) {
+            $_SESSION['PRESCRIPTION_ALREADY_ADDED'] = 'A prescription has already been added for this appointment. You cannot add another.';
+            header('Location: appointment_doctor.php?tab=today');
+            exit;
+        }
+    }
     try {
-        $appointment_id = intval($_POST['appointment_id']);
         $conn->begin_transaction();
         $height = !empty($_POST['height_cm']) ? $_POST['height_cm'] : null;
         $weight = !empty($_POST['weight_kg']) ? $_POST['weight_kg'] : null;
@@ -111,6 +121,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_prescription'])) 
             }
             $med_stmt->close();
         }
+
+        // Mark appointment as COMPLETED when doctor adds prescription
+        $conn->query("UPDATE appointment_tbl SET STATUS = 'COMPLETED' WHERE APPOINTMENT_ID = $appointment_id AND DOCTOR_ID = " . (int)$doctor_id);
 
         $conn->commit();
         header("Location: manage_prescriptions.php?status=success");
@@ -159,13 +172,27 @@ $prescriptions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 // When coming from appointment_doctor.php with appointment_id, pre-select it
  $preselected_appointment_id = isset($_POST['appointment_id']) ? (int)$_POST['appointment_id'] : (isset($_GET['appointment_id']) ? (int)$_GET['appointment_id'] : null);
 
+ // If opening form for an appointment that already has a completed prescription, redirect (do not allow adding another)
+ if ($preselected_appointment_id) {
+     $already = $conn->query("SELECT 1 FROM prescription_tbl WHERE APPOINTMENT_ID = $preselected_appointment_id AND TRIM(COALESCE(DIAGNOSIS,'')) != '' LIMIT 1");
+     if ($already && $already->num_rows > 0) {
+         $_SESSION['PRESCRIPTION_ALREADY_ADDED'] = 'A prescription has already been added for this appointment. You cannot add another.';
+         header('Location: appointment_doctor.php?tab=today');
+         exit;
+     }
+ }
+
  // Fetch vitals from prescription_tbl (receptionist may have added them in view_prescription) for pre-fill
  $appointment_vitals = [];
- if (!empty($completed_appointments)) {
-     $apt_ids = array_column($completed_appointments, 'APPOINTMENT_ID');
+ $apt_ids = array_column($completed_appointments, 'APPOINTMENT_ID');
+ if ($preselected_appointment_id && !in_array($preselected_appointment_id, $apt_ids)) {
+     $apt_ids[] = $preselected_appointment_id;
+ }
+ if (!empty($apt_ids)) {
      $vq = @$conn->query("SELECT APPOINTMENT_ID, BLOOD_PRESSURE, WEIGHT_KG, HEIGHT_CM FROM prescription_tbl WHERE APPOINTMENT_ID IN (" . implode(',', array_map('intval', $apt_ids)) . ")");
      if ($vq) while ($v = $vq->fetch_assoc()) $appointment_vitals[$v['APPOINTMENT_ID']] = $v;
  }
+ $preselected_vitals = ($preselected_appointment_id && isset($appointment_vitals[$preselected_appointment_id])) ? $appointment_vitals[$preselected_appointment_id] : null;
  $conn->close();
 ?>
 
@@ -260,9 +287,9 @@ $prescriptions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                         <?php endif; ?>
                         <div class="form-grid">
                             <div class="form-group"><label>Issue Date:</label><input type="date" name="issue_date" required value="<?php echo date('Y-m-d'); ?>"></div>
-                            <div class="form-group"><label>Blood Pressure (BP):</label><input type="text" name="blood_pressure" id="form_blood_pressure" placeholder="120/80"></div>
-                            <div class="form-group"><label>Height (cm):</label><input type="number" name="height_cm" id="form_height_cm" step="0.1"></div>
-                            <div class="form-group"><label>Weight (kg):</label><input type="number" step="0.1" name="weight_kg" id="form_weight_kg"></div>
+                            <div class="form-group"><label>Blood Pressure (BP):</label><input type="text" name="blood_pressure" id="form_blood_pressure" placeholder="120/80" value="<?php echo $preselected_vitals && isset($preselected_vitals['BLOOD_PRESSURE']) ? htmlspecialchars($preselected_vitals['BLOOD_PRESSURE']) : ''; ?>"></div>
+                            <div class="form-group"><label>Height (cm):</label><input type="number" name="height_cm" id="form_height_cm" step="0.1" value="<?php echo $preselected_vitals && isset($preselected_vitals['HEIGHT_CM']) && $preselected_vitals['HEIGHT_CM'] !== null && $preselected_vitals['HEIGHT_CM'] !== '' ? htmlspecialchars($preselected_vitals['HEIGHT_CM']) : ''; ?>"></div>
+                            <div class="form-group"><label>Weight (kg):</label><input type="number" step="0.1" name="weight_kg" id="form_weight_kg" value="<?php echo $preselected_vitals && isset($preselected_vitals['WEIGHT_KG']) && $preselected_vitals['WEIGHT_KG'] !== null && $preselected_vitals['WEIGHT_KG'] !== '' ? htmlspecialchars($preselected_vitals['WEIGHT_KG']) : ''; ?>"></div>
                             <div class="form-group">
                                 <label>Diabetes:</label>
                                 <select name="diabetes">
@@ -323,16 +350,19 @@ $prescriptions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     </div>
     <script>
         var appointmentVitals = <?= json_encode($appointment_vitals); ?>;
+        function fillVitalsForAppointment(aptId) {
+            if (!aptId) return;
+            var v = appointmentVitals[aptId];
+            document.getElementById('form_blood_pressure').value = v && v.BLOOD_PRESSURE ? v.BLOOD_PRESSURE : '';
+            document.getElementById('form_height_cm').value = v && v.HEIGHT_CM != null && v.HEIGHT_CM !== '' ? v.HEIGHT_CM : '';
+            document.getElementById('form_weight_kg').value = v && v.WEIGHT_KG != null && v.WEIGHT_KG !== '' ? v.WEIGHT_KG : '';
+        }
         var aptSelect = document.querySelector('select[name="appointment_id"]');
         if (aptSelect) {
-            aptSelect.addEventListener('change', function() {
-                var aptId = this.value;
-                var v = appointmentVitals[aptId];
-                document.getElementById('form_blood_pressure').value = v && v.BLOOD_PRESSURE ? v.BLOOD_PRESSURE : '';
-                document.getElementById('form_height_cm').value = v && v.HEIGHT_CM != null && v.HEIGHT_CM !== '' ? v.HEIGHT_CM : '';
-                document.getElementById('form_weight_kg').value = v && v.WEIGHT_KG != null && v.WEIGHT_KG !== '' ? v.WEIGHT_KG : '';
-            });
+            aptSelect.addEventListener('change', function() { fillVitalsForAppointment(this.value); });
         }
+        var preselectedAptId = document.querySelector('input[name="appointment_id"][type="hidden"]');
+        if (preselectedAptId && preselectedAptId.value) { fillVitalsForAppointment(preselectedAptId.value); }
         function addMedRow() {
             const area = document.getElementById('medicine-area');
             const row = document.querySelector('.medicine-block').cloneNode(true);

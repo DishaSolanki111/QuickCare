@@ -102,6 +102,10 @@ if (isset($_SESSION['APPOINTMENT_STATUS_SUCCESS'])) {
     $success_message = $_SESSION['APPOINTMENT_STATUS_SUCCESS'];
     unset($_SESSION['APPOINTMENT_STATUS_SUCCESS']);
 }
+if (isset($_SESSION['PRESCRIPTION_ALREADY_ADDED'])) {
+    $error_message = $_SESSION['PRESCRIPTION_ALREADY_ADDED'];
+    unset($_SESSION['PRESCRIPTION_ALREADY_ADDED']);
+}
 
 // ================== FETCH APPOINTMENTS ==================
 // Fetch appointments for the logged-in doctor from appointment_tbl; filter by STATUS.
@@ -162,6 +166,15 @@ foreach ($all_appointments as $appt) {
 }
 
 $active_tab = (isset($_GET['tab']) && in_array($_GET['tab'], ['today', 'upcoming', 'past', 'cancelled'], true)) ? $_GET['tab'] : 'today';
+
+// Appointment IDs that have any prescription row (show "View Prescription" for these)
+$appointment_ids_with_prescription = [];
+$pr_q = $conn->query("SELECT p.APPOINTMENT_ID FROM prescription_tbl p JOIN appointment_tbl a ON p.APPOINTMENT_ID = a.APPOINTMENT_ID WHERE a.DOCTOR_ID = " . (int)$doctor_id);
+if ($pr_q) { while ($pr = $pr_q->fetch_assoc()) $appointment_ids_with_prescription[] = (int)$pr['APPOINTMENT_ID']; }
+// Appointment IDs that have a completed prescription (doctor already submitted) — hide "Add Prescription" for these
+$appointment_ids_with_complete_prescription = [];
+$pr_complete_q = $conn->query("SELECT p.APPOINTMENT_ID FROM prescription_tbl p JOIN appointment_tbl a ON p.APPOINTMENT_ID = a.APPOINTMENT_ID WHERE a.DOCTOR_ID = " . (int)$doctor_id . " AND TRIM(COALESCE(p.DIAGNOSIS,'')) != ''");
+if ($pr_complete_q) { while ($pr = $pr_complete_q->fetch_assoc()) $appointment_ids_with_complete_prescription[] = (int)$pr['APPOINTMENT_ID']; }
 
  $conn->close();
 ?>
@@ -692,7 +705,7 @@ $active_tab = (isset($_GET['tab']) && in_array($_GET['tab'], ['today', 'upcoming
                             </div>
                             
                             <div class="appointment-actions">
-                                <?php if ($appointment['STATUS'] === 'SCHEDULED'): ?>
+                                <?php if ($appointment['STATUS'] === 'SCHEDULED' && !in_array((int)$appointment['APPOINTMENT_ID'], $appointment_ids_with_complete_prescription)): ?>
                                     <form method="POST" action="prescription_form.php" style="display: inline;">
                                         <input type="hidden" name="patient_id" value="<?php echo (int)$appointment['PATIENT_ID']; ?>">
                                         <input type="hidden" name="appointment_id" value="<?php echo (int)$appointment['APPOINTMENT_ID']; ?>">
@@ -700,6 +713,8 @@ $active_tab = (isset($_GET['tab']) && in_array($_GET['tab'], ['today', 'upcoming
                                             <i class="fas fa-file-prescription"></i> Add Prescription
                                         </button>
                                     </form>
+                                    <?php endif; ?>
+                                <?php if ($appointment['STATUS'] === 'SCHEDULED'): ?>
                                     <form method="POST" style="display: inline;">
                                         <input type="hidden" name="appointment_id" value="<?php echo $appointment['APPOINTMENT_ID']; ?>">
                                         <input type="hidden" name="status" value="CANCELLED">
@@ -709,9 +724,11 @@ $active_tab = (isset($_GET['tab']) && in_array($_GET['tab'], ['today', 'upcoming
                                     </form>
                                 <?php endif; ?>
                                 
+                                <?php if (in_array((int)$appointment['APPOINTMENT_ID'], $appointment_ids_with_prescription)): ?>
                                 <button class="btn btn-primary" onclick="viewPrescription(<?php echo $appointment['APPOINTMENT_ID']; ?>)">
                                     <i class="fas fa-file-medical"></i> View Prescription
                                 </button>
+                                <?php endif; ?>
                             </div>
                         </div>
                     <?php endforeach; ?>
@@ -808,10 +825,11 @@ $active_tab = (isset($_GET['tab']) && in_array($_GET['tab'], ['today', 'upcoming
                             
                             <?php if ($appointment['STATUS'] !== 'CANCELLED'): ?>
                             <div class="appointment-actions">
+                                <?php if (in_array((int)$appointment['APPOINTMENT_ID'], $appointment_ids_with_prescription)): ?>
                                 <button class="btn btn-primary" onclick="viewPrescription(<?php echo $appointment['APPOINTMENT_ID']; ?>)">
                                     <i class="fas fa-file-medical"></i> View Prescription
                                 </button>
-                                
+                                <?php endif; ?>
                                 <button class="btn btn-success" onclick="viewFeedback(<?php echo $appointment['APPOINTMENT_ID']; ?>)">
                                     <i class="fas fa-star"></i> View Feedback
                                 </button>

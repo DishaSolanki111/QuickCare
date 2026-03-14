@@ -52,6 +52,15 @@
         $height = isset($_POST['height_cm']) && $_POST['height_cm'] !== '' ? floatval($_POST['height_cm']) : null;
         $vitals_saved = false;
         if ($aid > 0) {
+            // Receptionist can add vitals only at or after appointment time (same rule as reminder/button: use MySQL NOW())
+            $apt_check = $conn->query("SELECT 1 FROM appointment_tbl WHERE APPOINTMENT_ID = $aid AND TIMESTAMP(APPOINTMENT_DATE, APPOINTMENT_TIME) <= NOW() LIMIT 1");
+            if ($apt_check && $apt_check->num_rows === 0) {
+                $tq = $conn->query("SELECT APPOINTMENT_TIME FROM appointment_tbl WHERE APPOINTMENT_ID = $aid LIMIT 1");
+                $tm = $tq && ($tr = $tq->fetch_assoc()) ? date('h:i A', strtotime($tr['APPOINTMENT_TIME'])) : '';
+                $_SESSION['vitals_saved_msg'] = 'Vitals can only be added at or after the appointment time (' . $tm . ').';
+                header('Location: view_prescription.php');
+                exit;
+            }
             $exist = $conn->query("SELECT PRESCRIPTION_ID FROM prescription_tbl WHERE APPOINTMENT_ID = $aid LIMIT 1");
             if ($exist && $exist->num_rows > 0) {
                 $stmt = $conn->prepare("UPDATE prescription_tbl SET HEIGHT_CM=?, WEIGHT_KG=?, BLOOD_PRESSURE=? WHERE APPOINTMENT_ID=?");
@@ -86,6 +95,7 @@
     $scheduled_appointments = [];
     $sched_q = mysqli_query($conn, "
         SELECT a.APPOINTMENT_ID, a.APPOINTMENT_DATE, a.APPOINTMENT_TIME,
+               (TIMESTAMP(a.APPOINTMENT_DATE, a.APPOINTMENT_TIME) <= NOW()) AS time_reached,
                pat.PATIENT_ID, pat.FIRST_NAME AS PAT_FNAME, pat.LAST_NAME AS PAT_LNAME,
                d.DOCTOR_ID, d.FIRST_NAME AS DOC_FNAME, d.LAST_NAME AS DOC_LNAME, s.SPECIALISATION_NAME
         FROM appointment_tbl a
@@ -227,6 +237,8 @@
             <?php foreach ($scheduled_appointments as $sapt): 
                 $vid = $sapt['APPOINTMENT_ID'];
                 $vitals = isset($vitals_by_apt[$vid]) ? $vitals_by_apt[$vid] : null;
+                $time_reached = !empty($sapt['time_reached']); // Same as reminder: TIMESTAMP(...) <= NOW() in MySQL
+                $apt_ts = strtotime($sapt['APPOINTMENT_DATE'] . ' ' . $sapt['APPOINTMENT_TIME']);
             ?>
                 <tr>
                     <td><?= date('M d, Y', strtotime($sapt['APPOINTMENT_DATE'])) ?> <?= date('h:i A', strtotime($sapt['APPOINTMENT_TIME'])) ?></td>
@@ -240,7 +252,15 @@
                         <?php endif; ?>
                     </td>
                     <td>
+                        <?php
+                        $has_vitals = $vitals && (trim($vitals['BLOOD_PRESSURE'] ?? '') !== '' || ($vitals['WEIGHT_KG'] ?? null) !== null || ($vitals['HEIGHT_CM'] ?? null) !== null);
+                        if ($has_vitals): ?>
+                        <span style="color:#0a6b2d; font-weight:600;">Recorded</span>
+                        <?php elseif (!$time_reached): ?>
+                        <span style="color:#666;">Available at <?= date('h:i A', $apt_ts) ?></span>
+                        <?php else: ?>
                         <button type="button" class="btn-vitals" onclick="openVitalsModal(<?= $vid ?>, '<?= date('M d, Y', strtotime($sapt['APPOINTMENT_DATE'])) ?> <?= date('h:i A', strtotime($sapt['APPOINTMENT_TIME'])) ?>', '<?= htmlspecialchars(addslashes($sapt['PAT_FNAME'] . ' ' . $sapt['PAT_LNAME'])) ?>', <?= $vitals ? json_encode($vitals) : 'null' ?>)">Add vitals</button>
+                        <?php endif; ?>
                     </td>
                 </tr>
             <?php endforeach; ?>

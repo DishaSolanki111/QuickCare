@@ -98,6 +98,33 @@ if (!isset($reminder_query) && isset($conn)) {
             $receptionist_reminders[] = $r;
         }
     }
+
+    // Add vitals reminders: only at or after the exact appointment time (e.g. 5 PM on 14th),
+    // not before. Only for appointments where vitals are not yet recorded (reminder removed once added).
+    $vitals_q = @mysqli_query($conn, "
+        SELECT a.APPOINTMENT_DATE, a.APPOINTMENT_TIME,
+               CONCAT(p.FIRST_NAME, ' ', p.LAST_NAME) AS PATIENT_NAME
+        FROM appointment_tbl a
+        JOIN patient_tbl p ON a.PATIENT_ID = p.PATIENT_ID
+        LEFT JOIN prescription_tbl pr ON pr.APPOINTMENT_ID = a.APPOINTMENT_ID
+        WHERE a.STATUS = 'SCHEDULED'
+          AND a.APPOINTMENT_DATE = CURDATE()
+          AND TIMESTAMP(a.APPOINTMENT_DATE, a.APPOINTMENT_TIME) <= NOW()
+          AND (pr.PRESCRIPTION_ID IS NULL
+               OR (TRIM(COALESCE(pr.BLOOD_PRESSURE,'')) = '' AND pr.WEIGHT_KG IS NULL AND pr.HEIGHT_CM IS NULL))
+        ORDER BY a.APPOINTMENT_TIME ASC
+    ");
+    if ($vitals_q) {
+        while ($r = mysqli_fetch_assoc($vitals_q)) {
+            $time_str = date('h:i A', strtotime($r['APPOINTMENT_TIME']));
+            $receptionist_reminders[] = [
+                'APPOINTMENT_DATE' => $r['APPOINTMENT_DATE'],
+                'APPOINTMENT_TIME' => $r['APPOINTMENT_TIME'],
+                'REMARKS'          => 'Add vitals for ' . $r['PATIENT_NAME'] . ' (appointment at ' . $time_str . ')',
+                'TITLE'            => 'Add Vitals'
+            ];
+        }
+    }
     usort($receptionist_reminders, function ($a, $b) {
         $dt_a = ($a['APPOINTMENT_DATE'] ?? '') . ' ' . ($a['APPOINTMENT_TIME'] ?? '');
         $dt_b = ($b['APPOINTMENT_DATE'] ?? '') . ' ' . ($b['APPOINTMENT_TIME'] ?? '');
