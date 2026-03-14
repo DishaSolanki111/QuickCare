@@ -1,10 +1,11 @@
 -- phpMyAdmin SQL Dump
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
+--
 -- Host: 127.0.0.1
--- Generation Time: Jan 10, 2026 at 09:47 AM
+-- Generation Time: Mar 14, 2026 at 07:50 AM
 -- Server version: 10.4.32-MariaDB
--- PHP Version: 8.2.12
+-- PHP Version: 8.0.30
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -107,7 +108,13 @@ INSERT INTO `appointment_reminder_tbl` (`APPOINTMENT_REMINDER_ID`, `RECEPTIONIST
 (66, 1, 25, '10:00:00', 'Reminder: You have an appointment with Dr. Rajesh Kumar in 3 hours at 01:00 PM today'),
 (67, 1, 26, '09:00:25', 'Your appointment has been booked successfully with Dr. Dr. Rajesh Kumar on January 12, 2026 at 12:00 PM'),
 (68, 1, 26, '12:00:00', 'Reminder: You have an appointment with Dr. Rajesh Kumar tomorrow at 12:00 PM on January 12, 2026'),
-(69, 1, 26, '09:00:00', 'Reminder: You have an appointment with Dr. Rajesh Kumar in 3 hours at 12:00 PM today');
+(69, 1, 26, '09:00:00', 'Reminder: You have an appointment with Dr. Rajesh Kumar in 3 hours at 12:00 PM today'),
+(70, 1, 29, '05:13:32', '[CANCELLED_BY_PATIENT] Arjun Mishra cancelled the appointment for Mar 24, 2026 at 02:00 PM.'),
+(71, 1, 30, '05:14:11', '[CANCELLED_BY_PATIENT] Arjun Mishra cancelled the appointment for Mar 18, 2026 at 05:00 PM.'),
+(72, 1, 31, '05:14:29', '[CANCELLED_BY_PATIENT] Arjun Mishra cancelled the appointment for Mar 16, 2026 at 01:00 PM.'),
+(73, 1, 25, '05:15:28', '[CANCELLED_BY_PATIENT] Arjun Mishra cancelled the appointment for Feb 25, 2026 at 01:00 PM.'),
+(74, 1, 24, '05:15:49', '[CANCELLED_BY_PATIENT] Arjun Mishra cancelled the appointment for Feb 12, 2026 at 10:00 AM.'),
+(75, 1, 26, '05:16:04', '[CANCELLED_BY_PATIENT] Arjun Mishra cancelled the appointment for Feb 08, 2026 at 12:00 PM.');
 
 -- --------------------------------------------------------
 
@@ -137,26 +144,34 @@ INSERT INTO `appointment_tbl` (`APPOINTMENT_ID`, `PATIENT_ID`, `DOCTOR_ID`, `SCH
 (4, 2, 2, 5, '2026-03-05 12:00:00', '2026-03-10', '11:00:00', 'COMPLETED'),
 (5, 3, 3, 7, '2026-03-04 13:20:00', '2026-03-09', '09:00:00', 'COMPLETED'),
 (6, 3, 3, 8, '2026-03-06 14:45:00', '2026-03-12', '09:00:00', 'COMPLETED'),
-(7, 4, 4, 10, '2026-03-07 08:30:00', '2026-03-14', '10:00:00', 'COMPLETED'),
-(8, 4, 4, 11, '2026-03-08 09:10:00', '2026-03-15', '10:00:00', 'COMPLETED'),
-(9, 5, 5, 13, '2026-03-09 10:00:00', '2026-03-17', '11:00:00', 'COMPLETED'),
-(10, 5, 5, 14, '2026-03-10 11:30:00', '2026-03-20', '11:00:00', 'COMPLETED'),
-(11, 6, 6, 16, '2026-04-11 12:15:00', '2026-04-22', '09:00:00', 'COMPLETED'),
-(12, 6, 6, 17, '2026-04-12 13:00:00', '2026-04-25', '09:00:00', 'COMPLETED'),
-(13, 7, 7, 19, '2026-04-02 14:00:00', '2026-04-06', '10:00:00', 'COMPLETED'),
-(14, 7, 7, 20, '2026-04-05 15:30:00', '2026-04-11', '10:00:00', 'COMPLETED'),
-(15, 8, 8, 22, '2026-04-08 16:00:00', '2026-04-16', '11:00:00', 'COMPLETED'),
-(16, 8, 8, 23, '2026-04-10 17:20:00', '2026-04-18', '11:00:00', 'COMPLETED'),
-(17, 9, 9, 25, '2026-04-12 09:45:00', '2026-04-21', '09:00:00', 'COMPLETED'),
-(18, 9, 9, 26, '2026-04-15 10:30:00', '2026-04-24', '09:00:00', 'COMPLETED'),
-(19, 10, 10, 28, '2026-04-18 11:00:00', '2026-04-28', '10:00:00', 'COMPLETED'),
-(20, 10, 10, 29, '2026-04-20 12:00:00', '2026-04-30', '10:00:00', 'COMPLETED'),
-(21, 7, 2, 18, '2026-01-09 10:38:09', '2026-02-10', '10:30:00', 'SCHEDULED'),
-(22, 8, 3, 19, '2026-01-09 10:38:09', '2026-02-15', '11:00:00', 'SCHEDULED'),
-(23, 9, 1, 20, '2026-01-09 10:38:09', '2026-02-20', '09:30:00', 'SCHEDULED'),
-(24, 1, 1, 1, '2026-01-09 11:11:14', '2026-02-12', '10:00:00', 'SCHEDULED'),
-(25, 1, 1, 1, '2026-01-09 14:44:14', '2026-02-25', '13:00:00', 'SCHEDULED'),
-(26, 1, 1, 1, '2026-01-10 08:00:25', '2026-02-08', '12:00:00', 'SCHEDULED');
+(7, 4, 4, 10, '2026-03-07 08:30:00', '2026-03-14', '10:00:00', 'SCHEDULED'),
+(8, 4, 4, 11, '2026-03-08 09:10:00', '2026-03-15', '10:00:00', 'SCHEDULED'),
+(9, 5, 5, 13, '2026-03-09 10:00:00', '2026-03-17', '11:00:00', 'SCHEDULED'),
+(10, 5, 5, 14, '2026-03-10 11:30:00', '2026-03-20', '11:00:00', 'SCHEDULED'),
+(11, 6, 6, 16, '2026-04-11 12:15:00', '2026-04-22', '09:00:00', 'SCHEDULED'),
+(12, 6, 6, 17, '2026-04-12 13:00:00', '2026-04-25', '09:00:00', 'SCHEDULED'),
+(13, 7, 7, 19, '2026-04-02 14:00:00', '2026-04-06', '10:00:00', 'SCHEDULED'),
+(14, 7, 7, 20, '2026-04-05 15:30:00', '2026-04-11', '10:00:00', 'SCHEDULED'),
+(15, 8, 8, 22, '2026-04-08 16:00:00', '2026-04-16', '11:00:00', 'SCHEDULED'),
+(16, 8, 8, 23, '2026-04-10 17:20:00', '2026-04-18', '11:00:00', 'SCHEDULED'),
+(17, 9, 9, 25, '2026-04-12 09:45:00', '2026-04-21', '09:00:00', 'SCHEDULED'),
+(18, 9, 9, 26, '2026-04-15 10:30:00', '2026-04-24', '09:00:00', 'SCHEDULED'),
+(19, 10, 10, 28, '2026-04-18 11:00:00', '2026-04-28', '10:00:00', 'SCHEDULED'),
+(20, 10, 10, 29, '2026-04-20 12:00:00', '2026-04-30', '10:00:00', 'SCHEDULED'),
+(21, 7, 2, 18, '2026-01-09 10:38:09', '2026-02-10', '10:30:00', 'COMPLETED'),
+(22, 8, 3, 19, '2026-01-09 10:38:09', '2026-02-15', '11:00:00', 'COMPLETED'),
+(23, 9, 1, 20, '2026-01-09 10:38:09', '2026-02-20', '09:30:00', 'COMPLETED'),
+(24, 1, 1, 1, '2026-01-09 11:11:14', '2026-02-12', '10:00:00', 'CANCELLED'),
+(25, 1, 1, 1, '2026-01-09 14:44:14', '2026-02-25', '13:00:00', 'CANCELLED'),
+(26, 1, 1, 1, '2026-01-10 08:00:25', '2026-02-08', '12:00:00', 'CANCELLED'),
+(27, 1, 5, 15, '2026-03-13 11:22:20', '2026-03-13', '14:00:00', 'COMPLETED'),
+(28, 1, 9, 27, '2026-03-13 11:28:21', '2026-03-13', '14:00:00', 'COMPLETED'),
+(29, 1, 8, 22, '2026-03-13 11:29:43', '2026-03-24', '14:00:00', 'CANCELLED'),
+(30, 1, 5, 14, '2026-03-13 11:31:21', '2026-03-18', '17:00:00', 'CANCELLED'),
+(31, 1, 7, 19, '2026-03-13 16:17:59', '2026-03-16', '13:00:00', 'CANCELLED'),
+(32, 1, 5, 14, '2026-03-14 04:26:12', '2026-03-25', '14:00:00', 'SCHEDULED'),
+(33, 1, 7, 21, '2026-03-14 04:28:16', '2026-03-27', '12:00:00', 'SCHEDULED'),
+(34, 2, 5, 15, '2026-03-14 04:38:31', '2026-03-27', '13:00:00', 'SCHEDULED');
 
 -- --------------------------------------------------------
 
@@ -250,25 +265,11 @@ CREATE TABLE `doctor_tbl` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- otp table
---
-CREATE TABLE password_resets (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    user_type ENUM('patient','doctor','receptionist') NOT NULL,
-    user_id INT NOT NULL,
-    phone VARCHAR(15) NOT NULL,
-    otp_hash VARCHAR(255) NOT NULL,
-    expires_at DATETIME NOT NULL,
-    attempts INT DEFAULT 0,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
---
 -- Dumping data for table `doctor_tbl`
 --
 
 INSERT INTO `doctor_tbl` (`DOCTOR_ID`, `SPECIALISATION_ID`, `PROFILE_IMAGE`, `FIRST_NAME`, `LAST_NAME`, `DOB`, `DOJ`, `USERNAME`, `PSWD`, `PHONE`, `EMAIL`, `GENDER`, `EDUCATION`, `STATUS`, `SECURITY_QUESTION`, `SECURITY_ANSWER`) VALUES
-(1, 1, 'uploads/rajesh.jpeg', 'Rajesh', 'Kumar', '1975-03-15', '2010-06-20', 'Dr_rajesh01', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543210, 'rajesh.kumar@gmail.com', 'MALE', 'MBBS, MD (Pediatrics)', 'approved', 'What was the name of your first school?', 'St. Xavier School'),
+(1, 1, 'uploads/rajesh.jpeg', 'Rajesh', 'Kumar', '1975-03-15', '2010-06-20', 'Dr_rajesh01', '$2y$10$J2Pa/v7n9cwMwGL/URSOjOhTImcZqkphMjKjdnPWsFWWY0uQYFiGG', 9876543210, 'rajesh.kumar@gmail.com', 'MALE', 'MBBS, MD (Pediatrics)', 'approved', 'What was the name of your first school?', 'St. Xavier School'),
 (2, 1, 'uploads/priya.jpeg', 'Priya', 'Sharma', '1980-07-22', '2012-09-15', 'Dr_priya02', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543211, 'priya.sharma@gmail.com', 'FEMALE', 'MBBS, DCH', 'approved', 'What is your favorite food from childhood?', 'Khichdi'),
 (3, 1, 'uploads/amit.jpeg', 'Amit', 'Patel', '1978-11-10', '2015-03-25', 'Dr_amit03', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543212, 'amit.patel@gmail.com', 'MALE', 'MBBS, DNB (Pediatrics)', 'approved', 'Where did you go for your first school trip?', 'Ahmedabad'),
 (4, 2, 'uploads/sunita1.jpeg', 'Sunita', 'Reddy', '1976-05-18', '2011-07-10', 'Dr_sunita04', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543213, 'sunita.reddy@gmail.com', 'FEMALE', 'MBBS, MD (Cardiology)', 'approved', 'What was the nickname your family calls you?', 'Suni'),
@@ -303,7 +304,7 @@ CREATE TABLE `feedback_tbl` (
 
 INSERT INTO `feedback_tbl` (`FEEDBACK_ID`, `APPOINTMENT_ID`, `RATING`, `COMMENTS`) VALUES
 (1, 1, 5, 'Doctor was very patient with my child. Explained everything clearly.'),
-(2, 2, 5, 'Follow-up was thorough. Treatment is working well.'),
+(2, 2, 2, 'Follow-up was thorough. Treatment is working well.'),
 (3, 3, 4, 'Good consultation, but waiting time was a bit long.'),
 (4, 4, 5, 'Doctor took time to explain the test results. Very satisfied.'),
 (5, 5, 5, 'Doctor handled my child`s asthma attack very professionally.'),
@@ -346,12 +347,6 @@ CREATE TABLE `medicine_reminder_tbl` (
 --
 
 INSERT INTO `medicine_reminder_tbl` (`MEDICINE_REMINDER_ID`, `MEDICINE_ID`, `CREATOR_ROLE`, `CREATOR_ID`, `PATIENT_ID`, `START_DATE`, `END_DATE`, `REMINDER_TIME`, `REMARKS`) VALUES
-(1, 1, 'RECEPTIONIST', 1, 1, '2026-03-08', '2026-04-08', '08:00:00', 'Morning dose'),
-(2, 1, 'RECEPTIONIST', 1, 1, '2026-03-08', '2026-04-08', '20:00:00', 'Evening dose'),
-(3, 2, 'RECEPTIONIST', 1, 1, '2026-03-08', '2026-04-08', '08:00:00', 'Morning dose'),
-(4, 2, 'RECEPTIONIST', 1, 1, '2026-03-08', '2026-04-08', '14:00:00', 'Afternoon dose'),
-(5, 2, 'RECEPTIONIST', 1, 1, '2026-03-08', '2026-04-08', '20:00:00', 'Evening dose'),
-(6, 4, 'RECEPTIONIST', 1, 1, '2026-03-09', '2026-04-09', '09:00:00', 'Morning dose'),
 (7, 5, 'RECEPTIONIST', 1, 2, '2026-03-11', '2026-04-11', '08:00:00', 'Morning dose'),
 (8, 6, 'RECEPTIONIST', 1, 2, '2026-03-11', '2026-04-11', '09:00:00', 'Morning dose'),
 (9, 3, 'RECEPTIONIST', 2, 3, '2026-03-13', '2026-04-13', '08:00:00', 'Morning dose'),
@@ -412,6 +407,30 @@ INSERT INTO `medicine_tbl` (`MEDICINE_ID`, `RECEPTIONIST_ID`, `MED_NAME`, `DESCR
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `password_resets`
+--
+
+CREATE TABLE `password_resets` (
+  `id` int(11) NOT NULL,
+  `user_type` enum('patient','doctor','receptionist') NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `phone` varchar(15) NOT NULL,
+  `otp_hash` varchar(255) NOT NULL,
+  `expires_at` datetime NOT NULL,
+  `attempts` int(11) DEFAULT 0,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `password_resets`
+--
+
+INSERT INTO `password_resets` (`id`, `user_type`, `user_id`, `phone`, `otp_hash`, `expires_at`, `attempts`, `created_at`) VALUES
+(1, 'doctor', 1, '9876543210', '$2y$10$60fLZchkBICvTDdVbaR.8uFqDi2ND0uSa.Aiur2bh0QGYAuGEEG4i', '2026-03-13 15:09:30', 0, '2026-03-13 13:59:30');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `patient_tbl`
 --
 
@@ -441,7 +460,7 @@ INSERT INTO `patient_tbl` (`PATIENT_ID`, `FIRST_NAME`, `LAST_NAME`, `USERNAME`, 
 (2, 'Pooja', 'Sharma', 'Pooja_s02', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', '1985-08-22', 'FEMALE', 'A+', 9876543202, 'pooja.sharma@gmail.com', '456, MG Road, Delhi', '', 'What is your favorite food from childhood?', 'Mango ice cream'),
 (3, 'Rohan', 'Patel', 'Rohan_p03', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', '1992-12-10', 'MALE', 'O+', 9876543203, 'rohan.patel@gmail.com', '789, Brigade Road, Bangalore', '', 'Where did you go for your first school trip?', 'Mysore'),
 (4, 'Neha', 'Gupta', 'Neha_g04', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', '1988-03-18', 'FEMALE', 'AB+', 9876543204, 'neha.gupta@gmail.com', '321, FC Road, Pune', '', 'What was the nickname your family calls you?', 'Nehu'),
-(5, 'Amit', 'Kumar', 'Amit_k05', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', '1987-07-25', 'MALE', 'A-', 9876543205, 'amit.kumar@gmail.com', '654, Jubilee Hills, Hyderabad', '', 'What was the name of your first school?', 'St. Mary''s High School'),
+(5, 'Amit', 'Kumar', 'Amit_k05', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', '1987-07-25', 'MALE', 'A-', 9876543205, 'amit.kumar@gmail.com', '654, Jubilee Hills, Hyderabad', '', 'What was the name of your first school?', 'St. Mary\'s High School'),
 (6, 'Sneha', 'Reddy', 'Sneha_r06', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', '1991-11-30', 'FEMALE', 'B-', 9876543206, 'sneha.reddy@gmail.com', '987, Banjara Hills, Hyderabad', '', 'What is your favorite food from childhood?', 'Dosa'),
 (7, 'Vikas', 'Singh', 'Vikas_s07', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', '1986-09-14', 'MALE', 'O-', 9876543207, 'vikas.singh@gmail.com', '147, Connaught Place, Delhi', '', 'Where did you go for your first school trip?', 'Shimla'),
 (8, 'Anjali', 'Desai', 'Anjali_d08', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', '1993-02-05', 'FEMALE', 'AB-', 9876543208, 'anjali.desai@gmail.com', '258, Marine Drive, Mumbai', '', 'What was the nickname your family calls you?', 'Anju'),
@@ -489,7 +508,15 @@ INSERT INTO `payment_tbl` (`PAYMENT_ID`, `APPOINTMENT_ID`, `AMOUNT`, `PAYMENT_DA
 (17, 17, 300.00, '2026-04-12', 'CREDIT CARD', 'COMPLETED', 'TXN123456805', '2026-04-12 09:45:00'),
 (18, 18, 300.00, '2026-04-15', 'GOOGLE PAY', 'COMPLETED', 'TXN123456806', '2026-04-15 10:30:00'),
 (19, 19, 300.00, '2026-04-18', 'UPI', 'COMPLETED', 'TXN123456807', '2026-04-18 11:00:00'),
-(20, 20, 300.00, '2026-04-20', 'NET BANKING', 'COMPLETED', 'TXN123456808', '2026-04-20 12:00:00');
+(20, 20, 300.00, '2026-04-20', 'NET BANKING', 'COMPLETED', 'TXN123456808', '2026-04-20 12:00:00'),
+(21, 27, 300.00, '2026-03-13', 'UPI', 'COMPLETED', 'pay_SQgx1vFxfDVMWN', '2026-03-13 11:22:20'),
+(22, 28, 300.00, '2026-03-13', 'UPI', 'COMPLETED', 'pay_SQh3OTq3RuwTDB', '2026-03-13 11:28:21'),
+(23, 29, 300.00, '2026-03-13', 'UPI', 'COMPLETED', 'pay_SQh4pMCNnBLL5E', '2026-03-13 11:29:43'),
+(24, 30, 300.00, '2026-03-13', 'UPI', 'COMPLETED', 'pay_SQh6YahElXIRxL', '2026-03-13 11:31:21'),
+(25, 31, 300.00, '2026-03-13', 'UPI', 'COMPLETED', 'pay_SQlzKnOr6CkfsL', '2026-03-13 16:17:59'),
+(26, 32, 300.00, '2026-03-14', 'UPI', 'COMPLETED', 'pay_SQyOYlI9nJ7Fkt', '2026-03-14 04:26:12'),
+(27, 33, 300.00, '2026-03-14', 'UPI', 'COMPLETED', 'pay_SQyQjtHa8MHg2f', '2026-03-14 04:28:16'),
+(28, 34, 300.00, '2026-03-14', 'UPI', 'COMPLETED', 'pay_SQybZObAwbl5fW', '2026-03-14 04:38:31');
 
 -- --------------------------------------------------------
 
@@ -587,7 +614,7 @@ INSERT INTO `prescription_tbl` (`PRESCRIPTION_ID`, `APPOINTMENT_ID`, `ISSUE_DATE
 (8, 8, '2026-03-15', 165, 60.00, 130, 'TYPE-2', 'Follow-up check', 'Blood sugar levels improving', 'Continue medication and exercise', '2026-03-15 10:00:00'),
 (9, 9, '2026-03-17', 170, 75.00, 140, 'PRE-DIABTIC', 'High blood pressure, dizziness', 'Hypertension', 'Reduce salt intake', '2026-03-17 11:00:00'),
 (10, 10, '2026-03-20', 170, 75.00, 140, 'PRE-DIABTIC', 'Follow-up check', 'Blood pressure controlled', 'Continue lifestyle changes', '2026-03-20 11:00:00'),
-(11, 11, '2026-04-22', 155, 50.00, 120, 'NO', 'Irregular heartbeat', 'Arrhythmia', 'Avoid caffeine and stress', '2026-04-22 09:00:00'),
+(11, 11, '2026-04-22', 155, 50.00, 0, 'NO', 'Irregular heartbeat', 'Arrhythmia', 'Avoid caffeine and stress', '2026-04-22 09:00:00'),
 (12, 12, '2026-04-25', 155, 50.00, 120, 'NO', 'Follow-up check', 'Heart rhythm normal', 'Continue medication as prescribed', '2026-04-25 09:00:00'),
 (13, 13, '2026-04-06', 175, 80.00, 125, 'NO', 'Knee pain, difficulty walking', 'Osteoarthritis', 'Physical therapy recommended', '2026-04-06 10:00:00'),
 (14, 14, '2026-04-11', 175, 80.00, 125, 'NO', 'Follow-up check', 'Pain management effective', 'Continue exercises', '2026-04-11 10:00:00'),
@@ -711,6 +738,12 @@ ALTER TABLE `medicine_tbl`
   ADD KEY `RECEPTIONIST_ID` (`RECEPTIONIST_ID`);
 
 --
+-- Indexes for table `password_resets`
+--
+ALTER TABLE `password_resets`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `patient_tbl`
 --
 ALTER TABLE `patient_tbl`
@@ -760,13 +793,13 @@ ALTER TABLE `specialisation_tbl`
 -- AUTO_INCREMENT for table `appointment_reminder_tbl`
 --
 ALTER TABLE `appointment_reminder_tbl`
-  MODIFY `APPOINTMENT_REMINDER_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=70;
+  MODIFY `APPOINTMENT_REMINDER_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=76;
 
 --
 -- AUTO_INCREMENT for table `appointment_tbl`
 --
 ALTER TABLE `appointment_tbl`
-  MODIFY `APPOINTMENT_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
+  MODIFY `APPOINTMENT_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
 
 --
 -- AUTO_INCREMENT for table `doctor_schedule_tbl`
@@ -790,13 +823,19 @@ ALTER TABLE `feedback_tbl`
 -- AUTO_INCREMENT for table `medicine_reminder_tbl`
 --
 ALTER TABLE `medicine_reminder_tbl`
-  MODIFY `MEDICINE_REMINDER_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
+  MODIFY `MEDICINE_REMINDER_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
 
 --
 -- AUTO_INCREMENT for table `medicine_tbl`
 --
 ALTER TABLE `medicine_tbl`
   MODIFY `MEDICINE_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+
+--
+-- AUTO_INCREMENT for table `password_resets`
+--
+ALTER TABLE `password_resets`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `patient_tbl`
@@ -808,7 +847,7 @@ ALTER TABLE `patient_tbl`
 -- AUTO_INCREMENT for table `payment_tbl`
 --
 ALTER TABLE `payment_tbl`
-  MODIFY `PAYMENT_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `PAYMENT_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
 
 --
 -- AUTO_INCREMENT for table `prescription_tbl`
@@ -897,7 +936,6 @@ ALTER TABLE `prescription_medicine_tbl`
 --
 ALTER TABLE `prescription_tbl`
   ADD CONSTRAINT `prescription_tbl_ibfk_1` FOREIGN KEY (`APPOINTMENT_ID`) REFERENCES `appointment_tbl` (`APPOINTMENT_ID`) ON DELETE CASCADE ON UPDATE CASCADE;
-
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

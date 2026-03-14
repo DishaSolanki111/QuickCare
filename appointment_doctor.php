@@ -78,7 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_status'])) {
                 }
             }
 
-            header('Location: appointment_doctor.php' . ($status === 'COMPLETED' ? '?tab=past' : ''));
+            header('Location: appointment_doctor.php' . ($status === 'COMPLETED' ? '?tab=past' : ($status === 'CANCELLED' ? '?tab=cancelled' : '')));
             exit;
         }
         $error_message = "Error updating appointment status: " . $conn->error;
@@ -104,7 +104,7 @@ if (isset($_SESSION['APPOINTMENT_STATUS_SUCCESS'])) {
 }
 
 // ================== FETCH APPOINTMENTS ==================
-// Fetch all appointments for this doctor once, then categorize in PHP.
+// Fetch appointments for the logged-in doctor from appointment_tbl; filter by STATUS.
 $today_php = date('Y-m-d');
 
 $all_appointments = [];
@@ -121,7 +121,9 @@ $all_stmt->execute();
 $all_result = $all_stmt->get_result();
 if ($all_result) {
     while ($row = $all_result->fetch_assoc()) {
-        $all_appointments[] = $row;
+        if ((int)($row['DOCTOR_ID'] ?? 0) === $doctor_id) {
+            $all_appointments[] = $row;
+        }
     }
 }
 $all_stmt->close();
@@ -129,23 +131,37 @@ $all_stmt->close();
 $today_appointments = [];
 $upcoming_appointments = [];
 $past_appointments = [];
+$cancelled_appointments = [];
 
 foreach ($all_appointments as $appt) {
     $appt_date = $appt['APPOINTMENT_DATE'];
+    $status = strtoupper(trim($appt['STATUS'] ?? ''));
 
-    if ($appt_date === $today_php) {
-        // Date = today → Today's Appointments
-        $today_appointments[] = $appt;
-    } elseif ($appt_date > $today_php) {
-        // Date > today → Upcoming Appointments
-        $upcoming_appointments[] = $appt;
-    } elseif ($appt_date < $today_php) {
-        // Date < today → Past Appointments
+    // STATUS = CANCELLED → Cancelled tab
+    if ($status === 'CANCELLED') {
+        $cancelled_appointments[] = $appt;
+        continue;
+    }
+
+    // STATUS = COMPLETED → Past tab
+    if ($status === 'COMPLETED') {
         $past_appointments[] = $appt;
+        continue;
+    }
+
+    // STATUS = SCHEDULED → Today (date = today) or Upcoming (date > today)
+    if ($status === 'SCHEDULED') {
+        if ($appt_date === $today_php) {
+            $today_appointments[] = $appt;
+        } elseif ($appt_date > $today_php) {
+            $upcoming_appointments[] = $appt;
+        } else {
+            $past_appointments[] = $appt;
+        }
     }
 }
 
-$active_tab = (isset($_GET['tab']) && in_array($_GET['tab'], ['today', 'upcoming', 'past'], true)) ? $_GET['tab'] : 'today';
+$active_tab = (isset($_GET['tab']) && in_array($_GET['tab'], ['today', 'upcoming', 'past', 'cancelled'], true)) ? $_GET['tab'] : 'today';
 
  $conn->close();
 ?>
@@ -415,6 +431,10 @@ $active_tab = (isset($_GET['tab']) && in_array($_GET['tab'], ['today', 'upcoming
             display: inline-flex;
             align-items: center;
             justify-content: center;
+            gap: 8px;
+        }
+        .btn i {
+            flex-shrink: 0;
         }
 
         .btn-primary {
@@ -627,8 +647,9 @@ $active_tab = (isset($_GET['tab']) && in_array($_GET['tab'], ['today', 'upcoming
             <!-- Tabs -->
             <div class="tabs">
                 <div class="tab <?= $active_tab === 'today' ? 'active' : '' ?>" data-tab="today">Today's Appointments</div>
-                <div class="tab <?= $active_tab === 'upcoming' ? 'active' : '' ?>" data-tab="upcoming">Past Appointments</div>
-                <div class="tab <?= $active_tab === 'past' ? 'active' : '' ?>" data-tab="past">Upcoming Appointments</div>
+                <div class="tab <?= $active_tab === 'upcoming' ? 'active' : '' ?>" data-tab="upcoming">Upcoming Appointments</div>
+                <div class="tab <?= $active_tab === 'past' ? 'active' : '' ?>" data-tab="past">Past Appointments</div>
+                <div class="tab <?= $active_tab === 'cancelled' ? 'active' : '' ?>" data-tab="cancelled">Cancelled Appointments</div>
             </div>
             
             <!-- Tab Content -->
@@ -672,11 +693,11 @@ $active_tab = (isset($_GET['tab']) && in_array($_GET['tab'], ['today', 'upcoming
                             
                             <div class="appointment-actions">
                                 <?php if ($appointment['STATUS'] === 'SCHEDULED'): ?>
-                                    <form method="POST" style="display: inline;">
-                                        <input type="hidden" name="appointment_id" value="<?php echo $appointment['APPOINTMENT_ID']; ?>">
-                                        <input type="hidden" name="status" value="COMPLETED">
-                                        <button type="submit" name="update_status" class="btn btn-success" onclick="return confirm('Are you sure you want to mark this appointment as completed?')">
-                                            <i class="fas fa-check"></i> Mark as Completed
+                                    <form method="POST" action="prescription_form.php" style="display: inline;">
+                                        <input type="hidden" name="patient_id" value="<?php echo (int)$appointment['PATIENT_ID']; ?>">
+                                        <input type="hidden" name="appointment_id" value="<?php echo (int)$appointment['APPOINTMENT_ID']; ?>">
+                                        <button type="submit" class="btn btn-success">
+                                            <i class="fas fa-file-prescription"></i> Add Prescription
                                         </button>
                                     </form>
                                     <form method="POST" style="display: inline;">
@@ -803,6 +824,45 @@ $active_tab = (isset($_GET['tab']) && in_array($_GET['tab'], ['today', 'upcoming
                         <i class="far fa-calendar-times"></i>
                         <h3>No Past Appointments</h3>
                         <p>You don't have any past appointments.</p>
+                    </div>
+                <?php endif; ?>
+            </div>
+
+            <div class="tab-content <?= $active_tab === 'cancelled' ? 'active' : '' ?>" id="cancelled">
+                <?php if (count($cancelled_appointments) > 0): ?>
+                    <?php foreach ($cancelled_appointments as $appointment): ?>
+                        <div class="appointment-card">
+                            <div class="appointment-header">
+                                <div class="patient-info">
+                                    <h3><?php echo htmlspecialchars($appointment['PAT_FNAME'] . ' ' . $appointment['PAT_LNAME']); ?></h3>
+                                    <p><i class="fas fa-phone"></i> <?php echo htmlspecialchars($appointment['PAT_PHONE']); ?></p>
+                                    <p><i class="fas fa-envelope"></i> <?php echo htmlspecialchars($appointment['PAT_EMAIL']); ?></p>
+                                </div>
+                                <span class="status-badge status-cancelled"><?php echo $appointment['STATUS']; ?></span>
+                            </div>
+                            <div class="appointment-details">
+                                <div class="appointment-detail">
+                                    <i class="far fa-calendar"></i>
+                                    <span><?php echo date('F d, Y', strtotime($appointment['APPOINTMENT_DATE'])); ?></span>
+                                </div>
+                                <div class="appointment-detail">
+                                    <i class="far fa-clock"></i>
+                                    <span><?php echo date('h:i A', strtotime($appointment['APPOINTMENT_TIME'])); ?></span>
+                                </div>
+                                <?php if (!empty($appointment['REASON'])): ?>
+                                <div class="appointment-detail">
+                                    <i class="fas fa-stethoscope"></i>
+                                    <span><?php echo htmlspecialchars($appointment['REASON']); ?></span>
+                                </div>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <div class="empty-state">
+                        <i class="far fa-calendar-times"></i>
+                        <h3>No Cancelled Appointments</h3>
+                        <p>You don't have any cancelled appointments.</p>
                     </div>
                 <?php endif; ?>
             </div>

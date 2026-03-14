@@ -149,12 +149,15 @@ $prescriptions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                      FROM appointment_tbl a 
                      JOIN doctor_tbl d ON a.DOCTOR_ID = d.DOCTOR_ID 
                      JOIN specialisation_tbl s ON d.SPECIALISATION_ID = s.SPECIALISATION_ID 
-                     WHERE a.PATIENT_ID = ? AND a.DOCTOR_ID = ? AND a.STATUS = 'COMPLETED' 
+                     WHERE a.PATIENT_ID = ? AND a.DOCTOR_ID = ? AND (a.STATUS = 'COMPLETED' OR a.STATUS = 'SCHEDULED') 
                      ORDER BY a.APPOINTMENT_DATE DESC";
  $appointment_stmt = $conn->prepare($appointment_sql);
  $appointment_stmt->bind_param("ii", $patient_id, $doctor_id);
  $appointment_stmt->execute();
  $completed_appointments = $appointment_stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+
+// When coming from appointment_doctor.php with appointment_id, pre-select it
+ $preselected_appointment_id = isset($_POST['appointment_id']) ? (int)$_POST['appointment_id'] : (isset($_GET['appointment_id']) ? (int)$_GET['appointment_id'] : null);
 
  // Fetch vitals from prescription_tbl (receptionist may have added them in view_prescription) for pre-fill
  $appointment_vitals = [];
@@ -241,8 +244,12 @@ $prescriptions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                     <h2 style="color:var(--soft-blue); border-bottom:2px solid #f0f0f0; padding-bottom:10px; margin-bottom:20px;">Add New Prescription</h2>
                     <form action="prescription_form.php" method="POST" id="prescriptionForm">
                         <input type="hidden" name="patient_id" value="<?php echo $patient_id; ?>">
+                        <?php if ($preselected_appointment_id): ?>
+                        <input type="hidden" name="appointment_id" value="<?php echo $preselected_appointment_id; ?>">
+                        <p style="margin-bottom:15px; padding:10px; background:#e8f4f8; border-radius:6px; color:var(--primary-color);"><i class="fas fa-calendar-check"></i> <strong>Linked to appointment</strong> (from Today's Appointments)</p>
+                        <?php else: ?>
                         <div class="form-group">
-                            <label>Link to Completed Appointment:</label>
+                            <label>Link to Appointment:</label>
                             <select name="appointment_id" required>
                                 <option value="">--Select--</option>
                                 <?php foreach ($completed_appointments as $apt): ?>
@@ -250,6 +257,7 @@ $prescriptions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                                 <?php endforeach; ?>
                             </select>
                         </div>
+                        <?php endif; ?>
                         <div class="form-grid">
                             <div class="form-group"><label>Issue Date:</label><input type="date" name="issue_date" required value="<?php echo date('Y-m-d'); ?>"></div>
                             <div class="form-group"><label>Blood Pressure (BP):</label><input type="text" name="blood_pressure" id="form_blood_pressure" placeholder="120/80"></div>
