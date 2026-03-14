@@ -299,6 +299,11 @@ html {
             display: inline-flex;
             align-items: center;
             justify-content: center;
+            gap: 8px;
+        }
+        
+        .btn i {
+            flex-shrink: 0;
         }
         
         .btn-primary {
