@@ -127,7 +127,7 @@ include 'header.php';
         .tabs {
             display: flex;
             justify-content: space-between;
-            margin-top: 8px;
+            margin-bottom: 20px;
             background: var(--primary-light);
             border-radius: 15px;
             padding: 5px;

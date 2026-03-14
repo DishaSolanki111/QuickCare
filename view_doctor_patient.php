@@ -100,7 +100,7 @@ font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
         body {
-            font-family: Arial, sans-serif;
+            font-family:arial Verdana, Geneva, Tahoma, sans-serif;
             background: #D0D7E1;
             display: flex;
             height: 100vh;

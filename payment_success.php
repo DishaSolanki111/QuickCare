@@ -34,39 +34,42 @@ session_start();
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-image: url('book_appoitment_bg_img.jpeg');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
-            color: var(--text-dark);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            padding-top:100px;  
-        }
+        body::before {
+            padding-bottom:90px;
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1; /* Puts it behind everything */
+  
+  /* Your Image Settings */
+  background-image: url('uploads/background.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  
+  /* The Blur and Opacity */
+  filter: blur(3px); /* Adjust pixels for more/less blur */
+  opacity: 0.8;      /* Adjust for transparency */
+  
+  /* Darken effect */
+  background-color: rgba(0, 0, 0, 0.4); 
+  background-blend-mode: overlay;
+}
+
 
         .page-header {
          
-            color: darkblue;
+            color: white;
            
             text-align: center;
             position: relative; 
-            overflow: hidden;
+          
         }
 
-        .page-header::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 500%;
-            height: 50%;
-            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%23ffffff' fill-opacity='0.1' d='M0,224L48,213.3C96,203,192,181,288,181.3C384,181,480,203,576,224C672,245,768,267,864,261.3C960,256,1056,224,1152,213.3C1248,203,1344,213,1392,218.7L1440,224L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z'%3E%3C/path%3E%3C/svg%3E") no-repeat bottom;
-            background-size: cover;
-        }
+        
 
         .page-header h1 {
             font-size: 2.8rem;
@@ -79,7 +82,7 @@ session_start();
             font-size: 1.2rem;
             max-width: 700px;
             margin: 0 auto;
-            opacity: 0.9;
+         
             position: relative;
             z-index: 2;
         }
@@ -379,12 +382,12 @@ session_start();
 </head>
 <body>
    <?php include 'header.php'; ?>
-    <div class="page-header">
+    <!-- <div class="page-header">
         <div class="container">
-            <h1>Payment Status</h1>
-            <p>Your transaction has been processed successfully</p>
+            <h1 style="color:white;">Payment Status</h1>
+            <p style="color:white;">Your transaction has been processed successfully</p>
         </div>
-    </div>
+    </div> -->
 
     <section class="success-section">
         <div class="container">

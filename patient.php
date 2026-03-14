@@ -103,7 +103,7 @@ $medicine_reminder_query = mysqli_query($conn, "
         }
         
         body {
-            font-family: Arial, sans-serif;
+           font-family:arial Verdana, Geneva, Tahoma, sans-serif;
             background: #D0D7E1;
             display: flex;
             height: 100vh;
@@ -300,24 +300,7 @@ $medicine_reminder_query = mysqli_query($conn, "
             flex-wrap: wrap;
         }
 
-        .btn {
-            width: 80%;
-            flex: 1;
-            background: #072D44;
-            padding: 15px;
-            border-radius: 10px;
-            text-align: center;
-            font-weight: 700;
-            color: white;
-            cursor: pointer;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            text-decoration: none;
-            transition: background 0.3s;
-        }
-
-        .btn:hover {
-            background: #064469;
-        }
+        
 
         .profile-info {
             display: flex;
@@ -478,13 +461,7 @@ $medicine_reminder_query = mysqli_query($conn, "
             </div>
         </div>
 
-        <!-- BUTTONS -->
-        <div class="actions">
-            <a href="appointment.php" class="btn">Book Appointment</a>
-            <a href="patinet_prescriptions.php" class="btn">View Prescription</a>
-            <a href="patient_feedback.php" class="btn">Give Feedback</a>
-            <a href="patient_payments.php" class="btn">Payment History</a>
-        </div>
+        
     </div>
 </div>
 
