@@ -29,6 +29,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
     $gender = mysqli_real_escape_string($conn, $_POST['gender']);
     $phone = mysqli_real_escape_string($conn, $_POST['phone']);
     $email = mysqli_real_escape_string($conn, $_POST['email']);
+    $address = isset($_POST['address']) ? mysqli_real_escape_string($conn, $_POST['address']) : '';
     
     $errors = [];
     
@@ -72,6 +73,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
         if ($doj_date <= $dob_date) {
             $errors[] = "Date of Joining must be after Date of Birth.";
         }
+        // Enforce same age rule as registration: at least 23 years gap between DOB and DOJ
+        $age_diff = $dob_date->diff($doj_date)->y;
+        if ($age_diff < 23) {
+            $errors[] = "Receptionist must be at least 23 years old at date of joining.";
+        }
     }
     
     // ---------------- PHONE VALIDATION ----------------
@@ -96,7 +102,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
     }
     
     if (empty($errors)) {
-        // Update receptionist data
+        // Update receptionist data (same fields as registration, except username/password)
         $query = "UPDATE receptionist_tbl SET 
                  FIRST_NAME = ?, 
                  LAST_NAME = ?, 
@@ -104,11 +110,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
                  DOJ = ?, 
                  GENDER = ?, 
                  PHONE = ?, 
-                 EMAIL = ? 
+                 EMAIL = ?, 
+                 ADDRESS = ?
                  WHERE RECEPTIONIST_ID = ?";
         
         $stmt = mysqli_prepare($conn, $query);
-        mysqli_stmt_bind_param($stmt, "sssssssi", $first_name, $last_name, $dob, $doj, $gender, $phone, $email, $receptionist_id);
+        mysqli_stmt_bind_param($stmt, "ssssssssi", $first_name, $last_name, $dob, $doj, $gender, $phone, $email, $address, $receptionist_id);
         
         if (mysqli_stmt_execute($stmt)) {
             $success_message = "Receptionist information updated successfully.";
@@ -477,7 +484,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'delete' && isset($_POST['id'
                     <td><?php echo $row['EMAIL']; ?></td>
                     <td>
                         <button class="action-btn edit-btn"
-                            onclick="openEditModal(<?php echo $row['RECEPTIONIST_ID']; ?>, '<?php echo addslashes($row['FIRST_NAME']); ?>', '<?php echo addslashes($row['LAST_NAME']); ?>', '<?php echo $row['DOB']; ?>', '<?php echo $row['DOJ']; ?>', '<?php echo $row['GENDER']; ?>', '<?php echo $row['PHONE']; ?>', '<?php echo $row['EMAIL']; ?>')">
+                            onclick="openEditModal(<?php echo $row['RECEPTIONIST_ID']; ?>, '<?php echo addslashes($row['FIRST_NAME']); ?>', '<?php echo addslashes($row['LAST_NAME']); ?>', '<?php echo $row['DOB']; ?>', '<?php echo $row['DOJ']; ?>', '<?php echo $row['GENDER']; ?>', '<?php echo $row['PHONE']; ?>', '<?php echo $row['EMAIL']; ?>', '<?php echo addslashes($row['ADDRESS']); ?>')">
                             <i class="bi bi-pencil"></i>
                             Edit
                         </button>
@@ -557,6 +564,12 @@ if (isset($_POST['action']) && $_POST['action'] == 'delete' && isset($_POST['id'
                 <input type="email" id="edit_email" name="email" required>
                 <div class="error-message" id="edit_email_error"></div>
             </div>
+
+            <div class="form-group">
+                <label for="edit_address">Address</label>
+                <textarea id="edit_address" name="address" rows="2" style="min-height:40px; max-height:80px; resize:vertical; font-size:14px;" placeholder="e.g. 221B, Vinod Residency, Mumbai"></textarea>
+                <div class="error-message" id="edit_address_error"></div>
+            </div>
             
             <div style="margin-top: 20px;">
                 <button type="submit" class="btn-save">Save Changes</button>
@@ -571,7 +584,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'delete' && isset($_POST['id'
 
 <script>
 // Modal functions
-function openEditModal(id, firstName, lastName, dob, doj, gender, phone, email) {
+function openEditModal(id, firstName, lastName, dob, doj, gender, phone, email, address) {
     document.getElementById('edit_receptionist_id').value = id;
     document.getElementById('edit_first_name').value = firstName;
     document.getElementById('edit_last_name').value = lastName;
@@ -580,6 +593,7 @@ function openEditModal(id, firstName, lastName, dob, doj, gender, phone, email) 
     document.getElementById('edit_gender').value = gender;
     document.getElementById('edit_phone').value = phone;
     document.getElementById('edit_email').value = email;
+    document.getElementById('edit_address').value = address || '';
     
     // Clear any previous error messages
     const errorElements = document.querySelectorAll('.error-message');
