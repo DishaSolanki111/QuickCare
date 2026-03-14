@@ -3,7 +3,32 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
- $currentPage = basename($_SERVER['PHP_SELF']);
+$currentPage = basename($_SERVER['PHP_SELF']);
+
+// If user is already logged in and tries to visit the main login page,
+// redirect them to their respective dashboard before any HTML is sent.
+if ($currentPage === 'login_for_all.php'
+    && !empty($_SESSION['LOGGED_IN'])
+    && $_SESSION['LOGGED_IN'] === true
+    && !empty($_SESSION['USER_TYPE'])
+) {
+    $type = $_SESSION['USER_TYPE'];
+
+    if ($type === 'patient' && !empty($_SESSION['PATIENT_ID'])) {
+        header('Location: patient.php');
+        exit;
+    }
+
+    if ($type === 'doctor' && !empty($_SESSION['DOCTOR_ID'])) {
+        header('Location: doctor_dashboard.php');
+        exit;
+    }
+
+    if ($type === 'receptionist' && !empty($_SESSION['RECEPTIONIST_ID'])) {
+        header('Location: receptionist.php');
+        exit;
+    }
+}
 ?>
 
 <!-- Header CSS -->
