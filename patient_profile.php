@@ -143,7 +143,7 @@ $medicine_reminder_query = mysqli_query($conn, "
         }
         
         body {
-            font-family: Arial, sans-serif;
+            font-family:arial Verdana, Geneva, Tahoma, sans-serif;
             background: #D0D7E1;
             display: flex;
             min-height: 100vh;
