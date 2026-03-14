@@ -27,7 +27,7 @@ if (empty($user_type) || empty($username) || empty($pswd)) {
 if ($user_type === 'doctor') {
 
     $stmt = $conn->prepare(
-        "SELECT DOCTOR_ID, FIRST_NAME, PSWD 
+        "SELECT DOCTOR_ID, FIRST_NAME, PSWD, SECURITY_QUESTION 
          FROM doctor_tbl 
          WHERE USERNAME = ?"
     );
@@ -46,12 +46,18 @@ if ($user_type === 'doctor') {
             $_SESSION['DOCTOR_ID'] = $row['DOCTOR_ID'];
             $_SESSION['USER_NAME'] = $row['FIRST_NAME'];
 
+            // If security question not set, force profile completion first
+            $needs_security = trim((string)($row['SECURITY_QUESTION'] ?? '')) === '';
+            $redirect_url = $needs_security ? 'doctor_profile.php?complete_security=1' : 'doctor_dashboard.php';
+
             // ✅ Return JSON Success
             header('Content-Type: application/json');
             echo json_encode([
                 'status' => 'success',
-                'message' => 'Login Successful! Redirecting to Dashboard...',
-                'redirect' => 'doctor_dashboard.php'
+                'message' => $needs_security
+                    ? 'Please complete your profile by setting a security question.'
+                    : 'Login Successful! Redirecting to Dashboard...',
+                'redirect' => $redirect_url
             ]);
             exit();
         }
@@ -113,7 +119,7 @@ if ($user_type === 'patient') {
 if ($user_type === 'receptionist') {
 
     $stmt = $conn->prepare(
-        "SELECT RECEPTIONIST_ID, FIRST_NAME, PSWD 
+        "SELECT RECEPTIONIST_ID, FIRST_NAME, PSWD, SECURITY_QUESTION 
          FROM receptionist_tbl 
          WHERE USERNAME = ?"
     );
@@ -132,12 +138,18 @@ if ($user_type === 'receptionist') {
             $_SESSION['RECEPTIONIST_ID'] = $row['RECEPTIONIST_ID'];
             $_SESSION['USER_NAME'] = $row['FIRST_NAME'];
 
+            // If security question not set, force profile completion first
+            $needs_security = trim((string)($row['SECURITY_QUESTION'] ?? '')) === '';
+            $redirect_url = $needs_security ? 'receptionist_profile.php?complete_security=1' : 'receptionist.php';
+
             // ✅ Return JSON Success
             header('Content-Type: application/json');
             echo json_encode([
                 'status' => 'success',
-                'message' => 'Login Successful! Redirecting to Dashboard...',
-                'redirect' => 'receptionist.php'
+                'message' => $needs_security
+                    ? 'Please complete your profile by setting a security question.'
+                    : 'Login Successful! Redirecting to Dashboard...',
+                'redirect' => $redirect_url
             ]);
             exit();
         }

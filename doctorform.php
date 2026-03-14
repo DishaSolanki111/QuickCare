@@ -546,10 +546,11 @@ include 'config.php'; ?>
                 if (empty(array_filter($field_errors))) {
                     $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
-                    $sql = "INSERT INTO doctor_tbl 
-                    (SPECIALISATION_ID, PROFILE_IMAGE, FIRST_NAME, LAST_NAME, DOB, DOJ, USERNAME, PSWD, PHONE, EMAIL, GENDER, LICENSE_NO, LICENSE_FILE, EDUCATION, STATUS)
-                    VALUES 
-                    ('$specialisation_id','$profile_image_path','$first_name','$last_name','$dob','$doj','$username','$hashed_password','$phone','$email','$gender',NULL,NULL,'$education','pending')";
+                    // Insert doctor with empty security question/answer (to be completed on first login)
+                    $sql = "INSERT INTO doctor_tbl
+                    (SPECIALISATION_ID, PROFILE_IMAGE, FIRST_NAME, LAST_NAME, DOB, DOJ, USERNAME, PSWD, PHONE, EMAIL, GENDER, LICENSE_NO, LICENSE_FILE, EDUCATION, STATUS, SECURITY_QUESTION, SECURITY_ANSWER)
+                    VALUES
+                    ('$specialisation_id','$profile_image_path','$first_name','$last_name','$dob','$doj','$username','$hashed_password','$phone','$email','$gender',NULL,NULL,'$education','pending','', '')";
 
                     if ($conn->query($sql) === TRUE) {
                         $conn->close();

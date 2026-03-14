@@ -46,6 +46,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_profile'])) {
     }
 }
 
+// Handle security question setup (first-time completion)
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_security'])) {
+    $sec_q = trim($_POST['security_question'] ?? '');
+    $sec_a = trim($_POST['security_answer'] ?? '');
+
+    if ($sec_q === '' || $sec_a === '') {
+        $error_message = "Please select a security question and provide an answer.";
+    } else {
+        $q_esc = mysqli_real_escape_string($conn, $sec_q);
+        $a_esc = mysqli_real_escape_string($conn, $sec_a);
+        $sec_query = "UPDATE doctor_tbl SET SECURITY_QUESTION = '$q_esc', SECURITY_ANSWER = '$a_esc' WHERE DOCTOR_ID = '$doctor_id'";
+        if (mysqli_query($conn, $sec_query)) {
+            // Refresh doctor data
+            $doctor_query = mysqli_query($conn, "SELECT d.*, s.SPECIALISATION_NAME FROM doctor_tbl d
+                                                LEFT JOIN specialisation_tbl s ON d.SPECIALISATION_ID = s.SPECIALISATION_ID
+                                                WHERE d.DOCTOR_ID = '$doctor_id'");
+            $doctor = mysqli_fetch_assoc($doctor_query);
+            $success_message = "Security question saved. Your profile is now complete.";
+        } else {
+            $error_message = "Could not save security question. Please try again.";
+        }
+    }
+}
+
 // Handle password change
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
     $current_password = $_POST['current_password'];
@@ -720,6 +744,35 @@ echo $years_exp;
 ?> years</span>
                             </div>
                         </div>
+
+                        <?php
+                        $needs_security = trim((string)($doctor['SECURITY_QUESTION'] ?? '')) === '';
+                        if ($needs_security): ?>
+                        <div class="alert alert-warning" style="margin-top:20px;">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            For security, please set a security question and answer. This will be used for password recovery.
+                        </div>
+                        <form method="POST" action="doctor_profile.php" style="margin-top:10px;">
+                            <input type="hidden" name="update_security" value="1">
+                            <div class="form-group">
+                                <label for="security_question">Security Question</label>
+                                <select id="security_question" name="security_question" class="form-control" required>
+                                    <option value="">Select a security question</option>
+                                    <option value="What was the name of your first school?">What was the name of your first school?</option>
+                                    <option value="What is your favorite food from childhood?">What is your favorite food from childhood?</option>
+                                    <option value="Where did you go for your first school trip?">Where did you go for your first school trip?</option>
+                                    <option value="What was the nickname your family calls you?">What was the nickname your family calls you?</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="security_answer">Security Answer</label>
+                                <input type="text" id="security_answer" name="security_answer" class="form-control" placeholder="Your answer" required>
+                            </div>
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-shield-alt"></i> Save Security Question
+                            </button>
+                        </form>
+                        <?php endif; ?>
                         
                         <div class="btn-group">
                             <button class="btn btn-primary" id="editProfileBtn">

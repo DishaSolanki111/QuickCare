@@ -510,8 +510,9 @@ include 'config.php';
                 if (empty(array_filter($field_errors))) {
                     $hashed_password = password_hash($password, PASSWORD_DEFAULT);
                     
-                    $sql = "INSERT INTO receptionist_tbl (FIRST_NAME, LAST_NAME, DOB, DOJ, GENDER, PHONE, EMAIL, USERNAME, PSWD, ADDRESS) 
-                            VALUES ('$first_name', '$last_name', '$dob', '$doj', '$gender', '$phone', '$email', '$username', '$hashed_password', '$address')";
+                    // Insert receptionist with empty security question/answer (to be completed on first login)
+                    $sql = "INSERT INTO receptionist_tbl (FIRST_NAME, LAST_NAME, DOB, DOJ, GENDER, PHONE, EMAIL, ADDRESS, USERNAME, PSWD, SECURITY_QUESTION, SECURITY_ANSWER) 
+                            VALUES ('$first_name', '$last_name', '$dob', '$doj', '$gender', '$phone', '$email', '$address', '$username', '$hashed_password', '', '')";
                     
                     if ($conn->query($sql) === TRUE) {
                         $conn->close();

@@ -65,7 +65,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $_SESSION['reset_security_question']  = $security_question;
 
                     if ($security_question === '' || $security_question === null) {
-                        $error_message = 'No security question is set for this account. Please contact support.';
+                        if ($user_type === 'patient') {
+                            $error_message = 'No security question is set for this patient account. Please contact support.';
+                        } else {
+                            $error_message = 'No security question is set for this account. Please log in and complete your profile first.';
+                        }
                         $stage = 'request';
                     } else {
                         $stage = 'security';
