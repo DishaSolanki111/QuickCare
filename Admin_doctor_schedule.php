@@ -137,67 +137,18 @@ if ($doctors_query && mysqli_num_rows($doctors_query) > 0) {
             --danger-color: #e74c3c;
             --warning-color: #f39c12;
             --info-color: #17a2b8;
+             --bg-gray: #f4f7f6;
         }
         
-        body {
+         body {
             margin: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            min-height: 100vh;
-        }
-        
-        .sidebar {
-            width: 250px;
-            background: var(--dark-blue);
-            min-height: 100vh;
-            color: white;
-            padding-top: 30px;
-            position: fixed;
-            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
-            z-index: 1000;
+            font-family:arial Verdana, Geneva, Tahoma, sans-serif;
+            background: var(--bg-gray);
+            display: flex;
         }
 
-        .sidebar h2 {
-            text-align: center;
-            margin-bottom: 40px;
-            color: var(--light-blue);
-            font-size: 24px;
-        }
-
-        .sidebar a {
-            display: block;
-            padding: 15px 25px;
-            color: var(--gray-blue);
-            text-decoration: none;
-            font-size: 16px;
-            border-left: 4px solid transparent;
-            transition: all 0.3s ease;
-        }
-
-        .sidebar a:hover, .sidebar a.active {
-            background: var(--mid-blue);
-            border-left: 4px solid var(--light-blue);
-            color: var(--white);
-        }
         
-        .logout-btn:hover{
-            background-color: var(--light-blue);
-        }
-        .logout-btn {
-            display: block;
-            width: 80%;
-            margin: 20px auto 0 auto;
-            padding: 10px;
-            background-color: var(--soft-blue);
-            color: var(--white);    
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            text-align: center;
-            transition: background-color 0.3s;
-        }
-        
+       
         .main-content {
             margin-left: 250px;
             padding: 30px;
@@ -878,14 +829,6 @@ if ($doctors_query && mysqli_num_rows($doctors_query) > 0) {
             
             .time-range {
                 font-size: 15px;
-            }
-            
-            .sidebar {
-                width: 70px;
-            }
-            
-            .sidebar h2, .sidebar a span {
-                display: none;
             }
             
             .main-content {
