@@ -103,10 +103,17 @@ if (isset($_POST['action']) && $_POST['action'] == 'edit_doctor') {
     }
     
     if (empty($errors)) {
-        // Update doctor data (keep original behaviour)
+        // Update doctor data (align fields with doctorform.php except username/password)
+        $dob     = isset($_POST['dob']) ? trim($_POST['dob']) : '';
+        $doj     = isset($_POST['doj']) ? trim($_POST['doj']) : '';
+        $gender  = isset($_POST['gender']) ? trim($_POST['gender']) : '';
+
         $query = "UPDATE doctor_tbl SET 
                  FIRST_NAME = ?, 
                  LAST_NAME = ?, 
+                 DOB = ?, 
+                 DOJ = ?, 
+                 GENDER = ?, 
                  EDUCATION = ?, 
                  PHONE = ?, 
                  EMAIL = ?, 
@@ -117,9 +124,12 @@ if (isset($_POST['action']) && $_POST['action'] == 'edit_doctor') {
         $stmt = mysqli_prepare($conn, $query);
         mysqli_stmt_bind_param(
             $stmt,
-            "sssssssi",
+            "ssssssssssi",
             $first_name,
             $last_name,
+            $dob,
+            $doj,
+            $gender,
             $education,
             $phone,
             $email,
@@ -537,6 +547,9 @@ $receptionist_id = $_SESSION['RECEPTIONIST_ID'];
             SELECT d.DOCTOR_ID,
                    d.FIRST_NAME,
                    d.LAST_NAME,
+                   d.DOB,
+                   d.DOJ,
+                   d.GENDER,
                    d.PROFILE_IMAGE,
                    d.EDUCATION,
                    d.PHONE,
@@ -586,6 +599,9 @@ $receptionist_id = $_SESSION['RECEPTIONIST_ID'];
                     onclick="openEditModal(<?php echo $row['DOCTOR_ID']; ?>, 
                     '<?php echo addslashes($row['FIRST_NAME']); ?>', 
                     '<?php echo addslashes($row['LAST_NAME']); ?>', 
+                    '<?php echo $row['DOB']; ?>',
+                    '<?php echo $row['DOJ']; ?>',
+                    '<?php echo $row['GENDER']; ?>',
                     '<?php echo addslashes($row['EDUCATION']); ?>', 
                     '<?php echo $row['PHONE']; ?>', 
                     '<?php echo $row['EMAIL']; ?>', 
@@ -639,6 +655,38 @@ $receptionist_id = $_SESSION['RECEPTIONIST_ID'];
                 </div>
             </div>
             
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="edit_dob">Date of Birth</label>
+                    <input type="date" id="edit_dob" name="dob">
+                    <div class="error-message" id="edit_dob_error"></div>
+                </div>
+                <div class="form-group">
+                    <label for="edit_doj">Date of Joining</label>
+                    <input type="date" id="edit_doj" name="doj">
+                    <div class="error-message" id="edit_doj_error"></div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Gender</label>
+                <div class="radio-group">
+                    <div class="radio-option">
+                        <input type="radio" id="edit_gender_male" name="gender" value="MALE">
+                        <label for="edit_gender_male">Male</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" id="edit_gender_female" name="gender" value="FEMALE">
+                        <label for="edit_gender_female">Female</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" id="edit_gender_other" name="gender" value="OTHER">
+                        <label for="edit_gender_other">Other</label>
+                    </div>
+                </div>
+                <div class="error-message" id="edit_gender_error"></div>
+            </div>
+
             <div class="form-group">
                 <label for="edit_education">Education</label>
                 <input type="text" id="edit_education" name="education" required>
@@ -657,7 +705,18 @@ $receptionist_id = $_SESSION['RECEPTIONIST_ID'];
                     <div class="error-message" id="edit_email_error"></div>
                 </div>
             </div>
-            
+            <div class="form-group">
+                <label for="edit_specialization">Specialisation</label>
+                <select id="edit_specialization" name="specialization_id" required>
+                    <option value="">Select Specialisation</option>
+                    <option value="1">Pediatrician</option>
+                    <option value="2">Cardiologist</option>
+                    <option value="3">Neurologist</option>
+                    <option value="4">Orthopedic</option>
+                </select>
+                <div class="error-message" id="edit_specialization_error"></div>
+            </div>
+                        
             
             <div style="margin-top: 20px;">
                 <button type="submit" class="btn-save">Save Changes</button>
@@ -672,14 +731,22 @@ $receptionist_id = $_SESSION['RECEPTIONIST_ID'];
 
 <script>
 // Modal functions
-function openEditModal(id, firstName, lastName, education, phone, email, specializationId, profileImage) {
+function openEditModal(id, firstName, lastName, dob, doj, gender, education, phone, email, specializationId, profileImage) {
     document.getElementById('edit_doctor_id').value = id;
     document.getElementById('edit_first_name').value = firstName;
     document.getElementById('edit_last_name').value = lastName;
+    document.getElementById('edit_dob').value = dob || '';
+    document.getElementById('edit_doj').value = doj || '';
+    
+    // Set gender radio buttons
+    document.getElementById('edit_gender_male').checked = (gender === 'MALE');
+    document.getElementById('edit_gender_female').checked = (gender === 'FEMALE');
+    document.getElementById('edit_gender_other').checked = (gender === 'OTHER');
+
     document.getElementById('edit_education').value = education;
     document.getElementById('edit_phone').value = phone;
     document.getElementById('edit_email').value = email;
-    // specializationId is preserved to maintain original behaviour if needed later
+    document.getElementById('edit_specialization').value = specializationId || '';
     
     document.getElementById('current_image').value = profileImage;
     
@@ -896,10 +963,13 @@ window.addEventListener('load', function() {
         <?php echo $doctor_data['DOCTOR_ID']; ?>,
         '<?php echo addslashes($doctor_data['FIRST_NAME']); ?>',
         '<?php echo addslashes($doctor_data['LAST_NAME']); ?>',
+        '<?php echo $doctor_data['DOB']; ?>',
+        '<?php echo $doctor_data['DOJ']; ?>',
+        '<?php echo $doctor_data['GENDER']; ?>',
         '<?php echo addslashes($doctor_data['EDUCATION']); ?>',
         '<?php echo $doctor_data['PHONE']; ?>',
         '<?php echo $doctor_data['EMAIL']; ?>',
-      
+        '<?php echo $doctor_data['SPECIALISATION_ID']; ?>',
         '<?php echo $doctor_data['PROFILE_IMAGE']; ?>'
     );
 });
