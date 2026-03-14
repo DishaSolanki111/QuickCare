@@ -285,16 +285,18 @@
                             <span class="patient-name"><i class="fa-solid fa-user"></i> <?= $pat['name'] ?></span>
                             <?php foreach ($pat['prescriptions'] as $pres): ?>
                                 <div class="prescription-detail-card">
+                                    <?php $has_vitals = !empty($pres['BLOOD_PRESSURE']) || ($pres['WEIGHT_KG'] !== null && $pres['WEIGHT_KG'] !== '') || ($pres['HEIGHT_CM'] !== null && $pres['HEIGHT_CM'] !== ''); ?>
                                     <div class="card-actions">
                                         <form method="POST" style="display:inline;">
                                             <input type="hidden" name="download" value="<?= $pres['PRESCRIPTION_ID'] ?>">
                                             <button type="submit" class="btn-pdf"><i class="fa-solid fa-file-pdf"></i> PDF</button>
                                         </form>
+                                        <?php if (!$has_vitals): ?>
                                         <button type="button" class="btn-vitals-inline" onclick="openVitalsModal(<?= (int)$pres['APPOINTMENT_ID'] ?>, '<?= date('M d, Y', strtotime($pres['APPOINTMENT_DATE'])) ?>', '<?= htmlspecialchars(addslashes($pat['name'])) ?>', <?= htmlspecialchars(json_encode(['BLOOD_PRESSURE' => $pres['BLOOD_PRESSURE'] ?? '', 'WEIGHT_KG' => $pres['WEIGHT_KG'] ?? null, 'HEIGHT_CM' => $pres['HEIGHT_CM'] ?? null])) ?>)">Add vitals</button>
+                                        <?php endif; ?>
                                     </div>
                                     <div class="detail-row"><strong>Appt. Date:</strong> <?= date('M d, Y', strtotime($pres['APPOINTMENT_DATE'])) ?></div>
                                     <?php
-                                    $has_vitals = !empty($pres['BLOOD_PRESSURE']) || ($pres['WEIGHT_KG'] !== null && $pres['WEIGHT_KG'] !== '') || ($pres['HEIGHT_CM'] !== null && $pres['HEIGHT_CM'] !== '');
                                     $is_past_appointment = strtotime($pres['APPOINTMENT_DATE']) < strtotime(date('Y-m-d'));
                                     if ($has_vitals && $is_past_appointment):
                                     ?>
