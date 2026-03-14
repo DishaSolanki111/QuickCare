@@ -69,6 +69,72 @@ if (!empty($patient['LAST_APPOINTMENT_DATE']) && $patient['LAST_APPOINTMENT_DATE
 
  $message = '';
 
+// --- EDIT MODE: load prescription by prescription_id (from Manage Prescriptions → Edit) ---
+$edit_mode = false;
+$edit_prescription = null;
+$edit_medicines = [];
+$prescription_id_param = isset($_GET['prescription_id']) ? (int)$_GET['prescription_id'] : 0;
+if ($prescription_id_param > 0) {
+    $eq = $conn->prepare("SELECT p.* FROM prescription_tbl p INNER JOIN appointment_tbl a ON p.APPOINTMENT_ID = a.APPOINTMENT_ID WHERE p.PRESCRIPTION_ID = ? AND a.PATIENT_ID = ? AND a.DOCTOR_ID = ?");
+    $eq->bind_param("iii", $prescription_id_param, $patient_id, $doctor_id);
+    $eq->execute();
+    $er = $eq->get_result();
+    if ($er && $er->num_rows > 0) {
+        $edit_prescription = $er->fetch_assoc();
+        $edit_mode = true;
+        $eq2 = $conn->prepare("SELECT pm.*, m.MED_NAME FROM prescription_medicine_tbl pm JOIN medicine_tbl m ON pm.MEDICINE_ID = m.MEDICINE_ID WHERE pm.PRESCRIPTION_ID = ? ORDER BY pm.MEDICINE_ID");
+        $eq2->bind_param("i", $prescription_id_param);
+        $eq2->execute();
+        $emr = $eq2->get_result();
+        if ($emr) while ($m = $emr->fetch_assoc()) $edit_medicines[] = $m;
+        $eq2->close();
+    }
+    $eq->close();
+}
+
+// --- HANDLE UPDATE PRESCRIPTION (edit mode submit) ---
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_prescription'])) {
+    $prescription_id = (int)$_POST['prescription_id'];
+    $appointment_id = (int)$_POST['appointment_id'];
+    $verify = $conn->prepare("SELECT p.PRESCRIPTION_ID FROM prescription_tbl p INNER JOIN appointment_tbl a ON p.APPOINTMENT_ID = a.APPOINTMENT_ID WHERE p.PRESCRIPTION_ID = ? AND a.PATIENT_ID = ? AND a.DOCTOR_ID = ?");
+    $verify->bind_param("iii", $prescription_id, $patient_id, $doctor_id);
+    $verify->execute();
+    $vr = $verify->get_result();
+    if (!$vr || $vr->num_rows === 0) {
+        $message = "<p class='message error'><strong>Error:</strong> Prescription not found or access denied.</p>";
+    } else {
+        try {
+            $conn->begin_transaction();
+            $height = !empty($_POST['height_cm']) ? $_POST['height_cm'] : null;
+            $weight = !empty($_POST['weight_kg']) ? $_POST['weight_kg'] : null;
+            $bp = !empty($_POST['blood_pressure']) ? trim($_POST['blood_pressure']) : null;
+            $upd = $conn->prepare("UPDATE prescription_tbl SET ISSUE_DATE=?, HEIGHT_CM=?, WEIGHT_KG=?, BLOOD_PRESSURE=?, DIABETES=?, SYMPTOMS=?, DIAGNOSIS=?, ADDITIONAL_NOTES=? WHERE PRESCRIPTION_ID=?");
+            $upd->bind_param("ssssssssi", $_POST['issue_date'], $height, $weight, $bp, $_POST['diabetes'], $_POST['symptoms'], $_POST['diagnosis'], $_POST['additional_notes'], $prescription_id);
+            $upd->execute();
+            $upd->close();
+            $conn->query("DELETE FROM prescription_medicine_tbl WHERE PRESCRIPTION_ID = " . $prescription_id);
+            if (isset($_POST['medicine_id']) && is_array($_POST['medicine_id'])) {
+                $med_stmt = $conn->prepare("INSERT INTO prescription_medicine_tbl (PRESCRIPTION_ID, MEDICINE_ID, DOSAGE, DURATION, FREQUENCY) VALUES (?, ?, ?, ?, ?)");
+                foreach ($_POST['medicine_id'] as $key => $mid) {
+                    if (!empty($mid)) {
+                        $med_stmt->bind_param("iisss", $prescription_id, $mid, $_POST['dosage'][$key], $_POST['duration'][$key], $_POST['frequency'][$key]);
+                        $med_stmt->execute();
+                    }
+                }
+                $med_stmt->close();
+            }
+            // Ensure appointment is marked COMPLETED when prescription is saved (edit flow)
+            $conn->query("UPDATE appointment_tbl SET STATUS = 'COMPLETED' WHERE APPOINTMENT_ID = $appointment_id AND DOCTOR_ID = " . (int)$doctor_id);
+            $conn->commit();
+            header("Location: manage_prescriptions.php?status=updated");
+            exit();
+        } catch (Exception $e) {
+            $conn->rollback();
+            $message = "<p class='message error'><strong>Error:</strong> " . htmlspecialchars($e->getMessage()) . "</p>";
+        }
+    }
+}
+
 // --- HANDLE FORM SUBMISSION (MULTIPLE MEDICINES) ---
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_prescription'])) {
     $appointment_id = intval($_POST['appointment_id']);
@@ -241,7 +307,7 @@ $prescriptions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
         <div class="main-content">
             <?php include 'doctor_header.php'; ?>
             <div class="content-card">
-                <a href="manage_prescriptions.php" style="display:inline-block; margin-bottom:20px; background-color: var(--primary-color); color:#fff; text-decoration:none; font-weight:bold; padding:8px 16px; border:1px solid var(--primary-color); border-radius:5px;">&larr; Back to Patient List</a>
+                <a href="manage_prescriptions.php" style="display:inline-block; margin-bottom:20px; background-color: var(--primary-color); color:#fff; text-decoration:none; font-weight:bold; padding:8px 16px; border:1px solid var(--primary-color); border-radius:5px;">&larr; Back to Manage Prescriptions</a>
                 
                 <?php echo $message; ?>
 
@@ -267,6 +333,73 @@ $prescriptions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                     </div>
                 </div>
 
+                <?php if ($edit_mode && $edit_prescription): ?>
+                <div class="form-container">
+                    <h2 style="color:var(--soft-blue); border-bottom:2px solid #f0f0f0; padding-bottom:10px; margin-bottom:20px;"><i class="fas fa-edit"></i> Edit Prescription</h2>
+                    <form action="prescription_form.php" method="POST" id="prescriptionForm">
+                        <input type="hidden" name="patient_id" value="<?php echo $patient_id; ?>">
+                        <input type="hidden" name="prescription_id" value="<?php echo (int)$edit_prescription['PRESCRIPTION_ID']; ?>">
+                        <input type="hidden" name="appointment_id" value="<?php echo (int)$edit_prescription['APPOINTMENT_ID']; ?>">
+                        <div class="form-grid">
+                            <div class="form-group"><label>Issue Date:</label><input type="date" name="issue_date" required value="<?php echo htmlspecialchars($edit_prescription['ISSUE_DATE'] ?? date('Y-m-d')); ?>"></div>
+                            <div class="form-group"><label>Blood Pressure (BP):</label><input type="text" name="blood_pressure" id="form_blood_pressure" value="<?php echo htmlspecialchars($edit_prescription['BLOOD_PRESSURE'] ?? ''); ?>"></div>
+                            <div class="form-group"><label>Height (cm):</label><input type="number" name="height_cm" id="form_height_cm" step="0.1" value="<?php echo $edit_prescription['HEIGHT_CM'] !== null && $edit_prescription['HEIGHT_CM'] !== '' ? htmlspecialchars($edit_prescription['HEIGHT_CM']) : ''; ?>"></div>
+                            <div class="form-group"><label>Weight (kg):</label><input type="number" step="0.1" name="weight_kg" id="form_weight_kg" value="<?php echo $edit_prescription['WEIGHT_KG'] !== null && $edit_prescription['WEIGHT_KG'] !== '' ? htmlspecialchars($edit_prescription['WEIGHT_KG']) : ''; ?>"></div>
+                            <div class="form-group">
+                                <label>Diabetes:</label>
+                                <select name="diabetes">
+                                    <?php $d = $edit_prescription['DIABETES'] ?? 'NO'; ?>
+                                    <option value="NO" <?php echo $d === 'NO' ? 'selected' : ''; ?>>No</option>
+                                    <option value="TYPE-1" <?php echo $d === 'TYPE-1' ? 'selected' : ''; ?>>Type-1</option>
+                                    <option value="TYPE-2" <?php echo $d === 'TYPE-2' ? 'selected' : ''; ?>>Type-2</option>
+                                    <option value="PRE-DIABTIC" <?php echo $d === 'PRE-DIABTIC' ? 'selected' : ''; ?>>Pre-Diabetic</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group"><label>Symptoms:</label><textarea name="symptoms" rows="3"><?php echo htmlspecialchars($edit_prescription['SYMPTOMS'] ?? ''); ?></textarea></div>
+                        <div class="form-group"><label>Diagnosis:</label><textarea name="diagnosis" rows="3" required><?php echo htmlspecialchars($edit_prescription['DIAGNOSIS'] ?? ''); ?></textarea></div>
+                        <h3 style="color:var(--soft-blue); border-bottom:2px solid #f0f0f0; padding-bottom:10px; margin-bottom:20px;">Medicine Details</h3>
+                        <div id="medicine-area">
+                            <?php if (count($edit_medicines) > 0): ?>
+                                <?php foreach ($edit_medicines as $med): ?>
+                                <div class="medicine-block">
+                                    <div class="form-grid">
+                                        <div class="form-group">
+                                            <label>Medicine:</label>
+                                            <select name="medicine_id[]" required>
+                                                <option value="">--Select--</option>
+                                                <?php foreach ($medicines as $m): ?><option value="<?php echo $m['MEDICINE_ID']; ?>" <?php echo (isset($med['MEDICINE_ID']) && (int)$med['MEDICINE_ID'] === (int)$m['MEDICINE_ID']) ? 'selected' : ''; ?>><?php echo htmlspecialchars($m['MED_NAME']); ?></option><?php endforeach; ?>
+                                            </select>
+                                        </div>
+                                        <div class="form-group"><label>Dosage:</label><input type="text" name="dosage[]" required value="<?php echo htmlspecialchars($med['DOSAGE'] ?? ''); ?>"></div>
+                                        <div class="form-group"><label>Duration:</label><input type="text" name="duration[]" required value="<?php echo htmlspecialchars($med['DURATION'] ?? ''); ?>"></div>
+                                        <div class="form-group"><label>Frequency:</label><input type="text" name="frequency[]" required value="<?php echo htmlspecialchars($med['FREQUENCY'] ?? ''); ?>"></div>
+                                    </div>
+                                </div>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <div class="medicine-block">
+                                    <div class="form-grid">
+                                        <div class="form-group">
+                                            <label>Medicine:</label>
+                                            <select name="medicine_id[]" required>
+                                                <option value="">--Select--</option>
+                                                <?php foreach ($medicines as $m): ?><option value="<?php echo $m['MEDICINE_ID']; ?>"><?php echo htmlspecialchars($m['MED_NAME']); ?></option><?php endforeach; ?>
+                                            </select>
+                                        </div>
+                                        <div class="form-group"><label>Dosage:</label><input type="text" name="dosage[]" required placeholder="500mg"></div>
+                                        <div class="form-group"><label>Duration:</label><input type="text" name="duration[]" required placeholder="7 days"></div>
+                                        <div class="form-group"><label>Frequency:</label><input type="text" name="frequency[]" required placeholder="Twice a day"></div>
+                                    </div>
+                                </div>
+                            <?php endif; ?>
+                        </div>
+                        <button type="button" class="btn btn-add" onclick="addMedRow()"><i class="fas fa-plus"></i> Add Another Medicine</button>
+                        <div class="form-group"><label>Additional Notes:</label><textarea name="additional_notes" rows="3"><?php echo htmlspecialchars($edit_prescription['ADDITIONAL_NOTES'] ?? ''); ?></textarea></div>
+                        <button type="submit" name="update_prescription" class="btn btn-submit">Update Prescription</button>
+                    </form>
+                </div>
+                <?php else: ?>
                 <div class="form-container">
                     <h2 style="color:var(--soft-blue); border-bottom:2px solid #f0f0f0; padding-bottom:10px; margin-bottom:20px;">Add New Prescription</h2>
                     <form action="prescription_form.php" method="POST" id="prescriptionForm">
@@ -327,6 +460,7 @@ $prescriptions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                         <button type="submit" name="add_prescription" class="btn btn-submit">Add Prescription</button>
                     </form>
                 </div>
+                <?php endif; ?>
 
                 <div class="prescription-list" style="margin-top:40px;">
                     <h2 style="color:var(--soft-blue); border-bottom:2px solid #f0f0f0; padding-bottom:10px; margin-bottom:20px;">Existing Prescriptions</h2>

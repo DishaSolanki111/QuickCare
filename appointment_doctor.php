@@ -107,6 +107,16 @@ if (isset($_SESSION['PRESCRIPTION_ALREADY_ADDED'])) {
     unset($_SESSION['PRESCRIPTION_ALREADY_ADDED']);
 }
 
+// ================== SYNC: appointments with completed prescription should be COMPLETED ==================
+$conn->query("
+    UPDATE appointment_tbl a
+    INNER JOIN prescription_tbl p ON p.APPOINTMENT_ID = a.APPOINTMENT_ID
+    SET a.STATUS = 'COMPLETED'
+    WHERE a.DOCTOR_ID = " . (int)$doctor_id . "
+      AND a.STATUS = 'SCHEDULED'
+      AND TRIM(COALESCE(p.DIAGNOSIS,'')) != ''
+");
+
 // ================== FETCH APPOINTMENTS ==================
 // Fetch appointments for the logged-in doctor from appointment_tbl; filter by STATUS.
 $today_php = date('Y-m-d');
@@ -167,10 +177,11 @@ foreach ($all_appointments as $appt) {
 
 $active_tab = (isset($_GET['tab']) && in_array($_GET['tab'], ['today', 'upcoming', 'past', 'cancelled'], true)) ? $_GET['tab'] : 'today';
 
-// Appointment IDs that have any prescription row (show "View Prescription" for these)
+// Appointment IDs that have any prescription row + map to prescription_id (for direct link to edit form)
 $appointment_ids_with_prescription = [];
-$pr_q = $conn->query("SELECT p.APPOINTMENT_ID FROM prescription_tbl p JOIN appointment_tbl a ON p.APPOINTMENT_ID = a.APPOINTMENT_ID WHERE a.DOCTOR_ID = " . (int)$doctor_id);
-if ($pr_q) { while ($pr = $pr_q->fetch_assoc()) $appointment_ids_with_prescription[] = (int)$pr['APPOINTMENT_ID']; }
+$prescription_id_by_apt = [];
+$pr_q = $conn->query("SELECT p.APPOINTMENT_ID, p.PRESCRIPTION_ID FROM prescription_tbl p JOIN appointment_tbl a ON p.APPOINTMENT_ID = a.APPOINTMENT_ID WHERE a.DOCTOR_ID = " . (int)$doctor_id);
+if ($pr_q) { while ($pr = $pr_q->fetch_assoc()) { $appointment_ids_with_prescription[] = (int)$pr['APPOINTMENT_ID']; $prescription_id_by_apt[(int)$pr['APPOINTMENT_ID']] = (int)$pr['PRESCRIPTION_ID']; } }
 // Appointment IDs that have a completed prescription (doctor already submitted) — hide "Add Prescription" for these
 $appointment_ids_with_complete_prescription = [];
 $pr_complete_q = $conn->query("SELECT p.APPOINTMENT_ID FROM prescription_tbl p JOIN appointment_tbl a ON p.APPOINTMENT_ID = a.APPOINTMENT_ID WHERE a.DOCTOR_ID = " . (int)$doctor_id . " AND TRIM(COALESCE(p.DIAGNOSIS,'')) != ''");
@@ -724,11 +735,14 @@ if ($pr_complete_q) { while ($pr = $pr_complete_q->fetch_assoc()) $appointment_i
                                     </form>
                                 <?php endif; ?>
                                 
-                                <?php if (in_array((int)$appointment['APPOINTMENT_ID'], $appointment_ids_with_prescription)): ?>
-                                <button class="btn btn-primary" onclick="viewPrescription(<?php echo $appointment['APPOINTMENT_ID']; ?>)">
+                                <?php if (in_array((int)$appointment['APPOINTMENT_ID'], $appointment_ids_with_prescription)): 
+                                    $pid = $prescription_id_by_apt[(int)$appointment['APPOINTMENT_ID']] ?? 0;
+                                    $patid = (int)$appointment['PATIENT_ID'];
+                                    if ($pid && $patid): ?>
+                                <a href="prescription_form.php?patient_id=<?php echo $patid; ?>&prescription_id=<?php echo $pid; ?>" class="btn btn-primary">
                                     <i class="fas fa-file-medical"></i> View Prescription
-                                </button>
-                                <?php endif; ?>
+                                </a>
+                                <?php endif; endif; ?>
                             </div>
                         </div>
                     <?php endforeach; ?>
@@ -825,11 +839,14 @@ if ($pr_complete_q) { while ($pr = $pr_complete_q->fetch_assoc()) $appointment_i
                             
                             <?php if ($appointment['STATUS'] !== 'CANCELLED'): ?>
                             <div class="appointment-actions">
-                                <?php if (in_array((int)$appointment['APPOINTMENT_ID'], $appointment_ids_with_prescription)): ?>
-                                <button class="btn btn-primary" onclick="viewPrescription(<?php echo $appointment['APPOINTMENT_ID']; ?>)">
+                                <?php if (in_array((int)$appointment['APPOINTMENT_ID'], $appointment_ids_with_prescription)): 
+                                    $pid = $prescription_id_by_apt[(int)$appointment['APPOINTMENT_ID']] ?? 0;
+                                    $patid = (int)$appointment['PATIENT_ID'];
+                                    if ($pid && $patid): ?>
+                                <a href="prescription_form.php?patient_id=<?php echo $patid; ?>&prescription_id=<?php echo $pid; ?>" class="btn btn-primary">
                                     <i class="fas fa-file-medical"></i> View Prescription
-                                </button>
-                                <?php endif; ?>
+                                </a>
+                                <?php endif; endif; ?>
                                 <button class="btn btn-success" onclick="viewFeedback(<?php echo $appointment['APPOINTMENT_ID']; ?>)">
                                     <i class="fas fa-star"></i> View Feedback
                                 </button>

@@ -38,10 +38,12 @@ if ($doc_result->num_rows === 1) {
 
 // Check for success message in URL
  $alert_message = '';
-if (isset($_POST['status'])) {
-    $status = $_POST['status'];
+if (isset($_GET['status'])) {
+    $status = $_GET['status'];
     if ($status === 'success') {
         $alert_message = "Prescription added successfully!";
+    } elseif ($status === 'updated') {
+        $alert_message = "Prescription updated successfully!";
     } elseif ($status === 'deleted_success') {
         $alert_message = "Prescription deleted successfully!";
     }
@@ -51,8 +53,7 @@ if (isset($_POST['status'])) {
 $filter_name = isset($_GET['filter_name']) ? trim(mysqli_real_escape_string($conn, $_GET['filter_name'])) : '';
 $filter_date = isset($_GET['filter_date']) ? mysqli_real_escape_string($conn, $_GET['filter_date']) : '';
 
-// Fetch only patients who have appointments with this doctor
-// Apply name and date filters when provided
+// Fetch existing prescriptions for this doctor (one row per prescription)
 $conditions = ["a.DOCTOR_ID = ?"];
 $types = "i";
 $params = [$doctor_id];
@@ -71,13 +72,13 @@ if (!empty($filter_date)) {
     $params[] = $filter_date;
 }
 
-$sql = "SELECT pt.PATIENT_ID, pt.FIRST_NAME, pt.LAST_NAME, pt.PHONE, pt.EMAIL,
-                MAX(a.APPOINTMENT_DATE) AS LAST_APPOINTMENT_DATE
-         FROM patient_tbl pt
-         INNER JOIN appointment_tbl a ON pt.PATIENT_ID = a.PATIENT_ID
+$sql = "SELECT p.PRESCRIPTION_ID, pt.PATIENT_ID, pt.FIRST_NAME, pt.LAST_NAME, pt.PHONE, pt.EMAIL,
+                a.APPOINTMENT_ID, a.APPOINTMENT_DATE, a.APPOINTMENT_TIME
+         FROM prescription_tbl p
+         INNER JOIN appointment_tbl a ON p.APPOINTMENT_ID = a.APPOINTMENT_ID
+         INNER JOIN patient_tbl pt ON a.PATIENT_ID = pt.PATIENT_ID
          WHERE " . implode(" AND ", $conditions) . "
-         GROUP BY pt.PATIENT_ID, pt.FIRST_NAME, pt.LAST_NAME, pt.PHONE, pt.EMAIL
-         ORDER BY pt.LAST_NAME, pt.FIRST_NAME";
+         ORDER BY a.APPOINTMENT_DATE DESC, a.APPOINTMENT_TIME DESC";
 $stmt = $conn->prepare($sql);
 
 if (!$stmt) {
@@ -87,10 +88,10 @@ $stmt->bind_param($types, ...$params);
 $stmt->execute();
 $result = $stmt->get_result();
 
-$patients = [];
+$prescriptions_list = [];
 if ($result && $result->num_rows > 0) {
     while($row = $result->fetch_assoc()) {
-        $patients[] = $row;
+        $prescriptions_list[] = $row;
     }
 }
 $stmt->close();
@@ -404,34 +405,32 @@ $stmt->close();
                         </tr>
                     </thead>
                     <tbody>
-                        <?php if (count($patients) > 0): ?>
-                            <?php foreach ($patients as $patient): ?>
+                        <?php if (count($prescriptions_list) > 0): ?>
+                            <?php foreach ($prescriptions_list as $row): ?>
                                 <tr>
-                                    <td><?php echo htmlspecialchars($patient['FIRST_NAME'] . ' ' . $patient['LAST_NAME']); ?></td>
+                                    <td><?php echo htmlspecialchars($row['FIRST_NAME'] . ' ' . $row['LAST_NAME']); ?></td>
                                     <td><?php 
-                                        echo !empty($patient['LAST_APPOINTMENT_DATE']) 
-                                            ? htmlspecialchars((new DateTime($patient['LAST_APPOINTMENT_DATE']))->format('F d, Y')) 
-                                            : 'N/A'; 
+                                        $dt = !empty($row['APPOINTMENT_DATE']) ? $row['APPOINTMENT_DATE'] : '';
+                                        $tm = !empty($row['APPOINTMENT_TIME']) ? $row['APPOINTMENT_TIME'] : '';
+                                        if ($dt) echo htmlspecialchars((new DateTime($dt))->format('F d, Y') . ($tm ? ' ' . date('h:i A', strtotime($tm)) : ''));
+                                        else echo 'N/A';
                                     ?></td>
                                     <td>
                                         <?php 
                                         $contact_parts = [];
-                                        if (!empty($patient['PHONE'])) $contact_parts[] = 'Ph: ' . htmlspecialchars($patient['PHONE']);
-                                        if (!empty($patient['EMAIL'])) $contact_parts[] = htmlspecialchars($patient['EMAIL']);
+                                        if (!empty($row['PHONE'])) $contact_parts[] = 'Ph: ' . htmlspecialchars($row['PHONE']);
+                                        if (!empty($row['EMAIL'])) $contact_parts[] = htmlspecialchars($row['EMAIL']);
                                         echo implode(' | ', $contact_parts ?: ['N/A']);
                                         ?>
                                     </td>
                                     <td>
-                                        <form method="POST" action="prescription_form.php" style="display:inline">
-                                            <input type="hidden" name="patient_id" value="<?php echo (int)$patient['PATIENT_ID']; ?>">
-                                            <button type="submit" class="btn">Manage Prescriptions</button>
-                                        </form>
+                                        <a href="prescription_form.php?patient_id=<?php echo (int)$row['PATIENT_ID']; ?>&prescription_id=<?php echo (int)$row['PRESCRIPTION_ID']; ?>" class="btn btn-primary"><i class="fas fa-edit"></i> Edit Prescription</a>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>
                         <?php else: ?>
                             <tr>
-                                <td colspan="4" style="text-align: center;">No patients found.</td>
+                                <td colspan="4" style="text-align: center;">No prescriptions found.</td>
                             </tr>
                         <?php endif; ?>
                     </tbody>
