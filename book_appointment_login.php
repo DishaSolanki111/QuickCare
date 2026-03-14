@@ -454,7 +454,6 @@ body::before {
                 </div>
 
                 <div class="modal-content">
-                    <a href="book_appointment_time.php" class="close">&times;</a>
                     <h2>Login to Continue</h2>
                     
                     <!-- Step Indicator -->

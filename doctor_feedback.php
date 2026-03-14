@@ -12,8 +12,8 @@ $doctor_id = $_SESSION['DOCTOR_ID'];
 // Optional filter: patient name (first, last, or full)
 $filter_name = isset($_GET['filter_name']) ? trim($_GET['filter_name']) : '';
 
-// Base query for this doctor's feedback
-$feedback_query = "SELECT f.FEEDBACK_ID, f.RATING, f.COMMENTS, a.APPOINTMENT_DATE, p.FIRST_NAME, p.LAST_NAME 
+// Base query for this doctor's feedback (include PATIENT_ID for grouping)
+$feedback_query = "SELECT f.FEEDBACK_ID, f.RATING, f.COMMENTS, a.APPOINTMENT_DATE, p.PATIENT_ID, p.FIRST_NAME, p.LAST_NAME 
     FROM feedback_tbl f 
     JOIN appointment_tbl a ON f.APPOINTMENT_ID = a.APPOINTMENT_ID 
     JOIN patient_tbl p ON a.PATIENT_ID = p.PATIENT_ID 
@@ -42,6 +42,20 @@ while ($row = $feedback_result->fetch_assoc()) {
     $feedbacks[] = $row;
 }
 $feedback_stmt->close();
+
+// Group feedback by patient so one card per patient
+$by_patient = [];
+foreach ($feedbacks as $fb) {
+    $pid = (int) $fb['PATIENT_ID'];
+    if (!isset($by_patient[$pid])) {
+        $by_patient[$pid] = [
+            'FIRST_NAME' => $fb['FIRST_NAME'],
+            'LAST_NAME'  => $fb['LAST_NAME'],
+            'entries'    => [],
+        ];
+    }
+    $by_patient[$pid]['entries'][] = $fb;
+}
 $conn->close();
 ?>
 <!DOCTYPE html>
@@ -274,6 +288,38 @@ $conn->close();
         .rating i {
             color: #FFD700;
         }
+
+        .feedback-entry {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .feedback-entry:first-of-type {
+            margin-top: 15px;
+            padding-top: 0;
+            border-top: none;
+        }
+
+        .feedback-entry-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 6px;
+        }
+
+        .feedback-date {
+            color: #777;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .feedback-comment {
+            margin: 0;
+            color: #333;
+        }
         
         /* Footer Styles */
         footer {
@@ -358,27 +404,33 @@ $conn->close();
                         </div>
                     </form>
 
-                    <?php if (count($feedbacks) > 0): ?>
-                        <?php foreach ($feedbacks as $fb): 
-                            $initials = strtoupper(substr($fb['FIRST_NAME'], 0, 1) . substr($fb['LAST_NAME'], 0, 1));
-                            $rating = (int) ($fb['RATING'] ?? 0);
+                    <?php if (count($by_patient) > 0): ?>
+                        <?php foreach ($by_patient as $patient): 
+                            $initials = strtoupper(substr($patient['FIRST_NAME'], 0, 1) . substr($patient['LAST_NAME'], 0, 1));
+                            $patient_name = htmlspecialchars($patient['FIRST_NAME'] . ' ' . $patient['LAST_NAME']);
                         ?>
                     <div class="feedback-card">
                         <div class="feedback-header">
                             <div class="patient-info">
-                                <div class="patient-avatar"><?php echo htmlspecialchars($initials); ?></div>
-                                <div>
-                                    <div class="patient-name"><?php echo htmlspecialchars($fb['FIRST_NAME'] . ' ' . $fb['LAST_NAME']); ?></div>
-                                    <div style="color: #777; font-size: 14px;"><?php echo date('F d, Y', strtotime($fb['APPOINTMENT_DATE'])); ?></div>
-                                </div>
-                            </div>
-                            <div class="rating">
-                                <?php for ($i = 1; $i <= 5; $i++): ?>
-                                <i class="<?php echo $i <= $rating ? 'fas fa-star' : 'far fa-star'; ?>"></i>
-                                <?php endfor; ?>
+                                <div class="patient-avatar"><?php echo $initials; ?></div>
+                                <div class="patient-name"><?php echo $patient_name; ?></div>
                             </div>
                         </div>
-                        <p style="margin-top: 15px;"><?php echo htmlspecialchars($fb['COMMENTS'] ?? 'No comments'); ?></p>
+                        <?php foreach ($patient['entries'] as $fb): 
+                            $rating = (int) ($fb['RATING'] ?? 0);
+                        ?>
+                        <div class="feedback-entry">
+                            <div class="feedback-entry-header">
+                                <span class="feedback-date"><?php echo date('F d, Y', strtotime($fb['APPOINTMENT_DATE'])); ?></span>
+                                <div class="rating">
+                                    <?php for ($i = 1; $i <= 5; $i++): ?>
+                                    <i class="<?php echo $i <= $rating ? 'fas fa-star' : 'far fa-star'; ?>"></i>
+                                    <?php endfor; ?>
+                                </div>
+                            </div>
+                            <p class="feedback-comment"><?php echo htmlspecialchars($fb['COMMENTS'] ?? 'No comments'); ?></p>
+                        </div>
+                        <?php endforeach; ?>
                     </div>
                         <?php endforeach; ?>
                     <?php else: ?>

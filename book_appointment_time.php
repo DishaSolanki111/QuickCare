@@ -494,7 +494,6 @@ body::before {
                     <?php if ($is_reschedule): ?>
                     <input type="hidden" name="reschedule_appointment_id" value="<?php echo (int)$_SESSION['reschedule_appointment_id']; ?>">
                     <?php endif; ?>
-                    <button type="submit" class="close" style="background:none;border:none;font-size:28px;cursor:pointer">&times;</button>
                 </form>
                     <h2><?php echo $is_reschedule ? 'Reschedule: Select New Time' : 'Select Time Slot'; ?></h2>
                     
