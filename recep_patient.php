@@ -160,19 +160,29 @@ if (isset($_POST['action']) && $_POST['action'] == 'delete' && isset($_POST['id'
     }
 
     .action-btn {
-        padding: 5px 10px;
+        padding: 5px 12px;
         border: none;
-        border-radius: 3px;
+        border-radius: 4px;
         cursor: pointer;
         color: white;
-        margin-right: 5px;
+        margin-right: 0;
         display: inline-flex;
         align-items: center;
         gap: 4px;
+        font-size: 13px;
     }
-
+    
     .edit-btn { background: #f39c12; }
+    .view-btn { background: #000000; }
     .delete-btn { background: #e74c3c; }
+
+    .actions-td {
+        white-space: nowrap;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
+    }
 
     .blood-group-badge {
         padding: 3px 8px;
@@ -452,11 +462,18 @@ $receptionist_id = $_SESSION['RECEPTIONIST_ID'];
                     <td><span class='blood-group-badge'>{$row['BLOOD_GROUP']}</span></td>
                     <td>{$row['PHONE']}</td>
                     <td>{$row['EMAIL']}</td>
-                    <td>
+                    <td class='actions-td'>
                         <button class='action-btn edit-btn'
                             onclick=\"openEditModal({$row['PATIENT_ID']}, '" . addslashes($row['FIRST_NAME']) . "', '" . addslashes($row['LAST_NAME']) . "', '{$row['DOB']}', '{$row['GENDER']}', '{$row['BLOOD_GROUP']}', '{$row['PHONE']}', '{$row['EMAIL']}', '" . addslashes($row['ADDRESS']) . "')\">
                             <i class='bi bi-pencil'></i>
                             Edit
+                        </button>
+                        <button
+                            class='action-btn view-btn'
+                            type='button'
+                            onclick=\"window.location.href='recep_patient_profile_view.php?patient_id={$row['PATIENT_ID']}';\">
+                            <i class='bi bi-eye'></i>
+                            View
                         </button>
                         <button class='action-btn delete-btn'
                             onclick=\"deletePatient({$row['PATIENT_ID']})\">

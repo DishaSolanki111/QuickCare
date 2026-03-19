@@ -304,6 +304,15 @@ $receptionist_id = $_SESSION['RECEPTIONIST_ID'];
             white-space: nowrap;
         }
 
+        .doctor-actions {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .view-btn { background-color: #000000; }
+
         /* Modal Styles */
         .modal {
             display: none;
@@ -594,22 +603,31 @@ $receptionist_id = $_SESSION['RECEPTIONIST_ID'];
             <td><?php echo $row['EDUCATION']; ?></td>
             <td><?php echo $row['PHONE']; ?></td>
             <td><?php echo $row['EMAIL']; ?></td>
-            <td class="actions-td">
-                <button type="button" class="action-btn edit-btn"
-                    onclick="openEditModal(<?php echo $row['DOCTOR_ID']; ?>, 
-                    '<?php echo addslashes($row['FIRST_NAME']); ?>', 
-                    '<?php echo addslashes($row['LAST_NAME']); ?>', 
-                    '<?php echo $row['DOB']; ?>',
-                    '<?php echo $row['DOJ']; ?>',
-                    '<?php echo $row['GENDER']; ?>',
-                    '<?php echo addslashes($row['EDUCATION']); ?>', 
-                    '<?php echo $row['PHONE']; ?>', 
-                    '<?php echo $row['EMAIL']; ?>', 
-                    '<?php echo $row['SPECIALISATION_ID']; ?>', 
-                    '<?php echo $row['PROFILE_IMAGE']; ?>')">
-                    <i class="bi bi-pencil"></i>
-                    Edit
-                </button>
+                    <td class="actions-td">
+                <div class="doctor-actions">
+                            <form method="GET" action="recep_doctor_profile_view.php" style="display:inline">
+                                <input type="hidden" name="doctor_id" value="<?php echo $row['DOCTOR_ID']; ?>">
+                                <button type="submit" class="action-btn view-btn">
+                                    <i class="bi bi-eye"></i>
+                                    View
+                                </button>
+                            </form>
+                    <button type="button" class="action-btn edit-btn"
+                        onclick="openEditModal(<?php echo $row['DOCTOR_ID']; ?>, 
+                        '<?php echo addslashes($row['FIRST_NAME']); ?>', 
+                        '<?php echo addslashes($row['LAST_NAME']); ?>', 
+                        '<?php echo $row['DOB']; ?>',
+                        '<?php echo $row['DOJ']; ?>',
+                        '<?php echo $row['GENDER']; ?>',
+                        '<?php echo addslashes($row['EDUCATION']); ?>', 
+                        '<?php echo $row['PHONE']; ?>', 
+                        '<?php echo $row['EMAIL']; ?>', 
+                        '<?php echo $row['SPECIALISATION_ID']; ?>', 
+                        '<?php echo $row['PROFILE_IMAGE']; ?>')">
+                        <i class="bi bi-pencil"></i>
+                        Edit
+                    </button>
+                </div>
             </td>
         </tr>
         <?php
