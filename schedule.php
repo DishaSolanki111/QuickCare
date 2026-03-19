@@ -590,11 +590,11 @@ if ($result->num_rows > 0) {
                     <?php endforeach; ?>
                 </select>
             </div>
-            <div class="filter-group" style="max-width: 160px;">
+            <div class="filter-group" style="max-width: 200px;">
                 <label>&nbsp;</label>
                 <button id="filter-btn" class="btn-book" style="background-color: var(--primary-blue); display:flex; align-items:center; justify-content:center; gap:6px; margin-top:0;">
                     <i class="fas fa-search"></i>
-                    Search
+                    Search Schedule
                 </button>
             </div>
         </div>
@@ -639,9 +639,26 @@ if ($result->num_rows > 0) {
             loadDoctorSchedules();
 
             // Event listeners for filters
-            // Do NOT auto-load when user changes filters; only load on explicit Search click
             document.getElementById('filter-btn').addEventListener('click', function (e) {
                 e.preventDefault();
+                const specId = document.getElementById('specialization').value;
+
+                // If a specific specialization is selected, go to doctors.php with that specialization
+                if (specId && specId !== '0') {
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = 'doctors.php';
+                    const input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = 'spec_id';
+                    input.value = specId;
+                    form.appendChild(input);
+                    document.body.appendChild(form);
+                    form.submit();
+                    return;
+                }
+
+                // Otherwise, just update the schedule view
                 updateDateDisplay();
                 loadDoctorSchedules();
             });

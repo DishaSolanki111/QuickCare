@@ -3,7 +3,6 @@
 // Start session to store booking data
 session_start();
 include "config.php";
-include "header.php";
 
 // Get doctor ID from POST (or session for reschedule back-navigation)
 $doctor_id = isset($_POST['doctor_id']) ? intval($_POST['doctor_id']) : 0;
@@ -18,6 +17,9 @@ if ($doctor_id == 0) {
     header("Location: doctors.php");
     exit();
 }
+
+// Only include header after all redirects / header() calls
+include "header.php";
 
 // If reschedule mode: verify user and appointment ownership
 $is_patient_reschedule = false;
