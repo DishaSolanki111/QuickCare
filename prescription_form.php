@@ -497,11 +497,9 @@ $conn->close();
                         <div class="prescription-item">
                             <div style="display:flex; justify-content:space-between; align-items:center;">
                                 <span><strong>Issue Date:</strong> <?php echo $p['ISSUE_DATE']; ?> | <strong>Doctor:</strong> <?php echo $p['DOC_FNAME'] . ' ' . $p['DOC_LNAME']; ?></span>
-                                <form action="prescription_form.php" method="POST" onsubmit="return confirm('Are you sure?');">
-                                    <input type="hidden" name="patient_id" value="<?php echo $patient_id; ?>">
-                                    <input type="hidden" name="delete_prescription_id" value="<?php echo $p['PRESCRIPTION_ID']; ?>">
-                                    <button type="submit" class="btn btn-delete">Delete</button>
-                                </form>
+                                <a href="prescription_form.php?patient_id=<?php echo $patient_id; ?>&prescription_id=<?php echo $p['PRESCRIPTION_ID']; ?>" class="btn btn-add" style="background-color:#072d44; padding:6px 12px; font-size:13px; text-decoration:none;">
+                                    Edit
+                                </a>
                             </div>
                             <p style="margin-top:10px;"><strong>Diagnosis:</strong> <?php echo nl2br(htmlspecialchars($p['DIAGNOSIS'])); ?></p>
                             <p><strong>Symptoms:</strong> <?php echo nl2br(htmlspecialchars($p['SYMPTOMS'])); ?></p>
