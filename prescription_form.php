@@ -370,10 +370,10 @@ $conn->close();
                         <input type="hidden" name="prescription_id" value="<?php echo (int)$edit_prescription['PRESCRIPTION_ID']; ?>">
                         <input type="hidden" name="appointment_id" value="<?php echo (int)$edit_prescription['APPOINTMENT_ID']; ?>">
                         <div class="form-grid">
-                            <div class="form-group"><label>Issue Date:</label><input type="date" name="issue_date" required value="<?php echo htmlspecialchars($edit_prescription['ISSUE_DATE'] ?? date('Y-m-d')); ?>"></div>
-                            <div class="form-group"><label>Blood Pressure (BP):</label><input type="text" name="blood_pressure" id="form_blood_pressure" value="<?php echo htmlspecialchars($edit_prescription['BLOOD_PRESSURE'] ?? ''); ?>"></div>
-                            <div class="form-group"><label>Height (cm):</label><input type="number" name="height_cm" id="form_height_cm" step="0.1" value="<?php echo $edit_prescription['HEIGHT_CM'] !== null && $edit_prescription['HEIGHT_CM'] !== '' ? htmlspecialchars($edit_prescription['HEIGHT_CM']) : ''; ?>"></div>
-                            <div class="form-group"><label>Weight (kg):</label><input type="number" step="0.1" name="weight_kg" id="form_weight_kg" value="<?php echo $edit_prescription['WEIGHT_KG'] !== null && $edit_prescription['WEIGHT_KG'] !== '' ? htmlspecialchars($edit_prescription['WEIGHT_KG']) : ''; ?>"></div>
+                            <div class="form-group"><label>Issue Date:</label><input type="date" name="issue_date" required readonly value="<?php echo htmlspecialchars($edit_prescription['ISSUE_DATE'] ?? date('Y-m-d')); ?>"></div>
+                            <div class="form-group"><label>Blood Pressure (BP):</label><input type="text" name="blood_pressure" id="form_blood_pressure" readonly value="<?php echo htmlspecialchars($edit_prescription['BLOOD_PRESSURE'] ?? ''); ?>"></div>
+                            <div class="form-group"><label>Height (cm):</label><input type="number" name="height_cm" id="form_height_cm" step="0.1" readonly value="<?php echo $edit_prescription['HEIGHT_CM'] !== null && $edit_prescription['HEIGHT_CM'] !== '' ? htmlspecialchars($edit_prescription['HEIGHT_CM']) : ''; ?>"></div>
+                            <div class="form-group"><label>Weight (kg):</label><input type="number" step="0.1" name="weight_kg" id="form_weight_kg" readonly value="<?php echo $edit_prescription['WEIGHT_KG'] !== null && $edit_prescription['WEIGHT_KG'] !== '' ? htmlspecialchars($edit_prescription['WEIGHT_KG']) : ''; ?>"></div>
                             <div class="form-group">
                                 <label>Diabetes:</label>
                                 <select name="diabetes">
@@ -448,10 +448,10 @@ $conn->close();
                         </div>
                         <?php endif; ?>
                         <div class="form-grid">
-                            <div class="form-group"><label>Issue Date:</label><input type="date" name="issue_date" required value="<?php echo date('Y-m-d'); ?>"></div>
-                            <div class="form-group"><label>Blood Pressure (BP):</label><input type="text" name="blood_pressure" id="form_blood_pressure" placeholder="120/80" value="<?php echo $preselected_vitals && isset($preselected_vitals['BLOOD_PRESSURE']) ? htmlspecialchars($preselected_vitals['BLOOD_PRESSURE']) : ''; ?>"></div>
-                            <div class="form-group"><label>Height (cm):</label><input type="number" name="height_cm" id="form_height_cm" step="0.1" value="<?php echo $preselected_vitals && isset($preselected_vitals['HEIGHT_CM']) && $preselected_vitals['HEIGHT_CM'] !== null && $preselected_vitals['HEIGHT_CM'] !== '' ? htmlspecialchars($preselected_vitals['HEIGHT_CM']) : ''; ?>"></div>
-                            <div class="form-group"><label>Weight (kg):</label><input type="number" step="0.1" name="weight_kg" id="form_weight_kg" value="<?php echo $preselected_vitals && isset($preselected_vitals['WEIGHT_KG']) && $preselected_vitals['WEIGHT_KG'] !== null && $preselected_vitals['WEIGHT_KG'] !== '' ? htmlspecialchars($preselected_vitals['WEIGHT_KG']) : ''; ?>"></div>
+                            <div class="form-group"><label>Issue Date:</label><input type="date" name="issue_date" required readonly value="<?php echo date('Y-m-d'); ?>"></div>
+                            <div class="form-group"><label>Blood Pressure (BP):</label><input type="text" name="blood_pressure" id="form_blood_pressure" readonly placeholder="120/80" value="<?php echo $preselected_vitals && isset($preselected_vitals['BLOOD_PRESSURE']) ? htmlspecialchars($preselected_vitals['BLOOD_PRESSURE']) : ''; ?>"></div>
+                            <div class="form-group"><label>Height (cm):</label><input type="number" name="height_cm" id="form_height_cm" step="0.1" readonly value="<?php echo $preselected_vitals && isset($preselected_vitals['HEIGHT_CM']) && $preselected_vitals['HEIGHT_CM'] !== null && $preselected_vitals['HEIGHT_CM'] !== '' ? htmlspecialchars($preselected_vitals['HEIGHT_CM']) : ''; ?>"></div>
+                            <div class="form-group"><label>Weight (kg):</label><input type="number" step="0.1" name="weight_kg" id="form_weight_kg" readonly value="<?php echo $preselected_vitals && isset($preselected_vitals['WEIGHT_KG']) && $preselected_vitals['WEIGHT_KG'] !== null && $preselected_vitals['WEIGHT_KG'] !== '' ? htmlspecialchars($preselected_vitals['WEIGHT_KG']) : ''; ?>"></div>
                             <div class="form-group">
                                 <label>Diabetes:</label>
                                 <select name="diabetes">
