@@ -236,25 +236,31 @@ if ($spec_id > 0) {
 
         .card-actions {
             display: flex;
-            align-items: center;
-            gap: 12px;
+            flex-direction: column;
+            gap: 8px;
             width: 100%;
             margin-top: auto;
         }
-
-        .card-actions form {
+        
+        .card-actions-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+        }
+        
+        .card-actions-row form {
             flex: 1;
             display: flex;
             min-width: 0;
         }
-
+        
         .card-actions button,
         .card-actions a {
             flex: 1;
-            width: 100%;
             padding: 8px 0;
             border: none;
-            border-radius: 7px;
+            border-radius: 8px;
             font-weight: 500;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -279,13 +285,21 @@ if ($spec_id > 0) {
         }
 
         .btn-secondary {
-            background: var(--light-blue);
+            background: #E0F2FF;
             color: var(--primary);
         }
-
+        
         .btn-secondary:hover {
             background: var(--medium-blue);
             transform: translateY(-3px);
+        }
+        
+        .card-actions-row.feedback-row {
+            justify-content: center;
+        }
+
+        .card-actions-row.feedback-row form {
+            flex: 0 0 70%;
         }
 
         /* Footer with Wave Effect */
@@ -447,14 +461,22 @@ if ($spec_id > 0) {
                             <i class="fas fa-star-half-alt"></i>
                         </div>
                         <div class="card-actions">
-                            <form method="POST" action="d_profile.php" style="display:inline">
-                                <input type="hidden" name="id" value="<?php echo $row['DOCTOR_ID']; ?>">
-                                <button type="submit" class="btn-secondary"><i class="fas fa-user"></i> View Profile</button>
-                            </form>
-                            <form method="POST" action="book_appointment_date.php" style="display:inline">
-                                <input type="hidden" name="doctor_id" value="<?php echo $row['DOCTOR_ID']; ?>">
-                                <button type="submit" class="btn-primary"><i class="fas fa-calendar-check"></i> Book Now</button>
-                            </form>
+                            <div class="card-actions-row">
+                                <form method="POST" action="d_profile.php" style="display:inline">
+                                    <input type="hidden" name="id" value="<?php echo $row['DOCTOR_ID']; ?>">
+                                    <button type="submit" class="btn-secondary"><i class="fas fa-user"></i> View Profile</button>
+                                </form>
+                                <form method="POST" action="book_appointment_date.php" style="display:inline">
+                                    <input type="hidden" name="doctor_id" value="<?php echo $row['DOCTOR_ID']; ?>">
+                                    <button type="submit" class="btn-primary"><i class="fas fa-calendar-check"></i> Book Now</button>
+                                </form>
+                            </div>
+                            <div class="card-actions-row feedback-row">
+                                <form method="GET" action="doctor_visitor_feedback.php" style="display:flex;">
+                                    <input type="hidden" name="doctor_id" value="<?php echo $row['DOCTOR_ID']; ?>">
+                                    <button type="submit" class="btn-secondary btn-feedback"><i class="fas fa-star"></i> View Feedback</button>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 <?php } ?>
