@@ -2,22 +2,33 @@
 session_start();
 include "config.php";
 include "header.php";
-if (!isset($_POST['spec_id'])) {
-    die("Specialization ID not provided");
+// Accept specialization from POST (schedule.php) or GET; if none, show all doctors
+$spec_id = isset($_POST['spec_id']) ? intval($_POST['spec_id']) : (isset($_GET['spec_id']) ? intval($_GET['spec_id']) : 0);
+$from_schedule = isset($_POST['from_schedule']) ? (int)$_POST['from_schedule'] : (isset($_GET['from_schedule']) ? (int)$_GET['from_schedule'] : 0);
+
+if ($spec_id > 0) {
+    $q = "SELECT DOCTOR_ID, FIRST_NAME, LAST_NAME, PROFILE_IMAGE, SPECIALISATION_ID 
+        FROM doctor_tbl 
+        WHERE SPECIALISATION_ID = $spec_id AND STATUS = 'approved'";
+} else {
+    $q = "SELECT DOCTOR_ID, FIRST_NAME, LAST_NAME, PROFILE_IMAGE, SPECIALISATION_ID 
+        FROM doctor_tbl 
+        WHERE STATUS = 'approved'";
 }
-
-$spec_id = intval($_POST['spec_id']);
-
- $q = "SELECT DOCTOR_ID, FIRST_NAME, LAST_NAME, PROFILE_IMAGE, SPECIALISATION_ID 
-     FROM doctor_tbl 
-     WHERE SPECIALISATION_ID = $spec_id AND STATUS = 'approved'";
 
  $res = mysqli_query($conn, $q);
 
 // Fetch specialization name
- $spec_query = mysqli_query($conn, "SELECT SPECIALISATION_NAME FROM specialisation_tbl WHERE SPECIALISATION_ID = $spec_id");
- $spec_data = mysqli_fetch_assoc($spec_query);
- $specialization_name = $spec_data['SPECIALISATION_NAME'] ?? 'Specialist';
+$specialization_name = 'All Specializations';
+if ($spec_id > 0) {
+    $spec_query = mysqli_query($conn, "SELECT SPECIALISATION_NAME FROM specialisation_tbl WHERE SPECIALISATION_ID = $spec_id");
+    $spec_data = mysqli_fetch_assoc($spec_query);
+    if (!empty($spec_data['SPECIALISATION_NAME'])) {
+        $specialization_name = $spec_data['SPECIALISATION_NAME'];
+    } else {
+        $specialization_name = 'Specialist';
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -411,7 +422,7 @@ $spec_id = intval($_POST['spec_id']);
     <section class="doctors-section">
         <div class="container">
             <div class="back-bar">
-                <a href="book_appointment_date.php" class="back-link">
+                <a href="<?php echo $from_schedule ? 'schedule.php' : 'appointment.php'; ?>" class="back-link">
                     <i class="fas fa-arrow-left"></i>
                     Back
                 </a>
