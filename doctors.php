@@ -273,25 +273,18 @@ if ($spec_id > 0) {
             gap: 5px;
         }
 
-        .btn-primary {
-            background: var(--primary);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: var(--primary-dark);
-            transform: translateY(-3px);
-            box-shadow: 0 6px 15px rgba(0, 102, 204, 0.3);
-        }
-
+        .btn-primary,
         .btn-secondary {
             background: #E0F2FF;
             color: var(--primary);
         }
         
+        .btn-primary:hover,
         .btn-secondary:hover {
             background: var(--medium-blue);
+            color: #ffffff;
             transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 102, 204, 0.25);
         }
         
         .card-actions-row.feedback-row {
