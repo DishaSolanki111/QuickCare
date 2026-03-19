@@ -221,6 +221,34 @@ $stmt = $conn->prepare($sql);
 $stmt->bind_param("ii", $patient_id, $doctor_id);
 $stmt->execute();
 $prescriptions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+$stmt->close();
+
+// Fetch medicines for each existing prescription (for display in list)
+$prescription_medicines = [];
+if (!empty($prescriptions)) {
+    $prescription_ids = array_column($prescriptions, 'PRESCRIPTION_ID');
+    $placeholders = implode(',', array_fill(0, count($prescription_ids), '?'));
+    $types = str_repeat('i', count($prescription_ids));
+    $sqlMedList = "SELECT pm.PRESCRIPTION_ID, m.MED_NAME, pm.DOSAGE, pm.DURATION, pm.FREQUENCY
+                   FROM prescription_medicine_tbl pm
+                   JOIN medicine_tbl m ON pm.MEDICINE_ID = m.MEDICINE_ID
+                   WHERE pm.PRESCRIPTION_ID IN ($placeholders)
+                   ORDER BY pm.PRESCRIPTION_ID, m.MED_NAME";
+    $stmtMedList = $conn->prepare($sqlMedList);
+    if ($stmtMedList) {
+        $stmtMedList->bind_param($types, ...$prescription_ids);
+        $stmtMedList->execute();
+        $resMedList = $stmtMedList->get_result();
+        while ($rowMed = $resMedList->fetch_assoc()) {
+            $pid = $rowMed['PRESCRIPTION_ID'];
+            if (!isset($prescription_medicines[$pid])) {
+                $prescription_medicines[$pid] = [];
+            }
+            $prescription_medicines[$pid][] = $rowMed;
+        }
+        $stmtMedList->close();
+    }
+}
 
 // --- FETCH MEDICINES & APPOINTMENTS ---
  $medicines = $conn->query("SELECT MEDICINE_ID, MED_NAME FROM medicine_tbl ORDER BY MED_NAME")->fetch_all(MYSQLI_ASSOC);
@@ -234,6 +262,7 @@ $prescriptions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
  $appointment_stmt->bind_param("ii", $patient_id, $doctor_id);
  $appointment_stmt->execute();
  $completed_appointments = $appointment_stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+ $appointment_stmt->close();
 
 // When coming from appointment_doctor.php with appointment_id, pre-select it
  $preselected_appointment_id = isset($_POST['appointment_id']) ? (int)$_POST['appointment_id'] : (isset($_GET['appointment_id']) ? (int)$_GET['appointment_id'] : null);
@@ -255,11 +284,11 @@ $prescriptions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
      $apt_ids[] = $preselected_appointment_id;
  }
  if (!empty($apt_ids)) {
-     $vq = @$conn->query("SELECT APPOINTMENT_ID, BLOOD_PRESSURE, WEIGHT_KG, HEIGHT_CM FROM prescription_tbl WHERE APPOINTMENT_ID IN (" . implode(',', array_map('intval', $apt_ids)) . ")");
-     if ($vq) while ($v = $vq->fetch_assoc()) $appointment_vitals[$v['APPOINTMENT_ID']] = $v;
- }
- $preselected_vitals = ($preselected_appointment_id && isset($appointment_vitals[$preselected_appointment_id])) ? $appointment_vitals[$preselected_appointment_id] : null;
- $conn->close();
+ $vq = @$conn->query("SELECT APPOINTMENT_ID, BLOOD_PRESSURE, WEIGHT_KG, HEIGHT_CM FROM prescription_tbl WHERE APPOINTMENT_ID IN (" . implode(',', array_map('intval', $apt_ids)) . ")");
+    if ($vq) while ($v = $vq->fetch_assoc()) $appointment_vitals[$v['APPOINTMENT_ID']] = $v;
+}
+$preselected_vitals = ($preselected_appointment_id && isset($appointment_vitals[$preselected_appointment_id])) ? $appointment_vitals[$preselected_appointment_id] : null;
+$conn->close();
 ?>
 
 <!DOCTYPE html>
@@ -476,6 +505,21 @@ $prescriptions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                             </div>
                             <p style="margin-top:10px;"><strong>Diagnosis:</strong> <?php echo nl2br(htmlspecialchars($p['DIAGNOSIS'])); ?></p>
                             <p><strong>Symptoms:</strong> <?php echo nl2br(htmlspecialchars($p['SYMPTOMS'])); ?></p>
+                            <?php if (!empty($prescription_medicines[$p['PRESCRIPTION_ID']])): ?>
+                                <div style="margin-top:10px;">
+                                    <strong>Medicines:</strong>
+                                    <ul style="margin-top:5px; padding-left:18px;">
+                                        <?php foreach ($prescription_medicines[$p['PRESCRIPTION_ID']] as $med): ?>
+                                            <li>
+                                                <?php echo htmlspecialchars($med['MED_NAME']); ?>
+                                                (<?php echo htmlspecialchars($med['DOSAGE']); ?>,
+                                                <?php echo htmlspecialchars($med['DURATION']); ?>,
+                                                <?php echo htmlspecialchars($med['FREQUENCY']); ?>)
+                                            </li>
+                                        <?php endforeach; ?>
+                                    </ul>
+                                </div>
+                            <?php endif; ?>
                         </div>
                     <?php endforeach; ?>
                 </div>
