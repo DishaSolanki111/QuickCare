@@ -276,10 +276,10 @@ if (isset($_SESSION['schedule_success_message'])) {
         /* Doctor Profile Section */
         .doctor-profile-card {
             background: var(--white);
-            border-radius: 12px;
+            border-radius: 10px;
             padding: 0;
-            margin-bottom: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            margin-bottom: 10px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.05);
             overflow: hidden;
         }
 
@@ -287,23 +287,23 @@ if (isset($_SESSION['schedule_success_message'])) {
         .doctor-header {
             background: #1a3a5f;
             color: white;
-            padding: 18px 22px;
+            padding: 12px 16px;
             display: flex;
             align-items: center;
-            gap: 18px;
+            gap: 12px;
         }
 
         .doctor-avatar {
-            width: 68px;
-            height: 68px;
+            width: 56px;
+            height: 56px;
             border-radius: 50%;
-            border: 3px solid var(--light-blue);
+            border: 2px solid var(--light-blue);
             object-fit: cover;
         }
 
         .doctor-info h3 {
             margin: 0;
-            font-size: 20px;
+            font-size: 18px;
             font-weight: 600;
             color: white;
         }
@@ -311,40 +311,40 @@ if (isset($_SESSION['schedule_success_message'])) {
         .doctor-specialization {
             display: inline-block;
             background: var(--secondary-color);
-            padding: 4px 12px;
-            border-radius: 18px;
-            font-size: 13px;
-            margin-top: 6px;
+            padding: 3px 10px;
+            border-radius: 16px;
+            font-size: 12px;
+            margin-top: 4px;
             color:white;
         }
 
         /* Schedule List - Horizontal Bars */
         .schedule-list-container {
             background: var(--white);
-            border-radius: 12px;
-            padding: 16px 18px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border-radius: 10px;
+            padding: 12px 14px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.04);
             border: 1px solid #e9ecef;
         }
 
         .schedule-grid {
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 8px;
         }
 
         /* Schedule row: horizontal rounded card, light grey, blue left accent */
         .day-schedule {
             background: #f6f9fb;
-            border-radius: 10px;
-            padding: 10px 14px;
-            border-left: 4px solid var(--secondary-color);
-            box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+            border-radius: 8px;
+            padding: 8px 12px;
+            border-left: 3px solid var(--secondary-color);
+            box-shadow: 0 1px 1px rgba(0,0,0,0.02);
             transition: all 0.3s ease;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 14px;
+            gap: 10px;
             flex-wrap: wrap;
         }
 
@@ -356,10 +356,10 @@ if (isset($_SESSION['schedule_success_message'])) {
         .day-name {
             font-weight: 700;
             color: var(--dark-blue);
-            font-size: 20px;
+            font-size: 17px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
             flex-shrink: 0;
         }
 
@@ -369,37 +369,37 @@ if (isset($_SESSION['schedule_success_message'])) {
 
         .time-range {
             color: #4a5568;
-            font-size: 18px;
+            font-size: 15px;
             font-weight: 500;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             flex-shrink: 0;
         }
 
         .time-range i {
             color: var(--accent-color);
-            font-size: 20px;
+            font-size: 18px;
         }
 
         .schedule-actions {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 8px;
             flex-shrink: 0;
         }
 
         .schedule-actions .btn-edit-schedule {
-            padding: 10px 18px;
+            padding: 6px 14px;
             border: none;
-            border-radius: 8px;
-            font-size: 15px;
+            border-radius: 6px;
+            font-size: 13px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.25s ease;
             display: inline-flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             background: #f39c12;
             color: white;
         }
@@ -409,13 +409,13 @@ if (isset($_SESSION['schedule_success_message'])) {
         }
 
         .schedule-actions .btn.btn-danger {
-            padding: 10px 18px;
-            font-size: 15px;
+            padding: 6px 14px;
+            font-size: 13px;
             font-weight: 600;
-            border-radius: 8px;
+            border-radius: 6px;
             display: inline-flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
         }
 
         .btn {

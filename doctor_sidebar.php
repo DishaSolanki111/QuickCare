@@ -150,9 +150,10 @@ body {
 
     <a href="doctor_dashboard.php" class="<?= ($currentPage == 'doctor_dashboard.php') ? 'active' : '' ?>">Dashboard</a>
 
-    <a href="doctor_profile.php" class="<?= ($currentPage == 'doctor_profile.php') ? 'active' : '' ?>">Profile</a>
+    <a href="doctor_profile.php" class="<?= ($currentPage == 'doctor_profile.php') ? 'active' : '' ?>">My Profile</a>
+    <a href="doctor_patient_profile.php" class="<?= ($currentPage == 'doctor_patient_profile.php') ? 'active' : '' ?>">Patient Profile</a>
 
-    <a href="mangae_schedule_doctor.php" class="<?= ($currentPage == 'mangae_schedule_doctor.php') ? 'active' : '' ?>">Schedule</a>
+    <a href="mangae_schedule_doctor.php" class="<?= ($currentPage == 'mangae_schedule_doctor.php') ? 'active' : '' ?>">My Schedule</a>
 
     <a href="appointment_doctor.php" class="<?= ($currentPage == 'appointment_doctor.php') ? 'active' : '' ?>">Appointments</a>
 
