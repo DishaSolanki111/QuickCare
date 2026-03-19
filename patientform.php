@@ -537,18 +537,43 @@ include 'header.php';?>
                 // - Only letters, numbers, and underscore
                 // - No character can repeat more than 2 times consecutively
                 $username = trim($username);
-                if (!preg_match('/^(?!.*([A-Za-z0-9_])\1\1)[A-Za-z][A-Za-z0-9_]{2,19}$/', $username)) {
-                    $field_errors['username'] = "Username must start with a letter, be 3–20 characters, use only letters, numbers and underscore (_), and not repeat any character more than 2 times in a row.";
+                $usernameErrors = [];
+                if ($username === '') {
+                    $usernameErrors[] = "Username is required.";
+                } else {
+                    if (!preg_match('/^[A-Za-z]/', $username)) {
+                        $usernameErrors[] = "Must start with a letter.";
+                    }
+                    if (strlen($username) < 3 || strlen($username) > 20) {
+                        $usernameErrors[] = "Length must be between 3 and 20 characters.";
+                    }
+                    if (!preg_match('/^[A-Za-z0-9_]+$/', $username)) {
+                        $usernameErrors[] = "Only letters, numbers, and underscore (_) are allowed.";
+                    }
+                    if (preg_match('/([A-Za-z0-9_])\1\1/', $username)) {
+                        $usernameErrors[] = "No character can repeat more than 2 times in a row.";
+                    }
                 }
-
+                if (!empty($usernameErrors)) {
+                    $field_errors['username'] = implode(' ', $usernameErrors);
+                }
+                
                 // ---------------- PASSWORD VALIDATION ----------------
-                if (
-                    strlen($password) < 8 ||
-                    !preg_match('/[A-Z]/', $password) ||
-                    !preg_match('/[0-9]/', $password) ||
-                    !preg_match('/[\W]/', $password)
-                ) {
-                    $field_errors['password'] = "Password must be at least 8 characters and include 1 uppercase letter, 1 digit, and 1 special character.";
+                $passwordErrors = [];
+                if (strlen($password) < 8) {
+                    $passwordErrors[] = "At least 8 characters.";
+                }
+                if (!preg_match('/[A-Z]/', $password)) {
+                    $passwordErrors[] = "Add at least 1 uppercase letter.";
+                }
+                if (!preg_match('/[0-9]/', $password)) {
+                    $passwordErrors[] = "Add at least 1 digit.";
+                }
+                if (!preg_match('/[\W]/', $password)) {
+                    $passwordErrors[] = "Add at least 1 special character.";
+                }
+                if (!empty($passwordErrors)) {
+                    $field_errors['password'] = implode(' ', $passwordErrors);
                 }
 
                 // ---------------- PHONE VALIDATION ----------------

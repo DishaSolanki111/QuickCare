@@ -455,22 +455,55 @@ include 'config.php';
                 }
 
                 // ---------------- USERNAME VALIDATION ----------------
-                if (
-                    !preg_match('/^[A-Z][A-Za-z0-9]*(_[A-Za-z0-9]+)*$/', $username) ||
-                    strlen($username) > 20 ||
-                    !preg_match('/\d/', $username)
-                ) {
-                    $field_errors['username'] = "Username must start with a capital letter, max 20 chars, no spaces, no consecutive underscores, not end with underscore, and include at least 1 digit (e.g. Meena_k01).";
+                // Rules:
+                // - Start with capital letter
+                // - Max 20 chars
+                // - No spaces
+                // - No consecutive underscores, not end with underscore
+                // - At least 1 digit
+                $usernameErrors = [];
+                if ($username === '') {
+                    $usernameErrors[] = "Username is required.";
+                } else {
+                    if (!preg_match('/^[A-Z]/', $username)) {
+                        $usernameErrors[] = "Must start with a capital letter.";
+                    }
+                    if (strlen($username) > 20) {
+                        $usernameErrors[] = "Must be at most 20 characters.";
+                    }
+                    if (preg_match('/\s/', $username)) {
+                        $usernameErrors[] = "No spaces allowed.";
+                    }
+                    if (!preg_match('/^[A-Z][A-Za-z0-9_]*$/', $username)) {
+                        $usernameErrors[] = "Only letters, numbers and underscore (_) allowed.";
+                    }
+                    if (preg_match('/__/', $username) || substr($username, -1) === '_') {
+                        $usernameErrors[] = "No consecutive underscores and cannot end with underscore.";
+                    }
+                    if (!preg_match('/\d/', $username)) {
+                        $usernameErrors[] = "Include at least 1 digit.";
+                    }
                 }
-
+                if (!empty($usernameErrors)) {
+                    $field_errors['username'] = implode(' ', $usernameErrors);
+                }
+                
                 // ---------------- PASSWORD VALIDATION ----------------
-                if (
-                    strlen($password) < 8 ||
-                    !preg_match('/[A-Z]/', $password) ||
-                    !preg_match('/[0-9]/', $password) ||
-                    !preg_match('/[\W]/', $password)
-                ) {
-                    $field_errors['password'] = "Password must be at least 8 characters and include 1 uppercase letter, 1 digit, and 1 special character.";
+                $passwordErrors = [];
+                if (strlen($password) < 8) {
+                    $passwordErrors[] = "At least 8 characters.";
+                }
+                if (!preg_match('/[A-Z]/', $password)) {
+                    $passwordErrors[] = "Add at least 1 uppercase letter.";
+                }
+                if (!preg_match('/[0-9]/', $password)) {
+                    $passwordErrors[] = "Add at least 1 digit.";
+                }
+                if (!preg_match('/[\W]/', $password)) {
+                    $passwordErrors[] = "Add at least 1 special character.";
+                }
+                if (!empty($passwordErrors)) {
+                    $field_errors['password'] = implode(' ', $passwordErrors);
                 }
 
                 // ---------------- AGE (DOB vs DOJ) VALIDATION ----------------
