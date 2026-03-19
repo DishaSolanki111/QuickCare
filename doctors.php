@@ -4,6 +4,7 @@ include "config.php";
 include "header.php";
 // Accept specialization from POST (schedule.php) or GET; if none, show all doctors
 $spec_id = isset($_POST['spec_id']) ? intval($_POST['spec_id']) : (isset($_GET['spec_id']) ? intval($_GET['spec_id']) : 0);
+$from_schedule = isset($_POST['from_schedule']) ? (int)$_POST['from_schedule'] : (isset($_GET['from_schedule']) ? (int)$_GET['from_schedule'] : 0);
 
 if ($spec_id > 0) {
     $q = "SELECT DOCTOR_ID, FIRST_NAME, LAST_NAME, PROFILE_IMAGE, SPECIALISATION_ID 
@@ -421,7 +422,7 @@ if ($spec_id > 0) {
     <section class="doctors-section">
         <div class="container">
             <div class="back-bar">
-                <a href="appointment.php" class="back-link">
+                <a href="<?php echo $from_schedule ? 'schedule.php' : 'appointment.php'; ?>" class="back-link">
                     <i class="fas fa-arrow-left"></i>
                     Back
                 </a>

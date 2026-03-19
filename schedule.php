@@ -653,6 +653,11 @@ if ($result->num_rows > 0) {
                     input.name = 'spec_id';
                     input.value = specId;
                     form.appendChild(input);
+                    const from = document.createElement('input');
+                    from.type = 'hidden';
+                    from.name = 'from_schedule';
+                    from.value = '1';
+                    form.appendChild(from);
                     document.body.appendChild(form);
                     form.submit();
                     return;
