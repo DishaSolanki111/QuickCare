@@ -246,7 +246,20 @@ if (isset($_POST['action']) && $_POST['action'] == 'delete' && isset($_POST['id'
         gap: 4px;
     }
 
+    .actions-td {
+        white-space: nowrap;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .actions-td .action-btn {
+        margin-right: 0;
+    }
+
     .edit-btn { background: #f39c12; color: white; }
+    .view-btn { background: #000000; color: white; }
     .delete-btn { background: #e74c3c; color: white; }
 
     .add-btn {
@@ -482,11 +495,18 @@ if (isset($_POST['action']) && $_POST['action'] == 'delete' && isset($_POST['id'
                     <td><?php echo $row['GENDER']; ?></td>
                     <td><?php echo $row['PHONE']; ?></td>
                     <td><?php echo $row['EMAIL']; ?></td>
-                    <td>
+                    <td class="actions-td">
                         <button class="action-btn edit-btn"
                             onclick="openEditModal(<?php echo $row['RECEPTIONIST_ID']; ?>, '<?php echo addslashes($row['FIRST_NAME']); ?>', '<?php echo addslashes($row['LAST_NAME']); ?>', '<?php echo $row['DOB']; ?>', '<?php echo $row['DOJ']; ?>', '<?php echo $row['GENDER']; ?>', '<?php echo $row['PHONE']; ?>', '<?php echo $row['EMAIL']; ?>', '<?php echo addslashes($row['ADDRESS']); ?>')">
                             <i class="bi bi-pencil"></i>
                             Edit
+                        </button>
+                        <button
+                            class="action-btn view-btn"
+                            type="button"
+                            onclick="window.location.href='admin_receptionist_profile_view.php?receptionist_id=<?php echo (int)$row['RECEPTIONIST_ID']; ?>';">
+                            <i class="bi bi-eye"></i>
+                            View
                         </button>
                         <button class="action-btn delete-btn"
                             onclick="deleteReceptionist(<?php echo $row['RECEPTIONIST_ID']; ?>)">

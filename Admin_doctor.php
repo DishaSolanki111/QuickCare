@@ -295,7 +295,17 @@ include 'admin_sidebar.php';
 
         .actions-td {
             white-space: nowrap;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
         }
+
+        .actions-td .action-btn {
+            margin: 0;
+        }
+
+        .view-btn { background-color: #000000; color: white; }
 
         /* Modal Styles */
         .modal {
@@ -590,6 +600,14 @@ include 'admin_sidebar.php';
                     <i class="bi bi-pencil"></i>
                     Edit
                 </button>
+
+                <form method="GET" action="admin_doctor_profile_view.php" style="display:inline;">
+                    <input type="hidden" name="doctor_id" value="<?php echo (int)$row['DOCTOR_ID']; ?>">
+                    <button type="submit" class="action-btn view-btn">
+                        <i class="bi bi-eye"></i>
+                        View
+                    </button>
+                </form>
 
                 <button type="button" class="action-btn delete-btn"
                     onclick="confirmDelete(<?php echo $row['DOCTOR_ID']; ?>)">
