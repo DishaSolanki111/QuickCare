@@ -1,6 +1,7 @@
 <?php
 session_start();
 include 'config.php';
+require_once 'notification_seen.php';
 
 // Check if user is logged in
 if (!isset($_SESSION['PATIENT_ID'])) {
@@ -29,7 +30,12 @@ if (!isset($_SESSION['PATIENT_ID'])) {
  $reminders = [];
 if ($result) {
     while ($row = mysqli_fetch_assoc($result)) {
+        $notifKey = qc_notification_make_key(
+            'appointment',
+            $patient_id . '|' . $row['APPOINTMENT_DATE'] . '|' . $row['APPOINTMENT_TIME'] . '|' . ($row['REMARKS'] ?? '')
+        );
         $reminders[] = [
+            'notif_key' => $notifKey,
             'message' => $row['REMARKS'],
             'date' => $row['APPOINTMENT_DATE'],
             'time' => $row['APPOINTMENT_TIME'],
@@ -56,7 +62,12 @@ if ($med_result) {
         if (!empty(trim($row['REMARKS']))) {
             $msg .= ' - ' . $row['REMARKS'];
         }
+        $notifKey = qc_notification_make_key(
+            'medicine',
+            $patient_id . '|' . $current_date . '|' . $row['REMINDER_TIME'] . '|' . $row['MED_NAME'] . '|' . ($row['REMARKS'] ?? '')
+        );
         $reminders[] = [
+            'notif_key' => $notifKey,
             'message' => $msg,
             'date' => $current_date,
             'time' => $row['REMINDER_TIME'],
@@ -70,7 +81,12 @@ if ($med_result) {
 $cn_query = @mysqli_query($conn, "SELECT REMARKS, START_DATE, REMINDER_TIME FROM medicine_reminder_tbl WHERE PATIENT_ID = $patient_id AND REMARKS LIKE '[CANCELLED]%' ORDER BY START_DATE DESC, REMINDER_TIME DESC LIMIT 5");
 if ($cn_query && mysqli_num_rows($cn_query) > 0) {
     while ($row = mysqli_fetch_assoc($cn_query)) {
+        $notifKey = qc_notification_make_key(
+            'cancellation',
+            $patient_id . '|' . $row['START_DATE'] . '|' . $row['REMINDER_TIME'] . '|' . ($row['REMARKS'] ?? '')
+        );
         $reminders[] = [
+            'notif_key' => $notifKey,
             'message' => str_replace('[CANCELLED] ', '', $row['REMARKS']),
             'date' => $row['START_DATE'],
             'time' => $row['REMINDER_TIME'],
@@ -80,5 +96,27 @@ if ($cn_query && mysqli_num_rows($cn_query) > 0) {
     }
 }
 
-echo json_encode(['status' => 'success', 'reminders' => $reminders]);
+$allKeys = array_map(function ($r) {
+    return $r['notif_key'] ?? '';
+}, $reminders);
+$seenMap = qc_notification_seen_map($conn, 'patient', $patient_id, $allKeys);
+$unseen = [];
+$toMarkSeen = [];
+foreach ($reminders as $item) {
+    $k = $item['notif_key'] ?? '';
+    if ($k !== '' && isset($seenMap[$k])) {
+        continue;
+    }
+    if ($k !== '') {
+        $toMarkSeen[] = $k;
+    }
+    unset($item['notif_key']);
+    $unseen[] = $item;
+}
+
+if (!empty($toMarkSeen)) {
+    qc_notification_mark_seen($conn, 'patient', $patient_id, $toMarkSeen);
+}
+
+echo json_encode(['status' => 'success', 'reminders' => $unseen]);
 ?>

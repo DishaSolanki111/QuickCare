@@ -3,6 +3,7 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
+require_once 'notification_seen.php';
 
 /**
  * Name resolution strategy:
@@ -41,16 +42,7 @@ if ($initials === '') {
 }
 
 // Auto-fetch appointment cancel/reschedule and schedule delete/reschedule notifications for receptionist when not set
-// Show reminders only once per login session to avoid constant repetition.
 if (!isset($reminder_query) && isset($conn)) {
-    if (session_status() === PHP_SESSION_NONE) {
-        session_start();
-    }
-
-    // If reminders have already been shown in this session, skip fetching again.
-    if (!empty($_SESSION['RECEP_REMINDERS_SEEN'] ?? false)) {
-        $reminder_query = [];
-    } else {
     $receptionist_reminders = [];
     $ar_q = @mysqli_query($conn, "
         SELECT ar.APPOINTMENT_REMINDER_ID, ar.REMARKS, a.APPOINTMENT_DATE, a.APPOINTMENT_TIME,
@@ -139,8 +131,41 @@ if (!isset($reminder_query) && isset($conn)) {
         $dt_b = ($b['APPOINTMENT_DATE'] ?? '') . ' ' . ($b['APPOINTMENT_TIME'] ?? '');
         return strcmp($dt_b, $dt_a);
     });
-    $reminder_query = $receptionist_reminders;
-    $_SESSION['RECEP_REMINDERS_SEEN'] = true;
+
+    $rid = (int)($_SESSION['RECEPTIONIST_ID'] ?? 0);
+    if ($rid > 0) {
+        $allKeys = [];
+        $processed = [];
+        foreach ($receptionist_reminders as $row) {
+            $k = qc_notification_make_key(
+                'receptionist',
+                $rid . '|' . ($row['TITLE'] ?? '') . '|' . ($row['APPOINTMENT_DATE'] ?? '') . '|' . ($row['APPOINTMENT_TIME'] ?? '') . '|' . ($row['REMARKS'] ?? '')
+            );
+            $row['_notif_key'] = $k;
+            $allKeys[] = $k;
+            $processed[] = $row;
+        }
+
+        $seenMap = qc_notification_seen_map($conn, 'receptionist', $rid, $allKeys);
+        $toMarkSeen = [];
+        $filtered = [];
+        foreach ($processed as $row) {
+            $k = $row['_notif_key'] ?? '';
+            if ($k !== '' && isset($seenMap[$k])) {
+                continue;
+            }
+            if ($k !== '') {
+                $toMarkSeen[] = $k;
+            }
+            unset($row['_notif_key']);
+            $filtered[] = $row;
+        }
+        if (!empty($toMarkSeen)) {
+            qc_notification_mark_seen($conn, 'receptionist', $rid, $toMarkSeen);
+        }
+        $reminder_query = $filtered;
+    } else {
+        $reminder_query = $receptionist_reminders;
     }
 }
 
