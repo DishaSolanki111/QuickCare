@@ -14,8 +14,17 @@ include 'config.php';
  $patient_query = mysqli_query($conn, "SELECT * FROM patient_tbl WHERE PATIENT_ID = '$patient_id'");
  $patient = mysqli_fetch_assoc($patient_query);
 
-// Get selected specialization from query parameters
- $selected_specialization = isset($_POST['specialization']) ? mysqli_real_escape_string($conn, $_POST['specialization']) : '';
+// Get selected specialization and preserve it across profile back-navigation
+ $selected_specialization = '';
+if (isset($_POST['specialization'])) {
+    $selected_specialization = mysqli_real_escape_string($conn, $_POST['specialization']);
+} elseif (isset($_POST['spec_id'])) {
+    $selected_specialization = mysqli_real_escape_string($conn, $_POST['spec_id']);
+} elseif (isset($_GET['specialization'])) {
+    $selected_specialization = mysqli_real_escape_string($conn, $_GET['specialization']);
+} elseif (isset($_GET['spec_id'])) {
+    $selected_specialization = mysqli_real_escape_string($conn, $_GET['spec_id']);
+}
 
 // Fetch specializations for filter
  $specializations_query = mysqli_query($conn, "SELECT * FROM specialisation_tbl ORDER BY SPECIALISATION_NAME");
@@ -668,7 +677,6 @@ mysqli_data_seek($specializations_query, 0);
 
 <div class="form-group" style="display: flex; align-items: flex-end;">
 <button type="submit" class="btn btn-primary">Search</button>
-<a href="view_doctor_patient.php" class="btn" style="margin-left: 10px; background-color: #e74c3c; color: white; text-decoration: none;">Reset</a>
 </div>
 </form>
 </div>
@@ -707,6 +715,7 @@ while ($doctor = mysqli_fetch_assoc($doctors_result)) {
             <form method="POST" action="d_profile.php" style="display:inline">
             <input type="hidden" name="id" value="<?php echo $doctor['DOCTOR_ID']; ?>">
             <input type="hidden" name="source" value="view_doctor_patient">
+            <input type="hidden" name="spec_id" value="<?php echo htmlspecialchars($selected_specialization); ?>">
             <button type="submit" class="btn btn-primary"><i class="fas fa-user-md"></i> View Profile</button>
             </form>
 <form method="POST" action="book_appointment_date.php" style="display:inline">
