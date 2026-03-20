@@ -434,6 +434,11 @@ body::before {
                 text-align: center;
             }
         }
+
+        /* Password eye toggle */
+        .password-container {
+            position: relative;
+        }
     </style>
 </head>
 <body>
@@ -476,7 +481,9 @@ body::before {
                         
                         <div class="form-group">
                             <label for="login_password">Password</label>
-                            <input type="password" class="form-control" id="login_password" placeholder="Enter your password" required>
+                            <div class="password-container">
+                                <input type="password" class="form-control" id="login_password" placeholder="Enter your password" required>
+                            </div>
                         </div>
                         
                         <div class="form-group">
@@ -486,7 +493,11 @@ body::before {
                         </div>
                         
                         <p>Don't have an account? <a href="patientform.php">Register here</a></p>
-                        <p><a href="forgot_password.php">Forgot password?</a></p>
+                        <p>
+                            <a href="forgot_password.php?role=patient&source=book_appointment_login">
+                                Forgot password?
+                            </a>
+                        </p>
                     </div>
                     
                     <div class="btn-group">
@@ -527,6 +538,20 @@ body::before {
     <script>
     function goBack() {
         window.location.href = 'book_appointment_time.php';
+    }
+    
+    function togglePasswordVisibility(inputId, btnEl) {
+        const input = document.getElementById(inputId);
+        if (!input) return;
+
+        const isPassword = input.type === 'password';
+        input.type = isPassword ? 'text' : 'password';
+
+        if (btnEl) {
+            btnEl.innerHTML = isPassword
+                ? '<i class="fas fa-eye-slash"></i>'
+                : '<i class="fas fa-eye"></i>';
+        }
     }
     
     // Login function
@@ -573,6 +598,11 @@ body::before {
                 document.getElementById('login_username').disabled = true;
                 document.getElementById('login_password').disabled = true;
                 loginButton.style.display = 'none';
+
+                // Acknowledge + automatically redirect to confirmation step
+                setTimeout(() => {
+                    window.location.href = 'book_appointment_confirm.php';
+                }, 1200);
             } else {
                 // Login failed
                 document.getElementById('loginError').textContent = data.message || 'Login failed. Please try again.';

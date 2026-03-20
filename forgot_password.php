@@ -18,8 +18,23 @@ $prefilled_role = isset($_GET['role']) ? strtolower(trim($_GET['role'])) : '';
 if (!in_array($prefilled_role, ['patient', 'doctor', 'receptionist'], true)) {
     $prefilled_role = '';
 }
-// Helper for re-using role in links/forms
+// Source of navigation (used for correct back/redirect behavior)
+$source = isset($_GET['source']) ? strtolower(trim($_GET['source'])) : '';
+if (!in_array($source, ['book_appointment_login'], true)) {
+    $source = '';
+}
+
+// If coming from book_appointment_login.php, default to patient role
+if ($source === 'book_appointment_login' && $prefilled_role === '') {
+    $prefilled_role = 'patient';
+}
+
+// Helper for re-using role + source in links/forms
 $role_query = $prefilled_role ? ('?role=' . urlencode($prefilled_role)) : '';
+$source_query = $source !== '' ? (($role_query ? '&' : '?') . 'source=' . urlencode($source)) : '';
+$common_query = $role_query . $source_query;
+
+$back_login_href = ($source === 'book_appointment_login') ? 'book_appointment_login.php' : 'login_for_all.php';
 
 // If we already started a reset, keep user context in session
 if (!isset($_SESSION['reset_user_type'])) {
@@ -208,8 +223,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } elseif ($password !== $confirm_password) {
             $error_message = 'Passwords do not match.';
             $stage = 'set';
-        } elseif (strlen($password) < 6) {
-            $error_message = 'Password should be at least 6 characters long.';
+        } elseif (strlen($password) < 8) {
+            $error_message = 'Password must be at least 8 characters long.';
+            $stage = 'set';
+        } elseif (!preg_match('/[A-Z]/', $password)) {
+            $error_message = 'Password must contain at least 1 uppercase letter (A-Z).';
+            $stage = 'set';
+        } elseif (!preg_match('/[a-z]/', $password)) {
+            $error_message = 'Password must contain at least 1 lowercase letter (a-z).';
+            $stage = 'set';
+        } elseif (!preg_match('/[0-9]/', $password)) {
+            $error_message = 'Password must contain at least 1 digit (0-9).';
+            $stage = 'set';
+        } elseif (!preg_match('/[^A-Za-z0-9]/', $password)) {
+            $error_message = 'Password must contain at least 1 special character.';
             $stage = 'set';
         } else {
             $hash = password_hash($password, PASSWORD_DEFAULT);
@@ -480,6 +507,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             margin-bottom: 12px;
             border: 1px solid rgba(209, 213, 219, 0.8);
         }
+
+        .password-container {
+            position: relative;
+            margin-bottom: 14px;
+        }
+
     </style>
 </head>
 <body>
@@ -492,7 +525,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="error"><?php echo htmlspecialchars($error_message); ?></div>
             <?php endif; ?>
 
-            <form method="POST" action="forgot_password.php<?php echo $role_query; ?>">
+            <form method="POST" action="forgot_password.php<?php echo $common_query; ?>">
                 <input type="hidden" name="step" value="request">
 
                 <?php if ($prefilled_role): ?>
@@ -517,7 +550,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </form>
 
             <div class="back-link">
-                <a href="login_for_all.php">
+                <a href="<?php echo htmlspecialchars($back_login_href, ENT_QUOTES); ?>">
                     <i class="fas fa-arrow-left"></i>
                     Back to login
                 </a>
@@ -538,7 +571,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
             ?>
 
-            <form method="POST" action="forgot_password.php">
+            <form method="POST" action="forgot_password.php<?php echo $common_query; ?>">
                 <input type="hidden" name="step" value="security">
 
                 <label>Security Question</label>
@@ -553,7 +586,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </form>
 
             <div class="back-link">
-                <a href="forgot_password.php<?php echo $role_query; ?>">
+                <a href="forgot_password.php<?php echo $common_query; ?>">
                     <i class="fas fa-rotate-left"></i>
                     Start over
                 </a>
@@ -570,7 +603,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="info"><?php echo htmlspecialchars($info_message); ?></div>
             <?php endif; ?>
 
-            <form method="POST" action="forgot_password.php">
+            <form method="POST" action="forgot_password.php<?php echo $common_query; ?>">
                 <input type="hidden" name="step" value="verify">
 
                 <label for="otp">OTP</label>
@@ -580,7 +613,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </form>
 
             <div class="back-link">
-                <a href="forgot_password.php<?php echo $role_query; ?>">
+                <a href="forgot_password.php<?php echo $common_query; ?>">
                     <i class="fas fa-rotate-left"></i>
                     Start over
                 </a>
@@ -594,20 +627,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="error"><?php echo htmlspecialchars($error_message); ?></div>
             <?php endif; ?>
 
-            <form method="POST" action="forgot_password.php">
+            <form method="POST" action="forgot_password.php<?php echo $common_query; ?>">
                 <input type="hidden" name="step" value="set">
 
                 <label for="password">New Password</label>
-                <input type="password" name="password" id="password" required>
+                <div class="password-container">
+                    <input type="password" name="password" id="password" required>
+                </div>
 
                 <label for="confirm_password">Confirm New Password</label>
-                <input type="password" name="confirm_password" id="confirm_password" required>
+                <div class="password-container">
+                    <input type="password" name="confirm_password" id="confirm_password" required>
+                </div>
 
                 <button type="submit">Save New Password</button>
             </form>
 
             <div class="back-link">
-                <a href="forgot_password.php<?php echo $role_query; ?>">
+                <a href="forgot_password.php<?php echo $common_query; ?>">
                     <i class="fas fa-rotate-left"></i>
                     Start over
                 </a>
@@ -618,7 +655,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <p class="sub">Your password has been reset. You can now log in with your new password.</p>
 
             <div class="back-link">
-                <a href="login_for_all.php">
+                <a href="<?php echo htmlspecialchars($back_login_href, ENT_QUOTES); ?>">
                     <i class="fas fa-sign-in-alt"></i>
                     Go to login
                 </a>
@@ -626,5 +663,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <?php endif; ?>
     </div>
+
+    <script>
+        function togglePasswordVisibility(inputId, btnEl) {
+            const input = document.getElementById(inputId);
+            if (!input) return;
+
+            const isPassword = input.type === 'password';
+            input.type = isPassword ? 'text' : 'password';
+
+            if (btnEl) {
+                btnEl.innerHTML = isPassword
+                    ? '<i class="fas fa-eye-slash"></i>'
+                    : '<i class="fas fa-eye"></i>';
+            }
+        }
+    </script>
 </body>
 </html>

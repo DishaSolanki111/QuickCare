@@ -616,7 +616,7 @@ body::before {
 
     <script>
     function goBackFromDate() {
-        window.history.back();
+        window.location.href = 'doctors.php';
     }
 
     // Initialize the page
