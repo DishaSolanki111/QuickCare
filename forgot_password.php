@@ -226,8 +226,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } elseif (strlen($password) < 8) {
             $error_message = 'Password must be at least 8 characters long.';
             $stage = 'set';
-        } elseif (!preg_match('/[A-Z]/', $password)) {
-            $error_message = 'Password must contain at least 1 uppercase letter (A-Z).';
+        } elseif (!preg_match('/^[A-Z]/', $password)) {
+            $error_message = 'Password must start with a capital letter (A-Z).';
             $stage = 'set';
         } elseif (!preg_match('/[a-z]/', $password)) {
             $error_message = 'Password must contain at least 1 lowercase letter (a-z).';

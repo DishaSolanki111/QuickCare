@@ -8,6 +8,8 @@ if (!isset($_SESSION['RECEPTIONIST_ID'])) {
 }
 
 include 'config.php';
+require_once 'username_validation.php';
+require_once 'account_validation.php';
 include 'recept_sidebar.php';
  $receptionist_id = $_SESSION['RECEPTIONIST_ID'];
 
@@ -21,66 +23,173 @@ include 'recept_sidebar.php';
 // Handle user creation
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create_user'])) {
     $user_type = mysqli_real_escape_string($conn, $_POST['user_type']);
+
+    // Enforce strict username rules + normalization for case-insensitive uniqueness
+    $usernameRaw = $_POST['username'] ?? '';
+    $usernameNormalized = '';
+    $usernameError = '';
+    if (!qc_validate_username($usernameRaw, $usernameNormalized, $usernameError)) {
+        $error_message = $usernameError;
+    }
     
     if ($user_type === 'patient') {
-        $first_name = mysqli_real_escape_string($conn, $_POST['first_name']);
-        $last_name = mysqli_real_escape_string($conn, $_POST['last_name']);
-        $username = mysqli_real_escape_string($conn, $_POST['username']);
-        $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
+        $first_name_raw = $_POST['first_name'] ?? '';
+        $last_name_raw = $_POST['last_name'] ?? '';
+        $username = $usernameNormalized;
         $dob = mysqli_real_escape_string($conn, $_POST['dob']);
         $gender = mysqli_real_escape_string($conn, $_POST['gender']);
         $blood_group = mysqli_real_escape_string($conn, $_POST['blood_group']);
         $phone = mysqli_real_escape_string($conn, $_POST['phone']);
-        $email = mysqli_real_escape_string($conn, $_POST['email']);
+        $email_raw = $_POST['email'] ?? '';
+        $email = mysqli_real_escape_string($conn, $email_raw);
         $address = mysqli_real_escape_string($conn, $_POST['address']);
-        
-        $create_query = "INSERT INTO patient_tbl (FIRST_NAME, LAST_NAME, USERNAME, PSWD, DOB, GENDER, BLOOD_GROUP, PHONE, EMAIL, ADDRESS) 
-                         VALUES ('$first_name', '$last_name', '$username', '$password', '$dob', '$gender', '$blood_group', '$phone', '$email', '$address')";
-        
-        if (mysqli_query($conn, $create_query)) {
-            $success_message = "Patient account created successfully!";
+        $passwordRaw = $_POST['password'] ?? '';
+
+        // Validate name + password before hashing/insert
+        $first_nameNormalized = '';
+        $last_nameNormalized = '';
+        if (!qc_validate_person_name($first_name_raw, $first_nameNormalized, $first_nameErr)) {
+            $error_message = $first_nameErr;
+        } elseif (!qc_validate_person_name($last_name_raw, $last_nameNormalized, $last_nameErr)) {
+            $error_message = $last_nameErr;
+        } elseif (!qc_validate_password($passwordRaw, $usernameNormalized, strtolower(trim((string)$email_raw)), $passwordErr)) {
+            $error_message = $passwordErr;
         } else {
-            $error_message = "Error creating patient account: " . mysqli_error($conn);
+            $first_name = mysqli_real_escape_string($conn, $first_nameNormalized);
+            $last_name = mysqli_real_escape_string($conn, $last_nameNormalized);
+            $password = password_hash($passwordRaw, PASSWORD_DEFAULT);
+        }
+
+        if (empty($error_message)) {
+            $stmt = $conn->prepare("SELECT COUNT(*) as cnt FROM patient_tbl WHERE LOWER(USERNAME) = ?");
+            $stmt->bind_param("s", $username);
+            $stmt->execute();
+            $check_result = $stmt->get_result();
+            $exists = ($check_result && $check_result->fetch_assoc()['cnt'] > 0);
+            $stmt->close();
+
+            if ($exists) {
+                $error_message = "Username already exists. Please choose another one.";
+            } else {
+                $create_query = "INSERT INTO patient_tbl (FIRST_NAME, LAST_NAME, USERNAME, PSWD, DOB, GENDER, BLOOD_GROUP, PHONE, EMAIL, ADDRESS) 
+                                 VALUES ('$first_name', '$last_name', '$username', '$password', '$dob', '$gender', '$blood_group', '$phone', '$email', '$address')";
+                
+                if (mysqli_query($conn, $create_query)) {
+                    $success_message = "Patient account created successfully!";
+                } else {
+                    $error_message = "Error creating patient account: " . mysqli_error($conn);
+                }
+            }
         }
     } elseif ($user_type === 'doctor') {
         $specialisation_id = mysqli_real_escape_string($conn, $_POST['specialisation_id']);
-        $first_name = mysqli_real_escape_string($conn, $_POST['first_name']);
-        $last_name = mysqli_real_escape_string($conn, $_POST['last_name']);
-        $username = mysqli_real_escape_string($conn, $_POST['username']);
-        $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
+        $first_name_raw = $_POST['first_name'] ?? '';
+        $last_name_raw = $_POST['last_name'] ?? '';
+        $username = $usernameNormalized;
+        $passwordRaw = $_POST['password'] ?? '';
         $dob = mysqli_real_escape_string($conn, $_POST['dob']);
         $doj = mysqli_real_escape_string($conn, $_POST['doj']);
         $gender = mysqli_real_escape_string($conn, $_POST['gender']);
         $phone = mysqli_real_escape_string($conn, $_POST['phone']);
-        $email = mysqli_real_escape_string($conn, $_POST['email']);
-        
-        $create_query = "INSERT INTO doctor_tbl (SPECIALISATION_ID, FIRST_NAME, LAST_NAME, USERNAME, PSWD, DOB, DOJ, GENDER, PHONE, EMAIL) 
-                         VALUES ('$specialisation_id', '$first_name', '$last_name', '$username', '$password', '$dob', '$doj', '$gender', '$phone', '$email')";
-        
-        if (mysqli_query($conn, $create_query)) {
-            $success_message = "Doctor account created successfully!";
-        } else {
-            $error_message = "Error creating doctor account: " . mysqli_error($conn);
+        $email_raw = $_POST['email'] ?? '';
+        $email = mysqli_real_escape_string($conn, $email_raw);
+
+        // Validate name + password before hashing/insert
+        if (empty($error_message)) {
+            $first_nameNormalized = '';
+            $last_nameNormalized = '';
+
+            if (!qc_validate_person_name($first_name_raw, $first_nameNormalized, $first_nameErr)) {
+                $error_message = $first_nameErr;
+            } elseif (!qc_validate_person_name($last_name_raw, $last_nameNormalized, $last_nameErr)) {
+                $error_message = $last_nameErr;
+            } else {
+                $passwordErr = '';
+                if (!qc_validate_password($passwordRaw, $usernameNormalized, strtolower(trim((string)$email_raw)), $passwordErr)) {
+                    $error_message = $passwordErr;
+                } else {
+                    $first_name = mysqli_real_escape_string($conn, $first_nameNormalized);
+                    $last_name = mysqli_real_escape_string($conn, $last_nameNormalized);
+                    $password = password_hash($passwordRaw, PASSWORD_DEFAULT);
+                }
+            }
+        }
+
+        if (empty($error_message)) {
+            $stmt = $conn->prepare("SELECT COUNT(*) as cnt FROM doctor_tbl WHERE LOWER(USERNAME) = ?");
+            $stmt->bind_param("s", $username);
+            $stmt->execute();
+            $check_result = $stmt->get_result();
+            $exists = ($check_result && $check_result->fetch_assoc()['cnt'] > 0);
+            $stmt->close();
+
+            if ($exists) {
+                $error_message = "Username already exists. Please choose another one.";
+            } else {
+                $create_query = "INSERT INTO doctor_tbl (SPECIALISATION_ID, FIRST_NAME, LAST_NAME, USERNAME, PSWD, DOB, DOJ, GENDER, PHONE, EMAIL) 
+                                 VALUES ('$specialisation_id', '$first_name', '$last_name', '$username', '$password', '$dob', '$doj', '$gender', '$phone', '$email')";
+                
+                if (mysqli_query($conn, $create_query)) {
+                    $success_message = "Doctor account created successfully!";
+                } else {
+                    $error_message = "Error creating doctor account: " . mysqli_error($conn);
+                }
+            }
         }
     } elseif ($user_type === 'receptionist') {
-        $first_name = mysqli_real_escape_string($conn, $_POST['first_name']);
-        $last_name = mysqli_real_escape_string($conn, $_POST['last_name']);
-        $username = mysqli_real_escape_string($conn, $_POST['username']);
-        $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
+        $first_name_raw = $_POST['first_name'] ?? '';
+        $last_name_raw = $_POST['last_name'] ?? '';
+        $username = $usernameNormalized;
+        $passwordRaw = $_POST['password'] ?? '';
         $dob = mysqli_real_escape_string($conn, $_POST['dob']);
         $doj = mysqli_real_escape_string($conn, $_POST['doj']);
         $gender = mysqli_real_escape_string($conn, $_POST['gender']);
         $phone = mysqli_real_escape_string($conn, $_POST['phone']);
-        $email = mysqli_real_escape_string($conn, $_POST['email']);
+        $email_raw = $_POST['email'] ?? '';
+        $email = mysqli_real_escape_string($conn, $email_raw);
         $address = mysqli_real_escape_string($conn, $_POST['address']);
-        
-        $create_query = "INSERT INTO receptionist_tbl (FIRST_NAME, LAST_NAME, DOB, DOJ, GENDER, PHONE, EMAIL, ADDRESS, USERNAME, PSWD) 
-                         VALUES ('$first_name', '$last_name', '$dob', '$doj', '$gender', '$phone', '$email', '$address', '$username', '$password')";
-        
-        if (mysqli_query($conn, $create_query)) {
-            $success_message = "Receptionist account created successfully!";
-        } else {
-            $error_message = "Error creating receptionist account: " . mysqli_error($conn);
+
+        // Validate name + password before hashing/insert
+        if (empty($error_message)) {
+            $first_nameNormalized = '';
+            $last_nameNormalized = '';
+
+            if (!qc_validate_person_name($first_name_raw, $first_nameNormalized, $first_nameErr)) {
+                $error_message = $first_nameErr;
+            } elseif (!qc_validate_person_name($last_name_raw, $last_nameNormalized, $last_nameErr)) {
+                $error_message = $last_nameErr;
+            } else {
+                $passwordErr = '';
+                if (!qc_validate_password($passwordRaw, $usernameNormalized, strtolower(trim((string)$email_raw)), $passwordErr)) {
+                    $error_message = $passwordErr;
+                } else {
+                    $first_name = mysqli_real_escape_string($conn, $first_nameNormalized);
+                    $last_name = mysqli_real_escape_string($conn, $last_nameNormalized);
+                    $password = password_hash($passwordRaw, PASSWORD_DEFAULT);
+                }
+            }
+        }
+
+        if (empty($error_message)) {
+            $stmt = $conn->prepare("SELECT COUNT(*) as cnt FROM receptionist_tbl WHERE LOWER(USERNAME) = ?");
+            $stmt->bind_param("s", $username);
+            $stmt->execute();
+            $check_result = $stmt->get_result();
+            $exists = ($check_result && $check_result->fetch_assoc()['cnt'] > 0);
+            $stmt->close();
+
+            if ($exists) {
+                $error_message = "Username already exists. Please choose another one.";
+            } else {
+                $create_query = "INSERT INTO receptionist_tbl (FIRST_NAME, LAST_NAME, DOB, DOJ, GENDER, PHONE, EMAIL, ADDRESS, USERNAME, PSWD) 
+                                 VALUES ('$first_name', '$last_name', '$dob', '$doj', '$gender', '$phone', '$email', '$address', '$username', '$password')";
+                
+                if (mysqli_query($conn, $create_query)) {
+                    $success_message = "Receptionist account created successfully!";
+                } else {
+                    $error_message = "Error creating receptionist account: " . mysqli_error($conn);
+                }
+            }
         }
     }
 }
