@@ -493,28 +493,9 @@ html {
             <!-- Header -->
             <?php include 'patient_header.php'; ?>
             
-            <!-- Tabs Section (same style as manage_appointments.php) -->
-            <div class="tabs">
-                <div class="tab <?php echo $active_tab === 'your-feedback' ? 'active' : ''; ?>" data-tab="your-feedback">Your Feedback</div>
-                <div class="tab <?php echo $active_tab === 'all-feedback' ? 'active' : ''; ?>" data-tab="all-feedback">All Feedback</div>
-            </div>
+            <!-- Feedback Section -->
 
-            <!-- Filter by Star Rating: 1 to 5 stars -->
-            <form method="GET" action="patient_feedback.php" id="feedbackFilterForm" style="margin-bottom:20px;">
-                <input type="hidden" name="tab" id="filterTabInput" value="<?php echo htmlspecialchars($active_tab); ?>">
-                <label for="filter_rating" style="margin-right:10px;">Filter by rating:</label>
-                <select name="filter_rating" id="filter_rating" class="form-control" style="display:inline-block; width:auto; margin-right:10px;">
-                    <option value="" <?php echo $filter_rating == 0 ? 'selected' : ''; ?>>All</option>
-                    <option value="1" <?php echo $filter_rating == 1 ? 'selected' : ''; ?>>1 Star</option>
-                    <option value="2" <?php echo $filter_rating == 2 ? 'selected' : ''; ?>>2 Stars</option>
-                    <option value="3" <?php echo $filter_rating == 3 ? 'selected' : ''; ?>>3 Stars</option>
-                    <option value="4" <?php echo $filter_rating == 4 ? 'selected' : ''; ?>>4 Stars</option>
-                    <option value="5" <?php echo $filter_rating == 5 ? 'selected' : ''; ?>>5 Stars</option>
-                </select>
-                <button type="submit" class="btn btn-primary" style="vertical-align:middle;">
-                Search
-                </button>
-            </form>
+
             
             <!-- Success/Error Messages -->
             <?php if (isset($success_message)): ?>
@@ -530,8 +511,8 @@ html {
             <?php endif; ?>
             
 
-            <!-- Tab Content: Your Feedback -->
-            <div class="tab-content <?php echo $active_tab === 'your-feedback' ? 'active' : ''; ?>" id="your-feedback">
+            <!-- Your Feedback -->
+            <div id="your-feedback">
                 <?php if ($appointment_details): ?>
                 <div class="feedback-card">
                     <div class="feedback-header">
@@ -656,88 +637,7 @@ html {
                 ?>
             </div>
 
-            <!-- Tab Content: All Feedback -->
-            <div class="tab-content <?php echo $active_tab === 'all-feedback' ? 'active' : ''; ?>" id="all-feedback">
-                <h3 style="margin-bottom: 20px;">All Patient Feedback</h3>
-                <?php
-                $all_rating_where = ($filter_rating >= 1 && $filter_rating <= 5) ? " AND f.RATING = " . $filter_rating : "";
-                $all_feedback_query = mysqli_query(
-                    $conn,
-                    "SELECT 
-                        f.RATING, 
-                        f.COMMENTS, 
-                        p.FIRST_NAME AS P_FNAME, 
-                        p.LAST_NAME AS P_LNAME, 
-                        d.FIRST_NAME AS D_FNAME, 
-                        d.LAST_NAME AS D_LNAME,
-                        s.SPECIALISATION_NAME
-                     FROM feedback_tbl f 
-                     JOIN appointment_tbl a ON f.APPOINTMENT_ID = a.APPOINTMENT_ID 
-                     JOIN patient_tbl p ON a.PATIENT_ID = p.PATIENT_ID 
-                     JOIN doctor_tbl d ON a.DOCTOR_ID = d.DOCTOR_ID
-                     JOIN specialisation_tbl s ON d.SPECIALISATION_ID = s.SPECIALISATION_ID
-                     WHERE 1=1 $all_rating_where
-                     ORDER BY f.RATING ASC, f.FEEDBACK_ID DESC"
-                );
-                if ($all_feedback_query && mysqli_num_rows($all_feedback_query) > 0) {
-                    // Group all feedback rows by doctor so each doctor has one card
-                    $allDoctorGroups = [];
-                    while ($row = mysqli_fetch_assoc($all_feedback_query)) {
-                        $doctorName = $row['D_FNAME'] . ' ' . $row['D_LNAME'];
-                        $specName   = $row['SPECIALISATION_NAME'];
-                        $groupKey   = $doctorName . '|' . $specName;
 
-                        if (!isset($allDoctorGroups[$groupKey])) {
-                            $allDoctorGroups[$groupKey] = [
-                                'doctor_name'   => $doctorName,
-                                'specialisation'=> $specName,
-                                'entries'       => []
-                            ];
-                        }
-                        $allDoctorGroups[$groupKey]['entries'][] = $row;
-                    }
-
-                    foreach ($allDoctorGroups as $group) {
-                        ?>
-                        <div class="feedback-card">
-                            <div class="feedback-header">
-                                <div>
-                                    <h3>Dr. <?php echo htmlspecialchars($group['doctor_name']); ?></h3>
-                                    <div class="feedback-subtitle">
-                                        <?php echo htmlspecialchars($group['specialisation']); ?>
-                                    </div>
-                                </div>
-                            </div>
-                            <?php foreach ($group['entries'] as $entry): ?>
-                                <div style="padding-top:8px; padding-bottom:10px; border-top:1px solid #edf2f7; margin-top:8px;">
-                                    <div class="feedback-patient">
-                                        <i class="fas fa-user"></i>
-                                        <span><?php echo htmlspecialchars($entry['P_FNAME'] . ' ' . $entry['P_LNAME']); ?></span>
-                                    </div>
-                                    <div class="rating rating-inline">
-                                        <div class="rating-stars">
-                                            <?php for ($i = 1; $i <= 5; $i++): ?>
-                                                <i class="fas fa-star star-display <?php echo $i <= $entry['RATING'] ? 'active' : ''; ?>"></i>
-                                            <?php endfor; ?>
-                                        </div>
-                                        <span class="rating-value"><?php echo $entry['RATING']; ?>/5</span>
-                                    </div>
-                                    <div class="feedback-text">
-                                        <?php echo htmlspecialchars($entry['COMMENTS']); ?>
-                                    </div>
-                                </div>
-                            <?php endforeach; ?>
-                        </div>
-                        <?php
-                    }
-                } else {
-                    echo '<div class="empty-state">
-                        <i class="fas fa-comment-slash"></i>
-                        <p>No feedback found</p>
-                    </div>';
-                }
-                ?>
-            </div>
 
             <!-- Feedback Modal -->
             <div id="feedbackModal" class="modal">

@@ -271,7 +271,7 @@ include 'header.php';
             box-shadow: var(--shadow);
             transition: all 0.3s ease;
             text-align: center;
-            padding: 2rem 1.5rem;
+            padding: 1.5rem 1.25rem;
             border: 1px solid #e0e0e0;
         }
 
@@ -282,9 +282,9 @@ include 'header.php';
         }
 
         .specialist-icon {
-            width: 80px;
-            height: 80px;
-            margin: 0 auto 1.5rem;
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 1rem;
             background-color: var(--light-blue);
             border-radius: 50%;
             display: flex;
@@ -299,7 +299,7 @@ include 'header.php';
         }
 
         .specialist-icon i {
-            font-size: 2rem;
+            font-size: 1.5rem;
             color: var(--primary-blue);
         }
 
@@ -308,7 +308,7 @@ include 'header.php';
         }
 
         .specialist-title {
-            font-size: 1.5rem;
+            font-size: 1.25rem;
             margin-bottom: 0.5rem;
             color: var(--text-dark);
         }
@@ -338,6 +338,57 @@ include 'header.php';
 
         .specialist-link:hover i {
             transform: translateX(5px);
+        }
+
+        /* ===== STATIC WORKFLOW ===== */
+        .workflow {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-top: 20px;
+            position: relative;
+            gap: 5px;
+        }
+
+        .workflow::before {
+            content: "";
+            position: absolute;
+            top: 15px;
+            left: 8%;
+            right: 8%;
+            height: 2px;
+            background: #d6e4ff;
+            z-index: 0;
+        }
+
+        .workflow-step {
+            flex: 1;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+            min-width: 0;
+        }
+
+        .workflow-circle {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+            color: #fff;
+            font-size: 0.85rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 6px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        .workflow-step p {
+            font-size: 0.75rem;
+            font-weight: 600;
+            line-height: 1.2;
+            color: var(--dark);
         }
 
         /* Features Section - Now with White Background */
@@ -668,44 +719,120 @@ include 'header.php';
         <div class="wave-container"></div>
     </div>
 
-    <!-- Popular Specialists Section with White Background -->
-    <section class="specialists" id="specialists-section">
+    <!-- Services Section with White Background -->
+    <section class="specialists" id="services-section">
         <div class="container">
-            <h2 class="section-title fade-in">Our Specialists</h2>
-            <p class="section-subtitle fade-in">Find right specialist for your health needs</p>
+            <h2 class="section-title fade-in">Our Services</h2>
+            <p class="section-subtitle fade-in">Comprehensive healthcare solutions for you</p>
             <div class="specialist-cards">
-                <div class="specialist-card fade-in">
-                    <div class="specialist-icon">
-                        <i class="fas fa-user-md"></i>
+                
+                <!-- Service 1 -->
+                <div class="specialist-card fade-in" style="text-align: left;">
+                    <div class="specialist-icon" style="margin: 0 auto 1.5rem;">
+                        <i class="fas fa-calendar-check"></i>
                     </div>
-                    <h3 class="specialist-title">Pediatrician</h3>
-                    <p class="specialist-subtitle">Child Specialist</p>
+                    <h3 class="specialist-title" style="text-align: center;">Online Appointment Booking</h3>
+                    <p class="specialist-subtitle" style="text-align: center; margin-bottom: 20px;">Patients can book doctor appointments easily without waiting in queues.</p>
                     
-                </div>
-                <div class="specialist-card fade-in">
-                    <div class="specialist-icon">
-                        <i class="fas fa-heartbeat"></i>
+                    <ul style="list-style: none; padding: 0; margin-bottom: 20px;">
+                        <li style="padding: 6px 0; color: #5f6368; font-size: 0.95rem;"><span style="color: var(--primary); margin-right: 8px;">✔</span> Easy online booking system</li>
+                        <li style="padding: 6px 0; color: #5f6368; font-size: 0.95rem;"><span style="color: var(--primary); margin-right: 8px;">✔</span> Doctor & specialization selection</li>
+                        <li style="padding: 6px 0; color: #5f6368; font-size: 0.95rem;"><span style="color: var(--primary); margin-right: 8px;">✔</span> Date and time slot availability</li>
+                        <li style="padding: 6px 0; color: #5f6368; font-size: 0.95rem;"><span style="color: var(--primary); margin-right: 8px;">✔</span> Appointment history tracking</li>
+                    </ul>
+                    
+                    <div class="workflow">
+                        <div class="workflow-step">
+                            <div class="workflow-circle">1</div>
+                            <p>select doctor</p>
+                        </div>
+                        <div class="workflow-step">
+                            <div class="workflow-circle">2</div>
+                            <p>select date & time</p>
+                        </div>
+                        <div class="workflow-step">
+                            <div class="workflow-circle">3</div>
+                            <p>Login</p>
+                        </div>
+                        <div class="workflow-step">
+                            <div class="workflow-circle">4</div>
+                            <p>Payment</p>
+                        </div>
+                        <div class="workflow-step">
+                            <div class="workflow-circle">5</div>
+                            <p>Confirm</p>
+                        </div>
                     </div>
-                    <h3 class="specialist-title">Cardiologist</h3>
-                    <p class="specialist-subtitle">Heart Specialist</p>
-                   
                 </div>
-                <div class="specialist-card fade-in">
-                    <div class="specialist-icon">
-                        <i class="fas fa-bone"></i>
+                
+                <!-- Service 2 -->
+                <div class="specialist-card fade-in" style="text-align: left;">
+                    <div class="specialist-icon" style="margin: 0 auto 1.5rem;">
+                        <i class="fas fa-file-medical"></i>
                     </div>
-                    <h3 class="specialist-title">Orthopedics</h3>
-                    <p class="specialist-subtitle">Joint and bones Specialist</p>
-                  
-                </div>
-                <div class="specialist-card fade-in">
-                    <div class="specialist-icon">
-                        <i class="fas fa-brain"></i>
+                    <h3 class="specialist-title" style="text-align: center;">Digital Prescription</h3>
+                    <p class="specialist-subtitle" style="text-align: center; margin-bottom: 20px;">Access your prescriptions and medical history digitally anytime, anywhere in digital format.</p>
+                    
+                    <ul style="list-style: none; padding: 0; margin-bottom: 20px;">
+                        <li style="padding: 6px 0; color: #5f6368; font-size: 0.95rem;"><span style="color: var(--primary); margin-right: 8px;">✔</span> Digital prescriptions</li>
+                        <li style="padding: 6px 0; color: #5f6368; font-size: 0.95rem;"><span style="color: var(--primary); margin-right: 8px;">✔</span> Complete medical history</li>
+                        <li style="padding: 6px 0; color: #5f6368; font-size: 0.95rem;"><span style="color: var(--primary); margin-right: 8px;">✔</span> Easy sharing with doctors and receptionist</li>
+                    </ul>
+                    
+                    <div class="workflow">
+                        <div class="workflow-step">
+                            <div class="workflow-circle">1</div>
+                            <p>Consultation</p>
+                        </div>
+                        <div class="workflow-step">
+                            <div class="workflow-circle">2</div>
+                            <p>Doctor Uploads</p>
+                        </div>
+                        <div class="workflow-step">
+                            <div class="workflow-circle">3</div>
+                            <p>Stored prescription</p>
+                        </div>
+                        <div class="workflow-step">
+                            <div class="workflow-circle">4</div>
+                            <p>Patient Views</p>
+                        </div>
                     </div>
-                    <h3 class="specialist-title">Neurologist</h3>
-                    <p class="specialist-subtitle">Brain & Nerves</p>
-                   
                 </div>
+                
+                <!-- Service 3 -->
+                <div class="specialist-card fade-in" style="text-align: left;">
+                    <div class="specialist-icon" style="margin: 0 auto 1.5rem;">
+                        <i class="fas fa-bell"></i>
+                    </div>
+                    <h3 class="specialist-title" style="text-align: center;">Medicine & Appointment Reminders</h3>
+                    <p class="specialist-subtitle" style="text-align: center; margin-bottom: 20px;">Set reminders for your appointments and medicine.</p>
+                    
+                    <ul style="list-style: none; padding: 0; margin-bottom: 20px;">
+                        <li style="padding: 6px 0; color: #5f6368; font-size: 0.95rem;"><span style="color: var(--primary); margin-right: 8px;">✔</span> Appointment reminders</li>
+                        <li style="padding: 6px 0; color: #5f6368; font-size: 0.95rem;"><span style="color: var(--primary); margin-right: 8px;">✔</span> Medicine reminder</li>
+                        <li style="padding: 6px 0; color: #5f6368; font-size: 0.95rem;"><span style="color: var(--primary); margin-right: 8px;">✔</span> Customizable reminders</li>
+                    </ul>
+                    
+                    <div class="workflow">
+                        <div class="workflow-step">
+                            <div class="workflow-circle">1</div>
+                            <p>Appointment reminder</p>
+                        </div>
+                        <div class="workflow-step">
+                            <div class="workflow-circle">2</div>
+                            <p>Prescription Created</p>
+                        </div>
+                        <div class="workflow-step">
+                            <div class="workflow-circle">3</div>
+                            <p>Reminder Set</p>
+                        </div>
+                        <div class="workflow-step">
+                            <div class="workflow-circle">4</div>
+                            <p>Reminder Sent</p>
+                        </div>
+                    </div>
+                </div>
+                
             </div>
         </div>
     </section>
@@ -754,24 +881,14 @@ include 'header.php';
                 <ul>
                     <li><a href="index.php">Home</a></li>
                     <li><a href="appointment.php">Book Appointment</a></li>
-                    <!-- <li><a href="#">Health Blog</a></li> -->
-                    <!-- <li><a href="#">FAQs</a></li> -->
+             
                 </ul>
             </div>
             <div class="footer-column">
                 <h3>Contact Us</h3>
                 <p><a href="mailto:quickcare012@gmail.com" style="color: rgba(255,255,255,0.9); text-decoration: none;">quickcare012@gmail.com</a></p>
             </div>
-            <!-- <div class="footer-column">
-                <h3>Services</h3>
-                <ul>
-                    <li><a href="#">Online Consultation</a></li>
-                    <li><a href="#">Emergency Care</a></li>
-                    <li><a href="#">Health Checkup</a></li>
-                    <li><a href="#">Lab Tests</a></li>
-                    <li><a href="#">Medicine Delivery</a></li>
-                </ul>
-            </div> -->
+            
         </div>
     </footer>
 
@@ -783,7 +900,7 @@ include 'header.php';
     <script>
         // Get references to the sections and buttons
         const heroSection = document.getElementById('hero-section');
-        const specialistsSection = document.getElementById('specialists-section');
+        const servicesSection = document.getElementById('services-section');
         const featuresSection = document.getElementById('features-section');
         const footerSection = document.getElementById('footer-section');
         const backToHomeBtn = document.getElementById('back-to-home');
@@ -791,7 +908,7 @@ include 'header.php';
         // Variable to track if we're in doctors-only view
         let doctorsOnlyView = false;
         
-        // Function to show only the specialists section
+        // Function to show only the services section
         function showDoctorsOnly() {
             heroSection.classList.add('hidden-section');
             featuresSection.classList.add('hidden-section');
@@ -799,9 +916,9 @@ include 'header.php';
             backToHomeBtn.classList.add('show');
             doctorsOnlyView = true;
             
-            // Scroll to the specialists section
+            // Scroll to the services section
             window.scrollTo({
-                top: specialistsSection.offsetTop - 80,
+                top: servicesSection.offsetTop - 80,
                 behavior: 'smooth'
             });
         }

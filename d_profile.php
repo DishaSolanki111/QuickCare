@@ -467,7 +467,7 @@ $spec_back_id = (int)($doctor['SPECIALISATION_ID'] ?? 0);
         <div class="content-wrapper">
             <div class="container">
                 <form id="backDoctorsForm" method="POST" action="<?php echo ($source === 'view_doctor_patient') ? 'view_doctor_patient.php' : 'doctors.php'; ?>" style="display:inline;">
-                    <input type="hidden" name="spec_id" value="<?php echo htmlspecialchars($spec_id !== '' ? $spec_id : (string)$spec_back_id); ?>">
+                    <input type="hidden" name="spec_id" value="<?php echo htmlspecialchars($spec_id); ?>">
                 </form>
                 <button type="button" class="back-btn" onclick="document.getElementById('backDoctorsForm').submit()">
                     <i class="fas fa-arrow-left"></i>
@@ -496,10 +496,6 @@ $spec_back_id = (int)($doctor['SPECIALISATION_ID'] ?? 0);
                         </div>
                         <div class="contact-info">
                             <div class="contact-item">
-                                <i class="fas fa-phone"></i>
-                                <span><?php echo htmlspecialchars($doctor['PHONE']); ?></span>
-                            </div>
-                            <div class="contact-item">
                                 <i class="fas fa-envelope"></i>
                                 <span><?php echo htmlspecialchars($doctor['EMAIL']); ?></span>
                             </div>
@@ -512,10 +508,6 @@ $spec_back_id = (int)($doctor['SPECIALISATION_ID'] ?? 0);
                             <div class="contact-item">
                                 <i class="fas fa-venus-mars"></i>
                                 <span><?php echo htmlspecialchars($doctor['GENDER']); ?></span>
-                            </div>
-                            <div class="contact-item">
-                                <i class="fas fa-birthday-cake"></i>
-                                <span><?php echo date('d M Y', strtotime($doctor['DOB'])); ?></span>
                             </div>
                         </div>
 

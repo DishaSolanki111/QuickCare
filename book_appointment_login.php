@@ -116,7 +116,7 @@ body::before {
         }
 
         .booking-container {
-            max-width: 500px;
+            max-width: 400px;
             margin: 0 auto;
             background: white;
             border-radius: 15px;
@@ -127,10 +127,10 @@ body::before {
         .doctor-summary {
             background: linear-gradient(135deg, var(--dark-blue) 0%, var(--mid-blue) 100%);
             color: white;
-            padding: 2rem;
+            padding: 1.5rem;
             display: flex;
             align-items: center;
-            gap: 2rem;
+            gap: 1.5rem;
         }
 
         .doctor-avatar {
@@ -158,7 +158,7 @@ body::before {
 
         .modal-content {
             background-color: #fefefe;
-            padding: 30px;
+            padding: 20px;
             width: 100%;
         }
 
