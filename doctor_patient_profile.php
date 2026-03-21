@@ -306,9 +306,6 @@ $patients_result = $doctor_id > 0 ? mysqli_query($conn, $sql) : false;
                                 <i class="fas fa-user"></i>
                             </div>
                             <div class="patient-name"><?php echo htmlspecialchars($fullName); ?></div>
-                            <div class="primary-contact">
-                                <?php echo htmlspecialchars($p['PHONE']); ?>
-                            </div>
                         </div>
                         <div class="card-details">
                             <div class="detail-row">
