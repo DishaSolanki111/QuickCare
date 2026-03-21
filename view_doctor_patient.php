@@ -185,6 +185,7 @@ color: var(--dark-color);
 
 .form-control {
 width: 100%;
+height: 44px;
 padding: 10px 15px;
 border: 1px solid #ddd;
 border-radius: 5px;
@@ -200,6 +201,7 @@ box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
 
 .btn {
 padding: 10px 20px;
+height: 44px;
 border: none;
 border-radius: 5px;
 cursor: pointer;
@@ -236,8 +238,8 @@ padding-right: 10px;
 
 .doctor-grid {
 display: grid;
-grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-gap: 20px;
+grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+gap: 15px;
 }
 
 .doctor-card {
@@ -254,7 +256,7 @@ box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
 }
 
 .doctor-image {
-height: 200px;
+height: 160px;
 background-color: #f8f9fa;
 display: flex;
 align-items: center;
@@ -282,7 +284,7 @@ font-weight: bold;
 }
 
 .doctor-info {
-padding: 20px;
+padding: 15px;
 }
 
 .doctor-name {

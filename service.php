@@ -395,13 +395,13 @@ footer::before {
         <img src="uploads/digital prescription.png" alt="Digital Prescription & Medical Records">
     </div>
     <div class="service-content">
-        <h2>Digital Prescription & Medical Records</h2>
+        <h2>Digital Prescription</h2>
         <p>Access your prescriptions and medical history digitally anytime, anywhere in digital format.</p>
 
         <ul class="service-features">
             <li>Digital prescriptions</li>
             <li>Complete medical history</li>                
-            <li>Easy sharing with doctors and receptionistx</li>
+            <li>Easy sharing with doctors and receptionist</li>
         </ul>
 
         <div class="workflow">

@@ -1,6 +1,7 @@
 <?php
 session_start();
 include 'config.php';
+include 'header.php';
 
 $doctor_id = isset($_GET['doctor_id']) ? (int)$_GET['doctor_id'] : 0;
 
@@ -269,9 +270,6 @@ $fb_stmt->close();
                         </div>
                         <div class="fb-body">
                             <p><strong>Patient:</strong> <?php echo htmlspecialchars($patientName); ?></p>
-                            <p style="color:var(--text-muted);font-size:0.8rem;margin-top:2px;">
-                                DOB: <?php echo htmlspecialchars($fb['DOB']); ?> · Phone: <?php echo htmlspecialchars($fb['PHONE']); ?>
-                            </p>
                         </div>
                         <div class="fb-quote">
                             <i class="fas fa-quote-left"></i>

@@ -59,21 +59,53 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
 
 // Handle delete
 if (isset($_POST['action']) && $_POST['action'] == 'delete' && isset($_POST['id'])) {
-    $patient_id = $_POST['id'];
-    $query = "DELETE FROM patient_tbl WHERE PATIENT_ID = ?";
-    $stmt = mysqli_prepare($conn, $query);
-    mysqli_stmt_bind_param($stmt, "i", $patient_id);
+    $patient_id = (int)$_POST['id'];
     
-    if (mysqli_stmt_execute($stmt)) {
-        $success_message = "Patient deleted successfully!";
-    } else {
-        $error_message = "Error deleting patient: " . mysqli_error($conn);
+    if ($patient_id > 0) {
+        // Cascade delete manually to fix foreign key constraint block
+        mysqli_query($conn, "DELETE FROM medicine_reminder_tbl WHERE PATIENT_ID = $patient_id");
+        
+        $appts = mysqli_query($conn, "SELECT APPOINTMENT_ID FROM appointment_tbl WHERE PATIENT_ID = $patient_id");
+        if ($appts) {
+            while ($row = mysqli_fetch_assoc($appts)) {
+                $aid = (int)$row['APPOINTMENT_ID'];
+                mysqli_query($conn, "DELETE FROM payment_tbl WHERE APPOINTMENT_ID = $aid");
+                mysqli_query($conn, "DELETE FROM feedback_tbl WHERE APPOINTMENT_ID = $aid");
+                mysqli_query($conn, "DELETE FROM appointment_reminder_tbl WHERE APPOINTMENT_ID = $aid");
+                
+                $presc = mysqli_query($conn, "SELECT PRESCRIPTION_ID FROM prescription_tbl WHERE APPOINTMENT_ID = $aid");
+                if ($presc) {
+                    while ($prow = mysqli_fetch_assoc($presc)) {
+                        $pid = (int)$prow['PRESCRIPTION_ID'];
+                        mysqli_query($conn, "DELETE FROM prescription_medicine_tbl WHERE PRESCRIPTION_ID = $pid");
+                        mysqli_query($conn, "DELETE FROM prescription_tbl WHERE PRESCRIPTION_ID = $pid");
+                    }
+                }
+            }
+        }
+        mysqli_query($conn, "DELETE FROM appointment_tbl WHERE PATIENT_ID = $patient_id");
+        
+        $query = "DELETE FROM patient_tbl WHERE PATIENT_ID = ?";
+        $stmt = mysqli_prepare($conn, $query);
+        mysqli_stmt_bind_param($stmt, "i", $patient_id);
+        
+        if (mysqli_stmt_execute($stmt)) {
+            $msg = urlencode("Patient deleted successfully!");
+            header("Location: Admin_patient.php?success=$msg");
+        } else {
+            $err = urlencode("Error deleting patient: " . mysqli_error($conn));
+            header("Location: Admin_patient.php?error=$err");
+        }
+        mysqli_stmt_close($stmt);
+        exit();
     }
-    mysqli_stmt_close($stmt);
-    
-    // Redirect to remove delete parameters from URL
-    header("Location: Admin_patient.php");
-    exit();
+}
+// Pull success/error from GET (set after delete redirect)
+if (empty($success_message) && isset($_GET['success'])) {
+    $success_message = htmlspecialchars($_GET['success']);
+}
+if (empty($error_message) && isset($_GET['error'])) {
+    $error_message = htmlspecialchars($_GET['error']);
 }
 ?>
 

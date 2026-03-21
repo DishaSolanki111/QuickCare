@@ -376,7 +376,7 @@ body::before {
         .calendar-day.available {
             background-color: rgba(46, 204, 113, 0.3); /* Increased green opacity */
             border-color: var(--accent-color);
-            color: var(--accent-color);
+            color: #000;
             font-weight: 500;
         }
 

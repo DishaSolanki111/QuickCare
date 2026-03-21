@@ -116,94 +116,150 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
 <title>Receptionist Profile</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
- <style>
+    <style>
         :root {
-            --primary: #0066cc;
-            --primary-dark: #0052a3;
-            --primary-light: #e6f2ff;
-            --secondary: #00a8cc;
-            --accent: #00a86b;
-            --warning: #ff6b6b;
-            --dark: #1a3a5f;
-            --light: #f8fafc;
+            --primary: #072D44;
+            --primary-dark: #064469;
+            --secondary: #5790AB;
+            --accent: #9CCDD8;
+            --light: #D0D7E1;
             --white: #ffffff;
-            --text: #2c5282;
-            --text-light: #4a6fa5;
-            --gradient-1: linear-gradient(135deg, #0066cc 0%, #00a8cc 100%);
-            --gradient-2: linear-gradient(135deg, #00a8cc 0%, #00a86b 100%);
-            --gradient-3: linear-gradient(135deg, #0066cc 0%, #0052a3 100%);
-            --shadow-sm: 0 2px 4px rgba(0,0,0,0.06);
-            --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
-            --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
-            --shadow-xl: 0 20px 25px rgba(0,0,0,0.1);
-            --shadow-2xl: 0 25px 50px rgba(0,0,0,0.25);
-            --dark-blue: #072D44;
-            --mid-blue: #064469;
-            --soft-blue: #5790AB;
-            --light-blue: #9CCDD8;
-            --gray-blue: #D0D7E1;
-            --white: #ffffff;
-            --card-bg: #F6F9FB;
-            --primary-color: #1a3a5f;
-            --secondary-color: #3498db;
-         
-            --info-color: #17a2b8;
+            --gray: #6c757d;
+            --success: #28a745;
+            --danger: #dc3545;
+            --warning: #ffc107;
+            --info: #17a2b8;
+            --shadow-sm: 0 2px 4px rgba(0,0,0,0.1);
+            --shadow-md: 0 4px 8px rgba(0,0,0,0.15);
+            --shadow-lg: 0 10px 20px rgba(0,0,0,0.2);
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
         }
 
         body {
-            background-color: #f5f8fa;
-            color: var(--text);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light);
+            color: #333;
             line-height: 1.6;
-            overflow-x: hidden;
         }
+
+        /* Container for the entire layout */
+        .container {
+            display: flex;
+            width: 100%;
+            min-height: 100vh;
+        }
+
       
         /* Main Content */
         .main-content {
-            margin-left: 260px;
-            padding: 20px;
-            transition: margin-left 0.3s ease;
-            width: 1500px;
+            margin-left: 150px;
+            padding: 20px 0;
+            width: calc(100% - 250px);
             min-height: 100vh;
+        }
+
+        /* Top Bar - match doctor_dashboard/doctor_header */
+        .topbar {
+            background: #ffffff;
+            padding: 18px 30px;
+            
+            justify-content: space-between;
+            align-items: left;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+            margin-bottom: 20px;
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #f0f0f0;
+        }
+
+        .user-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .name-row {
+            display: flex;
+            align-items: center;
+        }
+
+        .doctor-name {
+            font-weight: 600;
+            color: #1a3a5f;
+            font-size: 16px;
+        }
+
+        .date {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        /* Profile Content */
+        .profile-content {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 25px 30px 15px 30px; /* Reduced bottom padding */
+            box-shadow: var(--shadow-md);
+          
+            height: fit-content; /* Fit snugly after buttons */
         }
 
         .profile-header {
             display: flex;
             align-items: center;
             margin-bottom: 30px;
-            padding: 10px;
-            background: var(--white);
-            border-radius: 12px;
-            box-shadow: var(--shadow-md);
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
         }
 
         .profile-avatar {
-            width: 100px;
-            height: 100px;
+            width: 120px;
+            height: 120px;
             border-radius: 50%;
-            object-fit: cover;
-            margin-right: 25px;
-            border: 4px solid var(--primary-light);
+            background-color: var(--secondary);
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 42px;
+            font-weight: bold;
+            margin-right: 30px;
+            box-shadow: var(--shadow-md);
         }
 
         .profile-info h2 {
-            font-size: 28px;
-            color: var(--dark);
-            margin-bottom: 5px;
+            font-size: 32px;
+            color: var(--primary);
+            margin-bottom: 8px;
         }
 
         .profile-info p {
-            color: var(--text-light);
-            margin-bottom: 10px;
+            color: var(--gray);
+            font-size: 16px;
+            margin-bottom: 5px;
         }
 
-
+        /* Form Styles */
         .form-group {
             margin-bottom: 20px;
         }
@@ -212,7 +268,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
             display: block;
             margin-bottom: 8px;
             font-weight: 600;
-            color: var(--dark);
+            color: var(--primary);
         }
 
         .form-control {
@@ -225,22 +281,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
         }
 
         .form-control:focus {
-            border-color: var(--primary);
+            border-color: var(--secondary);
             outline: none;
-            box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.2);
+            box-shadow: 0 0 0 2px rgba(87, 144, 171, 0.2);
         }
 
-        .form-control.error {
-            border-color: var(--warning);
-            box-shadow: 0 0 0 2px rgba(255, 107, 107, 0.2);
-        }
-
-        .form-control.valid {
-            border-color: var(--accent);
+        .form-control:disabled {
+            background-color: #f8f9fa;
+            cursor: not-allowed;
         }
 
         .btn {
-            padding: 12px 20px;
+            padding: 12px 24px;
             border: none;
             border-radius: 6px;
             cursor: pointer;
@@ -249,24 +301,47 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
             display: inline-flex;
             align-items: center;
             justify-content: center;
+            font-size: 16px;
+            gap: 8px;
         }
 
         .btn-primary {
-            background-color: var(--primary);
-            color: white;
+            background-color: var(--secondary);
+            color: var(--white);
         }
 
         .btn-primary:hover {
-            background-color: var(--primary-dark);
+            background-color: #46829b;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
         }
 
         .btn-danger {
-            background-color: var(--danger-color);
-            color: white;
+            background-color: var(--danger);
+            color: var(--white);
         }
 
         .btn-danger:hover {
-            background-color: #c0392b;
+            background-color: #c82333;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-success {
+            background-color: var(--success);
+            color: var(--white);
+        }
+
+        .btn-success:hover {
+            background-color: #218838;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
         }
 
         .alert {
@@ -293,9 +368,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
         .info-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
+            gap: 25px;
         }
 
+        .info-item {
+            margin-bottom: 20px;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 5px;
+            display: block;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .info-value {
+            color: #555;
+            font-size: 16px;
+        }
+
+        /* Edit Form Styles */
         .edit-profile-form {
             display: none;
         }
@@ -319,29 +414,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
         }
 
         .modal-content {
-            background: linear-gradient(135deg, #ffffff 0%, #f0f7ff 100%);
+            background: #ffffff;
             border-radius: 10px;
             padding: 25px 30px;
             width: 100%;
             max-width: 450px;
-            box-shadow: var(--shadow-xl);
-            border: 2px solid var(--primary-light);
+            box-shadow: var(--shadow-lg);
         }
 
         .modal-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid var(--primary-light);
+            margin-bottom: 15px;
         }
 
         .modal-header h3 {
             margin: 0;
-            font-size: 22px;
+            font-size: 20px;
             color: var(--primary);
-            font-weight: 600;
         }
 
         .modal-close {
@@ -349,11 +440,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
             border: none;
             font-size: 22px;
             cursor: pointer;
-            color: var(--text-light);
+            color: var(--gray);
         }
 
         .error-message {
-            color: var(--warning);
+            color: var(--danger);
             font-size: 13px;
             margin-top: 5px;
             display: none;
@@ -370,48 +461,47 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
             right: 12px;
             transform: translateY(-50%);
             cursor: pointer;
-            color: var(--primary);
+            color: var(--secondary);
             font-size: 14px;
         }
 
-        .btn-group {
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        /* Tabs */
+        .profile-tabs {
             display: flex;
-            gap: 15px;
-            margin-top: 25px;
+            margin-bottom: 25px;
+            border-bottom: 1px solid #eee;
         }
 
-        .info-item {
-            margin-bottom: 15px;
-        }
-
-        .info-label {
+        .tab {
+            padding: 12px 20px;
+            cursor: pointer;
             font-weight: 600;
-            color: var(--dark);
-            margin-bottom: 5px;
+            color: var(--gray);
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .tab:hover {
+            color: var(--primary);
+        }
+
+        .tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--secondary);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
             display: block;
-            font-size: 14px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .info-value {
-            color: #555;
-            font-size: 16px;
-        }
-
-        .info-item {
-            margin-bottom: 15px;
-        }
-
-        .info-label {
-            font-weight: 600;
-            color: var(--dark);
-            margin-bottom: 5px;
-            display: block;
-        }
-
-        .info-value {
-            color: #555;
         }
 
         /* Responsive Design */
@@ -438,9 +528,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
             
             .main-content {
                 margin-left: 70px;
+                width: calc(100% - 70px);
             }
             
-            .info-grid {
+            .info-grid,
+            .form-row {
                 grid-template-columns: 1fr;
             }
         }
@@ -456,6 +548,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
             
             .main-content {
                 margin-left: 0;
+                width: 100%;
             }
             
             .topbar {
@@ -475,6 +568,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
                 margin-right: 0;
                 margin-bottom: 20px;
             }
+            
+            .btn-group {
+                flex-direction: column;
+            }
         }
 
         /* Mobile Menu Toggle */
@@ -483,8 +580,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
             background: none;
             border: none;
             font-size: 24px;
-            color: var(--dark);
+            color: var(--primary);
             cursor: pointer;
+            margin-right: 15px;
         }
 
         @media (max-width: 768px) {
@@ -496,17 +594,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
 </head>
 
 <body>
+    <div class="container">
+        <!-- Sidebar -->
+        <?php include 'recept_sidebar.php'; ?>
 
-<?php include 'recept_sidebar.php'; ?>
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Header -->
+            <?php include 'receptionist_header.php'; ?>
+          
+            <!-- Profile Content -->
+            <div class="profile-content">
+                <!-- Profile Header -->
+                <div class="profile-header">
+                    <div class="profile-avatar">
+                        <?php echo strtoupper(substr($receptionist['FIRST_NAME'], 0, 1) . substr($receptionist['LAST_NAME'], 0, 1)); ?>
+                    </div>
+                    
+                    <div class="profile-info">
+                        <h2><?php echo htmlspecialchars($receptionist['FIRST_NAME'] . ' ' . $receptionist['LAST_NAME']); ?></h2>
+                        <p>Receptionist</p>
+                    </div>
+                </div>
 
-
-<div class="main-content">
-    <!-- Header -->
-    <?php include 'receptionist_header.php'; ?>
-  
-<div class="profile-content">
-    <!-- Combined Information Section (Personal + Security) -->
-    <div id="personal-info">
+                <!-- Combined Information Section (Personal + Security) -->
+                <div id="personal-info">
         <?php if (isset($success_message)): ?>
             <div class="alert alert-success">
                 <i class="fas fa-check-circle"></i>
@@ -898,5 +1010,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
+        </div>
+    </div>
 </body>
 </html>

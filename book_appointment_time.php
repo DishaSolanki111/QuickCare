@@ -304,7 +304,7 @@ body::before {
         .time-slot.available {
             background-color: rgba(46, 204, 113, 0.1);
             border-color: var(--accent-color);
-            color: var(--accent-color);
+            color: #000;
         }
 
         .time-slot.booked {

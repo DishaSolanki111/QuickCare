@@ -1,8 +1,7 @@
 <?php
 ob_start();
 include 'config.php'; 
-require_once 'username_validation.php';
-require_once 'account_validation.php';
+
 include 'header.php';?>
 <!DOCTYPE html>
 <html lang="en">
@@ -11,6 +10,8 @@ include 'header.php';?>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Patient Registration | QuickCare</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Flatpickr CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <style>
         :root {
             --primary-blue: #0a4d68;
@@ -731,7 +732,7 @@ include 'header.php';?>
                         <div class="form-group">
                             <label for="password">Password <span class="required">*</span></label>
                             <div class="password-wrapper">
-                                <input type="password" id="password" name="password" placeholder="John@123" required>
+                                <input type="password" id="password" name="password" placeholder="vinod@123" required>
                                 <i class="fas fa-eye-slash toggle-password" id="togglePassword"></i>
                             </div>
                             <div class="error-message" id="password_error"<?php if (!empty($field_errors['password'])) echo ' style="display:block"'; ?>><?php echo htmlspecialchars($field_errors['password'] ?? ''); ?></div>
@@ -1095,6 +1096,19 @@ include 'header.php';?>
             toast.className = toast.className.replace('show', '');
         }, 5000);
     }
+    </script>
+
+    <!-- Flatpickr JS -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            flatpickr("#dob", {
+                dateFormat: "Y-m-d",
+                maxDate: "today",
+                allowInput: true,
+                disableMobile: "true" // Use desktop style custom calendar even on mobile
+            });
+        });
     </script>
 </body>
 </html>
