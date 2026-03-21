@@ -1,0 +1,835 @@
+<ew-language date="2026/3/21" id="en-US" author="e.World Technology Limited">
+  <project>
+    <phrase id="footertext" value="&amp;copy;2025 e.World Technology Limited. All rights reserved." />
+    <menu id="1">
+      <phrase id="menutext" value="appointment reminder tbl" />
+    </menu>
+    <menu id="2">
+      <phrase id="menutext" value="appointment tbl" />
+    </menu>
+    <menu id="3">
+      <phrase id="menutext" value="doctor schedule tbl" />
+    </menu>
+    <menu id="4">
+      <phrase id="menutext" value="doctor tbl" />
+    </menu>
+    <menu id="5">
+      <phrase id="menutext" value="feedback tbl" />
+    </menu>
+    <menu id="6">
+      <phrase id="menutext" value="medicine reminder tbl" />
+    </menu>
+    <menu id="7">
+      <phrase id="menutext" value="medicine tbl" />
+    </menu>
+    <menu id="8">
+      <phrase id="menutext" value="password resets" />
+    </menu>
+    <menu id="9">
+      <phrase id="menutext" value="patient tbl" />
+    </menu>
+    <menu id="10">
+      <phrase id="menutext" value="payment tbl" />
+    </menu>
+    <menu id="11">
+      <phrase id="menutext" value="prescription medicine tbl" />
+    </menu>
+    <menu id="12">
+      <phrase id="menutext" value="prescription tbl" />
+    </menu>
+    <menu id="14">
+      <phrase id="menutext" value="receptionist tbl" />
+    </menu>
+    <menu id="15">
+      <phrase id="menutext" value="specialisation tbl" />
+    </menu>
+    <menu id="16">
+      <phrase id="menutext" value="Appointment report" />
+    </menu>
+    <menu id="17">
+      <phrase id="menutext" value="view appointment report" />
+    </menu>
+    <menu id="18">
+      <phrase id="menutext" value="view doctor report" />
+    </menu>
+    <menu id="19">
+      <phrase id="menutext" value="view feedback report" />
+    </menu>
+    <menu id="20">
+      <phrase id="menutext" value="view patient report" />
+    </menu>
+    <menu id="21">
+      <phrase id="menutext" value="view payment report" />
+    </menu>
+    <menu id="22">
+      <phrase id="menutext" value=" Appointment Report" />
+    </menu>
+    <table id="appointment_reminder_tbl">
+      <phrase id="tblcaption" value="appointment reminder tbl" />
+      <field id="appointment_reminder_id">
+        <phrase id="fldcaption" value="APPOINTMENT REMINDER ID" />
+      </field>
+      <field id="receptionist_id">
+        <phrase id="fldcaption" value="RECEPTIONIST ID" />
+      </field>
+      <field id="appointment_id">
+        <phrase id="fldcaption" value="APPOINTMENT ID" />
+      </field>
+      <field id="reminder_time">
+        <phrase id="fldcaption" value="REMINDER TIME" />
+      </field>
+      <field id="remarks">
+        <phrase id="fldcaption" value="REMARKS" />
+      </field>
+    </table>
+    <table id="appointment_tbl">
+      <phrase id="tblcaption" value="appointment tbl" />
+      <field id="appointment_id">
+        <phrase id="fldcaption" value="APPOINTMENT ID" />
+      </field>
+      <field id="patient_id">
+        <phrase id="fldcaption" value="PATIENT ID" />
+      </field>
+      <field id="doctor_id">
+        <phrase id="fldcaption" value="DOCTOR ID" />
+      </field>
+      <field id="schedule_id">
+        <phrase id="fldcaption" value="SCHEDULE ID" />
+      </field>
+      <field id="created_at">
+        <phrase id="fldcaption" value="CREATED AT" />
+      </field>
+      <field id="appointment_date">
+        <phrase id="fldcaption" value="APPOINTMENT DATE" />
+      </field>
+      <field id="appointment_time">
+        <phrase id="fldcaption" value="APPOINTMENT TIME" />
+      </field>
+      <field id="status">
+        <phrase id="fldcaption" value="STATUS" />
+        <phrase id="fldtagvalue1" value="SCHEDULED" />
+        <phrase id="fldtagcaption1" value="SCHEDULED" />
+        <phrase id="fldtagvalue2" value="COMPLETED" />
+        <phrase id="fldtagcaption2" value="COMPLETED" />
+        <phrase id="fldtagvalue3" value="CANCELLED" />
+        <phrase id="fldtagcaption3" value="CANCELLED" />
+      </field>
+    </table>
+    <table id="doctor_schedule_tbl">
+      <phrase id="tblcaption" value="doctor schedule tbl" />
+      <field id="schedule_id">
+        <phrase id="fldcaption" value="SCHEDULE ID" />
+      </field>
+      <field id="doctor_id">
+        <phrase id="fldcaption" value="DOCTOR ID" />
+      </field>
+      <field id="receptionist_id">
+        <phrase id="fldcaption" value="RECEPTIONIST ID" />
+      </field>
+      <field id="start_time">
+        <phrase id="fldcaption" value="START TIME" />
+      </field>
+      <field id="end_time">
+        <phrase id="fldcaption" value="END TIME" />
+      </field>
+      <field id="available_day">
+        <phrase id="fldcaption" value="AVAILABLE DAY" />
+        <phrase id="fldtagvalue1" value="MON" />
+        <phrase id="fldtagcaption1" value="MON" />
+        <phrase id="fldtagvalue2" value="TUE" />
+        <phrase id="fldtagcaption2" value="TUE" />
+        <phrase id="fldtagvalue3" value="WED" />
+        <phrase id="fldtagcaption3" value="WED" />
+        <phrase id="fldtagvalue4" value="THUR" />
+        <phrase id="fldtagcaption4" value="THUR" />
+        <phrase id="fldtagvalue5" value="FRI" />
+        <phrase id="fldtagcaption5" value="FRI" />
+        <phrase id="fldtagvalue6" value="SAT" />
+        <phrase id="fldtagcaption6" value="SAT" />
+        <phrase id="fldtagvalue7" value="SUN" />
+        <phrase id="fldtagcaption7" value="SUN" />
+      </field>
+    </table>
+    <table id="doctor_tbl">
+      <phrase id="tblcaption" value="doctor tbl" />
+      <field id="doctor_id">
+        <phrase id="fldcaption" value="DOCTOR ID" />
+      </field>
+      <field id="specialisation_id">
+        <phrase id="fldcaption" value="SPECIALISATION ID" />
+      </field>
+      <field id="profile_image">
+        <phrase id="fldcaption" value="PROFILE IMAGE" />
+      </field>
+      <field id="first_name">
+        <phrase id="fldcaption" value="FIRST NAME" />
+      </field>
+      <field id="last_name">
+        <phrase id="fldcaption" value="LAST NAME" />
+      </field>
+      <field id="dob">
+        <phrase id="fldcaption" value="DOB" />
+      </field>
+      <field id="doj">
+        <phrase id="fldcaption" value="DOJ" />
+      </field>
+      <field id="username">
+        <phrase id="fldcaption" value="USERNAME" />
+      </field>
+      <field id="pswd">
+        <phrase id="fldcaption" value="PSWD" />
+      </field>
+      <field id="phone">
+        <phrase id="fldcaption" value="PHONE" />
+      </field>
+      <field id="email">
+        <phrase id="fldcaption" value="EMAIL" />
+      </field>
+      <field id="gender">
+        <phrase id="fldcaption" value="GENDER" />
+        <phrase id="fldtagvalue1" value="MALE" />
+        <phrase id="fldtagcaption1" value="MALE" />
+        <phrase id="fldtagvalue2" value="FEMALE" />
+        <phrase id="fldtagcaption2" value="FEMALE" />
+        <phrase id="fldtagvalue3" value="OTHER" />
+        <phrase id="fldtagcaption3" value="OTHER" />
+      </field>
+      <field id="education">
+        <phrase id="fldcaption" value="EDUCATION" />
+      </field>
+      <field id="status">
+        <phrase id="fldcaption" value="STATUS" />
+        <phrase id="fldtagvalue1" value="pending" />
+        <phrase id="fldtagcaption1" value="pending" />
+        <phrase id="fldtagvalue2" value="approved" />
+        <phrase id="fldtagcaption2" value="approved" />
+        <phrase id="fldtagvalue3" value="rejected" />
+        <phrase id="fldtagcaption3" value="rejected" />
+      </field>
+      <field id="security_question">
+        <phrase id="fldcaption" value="SECURITY QUESTION" />
+      </field>
+      <field id="security_answer">
+        <phrase id="fldcaption" value="SECURITY ANSWER" />
+      </field>
+    </table>
+    <table id="feedback_tbl">
+      <phrase id="tblcaption" value="feedback tbl" />
+      <field id="feedback_id">
+        <phrase id="fldcaption" value="FEEDBACK ID" />
+      </field>
+      <field id="appointment_id">
+        <phrase id="fldcaption" value="APPOINTMENT ID" />
+      </field>
+      <field id="rating">
+        <phrase id="fldcaption" value="RATING" />
+      </field>
+      <field id="comments">
+        <phrase id="fldcaption" value="COMMENTS" />
+      </field>
+    </table>
+    <table id="medicine_reminder_tbl">
+      <phrase id="tblcaption" value="medicine reminder tbl" />
+      <field id="medicine_reminder_id">
+        <phrase id="fldcaption" value="MEDICINE REMINDER ID" />
+      </field>
+      <field id="medicine_id">
+        <phrase id="fldcaption" value="MEDICINE ID" />
+      </field>
+      <field id="creator_role">
+        <phrase id="fldcaption" value="CREATOR ROLE" />
+        <phrase id="fldtagvalue1" value="PATIENT" />
+        <phrase id="fldtagcaption1" value="PATIENT" />
+        <phrase id="fldtagvalue2" value="RECEPTIONIST" />
+        <phrase id="fldtagcaption2" value="RECEPTIONIST" />
+      </field>
+      <field id="creator_id">
+        <phrase id="fldcaption" value="CREATOR ID" />
+      </field>
+      <field id="patient_id">
+        <phrase id="fldcaption" value="PATIENT ID" />
+      </field>
+      <field id="start_date">
+        <phrase id="fldcaption" value="START DATE" />
+      </field>
+      <field id="end_date">
+        <phrase id="fldcaption" value="END DATE" />
+      </field>
+      <field id="reminder_time">
+        <phrase id="fldcaption" value="REMINDER TIME" />
+      </field>
+      <field id="remarks">
+        <phrase id="fldcaption" value="REMARKS" />
+      </field>
+    </table>
+    <table id="medicine_tbl">
+      <phrase id="tblcaption" value="medicine tbl" />
+      <field id="medicine_id">
+        <phrase id="fldcaption" value="MEDICINE ID" />
+      </field>
+      <field id="receptionist_id">
+        <phrase id="fldcaption" value="RECEPTIONIST ID" />
+      </field>
+      <field id="med_name">
+        <phrase id="fldcaption" value="MED NAME" />
+      </field>
+      <field id="description">
+        <phrase id="fldcaption" value="DESCRIPTION" />
+      </field>
+    </table>
+    <table id="password_resets">
+      <phrase id="tblcaption" value="password resets" />
+      <field id="id">
+        <phrase id="fldcaption" value="id" />
+      </field>
+      <field id="user_type">
+        <phrase id="fldcaption" value="user type" />
+        <phrase id="fldtagvalue1" value="patient" />
+        <phrase id="fldtagcaption1" value="patient" />
+        <phrase id="fldtagvalue2" value="doctor" />
+        <phrase id="fldtagcaption2" value="doctor" />
+        <phrase id="fldtagvalue3" value="receptionist" />
+        <phrase id="fldtagcaption3" value="receptionist" />
+      </field>
+      <field id="user_id">
+        <phrase id="fldcaption" value="user id" />
+      </field>
+      <field id="phone">
+        <phrase id="fldcaption" value="phone" />
+      </field>
+      <field id="otp_hash">
+        <phrase id="fldcaption" value="otp hash" />
+      </field>
+      <field id="expires_at">
+        <phrase id="fldcaption" value="expires at" />
+      </field>
+      <field id="attempts">
+        <phrase id="fldcaption" value="attempts" />
+      </field>
+      <field id="created_at">
+        <phrase id="fldcaption" value="created at" />
+      </field>
+    </table>
+    <table id="patient_tbl">
+      <phrase id="tblcaption" value="patient tbl" />
+      <field id="patient_id">
+        <phrase id="fldcaption" value="PATIENT ID" />
+      </field>
+      <field id="first_name">
+        <phrase id="fldcaption" value="FIRST NAME" />
+      </field>
+      <field id="last_name">
+        <phrase id="fldcaption" value="LAST NAME" />
+      </field>
+      <field id="username">
+        <phrase id="fldcaption" value="USERNAME" />
+      </field>
+      <field id="pswd">
+        <phrase id="fldcaption" value="PSWD" />
+      </field>
+      <field id="dob">
+        <phrase id="fldcaption" value="DOB" />
+      </field>
+      <field id="gender">
+        <phrase id="fldcaption" value="GENDER" />
+        <phrase id="fldtagvalue1" value="MALE" />
+        <phrase id="fldtagcaption1" value="MALE" />
+        <phrase id="fldtagvalue2" value="FEMALE" />
+        <phrase id="fldtagcaption2" value="FEMALE" />
+        <phrase id="fldtagvalue3" value="OTHER" />
+        <phrase id="fldtagcaption3" value="OTHER" />
+      </field>
+      <field id="blood_group">
+        <phrase id="fldcaption" value="BLOOD GROUP" />
+        <phrase id="fldtagvalue1" value="A+" />
+        <phrase id="fldtagcaption1" value="A+" />
+        <phrase id="fldtagvalue2" value="A-" />
+        <phrase id="fldtagcaption2" value="A-" />
+        <phrase id="fldtagvalue3" value="B+" />
+        <phrase id="fldtagcaption3" value="B+" />
+        <phrase id="fldtagvalue4" value="B-" />
+        <phrase id="fldtagcaption4" value="B-" />
+        <phrase id="fldtagvalue5" value="O+" />
+        <phrase id="fldtagcaption5" value="O+" />
+        <phrase id="fldtagvalue6" value="O-" />
+        <phrase id="fldtagcaption6" value="O-" />
+        <phrase id="fldtagvalue7" value="AB+" />
+        <phrase id="fldtagcaption7" value="AB+" />
+        <phrase id="fldtagvalue8" value="AB-" />
+        <phrase id="fldtagcaption8" value="AB-" />
+      </field>
+      <field id="phone">
+        <phrase id="fldcaption" value="PHONE" />
+      </field>
+      <field id="email">
+        <phrase id="fldcaption" value="EMAIL" />
+      </field>
+      <field id="address">
+        <phrase id="fldcaption" value="ADDRESS" />
+      </field>
+      <field id="medical_history_file">
+        <phrase id="fldcaption" value="MEDICAL HISTORY FILE" />
+      </field>
+      <field id="security_question">
+        <phrase id="fldcaption" value="SECURITY QUESTION" />
+      </field>
+      <field id="security_answer">
+        <phrase id="fldcaption" value="SECURITY ANSWER" />
+      </field>
+    </table>
+    <table id="payment_tbl">
+      <phrase id="tblcaption" value="payment tbl" />
+      <field id="payment_id">
+        <phrase id="fldcaption" value="PAYMENT ID" />
+      </field>
+      <field id="appointment_id">
+        <phrase id="fldcaption" value="APPOINTMENT ID" />
+      </field>
+      <field id="amount">
+        <phrase id="fldcaption" value="AMOUNT" />
+      </field>
+      <field id="payment_date">
+        <phrase id="fldcaption" value="PAYMENT DATE" />
+      </field>
+      <field id="payment_mode">
+        <phrase id="fldcaption" value="PAYMENT MODE" />
+        <phrase id="fldtagvalue1" value="CREDIT CARD" />
+        <phrase id="fldtagcaption1" value="CREDIT CARD" />
+        <phrase id="fldtagvalue2" value="GOOGLE PAY" />
+        <phrase id="fldtagcaption2" value="GOOGLE PAY" />
+        <phrase id="fldtagvalue3" value="UPI" />
+        <phrase id="fldtagcaption3" value="UPI" />
+        <phrase id="fldtagvalue4" value="NET BANKING" />
+        <phrase id="fldtagcaption4" value="NET BANKING" />
+      </field>
+      <field id="status">
+        <phrase id="fldcaption" value="STATUS" />
+        <phrase id="fldtagvalue1" value="COMPLETED" />
+        <phrase id="fldtagcaption1" value="COMPLETED" />
+        <phrase id="fldtagvalue2" value="FAILED" />
+        <phrase id="fldtagcaption2" value="FAILED" />
+      </field>
+      <field id="transaction_id">
+        <phrase id="fldcaption" value="TRANSACTION ID" />
+      </field>
+      <field id="created_at">
+        <phrase id="fldcaption" value="CREATED AT" />
+      </field>
+    </table>
+    <table id="prescription_medicine_tbl">
+      <phrase id="tblcaption" value="prescription medicine tbl" />
+      <field id="prescription_id">
+        <phrase id="fldcaption" value="PRESCRIPTION ID" />
+      </field>
+      <field id="medicine_id">
+        <phrase id="fldcaption" value="MEDICINE ID" />
+      </field>
+      <field id="dosage">
+        <phrase id="fldcaption" value="DOSAGE" />
+      </field>
+      <field id="duration">
+        <phrase id="fldcaption" value="DURATION" />
+      </field>
+      <field id="frequency">
+        <phrase id="fldcaption" value="FREQUENCY" />
+      </field>
+      <field id="created_at">
+        <phrase id="fldcaption" value="CREATED AT" />
+      </field>
+    </table>
+    <table id="prescription_tbl">
+      <phrase id="tblcaption" value="prescription tbl" />
+      <field id="prescription_id">
+        <phrase id="fldcaption" value="PRESCRIPTION ID" />
+      </field>
+      <field id="appointment_id">
+        <phrase id="fldcaption" value="APPOINTMENT ID" />
+      </field>
+      <field id="issue_date">
+        <phrase id="fldcaption" value="ISSUE DATE" />
+      </field>
+      <field id="height_cm">
+        <phrase id="fldcaption" value="HEIGHT CM" />
+      </field>
+      <field id="weight_kg">
+        <phrase id="fldcaption" value="WEIGHT KG" />
+      </field>
+      <field id="blood_pressure">
+        <phrase id="fldcaption" value="BLOOD PRESSURE" />
+      </field>
+      <field id="diabetes">
+        <phrase id="fldcaption" value="DIABETES" />
+        <phrase id="fldtagvalue1" value="NO" />
+        <phrase id="fldtagcaption1" value="NO" />
+        <phrase id="fldtagvalue2" value="TYPE-1" />
+        <phrase id="fldtagcaption2" value="TYPE-1" />
+        <phrase id="fldtagvalue3" value="TYPE-2" />
+        <phrase id="fldtagcaption3" value="TYPE-2" />
+        <phrase id="fldtagvalue4" value="PRE-DIABTIC" />
+        <phrase id="fldtagcaption4" value="PRE-DIABTIC" />
+      </field>
+      <field id="symptoms">
+        <phrase id="fldcaption" value="SYMPTOMS" />
+      </field>
+      <field id="diagnosis">
+        <phrase id="fldcaption" value="DIAGNOSIS" />
+      </field>
+      <field id="additional_notes">
+        <phrase id="fldcaption" value="ADDITIONAL NOTES" />
+      </field>
+      <field id="created_at">
+        <phrase id="fldcaption" value="CREATED AT" />
+      </field>
+    </table>
+    <table id="receptionist_tbl">
+      <phrase id="tblcaption" value="receptionist tbl" />
+      <field id="receptionist_id">
+        <phrase id="fldcaption" value="RECEPTIONIST ID" />
+      </field>
+      <field id="first_name">
+        <phrase id="fldcaption" value="FIRST NAME" />
+      </field>
+      <field id="last_name">
+        <phrase id="fldcaption" value="LAST NAME" />
+      </field>
+      <field id="dob">
+        <phrase id="fldcaption" value="DOB" />
+      </field>
+      <field id="doj">
+        <phrase id="fldcaption" value="DOJ" />
+      </field>
+      <field id="gender">
+        <phrase id="fldcaption" value="GENDER" />
+        <phrase id="fldtagvalue1" value="MALE" />
+        <phrase id="fldtagcaption1" value="MALE" />
+        <phrase id="fldtagvalue2" value="FEMALE" />
+        <phrase id="fldtagcaption2" value="FEMALE" />
+        <phrase id="fldtagvalue3" value="OTHER" />
+        <phrase id="fldtagcaption3" value="OTHER" />
+      </field>
+      <field id="phone">
+        <phrase id="fldcaption" value="PHONE" />
+      </field>
+      <field id="email">
+        <phrase id="fldcaption" value="EMAIL" />
+      </field>
+      <field id="address">
+        <phrase id="fldcaption" value="ADDRESS" />
+      </field>
+      <field id="username">
+        <phrase id="fldcaption" value="USERNAME" />
+      </field>
+      <field id="pswd">
+        <phrase id="fldcaption" value="PSWD" />
+      </field>
+      <field id="security_question">
+        <phrase id="fldcaption" value="SECURITY QUESTION" />
+      </field>
+      <field id="security_answer">
+        <phrase id="fldcaption" value="SECURITY ANSWER" />
+      </field>
+    </table>
+    <table id="specialisation_tbl">
+      <phrase id="tblcaption" value="specialisation tbl" />
+      <field id="specialisation_id">
+        <phrase id="fldcaption" value="SPECIALISATION ID" />
+      </field>
+      <field id="specialisation_name">
+        <phrase id="fldcaption" value="SPECIALISATION NAME" />
+      </field>
+    </table>
+    <table id="appointment_report">
+      <phrase id="tblcaption" value="Appointment report" />
+      <chart id="chart1">
+        <phrase id="chartcaption" value="Appointment Chart" />
+        <phrase id="chartxaxisname" value="APPOINTMENT DATE" />
+        <phrase id="chartyaxisname" value="APPOINTMENT ID" />
+      </chart>
+      <field id="appointment_id">
+        <phrase id="fldcaption" value="Appointment No." />
+      </field>
+      <field id="patient_id">
+        <phrase id="fldcaption" value="Patient" />
+      </field>
+      <field id="doctor_id">
+        <phrase id="fldcaption" value="Doctor" />
+      </field>
+      <field id="schedule_id">
+        <phrase id="fldcaption" value="SCHEDULE ID" />
+      </field>
+      <field id="created_at">
+        <phrase id="fldcaption" value="CREATED AT" />
+      </field>
+      <field id="appointment_date">
+        <phrase id="fldcaption" value="Date" />
+      </field>
+      <field id="appointment_time">
+        <phrase id="fldcaption" value="Time" />
+      </field>
+      <field id="status">
+        <phrase id="fldcaption" value="Status" />
+        <phrase id="fldtagvalue1" value="SCHEDULED" />
+        <phrase id="fldtagcaption1" value="SCHEDULED" />
+        <phrase id="fldtagvalue2" value="COMPLETED" />
+        <phrase id="fldtagcaption2" value="COMPLETED" />
+        <phrase id="fldtagvalue3" value="CANCELLED" />
+        <phrase id="fldtagcaption3" value="CANCELLED" />
+      </field>
+    </table>
+    <table id="view_appointment_report">
+      <phrase id="tblcaption" value="view appointment report" />
+      <chart id="chart1">
+        <phrase id="chartcaption" value="Appointments by Month" />
+        <phrase id="chartxaxisname" value="Month " />
+        <phrase id="chartyaxisname" value="Appt No" />
+      </chart>
+      <chart id="chart2">
+        <phrase id="chartcaption" value="Appointments by Status" />
+        <phrase id="chartxaxisname" value="Status" />
+        <phrase id="chartyaxisname" value="Appt No" />
+      </chart>
+      <chart id="chart3">
+        <phrase id="chartcaption" value=" Appointments by Doctor" />
+        <phrase id="chartxaxisname" value="Doctor Name" />
+        <phrase id="chartyaxisname" value="Appt No" />
+      </chart>
+      <field id="appointment_id">
+        <phrase id="fldcaption" value="Appt No" />
+      </field>
+      <field id="patient_name">
+        <phrase id="fldcaption" value="Patient Name" />
+      </field>
+      <field id="doctor_name">
+        <phrase id="fldcaption" value="Doctor Name" />
+      </field>
+      <field id="specialisation">
+        <phrase id="fldcaption" value="Specialisation" />
+      </field>
+      <field id="appointment_date">
+        <phrase id="fldcaption" value="Date" />
+      </field>
+      <field id="day_name">
+        <phrase id="fldcaption" value="Day " />
+      </field>
+      <field id="week_number">
+        <phrase id="fldcaption" value="Week " />
+      </field>
+      <field id="month_number">
+        <phrase id="fldcaption" value="Month No" />
+      </field>
+      <field id="month_name">
+        <phrase id="fldcaption" value="Month " />
+      </field>
+      <field id="year">
+        <phrase id="fldcaption" value="Year" />
+      </field>
+      <field id="appointment_time">
+        <phrase id="fldcaption" value="Time" />
+      </field>
+      <field id="status">
+        <phrase id="fldcaption" value="Status" />
+        <phrase id="fldtagvalue1" value="SCHEDULED" />
+        <phrase id="fldtagcaption1" value="SCHEDULED" />
+        <phrase id="fldtagvalue2" value="COMPLETED" />
+        <phrase id="fldtagcaption2" value="COMPLETED" />
+        <phrase id="fldtagvalue3" value="CANCELLED" />
+        <phrase id="fldtagcaption3" value="CANCELLED" />
+      </field>
+    </table>
+    <table id="view_doctor_report">
+      <phrase id="tblcaption" value="view doctor report" />
+    </table>
+    <table id="view_feedback_report">
+      <phrase id="tblcaption" value="view feedback report" />
+      <field id="feedback_id">
+        <phrase id="fldcaption" value="FEEDBACK ID" />
+      </field>
+      <field id="patient_name">
+        <phrase id="fldcaption" value="Patient Name" />
+      </field>
+      <field id="doctor_name">
+        <phrase id="fldcaption" value="Doctor Name" />
+      </field>
+      <field id="specialisation">
+        <phrase id="fldcaption" value="Specialisation" />
+      </field>
+      <field id="rating">
+        <phrase id="fldcaption" value="RATING" />
+      </field>
+      <field id="comments">
+        <phrase id="fldcaption" value="COMMENTS" />
+      </field>
+      <field id="appointment_date">
+        <phrase id="fldcaption" value="APPOINTMENT DATE" />
+      </field>
+    </table>
+    <table id="view_patient_report">
+      <phrase id="tblcaption" value="view patient report" />
+      <field id="patient_id">
+        <phrase id="fldcaption" value="PATIENT ID" />
+      </field>
+      <field id="patient_name">
+        <phrase id="fldcaption" value="Patient Name" />
+      </field>
+      <field id="gender">
+        <phrase id="fldcaption" value="GENDER" />
+        <phrase id="fldtagvalue1" value="MALE" />
+        <phrase id="fldtagcaption1" value="MALE" />
+        <phrase id="fldtagvalue2" value="FEMALE" />
+        <phrase id="fldtagcaption2" value="FEMALE" />
+        <phrase id="fldtagvalue3" value="OTHER" />
+        <phrase id="fldtagcaption3" value="OTHER" />
+      </field>
+      <field id="blood_group">
+        <phrase id="fldcaption" value="BLOOD GROUP" />
+        <phrase id="fldtagvalue1" value="A+" />
+        <phrase id="fldtagcaption1" value="A+" />
+        <phrase id="fldtagvalue2" value="A-" />
+        <phrase id="fldtagcaption2" value="A-" />
+        <phrase id="fldtagvalue3" value="B+" />
+        <phrase id="fldtagcaption3" value="B+" />
+        <phrase id="fldtagvalue4" value="B-" />
+        <phrase id="fldtagcaption4" value="B-" />
+        <phrase id="fldtagvalue5" value="O+" />
+        <phrase id="fldtagcaption5" value="O+" />
+        <phrase id="fldtagvalue6" value="O-" />
+        <phrase id="fldtagcaption6" value="O-" />
+        <phrase id="fldtagvalue7" value="AB+" />
+        <phrase id="fldtagcaption7" value="AB+" />
+        <phrase id="fldtagvalue8" value="AB-" />
+        <phrase id="fldtagcaption8" value="AB-" />
+      </field>
+      <field id="phone">
+        <phrase id="fldcaption" value="PHONE" />
+      </field>
+      <field id="email">
+        <phrase id="fldcaption" value="EMAIL" />
+      </field>
+      <field id="total_appointments">
+        <phrase id="fldcaption" value="Total Appointments" />
+      </field>
+      <field id="completed_appointments">
+        <phrase id="fldcaption" value="Completed Appointments" />
+      </field>
+      <field id="upcoming_appointments">
+        <phrase id="fldcaption" value="Upcoming Appointments" />
+      </field>
+      <field id="cancelled_appointments">
+        <phrase id="fldcaption" value="Cancelled Appointments" />
+      </field>
+      <field id="last_visit">
+        <phrase id="fldcaption" value="Last Visit" />
+      </field>
+      <field id="first_visit">
+        <phrase id="fldcaption" value="First Visit" />
+      </field>
+      <field id="total_prescriptions">
+        <phrase id="fldcaption" value="Total Prescriptions" />
+      </field>
+      <field id="total_amount_paid">
+        <phrase id="fldcaption" value="Total Amount Paid" />
+      </field>
+      <field id="avg_rating_given">
+        <phrase id="fldcaption" value="Avg Rating Given" />
+      </field>
+    </table>
+    <table id="view_payment_report">
+      <phrase id="tblcaption" value="view payment report" />
+      <field id="payment_id">
+        <phrase id="fldcaption" value="PAYMENT ID" />
+      </field>
+      <field id="transaction_id">
+        <phrase id="fldcaption" value="TRANSACTION ID" />
+      </field>
+      <field id="patient_name">
+        <phrase id="fldcaption" value="Patient Name" />
+      </field>
+      <field id="doctor_name">
+        <phrase id="fldcaption" value="Doctor Name" />
+      </field>
+      <field id="amount">
+        <phrase id="fldcaption" value="AMOUNT" />
+      </field>
+      <field id="payment_mode">
+        <phrase id="fldcaption" value="PAYMENT MODE" />
+        <phrase id="fldtagvalue1" value="CREDIT CARD" />
+        <phrase id="fldtagcaption1" value="CREDIT CARD" />
+        <phrase id="fldtagvalue2" value="GOOGLE PAY" />
+        <phrase id="fldtagcaption2" value="GOOGLE PAY" />
+        <phrase id="fldtagvalue3" value="UPI" />
+        <phrase id="fldtagcaption3" value="UPI" />
+        <phrase id="fldtagvalue4" value="NET BANKING" />
+        <phrase id="fldtagcaption4" value="NET BANKING" />
+      </field>
+      <field id="payment_status">
+        <phrase id="fldcaption" value="Payment Status" />
+        <phrase id="fldtagvalue1" value="COMPLETED" />
+        <phrase id="fldtagcaption1" value="COMPLETED" />
+        <phrase id="fldtagvalue2" value="FAILED" />
+        <phrase id="fldtagcaption2" value="FAILED" />
+      </field>
+      <field id="payment_date">
+        <phrase id="fldcaption" value="PAYMENT DATE" />
+      </field>
+      <field id="day_name">
+        <phrase id="fldcaption" value="Day Name" />
+      </field>
+      <field id="week_number">
+        <phrase id="fldcaption" value="Week Number" />
+      </field>
+      <field id="month_number">
+        <phrase id="fldcaption" value="Month Number" />
+      </field>
+      <field id="month_name">
+        <phrase id="fldcaption" value="Month Name" />
+      </field>
+      <field id="year">
+        <phrase id="fldcaption" value="Year" />
+      </field>
+    </table>
+    <table id="view_prescription_report">
+      <phrase id="tblcaption" value=" Appointment Report" />
+      <chart id="chart1">
+        <phrase id="chartcaption" value="Appointments by Month" />
+      </chart>
+      <field id="prescription_id">
+        <phrase id="fldcaption" value="PRESCRIPTION ID" />
+      </field>
+      <field id="issue_date">
+        <phrase id="fldcaption" value="ISSUE DATE" />
+      </field>
+      <field id="patient_name">
+        <phrase id="fldcaption" value="Patient Name" />
+      </field>
+      <field id="doctor_name">
+        <phrase id="fldcaption" value="Doctor Name" />
+      </field>
+      <field id="specialisation">
+        <phrase id="fldcaption" value="Specialisation" />
+      </field>
+      <field id="symptoms">
+        <phrase id="fldcaption" value="SYMPTOMS" />
+      </field>
+      <field id="diagnosis">
+        <phrase id="fldcaption" value="DIAGNOSIS" />
+      </field>
+      <field id="diabetes">
+        <phrase id="fldcaption" value="DIABETES" />
+        <phrase id="fldtagvalue1" value="NO" />
+        <phrase id="fldtagcaption1" value="NO" />
+        <phrase id="fldtagvalue2" value="TYPE-1" />
+        <phrase id="fldtagcaption2" value="TYPE-1" />
+        <phrase id="fldtagvalue3" value="TYPE-2" />
+        <phrase id="fldtagcaption3" value="TYPE-2" />
+        <phrase id="fldtagvalue4" value="PRE-DIABTIC" />
+        <phrase id="fldtagcaption4" value="PRE-DIABTIC" />
+      </field>
+      <field id="blood_pressure">
+        <phrase id="fldcaption" value="BLOOD PRESSURE" />
+      </field>
+      <field id="additional_notes">
+        <phrase id="fldcaption" value="ADDITIONAL NOTES" />
+      </field>
+    </table>
+  </project>
+</ew-language>

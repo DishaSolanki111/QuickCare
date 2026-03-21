@@ -307,8 +307,9 @@ if (file_exists('Admin_sidebar.php')) {
           <div class="ms"><div class="ms-v" style="color:var(--green)"><?=$done_appt?></div><div class="ms-l">Completed</div></div>
           <div class="ms"><div class="ms-v" style="color:var(--orange)"><?=$sched_appt?></div><div class="ms-l">Scheduled</div></div>
         </div>
-        <a href="report_detail.php?type=appointment" class="vbtn"><i class="fas fa-arrow-right"></i>View Appointment Report</a>
-      </div>
+        <a href="http://localhost/QuickCare/QuickCare/Admin_report/ViewAppointmentReport" class="vbtn">
+   <i class="fas fa-arrow-right"></i>View Appointment Report
+</a></div>
 
       <!-- 2. PAYMENT -->
       <div class="card t2">
