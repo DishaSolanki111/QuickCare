@@ -465,7 +465,6 @@ $res = mysqli_query($conn,$q);
                 <h3>Quick Links</h3>
                 <ul>
                     <li><a href="index.php">Home</a></li>
-                    <li><a href="appointment.php">Find Doctors</a></li>
                     <li><a href="appointment.php">Book Appointment</a></li>
                 </ul>
             </div>

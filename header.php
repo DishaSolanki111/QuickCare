@@ -419,7 +419,7 @@ if ($currentPage === 'login_for_all.php'
         <div class="nav-right-container">
             <div class="nav-links">
                 <a href="index.php" class="<?= ($currentPage == 'index.php') ? 'active' : '' ?>">Home</a>
-                <a href="service.php" class="<?= ($currentPage == 'service.php') ? 'active' : '' ?>">Our services</a>
+                <!-- <a href="service.php" class="<?= ($currentPage == 'service.php') ? 'active' : '' ?>">Our services</a> -->
                 <a href="schedule.php" class="<?= ($currentPage == 'schedule.php') ? 'active' : '' ?>">Schedule</a>
                 <a href="appointment.php" class="<?= ($currentPage == 'appointment.php') ? 'active' : '' ?>">Doctors</a>
                 <a href="aboutus.php" class="<?= ($currentPage == 'aboutus.php') ? 'active' : '' ?>">About us</a>

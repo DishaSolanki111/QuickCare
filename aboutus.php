@@ -438,7 +438,6 @@ include 'header.php'; // Include the header
                 <h3>Quick Links</h3>
                 <ul>
                     <li><a href="index.php">Home</a></li>
-                    <li><a href="doctors.php">Find Doctors</a></li>
                     <li><a href="appointment.php">Book Appointment</a></li>
                   
 
