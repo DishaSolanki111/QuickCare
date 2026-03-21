@@ -3,6 +3,7 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
+require_once 'notification_seen.php';
 
 // Fetch reminder queries if not set (so reminders work on every page)
 if ((!isset($reminder_query) || !isset($medicine_reminder_query) || !isset($cancellation_query)) && isset($patient, $conn) && !empty($patient['PATIENT_ID'])) {
@@ -61,11 +62,75 @@ if (!empty($patient['FIRST_NAME']) || !empty($patient['LAST_NAME'])) {
     $initials = 'PT';
 }
 
+// Build arrays first so we can hide already-seen notifications for this patient.
+$pidForSeen = (int)($patient['PATIENT_ID'] ?? 0);
+$appointment_items = [];
+$medicine_items = [];
+$cancellation_items = [];
+$allKeys = [];
+
+if (isset($reminder_query) && $reminder_query) {
+    while ($row = mysqli_fetch_assoc($reminder_query)) {
+        $k = qc_notification_make_key(
+            'appointment',
+            $pidForSeen . '|' . ($row['APPOINTMENT_DATE'] ?? '') . '|' . ($row['APPOINTMENT_TIME'] ?? '') . '|' . ($row['REMARKS'] ?? '')
+        );
+        $row['_notif_key'] = $k;
+        $appointment_items[] = $row;
+        $allKeys[] = $k;
+    }
+}
+if (isset($medicine_reminder_query) && $medicine_reminder_query) {
+    while ($row = mysqli_fetch_assoc($medicine_reminder_query)) {
+        $k = qc_notification_make_key(
+            'medicine',
+            $pidForSeen . '|' . ($row['REMINDER_DATE'] ?? date('Y-m-d')) . '|' . ($row['REMINDER_TIME'] ?? '') . '|' . ($row['MED_NAME'] ?? '') . '|' . ($row['REMARKS'] ?? '')
+        );
+        $row['_notif_key'] = $k;
+        $medicine_items[] = $row;
+        $allKeys[] = $k;
+    }
+}
+if (isset($cancellation_query) && $cancellation_query) {
+    while ($row = mysqli_fetch_assoc($cancellation_query)) {
+        $k = qc_notification_make_key(
+            'cancellation',
+            $pidForSeen . '|' . ($row['START_DATE'] ?? '') . '|' . ($row['REMINDER_TIME'] ?? '') . '|' . ($row['REMARKS'] ?? '')
+        );
+        $row['_notif_key'] = $k;
+        $cancellation_items[] = $row;
+        $allKeys[] = $k;
+    }
+}
+
+$seenMap = qc_notification_seen_map($conn, 'patient', $pidForSeen, $allKeys);
+$toMarkSeen = [];
+
+$appointment_items = array_values(array_filter($appointment_items, function ($row) use ($seenMap, &$toMarkSeen) {
+    $k = $row['_notif_key'] ?? '';
+    if ($k !== '' && isset($seenMap[$k])) return false;
+    if ($k !== '') $toMarkSeen[] = $k;
+    return true;
+}));
+$medicine_items = array_values(array_filter($medicine_items, function ($row) use ($seenMap, &$toMarkSeen) {
+    $k = $row['_notif_key'] ?? '';
+    if ($k !== '' && isset($seenMap[$k])) return false;
+    if ($k !== '') $toMarkSeen[] = $k;
+    return true;
+}));
+$cancellation_items = array_values(array_filter($cancellation_items, function ($row) use ($seenMap, &$toMarkSeen) {
+    $k = $row['_notif_key'] ?? '';
+    if ($k !== '' && isset($seenMap[$k])) return false;
+    if ($k !== '') $toMarkSeen[] = $k;
+    return true;
+}));
+
+if (!empty($toMarkSeen)) {
+    qc_notification_mark_seen($conn, 'patient', $pidForSeen, $toMarkSeen);
+}
+
 // Notification count (appointment + medicine + cancellation reminders)
-$reminder_count = isset($reminder_query) && $reminder_query ? mysqli_num_rows($reminder_query) : 0;
-$medicine_reminder_count = isset($medicine_reminder_query) && $medicine_reminder_query ? mysqli_num_rows($medicine_reminder_query) : 0;
-$cancellation_count = isset($cancellation_query) && $cancellation_query ? mysqli_num_rows($cancellation_query) : 0;
-$reminder_count += $medicine_reminder_count + $cancellation_count;
+$reminder_count = count($appointment_items) + count($medicine_items) + count($cancellation_items);
 ?>
 
 <header class="topbar">
@@ -99,8 +164,8 @@ $reminder_count += $medicine_reminder_count + $cancellation_count;
 
                 <div class="notification-dropdown" id="notificationDropdown">
                     <?php if ($reminder_count > 0): ?>
-                        <?php if (isset($reminder_query) && $reminder_query): ?>
-                            <?php while ($reminder = mysqli_fetch_assoc($reminder_query)): ?>
+                        <?php if (!empty($appointment_items)): ?>
+                            <?php foreach ($appointment_items as $reminder): ?>
                                 <div class="notification-item">
                                     <div class="notification-icon">
                                         <i class="fas fa-calendar-check"></i>
@@ -117,10 +182,10 @@ $reminder_count += $medicine_reminder_count + $cancellation_count;
                                         </div>
                                     </div>
                                 </div>
-                            <?php endwhile; ?>
+                            <?php endforeach; ?>
                         <?php endif; ?>
-                        <?php if (isset($medicine_reminder_query) && $medicine_reminder_query): ?>
-                            <?php while ($med = mysqli_fetch_assoc($medicine_reminder_query)): ?>
+                        <?php if (!empty($medicine_items)): ?>
+                            <?php foreach ($medicine_items as $med): ?>
                                 <div class="notification-item">
                                     <div class="notification-icon">
                                         <i class="fas fa-pills"></i>
@@ -135,10 +200,10 @@ $reminder_count += $medicine_reminder_count + $cancellation_count;
                                         </div>
                                     </div>
                                 </div>
-                            <?php endwhile; ?>
+                            <?php endforeach; ?>
                         <?php endif; ?>
-                        <?php if (isset($cancellation_query) && $cancellation_query): ?>
-                            <?php while ($cn = mysqli_fetch_assoc($cancellation_query)): ?>
+                        <?php if (!empty($cancellation_items)): ?>
+                            <?php foreach ($cancellation_items as $cn): ?>
                                 <div class="notification-item">
                                     <div class="notification-icon" style="background: #fee2e2; color: #dc2626;">
                                         <i class="fas fa-calendar-times"></i>
@@ -153,25 +218,7 @@ $reminder_count += $medicine_reminder_count + $cancellation_count;
                                         </div>
                                     </div>
                                 </div>
-                            <?php endwhile; ?>
-                        <?php endif; ?>
-                        <?php if (isset($cancellation_query) && $cancellation_query): ?>
-                            <?php while ($cn = mysqli_fetch_assoc($cancellation_query)): ?>
-                                <div class="notification-item">
-                                    <div class="notification-icon" style="background: #fee2e2; color: #dc2626;">
-                                        <i class="fas fa-calendar-times"></i>
-                                    </div>
-                                    <div class="notification-content">
-                                        <div class="notification-title">Appointment Cancelled</div>
-                                        <div class="notification-message">
-                                            <?php echo htmlspecialchars(str_replace('[CANCELLED] ', '', $cn['REMARKS'])); ?>
-                                        </div>
-                                        <div class="notification-time">
-                                            <?php echo date('M d, Y', strtotime($cn['START_DATE'])); ?>
-                                        </div>
-                                    </div>
-                                </div>
-                            <?php endwhile; ?>
+                            <?php endforeach; ?>
                         <?php endif; ?>
                     <?php else: ?>
                         <div class="no-notifications">No new notifications</div>

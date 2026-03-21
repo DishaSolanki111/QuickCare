@@ -713,13 +713,6 @@ html {
                 </div>
             <?php endif; ?>
             
-            <!-- Book New Appointment Button -->
-            <div style="margin-bottom: 20px;">
-                <button class="btn btn-success" onClick="window.location.href='appointment.php'">
-                    <i class="fas fa-plus"></i> Book New Appointment
-                </button>
-            </div>
-            
             <!-- Tabs Section -->
             <div class="tabs">
                 <div class="tab active" data-tab="upcoming">Upcoming Appointments</div>

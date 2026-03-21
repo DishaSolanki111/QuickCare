@@ -1,6 +1,8 @@
 <?php
 session_start();
 include 'config.php';   // 🔴 REQUIRED — FIXES YOUR ERROR
+require_once 'username_validation.php';
+require_once 'account_validation.php';
 
  $success = false;
  $error = "";
@@ -8,25 +10,57 @@ include 'config.php';   // 🔴 REQUIRED — FIXES YOUR ERROR
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // 🔹 SANITIZE INPUTS
-    $first_name  = mysqli_real_escape_string($conn, $_POST['first_name']);
-    $last_name   = mysqli_real_escape_string($conn, $_POST['last_name']);
-    $username    = mysqli_real_escape_string($conn, $_POST['username']);
-    $password    = $_POST['password'];
+    $first_name_raw  = $_POST['first_name'] ?? '';
+    $last_name_raw   = $_POST['last_name'] ?? '';
+    $usernameRaw = $_POST['username'] ?? '';
+    $passwordRaw = $_POST['password'] ?? '';
     $dob         = $_POST['dob'];
     $gender      = $_POST['gender'] ?? '';
     $blood_group = $_POST['blood_group'] ?? '';
     $phone       = $_POST['phone'];
-    $email       = $_POST['email'];
+    $email_raw   = $_POST['email'] ?? '';
     $address     = mysqli_real_escape_string($conn, $_POST['address']);
 
-    // 🔹 HASH PASSWORD
-    $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-
-    // 🔹 CHECK USERNAME ALREADY EXISTS
-    $check = mysqli_query($conn, "SELECT PATIENT_ID FROM patient_tbl WHERE USERNAME='$username'");
-    if(mysqli_num_rows($check) > 0){
-        $error = "Username already exists!";
+    // 🔹 CHECK USERNAME ALREADY EXISTS (case-insensitive) + strict validation
+    $usernameNormalized = '';
+    $usernameError = '';
+    if (!qc_validate_username($usernameRaw, $usernameNormalized, $usernameError)) {
+        $error = $usernameError;
     } else {
+        $username = $usernameNormalized;
+        $emailLower = strtolower(trim((string)$email_raw));
+
+        // Validate first/last name (no spaces; letters + - + ')
+        $first_nameNormalized = '';
+        $last_nameNormalized = '';
+        if (!qc_validate_person_name($first_name_raw, $first_nameNormalized, $first_nameErr)) {
+            $error = $first_nameErr;
+        } elseif (!qc_validate_person_name($last_name_raw, $last_nameNormalized, $last_nameErr)) {
+            $error = $last_nameErr;
+        } else {
+            $passwordError = '';
+            if (!qc_validate_password($passwordRaw, $username, $emailLower, $passwordError)) {
+                $error = $passwordError;
+            } else {
+                $first_name = mysqli_real_escape_string($conn, $first_nameNormalized);
+                $last_name = mysqli_real_escape_string($conn, $last_nameNormalized);
+                $email = mysqli_real_escape_string($conn, $email_raw);
+                $hashed_password = password_hash($passwordRaw, PASSWORD_DEFAULT);
+            }
+        }
+
+        // Only proceed if name/password validation passed
+        if ($error === '') {
+        $stmt = $conn->prepare("SELECT PATIENT_ID FROM patient_tbl WHERE LOWER(USERNAME) = ?");
+        $stmt->bind_param("s", $username);
+        $stmt->execute();
+        $check = $stmt->get_result();
+        $exists = ($check && $check->num_rows > 0);
+        $stmt->close();
+
+        if ($exists) {
+            $error = "Username already exists!";
+        } else {
 
         // 🔹 INSERT PATIENT
         $sql = "
@@ -37,10 +71,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
          '$blood_group','$phone','$email','$address')
         ";
 
-        if(mysqli_query($conn, $sql)){
-            $success = true;
-        } else {
-            $error = mysqli_error($conn);
+            if(mysqli_query($conn, $sql)){
+                $success = true;
+            } else {
+                $error = mysqli_error($conn);
+            }
+        }
         }
     }
 }

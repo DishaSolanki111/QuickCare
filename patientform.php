@@ -1,6 +1,8 @@
 <?php
 ob_start();
 include 'config.php'; 
+require_once 'username_validation.php';
+require_once 'account_validation.php';
 include 'header.php';?>
 <!DOCTYPE html>
 <html lang="en">
@@ -497,8 +499,8 @@ include 'header.php';?>
                 }
 
                 // ---------------- SANITIZE ----------------
-                $first_name = strtoupper(trim(mysqli_real_escape_string($conn, $_POST['first_name'])));
-                $last_name  = strtoupper(trim(mysqli_real_escape_string($conn, $_POST['last_name'])));
+                $first_name_raw = $_POST['first_name'] ?? '';
+                $last_name_raw  = $_POST['last_name'] ?? '';
                 $dob        = $_POST['dob'];
                 $blood_group = $_POST['blood_group'] ?? '';
                 $address    = mysqli_real_escape_string($conn, $_POST['address']);
@@ -510,12 +512,18 @@ include 'header.php';?>
                 $security_question = $_POST['security_question'] ?? '';
                 $security_answer   = trim($_POST['security_answer'] ?? '');
 
-                // ---------------- FIRST NAME / LAST NAME - MUST BE CAPITAL ----------------
-                if (!preg_match('/^[A-Z\s]+$/', $first_name)) {
-                    $field_errors['first_name'] = "First name must contain only capital letters.";
+                // ---------------- FIRST NAME / LAST NAME ----------------
+                $first_nameNormalized = '';
+                $last_nameNormalized = '';
+                if (!qc_validate_person_name($first_name_raw, $first_nameNormalized, $first_nameErr)) {
+                    $field_errors['first_name'] = $first_nameErr;
+                } else {
+                    $first_name = strtoupper(mysqli_real_escape_string($conn, $first_nameNormalized));
                 }
-                if (!preg_match('/^[A-Z\s]+$/', $last_name)) {
-                    $field_errors['last_name'] = "Last name must contain only capital letters.";
+                if (!qc_validate_person_name($last_name_raw, $last_nameNormalized, $last_nameErr)) {
+                    $field_errors['last_name'] = $last_nameErr;
+                } else {
+                    $last_name = strtoupper(mysqli_real_escape_string($conn, $last_nameNormalized));
                 }
 
                 // ---------------- DATE VALIDATION ----------------
@@ -531,49 +539,20 @@ include 'header.php';?>
                 }
 
                 // ---------------- USERNAME VALIDATION ----------------
-                // Rules:
-                // - Must start with a letter
-                // - Length 3–20 characters
-                // - Only letters, numbers, and underscore
-                // - No character can repeat more than 2 times consecutively
-                $username = trim($username);
-                $usernameErrors = [];
-                if ($username === '') {
-                    $usernameErrors[] = "Username is required.";
+                $usernameNormalized = '';
+                $usernameError = '';
+                if (!qc_validate_username($username, $usernameNormalized, $usernameError)) {
+                    $field_errors['username'] = $usernameError;
                 } else {
-                    if (!preg_match('/^[A-Za-z]/', $username)) {
-                        $usernameErrors[] = "Must start with a letter.";
-                    }
-                    if (strlen($username) < 3 || strlen($username) > 20) {
-                        $usernameErrors[] = "Length must be between 3 and 20 characters.";
-                    }
-                    if (!preg_match('/^[A-Za-z0-9_]+$/', $username)) {
-                        $usernameErrors[] = "Only letters, numbers, and underscore (_) are allowed.";
-                    }
-                    if (preg_match('/([A-Za-z0-9_])\1\1/', $username)) {
-                        $usernameErrors[] = "No character can repeat more than 2 times in a row.";
-                    }
-                }
-                if (!empty($usernameErrors)) {
-                    $field_errors['username'] = implode(' ', $usernameErrors);
+                    // Store lowercase internally for consistent case-insensitive behavior
+                    $username = $usernameNormalized;
                 }
                 
                 // ---------------- PASSWORD VALIDATION ----------------
-                $passwordErrors = [];
-                if (strlen($password) < 8) {
-                    $passwordErrors[] = "At least 8 characters.";
-                }
-                if (!preg_match('/[A-Z]/', $password)) {
-                    $passwordErrors[] = "Add at least 1 uppercase letter.";
-                }
-                if (!preg_match('/[0-9]/', $password)) {
-                    $passwordErrors[] = "Add at least 1 digit.";
-                }
-                if (!preg_match('/[\W]/', $password)) {
-                    $passwordErrors[] = "Add at least 1 special character.";
-                }
-                if (!empty($passwordErrors)) {
-                    $field_errors['password'] = implode(' ', $passwordErrors);
+                $passwordError = '';
+                $emailLower = strtolower((string)trim($email));
+                if (!qc_validate_password($password, $username, $emailLower, $passwordError)) {
+                    $field_errors['password'] = $passwordError;
                 }
 
                 // ---------------- PHONE VALIDATION ----------------
@@ -596,12 +575,14 @@ include 'header.php';?>
 
                 // ---------------- USERNAME EXISTS CHECK (patient_tbl) ----------------
                 if (empty($field_errors['username'])) {
-                    $check_username = mysqli_real_escape_string($conn, $username);
-                    $check_sql = "SELECT COUNT(*) as cnt FROM patient_tbl WHERE USERNAME = '$check_username'";
-                    $check_result = $conn->query($check_sql);
+                    $stmt = $conn->prepare("SELECT COUNT(*) as cnt FROM patient_tbl WHERE LOWER(USERNAME) = ?");
+                    $stmt->bind_param("s", $username);
+                    $stmt->execute();
+                    $check_result = $stmt->get_result();
                     if ($check_result && $check_result->fetch_assoc()['cnt'] > 0) {
                         $field_errors['username'] = "Username already exists. Please choose another one.";
                     }
+                    $stmt->close();
                 }
 
                 // ---------------- FINAL INSERT ----------------
@@ -829,13 +810,17 @@ include 'header.php';?>
     // --- Validation Logic Functions ---
 
     function validateFirstName(input) {
-        if (input.value.trim() !== '') {
+        const val = input.value.trim();
+        const nameRegex = /^[A-Za-z]+$/;
+        if (val.length >= 2 && val.length <= 50 && nameRegex.test(val) && !/(.)\1{3,}/.test(val)) {
             hideError('first_name');
         }
     }
 
     function validateLastName(input) {
-        if (input.value.trim() !== '') {
+        const val = input.value.trim();
+        const nameRegex = /^[A-Za-z]+$/;
+        if (val.length >= 2 && val.length <= 50 && nameRegex.test(val) && !/(.)\1{3,}/.test(val)) {
             hideError('last_name');
         }
     }
@@ -871,15 +856,36 @@ include 'header.php';?>
 
     function validateUsername(input) {
         const val = input.value.trim();
-        const usernameRegex = /^(?!.*([A-Za-z0-9_])\1\1)[A-Za-z][A-Za-z0-9_]{2,19}$/;
-        if (val !== '' && usernameRegex.test(val)) {
+        const reserved = ['admin', 'root', 'support', 'api', 'system'];
+        const lower = val.toLowerCase();
+
+        const usernameRegex = /^[A-Za-z0-9_.]+$/;
+        const isNumericOnly = /^\d+$/.test(val);
+        const isValid =
+            val.length >= 3 &&
+            val.length <= 30 &&
+            !/\s/.test(val) &&
+            usernameRegex.test(val) &&
+            !/^[_.]|[_.]$/.test(val) &&
+            !/[_.]{2,}/.test(val) &&
+            !isNumericOnly &&
+            reserved.indexOf(lower) === -1;
+
+        if (val !== '' && isValid) {
             hideError('username');
         }
     }
 
     function validatePassword(input) {
         const val = input.value;
-        if (val.length >= 8 && /[A-Z]/.test(val) && /[0-9]/.test(val) && /[\W_]/.test(val)) {
+        const specialRegex = /[^A-Za-z0-9]/;
+        const hasUpper = /[A-Z]/.test(val);
+        const hasLower = /[a-z]/.test(val);
+        const hasDigit = /[0-9]/.test(val);
+        const hasSpecial = specialRegex.test(val);
+        const startsWithCapital = /^[A-Z]/.test(val);
+
+        if (val.length >= 8 && startsWithCapital && hasUpper && hasLower && hasDigit && hasSpecial) {
             hideError('password');
         }
     }
@@ -939,8 +945,8 @@ include 'header.php';?>
         if (firstName.value.trim() === '') {
             showError('first_name', "First name is required.");
             isValid = false;
-        } else if (!/^[A-Za-z\s]+$/.test(firstName.value.trim())) {
-            showError('first_name', "First name must contain only letters (stored in CAPITAL).");
+        } else if (!/^[A-Za-z]+$/.test(firstName.value.trim()) || firstName.value.trim().length < 2 || firstName.value.trim().length > 50 || /(.)\1{3,}/.test(firstName.value.trim())) {
+            showError('first_name', "First name must be 2–50 letters only and no letter can repeat more than 3 times consecutively.");
             isValid = false;
         } else {
             hideError('first_name');
@@ -951,8 +957,8 @@ include 'header.php';?>
         if (lastName.value.trim() === '') {
             showError('last_name', "Last name is required.");
             isValid = false;
-        } else if (!/^[A-Za-z\s]+$/.test(lastName.value.trim())) {
-            showError('last_name', "Last name must contain only letters (stored in CAPITAL).");
+        } else if (!/^[A-Za-z]+$/.test(lastName.value.trim()) || lastName.value.trim().length < 2 || lastName.value.trim().length > 50 || /(.)\1{3,}/.test(lastName.value.trim())) {
+            showError('last_name', "Last name must be 2–50 letters only and no letter can repeat more than 3 times consecutively.");
             isValid = false;
         } else {
             hideError('last_name');
@@ -999,13 +1005,27 @@ include 'header.php';?>
 
         // 7. Validate Username
         const username = document.getElementById('username');
-        const usernameRegex = /^(?!.*([A-Za-z0-9_])\1\1)[A-Za-z][A-Za-z0-9_]{2,19}$/;
         const unameVal = username.value.trim();
+        const reserved = ['admin', 'root', 'support', 'api', 'system'];
+        const lower = unameVal.toLowerCase();
+
+        const usernameRegex = /^[A-Za-z0-9_.]+$/;
+        const isNumericOnly = /^\d+$/.test(unameVal);
+        const isValidUsername =
+            unameVal.length >= 3 &&
+            unameVal.length <= 30 &&
+            !/\s/.test(unameVal) &&
+            usernameRegex.test(unameVal) &&
+            !/^[_.]|[_.]$/.test(unameVal) &&
+            !/[_.]{2,}/.test(unameVal) &&
+            !isNumericOnly &&
+            reserved.indexOf(lower) === -1;
+
         if (unameVal === '') {
             showError('username', "Username is required.");
             isValid = false;
-        } else if (!usernameRegex.test(unameVal)) {
-            showError('username', "Username must start with a letter, be 3–20 characters, use only letters, numbers and underscore (_), and not repeat any character more than 2 times in a row.");
+        } else if (!isValidUsername) {
+            showError('username', "Invalid username. Use 3–30 chars with letters/numbers and _ or ., no spaces, no starting/ending with _/., and no consecutive _/.");
             isValid = false;
         } else {
             hideError('username');
@@ -1013,16 +1033,25 @@ include 'header.php';?>
 
         // 8. Validate Password
         const password = document.getElementById('password');
-        if (password.value.length < 8) {
+        const pw = password.value;
+        const specialRegex = /[^A-Za-z0-9]/;
+
+        if (pw.length < 8) {
             showError('password', "Password must be at least 8 characters long.");
             isValid = false;
-        } else if (!/[A-Z]/.test(password.value)) {
-            showError('password', "Password must contain at least one uppercase letter.");
+        } else if (!/^[A-Z]/.test(pw)) {
+            showError('password', "Password must start with a capital letter (A-Z).");
             isValid = false;
-        } else if (!/[0-9]/.test(password.value)) {
+        } else if (!/[A-Z]/.test(pw)) {
+            showError('password', "Password must contain at least one uppercase letter (A-Z).");
+            isValid = false;
+        } else if (!/[a-z]/.test(pw)) {
+            showError('password', "Password must contain at least one lowercase letter (a-z).");
+            isValid = false;
+        } else if (!/[0-9]/.test(pw)) {
             showError('password', "Password must contain at least one digit.");
             isValid = false;
-        } else if (!/[\W_]/.test(password.value)) {
+        } else if (!specialRegex.test(pw)) {
             showError('password', "Password must contain at least one special character.");
             isValid = false;
         } else {

@@ -5,6 +5,7 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 include 'config.php';
+require_once 'notification_seen.php';
 
 $doctor_id = $_SESSION['DOCTOR_ID'] ?? 0;
 if (!$doctor_id) {
@@ -75,6 +76,62 @@ if (!$doctor_id) {
     $cancelledByPatientNotifications = $cancelled_result->fetch_all(MYSQLI_ASSOC);
     $cancelledByPatientCount = count($cancelledByPatientNotifications);
 }
+$totalBadgeCount = $reminderCount + $rescheduleCount + $cancelledByPatientCount;
+
+if ($doctor_id) {
+    $allKeys = [];
+    foreach ($appointments as $row) {
+        $row['_notif_key'] = qc_notification_make_key(
+            'doctor_upcoming',
+            $doctor_id . '|' . ($row['APPOINTMENT_ID'] ?? '') . '|' . ($row['appointment_datetime'] ?? '')
+        );
+        $allKeys[] = $row['_notif_key'];
+    }
+    foreach ($rescheduleNotifications as $row) {
+        $row['_notif_key'] = qc_notification_make_key(
+            'doctor_rescheduled',
+            $doctor_id . '|' . ($row['APPOINTMENT_REMINDER_ID'] ?? '') . '|' . ($row['REMARKS'] ?? '')
+        );
+        $allKeys[] = $row['_notif_key'];
+    }
+    foreach ($cancelledByPatientNotifications as $row) {
+        $row['_notif_key'] = qc_notification_make_key(
+            'doctor_cancelled',
+            $doctor_id . '|' . ($row['APPOINTMENT_REMINDER_ID'] ?? '') . '|' . ($row['REMARKS'] ?? '')
+        );
+        $allKeys[] = $row['_notif_key'];
+    }
+
+    $seenMap = qc_notification_seen_map($conn, 'doctor', $doctor_id, $allKeys);
+    $toMarkSeen = [];
+
+    $appointments = array_values(array_filter($appointments, function ($row) use ($seenMap, &$toMarkSeen) {
+        $k = $row['_notif_key'] ?? '';
+        if ($k !== '' && isset($seenMap[$k])) return false;
+        if ($k !== '') $toMarkSeen[] = $k;
+        return true;
+    }));
+    $rescheduleNotifications = array_values(array_filter($rescheduleNotifications, function ($row) use ($seenMap, &$toMarkSeen) {
+        $k = $row['_notif_key'] ?? '';
+        if ($k !== '' && isset($seenMap[$k])) return false;
+        if ($k !== '') $toMarkSeen[] = $k;
+        return true;
+    }));
+    $cancelledByPatientNotifications = array_values(array_filter($cancelledByPatientNotifications, function ($row) use ($seenMap, &$toMarkSeen) {
+        $k = $row['_notif_key'] ?? '';
+        if ($k !== '' && isset($seenMap[$k])) return false;
+        if ($k !== '') $toMarkSeen[] = $k;
+        return true;
+    }));
+
+    if (!empty($toMarkSeen)) {
+        qc_notification_mark_seen($conn, 'doctor', $doctor_id, $toMarkSeen);
+    }
+}
+
+$reminderCount = count($appointments);
+$rescheduleCount = count($rescheduleNotifications);
+$cancelledByPatientCount = count($cancelledByPatientNotifications);
 $totalBadgeCount = $reminderCount + $rescheduleCount + $cancelledByPatientCount;
 ?>
 
