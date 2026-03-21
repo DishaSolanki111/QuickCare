@@ -154,67 +154,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
             min-height: 100vh;
         }
 
-        /* Sidebar */
-        .sidebar {
-            width: 250px;
-            background: var(--primary);
-            color: var(--white);
-            height: 100vh;
-            position: fixed;
-            left: 0;
-            top: 0;
-            overflow-y: auto;
-            transition: all 0.3s ease;
-            z-index: 1000;
-        }
-
-        .sidebar-header {
-            padding: 20px;
-            text-align: center;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .sidebar-header h2 {
-            font-size: 24px;
-            font-weight: 700;
-            margin-bottom: 5px;
-        }
-
-        .sidebar-nav {
-            padding: 20px 0;
-        }
-
-        .sidebar-nav a {
-            display: flex;
-            align-items: center;
-            padding: 15px 20px;
-            color: var(--white);
-            text-decoration: none;
-            transition: all 0.3s ease;
-            border-left: 3px solid transparent;
-        }
-
-        .sidebar-nav a:hover,
-        .sidebar-nav a.active {
-            background-color: var(--primary-dark);
-            border-left-color: var(--secondary);
-        }
-
-        .sidebar-nav a i {
-            margin-right: 10px;
-            font-size: 18px;
-            width: 20px;
-            text-align: center;
-        }
-
-        .sidebar-nav a span {
-            font-size: 16px;
-        }
-
+      
         /* Main Content */
         .main-content {
-            margin-left: 250px;
-            padding: 20px;
+            margin-left: 150px;
+            padding: 20px 0;
             width: calc(100% - 250px);
             min-height: 100vh;
         }
@@ -223,11 +167,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
         .topbar {
             background: #ffffff;
             padding: 18px 30px;
-            display: flex;
+            
             justify-content: space-between;
-            align-items: center;
+            align-items: left;
             box-shadow: 0 2px 6px rgba(0,0,0,0.06);
-            margin-bottom: 10px;
+            margin-bottom: 20px;
         }
 
         .topbar-right {
@@ -274,9 +218,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
         .profile-content {
             background: var(--white);
             border-radius: 12px;
-            padding: 30px;
+            padding: 25px 30px 15px 30px; /* Reduced bottom padding */
             box-shadow: var(--shadow-md);
-            max-width: 600px;
+          
+            height: fit-content; /* Fit snugly after buttons */
         }
 
         .profile-header {
