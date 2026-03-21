@@ -21,8 +21,8 @@ use PHPMaker2026\Project2\Db\Entity;
 class ViewPaymentReportController extends BaseController
 {
     // list
-    #[Route('/ViewPaymentReportList', methods: ['GET', 'POST', 'OPTIONS'], name: 'list.view_payment_report')]
-    public function list(Request $request, ViewPaymentReportList $page): Response
+    #[Route('/ViewPaymentReportList/{chartName}', methods: ['GET', 'POST', 'OPTIONS'], name: 'list.view_payment_report')]
+    public function list(Request $request, ViewPaymentReportList $page, ?string $chartName = null): Response
     {
         // Init page
         $page->init();
@@ -38,6 +38,23 @@ class ViewPaymentReportController extends BaseController
         if (!$page->Records) {
             $page->Records = $page->loadRecords($page->StartRecord - 1, $page->DisplayRecords);
         }
+
+        // Get chart data
+        foreach ($page->Charts as $id => $chart) {
+            $chartService = new ChartService($chart, $this);
+            $page->ChartData[$id] = $chartService->getChartData($page->Filter, $page->getOrderBy());
+        }
+
+        // Run page
+        return $chartName ? $this->runChart($page, $chartName) : $this->runPage($page);
+    }
+
+    // search
+    #[Route('/ViewPaymentReportSearch', methods: ['GET', 'POST', 'OPTIONS'], name: 'search.view_payment_report')]
+    public function search(Request $request, ViewPaymentReportSearch $page): Response
+    {
+        // Check resolved arguments
+        $hasResolved = false;
 
         // Run page
         return $this->runPage($page);

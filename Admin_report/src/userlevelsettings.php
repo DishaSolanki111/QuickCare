@@ -52,11 +52,9 @@ return [
     ['{A46002E4-B4F6-47F2-B55F-A3278D4B1DC4}specialisation_tbl', '-2', '0'],
     ['{A46002E4-B4F6-47F2-B55F-A3278D4B1DC4}Appointment_report', '-2', '0'],
     ['{A46002E4-B4F6-47F2-B55F-A3278D4B1DC4}view_appointment_report', '-2', '0'],
-    ['{A46002E4-B4F6-47F2-B55F-A3278D4B1DC4}view_doctor_report', '-2', '0'],
-    ['{A46002E4-B4F6-47F2-B55F-A3278D4B1DC4}view_feedback_report', '-2', '0'],
     ['{A46002E4-B4F6-47F2-B55F-A3278D4B1DC4}view_patient_report', '-2', '0'],
     ['{A46002E4-B4F6-47F2-B55F-A3278D4B1DC4}view_payment_report', '-2', '0'],
-    ['{A46002E4-B4F6-47F2-B55F-A3278D4B1DC4}view_prescription_report', '-2', '0']
+    ['{A46002E4-B4F6-47F2-B55F-A3278D4B1DC4}view_doctor_report', '-2', '0']
 ],
 
     /**
@@ -87,10 +85,8 @@ return [
     ['specialisation_tbl', 'specialisation_tbl', 'specialisation tbl', true, '{A46002E4-B4F6-47F2-B55F-A3278D4B1DC4}', ''],
     ['Appointment_report', 'Appointment_report', 'Appointment report', true, '{A46002E4-B4F6-47F2-B55F-A3278D4B1DC4}', ''],
     ['view_appointment_report', 'view_appointment_report', 'view appointment report', true, '{A46002E4-B4F6-47F2-B55F-A3278D4B1DC4}', 'ViewAppointmentReportList'],
-    ['view_doctor_report', 'view_doctor_report', 'view doctor report', true, '{A46002E4-B4F6-47F2-B55F-A3278D4B1DC4}', ''],
-    ['view_feedback_report', 'view_feedback_report', 'view feedback report', true, '{A46002E4-B4F6-47F2-B55F-A3278D4B1DC4}', 'ViewFeedbackReportList'],
-    ['view_patient_report', 'view_patient_report', 'view patient report', true, '{A46002E4-B4F6-47F2-B55F-A3278D4B1DC4}', 'ViewPatientReportList'],
+    ['view_patient_report', 'view_patient_report', 'view patient report', true, '{A46002E4-B4F6-47F2-B55F-A3278D4B1DC4}', ''],
     ['view_payment_report', 'view_payment_report', 'view payment report', true, '{A46002E4-B4F6-47F2-B55F-A3278D4B1DC4}', 'ViewPaymentReportList'],
-    ['view_prescription_report', 'view_prescription_report', ' Appointment Report', true, '{A46002E4-B4F6-47F2-B55F-A3278D4B1DC4}', 'ViewPrescriptionReportList']
+    ['view_doctor_report', 'view_doctor_report', 'view doctor report', true, '{A46002E4-B4F6-47F2-B55F-A3278D4B1DC4}', 'ViewDoctorReportList']
 ],
 ];

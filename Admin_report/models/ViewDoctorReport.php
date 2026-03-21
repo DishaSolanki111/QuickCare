@@ -98,8 +98,24 @@ class ViewDoctorReport extends DbTable implements LookupTableInterface
     public bool $ModalGridAdd = false;
     public bool $ModalGridEdit = false;
     public bool $ModalMultiEdit = false;
+    public DbChart $Chart1;
+    public DbChart $Chart2;
+    public DbChart $Chart3;
 
     // Fields
+    public DbField $DOCTOR_ID;
+    public DbField $Doctor_Name;
+    public DbField $Specialisation;
+    public DbField $EDUCATION;
+    public DbField $Doctor_Status;
+    public DbField $APPOINTMENT_ID;
+    public DbField $APPOINTMENT_DATE;
+    public DbField $Month_Name;
+    public DbField $Month_Number;
+    public DbField $Year;
+    public DbField $Appointment_Status;
+    public DbField $Total_Patients;
+    public DbField $Avg_Rating;
 
     // Page ID
     public string $PageID = ""; // To be set by subclass
@@ -145,11 +161,205 @@ class ViewDoctorReport extends DbTable implements LookupTableInterface
         $this->GridAddRowCount = 5;
         $this->AllowAddDeleteRow = true; // Allow add/delete row
         $this->UseAjaxActions = $this->UseAjaxActions || Config("USE_AJAX_ACTIONS");
+        $this->UseColumnVisibility = true;
         $this->UserIDPermission = Config("DEFAULT_USER_ID_PERMISSION"); // Default User ID permission
         $this->BasicSearch = new BasicSearch($this, Session(), $this->language);
 
         // Create fields
         $this->Fields = $this->fieldFactory->createAll($this);
+
+        // DOCTOR_ID
+        $this->DOCTOR_ID = $this->Fields['DOCTOR_ID'];
+        $this->DOCTOR_ID->DefaultErrorMessage = $this->language->phrase("IncorrectInteger");
+
+        // Doctor_Name
+        $this->Doctor_Name = $this->Fields['Doctor_Name'];
+        $this->Doctor_Name->Lookup = new Lookup($this->Doctor_Name, 'view_doctor_report', true, 'Doctor_Name', ["Doctor_Name","","",""], '', "", [], [], [], [], [], [], false, '', '', "");
+
+        // Specialisation
+        $this->Specialisation = $this->Fields['Specialisation'];
+        $this->Specialisation->Lookup = new Lookup($this->Specialisation, 'view_doctor_report', true, 'Specialisation', ["Specialisation","","",""], '', "", [], [], [], [], [], [], false, '', '', "");
+
+        // EDUCATION
+        $this->EDUCATION = $this->Fields['EDUCATION'];
+
+        // Doctor_Status
+        $this->Doctor_Status = $this->Fields['Doctor_Status'];
+        $this->Doctor_Status->Lookup = new Lookup($this->Doctor_Status, 'view_doctor_report', true, 'Doctor_Status', ["Doctor_Status","","",""], '', "", [], [], [], [], [], [], false, '', '', "");
+        $this->Doctor_Status->OptionCount = 3;
+
+        // APPOINTMENT_ID
+        $this->APPOINTMENT_ID = $this->Fields['APPOINTMENT_ID'];
+        $this->APPOINTMENT_ID->DefaultErrorMessage = $this->language->phrase("IncorrectInteger");
+
+        // APPOINTMENT_DATE
+        $this->APPOINTMENT_DATE = $this->Fields['APPOINTMENT_DATE'];
+        $this->APPOINTMENT_DATE->Lookup = new Lookup($this->APPOINTMENT_DATE, 'view_doctor_report', true, 'APPOINTMENT_DATE', ["APPOINTMENT_DATE","","",""], '', "", [], [], [], [], [], [], false, '', '', "");
+        $this->APPOINTMENT_DATE->DefaultErrorMessage = str_replace("%s", $httpContext["DATE_FORMAT"], $this->language->phrase("IncorrectDate"));
+
+        // Month_Name
+        $this->Month_Name = $this->Fields['Month_Name'];
+        $this->Month_Name->Lookup = new Lookup($this->Month_Name, 'view_doctor_report', true, 'Month_Name', ["Month_Name","","",""], '', "", [], [], [], [], [], [], false, '', '', "");
+
+        // Month_Number
+        $this->Month_Number = $this->Fields['Month_Number'];
+        $this->Month_Number->DefaultErrorMessage = $this->language->phrase("IncorrectInteger");
+
+        // Year
+        $this->Year = $this->Fields['Year'];
+        $this->Year->Lookup = new Lookup($this->Year, 'view_doctor_report', true, 'Year', ["Year","","",""], '', "", [], [], [], [], [], [], false, '', '', "");
+        $this->Year->DefaultErrorMessage = $this->language->phrase("IncorrectInteger");
+
+        // Appointment_Status
+        $this->Appointment_Status = $this->Fields['Appointment_Status'];
+        $this->Appointment_Status->Lookup = new Lookup($this->Appointment_Status, 'view_doctor_report', true, 'Appointment_Status', ["Appointment_Status","","",""], '', "", [], [], [], [], [], [], false, '', '', "");
+        $this->Appointment_Status->OptionCount = 3;
+
+        // Total_Patients
+        $this->Total_Patients = $this->Fields['Total_Patients'];
+        $this->Total_Patients->DefaultErrorMessage = $this->language->phrase("IncorrectInteger");
+
+        // Avg_Rating
+        $this->Avg_Rating = $this->Fields['Avg_Rating'];
+        $this->Avg_Rating->DefaultErrorMessage = $this->language->phrase("IncorrectFloat");
+
+        // Chart1
+        $this->Chart1 = new DbChart(
+            $this->language,
+            $this,
+            'Chart1',
+            'Chart1',
+            'Doctor_Name',
+            'APPOINTMENT_ID',
+            1004,
+            '',
+            0,
+            'COUNT',
+            800,
+            400
+        );
+        $this->Chart1->Position = 1;
+        $this->Chart1->PageBreakType = "after";
+        $this->Chart1->YAxisFormat = [""];
+        $this->Chart1->YFieldFormat = [""];
+        $this->Chart1->SortType = 0;
+        $this->Chart1->SortSequence = "";
+        $this->Chart1->SqlXField = "`Doctor_Name`";
+        $this->Chart1->SqlYField = "COUNT(`APPOINTMENT_ID`)";
+        $this->Chart1->SqlSeriesField = "''";
+        $this->Chart1->SqlGroupBy = "`Doctor_Name`";
+        $this->Chart1->SqlOrderBy = "";
+        $this->Chart1->SeriesDateType = "";
+        $this->Chart1->ID = "view_doctor_report_Chart1"; // Chart ID
+        $this->Chart1->setParameters([
+            ["type", "1004"],
+            ["seriestype", "0"]
+        ]); // Chart type / Chart series type
+        $this->Chart1->setParameters([
+            ["caption", $this->Chart1->caption()],
+            ["xaxisname", $this->Chart1->xAxisName()]
+        ]); // Chart caption / X axis name
+        $this->Chart1->setParameter("yaxisname", $this->Chart1->yAxisName()); // Y axis name
+        $this->Chart1->setParameters([
+            ["shownames", "1"],
+            ["showvalues", "1"],
+            ["showhovercap", "1"]
+        ]); // Show names / Show values / Show hover
+        $this->Chart1->setParameter("alpha", DbChart::getDefaultAlpha()); // Chart alpha (datasets background color)
+        $this->Chart1->setParameters([["options.plugins.legend.labels.pointStyleWidth",null]]);
+        $this->Charts[$this->Chart1->ID] = $this->Chart1;
+
+        // Chart2
+        $this->Chart2 = new DbChart(
+            $this->language,
+            $this,
+            'Chart2',
+            'Chart2',
+            'Specialisation',
+            'APPOINTMENT_ID',
+            1005,
+            '',
+            0,
+            'COUNT',
+            800,
+            400
+        );
+        $this->Chart2->Position = 1;
+        $this->Chart2->PageBreakType = "after";
+        $this->Chart2->YAxisFormat = [""];
+        $this->Chart2->YFieldFormat = [""];
+        $this->Chart2->SortType = 0;
+        $this->Chart2->SortSequence = "";
+        $this->Chart2->SqlXField = "`Specialisation`";
+        $this->Chart2->SqlYField = "COUNT(`APPOINTMENT_ID`)";
+        $this->Chart2->SqlSeriesField = "''";
+        $this->Chart2->SqlGroupBy = "`Specialisation`";
+        $this->Chart2->SqlOrderBy = "";
+        $this->Chart2->SeriesDateType = "";
+        $this->Chart2->ID = "view_doctor_report_Chart2"; // Chart ID
+        $this->Chart2->setParameters([
+            ["type", "1005"],
+            ["seriestype", "0"]
+        ]); // Chart type / Chart series type
+        $this->Chart2->setParameters([
+            ["caption", $this->Chart2->caption()],
+            ["xaxisname", $this->Chart2->xAxisName()]
+        ]); // Chart caption / X axis name
+        $this->Chart2->setParameter("yaxisname", $this->Chart2->yAxisName()); // Y axis name
+        $this->Chart2->setParameters([
+            ["shownames", "1"],
+            ["showvalues", "1"],
+            ["showhovercap", "1"]
+        ]); // Show names / Show values / Show hover
+        $this->Chart2->setParameter("alpha", DbChart::getDefaultAlpha()); // Chart alpha (datasets background color)
+        $this->Chart2->setParameters([["options.plugins.legend.labels.pointStyleWidth",null]]);
+        $this->Charts[$this->Chart2->ID] = $this->Chart2;
+
+        // Chart3
+        $this->Chart3 = new DbChart(
+            $this->language,
+            $this,
+            'Chart3',
+            'Chart3',
+            'Doctor_Name',
+            'Total_Patients',
+            1005,
+            '',
+            0,
+            'MAX',
+            800,
+            400
+        );
+        $this->Chart3->Position = 3;
+        $this->Chart3->PageBreakType = "before";
+        $this->Chart3->YAxisFormat = ["Number"];
+        $this->Chart3->YFieldFormat = ["Number"];
+        $this->Chart3->SortType = 0;
+        $this->Chart3->SortSequence = "";
+        $this->Chart3->SqlXField = "`Doctor_Name`";
+        $this->Chart3->SqlYField = "MAX(`Total_Patients`)";
+        $this->Chart3->SqlSeriesField = "''";
+        $this->Chart3->SqlGroupBy = "`Doctor_Name`";
+        $this->Chart3->SqlOrderBy = "";
+        $this->Chart3->SeriesDateType = "";
+        $this->Chart3->ID = "view_doctor_report_Chart3"; // Chart ID
+        $this->Chart3->setParameters([
+            ["type", "1005"],
+            ["seriestype", "0"]
+        ]); // Chart type / Chart series type
+        $this->Chart3->setParameters([
+            ["caption", $this->Chart3->caption()],
+            ["xaxisname", $this->Chart3->xAxisName()]
+        ]); // Chart caption / X axis name
+        $this->Chart3->setParameter("yaxisname", $this->Chart3->yAxisName()); // Y axis name
+        $this->Chart3->setParameters([
+            ["shownames", "1"],
+            ["showvalues", "1"],
+            ["showhovercap", "1"]
+        ]); // Show names / Show values / Show hover
+        $this->Chart3->setParameter("alpha", DbChart::getDefaultAlpha()); // Chart alpha (datasets background color)
+        $this->Chart3->setParameters([["options.plugins.legend.labels.pointStyleWidth",null]]);
+        $this->Charts[$this->Chart3->ID] = $this->Chart3;
 
         // Call Table Load event
         $this->tableLoad();
@@ -159,6 +369,336 @@ class ViewDoctorReport extends DbTable implements LookupTableInterface
     public function getFieldDefinitions(): array
     {
         return [
+            'DOCTOR_ID' => [
+                'FieldVar' => 'x_DOCTOR_ID', // Field variable name
+                'Param' => 'DOCTOR_ID', // Field parameter name (Table class property name)
+                'PropertyName' => 'doctorId', // Field entity property name
+                'Expression' => '`DOCTOR_ID`', // Field expression (used in SQL)
+                'BasicSearchExpression' => '`DOCTOR_ID`', // Field expression (used in basic search SQL)
+                'Type' => 3, // Field type
+                'DataType' => DataType::NUMBER, // Field data type (DataType::XXX)
+                'ParameterType' => ParameterType::INTEGER, // Field Doctrine parameter type
+                'Size' => 11, // Field size
+                'DateTimeFormat' => -1, // Date time format
+                'VirtualExpression' => '`DOCTOR_ID`', // Virtual field expression (used in ListSQL)
+                'IsVirtual' => false, // Virtual field
+                'ForceSelection' => false, // Autosuggest force selection
+                'VirtualSearch' => false, // Search as virtual field
+                'ViewTag' => 'FORMATTED TEXT', // View Tag
+                'HtmlTag' => 'NO', // HTML Tag
+                'IsUpload' => false, // Is upload field
+                'InputTextType' => 'text',
+                'Raw' => true,
+                'IsAutoIncrement' => true,
+                'Nullable' => false,
+                'Sortable' => false,
+
+                // 'UseAdvancedSearch' => true,
+                'SearchOperators' => ["=", "<>", "IN", "NOT IN", "<", "<=", ">", ">=", "BETWEEN", "NOT BETWEEN"],
+            ],
+            'Doctor_Name' => [
+                'FieldVar' => 'x_Doctor_Name', // Field variable name
+                'Param' => 'Doctor_Name', // Field parameter name (Table class property name)
+                'PropertyName' => 'doctorName', // Field entity property name
+                'Expression' => '`Doctor_Name`', // Field expression (used in SQL)
+                'BasicSearchExpression' => '`Doctor_Name`', // Field expression (used in basic search SQL)
+                'Type' => 200, // Field type
+                'DataType' => DataType::STRING, // Field data type (DataType::XXX)
+                'ParameterType' => ParameterType::STRING, // Field Doctrine parameter type
+                'Size' => 41, // Field size
+                'DateTimeFormat' => -1, // Date time format
+                'VirtualExpression' => '`Doctor_Name`', // Virtual field expression (used in ListSQL)
+                'IsVirtual' => false, // Virtual field
+                'ForceSelection' => false, // Autosuggest force selection
+                'VirtualSearch' => false, // Search as virtual field
+                'ViewTag' => 'FORMATTED TEXT', // View Tag
+                'HtmlTag' => 'TEXT', // HTML Tag
+                'IsUpload' => false, // Is upload field
+                'InputTextType' => 'text',
+                'Nullable' => false,
+                'Required' => true,
+                'UseFilter' => true,
+
+                // 'UseAdvancedSearch' => true,
+                'SearchOperators' => ["=", "<>", "IN", "NOT IN", "STARTS WITH", "NOT STARTS WITH", "LIKE", "NOT LIKE", "ENDS WITH", "NOT ENDS WITH", "IS EMPTY", "IS NOT EMPTY"],
+            ],
+            'Specialisation' => [
+                'FieldVar' => 'x_Specialisation', // Field variable name
+                'Param' => 'Specialisation', // Field parameter name (Table class property name)
+                'PropertyName' => 'specialisation', // Field entity property name
+                'Expression' => '`Specialisation`', // Field expression (used in SQL)
+                'BasicSearchExpression' => '`Specialisation`', // Field expression (used in basic search SQL)
+                'Type' => 200, // Field type
+                'DataType' => DataType::STRING, // Field data type (DataType::XXX)
+                'ParameterType' => ParameterType::STRING, // Field Doctrine parameter type
+                'Size' => 50, // Field size
+                'DateTimeFormat' => -1, // Date time format
+                'VirtualExpression' => '`Specialisation`', // Virtual field expression (used in ListSQL)
+                'IsVirtual' => false, // Virtual field
+                'ForceSelection' => false, // Autosuggest force selection
+                'VirtualSearch' => false, // Search as virtual field
+                'ViewTag' => 'FORMATTED TEXT', // View Tag
+                'HtmlTag' => 'TEXT', // HTML Tag
+                'IsUpload' => false, // Is upload field
+                'InputTextType' => 'text',
+                'Nullable' => false,
+                'Required' => true,
+                'UseFilter' => true,
+
+                // 'UseAdvancedSearch' => true,
+                'SearchOperators' => ["=", "<>", "IN", "NOT IN", "STARTS WITH", "NOT STARTS WITH", "LIKE", "NOT LIKE", "ENDS WITH", "NOT ENDS WITH", "IS EMPTY", "IS NOT EMPTY"],
+            ],
+            'EDUCATION' => [
+                'FieldVar' => 'x_EDUCATION', // Field variable name
+                'Param' => 'EDUCATION', // Field parameter name (Table class property name)
+                'PropertyName' => 'education', // Field entity property name
+                'Expression' => '`EDUCATION`', // Field expression (used in SQL)
+                'BasicSearchExpression' => '`EDUCATION`', // Field expression (used in basic search SQL)
+                'Type' => 200, // Field type
+                'DataType' => DataType::STRING, // Field data type (DataType::XXX)
+                'ParameterType' => ParameterType::STRING, // Field Doctrine parameter type
+                'Size' => 50, // Field size
+                'DateTimeFormat' => -1, // Date time format
+                'VirtualExpression' => '`EDUCATION`', // Virtual field expression (used in ListSQL)
+                'IsVirtual' => false, // Virtual field
+                'ForceSelection' => false, // Autosuggest force selection
+                'VirtualSearch' => false, // Search as virtual field
+                'ViewTag' => 'FORMATTED TEXT', // View Tag
+                'HtmlTag' => 'TEXT', // HTML Tag
+                'IsUpload' => false, // Is upload field
+                'InputTextType' => 'text',
+                'Nullable' => false,
+                'Required' => true,
+
+                // 'UseAdvancedSearch' => true,
+                'SearchOperators' => ["=", "<>", "IN", "NOT IN", "STARTS WITH", "NOT STARTS WITH", "LIKE", "NOT LIKE", "ENDS WITH", "NOT ENDS WITH", "IS EMPTY", "IS NOT EMPTY"],
+            ],
+            'Doctor_Status' => [
+                'FieldVar' => 'x_Doctor_Status', // Field variable name
+                'Param' => 'Doctor_Status', // Field parameter name (Table class property name)
+                'PropertyName' => 'doctorStatus', // Field entity property name
+                'Expression' => '`Doctor_Status`', // Field expression (used in SQL)
+                'BasicSearchExpression' => '`Doctor_Status`', // Field expression (used in basic search SQL)
+                'Type' => 200, // Field type
+                'DataType' => DataType::STRING, // Field data type (DataType::XXX)
+                'ParameterType' => ParameterType::STRING, // Field Doctrine parameter type
+                'Size' => 8, // Field size
+                'DateTimeFormat' => -1, // Date time format
+                'VirtualExpression' => '`Doctor_Status`', // Virtual field expression (used in ListSQL)
+                'IsVirtual' => false, // Virtual field
+                'ForceSelection' => false, // Autosuggest force selection
+                'VirtualSearch' => false, // Search as virtual field
+                'ViewTag' => 'FORMATTED TEXT', // View Tag
+                'HtmlTag' => 'RADIO', // HTML Tag
+                'IsUpload' => false, // Is upload field
+                'InputTextType' => 'text',
+                'Raw' => true,
+                'UseFilter' => true,
+
+                // 'UseAdvancedSearch' => true,
+                'SearchOperators' => ["=", "<>", "IS NULL", "IS NOT NULL"],
+                'OptionCount' => 3,
+            ],
+            'APPOINTMENT_ID' => [
+                'FieldVar' => 'x_APPOINTMENT_ID', // Field variable name
+                'Param' => 'APPOINTMENT_ID', // Field parameter name (Table class property name)
+                'PropertyName' => 'appointmentId', // Field entity property name
+                'Expression' => '`APPOINTMENT_ID`', // Field expression (used in SQL)
+                'BasicSearchExpression' => '`APPOINTMENT_ID`', // Field expression (used in basic search SQL)
+                'Type' => 3, // Field type
+                'DataType' => DataType::NUMBER, // Field data type (DataType::XXX)
+                'ParameterType' => ParameterType::INTEGER, // Field Doctrine parameter type
+                'Size' => 11, // Field size
+                'DateTimeFormat' => -1, // Date time format
+                'VirtualExpression' => '`APPOINTMENT_ID`', // Virtual field expression (used in ListSQL)
+                'IsVirtual' => false, // Virtual field
+                'ForceSelection' => false, // Autosuggest force selection
+                'VirtualSearch' => false, // Search as virtual field
+                'ViewTag' => 'FORMATTED TEXT', // View Tag
+                'HtmlTag' => 'NO', // HTML Tag
+                'IsUpload' => false, // Is upload field
+                'InputTextType' => 'text',
+                'Raw' => true,
+                'IsAutoIncrement' => true,
+                'Sortable' => false,
+
+                // 'UseAdvancedSearch' => true,
+                'SearchOperators' => ["=", "<>", "IN", "NOT IN", "<", "<=", ">", ">=", "BETWEEN", "NOT BETWEEN", "IS NULL", "IS NOT NULL"],
+            ],
+            'APPOINTMENT_DATE' => [
+                'FieldVar' => 'x_APPOINTMENT_DATE', // Field variable name
+                'Param' => 'APPOINTMENT_DATE', // Field parameter name (Table class property name)
+                'PropertyName' => 'appointmentDate', // Field entity property name
+                'Expression' => '`APPOINTMENT_DATE`', // Field expression (used in SQL)
+                'BasicSearchExpression' => CastDateFieldForLike("`APPOINTMENT_DATE`", 0, "DB"), // Field expression (used in basic search SQL)
+                'Type' => 133, // Field type
+                'DataType' => DataType::DATE, // Field data type (DataType::XXX)
+                'ParameterType' => ParameterType::STRING, // Field Doctrine parameter type
+                'Size' => 10, // Field size
+                'DateTimeFormat' => 0, // Date time format
+                'VirtualExpression' => '`APPOINTMENT_DATE`', // Virtual field expression (used in ListSQL)
+                'IsVirtual' => false, // Virtual field
+                'ForceSelection' => false, // Autosuggest force selection
+                'VirtualSearch' => false, // Search as virtual field
+                'ViewTag' => 'FORMATTED TEXT', // View Tag
+                'HtmlTag' => 'TEXT', // HTML Tag
+                'IsUpload' => false, // Is upload field
+                'InputTextType' => 'text',
+                'Raw' => true,
+                'UseFilter' => true,
+
+                // 'UseAdvancedSearch' => true,
+                'SearchOperators' => ["=", "<>", "IN", "NOT IN", "<", "<=", ">", ">=", "BETWEEN", "NOT BETWEEN", "IS NULL", "IS NOT NULL"],
+            ],
+            'Month_Name' => [
+                'FieldVar' => 'x_Month_Name', // Field variable name
+                'Param' => 'Month_Name', // Field parameter name (Table class property name)
+                'PropertyName' => 'monthName', // Field entity property name
+                'Expression' => '`Month_Name`', // Field expression (used in SQL)
+                'BasicSearchExpression' => '`Month_Name`', // Field expression (used in basic search SQL)
+                'Type' => 200, // Field type
+                'DataType' => DataType::STRING, // Field data type (DataType::XXX)
+                'ParameterType' => ParameterType::STRING, // Field Doctrine parameter type
+                'Size' => 9, // Field size
+                'DateTimeFormat' => -1, // Date time format
+                'VirtualExpression' => '`Month_Name`', // Virtual field expression (used in ListSQL)
+                'IsVirtual' => false, // Virtual field
+                'ForceSelection' => false, // Autosuggest force selection
+                'VirtualSearch' => false, // Search as virtual field
+                'ViewTag' => 'FORMATTED TEXT', // View Tag
+                'HtmlTag' => 'TEXT', // HTML Tag
+                'IsUpload' => false, // Is upload field
+                'InputTextType' => 'text',
+                'Sortable' => false,
+                'UseFilter' => true,
+
+                // 'UseAdvancedSearch' => true,
+                'SearchOperators' => ["=", "<>", "IN", "NOT IN", "STARTS WITH", "NOT STARTS WITH", "LIKE", "NOT LIKE", "ENDS WITH", "NOT ENDS WITH", "IS EMPTY", "IS NOT EMPTY", "IS NULL", "IS NOT NULL"],
+            ],
+            'Month_Number' => [
+                'FieldVar' => 'x_Month_Number', // Field variable name
+                'Param' => 'Month_Number', // Field parameter name (Table class property name)
+                'PropertyName' => 'monthNumber', // Field entity property name
+                'Expression' => '`Month_Number`', // Field expression (used in SQL)
+                'BasicSearchExpression' => '`Month_Number`', // Field expression (used in basic search SQL)
+                'Type' => 3, // Field type
+                'DataType' => DataType::NUMBER, // Field data type (DataType::XXX)
+                'ParameterType' => ParameterType::INTEGER, // Field Doctrine parameter type
+                'Size' => 2, // Field size
+                'DateTimeFormat' => -1, // Date time format
+                'VirtualExpression' => '`Month_Number`', // Virtual field expression (used in ListSQL)
+                'IsVirtual' => false, // Virtual field
+                'ForceSelection' => false, // Autosuggest force selection
+                'VirtualSearch' => false, // Search as virtual field
+                'ViewTag' => 'FORMATTED TEXT', // View Tag
+                'HtmlTag' => 'TEXT', // HTML Tag
+                'IsUpload' => false, // Is upload field
+                'InputTextType' => 'text',
+                'Raw' => true,
+                'Sortable' => false,
+
+                // 'UseAdvancedSearch' => true,
+                'SearchOperators' => ["=", "<>", "IN", "NOT IN", "<", "<=", ">", ">=", "BETWEEN", "NOT BETWEEN", "IS NULL", "IS NOT NULL"],
+            ],
+            'Year' => [
+                'FieldVar' => 'x_Year', // Field variable name
+                'Param' => 'Year', // Field parameter name (Table class property name)
+                'PropertyName' => 'year', // Field entity property name
+                'Expression' => '`Year`', // Field expression (used in SQL)
+                'BasicSearchExpression' => '`Year`', // Field expression (used in basic search SQL)
+                'Type' => 3, // Field type
+                'DataType' => DataType::NUMBER, // Field data type (DataType::XXX)
+                'ParameterType' => ParameterType::INTEGER, // Field Doctrine parameter type
+                'Size' => 4, // Field size
+                'DateTimeFormat' => -1, // Date time format
+                'VirtualExpression' => '`Year`', // Virtual field expression (used in ListSQL)
+                'IsVirtual' => false, // Virtual field
+                'ForceSelection' => false, // Autosuggest force selection
+                'VirtualSearch' => false, // Search as virtual field
+                'ViewTag' => 'FORMATTED TEXT', // View Tag
+                'HtmlTag' => 'TEXT', // HTML Tag
+                'IsUpload' => false, // Is upload field
+                'InputTextType' => 'text',
+                'Raw' => true,
+                'Sortable' => false,
+                'UseFilter' => true,
+
+                // 'UseAdvancedSearch' => true,
+                'SearchOperators' => ["=", "<>", "IN", "NOT IN", "<", "<=", ">", ">=", "BETWEEN", "NOT BETWEEN", "IS NULL", "IS NOT NULL"],
+            ],
+            'Appointment_Status' => [
+                'FieldVar' => 'x_Appointment_Status', // Field variable name
+                'Param' => 'Appointment_Status', // Field parameter name (Table class property name)
+                'PropertyName' => 'appointmentStatus', // Field entity property name
+                'Expression' => '`Appointment_Status`', // Field expression (used in SQL)
+                'BasicSearchExpression' => '`Appointment_Status`', // Field expression (used in basic search SQL)
+                'Type' => 200, // Field type
+                'DataType' => DataType::STRING, // Field data type (DataType::XXX)
+                'ParameterType' => ParameterType::STRING, // Field Doctrine parameter type
+                'Size' => 9, // Field size
+                'DateTimeFormat' => -1, // Date time format
+                'VirtualExpression' => '`Appointment_Status`', // Virtual field expression (used in ListSQL)
+                'IsVirtual' => false, // Virtual field
+                'ForceSelection' => false, // Autosuggest force selection
+                'VirtualSearch' => false, // Search as virtual field
+                'ViewTag' => 'FORMATTED TEXT', // View Tag
+                'HtmlTag' => 'RADIO', // HTML Tag
+                'IsUpload' => false, // Is upload field
+                'InputTextType' => 'text',
+                'UseFilter' => true,
+
+                // 'UseAdvancedSearch' => true,
+                'SearchOperators' => ["=", "<>", "IS NULL", "IS NOT NULL"],
+                'OptionCount' => 3,
+            ],
+            'Total_Patients' => [
+                'FieldVar' => 'x_Total_Patients', // Field variable name
+                'Param' => 'Total_Patients', // Field parameter name (Table class property name)
+                'PropertyName' => 'totalPatients', // Field entity property name
+                'Expression' => '`Total_Patients`', // Field expression (used in SQL)
+                'BasicSearchExpression' => '`Total_Patients`', // Field expression (used in basic search SQL)
+                'Type' => 20, // Field type
+                'DataType' => DataType::NUMBER, // Field data type (DataType::XXX)
+                'ParameterType' => ParameterType::STRING, // Field Doctrine parameter type
+                'Size' => 21, // Field size
+                'DateTimeFormat' => -1, // Date time format
+                'VirtualExpression' => '`Total_Patients`', // Virtual field expression (used in ListSQL)
+                'IsVirtual' => false, // Virtual field
+                'ForceSelection' => false, // Autosuggest force selection
+                'VirtualSearch' => false, // Search as virtual field
+                'ViewTag' => 'FORMATTED TEXT', // View Tag
+                'HtmlTag' => 'TEXT', // HTML Tag
+                'IsUpload' => false, // Is upload field
+                'InputTextType' => 'text',
+                'Raw' => true,
+
+                // 'UseAdvancedSearch' => true,
+                'SearchOperators' => ["=", "<>", "IN", "NOT IN", "<", "<=", ">", ">=", "BETWEEN", "NOT BETWEEN", "IS NULL", "IS NOT NULL"],
+            ],
+            'Avg_Rating' => [
+                'FieldVar' => 'x_Avg_Rating', // Field variable name
+                'Param' => 'Avg_Rating', // Field parameter name (Table class property name)
+                'PropertyName' => 'avgRating', // Field entity property name
+                'Expression' => '`Avg_Rating`', // Field expression (used in SQL)
+                'BasicSearchExpression' => '`Avg_Rating`', // Field expression (used in basic search SQL)
+                'Type' => 131, // Field type
+                'DataType' => DataType::NUMBER, // Field data type (DataType::XXX)
+                'ParameterType' => ParameterType::STRING, // Field Doctrine parameter type
+                'Size' => 14, // Field size
+                'DateTimeFormat' => -1, // Date time format
+                'VirtualExpression' => '`Avg_Rating`', // Virtual field expression (used in ListSQL)
+                'IsVirtual' => false, // Virtual field
+                'ForceSelection' => false, // Autosuggest force selection
+                'VirtualSearch' => false, // Search as virtual field
+                'ViewTag' => 'FORMATTED TEXT', // View Tag
+                'HtmlTag' => 'TEXT', // HTML Tag
+                'IsUpload' => false, // Is upload field
+                'InputTextType' => 'text',
+                'Raw' => true,
+
+                // 'UseAdvancedSearch' => true,
+                'SearchOperators' => ["=", "<>", "IN", "NOT IN", "<", "<=", ">", ">=", "BETWEEN", "NOT BETWEEN", "IS NULL", "IS NOT NULL"],
+            ],
         ];
     }
 
@@ -600,6 +1140,19 @@ class ViewDoctorReport extends DbTable implements LookupTableInterface
         if ($row === null) {
             return;
         }
+        $this->DOCTOR_ID->DbValue = $row->getDoctorId();
+        $this->Doctor_Name->DbValue = $row->getDoctorName();
+        $this->Specialisation->DbValue = $row->getSpecialisation();
+        $this->EDUCATION->DbValue = $row->getEducation();
+        $this->Doctor_Status->DbValue = $row->getDoctorStatus();
+        $this->APPOINTMENT_ID->DbValue = $row->getAppointmentId();
+        $this->APPOINTMENT_DATE->DbValue = $row->getAppointmentDate();
+        $this->Month_Name->DbValue = $row->getMonthName();
+        $this->Month_Number->DbValue = $row->getMonthNumber();
+        $this->Year->DbValue = $row->getYear();
+        $this->Appointment_Status->DbValue = $row->getAppointmentStatus();
+        $this->Total_Patients->DbValue = $row->getTotalPatients();
+        $this->Avg_Rating->DbValue = $row->getAvgRating();
     }
 
     // Delete uploaded files
@@ -959,6 +1512,19 @@ class ViewDoctorReport extends DbTable implements LookupTableInterface
     // Load row values from record
     public function loadListRowValues(array|BaseEntity $row): void
     {
+        $this->DOCTOR_ID->setDbValue($row['DOCTOR_ID']);
+        $this->Doctor_Name->setDbValue($row['Doctor_Name']);
+        $this->Specialisation->setDbValue($row['Specialisation']);
+        $this->EDUCATION->setDbValue($row['EDUCATION']);
+        $this->Doctor_Status->setDbValue($row['Doctor_Status']);
+        $this->APPOINTMENT_ID->setDbValue($row['APPOINTMENT_ID']);
+        $this->APPOINTMENT_DATE->setDbValue($row['APPOINTMENT_DATE']);
+        $this->Month_Name->setDbValue($row['Month_Name']);
+        $this->Month_Number->setDbValue($row['Month_Number']);
+        $this->Year->setDbValue($row['Year']);
+        $this->Appointment_Status->setDbValue($row['Appointment_Status']);
+        $this->Total_Patients->setDbValue($row['Total_Patients']);
+        $this->Avg_Rating->setDbValue($row['Avg_Rating']);
     }
 
     // Render list content
@@ -1005,6 +1571,136 @@ class ViewDoctorReport extends DbTable implements LookupTableInterface
 
         // Common render codes
 
+        // DOCTOR_ID
+
+        // Doctor_Name
+
+        // Specialisation
+
+        // EDUCATION
+
+        // Doctor_Status
+
+        // APPOINTMENT_ID
+
+        // APPOINTMENT_DATE
+
+        // Month_Name
+
+        // Month_Number
+
+        // Year
+
+        // Appointment_Status
+
+        // Total_Patients
+
+        // Avg_Rating
+
+        // DOCTOR_ID
+        $this->DOCTOR_ID->ViewValue = $this->DOCTOR_ID->CurrentValue;
+
+        // Doctor_Name
+        $this->Doctor_Name->ViewValue = $this->Doctor_Name->CurrentValue;
+
+        // Specialisation
+        $this->Specialisation->ViewValue = $this->Specialisation->CurrentValue;
+
+        // EDUCATION
+        $this->EDUCATION->ViewValue = $this->EDUCATION->CurrentValue;
+
+        // Doctor_Status
+        if (strval($this->Doctor_Status->CurrentValue) != "") {
+            $this->Doctor_Status->ViewValue = $this->Doctor_Status->optionCaption($this->Doctor_Status->CurrentValue);
+        } else {
+            $this->Doctor_Status->ViewValue = null;
+        }
+
+        // APPOINTMENT_ID
+        $this->APPOINTMENT_ID->ViewValue = $this->APPOINTMENT_ID->CurrentValue;
+
+        // APPOINTMENT_DATE
+        $this->APPOINTMENT_DATE->ViewValue = $this->APPOINTMENT_DATE->CurrentValue;
+        $this->APPOINTMENT_DATE->ViewValue = FormatDateTime($this->APPOINTMENT_DATE->ViewValue, $this->APPOINTMENT_DATE->formatPattern());
+
+        // Month_Name
+        $this->Month_Name->ViewValue = $this->Month_Name->CurrentValue;
+
+        // Month_Number
+        $this->Month_Number->ViewValue = $this->Month_Number->CurrentValue;
+        $this->Month_Number->ViewValue = FormatNumber($this->Month_Number->ViewValue, $this->Month_Number->formatPattern());
+
+        // Year
+        $this->Year->ViewValue = $this->Year->CurrentValue;
+        $this->Year->ViewValue = FormatNumber($this->Year->ViewValue, $this->Year->formatPattern());
+
+        // Appointment_Status
+        if (strval($this->Appointment_Status->CurrentValue) != "") {
+            $this->Appointment_Status->ViewValue = $this->Appointment_Status->optionCaption($this->Appointment_Status->CurrentValue);
+        } else {
+            $this->Appointment_Status->ViewValue = null;
+        }
+
+        // Total_Patients
+        $this->Total_Patients->ViewValue = $this->Total_Patients->CurrentValue;
+        $this->Total_Patients->ViewValue = FormatNumber($this->Total_Patients->ViewValue, $this->Total_Patients->formatPattern());
+
+        // Avg_Rating
+        $this->Avg_Rating->ViewValue = $this->Avg_Rating->CurrentValue;
+        $this->Avg_Rating->ViewValue = FormatNumber($this->Avg_Rating->ViewValue, $this->Avg_Rating->formatPattern());
+
+        // DOCTOR_ID
+        $this->DOCTOR_ID->HrefValue = "";
+        $this->DOCTOR_ID->TooltipValue = "";
+
+        // Doctor_Name
+        $this->Doctor_Name->HrefValue = "";
+        $this->Doctor_Name->TooltipValue = "";
+
+        // Specialisation
+        $this->Specialisation->HrefValue = "";
+        $this->Specialisation->TooltipValue = "";
+
+        // EDUCATION
+        $this->EDUCATION->HrefValue = "";
+        $this->EDUCATION->TooltipValue = "";
+
+        // Doctor_Status
+        $this->Doctor_Status->HrefValue = "";
+        $this->Doctor_Status->TooltipValue = "";
+
+        // APPOINTMENT_ID
+        $this->APPOINTMENT_ID->HrefValue = "";
+        $this->APPOINTMENT_ID->TooltipValue = "";
+
+        // APPOINTMENT_DATE
+        $this->APPOINTMENT_DATE->HrefValue = "";
+        $this->APPOINTMENT_DATE->TooltipValue = "";
+
+        // Month_Name
+        $this->Month_Name->HrefValue = "";
+        $this->Month_Name->TooltipValue = "";
+
+        // Month_Number
+        $this->Month_Number->HrefValue = "";
+        $this->Month_Number->TooltipValue = "";
+
+        // Year
+        $this->Year->HrefValue = "";
+        $this->Year->TooltipValue = "";
+
+        // Appointment_Status
+        $this->Appointment_Status->HrefValue = "";
+        $this->Appointment_Status->TooltipValue = "";
+
+        // Total_Patients
+        $this->Total_Patients->HrefValue = "";
+        $this->Total_Patients->TooltipValue = "";
+
+        // Avg_Rating
+        $this->Avg_Rating->HrefValue = "";
+        $this->Avg_Rating->TooltipValue = "";
+
         // Call Row Rendered event
         $this->rowRendered();
 
@@ -1036,7 +1732,29 @@ class ViewDoctorReport extends DbTable implements LookupTableInterface
             if ($doc->Horizontal) { // Horizontal format, write header
                 $doc->beginExportRow();
                 if ($exportPageType == "view") {
+                    $doc->exportCaption($this->Doctor_Name);
+                    $doc->exportCaption($this->Specialisation);
+                    $doc->exportCaption($this->Doctor_Status);
+                    $doc->exportCaption($this->APPOINTMENT_DATE);
+                    $doc->exportCaption($this->Month_Name);
+                    $doc->exportCaption($this->Year);
+                    $doc->exportCaption($this->Appointment_Status);
+                    $doc->exportCaption($this->Total_Patients);
+                    $doc->exportCaption($this->Avg_Rating);
                 } else {
+                    $doc->exportCaption($this->DOCTOR_ID);
+                    $doc->exportCaption($this->Doctor_Name);
+                    $doc->exportCaption($this->Specialisation);
+                    $doc->exportCaption($this->EDUCATION);
+                    $doc->exportCaption($this->Doctor_Status);
+                    $doc->exportCaption($this->APPOINTMENT_ID);
+                    $doc->exportCaption($this->APPOINTMENT_DATE);
+                    $doc->exportCaption($this->Month_Name);
+                    $doc->exportCaption($this->Month_Number);
+                    $doc->exportCaption($this->Year);
+                    $doc->exportCaption($this->Appointment_Status);
+                    $doc->exportCaption($this->Total_Patients);
+                    $doc->exportCaption($this->Avg_Rating);
                 }
                 $doc->endExportRow();
             }
@@ -1066,7 +1784,29 @@ class ViewDoctorReport extends DbTable implements LookupTableInterface
                 if (!$doc->ExportCustom) {
                     $doc->beginExportRow($rowCnt); // Allow CSS styles if enabled
                     if ($exportPageType == "view") {
+                        $doc->exportField($this->Doctor_Name);
+                        $doc->exportField($this->Specialisation);
+                        $doc->exportField($this->Doctor_Status);
+                        $doc->exportField($this->APPOINTMENT_DATE);
+                        $doc->exportField($this->Month_Name);
+                        $doc->exportField($this->Year);
+                        $doc->exportField($this->Appointment_Status);
+                        $doc->exportField($this->Total_Patients);
+                        $doc->exportField($this->Avg_Rating);
                     } else {
+                        $doc->exportField($this->DOCTOR_ID);
+                        $doc->exportField($this->Doctor_Name);
+                        $doc->exportField($this->Specialisation);
+                        $doc->exportField($this->EDUCATION);
+                        $doc->exportField($this->Doctor_Status);
+                        $doc->exportField($this->APPOINTMENT_ID);
+                        $doc->exportField($this->APPOINTMENT_DATE);
+                        $doc->exportField($this->Month_Name);
+                        $doc->exportField($this->Month_Number);
+                        $doc->exportField($this->Year);
+                        $doc->exportField($this->Appointment_Status);
+                        $doc->exportField($this->Total_Patients);
+                        $doc->exportField($this->Avg_Rating);
                     }
                     $doc->endExportRow($rowCnt);
                 }
@@ -1122,6 +1862,8 @@ class ViewDoctorReport extends DbTable implements LookupTableInterface
     // Update last insert ID
     public function updateLastInsertId(Entity\ViewDoctorReport $row, LifecycleEventArgs $args)
     {
+        $this->DOCTOR_ID->setDbValue($row['DOCTOR_ID']);
+        $this->APPOINTMENT_ID->setDbValue($row['APPOINTMENT_ID']);
     }
 
     // Save entity change set

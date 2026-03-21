@@ -19,6 +19,18 @@ ew.on("wrapper", function () {
         .setPageId("list")
         .setSubmitWithFetch(<?= $Page->UseAjaxActions ? "true" : "false" ?>)
         .setFormKeyCountName("<?= $Page->getFormKeyCountName() ?>")
+
+        // Dynamic selection lists
+        .setLists({
+            "Patient_Name": <?= $Page->Patient_Name->toClientList($Page) ?>,
+            "Doctor_Name": <?= $Page->Doctor_Name->toClientList($Page) ?>,
+            "PAYMENT_MODE": <?= $Page->PAYMENT_MODE->toClientList($Page) ?>,
+            "Payment_Status": <?= $Page->Payment_Status->toClientList($Page) ?>,
+            "PAYMENT_DATE": <?= $Page->PAYMENT_DATE->toClientList($Page) ?>,
+            "Day_Name": <?= $Page->Day_Name->toClientList($Page) ?>,
+            "Month_Name": <?= $Page->Month_Name->toClientList($Page) ?>,
+            "Year": <?= $Page->Year->toClientList($Page) ?>,
+        })
         .build();
     window[form.id] = form;
     currentForm = form;
@@ -41,6 +53,7 @@ ew.on("head", function () {
 <?= $Page->FilterOptions->render("body") ?>
 </div>
 <?php } ?>
+<?= $Page->showFilterList() ?>
 <?php if (!$Page->IsModal) { ?>
 <form name="fview_payment_reportsrch" id="fview_payment_reportsrch" class="ew-form ew-ext-search-form" action="<?= CurrentPageUrl(false) ?>" novalidate autocomplete="off">
 <div id="fview_payment_reportsrch_search_panel" class="mb-2 mb-sm-0 <?= $Page->SearchPanelClass ?>"><!-- .ew-search-panel -->
@@ -61,8 +74,36 @@ ew.on("wrapper", () => {
         .setSubmitWithFetch(true)
 <?php } ?>
 
+        // Add fields
+        .addFields([
+        ])
+        // Validate form
+        .setValidate(
+            async function () {
+                if (!this.validateRequired)
+                    return true; // Ignore validation
+                let fobj = this.getForm();
+
+                // Validate fields
+                if (!this.validateFields())
+                    return false;
+                return true;
+            }
+        )
+
+        // Use JavaScript validation or not
+        .setValidateRequired(ew.CLIENT_VALIDATE)
+
         // Dynamic selection lists
         .setLists({
+            "Patient_Name": <?= $Page->Patient_Name->toClientList($Page) ?>,
+            "Doctor_Name": <?= $Page->Doctor_Name->toClientList($Page) ?>,
+            "PAYMENT_MODE": <?= $Page->PAYMENT_MODE->toClientList($Page) ?>,
+            "Payment_Status": <?= $Page->Payment_Status->toClientList($Page) ?>,
+            "PAYMENT_DATE": <?= $Page->PAYMENT_DATE->toClientList($Page) ?>,
+            "Day_Name": <?= $Page->Day_Name->toClientList($Page) ?>,
+            "Month_Name": <?= $Page->Month_Name->toClientList($Page) ?>,
+            "Year": <?= $Page->Year->toClientList($Page) ?>,
         })
 
         // Filters
@@ -76,6 +117,313 @@ ew.on("wrapper", () => {
 <input type="hidden" name="cmd" value="search">
 <?php if (!$Page->isExport() && !($Page->CurrentAction && $Page->CurrentAction != "search") && $Page->hasSearchFields()) { ?>
 <div class="ew-extended-search container-fluid ps-2">
+<?php $Page->renderRow(RowType::SEARCH); ?>
+<div class="row mb-0<?= ($Page->SearchFieldsPerRow > 0) ? " row-cols-sm-" . $Page->SearchFieldsPerRow : "" ?>">
+<?php if ($Page->Patient_Name->Visible) { // Patient_Name ?>
+<?php
+if (!$Page->Patient_Name->UseFilter) {
+    $Page->SearchColumnCount++;
+}
+?>
+    <div id="xs_Patient_Name" class="col-sm-auto d-sm-flex align-items-start mb-3 px-0 pe-sm-2<?= $Page->Patient_Name->UseFilter ? " ew-filter-field" : "" ?>">
+        <select
+            id="x_Patient_Name"
+            name="x_Patient_Name[]"
+            class="form-control ew-select<?= $Page->Patient_Name->isInvalidClass() ?>"
+            data-select2-id="fview_payment_reportsrch_x_Patient_Name"
+            data-table="view_payment_report"
+            data-field="x_Patient_Name"
+            data-caption="<?= HtmlEncode(RemoveHtml($Page->Patient_Name->caption())) ?>"
+            data-filter="true"
+            multiple
+            size="1"
+            data-value-separator="<?= $Page->Patient_Name->displayValueSeparatorAttribute() ?>"
+            data-placeholder="<?= HtmlEncode($Page->Patient_Name->getPlaceHolder()) ?>"
+            data-ew-action="update-options"
+            <?= $Page->Patient_Name->editAttributes() ?>>
+            <?= $Page->Patient_Name->selectOptionListHtml("x_Patient_Name", true) ?>
+        </select>
+        <div class="invalid-feedback"><?= $Page->Patient_Name->getErrorMessage(false) ?></div>
+        <script<?= Nonce() ?>>
+        ew.on("fview_payment_reportsrch", function() {
+            let options = {
+                name: "x_Patient_Name",
+                selectId: "fview_payment_reportsrch_x_Patient_Name",
+                ajax: { id: "x_Patient_Name", form: "fview_payment_reportsrch", limit: ew.FILTER_PAGE_SIZE, data: { ajax: "filter" } }
+            };
+            options = Object.assign({}, ew.filterOptions, options, ew.vars.tables.view_payment_report.fields.Patient_Name.filterOptions);
+            ew.createFilter(options);
+        });
+        </script>
+    </div><!-- /.col-sm-auto -->
+<?php } ?>
+<?php if ($Page->Doctor_Name->Visible) { // Doctor_Name ?>
+<?php
+if (!$Page->Doctor_Name->UseFilter) {
+    $Page->SearchColumnCount++;
+}
+?>
+    <div id="xs_Doctor_Name" class="col-sm-auto d-sm-flex align-items-start mb-3 px-0 pe-sm-2<?= $Page->Doctor_Name->UseFilter ? " ew-filter-field" : "" ?>">
+        <select
+            id="x_Doctor_Name"
+            name="x_Doctor_Name[]"
+            class="form-control ew-select<?= $Page->Doctor_Name->isInvalidClass() ?>"
+            data-select2-id="fview_payment_reportsrch_x_Doctor_Name"
+            data-table="view_payment_report"
+            data-field="x_Doctor_Name"
+            data-caption="<?= HtmlEncode(RemoveHtml($Page->Doctor_Name->caption())) ?>"
+            data-filter="true"
+            multiple
+            size="1"
+            data-value-separator="<?= $Page->Doctor_Name->displayValueSeparatorAttribute() ?>"
+            data-placeholder="<?= HtmlEncode($Page->Doctor_Name->getPlaceHolder()) ?>"
+            data-ew-action="update-options"
+            <?= $Page->Doctor_Name->editAttributes() ?>>
+            <?= $Page->Doctor_Name->selectOptionListHtml("x_Doctor_Name", true) ?>
+        </select>
+        <div class="invalid-feedback"><?= $Page->Doctor_Name->getErrorMessage(false) ?></div>
+        <script<?= Nonce() ?>>
+        ew.on("fview_payment_reportsrch", function() {
+            let options = {
+                name: "x_Doctor_Name",
+                selectId: "fview_payment_reportsrch_x_Doctor_Name",
+                ajax: { id: "x_Doctor_Name", form: "fview_payment_reportsrch", limit: ew.FILTER_PAGE_SIZE, data: { ajax: "filter" } }
+            };
+            options = Object.assign({}, ew.filterOptions, options, ew.vars.tables.view_payment_report.fields.Doctor_Name.filterOptions);
+            ew.createFilter(options);
+        });
+        </script>
+    </div><!-- /.col-sm-auto -->
+<?php } ?>
+<?php if ($Page->PAYMENT_MODE->Visible) { // PAYMENT_MODE ?>
+<?php
+if (!$Page->PAYMENT_MODE->UseFilter) {
+    $Page->SearchColumnCount++;
+}
+?>
+    <div id="xs_PAYMENT_MODE" class="col-sm-auto d-sm-flex align-items-start mb-3 px-0 pe-sm-2<?= $Page->PAYMENT_MODE->UseFilter ? " ew-filter-field" : "" ?>">
+        <select
+            id="x_PAYMENT_MODE"
+            name="x_PAYMENT_MODE[]"
+            class="form-control ew-select<?= $Page->PAYMENT_MODE->isInvalidClass() ?>"
+            data-select2-id="fview_payment_reportsrch_x_PAYMENT_MODE"
+            data-table="view_payment_report"
+            data-field="x_PAYMENT_MODE"
+            data-caption="<?= HtmlEncode(RemoveHtml($Page->PAYMENT_MODE->caption())) ?>"
+            data-filter="true"
+            multiple
+            size="1"
+            data-value-separator="<?= $Page->PAYMENT_MODE->displayValueSeparatorAttribute() ?>"
+            data-placeholder="<?= HtmlEncode($Page->PAYMENT_MODE->getPlaceHolder()) ?>"
+            data-ew-action="update-options"
+            <?= $Page->PAYMENT_MODE->editAttributes() ?>>
+            <?= $Page->PAYMENT_MODE->selectOptionListHtml("x_PAYMENT_MODE", true) ?>
+        </select>
+        <div class="invalid-feedback"><?= $Page->PAYMENT_MODE->getErrorMessage(false) ?></div>
+        <script<?= Nonce() ?>>
+        ew.on("fview_payment_reportsrch", function() {
+            let options = {
+                name: "x_PAYMENT_MODE",
+                selectId: "fview_payment_reportsrch_x_PAYMENT_MODE",
+                ajax: { id: "x_PAYMENT_MODE", form: "fview_payment_reportsrch", limit: ew.FILTER_PAGE_SIZE, data: { ajax: "filter" } }
+            };
+            options = Object.assign({}, ew.filterOptions, options, ew.vars.tables.view_payment_report.fields.PAYMENT_MODE.filterOptions);
+            ew.createFilter(options);
+        });
+        </script>
+    </div><!-- /.col-sm-auto -->
+<?php } ?>
+<?php if ($Page->Payment_Status->Visible) { // Payment_Status ?>
+<?php
+if (!$Page->Payment_Status->UseFilter) {
+    $Page->SearchColumnCount++;
+}
+?>
+    <div id="xs_Payment_Status" class="col-sm-auto d-sm-flex align-items-start mb-3 px-0 pe-sm-2<?= $Page->Payment_Status->UseFilter ? " ew-filter-field" : "" ?>">
+        <select
+            id="x_Payment_Status"
+            name="x_Payment_Status[]"
+            class="form-control ew-select<?= $Page->Payment_Status->isInvalidClass() ?>"
+            data-select2-id="fview_payment_reportsrch_x_Payment_Status"
+            data-table="view_payment_report"
+            data-field="x_Payment_Status"
+            data-caption="<?= HtmlEncode(RemoveHtml($Page->Payment_Status->caption())) ?>"
+            data-filter="true"
+            multiple
+            size="1"
+            data-value-separator="<?= $Page->Payment_Status->displayValueSeparatorAttribute() ?>"
+            data-placeholder="<?= HtmlEncode($Page->Payment_Status->getPlaceHolder()) ?>"
+            data-ew-action="update-options"
+            <?= $Page->Payment_Status->editAttributes() ?>>
+            <?= $Page->Payment_Status->selectOptionListHtml("x_Payment_Status", true) ?>
+        </select>
+        <div class="invalid-feedback"><?= $Page->Payment_Status->getErrorMessage(false) ?></div>
+        <script<?= Nonce() ?>>
+        ew.on("fview_payment_reportsrch", function() {
+            let options = {
+                name: "x_Payment_Status",
+                selectId: "fview_payment_reportsrch_x_Payment_Status",
+                ajax: { id: "x_Payment_Status", form: "fview_payment_reportsrch", limit: ew.FILTER_PAGE_SIZE, data: { ajax: "filter" } }
+            };
+            options = Object.assign({}, ew.filterOptions, options, ew.vars.tables.view_payment_report.fields.Payment_Status.filterOptions);
+            ew.createFilter(options);
+        });
+        </script>
+    </div><!-- /.col-sm-auto -->
+<?php } ?>
+<?php if ($Page->PAYMENT_DATE->Visible) { // PAYMENT_DATE ?>
+<?php
+if (!$Page->PAYMENT_DATE->UseFilter) {
+    $Page->SearchColumnCount++;
+}
+?>
+    <div id="xs_PAYMENT_DATE" class="col-sm-auto d-sm-flex align-items-start mb-3 px-0 pe-sm-2<?= $Page->PAYMENT_DATE->UseFilter ? " ew-filter-field" : "" ?>">
+        <select
+            id="x_PAYMENT_DATE"
+            name="x_PAYMENT_DATE[]"
+            class="form-control ew-select<?= $Page->PAYMENT_DATE->isInvalidClass() ?>"
+            data-select2-id="fview_payment_reportsrch_x_PAYMENT_DATE"
+            data-table="view_payment_report"
+            data-field="x_PAYMENT_DATE"
+            data-caption="<?= HtmlEncode(RemoveHtml($Page->PAYMENT_DATE->caption())) ?>"
+            data-filter="true"
+            multiple
+            size="1"
+            data-value-separator="<?= $Page->PAYMENT_DATE->displayValueSeparatorAttribute() ?>"
+            data-placeholder="<?= HtmlEncode($Page->PAYMENT_DATE->getPlaceHolder()) ?>"
+            data-ew-action="update-options"
+            <?= $Page->PAYMENT_DATE->editAttributes() ?>>
+            <?= $Page->PAYMENT_DATE->selectOptionListHtml("x_PAYMENT_DATE", true) ?>
+        </select>
+        <div class="invalid-feedback"><?= $Page->PAYMENT_DATE->getErrorMessage(false) ?></div>
+        <script<?= Nonce() ?>>
+        ew.on("fview_payment_reportsrch", function() {
+            let options = {
+                name: "x_PAYMENT_DATE",
+                selectId: "fview_payment_reportsrch_x_PAYMENT_DATE",
+                ajax: { id: "x_PAYMENT_DATE", form: "fview_payment_reportsrch", limit: ew.FILTER_PAGE_SIZE, data: { ajax: "filter" } }
+            };
+            options = Object.assign({}, ew.filterOptions, options, ew.vars.tables.view_payment_report.fields.PAYMENT_DATE.filterOptions);
+            ew.createFilter(options);
+        });
+        </script>
+    </div><!-- /.col-sm-auto -->
+<?php } ?>
+<?php if ($Page->Day_Name->Visible) { // Day_Name ?>
+<?php
+if (!$Page->Day_Name->UseFilter) {
+    $Page->SearchColumnCount++;
+}
+?>
+    <div id="xs_Day_Name" class="col-sm-auto d-sm-flex align-items-start mb-3 px-0 pe-sm-2<?= $Page->Day_Name->UseFilter ? " ew-filter-field" : "" ?>">
+        <select
+            id="x_Day_Name"
+            name="x_Day_Name[]"
+            class="form-control ew-select<?= $Page->Day_Name->isInvalidClass() ?>"
+            data-select2-id="fview_payment_reportsrch_x_Day_Name"
+            data-table="view_payment_report"
+            data-field="x_Day_Name"
+            data-caption="<?= HtmlEncode(RemoveHtml($Page->Day_Name->caption())) ?>"
+            data-filter="true"
+            multiple
+            size="1"
+            data-value-separator="<?= $Page->Day_Name->displayValueSeparatorAttribute() ?>"
+            data-placeholder="<?= HtmlEncode($Page->Day_Name->getPlaceHolder()) ?>"
+            data-ew-action="update-options"
+            <?= $Page->Day_Name->editAttributes() ?>>
+            <?= $Page->Day_Name->selectOptionListHtml("x_Day_Name", true) ?>
+        </select>
+        <div class="invalid-feedback"><?= $Page->Day_Name->getErrorMessage(false) ?></div>
+        <script<?= Nonce() ?>>
+        ew.on("fview_payment_reportsrch", function() {
+            let options = {
+                name: "x_Day_Name",
+                selectId: "fview_payment_reportsrch_x_Day_Name",
+                ajax: { id: "x_Day_Name", form: "fview_payment_reportsrch", limit: ew.FILTER_PAGE_SIZE, data: { ajax: "filter" } }
+            };
+            options = Object.assign({}, ew.filterOptions, options, ew.vars.tables.view_payment_report.fields.Day_Name.filterOptions);
+            ew.createFilter(options);
+        });
+        </script>
+    </div><!-- /.col-sm-auto -->
+<?php } ?>
+<?php if ($Page->Month_Name->Visible) { // Month_Name ?>
+<?php
+if (!$Page->Month_Name->UseFilter) {
+    $Page->SearchColumnCount++;
+}
+?>
+    <div id="xs_Month_Name" class="col-sm-auto d-sm-flex align-items-start mb-3 px-0 pe-sm-2<?= $Page->Month_Name->UseFilter ? " ew-filter-field" : "" ?>">
+        <select
+            id="x_Month_Name"
+            name="x_Month_Name[]"
+            class="form-control ew-select<?= $Page->Month_Name->isInvalidClass() ?>"
+            data-select2-id="fview_payment_reportsrch_x_Month_Name"
+            data-table="view_payment_report"
+            data-field="x_Month_Name"
+            data-caption="<?= HtmlEncode(RemoveHtml($Page->Month_Name->caption())) ?>"
+            data-filter="true"
+            multiple
+            size="1"
+            data-value-separator="<?= $Page->Month_Name->displayValueSeparatorAttribute() ?>"
+            data-placeholder="<?= HtmlEncode($Page->Month_Name->getPlaceHolder()) ?>"
+            data-ew-action="update-options"
+            <?= $Page->Month_Name->editAttributes() ?>>
+            <?= $Page->Month_Name->selectOptionListHtml("x_Month_Name", true) ?>
+        </select>
+        <div class="invalid-feedback"><?= $Page->Month_Name->getErrorMessage(false) ?></div>
+        <script<?= Nonce() ?>>
+        ew.on("fview_payment_reportsrch", function() {
+            let options = {
+                name: "x_Month_Name",
+                selectId: "fview_payment_reportsrch_x_Month_Name",
+                ajax: { id: "x_Month_Name", form: "fview_payment_reportsrch", limit: ew.FILTER_PAGE_SIZE, data: { ajax: "filter" } }
+            };
+            options = Object.assign({}, ew.filterOptions, options, ew.vars.tables.view_payment_report.fields.Month_Name.filterOptions);
+            ew.createFilter(options);
+        });
+        </script>
+    </div><!-- /.col-sm-auto -->
+<?php } ?>
+<?php if ($Page->Year->Visible) { // Year ?>
+<?php
+if (!$Page->Year->UseFilter) {
+    $Page->SearchColumnCount++;
+}
+?>
+    <div id="xs_Year" class="col-sm-auto d-sm-flex align-items-start mb-3 px-0 pe-sm-2<?= $Page->Year->UseFilter ? " ew-filter-field" : "" ?>">
+        <select
+            id="x_Year"
+            name="x_Year[]"
+            class="form-control ew-select<?= $Page->Year->isInvalidClass() ?>"
+            data-select2-id="fview_payment_reportsrch_x_Year"
+            data-table="view_payment_report"
+            data-field="x_Year"
+            data-caption="<?= HtmlEncode(RemoveHtml($Page->Year->caption())) ?>"
+            data-filter="true"
+            multiple
+            size="1"
+            data-value-separator="<?= $Page->Year->displayValueSeparatorAttribute() ?>"
+            data-placeholder="<?= HtmlEncode($Page->Year->getPlaceHolder()) ?>"
+            data-ew-action="update-options"
+            <?= $Page->Year->editAttributes() ?>>
+            <?= $Page->Year->selectOptionListHtml("x_Year", true) ?>
+        </select>
+        <div class="invalid-feedback"><?= $Page->Year->getErrorMessage(false) ?></div>
+        <script<?= Nonce() ?>>
+        ew.on("fview_payment_reportsrch", function() {
+            let options = {
+                name: "x_Year",
+                selectId: "fview_payment_reportsrch_x_Year",
+                ajax: { id: "x_Year", form: "fview_payment_reportsrch", limit: ew.FILTER_PAGE_SIZE, data: { ajax: "filter" } }
+            };
+            options = Object.assign({}, ew.filterOptions, options, ew.vars.tables.view_payment_report.fields.Year.filterOptions);
+            ew.createFilter(options);
+        });
+        </script>
+    </div><!-- /.col-sm-auto -->
+<?php } ?>
+</div><!-- /.row -->
 <div class="row mb-0">
     <div class="col-sm-auto px-0 pe-sm-2">
         <div class="ew-basic-search input-group">
@@ -108,6 +456,36 @@ ew.on("wrapper", () => {
 <?php $Page->HeaderOptions?->render("body") ?>
 </div>
 <div id="ew-list">
+<?php if (!$Page->isExport() || $Page->isExport("print")) { ?>
+<!-- Top Container -->
+<div id="ew-top" class="<?= $Page->TopContentClass ?>">
+<?php } ?>
+<?php
+if (!$DashboardReport) {
+    // Set up chart drilldown
+    $Page->Chart1->DrillDownInPanel = $Page->DrillDownInPanel;
+    echo $Page->Chart1->render($Page->ChartData, "ew-chart-top");
+}
+?>
+<?php
+if (!$DashboardReport) {
+    // Set up chart drilldown
+    $Page->Chart2->DrillDownInPanel = $Page->DrillDownInPanel;
+    echo $Page->Chart2->render($Page->ChartData, "ew-chart-top");
+}
+?>
+<?php if (!$Page->isExport() || $Page->isExport("print")) { ?>
+</div>
+<!-- /#ew-top -->
+<?php } ?>
+<?php if (!$Page->isExport() || $Page->isExport("print")) { ?>
+<!-- Middle Container -->
+<div id="ew-middle" class="<?= $Page->MiddleContentClass ?>">
+<?php } ?>
+<?php if (!$Page->isExport() || $Page->isExport("print")) { ?>
+<!-- Content Container -->
+<div id="ew-content" class="<?= $Page->ContainerClass ?>">
+<?php } ?>
 <?php if ($Page->TotalRecords > 0 || $Page->CurrentAction) { ?>
 <div class="card ew-card ew-grid<?= $Page->isAddOrEdit() ? " ew-grid-add-edit" : "" ?> <?= $Page->TableGridClass ?>">
 <?php $formAction = GetUrl(UrlFor("list.view_payment_report", $Page->getUrlKey(true))) ?>
@@ -322,6 +700,29 @@ $Page->ListOptions->render("body", "right", $Page->RowCount);
 <div class="ew-list-other-options">
 <?php $Page->OtherOptions->render("body") ?>
 </div>
+<?php } ?>
+<?php if (!$Page->isExport() || $Page->isExport("print")) { ?>
+</div>
+<!-- /#ew-content -->
+<?php } ?>
+<?php if (!$Page->isExport() || $Page->isExport("print")) { ?>
+</div>
+<!-- /#ew-middle -->
+<?php } ?>
+<?php if (!$Page->isExport() || $Page->isExport("print")) { ?>
+<!-- Bottom Container -->
+<div id="ew-bottom" class="<?= $Page->BottomContentClass ?>">
+<?php } ?>
+<?php
+if (!$DashboardReport) {
+    // Set up chart drilldown
+    $Page->Chart3->DrillDownInPanel = $Page->DrillDownInPanel;
+    echo $Page->Chart3->render($Page->ChartData, "ew-chart-bottom");
+}
+?>
+<?php if (!$Page->isExport() || $Page->isExport("print")) { ?>
+</div>
+<!-- /#ew-bottom -->
 <?php } ?>
 </div>
 <div id="ew-footer-options">

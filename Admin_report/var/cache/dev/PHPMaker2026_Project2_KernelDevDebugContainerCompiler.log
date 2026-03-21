@@ -30,6 +30,8 @@ Symfony\Component\DependencyInjection\Compiler\ResolveChildDefinitionsPass: Reso
 Symfony\Component\DependencyInjection\Compiler\ResolveChildDefinitionsPass: Resolving inheritance for "PHPMaker2026\Project2\AppointmentReportController" (parent: .instanceof.PHPMaker2026\Project2\AppointmentReportController.0.PHPMaker2026\Project2\AppointmentReportController).
 Symfony\Component\DependencyInjection\Compiler\ResolveChildDefinitionsPass: Resolving inheritance for ".instanceof.PHPMaker2026\Project2\ViewAppointmentReportController.0.PHPMaker2026\Project2\ViewAppointmentReportController" (parent: .abstract.instanceof.PHPMaker2026\Project2\ViewAppointmentReportController).
 Symfony\Component\DependencyInjection\Compiler\ResolveChildDefinitionsPass: Resolving inheritance for "PHPMaker2026\Project2\ViewAppointmentReportController" (parent: .instanceof.PHPMaker2026\Project2\ViewAppointmentReportController.0.PHPMaker2026\Project2\ViewAppointmentReportController).
+Symfony\Component\DependencyInjection\Compiler\ResolveChildDefinitionsPass: Resolving inheritance for ".instanceof.PHPMaker2026\Project2\ViewDoctorReportController.0.PHPMaker2026\Project2\ViewDoctorReportController" (parent: .abstract.instanceof.PHPMaker2026\Project2\ViewDoctorReportController).
+Symfony\Component\DependencyInjection\Compiler\ResolveChildDefinitionsPass: Resolving inheritance for "PHPMaker2026\Project2\ViewDoctorReportController" (parent: .instanceof.PHPMaker2026\Project2\ViewDoctorReportController.0.PHPMaker2026\Project2\ViewDoctorReportController).
 Symfony\Component\DependencyInjection\Compiler\ResolveChildDefinitionsPass: Resolving inheritance for ".instanceof.PHPMaker2026\Project2\ViewFeedbackReportController.0.PHPMaker2026\Project2\ViewFeedbackReportController" (parent: .abstract.instanceof.PHPMaker2026\Project2\ViewFeedbackReportController).
 Symfony\Component\DependencyInjection\Compiler\ResolveChildDefinitionsPass: Resolving inheritance for "PHPMaker2026\Project2\ViewFeedbackReportController" (parent: .instanceof.PHPMaker2026\Project2\ViewFeedbackReportController.0.PHPMaker2026\Project2\ViewFeedbackReportController).
 Symfony\Component\DependencyInjection\Compiler\ResolveChildDefinitionsPass: Resolving inheritance for ".instanceof.PHPMaker2026\Project2\ViewPatientReportController.0.PHPMaker2026\Project2\ViewPatientReportController" (parent: .abstract.instanceof.PHPMaker2026\Project2\ViewPatientReportController).
@@ -368,7 +370,7 @@ Symfony\Component\DependencyInjection\Compiler\RemovePrivateAliasesPass: Removed
 Symfony\Component\DependencyInjection\Compiler\RemovePrivateAliasesPass: Removed service ".Psr\Log\LoggerInterface $deprecation.logger"; reason: private alias.
 Symfony\Component\DependencyInjection\Compiler\RemovePrivateAliasesPass: Removed service "Psr\Log\LoggerInterface $deprecationLogger"; reason: private alias.
 Symfony\Component\DependencyInjection\Compiler\RemovePrivateAliasesPass: Removed service "twig.loader"; reason: private alias.
-Symfony\Component\DependencyInjection\Compiler\RemovePrivateAliasesPass: Removed service ".service_locator.iyj8Uli"; reason: private alias.
+Symfony\Component\DependencyInjection\Compiler\RemovePrivateAliasesPass: Removed service ".service_locator.ajm3Lps"; reason: private alias.
 Symfony\Component\DependencyInjection\Compiler\RemovePrivateAliasesPass: Removed service ".service_locator.E1wOT5Z"; reason: private alias.
 Symfony\Component\DependencyInjection\Compiler\RemovePrivateAliasesPass: Removed service ".service_locator.rmAA14o"; reason: private alias.
 Symfony\Component\DependencyInjection\Compiler\RemovePrivateAliasesPass: Removed service "http_client"; reason: private alias.
@@ -388,9 +390,12 @@ Symfony\Component\DependencyInjection\Compiler\RemovePrivateAliasesPass: Removed
 Symfony\Component\DependencyInjection\Compiler\RemovePrivateAliasesPass: Removed service ".service_locator.FKy7Jgu"; reason: private alias.
 Symfony\Component\DependencyInjection\Compiler\RemovePrivateAliasesPass: Removed service ".service_locator.yHe9DfH"; reason: private alias.
 Symfony\Component\DependencyInjection\Compiler\RemovePrivateAliasesPass: Removed service ".service_locator.HsNwygH"; reason: private alias.
+Symfony\Component\DependencyInjection\Compiler\RemovePrivateAliasesPass: Removed service ".service_locator._W_eIqN"; reason: private alias.
+Symfony\Component\DependencyInjection\Compiler\RemovePrivateAliasesPass: Removed service ".service_locator.8jztcAS"; reason: private alias.
 Symfony\Component\DependencyInjection\Compiler\RemovePrivateAliasesPass: Removed service ".service_locator.H1aZoJ."; reason: private alias.
 Symfony\Component\DependencyInjection\Compiler\RemovePrivateAliasesPass: Removed service ".service_locator.jqyBw_6"; reason: private alias.
 Symfony\Component\DependencyInjection\Compiler\RemovePrivateAliasesPass: Removed service ".service_locator.1_q14zg"; reason: private alias.
+Symfony\Component\DependencyInjection\Compiler\RemovePrivateAliasesPass: Removed service ".service_locator.8oMN4o_"; reason: private alias.
 Symfony\Component\DependencyInjection\Compiler\RemovePrivateAliasesPass: Removed service ".service_locator.CGTTh7p"; reason: private alias.
 Symfony\Component\DependencyInjection\Compiler\RemovePrivateAliasesPass: Removed service ".service_locator.sVrfImU"; reason: private alias.
 Symfony\Component\DependencyInjection\Compiler\RemovePrivateAliasesPass: Removed service ".service_locator.OyKRmgd"; reason: private alias.
@@ -610,6 +615,8 @@ Symfony\Component\DependencyInjection\Compiler\RemoveAbstractDefinitionsPass: Re
 Symfony\Component\DependencyInjection\Compiler\RemoveAbstractDefinitionsPass: Removed service ".abstract.instanceof.PHPMaker2026\Project2\AppointmentReportController"; reason: abstract.
 Symfony\Component\DependencyInjection\Compiler\RemoveAbstractDefinitionsPass: Removed service ".instanceof.PHPMaker2026\Project2\ViewAppointmentReportController.0.PHPMaker2026\Project2\ViewAppointmentReportController"; reason: abstract.
 Symfony\Component\DependencyInjection\Compiler\RemoveAbstractDefinitionsPass: Removed service ".abstract.instanceof.PHPMaker2026\Project2\ViewAppointmentReportController"; reason: abstract.
+Symfony\Component\DependencyInjection\Compiler\RemoveAbstractDefinitionsPass: Removed service ".instanceof.PHPMaker2026\Project2\ViewDoctorReportController.0.PHPMaker2026\Project2\ViewDoctorReportController"; reason: abstract.
+Symfony\Component\DependencyInjection\Compiler\RemoveAbstractDefinitionsPass: Removed service ".abstract.instanceof.PHPMaker2026\Project2\ViewDoctorReportController"; reason: abstract.
 Symfony\Component\DependencyInjection\Compiler\RemoveAbstractDefinitionsPass: Removed service ".instanceof.PHPMaker2026\Project2\ViewFeedbackReportController.0.PHPMaker2026\Project2\ViewFeedbackReportController"; reason: abstract.
 Symfony\Component\DependencyInjection\Compiler\RemoveAbstractDefinitionsPass: Removed service ".abstract.instanceof.PHPMaker2026\Project2\ViewFeedbackReportController"; reason: abstract.
 Symfony\Component\DependencyInjection\Compiler\RemoveAbstractDefinitionsPass: Removed service ".instanceof.PHPMaker2026\Project2\ViewPatientReportController.0.PHPMaker2026\Project2\ViewPatientReportController"; reason: abstract.
@@ -810,7 +817,7 @@ Symfony\Component\DependencyInjection\Compiler\InlineServiceDefinitionsPass: Inl
 Symfony\Component\DependencyInjection\Compiler\InlineServiceDefinitionsPass: Inlined service "PHPMaker2026\Project2\EsmtpTransportFactoryDecorator.inner" to "PHPMaker2026\Project2\EsmtpTransportFactoryDecorator".
 Symfony\Component\DependencyInjection\Compiler\InlineServiceDefinitionsPass: Inlined service "argument_metadata_factory" to "argument_resolver".
 Symfony\Component\DependencyInjection\Compiler\InlineServiceDefinitionsPass: Inlined service ".service_locator.gxVyuXk" to "argument_resolver".
-Symfony\Component\DependencyInjection\Compiler\InlineServiceDefinitionsPass: Inlined service ".service_locator.9NYBu6h" to "argument_resolver.service".
+Symfony\Component\DependencyInjection\Compiler\InlineServiceDefinitionsPass: Inlined service ".service_locator.q6L9pLP" to "argument_resolver.service".
 Symfony\Component\DependencyInjection\Compiler\InlineServiceDefinitionsPass: Inlined service "error_handler.error_renderer.serializer" to "error_controller".
 Symfony\Component\DependencyInjection\Compiler\InlineServiceDefinitionsPass: Inlined service "controller_resolver" to "http_kernel".
 Symfony\Component\DependencyInjection\Compiler\InlineServiceDefinitionsPass: Inlined service "argument_resolver" to "http_kernel".
@@ -983,9 +990,12 @@ Symfony\Component\DependencyInjection\Compiler\InlineServiceDefinitionsPass: Inl
 Symfony\Component\DependencyInjection\Compiler\InlineServiceDefinitionsPass: Inlined service ".service_locator.XmLm93f" to ".service_locator.XmLm93f.PHPMaker2026\Project2\AppointmentReportController::__invoke()".
 Symfony\Component\DependencyInjection\Compiler\InlineServiceDefinitionsPass: Inlined service ".service_locator.EfXVwpA" to ".service_locator.EfXVwpA.PHPMaker2026\Project2\ViewAppointmentReportController::list()".
 Symfony\Component\DependencyInjection\Compiler\InlineServiceDefinitionsPass: Inlined service ".service_locator.8Sc5o65" to ".service_locator.8Sc5o65.PHPMaker2026\Project2\ViewAppointmentReportController::search()".
+Symfony\Component\DependencyInjection\Compiler\InlineServiceDefinitionsPass: Inlined service ".service_locator.gQniC2p" to ".service_locator.gQniC2p.PHPMaker2026\Project2\ViewDoctorReportController::list()".
+Symfony\Component\DependencyInjection\Compiler\InlineServiceDefinitionsPass: Inlined service ".service_locator.z5Y0ANf" to ".service_locator.z5Y0ANf.PHPMaker2026\Project2\ViewDoctorReportController::search()".
 Symfony\Component\DependencyInjection\Compiler\InlineServiceDefinitionsPass: Inlined service ".service_locator.nkpZtrq" to ".service_locator.nkpZtrq.PHPMaker2026\Project2\ViewFeedbackReportController::list()".
 Symfony\Component\DependencyInjection\Compiler\InlineServiceDefinitionsPass: Inlined service ".service_locator.e.bQX.a" to ".service_locator.e.bQX.a.PHPMaker2026\Project2\ViewPatientReportController::list()".
 Symfony\Component\DependencyInjection\Compiler\InlineServiceDefinitionsPass: Inlined service ".service_locator.BqnqZUP" to ".service_locator.BqnqZUP.PHPMaker2026\Project2\ViewPaymentReportController::list()".
+Symfony\Component\DependencyInjection\Compiler\InlineServiceDefinitionsPass: Inlined service ".service_locator.yEu_Fci" to ".service_locator.yEu_Fci.PHPMaker2026\Project2\ViewPaymentReportController::search()".
 Symfony\Component\DependencyInjection\Compiler\InlineServiceDefinitionsPass: Inlined service ".service_locator.rgYL3eR" to ".service_locator.rgYL3eR.PHPMaker2026\Project2\ViewPrescriptionReportController::list()".
 Symfony\Component\DependencyInjection\Compiler\InlineServiceDefinitionsPass: Inlined service ".service_locator.JoDynSJ" to ".service_locator.JoDynSJ.PHPMaker2026\Project2\ViewPrescriptionReportController::search()".
 Symfony\Component\DependencyInjection\Compiler\InlineServiceDefinitionsPass: Inlined service "security.access.authenticated_voter" to ".debug.security.voter.security.access.authenticated_voter".

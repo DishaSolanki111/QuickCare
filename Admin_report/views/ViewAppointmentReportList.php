@@ -24,6 +24,8 @@ ew.on("wrapper", function () {
         .setLists({
             "Doctor_Name": <?= $Page->Doctor_Name->toClientList($Page) ?>,
             "APPOINTMENT_DATE": <?= $Page->APPOINTMENT_DATE->toClientList($Page) ?>,
+            "Day_Name": <?= $Page->Day_Name->toClientList($Page) ?>,
+            "Month_Name": <?= $Page->Month_Name->toClientList($Page) ?>,
             "STATUS": <?= $Page->STATUS->toClientList($Page) ?>,
         })
         .build();
@@ -93,6 +95,8 @@ ew.on("wrapper", () => {
         .setLists({
             "Doctor_Name": <?= $Page->Doctor_Name->toClientList($Page) ?>,
             "APPOINTMENT_DATE": <?= $Page->APPOINTMENT_DATE->toClientList($Page) ?>,
+            "Day_Name": <?= $Page->Day_Name->toClientList($Page) ?>,
+            "Month_Name": <?= $Page->Month_Name->toClientList($Page) ?>,
             "STATUS": <?= $Page->STATUS->toClientList($Page) ?>,
         })
 
@@ -180,6 +184,82 @@ if (!$Page->APPOINTMENT_DATE->UseFilter) {
                 ajax: { id: "x_APPOINTMENT_DATE", form: "fview_appointment_reportsrch", limit: ew.FILTER_PAGE_SIZE, data: { ajax: "filter" } }
             };
             options = Object.assign({}, ew.filterOptions, options, ew.vars.tables.view_appointment_report.fields.APPOINTMENT_DATE.filterOptions);
+            ew.createFilter(options);
+        });
+        </script>
+    </div><!-- /.col-sm-auto -->
+<?php } ?>
+<?php if ($Page->Day_Name->Visible) { // Day_Name ?>
+<?php
+if (!$Page->Day_Name->UseFilter) {
+    $Page->SearchColumnCount++;
+}
+?>
+    <div id="xs_Day_Name" class="col-sm-auto d-sm-flex align-items-start mb-3 px-0 pe-sm-2<?= $Page->Day_Name->UseFilter ? " ew-filter-field" : "" ?>">
+        <select
+            id="x_Day_Name"
+            name="x_Day_Name[]"
+            class="form-control ew-select<?= $Page->Day_Name->isInvalidClass() ?>"
+            data-select2-id="fview_appointment_reportsrch_x_Day_Name"
+            data-table="view_appointment_report"
+            data-field="x_Day_Name"
+            data-caption="<?= HtmlEncode(RemoveHtml($Page->Day_Name->caption())) ?>"
+            data-filter="true"
+            multiple
+            size="1"
+            data-value-separator="<?= $Page->Day_Name->displayValueSeparatorAttribute() ?>"
+            data-placeholder="<?= HtmlEncode($Page->Day_Name->getPlaceHolder()) ?>"
+            data-ew-action="update-options"
+            <?= $Page->Day_Name->editAttributes() ?>>
+            <?= $Page->Day_Name->selectOptionListHtml("x_Day_Name", true) ?>
+        </select>
+        <div class="invalid-feedback"><?= $Page->Day_Name->getErrorMessage(false) ?></div>
+        <script<?= Nonce() ?>>
+        ew.on("fview_appointment_reportsrch", function() {
+            let options = {
+                name: "x_Day_Name",
+                selectId: "fview_appointment_reportsrch_x_Day_Name",
+                ajax: { id: "x_Day_Name", form: "fview_appointment_reportsrch", limit: ew.FILTER_PAGE_SIZE, data: { ajax: "filter" } }
+            };
+            options = Object.assign({}, ew.filterOptions, options, ew.vars.tables.view_appointment_report.fields.Day_Name.filterOptions);
+            ew.createFilter(options);
+        });
+        </script>
+    </div><!-- /.col-sm-auto -->
+<?php } ?>
+<?php if ($Page->Month_Name->Visible) { // Month_Name ?>
+<?php
+if (!$Page->Month_Name->UseFilter) {
+    $Page->SearchColumnCount++;
+}
+?>
+    <div id="xs_Month_Name" class="col-sm-auto d-sm-flex align-items-start mb-3 px-0 pe-sm-2<?= $Page->Month_Name->UseFilter ? " ew-filter-field" : "" ?>">
+        <select
+            id="x_Month_Name"
+            name="x_Month_Name[]"
+            class="form-control ew-select<?= $Page->Month_Name->isInvalidClass() ?>"
+            data-select2-id="fview_appointment_reportsrch_x_Month_Name"
+            data-table="view_appointment_report"
+            data-field="x_Month_Name"
+            data-caption="<?= HtmlEncode(RemoveHtml($Page->Month_Name->caption())) ?>"
+            data-filter="true"
+            multiple
+            size="1"
+            data-value-separator="<?= $Page->Month_Name->displayValueSeparatorAttribute() ?>"
+            data-placeholder="<?= HtmlEncode($Page->Month_Name->getPlaceHolder()) ?>"
+            data-ew-action="update-options"
+            <?= $Page->Month_Name->editAttributes() ?>>
+            <?= $Page->Month_Name->selectOptionListHtml("x_Month_Name", true) ?>
+        </select>
+        <div class="invalid-feedback"><?= $Page->Month_Name->getErrorMessage(false) ?></div>
+        <script<?= Nonce() ?>>
+        ew.on("fview_appointment_reportsrch", function() {
+            let options = {
+                name: "x_Month_Name",
+                selectId: "fview_appointment_reportsrch_x_Month_Name",
+                ajax: { id: "x_Month_Name", form: "fview_appointment_reportsrch", limit: ew.FILTER_PAGE_SIZE, data: { ajax: "filter" } }
+            };
+            options = Object.assign({}, ew.filterOptions, options, ew.vars.tables.view_appointment_report.fields.Month_Name.filterOptions);
             ew.createFilter(options);
         });
         </script>

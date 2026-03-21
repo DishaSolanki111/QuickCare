@@ -307,8 +307,7 @@ if (file_exists('Admin_sidebar.php')) {
           <div class="ms"><div class="ms-v" style="color:var(--green)"><?=$done_appt?></div><div class="ms-l">Completed</div></div>
           <div class="ms"><div class="ms-v" style="color:var(--orange)"><?=$sched_appt?></div><div class="ms-l">Scheduled</div></div>
         </div>
-        <a href="http://localhost/QuickCare/QuickCare/Admin_report/ViewAppointmentReport" class="vbtn">
-   <i class="fas fa-arrow-right"></i>View Appointment Report
+        <a href="http://localhost/QuickCare/QuickCare/Admin_report/ViewAppointmentReportList" class="vbtn"><i class="fas fa-arrow-right"></i>View Appointment Report
 </a></div>
 
       <!-- 2. PAYMENT -->
@@ -326,7 +325,10 @@ if (file_exists('Admin_sidebar.php')) {
           <div class="ms"><div class="ms-v" style="color:var(--green)"><?=$done_pay?></div><div class="ms-l">Paid</div></div>
           <div class="ms"><div class="ms-v" style="color:var(--orange)"><?=$pend_pay?></div><div class="ms-l">Pending</div></div>
         </div>
-        <a href="report_detail.php?type=payment" class="vbtn" style="background:var(--green)"><i class="fas fa-arrow-right"></i>View Payment Report</a>
+        <a href="http://localhost/QuickCare/QuickCare/Admin_report/ViewPaymentReportList" 
+   class="vbtn" style="background:var(--green)">
+   <i class="fas fa-arrow-right"></i>View Payment Report
+</a>
       </div>
 
       <!-- 3. PRESCRIPTION -->
@@ -398,7 +400,7 @@ if (file_exists('Admin_sidebar.php')) {
           <div class="ms"><div class="ms-v"><?=$total_specs?></div><div class="ms-l">Specs</div></div>
           <div class="ms"><div class="ms-v"><?=$total_appt?></div><div class="ms-l">Appts</div></div>
         </div>
-        <a href="report_detail.php?type=doctor" class="vbtn"><i class="fas fa-arrow-right"></i>View Doctor Report</a>
+        <a href="http://localhost/QuickCare/QuickCare/Admin_report/ViewDoctorReportList" class="vbtn"><i class="fas fa-arrow-right"></i>View Doctor Report</a>
       </div>
 
     </div><!-- /grid -->

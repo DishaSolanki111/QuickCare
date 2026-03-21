@@ -188,6 +188,7 @@ class ViewAppointmentReport extends DbTable implements LookupTableInterface
 
         // Day_Name
         $this->Day_Name = $this->Fields['Day_Name'];
+        $this->Day_Name->Lookup = new Lookup($this->Day_Name, 'view_appointment_report', true, 'Day_Name', ["Day_Name","","",""], '', "", [], [], [], [], [], [], false, '', '', "");
 
         // Week_Number
         $this->Week_Number = $this->Fields['Week_Number'];
@@ -199,6 +200,7 @@ class ViewAppointmentReport extends DbTable implements LookupTableInterface
 
         // Month_Name
         $this->Month_Name = $this->Fields['Month_Name'];
+        $this->Month_Name->Lookup = new Lookup($this->Month_Name, 'view_appointment_report', true, 'Month_Name', ["Month_Name","","",""], '', "", [], [], [], [], [], [], false, '', '', "");
 
         // Year
         $this->Year = $this->Fields['Year'];
@@ -510,6 +512,7 @@ class ViewAppointmentReport extends DbTable implements LookupTableInterface
                 'IsUpload' => false, // Is upload field
                 'InputTextType' => 'text',
                 'Sortable' => false,
+                'UseFilter' => true,
 
                 // 'UseAdvancedSearch' => true,
                 'SearchOperators' => ["=", "<>", "IN", "NOT IN", "STARTS WITH", "NOT STARTS WITH", "LIKE", "NOT LIKE", "ENDS WITH", "NOT ENDS WITH", "IS EMPTY", "IS NOT EMPTY", "IS NULL", "IS NOT NULL"],
@@ -582,6 +585,7 @@ class ViewAppointmentReport extends DbTable implements LookupTableInterface
                 'IsUpload' => false, // Is upload field
                 'InputTextType' => 'text',
                 'Sortable' => false,
+                'UseFilter' => true,
 
                 // 'UseAdvancedSearch' => true,
                 'SearchOperators' => ["=", "<>", "IN", "NOT IN", "STARTS WITH", "NOT STARTS WITH", "LIKE", "NOT LIKE", "ENDS WITH", "NOT ENDS WITH", "IS EMPTY", "IS NOT EMPTY", "IS NULL", "IS NOT NULL"],
@@ -1683,7 +1687,6 @@ class ViewAppointmentReport extends DbTable implements LookupTableInterface
             if ($doc->Horizontal) { // Horizontal format, write header
                 $doc->beginExportRow();
                 if ($exportPageType == "view") {
-                    $doc->exportCaption($this->APPOINTMENT_ID);
                     $doc->exportCaption($this->Patient_Name);
                     $doc->exportCaption($this->Doctor_Name);
                     $doc->exportCaption($this->Specialisation);
@@ -1735,7 +1738,6 @@ class ViewAppointmentReport extends DbTable implements LookupTableInterface
                 if (!$doc->ExportCustom) {
                     $doc->beginExportRow($rowCnt); // Allow CSS styles if enabled
                     if ($exportPageType == "view") {
-                        $doc->exportField($this->APPOINTMENT_ID);
                         $doc->exportField($this->Patient_Name);
                         $doc->exportField($this->Doctor_Name);
                         $doc->exportField($this->Specialisation);

@@ -91,6 +91,8 @@
         'InputTextType' => 'text',
         'Nullable' => false,
         'Required' => true,
+        'Sortable' => false,
+        'UseFilter' => true,
         'SearchOperators' => [
             '=',
             '<>',
@@ -127,6 +129,7 @@
         'InputTextType' => 'text',
         'Nullable' => false,
         'Required' => true,
+        'UseFilter' => true,
         'SearchOperators' => [
             '=',
             '<>',
@@ -199,6 +202,7 @@
         'Raw' => true,
         'Nullable' => false,
         'Required' => true,
+        'UseFilter' => true,
         'SearchOperators' => [
             '=',
             '<>',
@@ -227,6 +231,7 @@
         'Raw' => true,
         'Nullable' => false,
         'Required' => true,
+        'UseFilter' => true,
         'SearchOperators' => [
             '=',
             '<>',
@@ -255,6 +260,7 @@
         'Raw' => true,
         'Nullable' => false,
         'Required' => true,
+        'UseFilter' => true,
         'SearchOperators' => [
             '=',
             '<>',
@@ -287,6 +293,8 @@
         'HtmlTag' => 'TEXT',
         'IsUpload' => false,
         'InputTextType' => 'text',
+        'Sortable' => false,
+        'UseFilter' => true,
         'SearchOperators' => [
             '=',
             '<>',
@@ -324,6 +332,7 @@
         'IsUpload' => false,
         'InputTextType' => 'text',
         'Raw' => true,
+        'Sortable' => false,
         'SearchOperators' => [
             '=',
             '<>',
@@ -359,6 +368,7 @@
         'IsUpload' => false,
         'InputTextType' => 'text',
         'Raw' => true,
+        'Sortable' => false,
         'SearchOperators' => [
             '=',
             '<>',
@@ -393,6 +403,7 @@
         'HtmlTag' => 'TEXT',
         'IsUpload' => false,
         'InputTextType' => 'text',
+        'UseFilter' => true,
         'SearchOperators' => [
             '=',
             '<>',
@@ -430,6 +441,8 @@
         'IsUpload' => false,
         'InputTextType' => 'text',
         'Raw' => true,
+        'Sortable' => false,
+        'UseFilter' => true,
         'SearchOperators' => [
             '=',
             '<>',

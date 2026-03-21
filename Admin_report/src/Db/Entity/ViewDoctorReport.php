@@ -47,7 +47,201 @@ use InvalidArgumentException;
 #[Table('view_doctor_report')]
 class ViewDoctorReport extends BaseEntity
 {
+    #[Column(name: 'DOCTOR_ID', type: 'integer', insertable: false)]
+    #[GeneratedValue]
+    private int $doctorId;
+
+    #[Column(name: 'Doctor_Name', type: 'string', insertable: false, updatable: false)]
+    private string $doctorName;
+
+    #[Column(name: 'Specialisation', type: 'string')]
+    private string $specialisation;
+
+    #[Column(name: 'EDUCATION', type: 'string')]
+    private string $education;
+
+    #[Column(name: 'Doctor_Status', type: 'string', nullable: true)]
+    private ?string $doctorStatus;
+
+    #[Column(name: 'APPOINTMENT_ID', type: 'integer', nullable: true, insertable: false)]
+    #[GeneratedValue]
+    private ?int $appointmentId;
+
+    #[Column(name: 'APPOINTMENT_DATE', type: 'date', nullable: true)]
+    private ?DateTimeInterface $appointmentDate;
+
+    #[Column(name: 'Month_Name', type: 'string', nullable: true, insertable: false, updatable: false)]
+    private ?string $monthName;
+
+    #[Column(name: 'Month_Number', type: 'integer', nullable: true, insertable: false, updatable: false)]
+    private ?int $monthNumber;
+
+    #[Column(name: 'Year', type: 'integer', nullable: true, insertable: false, updatable: false)]
+    private ?int $year;
+
+    #[Column(name: 'Appointment_Status', type: 'string', nullable: true)]
+    private ?string $appointmentStatus;
+
+    #[Column(name: 'Total_Patients', type: 'bigint', nullable: true, insertable: false, updatable: false)]
+    private ?string $totalPatients;
+
+    #[Column(name: 'Avg_Rating', type: 'decimal', nullable: true, insertable: false, updatable: false)]
+    private ?string $avgRating;
+
     #[Id]
     #[Column(type: 'integer')]
     private int $id; // Fake primary key
+
+    public function __construct()
+    {
+        $this->doctorStatus = 'pending';
+    }
+
+    public function getDoctorId(): int
+    {
+        return $this->doctorId;
+    }
+
+    public function setDoctorId(int $value): static
+    {
+        $this->doctorId = $value;
+        return $this;
+    }
+
+    public function getDoctorName(): string
+    {
+        return HtmlDecode($this->doctorName);
+    }
+
+    public function setDoctorName(string $value): static
+    {
+        $this->doctorName = RemoveXss($value);
+        return $this;
+    }
+
+    public function getSpecialisation(): string
+    {
+        return HtmlDecode($this->specialisation);
+    }
+
+    public function setSpecialisation(string $value): static
+    {
+        $this->specialisation = RemoveXss($value);
+        return $this;
+    }
+
+    public function getEducation(): string
+    {
+        return HtmlDecode($this->education);
+    }
+
+    public function setEducation(string $value): static
+    {
+        $this->education = RemoveXss($value);
+        return $this;
+    }
+
+    public function getDoctorStatus(): ?string
+    {
+        return $this->doctorStatus;
+    }
+
+    public function setDoctorStatus(?string $value): static
+    {
+        if (!in_array($value, ["pending", "approved", "rejected"])) {
+            throw new InvalidArgumentException("Invalid 'Doctor_Status' value");
+        }
+        $this->doctorStatus = $value;
+        return $this;
+    }
+
+    public function getAppointmentId(): ?int
+    {
+        return $this->appointmentId;
+    }
+
+    public function setAppointmentId(?int $value): static
+    {
+        $this->appointmentId = $value;
+        return $this;
+    }
+
+    public function getAppointmentDate(): ?DateTimeInterface
+    {
+        return $this->appointmentDate;
+    }
+
+    public function setAppointmentDate(?DateTimeInterface $value): static
+    {
+        if (!$this->isInitialized('appointmentDate') || !SameDateTime($this->appointmentDate, $value)) {
+            $this->appointmentDate = $value;
+        }
+        return $this;
+    }
+
+    public function getMonthName(): ?string
+    {
+        return HtmlDecode($this->monthName);
+    }
+
+    public function setMonthName(?string $value): static
+    {
+        $this->monthName = RemoveXss($value);
+        return $this;
+    }
+
+    public function getMonthNumber(): ?int
+    {
+        return $this->monthNumber;
+    }
+
+    public function setMonthNumber(?int $value): static
+    {
+        $this->monthNumber = $value;
+        return $this;
+    }
+
+    public function getYear(): ?int
+    {
+        return $this->year;
+    }
+
+    public function setYear(?int $value): static
+    {
+        $this->year = $value;
+        return $this;
+    }
+
+    public function getAppointmentStatus(): ?string
+    {
+        return HtmlDecode($this->appointmentStatus);
+    }
+
+    public function setAppointmentStatus(?string $value): static
+    {
+        $this->appointmentStatus = RemoveXss($value);
+        return $this;
+    }
+
+    public function getTotalPatients(): ?string
+    {
+        return $this->totalPatients;
+    }
+
+    public function setTotalPatients(?string $value): static
+    {
+        $this->totalPatients = $value;
+        return $this;
+    }
+
+    public function getAvgRating(): ?string
+    {
+        return $this->avgRating;
+    }
+
+    public function setAvgRating(?string $value): static
+    {
+        $this->avgRating = $value;
+        return $this;
+    }
 }

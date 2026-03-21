@@ -98,6 +98,9 @@ class ViewPaymentReport extends DbTable implements LookupTableInterface
     public bool $ModalGridAdd = false;
     public bool $ModalGridEdit = false;
     public bool $ModalMultiEdit = false;
+    public DbChart $Chart1;
+    public DbChart $Chart2;
+    public DbChart $Chart3;
 
     // Fields
     public DbField $PAYMENT_ID;
@@ -158,6 +161,7 @@ class ViewPaymentReport extends DbTable implements LookupTableInterface
         $this->GridAddRowCount = 5;
         $this->AllowAddDeleteRow = true; // Allow add/delete row
         $this->UseAjaxActions = $this->UseAjaxActions || Config("USE_AJAX_ACTIONS");
+        $this->UseColumnVisibility = true;
         $this->UserIDPermission = Config("DEFAULT_USER_ID_PERMISSION"); // Default User ID permission
         $this->BasicSearch = new BasicSearch($this, Session(), $this->language);
 
@@ -173,9 +177,11 @@ class ViewPaymentReport extends DbTable implements LookupTableInterface
 
         // Patient_Name
         $this->Patient_Name = $this->Fields['Patient_Name'];
+        $this->Patient_Name->Lookup = new Lookup($this->Patient_Name, 'view_payment_report', true, 'Patient_Name', ["Patient_Name","","",""], '', "", [], [], [], [], [], [], false, '', '', "");
 
         // Doctor_Name
         $this->Doctor_Name = $this->Fields['Doctor_Name'];
+        $this->Doctor_Name->Lookup = new Lookup($this->Doctor_Name, 'view_payment_report', true, 'Doctor_Name', ["Doctor_Name","","",""], '', "", [], [], [], [], [], [], false, '', '', "");
 
         // AMOUNT
         $this->AMOUNT = $this->Fields['AMOUNT'];
@@ -183,20 +189,22 @@ class ViewPaymentReport extends DbTable implements LookupTableInterface
 
         // PAYMENT_MODE
         $this->PAYMENT_MODE = $this->Fields['PAYMENT_MODE'];
-        $this->PAYMENT_MODE->Lookup = new Lookup($this->PAYMENT_MODE, 'view_payment_report', false, '', ["","","",""], '', "", [], [], [], [], [], [], false, '', '', "");
+        $this->PAYMENT_MODE->Lookup = new Lookup($this->PAYMENT_MODE, 'view_payment_report', true, 'PAYMENT_MODE', ["PAYMENT_MODE","","",""], '', "", [], [], [], [], [], [], false, '', '', "");
         $this->PAYMENT_MODE->OptionCount = 4;
 
         // Payment_Status
         $this->Payment_Status = $this->Fields['Payment_Status'];
-        $this->Payment_Status->Lookup = new Lookup($this->Payment_Status, 'view_payment_report', false, '', ["","","",""], '', "", [], [], [], [], [], [], false, '', '', "");
+        $this->Payment_Status->Lookup = new Lookup($this->Payment_Status, 'view_payment_report', true, 'Payment_Status', ["Payment_Status","","",""], '', "", [], [], [], [], [], [], false, '', '', "");
         $this->Payment_Status->OptionCount = 2;
 
         // PAYMENT_DATE
         $this->PAYMENT_DATE = $this->Fields['PAYMENT_DATE'];
+        $this->PAYMENT_DATE->Lookup = new Lookup($this->PAYMENT_DATE, 'view_payment_report', true, 'PAYMENT_DATE', ["PAYMENT_DATE","","",""], '', "", [], [], [], [], [], [], false, '', '', "");
         $this->PAYMENT_DATE->DefaultErrorMessage = str_replace("%s", $httpContext["DATE_FORMAT"], $this->language->phrase("IncorrectDate"));
 
         // Day_Name
         $this->Day_Name = $this->Fields['Day_Name'];
+        $this->Day_Name->Lookup = new Lookup($this->Day_Name, 'view_payment_report', true, 'Day_Name', ["Day_Name","","",""], '', "", [], [], [], [], [], [], false, '', '', "");
 
         // Week_Number
         $this->Week_Number = $this->Fields['Week_Number'];
@@ -208,10 +216,150 @@ class ViewPaymentReport extends DbTable implements LookupTableInterface
 
         // Month_Name
         $this->Month_Name = $this->Fields['Month_Name'];
+        $this->Month_Name->Lookup = new Lookup($this->Month_Name, 'view_payment_report', true, 'Month_Name', ["Month_Name","","",""], '', "", [], [], [], [], [], [], false, '', '', "");
 
         // Year
         $this->Year = $this->Fields['Year'];
+        $this->Year->Lookup = new Lookup($this->Year, 'view_payment_report', true, 'Year', ["Year","","",""], '', "", [], [], [], [], [], [], false, '', '', "");
         $this->Year->DefaultErrorMessage = $this->language->phrase("IncorrectInteger");
+
+        // Chart1
+        $this->Chart1 = new DbChart(
+            $this->language,
+            $this,
+            'Chart1',
+            'Chart1',
+            'Month_Name',
+            'AMOUNT',
+            1004,
+            '',
+            0,
+            'SUM',
+            800,
+            400
+        );
+        $this->Chart1->Position = 1;
+        $this->Chart1->PageBreakType = "after";
+        $this->Chart1->YAxisFormat = ["Number"];
+        $this->Chart1->YFieldFormat = ["Number"];
+        $this->Chart1->SortType = 0;
+        $this->Chart1->SortSequence = "";
+        $this->Chart1->SqlXField = "`Month_Name`";
+        $this->Chart1->SqlYField = "SUM(`AMOUNT`)";
+        $this->Chart1->SqlSeriesField = "''";
+        $this->Chart1->SqlGroupBy = "`Month_Name`";
+        $this->Chart1->SqlOrderBy = "";
+        $this->Chart1->SeriesDateType = "";
+        $this->Chart1->ID = "view_payment_report_Chart1"; // Chart ID
+        $this->Chart1->setParameters([
+            ["type", "1004"],
+            ["seriestype", "0"]
+        ]); // Chart type / Chart series type
+        $this->Chart1->setParameters([
+            ["caption", $this->Chart1->caption()],
+            ["xaxisname", $this->Chart1->xAxisName()]
+        ]); // Chart caption / X axis name
+        $this->Chart1->setParameter("yaxisname", $this->Chart1->yAxisName()); // Y axis name
+        $this->Chart1->setParameters([
+            ["shownames", "1"],
+            ["showvalues", "1"],
+            ["showhovercap", "1"]
+        ]); // Show names / Show values / Show hover
+        $this->Chart1->setParameter("alpha", DbChart::getDefaultAlpha()); // Chart alpha (datasets background color)
+        $this->Chart1->setParameters([["options.plugins.legend.labels.pointStyleWidth",null]]);
+        $this->Charts[$this->Chart1->ID] = $this->Chart1;
+
+        // Chart2
+        $this->Chart2 = new DbChart(
+            $this->language,
+            $this,
+            'Chart2',
+            'Chart2',
+            'PAYMENT_MODE',
+            'AMOUNT',
+            1005,
+            '',
+            0,
+            'SUM',
+            800,
+            400
+        );
+        $this->Chart2->Position = 1;
+        $this->Chart2->PageBreakType = "after";
+        $this->Chart2->YAxisFormat = ["Number"];
+        $this->Chart2->YFieldFormat = ["Number"];
+        $this->Chart2->SortType = 0;
+        $this->Chart2->SortSequence = "";
+        $this->Chart2->SqlXField = "`PAYMENT_MODE`";
+        $this->Chart2->SqlYField = "SUM(`AMOUNT`)";
+        $this->Chart2->SqlSeriesField = "''";
+        $this->Chart2->SqlGroupBy = "`PAYMENT_MODE`";
+        $this->Chart2->SqlOrderBy = "";
+        $this->Chart2->SeriesDateType = "";
+        $this->Chart2->ID = "view_payment_report_Chart2"; // Chart ID
+        $this->Chart2->setParameters([
+            ["type", "1005"],
+            ["seriestype", "0"]
+        ]); // Chart type / Chart series type
+        $this->Chart2->setParameters([
+            ["caption", $this->Chart2->caption()],
+            ["xaxisname", $this->Chart2->xAxisName()]
+        ]); // Chart caption / X axis name
+        $this->Chart2->setParameter("yaxisname", $this->Chart2->yAxisName()); // Y axis name
+        $this->Chart2->setParameters([
+            ["shownames", "1"],
+            ["showvalues", "1"],
+            ["showhovercap", "1"]
+        ]); // Show names / Show values / Show hover
+        $this->Chart2->setParameter("alpha", DbChart::getDefaultAlpha()); // Chart alpha (datasets background color)
+        $this->Chart2->setParameters([["options.plugins.legend.labels.pointStyleWidth",null]]);
+        $this->Charts[$this->Chart2->ID] = $this->Chart2;
+
+        // Chart3
+        $this->Chart3 = new DbChart(
+            $this->language,
+            $this,
+            'Chart3',
+            'Chart3',
+            'Day_Name',
+            'AMOUNT',
+            1004,
+            '',
+            0,
+            'SUM',
+            800,
+            400
+        );
+        $this->Chart3->Position = 4;
+        $this->Chart3->PageBreakType = "before";
+        $this->Chart3->YAxisFormat = ["Number"];
+        $this->Chart3->YFieldFormat = ["Number"];
+        $this->Chart3->SortType = 0;
+        $this->Chart3->SortSequence = "";
+        $this->Chart3->SqlXField = "`Day_Name`";
+        $this->Chart3->SqlYField = "SUM(`AMOUNT`)";
+        $this->Chart3->SqlSeriesField = "''";
+        $this->Chart3->SqlGroupBy = "`Day_Name`";
+        $this->Chart3->SqlOrderBy = "";
+        $this->Chart3->SeriesDateType = "";
+        $this->Chart3->ID = "view_payment_report_Chart3"; // Chart ID
+        $this->Chart3->setParameters([
+            ["type", "1004"],
+            ["seriestype", "0"]
+        ]); // Chart type / Chart series type
+        $this->Chart3->setParameters([
+            ["caption", $this->Chart3->caption()],
+            ["xaxisname", $this->Chart3->xAxisName()]
+        ]); // Chart caption / X axis name
+        $this->Chart3->setParameter("yaxisname", $this->Chart3->yAxisName()); // Y axis name
+        $this->Chart3->setParameters([
+            ["shownames", "1"],
+            ["showvalues", "1"],
+            ["showhovercap", "1"]
+        ]); // Show names / Show values / Show hover
+        $this->Chart3->setParameter("alpha", DbChart::getDefaultAlpha()); // Chart alpha (datasets background color)
+        $this->Chart3->setParameters([["options.plugins.legend.labels.pointStyleWidth",null]]);
+        $this->Charts[$this->Chart3->ID] = $this->Chart3;
 
         // Call Table Load event
         $this->tableLoad();
@@ -293,6 +441,8 @@ class ViewPaymentReport extends DbTable implements LookupTableInterface
                 'InputTextType' => 'text',
                 'Nullable' => false,
                 'Required' => true,
+                'Sortable' => false,
+                'UseFilter' => true,
 
                 // 'UseAdvancedSearch' => true,
                 'SearchOperators' => ["=", "<>", "IN", "NOT IN", "STARTS WITH", "NOT STARTS WITH", "LIKE", "NOT LIKE", "ENDS WITH", "NOT ENDS WITH", "IS EMPTY", "IS NOT EMPTY"],
@@ -318,6 +468,7 @@ class ViewPaymentReport extends DbTable implements LookupTableInterface
                 'InputTextType' => 'text',
                 'Nullable' => false,
                 'Required' => true,
+                'UseFilter' => true,
 
                 // 'UseAdvancedSearch' => true,
                 'SearchOperators' => ["=", "<>", "IN", "NOT IN", "STARTS WITH", "NOT STARTS WITH", "LIKE", "NOT LIKE", "ENDS WITH", "NOT ENDS WITH", "IS EMPTY", "IS NOT EMPTY"],
@@ -370,6 +521,7 @@ class ViewPaymentReport extends DbTable implements LookupTableInterface
                 'Raw' => true,
                 'Nullable' => false,
                 'Required' => true,
+                'UseFilter' => true,
 
                 // 'UseAdvancedSearch' => true,
                 'SearchOperators' => ["=", "<>"],
@@ -397,6 +549,7 @@ class ViewPaymentReport extends DbTable implements LookupTableInterface
                 'Raw' => true,
                 'Nullable' => false,
                 'Required' => true,
+                'UseFilter' => true,
 
                 // 'UseAdvancedSearch' => true,
                 'SearchOperators' => ["=", "<>"],
@@ -424,6 +577,7 @@ class ViewPaymentReport extends DbTable implements LookupTableInterface
                 'Raw' => true,
                 'Nullable' => false,
                 'Required' => true,
+                'UseFilter' => true,
 
                 // 'UseAdvancedSearch' => true,
                 'SearchOperators' => ["=", "<>", "IN", "NOT IN", "<", "<=", ">", ">=", "BETWEEN", "NOT BETWEEN"],
@@ -447,6 +601,8 @@ class ViewPaymentReport extends DbTable implements LookupTableInterface
                 'HtmlTag' => 'TEXT', // HTML Tag
                 'IsUpload' => false, // Is upload field
                 'InputTextType' => 'text',
+                'Sortable' => false,
+                'UseFilter' => true,
 
                 // 'UseAdvancedSearch' => true,
                 'SearchOperators' => ["=", "<>", "IN", "NOT IN", "STARTS WITH", "NOT STARTS WITH", "LIKE", "NOT LIKE", "ENDS WITH", "NOT ENDS WITH", "IS EMPTY", "IS NOT EMPTY", "IS NULL", "IS NOT NULL"],
@@ -471,6 +627,7 @@ class ViewPaymentReport extends DbTable implements LookupTableInterface
                 'IsUpload' => false, // Is upload field
                 'InputTextType' => 'text',
                 'Raw' => true,
+                'Sortable' => false,
 
                 // 'UseAdvancedSearch' => true,
                 'SearchOperators' => ["=", "<>", "IN", "NOT IN", "<", "<=", ">", ">=", "BETWEEN", "NOT BETWEEN", "IS NULL", "IS NOT NULL"],
@@ -495,6 +652,7 @@ class ViewPaymentReport extends DbTable implements LookupTableInterface
                 'IsUpload' => false, // Is upload field
                 'InputTextType' => 'text',
                 'Raw' => true,
+                'Sortable' => false,
 
                 // 'UseAdvancedSearch' => true,
                 'SearchOperators' => ["=", "<>", "IN", "NOT IN", "<", "<=", ">", ">=", "BETWEEN", "NOT BETWEEN", "IS NULL", "IS NOT NULL"],
@@ -518,6 +676,7 @@ class ViewPaymentReport extends DbTable implements LookupTableInterface
                 'HtmlTag' => 'TEXT', // HTML Tag
                 'IsUpload' => false, // Is upload field
                 'InputTextType' => 'text',
+                'UseFilter' => true,
 
                 // 'UseAdvancedSearch' => true,
                 'SearchOperators' => ["=", "<>", "IN", "NOT IN", "STARTS WITH", "NOT STARTS WITH", "LIKE", "NOT LIKE", "ENDS WITH", "NOT ENDS WITH", "IS EMPTY", "IS NOT EMPTY", "IS NULL", "IS NOT NULL"],
@@ -542,6 +701,8 @@ class ViewPaymentReport extends DbTable implements LookupTableInterface
                 'IsUpload' => false, // Is upload field
                 'InputTextType' => 'text',
                 'Raw' => true,
+                'Sortable' => false,
+                'UseFilter' => true,
 
                 // 'UseAdvancedSearch' => true,
                 'SearchOperators' => ["=", "<>", "IN", "NOT IN", "<", "<=", ">", ">=", "BETWEEN", "NOT BETWEEN", "IS NULL", "IS NOT NULL"],
@@ -1579,7 +1740,6 @@ class ViewPaymentReport extends DbTable implements LookupTableInterface
             if ($doc->Horizontal) { // Horizontal format, write header
                 $doc->beginExportRow();
                 if ($exportPageType == "view") {
-                    $doc->exportCaption($this->PAYMENT_ID);
                     $doc->exportCaption($this->TRANSACTION_ID);
                     $doc->exportCaption($this->Patient_Name);
                     $doc->exportCaption($this->Doctor_Name);
@@ -1588,8 +1748,6 @@ class ViewPaymentReport extends DbTable implements LookupTableInterface
                     $doc->exportCaption($this->Payment_Status);
                     $doc->exportCaption($this->PAYMENT_DATE);
                     $doc->exportCaption($this->Day_Name);
-                    $doc->exportCaption($this->Week_Number);
-                    $doc->exportCaption($this->Month_Number);
                     $doc->exportCaption($this->Month_Name);
                     $doc->exportCaption($this->Year);
                 } else {
@@ -1635,7 +1793,6 @@ class ViewPaymentReport extends DbTable implements LookupTableInterface
                 if (!$doc->ExportCustom) {
                     $doc->beginExportRow($rowCnt); // Allow CSS styles if enabled
                     if ($exportPageType == "view") {
-                        $doc->exportField($this->PAYMENT_ID);
                         $doc->exportField($this->TRANSACTION_ID);
                         $doc->exportField($this->Patient_Name);
                         $doc->exportField($this->Doctor_Name);
@@ -1644,8 +1801,6 @@ class ViewPaymentReport extends DbTable implements LookupTableInterface
                         $doc->exportField($this->Payment_Status);
                         $doc->exportField($this->PAYMENT_DATE);
                         $doc->exportField($this->Day_Name);
-                        $doc->exportField($this->Week_Number);
-                        $doc->exportField($this->Month_Number);
                         $doc->exportField($this->Month_Name);
                         $doc->exportField($this->Year);
                     } else {

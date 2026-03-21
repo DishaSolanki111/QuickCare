@@ -2537,17 +2537,7 @@
                     'value' => 'view appointment report',
                 ],
             ],
-            [
-                'menutext' => [
-                    'value' => 'view doctor report',
-                ],
-            ],
-            [
-                'menutext' => [
-                    'value' => 'view feedback report',
-                ],
-            ],
-            [
+            20 => [
                 'menutext' => [
                     'value' => 'view patient report',
                 ],
@@ -2559,7 +2549,7 @@
             ],
             [
                 'menutext' => [
-                    'value' => ' Appointment Report',
+                    'value' => 'view doctor report',
                 ],
             ],
         ],
@@ -3700,61 +3690,27 @@
                     ],
                 ],
             ],
-            'view_doctor_report' => [
-                'tblcaption' => [
-                    'value' => 'view doctor report',
-                ],
-            ],
-            'view_feedback_report' => [
-                'tblcaption' => [
-                    'value' => 'view feedback report',
-                ],
-                'field' => [
-                    'feedback_id' => [
-                        'fldcaption' => [
-                            'value' => 'FEEDBACK ID',
-                        ],
-                    ],
-                    'patient_name' => [
-                        'fldcaption' => [
-                            'value' => 'Patient Name',
-                        ],
-                    ],
-                    'doctor_name' => [
-                        'fldcaption' => [
-                            'value' => 'Doctor Name',
-                        ],
-                    ],
-                    'specialisation' => [
-                        'fldcaption' => [
-                            'value' => 'Specialisation',
-                        ],
-                    ],
-                    'rating' => [
-                        'fldcaption' => [
-                            'value' => 'RATING',
-                        ],
-                    ],
-                    'comments' => [
-                        'fldcaption' => [
-                            'value' => 'COMMENTS',
-                        ],
-                    ],
-                    'appointment_date' => [
-                        'fldcaption' => [
-                            'value' => 'APPOINTMENT DATE',
-                        ],
-                    ],
-                ],
-            ],
             'view_patient_report' => [
                 'tblcaption' => [
                     'value' => 'view patient report',
                 ],
+                'chart' => [
+                    'chart1' => [
+                        'chartcaption' => [
+                            'value' => 'Patient Visit Summary',
+                        ],
+                        'chartxaxisname' => [
+                            'value' => 'Patient Name',
+                        ],
+                        'chartyaxisname' => [
+                            'value' => 'Total Visits',
+                        ],
+                    ],
+                ],
                 'field' => [
                     'patient_id' => [
                         'fldcaption' => [
-                            'value' => 'PATIENT ID',
+                            'value' => 'Patient No.',
                         ],
                     ],
                     'patient_name' => [
@@ -3764,7 +3720,7 @@
                     ],
                     'gender' => [
                         'fldcaption' => [
-                            'value' => 'GENDER',
+                            'value' => 'Gender',
                         ],
                         'fldtagvalue1' => [
                             'value' => 'MALE',
@@ -3787,7 +3743,7 @@
                     ],
                     'blood_group' => [
                         'fldcaption' => [
-                            'value' => 'BLOOD GROUP',
+                            'value' => 'Blood Group',
                         ],
                         'fldtagvalue1' => [
                             'value' => 'A+',
@@ -3840,57 +3796,82 @@
                     ],
                     'phone' => [
                         'fldcaption' => [
-                            'value' => 'PHONE',
+                            'value' => 'Phone',
                         ],
                     ],
                     'email' => [
                         'fldcaption' => [
-                            'value' => 'EMAIL',
+                            'value' => 'EMail',
                         ],
                     ],
                     'total_appointments' => [
                         'fldcaption' => [
-                            'value' => 'Total Appointments',
-                        ],
-                    ],
-                    'completed_appointments' => [
-                        'fldcaption' => [
-                            'value' => 'Completed Appointments',
-                        ],
-                    ],
-                    'upcoming_appointments' => [
-                        'fldcaption' => [
-                            'value' => 'Upcoming Appointments',
-                        ],
-                    ],
-                    'cancelled_appointments' => [
-                        'fldcaption' => [
-                            'value' => 'Cancelled Appointments',
-                        ],
-                    ],
-                    'last_visit' => [
-                        'fldcaption' => [
-                            'value' => 'Last Visit',
-                        ],
-                    ],
-                    'first_visit' => [
-                        'fldcaption' => [
-                            'value' => 'First Visit',
+                            'value' => 'Total Visits',
                         ],
                     ],
                     'total_prescriptions' => [
                         'fldcaption' => [
-                            'value' => 'Total Prescriptions',
+                            'value' => 'Prescriptions',
                         ],
                     ],
                     'total_amount_paid' => [
                         'fldcaption' => [
-                            'value' => 'Total Amount Paid',
+                            'value' => 'Amount Paid (₹)',
                         ],
                     ],
                     'avg_rating_given' => [
                         'fldcaption' => [
-                            'value' => 'Avg Rating Given',
+                            'value' => 'Avg Rating',
+                        ],
+                    ],
+                    'address' => [
+                        'fldcaption' => [
+                            'value' => 'ADDRESS',
+                        ],
+                    ],
+                    'completed_visits' => [
+                        'fldcaption' => [
+                            'value' => 'Completed ',
+                        ],
+                    ],
+                    'upcoming_visits' => [
+                        'fldcaption' => [
+                            'value' => 'Upcoming ',
+                        ],
+                    ],
+                    'cancelled_visits' => [
+                        'fldcaption' => [
+                            'value' => 'Cancelled ',
+                        ],
+                    ],
+                    'last_visit_date' => [
+                        'fldcaption' => [
+                            'value' => 'Last Visit ',
+                        ],
+                    ],
+                    'first_visit_date' => [
+                        'fldcaption' => [
+                            'value' => 'First Visit ',
+                        ],
+                    ],
+                    'doctors_visited' => [
+                        'fldcaption' => [
+                            'value' => 'Doctors Seen',
+                        ],
+                    ],
+                    'successful_payments' => [
+                        'fldcaption' => [
+                            'value' => 'Payments Done',
+                        ],
+                    ],
+                    'total_feedback_given' => [
+                        'fldcaption' => [
+                            'value' => 'Feedback Given',
+                        ],
+                    ],
+                    'medicine_reminders' => [
+                        'fldcaption' => [
+                            'value' => 'Medicine Reminders',
                         ],
                     ],
                 ],
@@ -3899,15 +3880,50 @@
                 'tblcaption' => [
                     'value' => 'view payment report',
                 ],
+                'chart' => [
+                    'chart1' => [
+                        'chartcaption' => [
+                            'value' => 'Revenue by Month',
+                        ],
+                        'chartxaxisname' => [
+                            'value' => 'Month ',
+                        ],
+                        'chartyaxisname' => [
+                            'value' => 'Total Revenue',
+                        ],
+                    ],
+                    'chart2' => [
+                        'chartcaption' => [
+                            'value' => ' Payments by Mode',
+                        ],
+                        'chartxaxisname' => [
+                            'value' => 'Payment Mode',
+                        ],
+                        'chartyaxisname' => [
+                            'value' => 'Total Amount',
+                        ],
+                    ],
+                    'chart3' => [
+                        'chartcaption' => [
+                            'value' => 'Revenue by Day',
+                        ],
+                        'chartxaxisname' => [
+                            'value' => 'Day ',
+                        ],
+                        'chartyaxisname' => [
+                            'value' => ' Revenue (₹)',
+                        ],
+                    ],
+                ],
                 'field' => [
                     'payment_id' => [
                         'fldcaption' => [
-                            'value' => 'PAYMENT ID',
+                            'value' => 'Payment No.',
                         ],
                     ],
                     'transaction_id' => [
                         'fldcaption' => [
-                            'value' => 'TRANSACTION ID',
+                            'value' => 'Transaction ID',
                         ],
                     ],
                     'patient_name' => [
@@ -3922,12 +3938,12 @@
                     ],
                     'amount' => [
                         'fldcaption' => [
-                            'value' => 'AMOUNT',
+                            'value' => 'Amount (₹)',
                         ],
                     ],
                     'payment_mode' => [
                         'fldcaption' => [
-                            'value' => 'PAYMENT MODE',
+                            'value' => 'Payment Mode',
                         ],
                         'fldtagvalue1' => [
                             'value' => 'CREDIT CARD',
@@ -3956,7 +3972,7 @@
                     ],
                     'payment_status' => [
                         'fldcaption' => [
-                            'value' => 'Payment Status',
+                            'value' => 'Status',
                         ],
                         'fldtagvalue1' => [
                             'value' => 'COMPLETED',
@@ -3973,27 +3989,27 @@
                     ],
                     'payment_date' => [
                         'fldcaption' => [
-                            'value' => 'PAYMENT DATE',
+                            'value' => 'Payment Date',
                         ],
                     ],
                     'day_name' => [
                         'fldcaption' => [
-                            'value' => 'Day Name',
+                            'value' => 'Day ',
                         ],
                     ],
                     'week_number' => [
                         'fldcaption' => [
-                            'value' => 'Week Number',
+                            'value' => 'Week ',
                         ],
                     ],
                     'month_number' => [
                         'fldcaption' => [
-                            'value' => 'Month Number',
+                            'value' => 'Month No',
                         ],
                     ],
                     'month_name' => [
                         'fldcaption' => [
-                            'value' => 'Month Name',
+                            'value' => 'Month ',
                         ],
                     ],
                     'year' => [
@@ -4003,31 +4019,49 @@
                     ],
                 ],
             ],
-            'view_prescription_report' => [
+            'view_doctor_report' => [
                 'tblcaption' => [
-                    'value' => ' Appointment Report',
+                    'value' => 'view doctor report',
                 ],
                 'chart' => [
                     'chart1' => [
                         'chartcaption' => [
-                            'value' => 'Appointments by Month',
+                            'value' => 'Appointments per Doctor',
+                        ],
+                        'chartxaxisname' => [
+                            'value' => 'Doctor Name',
+                        ],
+                        'chartyaxisname' => [
+                            'value' => 'Total Appointment',
+                        ],
+                    ],
+                    'chart2' => [
+                        'chartcaption' => [
+                            'value' => 'Appointments by Specialisation',
+                        ],
+                        'chartxaxisname' => [
+                            'value' => 'Specialisation',
+                        ],
+                        'chartyaxisname' => [
+                            'value' => 'Total',
+                        ],
+                    ],
+                    'chart3' => [
+                        'chartcaption' => [
+                            'value' => 'Total Patients per Doctor',
+                        ],
+                        'chartxaxisname' => [
+                            'value' => 'Doctor Name',
+                        ],
+                        'chartyaxisname' => [
+                            'value' => 'Total Patients',
                         ],
                     ],
                 ],
                 'field' => [
-                    'prescription_id' => [
+                    'doctor_id' => [
                         'fldcaption' => [
-                            'value' => 'PRESCRIPTION ID',
-                        ],
-                    ],
-                    'issue_date' => [
-                        'fldcaption' => [
-                            'value' => 'ISSUE DATE',
-                        ],
-                    ],
-                    'patient_name' => [
-                        'fldcaption' => [
-                            'value' => 'Patient Name',
+                            'value' => 'Doctor No',
                         ],
                     ],
                     'doctor_name' => [
@@ -4040,53 +4074,90 @@
                             'value' => 'Specialisation',
                         ],
                     ],
-                    'symptoms' => [
+                    'education' => [
                         'fldcaption' => [
-                            'value' => 'SYMPTOMS',
+                            'value' => 'Education',
                         ],
                     ],
-                    'diagnosis' => [
+                    'doctor_status' => [
                         'fldcaption' => [
-                            'value' => 'DIAGNOSIS',
-                        ],
-                    ],
-                    'diabetes' => [
-                        'fldcaption' => [
-                            'value' => 'DIABETES',
+                            'value' => 'Status',
                         ],
                         'fldtagvalue1' => [
-                            'value' => 'NO',
+                            'value' => 'pending',
                         ],
                         'fldtagcaption1' => [
-                            'value' => 'NO',
+                            'value' => 'pending',
                         ],
                         'fldtagvalue2' => [
-                            'value' => 'TYPE-1',
+                            'value' => 'approved',
                         ],
                         'fldtagcaption2' => [
-                            'value' => 'TYPE-1',
+                            'value' => 'approved',
                         ],
                         'fldtagvalue3' => [
-                            'value' => 'TYPE-2',
+                            'value' => 'rejected',
                         ],
                         'fldtagcaption3' => [
-                            'value' => 'TYPE-2',
-                        ],
-                        'fldtagvalue4' => [
-                            'value' => 'PRE-DIABTIC',
-                        ],
-                        'fldtagcaption4' => [
-                            'value' => 'PRE-DIABTIC',
+                            'value' => 'rejected',
                         ],
                     ],
-                    'blood_pressure' => [
+                    'appointment_id' => [
                         'fldcaption' => [
-                            'value' => 'BLOOD PRESSURE',
+                            'value' => 'Appointment No.',
                         ],
                     ],
-                    'additional_notes' => [
+                    'appointment_date' => [
                         'fldcaption' => [
-                            'value' => 'ADDITIONAL NOTES',
+                            'value' => 'Date',
+                        ],
+                    ],
+                    'month_name' => [
+                        'fldcaption' => [
+                            'value' => 'Month ',
+                        ],
+                    ],
+                    'month_number' => [
+                        'fldcaption' => [
+                            'value' => 'Month No',
+                        ],
+                    ],
+                    'year' => [
+                        'fldcaption' => [
+                            'value' => 'Year',
+                        ],
+                    ],
+                    'appointment_status' => [
+                        'fldcaption' => [
+                            'value' => 'Appointment Status',
+                        ],
+                        'fldtagvalue1' => [
+                            'value' => 'SCHEDULED',
+                        ],
+                        'fldtagcaption1' => [
+                            'value' => 'SCHEDULED',
+                        ],
+                        'fldtagvalue2' => [
+                            'value' => 'COMPLETED',
+                        ],
+                        'fldtagcaption2' => [
+                            'value' => 'COMPLETED',
+                        ],
+                        'fldtagvalue3' => [
+                            'value' => 'CANCELLED',
+                        ],
+                        'fldtagcaption3' => [
+                            'value' => 'CANCELLED',
+                        ],
+                    ],
+                    'total_patients' => [
+                        'fldcaption' => [
+                            'value' => 'Total Patients',
+                        ],
+                    ],
+                    'avg_rating' => [
+                        'fldcaption' => [
+                            'value' => 'Avg Rating',
                         ],
                     ],
                 ],

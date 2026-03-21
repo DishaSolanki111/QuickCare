@@ -31,6 +31,7 @@ C:\xampp\htdocs\QuickCare\QuickCare\Admin_report\controllers\ApiController.php
 C:\xampp\htdocs\QuickCare\QuickCare\Admin_report\controllers\AppController.php
 C:\xampp\htdocs\QuickCare\QuickCare\Admin_report\controllers\AppointmentReportController.php
 C:\xampp\htdocs\QuickCare\QuickCare\Admin_report\controllers\ViewAppointmentReportController.php
+C:\xampp\htdocs\QuickCare\QuickCare\Admin_report\controllers\ViewDoctorReportController.php
 C:\xampp\htdocs\QuickCare\QuickCare\Admin_report\controllers\ViewFeedbackReportController.php
 C:\xampp\htdocs\QuickCare\QuickCare\Admin_report\controllers\ViewPatientReportController.php
 C:\xampp\htdocs\QuickCare\QuickCare\Admin_report\controllers\ViewPaymentReportController.php
@@ -52,12 +53,15 @@ C:\xampp\htdocs\QuickCare\QuickCare\Admin_report\models\ViewAppointmentReport.ph
 C:\xampp\htdocs\QuickCare\QuickCare\Admin_report\models\ViewAppointmentReportList.php
 C:\xampp\htdocs\QuickCare\QuickCare\Admin_report\models\ViewAppointmentReportSearch.php
 C:\xampp\htdocs\QuickCare\QuickCare\Admin_report\models\ViewDoctorReport.php
+C:\xampp\htdocs\QuickCare\QuickCare\Admin_report\models\ViewDoctorReportList.php
+C:\xampp\htdocs\QuickCare\QuickCare\Admin_report\models\ViewDoctorReportSearch.php
 C:\xampp\htdocs\QuickCare\QuickCare\Admin_report\models\ViewFeedbackReport.php
 C:\xampp\htdocs\QuickCare\QuickCare\Admin_report\models\ViewFeedbackReportList.php
 C:\xampp\htdocs\QuickCare\QuickCare\Admin_report\models\ViewPatientReport.php
 C:\xampp\htdocs\QuickCare\QuickCare\Admin_report\models\ViewPatientReportList.php
 C:\xampp\htdocs\QuickCare\QuickCare\Admin_report\models\ViewPaymentReport.php
 C:\xampp\htdocs\QuickCare\QuickCare\Admin_report\models\ViewPaymentReportList.php
+C:\xampp\htdocs\QuickCare\QuickCare\Admin_report\models\ViewPaymentReportSearch.php
 C:\xampp\htdocs\QuickCare\QuickCare\Admin_report\models\ViewPrescriptionReport.php
 C:\xampp\htdocs\QuickCare\QuickCare\Admin_report\models\ViewPrescriptionReportList.php
 C:\xampp\htdocs\QuickCare\QuickCare\Admin_report\models\ViewPrescriptionReportSearch.php
@@ -289,9 +293,12 @@ C:\xampp\htdocs\QuickCare\QuickCare\Admin_report\templates\maintenance.html.twig
 C:\xampp\htdocs\QuickCare\QuickCare\Admin_report\views\AppointmentReportSummary.php
 C:\xampp\htdocs\QuickCare\QuickCare\Admin_report\views\ViewAppointmentReportList.php
 C:\xampp\htdocs\QuickCare\QuickCare\Admin_report\views\ViewAppointmentReportSearch.php
+C:\xampp\htdocs\QuickCare\QuickCare\Admin_report\views\ViewDoctorReportList.php
+C:\xampp\htdocs\QuickCare\QuickCare\Admin_report\views\ViewDoctorReportSearch.php
 C:\xampp\htdocs\QuickCare\QuickCare\Admin_report\views\ViewFeedbackReportList.php
 C:\xampp\htdocs\QuickCare\QuickCare\Admin_report\views\ViewPatientReportList.php
 C:\xampp\htdocs\QuickCare\QuickCare\Admin_report\views\ViewPaymentReportList.php
+C:\xampp\htdocs\QuickCare\QuickCare\Admin_report\views\ViewPaymentReportSearch.php
 C:\xampp\htdocs\QuickCare\QuickCare\Admin_report\views\ViewPrescriptionReportList.php
 C:\xampp\htdocs\QuickCare\QuickCare\Admin_report\views\ViewPrescriptionReportSearch.php
 C:\xampp\htdocs\QuickCare\QuickCare\Admin_report\views\email.php

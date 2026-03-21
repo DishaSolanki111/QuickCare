@@ -27,6 +27,10 @@ ew.on("wrapper", ew.renderJsTemplates);
 ew.emit("head");
 </script>
 <script<?= Nonce() ?> src="<?= $basePath ?>js/clientscript.js?v=26.7.0"></script>
+<?php
+include_once __DIR__ . "/admin_sidebar.php";
+include_once __DIR__ . "/admin_header.php";
+?>
 <!-- Navbar -->
 <script type="text/html" id="navbar-menu-items" class="ew-js-template" data-name="navbar" data-seq="10" data-data="navbar" data-method="appendTo" data-target="#ew-navbar">
 {{if items}}

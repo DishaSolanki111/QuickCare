@@ -15,9 +15,10 @@ return [
         '/session' => [[['_route' => 'session', '_controller' => 'PHPMaker2026\\Project2\\AppController::session'], null, ['GET' => 0, 'OPTIONS' => 1], null, false, false, null]],
         '/' => [[['_route' => 'index', '_controller' => 'PHPMaker2026\\Project2\\AppController::index'], null, ['GET' => 0], null, false, false, null]],
         '/ViewAppointmentReportSearch' => [[['_route' => 'search.view_appointment_report', '_controller' => 'PHPMaker2026\\Project2\\ViewAppointmentReportController::search'], null, ['GET' => 0, 'POST' => 1, 'OPTIONS' => 2], null, false, false, null]],
+        '/ViewDoctorReportSearch' => [[['_route' => 'search.view_doctor_report', '_controller' => 'PHPMaker2026\\Project2\\ViewDoctorReportController::search'], null, ['GET' => 0, 'POST' => 1, 'OPTIONS' => 2], null, false, false, null]],
         '/ViewFeedbackReportList' => [[['_route' => 'list.view_feedback_report', '_controller' => 'PHPMaker2026\\Project2\\ViewFeedbackReportController::list'], null, ['GET' => 0, 'POST' => 1, 'OPTIONS' => 2], null, false, false, null]],
         '/ViewPatientReportList' => [[['_route' => 'list.view_patient_report', '_controller' => 'PHPMaker2026\\Project2\\ViewPatientReportController::list'], null, ['GET' => 0, 'POST' => 1, 'OPTIONS' => 2], null, false, false, null]],
-        '/ViewPaymentReportList' => [[['_route' => 'list.view_payment_report', '_controller' => 'PHPMaker2026\\Project2\\ViewPaymentReportController::list'], null, ['GET' => 0, 'POST' => 1, 'OPTIONS' => 2], null, false, false, null]],
+        '/ViewPaymentReportSearch' => [[['_route' => 'search.view_payment_report', '_controller' => 'PHPMaker2026\\Project2\\ViewPaymentReportController::search'], null, ['GET' => 0, 'POST' => 1, 'OPTIONS' => 2], null, false, false, null]],
         '/ViewPrescriptionReportList' => [[['_route' => 'list.view_prescription_report', '_controller' => 'PHPMaker2026\\Project2\\ViewPrescriptionReportController::list'], null, ['GET' => 0, 'POST' => 1, 'OPTIONS' => 2], null, false, false, null]],
         '/ViewPrescriptionReportSearch' => [[['_route' => 'search.view_prescription_report', '_controller' => 'PHPMaker2026\\Project2\\ViewPrescriptionReportController::search'], null, ['GET' => 0, 'POST' => 1, 'OPTIONS' => 2], null, false, false, null]],
         '/logout' => [[['_route' => '_logout_main'], null, null, null, false, false, null]],
@@ -42,8 +43,12 @@ return [
                     .'|twofa/([^/]++)(?:/([^/]++)(?:/([^/]++))?)?(*:364)'
                 .')'
                 .'|/AppointmentReport(?:/([^/]++))?(*:405)'
-                .'|/ViewAppointmentReportList(?:/([^/]++))?(*:453)'
-                .'|/_error/(\\d+)(?:\\.([^/]++))?(*:489)'
+                .'|/View(?'
+                    .'|AppointmentReportList(?:/([^/]++))?(*:456)'
+                    .'|DoctorReportList(?:/([^/]++))?(*:494)'
+                    .'|PaymentReportList(?:/([^/]++))?(*:533)'
+                .')'
+                .'|/_error/(\\d+)(?:\\.([^/]++))?(*:570)'
             .')/?$}sDu',
     ],
     [ // $dynamicRoutes
@@ -59,8 +64,10 @@ return [
         314 => [[['_route' => 'api.permissions', '_controller' => 'PHPMaker2026\\Project2\\ApiController::permissions'], ['userLevel'], ['GET' => 0, 'POST' => 1, 'OPTIONS' => 2], null, false, true, null]],
         364 => [[['_route' => 'api.twofa', 'authType' => null, 'parm' => null, '_controller' => 'PHPMaker2026\\Project2\\ApiController::twofa'], ['action', 'authType', 'parm'], ['GET' => 0, 'POST' => 1, 'OPTIONS' => 2], null, false, true, null]],
         405 => [[['_route' => 'summary.appointment_report', 'chartName' => null, '_controller' => 'PHPMaker2026\\Project2\\AppointmentReportController'], ['chartName'], ['GET' => 0, 'POST' => 1, 'OPTIONS' => 2], null, false, true, null]],
-        453 => [[['_route' => 'list.view_appointment_report', 'chartName' => null, '_controller' => 'PHPMaker2026\\Project2\\ViewAppointmentReportController::list'], ['chartName'], ['GET' => 0, 'POST' => 1, 'OPTIONS' => 2], null, false, true, null]],
-        489 => [
+        456 => [[['_route' => 'list.view_appointment_report', 'chartName' => null, '_controller' => 'PHPMaker2026\\Project2\\ViewAppointmentReportController::list'], ['chartName'], ['GET' => 0, 'POST' => 1, 'OPTIONS' => 2], null, false, true, null]],
+        494 => [[['_route' => 'list.view_doctor_report', 'chartName' => null, '_controller' => 'PHPMaker2026\\Project2\\ViewDoctorReportController::list'], ['chartName'], ['GET' => 0, 'POST' => 1, 'OPTIONS' => 2], null, false, true, null]],
+        533 => [[['_route' => 'list.view_payment_report', 'chartName' => null, '_controller' => 'PHPMaker2026\\Project2\\ViewPaymentReportController::list'], ['chartName'], ['GET' => 0, 'POST' => 1, 'OPTIONS' => 2], null, false, true, null]],
+        570 => [
             [['_route' => '_preview_error', '_controller' => 'error_controller::preview', '_format' => 'html'], ['code', '_format'], null, null, false, true, null],
             [null, null, null, null, false, false, 0],
         ],

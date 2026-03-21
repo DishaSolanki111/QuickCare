@@ -205,16 +205,6 @@
         <parameter type="string">0</parameter>
       </parameter>
       <parameter type="collection">
-        <parameter>{A46002E4-B4F6-47F2-B55F-A3278D4B1DC4}view_doctor_report</parameter>
-        <parameter type="string">-2</parameter>
-        <parameter type="string">0</parameter>
-      </parameter>
-      <parameter type="collection">
-        <parameter>{A46002E4-B4F6-47F2-B55F-A3278D4B1DC4}view_feedback_report</parameter>
-        <parameter type="string">-2</parameter>
-        <parameter type="string">0</parameter>
-      </parameter>
-      <parameter type="collection">
         <parameter>{A46002E4-B4F6-47F2-B55F-A3278D4B1DC4}view_patient_report</parameter>
         <parameter type="string">-2</parameter>
         <parameter type="string">0</parameter>
@@ -225,7 +215,7 @@
         <parameter type="string">0</parameter>
       </parameter>
       <parameter type="collection">
-        <parameter>{A46002E4-B4F6-47F2-B55F-A3278D4B1DC4}view_prescription_report</parameter>
+        <parameter>{A46002E4-B4F6-47F2-B55F-A3278D4B1DC4}view_doctor_report</parameter>
         <parameter type="string">-2</parameter>
         <parameter type="string">0</parameter>
       </parameter>
@@ -360,28 +350,12 @@
         <parameter>ViewAppointmentReportList</parameter>
       </parameter>
       <parameter type="collection">
-        <parameter>view_doctor_report</parameter>
-        <parameter>view_doctor_report</parameter>
-        <parameter>view doctor report</parameter>
-        <parameter>true</parameter>
-        <parameter>{A46002E4-B4F6-47F2-B55F-A3278D4B1DC4}</parameter>
-        <parameter/>
-      </parameter>
-      <parameter type="collection">
-        <parameter>view_feedback_report</parameter>
-        <parameter>view_feedback_report</parameter>
-        <parameter>view feedback report</parameter>
-        <parameter>true</parameter>
-        <parameter>{A46002E4-B4F6-47F2-B55F-A3278D4B1DC4}</parameter>
-        <parameter>ViewFeedbackReportList</parameter>
-      </parameter>
-      <parameter type="collection">
         <parameter>view_patient_report</parameter>
         <parameter>view_patient_report</parameter>
         <parameter>view patient report</parameter>
         <parameter>true</parameter>
         <parameter>{A46002E4-B4F6-47F2-B55F-A3278D4B1DC4}</parameter>
-        <parameter>ViewPatientReportList</parameter>
+        <parameter/>
       </parameter>
       <parameter type="collection">
         <parameter>view_payment_report</parameter>
@@ -392,12 +366,12 @@
         <parameter>ViewPaymentReportList</parameter>
       </parameter>
       <parameter type="collection">
-        <parameter>view_prescription_report</parameter>
-        <parameter>view_prescription_report</parameter>
-        <parameter> Appointment Report</parameter>
+        <parameter>view_doctor_report</parameter>
+        <parameter>view_doctor_report</parameter>
+        <parameter>view doctor report</parameter>
         <parameter>true</parameter>
         <parameter>{A46002E4-B4F6-47F2-B55F-A3278D4B1DC4}</parameter>
-        <parameter>ViewPrescriptionReportList</parameter>
+        <parameter>ViewDoctorReportList</parameter>
       </parameter>
     </parameter>
     <parameter key="app.notifications.email_sender"/>
@@ -818,6 +792,8 @@
       <parameter key="ViewAppointmentReportSearch">ViewAppointmentReportSearch</parameter>
       <parameter key="ViewDoctorReport">ViewDoctorReport</parameter>
       <parameter key="view_doctor_report">ViewDoctorReport</parameter>
+      <parameter key="ViewDoctorReportList">ViewDoctorReportList</parameter>
+      <parameter key="ViewDoctorReportSearch">ViewDoctorReportSearch</parameter>
       <parameter key="ViewFeedbackReport">ViewFeedbackReport</parameter>
       <parameter key="view_feedback_report">ViewFeedbackReport</parameter>
       <parameter key="ViewFeedbackReportList">ViewFeedbackReportList</parameter>
@@ -827,6 +803,7 @@
       <parameter key="ViewPaymentReport">ViewPaymentReport</parameter>
       <parameter key="view_payment_report">ViewPaymentReport</parameter>
       <parameter key="ViewPaymentReportList">ViewPaymentReportList</parameter>
+      <parameter key="ViewPaymentReportSearch">ViewPaymentReportSearch</parameter>
       <parameter key="ViewPrescriptionReport">ViewPrescriptionReport</parameter>
       <parameter key="view_prescription_report">ViewPrescriptionReport</parameter>
       <parameter key="ViewPrescriptionReportList">ViewPrescriptionReportList</parameter>
@@ -1395,6 +1372,22 @@
       <argument type="service" id="http_kernel"/>
       <argument type="service" id="monolog.logger"/>
     </service>
+    <service id="PHPMaker2026\Project2\ViewDoctorReportController" class="PHPMaker2026\Project2\ViewDoctorReportController" public="true" autowire="true" autoconfigure="true">
+      <tag name="controller.service_arguments"/>
+      <tag name="routing.controller"/>
+      <argument type="service" id="kernel"/>
+      <argument type="service" id="PHPMaker2026\Project2\Language"/>
+      <argument type="service" id="PHPMaker2026\Project2\AdvancedSecurity"/>
+      <argument type="service" id="request_stack"/>
+      <argument type="service" id="PHPMaker2026\Project2\PhpRenderer"/>
+      <argument type="service" id="twig"/>
+      <argument type="service" id="PHPMaker2026\Project2\RuntimeLinkProvider"/>
+      <argument type="service" id="PHPMaker2026\Project2\AppServiceLocator"/>
+      <argument type="service" id="security.helper"/>
+      <argument type="service" id="parameter_bag"/>
+      <argument type="service" id="http_kernel"/>
+      <argument type="service" id="monolog.logger"/>
+    </service>
     <service id="PHPMaker2026\Project2\ViewFeedbackReportController" class="PHPMaker2026\Project2\ViewFeedbackReportController" public="true" autowire="true" autoconfigure="true">
       <tag name="controller.service_arguments"/>
       <tag name="routing.controller"/>
@@ -1532,6 +1525,24 @@
       <argument type="service" id="PHPMaker2026\Project2\FieldFactory"/>
       <argument type="service" id="event_dispatcher"/>
     </service>
+    <service id="PHPMaker2026\Project2\ViewDoctorReportList" class="PHPMaker2026\Project2\ViewDoctorReportList" public="true" autowire="true" autoconfigure="true">
+      <tag name="app.model"/>
+      <argument type="service" id="PHPMaker2026\Project2\Language"/>
+      <argument type="service" id="PHPMaker2026\Project2\AdvancedSecurity"/>
+      <argument type="service" id="ParagonIE\CSPBuilder\CSPBuilder"/>
+      <argument type="service" id="cache.app"/>
+      <argument type="service" id="PHPMaker2026\Project2\FieldFactory"/>
+      <argument type="service" id="event_dispatcher"/>
+    </service>
+    <service id="PHPMaker2026\Project2\ViewDoctorReportSearch" class="PHPMaker2026\Project2\ViewDoctorReportSearch" public="true" autowire="true" autoconfigure="true">
+      <tag name="app.model"/>
+      <argument type="service" id="PHPMaker2026\Project2\Language"/>
+      <argument type="service" id="PHPMaker2026\Project2\AdvancedSecurity"/>
+      <argument type="service" id="ParagonIE\CSPBuilder\CSPBuilder"/>
+      <argument type="service" id="cache.app"/>
+      <argument type="service" id="PHPMaker2026\Project2\FieldFactory"/>
+      <argument type="service" id="event_dispatcher"/>
+    </service>
     <service id="PHPMaker2026\Project2\ViewFeedbackReport" class="PHPMaker2026\Project2\ViewFeedbackReport" public="true" autowire="true" autoconfigure="true">
       <tag name="app.model"/>
       <tag name="doctrine.orm.entity_listener" event="postPersist" method="clearCache" lazy="" entity_manager="" entity="PHPMaker2026\Project2\Db\Entity\ViewFeedbackReport" priority=""/>
@@ -1593,6 +1604,15 @@
       <argument type="service" id="event_dispatcher"/>
     </service>
     <service id="PHPMaker2026\Project2\ViewPaymentReportList" class="PHPMaker2026\Project2\ViewPaymentReportList" public="true" autowire="true" autoconfigure="true">
+      <tag name="app.model"/>
+      <argument type="service" id="PHPMaker2026\Project2\Language"/>
+      <argument type="service" id="PHPMaker2026\Project2\AdvancedSecurity"/>
+      <argument type="service" id="ParagonIE\CSPBuilder\CSPBuilder"/>
+      <argument type="service" id="cache.app"/>
+      <argument type="service" id="PHPMaker2026\Project2\FieldFactory"/>
+      <argument type="service" id="event_dispatcher"/>
+    </service>
+    <service id="PHPMaker2026\Project2\ViewPaymentReportSearch" class="PHPMaker2026\Project2\ViewPaymentReportSearch" public="true" autowire="true" autoconfigure="true">
       <tag name="app.model"/>
       <argument type="service" id="PHPMaker2026\Project2\Language"/>
       <argument type="service" id="PHPMaker2026\Project2\AdvancedSecurity"/>
@@ -1840,6 +1860,10 @@
         <argument key="PHPMaker2026\Project2\ViewDoctorReport" type="service_closure" id="PHPMaker2026\Project2\ViewDoctorReport"/>
         <argument key="ViewDoctorReport" type="service_closure" id="PHPMaker2026\Project2\ViewDoctorReport"/>
         <argument key="view_doctor_report" type="service_closure" id="PHPMaker2026\Project2\ViewDoctorReport"/>
+        <argument key="PHPMaker2026\Project2\ViewDoctorReportList" type="service_closure" id="PHPMaker2026\Project2\ViewDoctorReportList"/>
+        <argument key="ViewDoctorReportList" type="service_closure" id="PHPMaker2026\Project2\ViewDoctorReportList"/>
+        <argument key="PHPMaker2026\Project2\ViewDoctorReportSearch" type="service_closure" id="PHPMaker2026\Project2\ViewDoctorReportSearch"/>
+        <argument key="ViewDoctorReportSearch" type="service_closure" id="PHPMaker2026\Project2\ViewDoctorReportSearch"/>
         <argument key="PHPMaker2026\Project2\ViewFeedbackReport" type="service_closure" id="PHPMaker2026\Project2\ViewFeedbackReport"/>
         <argument key="ViewFeedbackReport" type="service_closure" id="PHPMaker2026\Project2\ViewFeedbackReport"/>
         <argument key="view_feedback_report" type="service_closure" id="PHPMaker2026\Project2\ViewFeedbackReport"/>
@@ -1855,6 +1879,8 @@
         <argument key="view_payment_report" type="service_closure" id="PHPMaker2026\Project2\ViewPaymentReport"/>
         <argument key="PHPMaker2026\Project2\ViewPaymentReportList" type="service_closure" id="PHPMaker2026\Project2\ViewPaymentReportList"/>
         <argument key="ViewPaymentReportList" type="service_closure" id="PHPMaker2026\Project2\ViewPaymentReportList"/>
+        <argument key="PHPMaker2026\Project2\ViewPaymentReportSearch" type="service_closure" id="PHPMaker2026\Project2\ViewPaymentReportSearch"/>
+        <argument key="ViewPaymentReportSearch" type="service_closure" id="PHPMaker2026\Project2\ViewPaymentReportSearch"/>
         <argument key="PHPMaker2026\Project2\ViewPrescriptionReport" type="service_closure" id="PHPMaker2026\Project2\ViewPrescriptionReport"/>
         <argument key="ViewPrescriptionReport" type="service_closure" id="PHPMaker2026\Project2\ViewPrescriptionReport"/>
         <argument key="view_prescription_report" type="service_closure" id="PHPMaker2026\Project2\ViewPrescriptionReport"/>
@@ -1899,6 +1925,7 @@
           <argument>PHPMaker2026\Project2\AppController</argument>
           <argument>PHPMaker2026\Project2\AppointmentReportController</argument>
           <argument>PHPMaker2026\Project2\ViewAppointmentReportController</argument>
+          <argument>PHPMaker2026\Project2\ViewDoctorReportController</argument>
           <argument>PHPMaker2026\Project2\ViewFeedbackReportController</argument>
           <argument>PHPMaker2026\Project2\ViewPatientReportController</argument>
           <argument>PHPMaker2026\Project2\ViewPaymentReportController</argument>
@@ -1959,7 +1986,7 @@
     </service>
     <service id="argument_resolver.service" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\ServiceValueResolver">
       <tag name="Symfony\Component\HttpKernel\Controller\ArgumentResolver\ServiceValueResolver" priority="-50">controller.argument_value_resolver</tag>
-      <argument type="service" id=".service_locator.9NYBu6h"/>
+      <argument type="service" id=".service_locator.q6L9pLP"/>
     </service>
     <service id="argument_resolver.default" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\DefaultValueResolver">
       <tag name="Symfony\Component\HttpKernel\Controller\ArgumentResolver\DefaultValueResolver" priority="-100">controller.argument_value_resolver</tag>
@@ -4778,6 +4805,7 @@
         <argument>PHPMaker2026\Project2\AppController</argument>
         <argument>PHPMaker2026\Project2\AppointmentReportController</argument>
         <argument>PHPMaker2026\Project2\ViewAppointmentReportController</argument>
+        <argument>PHPMaker2026\Project2\ViewDoctorReportController</argument>
         <argument>PHPMaker2026\Project2\ViewFeedbackReportController</argument>
         <argument>PHPMaker2026\Project2\ViewPatientReportController</argument>
         <argument>PHPMaker2026\Project2\ViewPaymentReportController</argument>
@@ -8416,6 +8444,8 @@
     <service id=".abstract.instanceof.PHPMaker2026\Project2\AppointmentReportController" class="PHPMaker2026\Project2\AppointmentReportController" public="true" autowire="true" autoconfigure="true" abstract="true"/>
     <service id=".instanceof.PHPMaker2026\Project2\ViewAppointmentReportController.0.PHPMaker2026\Project2\ViewAppointmentReportController" class="PHPMaker2026\Project2\ViewAppointmentReportController" public="true" autowire="true" abstract="true"/>
     <service id=".abstract.instanceof.PHPMaker2026\Project2\ViewAppointmentReportController" class="PHPMaker2026\Project2\ViewAppointmentReportController" public="true" autowire="true" autoconfigure="true" abstract="true"/>
+    <service id=".instanceof.PHPMaker2026\Project2\ViewDoctorReportController.0.PHPMaker2026\Project2\ViewDoctorReportController" class="PHPMaker2026\Project2\ViewDoctorReportController" public="true" autowire="true" abstract="true"/>
+    <service id=".abstract.instanceof.PHPMaker2026\Project2\ViewDoctorReportController" class="PHPMaker2026\Project2\ViewDoctorReportController" public="true" autowire="true" autoconfigure="true" abstract="true"/>
     <service id=".instanceof.PHPMaker2026\Project2\ViewFeedbackReportController.0.PHPMaker2026\Project2\ViewFeedbackReportController" class="PHPMaker2026\Project2\ViewFeedbackReportController" public="true" autowire="true" abstract="true"/>
     <service id=".abstract.instanceof.PHPMaker2026\Project2\ViewFeedbackReportController" class="PHPMaker2026\Project2\ViewFeedbackReportController" public="true" autowire="true" autoconfigure="true" abstract="true"/>
     <service id=".instanceof.PHPMaker2026\Project2\ViewPatientReportController.0.PHPMaker2026\Project2\ViewPatientReportController" class="PHPMaker2026\Project2\ViewPatientReportController" public="true" autowire="true" abstract="true"/>
@@ -8615,6 +8645,30 @@
       <argument type="service" id="service_container"/>
       <factory service=".service_locator.8Sc5o65" method="withContext"/>
     </service>
+    <service id=".service_locator.gQniC2p" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator"/>
+      <argument type="collection">
+        <argument key="page" type="service_closure" id="PHPMaker2026\Project2\ViewDoctorReportList"/>
+      </argument>
+    </service>
+    <service id=".service_locator.gQniC2p.PHPMaker2026\Project2\ViewDoctorReportController::list()" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator_context" id="PHPMaker2026\Project2\ViewDoctorReportController::list()"/>
+      <argument>PHPMaker2026\Project2\ViewDoctorReportController::list()</argument>
+      <argument type="service" id="service_container"/>
+      <factory service=".service_locator.gQniC2p" method="withContext"/>
+    </service>
+    <service id=".service_locator.z5Y0ANf" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator"/>
+      <argument type="collection">
+        <argument key="page" type="service_closure" id="PHPMaker2026\Project2\ViewDoctorReportSearch"/>
+      </argument>
+    </service>
+    <service id=".service_locator.z5Y0ANf.PHPMaker2026\Project2\ViewDoctorReportController::search()" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator_context" id="PHPMaker2026\Project2\ViewDoctorReportController::search()"/>
+      <argument>PHPMaker2026\Project2\ViewDoctorReportController::search()</argument>
+      <argument type="service" id="service_container"/>
+      <factory service=".service_locator.z5Y0ANf" method="withContext"/>
+    </service>
     <service id=".service_locator.nkpZtrq" class="Symfony\Component\DependencyInjection\ServiceLocator">
       <tag name="container.service_locator"/>
       <argument type="collection">
@@ -8651,6 +8705,18 @@
       <argument type="service" id="service_container"/>
       <factory service=".service_locator.BqnqZUP" method="withContext"/>
     </service>
+    <service id=".service_locator.yEu_Fci" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator"/>
+      <argument type="collection">
+        <argument key="page" type="service_closure" id="PHPMaker2026\Project2\ViewPaymentReportSearch"/>
+      </argument>
+    </service>
+    <service id=".service_locator.yEu_Fci.PHPMaker2026\Project2\ViewPaymentReportController::search()" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator_context" id="PHPMaker2026\Project2\ViewPaymentReportController::search()"/>
+      <argument>PHPMaker2026\Project2\ViewPaymentReportController::search()</argument>
+      <argument type="service" id="service_container"/>
+      <factory service=".service_locator.yEu_Fci" method="withContext"/>
+    </service>
     <service id=".service_locator.rgYL3eR" class="Symfony\Component\DependencyInjection\ServiceLocator">
       <tag name="container.service_locator"/>
       <argument type="collection">
@@ -8675,7 +8741,7 @@
       <argument type="service" id="service_container"/>
       <factory service=".service_locator.JoDynSJ" method="withContext"/>
     </service>
-    <service id=".service_locator.9NYBu6h" class="Symfony\Component\DependencyInjection\ServiceLocator">
+    <service id=".service_locator.q6L9pLP" class="Symfony\Component\DependencyInjection\ServiceLocator">
       <tag name="container.service_locator"/>
       <argument type="collection">
         <argument key="kernel::setHttpContext" type="service_closure" id=".service_locator.VXDTPcr.kernel::setHttpContext()"/>
@@ -8688,9 +8754,12 @@
         <argument key="PHPMaker2026\Project2\AppointmentReportController::__invoke" type="service_closure" id=".service_locator.XmLm93f.PHPMaker2026\Project2\AppointmentReportController::__invoke()"/>
         <argument key="PHPMaker2026\Project2\ViewAppointmentReportController::list" type="service_closure" id=".service_locator.EfXVwpA.PHPMaker2026\Project2\ViewAppointmentReportController::list()"/>
         <argument key="PHPMaker2026\Project2\ViewAppointmentReportController::search" type="service_closure" id=".service_locator.8Sc5o65.PHPMaker2026\Project2\ViewAppointmentReportController::search()"/>
+        <argument key="PHPMaker2026\Project2\ViewDoctorReportController::list" type="service_closure" id=".service_locator.gQniC2p.PHPMaker2026\Project2\ViewDoctorReportController::list()"/>
+        <argument key="PHPMaker2026\Project2\ViewDoctorReportController::search" type="service_closure" id=".service_locator.z5Y0ANf.PHPMaker2026\Project2\ViewDoctorReportController::search()"/>
         <argument key="PHPMaker2026\Project2\ViewFeedbackReportController::list" type="service_closure" id=".service_locator.nkpZtrq.PHPMaker2026\Project2\ViewFeedbackReportController::list()"/>
         <argument key="PHPMaker2026\Project2\ViewPatientReportController::list" type="service_closure" id=".service_locator.e.bQX.a.PHPMaker2026\Project2\ViewPatientReportController::list()"/>
         <argument key="PHPMaker2026\Project2\ViewPaymentReportController::list" type="service_closure" id=".service_locator.BqnqZUP.PHPMaker2026\Project2\ViewPaymentReportController::list()"/>
+        <argument key="PHPMaker2026\Project2\ViewPaymentReportController::search" type="service_closure" id=".service_locator.yEu_Fci.PHPMaker2026\Project2\ViewPaymentReportController::search()"/>
         <argument key="PHPMaker2026\Project2\ViewPrescriptionReportController::list" type="service_closure" id=".service_locator.rgYL3eR.PHPMaker2026\Project2\ViewPrescriptionReportController::list()"/>
         <argument key="PHPMaker2026\Project2\ViewPrescriptionReportController::search" type="service_closure" id=".service_locator.JoDynSJ.PHPMaker2026\Project2\ViewPrescriptionReportController::search()"/>
         <argument key="kernel:setHttpContext" type="service_closure" id=".service_locator.VXDTPcr.kernel::setHttpContext()"/>
@@ -8701,9 +8770,12 @@
         <argument key="PHPMaker2026\Project2\AppointmentReportController" type="service_closure" id=".service_locator.XmLm93f.PHPMaker2026\Project2\AppointmentReportController::__invoke()"/>
         <argument key="PHPMaker2026\Project2\ViewAppointmentReportController:list" type="service_closure" id=".service_locator.EfXVwpA.PHPMaker2026\Project2\ViewAppointmentReportController::list()"/>
         <argument key="PHPMaker2026\Project2\ViewAppointmentReportController:search" type="service_closure" id=".service_locator.8Sc5o65.PHPMaker2026\Project2\ViewAppointmentReportController::search()"/>
+        <argument key="PHPMaker2026\Project2\ViewDoctorReportController:list" type="service_closure" id=".service_locator.gQniC2p.PHPMaker2026\Project2\ViewDoctorReportController::list()"/>
+        <argument key="PHPMaker2026\Project2\ViewDoctorReportController:search" type="service_closure" id=".service_locator.z5Y0ANf.PHPMaker2026\Project2\ViewDoctorReportController::search()"/>
         <argument key="PHPMaker2026\Project2\ViewFeedbackReportController:list" type="service_closure" id=".service_locator.nkpZtrq.PHPMaker2026\Project2\ViewFeedbackReportController::list()"/>
         <argument key="PHPMaker2026\Project2\ViewPatientReportController:list" type="service_closure" id=".service_locator.e.bQX.a.PHPMaker2026\Project2\ViewPatientReportController::list()"/>
         <argument key="PHPMaker2026\Project2\ViewPaymentReportController:list" type="service_closure" id=".service_locator.BqnqZUP.PHPMaker2026\Project2\ViewPaymentReportController::list()"/>
+        <argument key="PHPMaker2026\Project2\ViewPaymentReportController:search" type="service_closure" id=".service_locator.yEu_Fci.PHPMaker2026\Project2\ViewPaymentReportController::search()"/>
         <argument key="PHPMaker2026\Project2\ViewPrescriptionReportController:list" type="service_closure" id=".service_locator.rgYL3eR.PHPMaker2026\Project2\ViewPrescriptionReportController::list()"/>
         <argument key="PHPMaker2026\Project2\ViewPrescriptionReportController:search" type="service_closure" id=".service_locator.JoDynSJ.PHPMaker2026\Project2\ViewPrescriptionReportController::search()"/>
       </argument>
@@ -9245,7 +9317,7 @@
       <tag name="container.error" message="Cannot autowire service &quot;.service_locator.1vYpZ1B&quot;: it needs an instance of &quot;Symfony\Component\Config\Loader\LoaderInterface&quot; but this type has been excluded from autowiring."/>
     </service>
     <service id=".errored..service_locator.wMz3Tov.PHPMaker2026\Project2\PageInterface" class="PHPMaker2026\Project2\PageInterface">
-      <tag name="container.error" message="Cannot autowire service &quot;.service_locator.wMz3Tov&quot;: it references interface &quot;PHPMaker2026\Project2\PageInterface&quot; but no such service exists. You should maybe alias this interface to one of these existing services: &quot;PHPMaker2026\Project2\AppointmentReportSummary&quot;, &quot;PHPMaker2026\Project2\ViewAppointmentReportList&quot;, &quot;PHPMaker2026\Project2\ViewAppointmentReportSearch&quot;, &quot;PHPMaker2026\Project2\ViewFeedbackReportList&quot;, &quot;PHPMaker2026\Project2\ViewPatientReportList&quot;, &quot;PHPMaker2026\Project2\ViewPaymentReportList&quot;, &quot;PHPMaker2026\Project2\ViewPrescriptionReportList&quot;, &quot;PHPMaker2026\Project2\ViewPrescriptionReportSearch&quot;."/>
+      <tag name="container.error" message="Cannot autowire service &quot;.service_locator.wMz3Tov&quot;: it references interface &quot;PHPMaker2026\Project2\PageInterface&quot; but no such service exists. You should maybe alias this interface to one of these existing services: &quot;PHPMaker2026\Project2\AppointmentReportSummary&quot;, &quot;PHPMaker2026\Project2\ViewAppointmentReportList&quot;, &quot;PHPMaker2026\Project2\ViewAppointmentReportSearch&quot;, &quot;PHPMaker2026\Project2\ViewDoctorReportList&quot;, &quot;PHPMaker2026\Project2\ViewDoctorReportSearch&quot;, &quot;PHPMaker2026\Project2\ViewFeedbackReportList&quot;, &quot;PHPMaker2026\Project2\ViewPatientReportList&quot;, &quot;PHPMaker2026\Project2\ViewPaymentReportList&quot;, &quot;PHPMaker2026\Project2\ViewPaymentReportSearch&quot;, &quot;PHPMaker2026\Project2\ViewPrescriptionReportList&quot;, &quot;PHPMaker2026\Project2\ViewPrescriptionReportSearch&quot;."/>
     </service>
     <service id=".PHPMaker2026\Project2\Command\ConvertLocalEnvToSecretsCommand.lazy" class="Symfony\Component\Console\Command\LazyCommand">
       <argument>app:convert-local-secrets</argument>
@@ -9904,6 +9976,8 @@
     <service id="ViewAppointmentReportSearch" alias="PHPMaker2026\Project2\ViewAppointmentReportSearch" public="true"/>
     <service id="ViewDoctorReport" alias="PHPMaker2026\Project2\ViewDoctorReport" public="true"/>
     <service id="view_doctor_report" alias="PHPMaker2026\Project2\ViewDoctorReport" public="true"/>
+    <service id="ViewDoctorReportList" alias="PHPMaker2026\Project2\ViewDoctorReportList" public="true"/>
+    <service id="ViewDoctorReportSearch" alias="PHPMaker2026\Project2\ViewDoctorReportSearch" public="true"/>
     <service id="ViewFeedbackReport" alias="PHPMaker2026\Project2\ViewFeedbackReport" public="true"/>
     <service id="view_feedback_report" alias="PHPMaker2026\Project2\ViewFeedbackReport" public="true"/>
     <service id="ViewFeedbackReportList" alias="PHPMaker2026\Project2\ViewFeedbackReportList" public="true"/>
@@ -9913,6 +9987,7 @@
     <service id="ViewPaymentReport" alias="PHPMaker2026\Project2\ViewPaymentReport" public="true"/>
     <service id="view_payment_report" alias="PHPMaker2026\Project2\ViewPaymentReport" public="true"/>
     <service id="ViewPaymentReportList" alias="PHPMaker2026\Project2\ViewPaymentReportList" public="true"/>
+    <service id="ViewPaymentReportSearch" alias="PHPMaker2026\Project2\ViewPaymentReportSearch" public="true"/>
     <service id="ViewPrescriptionReport" alias="PHPMaker2026\Project2\ViewPrescriptionReport" public="true"/>
     <service id="view_prescription_report" alias="PHPMaker2026\Project2\ViewPrescriptionReport" public="true"/>
     <service id="ViewPrescriptionReportList" alias="PHPMaker2026\Project2\ViewPrescriptionReportList" public="true"/>
@@ -10095,7 +10170,7 @@
     <service id="HTMLPurifier" alias="exercise_html_purifier.default"/>
     <service id="container.env_var_processors_locator" alias=".service_locator.ryAvHi4" public="true"/>
     <service id="twig.loader.filesystem" alias="twig.loader.native_filesystem"/>
-    <service id="argument_resolver.controller_locator" alias=".service_locator.9NYBu6h"/>
+    <service id="argument_resolver.controller_locator" alias=".service_locator.q6L9pLP"/>
     <service id="doctrine.id_generator_locator" alias=".service_locator.W55Po6X"/>
     <service id=".Psr\Log\LoggerInterface $request.logger" alias="monolog.logger.request"/>
     <service id="Psr\Log\LoggerInterface $requestLogger" alias="monolog.logger.request"/>
@@ -10124,7 +10199,7 @@
     <service id=".Psr\Log\LoggerInterface $deprecation.logger" alias="monolog.logger.deprecation"/>
     <service id="Psr\Log\LoggerInterface $deprecationLogger" alias="monolog.logger.deprecation"/>
     <service id="twig.loader" alias="twig.loader.native_filesystem"/>
-    <service id=".service_locator.iyj8Uli" alias="app.internal_locator"/>
+    <service id=".service_locator.ajm3Lps" alias="app.internal_locator"/>
     <service id=".service_locator.E1wOT5Z" alias="app.tagged_locator"/>
     <service id=".service_locator.rmAA14o" alias=".service_locator.acS6RMD"/>
     <service id="http_client" alias="http_client.uri_template"/>
@@ -10144,9 +10219,12 @@
     <service id=".service_locator.FKy7Jgu" alias=".service_locator.XmLm93f"/>
     <service id=".service_locator.yHe9DfH" alias=".service_locator.EfXVwpA"/>
     <service id=".service_locator.HsNwygH" alias=".service_locator.8Sc5o65"/>
+    <service id=".service_locator._W_eIqN" alias=".service_locator.gQniC2p"/>
+    <service id=".service_locator.8jztcAS" alias=".service_locator.z5Y0ANf"/>
     <service id=".service_locator.H1aZoJ." alias=".service_locator.nkpZtrq"/>
     <service id=".service_locator.jqyBw_6" alias=".service_locator.e.bQX.a"/>
     <service id=".service_locator.1_q14zg" alias=".service_locator.BqnqZUP"/>
+    <service id=".service_locator.8oMN4o_" alias=".service_locator.yEu_Fci"/>
     <service id=".service_locator.CGTTh7p" alias=".service_locator.rgYL3eR"/>
     <service id=".service_locator.sVrfImU" alias=".service_locator.JoDynSJ"/>
     <service id=".service_locator.OyKRmgd" alias=".service_locator.TJNRSaV"/>

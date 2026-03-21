@@ -117,6 +117,7 @@ class ViewPaymentReportList extends ViewPaymentReport implements PageInterface
 
     // Page terminated
     private bool $terminated = false;
+    public array $ChartData = [];
 
     // Class variables
     public ?ListOptions $ListOptions = null; // List options
@@ -164,9 +165,9 @@ class ViewPaymentReportList extends ViewPaymentReport implements PageInterface
     public bool $RestoreSearch = false;
     public ?string $HashValue = null; // Hash value
     public ?SubPages $DetailPages = null;
-    public string $TopContentClass = "ew-top";
+    public string $TopContentClass = "ew-top d-flex";
     public string $MiddleContentClass = "ew-middle";
-    public string $BottomContentClass = "ew-bottom";
+    public string $BottomContentClass = "ew-bottom d-flex";
     public bool $IsModal = false;
     private bool $UseInfiniteScroll = false;
 
@@ -1092,6 +1093,123 @@ class ViewPaymentReportList extends ViewPaymentReport implements PageInterface
         $this->BasicSearch->setType($filter[Config("TABLE_BASIC_SEARCH_TYPE")] ?? "");
     }
 
+    // Advanced search WHERE clause based on QueryString
+    public function advancedSearchWhere(bool $default = false): string
+    {
+        $where = "";
+        $this->buildSearchSql($where, $this->PAYMENT_ID, $default, false); // PAYMENT_ID
+        $this->buildSearchSql($where, $this->TRANSACTION_ID, $default, false); // TRANSACTION_ID
+        $this->buildSearchSql($where, $this->Patient_Name, $default, true); // Patient_Name
+        $this->buildSearchSql($where, $this->Doctor_Name, $default, true); // Doctor_Name
+        $this->buildSearchSql($where, $this->AMOUNT, $default, false); // AMOUNT
+        $this->buildSearchSql($where, $this->PAYMENT_MODE, $default, true); // PAYMENT_MODE
+        $this->buildSearchSql($where, $this->Payment_Status, $default, true); // Payment_Status
+        $this->buildSearchSql($where, $this->PAYMENT_DATE, $default, true); // PAYMENT_DATE
+        $this->buildSearchSql($where, $this->Day_Name, $default, true); // Day_Name
+        $this->buildSearchSql($where, $this->Week_Number, $default, false); // Week_Number
+        $this->buildSearchSql($where, $this->Month_Number, $default, false); // Month_Number
+        $this->buildSearchSql($where, $this->Month_Name, $default, true); // Month_Name
+        $this->buildSearchSql($where, $this->Year, $default, true); // Year
+
+        // Set up search command
+        if (!$default && $where != "" && in_array($this->Command, ["", "reset", "resetall"])) {
+            $this->Command = "search";
+        }
+        if (!$default && $this->Command == "search") {
+            $this->PAYMENT_ID->AdvancedSearch->save(); // PAYMENT_ID
+            $this->TRANSACTION_ID->AdvancedSearch->save(); // TRANSACTION_ID
+            $this->Patient_Name->AdvancedSearch->save(); // Patient_Name
+            $this->Doctor_Name->AdvancedSearch->save(); // Doctor_Name
+            $this->AMOUNT->AdvancedSearch->save(); // AMOUNT
+            $this->PAYMENT_MODE->AdvancedSearch->save(); // PAYMENT_MODE
+            $this->Payment_Status->AdvancedSearch->save(); // Payment_Status
+            $this->PAYMENT_DATE->AdvancedSearch->save(); // PAYMENT_DATE
+            $this->Day_Name->AdvancedSearch->save(); // Day_Name
+            $this->Week_Number->AdvancedSearch->save(); // Week_Number
+            $this->Month_Number->AdvancedSearch->save(); // Month_Number
+            $this->Month_Name->AdvancedSearch->save(); // Month_Name
+            $this->Year->AdvancedSearch->save(); // Year
+        }
+        return $where;
+    }
+
+    // Query builder rules
+    public function queryBuilderRules(): ?string
+    {
+        return Post("rules") ?? $this->getSessionRules();
+    }
+
+    // Quey builder WHERE clause
+    public function queryBuilderWhere(string $fieldName = ""): string
+    {
+        // Get rules by query builder
+        $rules = $this->queryBuilderRules();
+
+        // Decode and parse rules
+        $where = $rules ? $this->parseRules(json_decode($rules, true), $fieldName) : "";
+
+        // Clear other search and save rules to session
+        if ($where && $fieldName == "") { // Skip if get query for specific field
+            $this->resetSearchParms();
+            $this->PAYMENT_ID->AdvancedSearch->save(); // PAYMENT_ID
+            $this->TRANSACTION_ID->AdvancedSearch->save(); // TRANSACTION_ID
+            $this->Patient_Name->AdvancedSearch->save(); // Patient_Name
+            $this->Doctor_Name->AdvancedSearch->save(); // Doctor_Name
+            $this->AMOUNT->AdvancedSearch->save(); // AMOUNT
+            $this->PAYMENT_MODE->AdvancedSearch->save(); // PAYMENT_MODE
+            $this->Payment_Status->AdvancedSearch->save(); // Payment_Status
+            $this->PAYMENT_DATE->AdvancedSearch->save(); // PAYMENT_DATE
+            $this->Day_Name->AdvancedSearch->save(); // Day_Name
+            $this->Week_Number->AdvancedSearch->save(); // Week_Number
+            $this->Month_Number->AdvancedSearch->save(); // Month_Number
+            $this->Month_Name->AdvancedSearch->save(); // Month_Name
+            $this->Year->AdvancedSearch->save(); // Year
+            $this->setSessionRules($rules);
+        }
+
+        // Return query
+        return $where;
+    }
+
+    // Build search SQL
+    protected function buildSearchSql(string &$where, DbField $fld, bool $default, bool $multiValue): void
+    {
+        $fldParm = $fld->Param;
+        $fldVal = $default ? $fld->AdvancedSearch->SearchValueDefault : $fld->AdvancedSearch->SearchValue;
+        $fldOpr = $default ? $fld->AdvancedSearch->SearchOperatorDefault : $fld->AdvancedSearch->SearchOperator;
+        $fldCond = $default ? $fld->AdvancedSearch->SearchConditionDefault : $fld->AdvancedSearch->SearchCondition;
+        $fldVal2 = $default ? $fld->AdvancedSearch->SearchValue2Default : $fld->AdvancedSearch->SearchValue2;
+        $fldOpr2 = $default ? $fld->AdvancedSearch->SearchOperator2Default : $fld->AdvancedSearch->SearchOperator2;
+        $fldVal = ConvertSearchValue($fldVal, $fldOpr, $fld);
+        $fldVal2 = ConvertSearchValue($fldVal2, $fldOpr2, $fld);
+        $fldOpr = ConvertSearchOperator($fldOpr, $fld, $fldVal);
+        $fldOpr2 = ConvertSearchOperator($fldOpr2, $fld, $fldVal2);
+        $wrk = "";
+        if (Config("SEARCH_MULTI_VALUE_OPTION") == 1 && !$fld->UseFilter || !IsMultiSearchOperator($fldOpr)) {
+            $multiValue = false;
+        }
+        if ($multiValue) {
+            $wrk = $fldVal != "" ? GetMultiSearchSql($fld, $fldOpr, $fldVal, $this->Dbid) : ""; // Field value 1
+            $wrk2 = $fldVal2 != "" ? GetMultiSearchSql($fld, $fldOpr2, $fldVal2, $this->Dbid) : ""; // Field value 2
+            AddFilter($wrk, $wrk2, $fldCond);
+        } else {
+            $sep = Config("MULTIPLE_OPTION_SEPARATOR");
+            if (is_array($fldVal)) {
+                $fldVal = implode($sep, $fldVal);
+            }
+            if (is_array($fldVal2)) {
+                $fldVal2 = implode($sep, $fldVal2);
+            }
+            $wrk = GetSearchSql($fld, $fldVal, $fldOpr, $fldCond, $fldVal2, $fldOpr2, $this->Dbid);
+        }
+        if ($this->SearchOption == "AUTO" && in_array($this->BasicSearch->getType(), ["AND", "OR"])) {
+            $cond = $this->BasicSearch->getType();
+        } else {
+            $cond = SameText($this->SearchOption, "OR") ? "OR" : "AND";
+        }
+        AddFilter($where, $wrk, $cond);
+    }
+
     // Show list of filters
     public function showFilterList(): string
     {
@@ -1103,6 +1221,123 @@ class ViewPaymentReportList extends ViewPaymentReport implements PageInterface
         $filterList = "";
         $captionClass = $this->isExport("email") ? "ew-filter-caption-email" : "ew-filter-caption";
         $captionSuffix = $this->isExport("email") ? ": " : "";
+
+        // Field PAYMENT_ID
+        $filter = $this->queryBuilderWhere("PAYMENT_ID");
+        if (!$filter) {
+            $this->buildSearchSql($filter, $this->PAYMENT_ID, false, false);
+        }
+        if ($filter != "") {
+            $filterList .= "<div><span class=\"" . $captionClass . "\">" . $this->PAYMENT_ID->caption() . "</span>" . $captionSuffix . $filter . "</div>";
+        }
+
+        // Field TRANSACTION_ID
+        $filter = $this->queryBuilderWhere("TRANSACTION_ID");
+        if (!$filter) {
+            $this->buildSearchSql($filter, $this->TRANSACTION_ID, false, false);
+        }
+        if ($filter != "") {
+            $filterList .= "<div><span class=\"" . $captionClass . "\">" . $this->TRANSACTION_ID->caption() . "</span>" . $captionSuffix . $filter . "</div>";
+        }
+
+        // Field Patient_Name
+        $filter = $this->queryBuilderWhere("Patient_Name");
+        if (!$filter) {
+            $this->buildSearchSql($filter, $this->Patient_Name, false, true);
+        }
+        if ($filter != "") {
+            $filterList .= "<div><span class=\"" . $captionClass . "\">" . $this->Patient_Name->caption() . "</span>" . $captionSuffix . $filter . "</div>";
+        }
+
+        // Field Doctor_Name
+        $filter = $this->queryBuilderWhere("Doctor_Name");
+        if (!$filter) {
+            $this->buildSearchSql($filter, $this->Doctor_Name, false, true);
+        }
+        if ($filter != "") {
+            $filterList .= "<div><span class=\"" . $captionClass . "\">" . $this->Doctor_Name->caption() . "</span>" . $captionSuffix . $filter . "</div>";
+        }
+
+        // Field AMOUNT
+        $filter = $this->queryBuilderWhere("AMOUNT");
+        if (!$filter) {
+            $this->buildSearchSql($filter, $this->AMOUNT, false, false);
+        }
+        if ($filter != "") {
+            $filterList .= "<div><span class=\"" . $captionClass . "\">" . $this->AMOUNT->caption() . "</span>" . $captionSuffix . $filter . "</div>";
+        }
+
+        // Field PAYMENT_MODE
+        $filter = $this->queryBuilderWhere("PAYMENT_MODE");
+        if (!$filter) {
+            $this->buildSearchSql($filter, $this->PAYMENT_MODE, false, true);
+        }
+        if ($filter != "") {
+            $filterList .= "<div><span class=\"" . $captionClass . "\">" . $this->PAYMENT_MODE->caption() . "</span>" . $captionSuffix . $filter . "</div>";
+        }
+
+        // Field Payment_Status
+        $filter = $this->queryBuilderWhere("Payment_Status");
+        if (!$filter) {
+            $this->buildSearchSql($filter, $this->Payment_Status, false, true);
+        }
+        if ($filter != "") {
+            $filterList .= "<div><span class=\"" . $captionClass . "\">" . $this->Payment_Status->caption() . "</span>" . $captionSuffix . $filter . "</div>";
+        }
+
+        // Field PAYMENT_DATE
+        $filter = $this->queryBuilderWhere("PAYMENT_DATE");
+        if (!$filter) {
+            $this->buildSearchSql($filter, $this->PAYMENT_DATE, false, true);
+        }
+        if ($filter != "") {
+            $filterList .= "<div><span class=\"" . $captionClass . "\">" . $this->PAYMENT_DATE->caption() . "</span>" . $captionSuffix . $filter . "</div>";
+        }
+
+        // Field Day_Name
+        $filter = $this->queryBuilderWhere("Day_Name");
+        if (!$filter) {
+            $this->buildSearchSql($filter, $this->Day_Name, false, true);
+        }
+        if ($filter != "") {
+            $filterList .= "<div><span class=\"" . $captionClass . "\">" . $this->Day_Name->caption() . "</span>" . $captionSuffix . $filter . "</div>";
+        }
+
+        // Field Week_Number
+        $filter = $this->queryBuilderWhere("Week_Number");
+        if (!$filter) {
+            $this->buildSearchSql($filter, $this->Week_Number, false, false);
+        }
+        if ($filter != "") {
+            $filterList .= "<div><span class=\"" . $captionClass . "\">" . $this->Week_Number->caption() . "</span>" . $captionSuffix . $filter . "</div>";
+        }
+
+        // Field Month_Number
+        $filter = $this->queryBuilderWhere("Month_Number");
+        if (!$filter) {
+            $this->buildSearchSql($filter, $this->Month_Number, false, false);
+        }
+        if ($filter != "") {
+            $filterList .= "<div><span class=\"" . $captionClass . "\">" . $this->Month_Number->caption() . "</span>" . $captionSuffix . $filter . "</div>";
+        }
+
+        // Field Month_Name
+        $filter = $this->queryBuilderWhere("Month_Name");
+        if (!$filter) {
+            $this->buildSearchSql($filter, $this->Month_Name, false, true);
+        }
+        if ($filter != "") {
+            $filterList .= "<div><span class=\"" . $captionClass . "\">" . $this->Month_Name->caption() . "</span>" . $captionSuffix . $filter . "</div>";
+        }
+
+        // Field Year
+        $filter = $this->queryBuilderWhere("Year");
+        if (!$filter) {
+            $this->buildSearchSql($filter, $this->Year, false, true);
+        }
+        if ($filter != "") {
+            $filterList .= "<div><span class=\"" . $captionClass . "\">" . $this->Year->caption() . "</span>" . $captionSuffix . $filter . "</div>";
+        }
         if ($this->BasicSearch->Keyword != "") {
             $filterList .= "<div><span class=\"" . $captionClass . "\">" . $this->language->phrase("BasicSearchKeyword") . "</span>" . $captionSuffix . $this->BasicSearch->Keyword . "</div>";
         }
@@ -1155,6 +1390,45 @@ class ViewPaymentReportList extends ViewPaymentReport implements PageInterface
         if ($this->BasicSearch->issetSession()) {
             return true;
         }
+        if ($this->PAYMENT_ID->AdvancedSearch->issetSession()) {
+            return true;
+        }
+        if ($this->TRANSACTION_ID->AdvancedSearch->issetSession()) {
+            return true;
+        }
+        if ($this->Patient_Name->AdvancedSearch->issetSession()) {
+            return true;
+        }
+        if ($this->Doctor_Name->AdvancedSearch->issetSession()) {
+            return true;
+        }
+        if ($this->AMOUNT->AdvancedSearch->issetSession()) {
+            return true;
+        }
+        if ($this->PAYMENT_MODE->AdvancedSearch->issetSession()) {
+            return true;
+        }
+        if ($this->Payment_Status->AdvancedSearch->issetSession()) {
+            return true;
+        }
+        if ($this->PAYMENT_DATE->AdvancedSearch->issetSession()) {
+            return true;
+        }
+        if ($this->Day_Name->AdvancedSearch->issetSession()) {
+            return true;
+        }
+        if ($this->Week_Number->AdvancedSearch->issetSession()) {
+            return true;
+        }
+        if ($this->Month_Number->AdvancedSearch->issetSession()) {
+            return true;
+        }
+        if ($this->Month_Name->AdvancedSearch->issetSession()) {
+            return true;
+        }
+        if ($this->Year->AdvancedSearch->issetSession()) {
+            return true;
+        }
         return false;
     }
 
@@ -1167,6 +1441,12 @@ class ViewPaymentReportList extends ViewPaymentReport implements PageInterface
 
         // Clear basic search parameters
         $this->resetBasicSearchParms();
+
+        // Clear advanced search parameters
+        $this->resetAdvancedSearchParms();
+
+        // Clear queryBuilder
+        $this->setSessionRules("");
     }
 
     // Load advanced search default values
@@ -1181,6 +1461,24 @@ class ViewPaymentReportList extends ViewPaymentReport implements PageInterface
         $this->BasicSearch->unsetSession();
     }
 
+    // Clear all advanced search parameters
+    protected function resetAdvancedSearchParms(): void
+    {
+        $this->PAYMENT_ID->AdvancedSearch->unsetSession();
+        $this->TRANSACTION_ID->AdvancedSearch->unsetSession();
+        $this->Patient_Name->AdvancedSearch->unsetSession();
+        $this->Doctor_Name->AdvancedSearch->unsetSession();
+        $this->AMOUNT->AdvancedSearch->unsetSession();
+        $this->PAYMENT_MODE->AdvancedSearch->unsetSession();
+        $this->Payment_Status->AdvancedSearch->unsetSession();
+        $this->PAYMENT_DATE->AdvancedSearch->unsetSession();
+        $this->Day_Name->AdvancedSearch->unsetSession();
+        $this->Week_Number->AdvancedSearch->unsetSession();
+        $this->Month_Number->AdvancedSearch->unsetSession();
+        $this->Month_Name->AdvancedSearch->unsetSession();
+        $this->Year->AdvancedSearch->unsetSession();
+    }
+
     // Restore all search parameters
     protected function restoreSearchParms(): void
     {
@@ -1188,6 +1486,21 @@ class ViewPaymentReportList extends ViewPaymentReport implements PageInterface
 
         // Restore basic search values
         $this->BasicSearch->load();
+
+        // Restore advanced search values
+        $this->PAYMENT_ID->AdvancedSearch->load();
+        $this->TRANSACTION_ID->AdvancedSearch->load();
+        $this->Patient_Name->AdvancedSearch->load();
+        $this->Doctor_Name->AdvancedSearch->load();
+        $this->AMOUNT->AdvancedSearch->load();
+        $this->PAYMENT_MODE->AdvancedSearch->load();
+        $this->Payment_Status->AdvancedSearch->load();
+        $this->PAYMENT_DATE->AdvancedSearch->load();
+        $this->Day_Name->AdvancedSearch->load();
+        $this->Week_Number->AdvancedSearch->load();
+        $this->Month_Number->AdvancedSearch->load();
+        $this->Month_Name->AdvancedSearch->load();
+        $this->Year->AdvancedSearch->load();
     }
 
     // Set up sort parameters
@@ -1297,6 +1610,14 @@ class ViewPaymentReportList extends ViewPaymentReport implements PageInterface
         $item->ShowInDropDown = false;
         $item->ShowInButtonGroup = false;
 
+        // "sequence"
+        $item = $this->ListOptions->add("sequence");
+        $item->CssClass = "text-nowrap";
+        $item->Visible = true;
+        $item->OnLeft = true; // Always on left
+        $item->ShowInDropDown = false;
+        $item->ShowInButtonGroup = false;
+
         // Drop down button for ListOptions
         $this->ListOptions->UseDropDownButton = false;
         $this->ListOptions->DropDownButtonPhrase = $this->language->phrase("ButtonListOptions");
@@ -1328,6 +1649,10 @@ class ViewPaymentReportList extends ViewPaymentReport implements PageInterface
 
         // Call ListOptions_Rendering event
         $this->listOptionsRendering();
+
+        // "sequence"
+        $opt = $this->ListOptions["sequence"];
+        $opt->Body = FormatSequenceNumber($this->RecordCount);
         $pageUrl = $this->pageUrl(false);
         if ($this->CurrentMode == "view") { // Check view mode
         } // End View mode
@@ -1739,6 +2064,125 @@ class ViewPaymentReportList extends ViewPaymentReport implements PageInterface
         }
     }
 
+    // Load search values for validation
+    protected function loadSearchValues(): bool
+    {
+        // Load search values
+        $hasValue = false;
+
+        // Load query builder rules
+        $rules = Post("rules");
+        if ($rules && $this->Command == "") {
+            $this->QueryRules = $rules;
+            $this->Command = "search";
+        }
+
+        // PAYMENT_ID
+        if ($this->PAYMENT_ID->AdvancedSearch->get()) {
+            $hasValue = true;
+            if (($this->PAYMENT_ID->AdvancedSearch->SearchValue != "" || $this->PAYMENT_ID->AdvancedSearch->SearchValue2 != "") && $this->Command == "") {
+                $this->Command = "search";
+            }
+        }
+
+        // TRANSACTION_ID
+        if ($this->TRANSACTION_ID->AdvancedSearch->get()) {
+            $hasValue = true;
+            if (($this->TRANSACTION_ID->AdvancedSearch->SearchValue != "" || $this->TRANSACTION_ID->AdvancedSearch->SearchValue2 != "") && $this->Command == "") {
+                $this->Command = "search";
+            }
+        }
+
+        // Patient_Name
+        if ($this->Patient_Name->AdvancedSearch->get()) {
+            $hasValue = true;
+            if (($this->Patient_Name->AdvancedSearch->SearchValue != "" || $this->Patient_Name->AdvancedSearch->SearchValue2 != "") && $this->Command == "") {
+                $this->Command = "search";
+            }
+        }
+
+        // Doctor_Name
+        if ($this->Doctor_Name->AdvancedSearch->get()) {
+            $hasValue = true;
+            if (($this->Doctor_Name->AdvancedSearch->SearchValue != "" || $this->Doctor_Name->AdvancedSearch->SearchValue2 != "") && $this->Command == "") {
+                $this->Command = "search";
+            }
+        }
+
+        // AMOUNT
+        if ($this->AMOUNT->AdvancedSearch->get()) {
+            $hasValue = true;
+            if (($this->AMOUNT->AdvancedSearch->SearchValue != "" || $this->AMOUNT->AdvancedSearch->SearchValue2 != "") && $this->Command == "") {
+                $this->Command = "search";
+            }
+        }
+
+        // PAYMENT_MODE
+        if ($this->PAYMENT_MODE->AdvancedSearch->get()) {
+            $hasValue = true;
+            if (($this->PAYMENT_MODE->AdvancedSearch->SearchValue != "" || $this->PAYMENT_MODE->AdvancedSearch->SearchValue2 != "") && $this->Command == "") {
+                $this->Command = "search";
+            }
+        }
+
+        // Payment_Status
+        if ($this->Payment_Status->AdvancedSearch->get()) {
+            $hasValue = true;
+            if (($this->Payment_Status->AdvancedSearch->SearchValue != "" || $this->Payment_Status->AdvancedSearch->SearchValue2 != "") && $this->Command == "") {
+                $this->Command = "search";
+            }
+        }
+
+        // PAYMENT_DATE
+        if ($this->PAYMENT_DATE->AdvancedSearch->get()) {
+            $hasValue = true;
+            if (($this->PAYMENT_DATE->AdvancedSearch->SearchValue != "" || $this->PAYMENT_DATE->AdvancedSearch->SearchValue2 != "") && $this->Command == "") {
+                $this->Command = "search";
+            }
+        }
+
+        // Day_Name
+        if ($this->Day_Name->AdvancedSearch->get()) {
+            $hasValue = true;
+            if (($this->Day_Name->AdvancedSearch->SearchValue != "" || $this->Day_Name->AdvancedSearch->SearchValue2 != "") && $this->Command == "") {
+                $this->Command = "search";
+            }
+        }
+
+        // Week_Number
+        if ($this->Week_Number->AdvancedSearch->get()) {
+            $hasValue = true;
+            if (($this->Week_Number->AdvancedSearch->SearchValue != "" || $this->Week_Number->AdvancedSearch->SearchValue2 != "") && $this->Command == "") {
+                $this->Command = "search";
+            }
+        }
+
+        // Month_Number
+        if ($this->Month_Number->AdvancedSearch->get()) {
+            $hasValue = true;
+            if (($this->Month_Number->AdvancedSearch->SearchValue != "" || $this->Month_Number->AdvancedSearch->SearchValue2 != "") && $this->Command == "") {
+                $this->Command = "search";
+            }
+        }
+
+        // Month_Name
+        if ($this->Month_Name->AdvancedSearch->get()) {
+            $hasValue = true;
+            if (($this->Month_Name->AdvancedSearch->SearchValue != "" || $this->Month_Name->AdvancedSearch->SearchValue2 != "") && $this->Command == "") {
+                $this->Command = "search";
+            }
+        }
+
+        // Year
+        if ($this->Year->AdvancedSearch->get()) {
+            $hasValue = true;
+            if (($this->Year->AdvancedSearch->SearchValue != "" || $this->Year->AdvancedSearch->SearchValue2 != "") && $this->Command == "") {
+                $this->Command = "search";
+            }
+        }
+        return $hasValue;
+    }
+
     /**
      * Load entities
      *
@@ -2037,12 +2481,139 @@ class ViewPaymentReportList extends ViewPaymentReport implements PageInterface
             // Year
             $this->Year->HrefValue = "";
             $this->Year->TooltipValue = "";
+        } elseif ($this->RowType == RowType::SEARCH) {
+            // PAYMENT_ID
+            $this->PAYMENT_ID->setupEditAttributes();
+            $this->PAYMENT_ID->EditValue = $this->PAYMENT_ID->AdvancedSearch->SearchValue;
+            $this->PAYMENT_ID->PlaceHolder = RemoveHtml($this->PAYMENT_ID->caption());
+
+            // TRANSACTION_ID
+            $this->TRANSACTION_ID->setupEditAttributes();
+            $this->TRANSACTION_ID->EditValue = !$this->TRANSACTION_ID->Raw ? HtmlDecode($this->TRANSACTION_ID->AdvancedSearch->SearchValue) : $this->TRANSACTION_ID->AdvancedSearch->SearchValue;
+            $this->TRANSACTION_ID->PlaceHolder = RemoveHtml($this->TRANSACTION_ID->caption());
+
+            // Patient_Name
+            if ($this->Patient_Name->UseFilter && !IsEmpty($this->Patient_Name->AdvancedSearch->SearchValue)) {
+                if (is_array($this->Patient_Name->AdvancedSearch->SearchValue)) {
+                    $this->Patient_Name->AdvancedSearch->SearchValue = implode(Config("FILTER_OPTION_SEPARATOR"), $this->Patient_Name->AdvancedSearch->SearchValue);
+                }
+                $this->Patient_Name->EditValue = explode(Config("FILTER_OPTION_SEPARATOR"), $this->Patient_Name->AdvancedSearch->SearchValue);
+            }
+
+            // Doctor_Name
+            if ($this->Doctor_Name->UseFilter && !IsEmpty($this->Doctor_Name->AdvancedSearch->SearchValue)) {
+                if (is_array($this->Doctor_Name->AdvancedSearch->SearchValue)) {
+                    $this->Doctor_Name->AdvancedSearch->SearchValue = implode(Config("FILTER_OPTION_SEPARATOR"), $this->Doctor_Name->AdvancedSearch->SearchValue);
+                }
+                $this->Doctor_Name->EditValue = explode(Config("FILTER_OPTION_SEPARATOR"), $this->Doctor_Name->AdvancedSearch->SearchValue);
+            }
+
+            // AMOUNT
+            $this->AMOUNT->setupEditAttributes();
+            $this->AMOUNT->EditValue = $this->AMOUNT->AdvancedSearch->SearchValue;
+            $this->AMOUNT->PlaceHolder = RemoveHtml($this->AMOUNT->caption());
+
+            // PAYMENT_MODE
+            if ($this->PAYMENT_MODE->UseFilter && !IsEmpty($this->PAYMENT_MODE->AdvancedSearch->SearchValue)) {
+                if (is_array($this->PAYMENT_MODE->AdvancedSearch->SearchValue)) {
+                    $this->PAYMENT_MODE->AdvancedSearch->SearchValue = implode(Config("FILTER_OPTION_SEPARATOR"), $this->PAYMENT_MODE->AdvancedSearch->SearchValue);
+                }
+                $this->PAYMENT_MODE->EditValue = explode(Config("FILTER_OPTION_SEPARATOR"), $this->PAYMENT_MODE->AdvancedSearch->SearchValue);
+            }
+
+            // Payment_Status
+            if ($this->Payment_Status->UseFilter && !IsEmpty($this->Payment_Status->AdvancedSearch->SearchValue)) {
+                if (is_array($this->Payment_Status->AdvancedSearch->SearchValue)) {
+                    $this->Payment_Status->AdvancedSearch->SearchValue = implode(Config("FILTER_OPTION_SEPARATOR"), $this->Payment_Status->AdvancedSearch->SearchValue);
+                }
+                $this->Payment_Status->EditValue = explode(Config("FILTER_OPTION_SEPARATOR"), $this->Payment_Status->AdvancedSearch->SearchValue);
+            }
+
+            // PAYMENT_DATE
+            if ($this->PAYMENT_DATE->UseFilter && !IsEmpty($this->PAYMENT_DATE->AdvancedSearch->SearchValue)) {
+                if (is_array($this->PAYMENT_DATE->AdvancedSearch->SearchValue)) {
+                    $this->PAYMENT_DATE->AdvancedSearch->SearchValue = implode(Config("FILTER_OPTION_SEPARATOR"), $this->PAYMENT_DATE->AdvancedSearch->SearchValue);
+                }
+                $this->PAYMENT_DATE->EditValue = explode(Config("FILTER_OPTION_SEPARATOR"), $this->PAYMENT_DATE->AdvancedSearch->SearchValue);
+            }
+
+            // Day_Name
+            if ($this->Day_Name->UseFilter && !IsEmpty($this->Day_Name->AdvancedSearch->SearchValue)) {
+                if (is_array($this->Day_Name->AdvancedSearch->SearchValue)) {
+                    $this->Day_Name->AdvancedSearch->SearchValue = implode(Config("FILTER_OPTION_SEPARATOR"), $this->Day_Name->AdvancedSearch->SearchValue);
+                }
+                $this->Day_Name->EditValue = explode(Config("FILTER_OPTION_SEPARATOR"), $this->Day_Name->AdvancedSearch->SearchValue);
+            }
+
+            // Week_Number
+            $this->Week_Number->setupEditAttributes();
+            $this->Week_Number->EditValue = $this->Week_Number->AdvancedSearch->SearchValue;
+            $this->Week_Number->PlaceHolder = RemoveHtml($this->Week_Number->caption());
+
+            // Month_Number
+            $this->Month_Number->setupEditAttributes();
+            $this->Month_Number->EditValue = $this->Month_Number->AdvancedSearch->SearchValue;
+            $this->Month_Number->PlaceHolder = RemoveHtml($this->Month_Number->caption());
+
+            // Month_Name
+            if ($this->Month_Name->UseFilter && !IsEmpty($this->Month_Name->AdvancedSearch->SearchValue)) {
+                if (is_array($this->Month_Name->AdvancedSearch->SearchValue)) {
+                    $this->Month_Name->AdvancedSearch->SearchValue = implode(Config("FILTER_OPTION_SEPARATOR"), $this->Month_Name->AdvancedSearch->SearchValue);
+                }
+                $this->Month_Name->EditValue = explode(Config("FILTER_OPTION_SEPARATOR"), $this->Month_Name->AdvancedSearch->SearchValue);
+            }
+
+            // Year
+            if ($this->Year->UseFilter && !IsEmpty($this->Year->AdvancedSearch->SearchValue)) {
+                if (is_array($this->Year->AdvancedSearch->SearchValue)) {
+                    $this->Year->AdvancedSearch->SearchValue = implode(Config("FILTER_OPTION_SEPARATOR"), $this->Year->AdvancedSearch->SearchValue);
+                }
+                $this->Year->EditValue = explode(Config("FILTER_OPTION_SEPARATOR"), $this->Year->AdvancedSearch->SearchValue);
+            }
         }
 
         // Call Row Rendered event
         if ($this->RowType != RowType::AGGREGATEINIT) {
             $this->rowRendered();
         }
+    }
+
+    // Validate search
+    protected function validateSearch(): bool
+    {
+        // Check if validation required
+        if (!Config("SERVER_VALIDATE")) {
+            return true;
+        }
+
+        // Return validate result
+        $validateSearch = !$this->hasInvalidFields();
+
+        // Call Form_CustomValidate event
+        $formCustomError = "";
+        $validateSearch = $validateSearch && $this->formCustomValidate($formCustomError);
+        if ($formCustomError != "") {
+            $this->setFailureMessage($formCustomError);
+        }
+        return $validateSearch;
+    }
+
+    // Load advanced search
+    public function loadAdvancedSearch(): void
+    {
+        $this->PAYMENT_ID->AdvancedSearch->load();
+        $this->TRANSACTION_ID->AdvancedSearch->load();
+        $this->Patient_Name->AdvancedSearch->load();
+        $this->Doctor_Name->AdvancedSearch->load();
+        $this->AMOUNT->AdvancedSearch->load();
+        $this->PAYMENT_MODE->AdvancedSearch->load();
+        $this->Payment_Status->AdvancedSearch->load();
+        $this->PAYMENT_DATE->AdvancedSearch->load();
+        $this->Day_Name->AdvancedSearch->load();
+        $this->Week_Number->AdvancedSearch->load();
+        $this->Month_Number->AdvancedSearch->load();
+        $this->Month_Name->AdvancedSearch->load();
+        $this->Year->AdvancedSearch->load();
     }
 
     // Set up search options
@@ -2066,6 +2637,15 @@ class ViewPaymentReportList extends ViewPaymentReport implements PageInterface
             $item->Body = "<a class=\"btn btn-default ew-show-all\" role=\"button\" title=\"" . $this->language->phrase("ShowAll") . "\" data-caption=\"" . $this->language->phrase("ShowAll") . "\" data-ew-action=\"refresh\" data-url=\"" . $resetUrl . "\">" . $this->language->phrase("ShowAllBtn") . "</a>";
         }
         $item->Visible = ($this->SearchWhere != $this->DefaultSearchWhere && $this->SearchWhere != "0=101");
+
+        // Advanced search button
+        $item = $this->SearchOptions->add("advancedsearch");
+        if ($this->ModalSearch && !IsMobile()) {
+            $item->Body = "<a class=\"btn btn-default ew-advanced-search\" title=\"" . $this->language->phrase("AdvancedSearch", true) . "\" data-table=\"view_payment_report\" data-caption=\"" . $this->language->phrase("AdvancedSearch", true) . "\" data-ew-action=\"modal\" data-url=\"ViewPaymentReportSearch\" data-btn=\"SearchBtn\">" . $this->language->phrase("AdvancedSearch", false) . "</a>";
+        } else {
+            $item->Body = "<a class=\"btn btn-default ew-advanced-search\" title=\"" . $this->language->phrase("AdvancedSearch", true) . "\" data-caption=\"" . $this->language->phrase("AdvancedSearch", true) . "\" href=\"ViewPaymentReportSearch\">" . $this->language->phrase("AdvancedSearch", false) . "</a>";
+        }
+        $item->Visible = true;
 
         // Button group for search
         $this->SearchOptions->UseDropDownButton = false;
@@ -2384,14 +2964,26 @@ class ViewPaymentReportList extends ViewPaymentReport implements PageInterface
 
         // Get default search criteria
         AddFilter($this->DefaultSearchWhere, $this->basicSearchWhere(true));
+        AddFilter($this->DefaultSearchWhere, $this->advancedSearchWhere(true));
 
         // Get basic search values
         if ($this->loadBasicSearchValues()) {
             $this->setSessionRules(""); // Clear rules for QueryBuilder
         }
 
+        // Get and validate search values for advanced search
+        $isAdvancedSearch = false;
+        if (IsEmpty(Post("action"))) { // Skip if user action
+            $isAdvancedSearch = $this->loadSearchValues();
+        }
+
         // Restore filter list
         $this->restoreFilterList();
+
+        // Clear rules for QueryBuilder
+        if ($this->validateSearch() && $isAdvancedSearch) {
+            $this->setSessionRules("");
+        }
 
         // Restore search parms from Session if not searching / reset / export
         if (($this->isExport() || $this->Command != "search" && $this->Command != "reset" && $this->Command != "resetall") && $this->Command != "json" && $this->checkSearchParms()) {
@@ -2406,6 +2998,14 @@ class ViewPaymentReportList extends ViewPaymentReport implements PageInterface
             $srchBasic = $this->basicSearchWhere();
         }
 
+        // Get advanced search criteria
+        if (!$this->hasInvalidFields()) {
+            $srchAdvanced = $this->advancedSearchWhere();
+        }
+
+        // Get query builder criteria
+        $query = $httpContext["DashboardReport"] ? "" : $this->queryBuilderWhere();
+
         // Load search default if no existing search criteria
         if (!$this->checkSearchParms() && !$query) {
             // Load basic search from default
@@ -2413,6 +3013,16 @@ class ViewPaymentReportList extends ViewPaymentReport implements PageInterface
             if ($this->BasicSearch->Keyword != "") {
                 $srchBasic = $this->basicSearchWhere(); // Save to session
             }
+
+            // Load advanced search from default
+            if ($this->loadAdvancedSearchDefault()) {
+                $srchAdvanced = $this->advancedSearchWhere(); // Save to session
+            }
+        }
+
+        // Restore search settings from Session
+        if (!$this->hasInvalidFields()) {
+            $this->loadAdvancedSearch();
         }
 
         // Build search criteria

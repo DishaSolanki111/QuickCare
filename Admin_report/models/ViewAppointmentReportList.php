@@ -1096,9 +1096,9 @@ class ViewAppointmentReportList extends ViewAppointmentReport implements PageInt
         $this->buildSearchSql($where, $this->Doctor_Name, $default, true); // Doctor_Name
         $this->buildSearchSql($where, $this->Specialisation, $default, false); // Specialisation
         $this->buildSearchSql($where, $this->APPOINTMENT_DATE, $default, true); // APPOINTMENT_DATE
-        $this->buildSearchSql($where, $this->Day_Name, $default, false); // Day_Name
+        $this->buildSearchSql($where, $this->Day_Name, $default, true); // Day_Name
         $this->buildSearchSql($where, $this->Week_Number, $default, false); // Week_Number
-        $this->buildSearchSql($where, $this->Month_Name, $default, false); // Month_Name
+        $this->buildSearchSql($where, $this->Month_Name, $default, true); // Month_Name
         $this->buildSearchSql($where, $this->Year, $default, false); // Year
         $this->buildSearchSql($where, $this->APPOINTMENT_TIME, $default, false); // APPOINTMENT_TIME
         $this->buildSearchSql($where, $this->STATUS, $default, true); // STATUS
@@ -1258,7 +1258,7 @@ class ViewAppointmentReportList extends ViewAppointmentReport implements PageInt
         // Field Day_Name
         $filter = $this->queryBuilderWhere("Day_Name");
         if (!$filter) {
-            $this->buildSearchSql($filter, $this->Day_Name, false, false);
+            $this->buildSearchSql($filter, $this->Day_Name, false, true);
         }
         if ($filter != "") {
             $filterList .= "<div><span class=\"" . $captionClass . "\">" . $this->Day_Name->caption() . "</span>" . $captionSuffix . $filter . "</div>";
@@ -1276,7 +1276,7 @@ class ViewAppointmentReportList extends ViewAppointmentReport implements PageInt
         // Field Month_Name
         $filter = $this->queryBuilderWhere("Month_Name");
         if (!$filter) {
-            $this->buildSearchSql($filter, $this->Month_Name, false, false);
+            $this->buildSearchSql($filter, $this->Month_Name, false, true);
         }
         if ($filter != "") {
             $filterList .= "<div><span class=\"" . $captionClass . "\">" . $this->Month_Name->caption() . "</span>" . $captionSuffix . $filter . "</div>";
@@ -2429,9 +2429,12 @@ class ViewAppointmentReportList extends ViewAppointmentReport implements PageInt
             }
 
             // Day_Name
-            $this->Day_Name->setupEditAttributes();
-            $this->Day_Name->EditValue = !$this->Day_Name->Raw ? HtmlDecode($this->Day_Name->AdvancedSearch->SearchValue) : $this->Day_Name->AdvancedSearch->SearchValue;
-            $this->Day_Name->PlaceHolder = RemoveHtml($this->Day_Name->caption());
+            if ($this->Day_Name->UseFilter && !IsEmpty($this->Day_Name->AdvancedSearch->SearchValue)) {
+                if (is_array($this->Day_Name->AdvancedSearch->SearchValue)) {
+                    $this->Day_Name->AdvancedSearch->SearchValue = implode(Config("FILTER_OPTION_SEPARATOR"), $this->Day_Name->AdvancedSearch->SearchValue);
+                }
+                $this->Day_Name->EditValue = explode(Config("FILTER_OPTION_SEPARATOR"), $this->Day_Name->AdvancedSearch->SearchValue);
+            }
 
             // Week_Number
             $this->Week_Number->setupEditAttributes();
@@ -2439,9 +2442,12 @@ class ViewAppointmentReportList extends ViewAppointmentReport implements PageInt
             $this->Week_Number->PlaceHolder = RemoveHtml($this->Week_Number->caption());
 
             // Month_Name
-            $this->Month_Name->setupEditAttributes();
-            $this->Month_Name->EditValue = !$this->Month_Name->Raw ? HtmlDecode($this->Month_Name->AdvancedSearch->SearchValue) : $this->Month_Name->AdvancedSearch->SearchValue;
-            $this->Month_Name->PlaceHolder = RemoveHtml($this->Month_Name->caption());
+            if ($this->Month_Name->UseFilter && !IsEmpty($this->Month_Name->AdvancedSearch->SearchValue)) {
+                if (is_array($this->Month_Name->AdvancedSearch->SearchValue)) {
+                    $this->Month_Name->AdvancedSearch->SearchValue = implode(Config("FILTER_OPTION_SEPARATOR"), $this->Month_Name->AdvancedSearch->SearchValue);
+                }
+                $this->Month_Name->EditValue = explode(Config("FILTER_OPTION_SEPARATOR"), $this->Month_Name->AdvancedSearch->SearchValue);
+            }
 
             // Year
             $this->Year->setupEditAttributes();
