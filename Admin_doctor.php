@@ -140,12 +140,20 @@ if (isset($_POST['delete'])) {
         $check = mysqli_query($conn, "SELECT COUNT(*) as c FROM appointment_tbl WHERE DOCTOR_ID = $id");
         $row = mysqli_fetch_assoc($check);
         if ((int) $row['c'] > 0) {
-            header("Location: Admin_doctor.php?error=Cannot delete doctor with appointments");
+            header("Location: Admin_doctor.php?error=" . urlencode("Cannot delete doctor with existing appointments."));
+            exit;
         } else {
-            mysqli_query($conn, "DELETE FROM doctor_tbl WHERE DOCTOR_ID = $id");
-            header("Location: Admin_doctor.php");
+            // Delete related
+            mysqli_query($conn, "DELETE FROM doctor_schedule_tbl WHERE DOCTOR_ID = $id");
+            mysqli_query($conn, "DELETE FROM feedback_tbl WHERE DOCTOR_ID = $id"); 
+            
+            if (mysqli_query($conn, "DELETE FROM doctor_tbl WHERE DOCTOR_ID = $id")) {
+                header("Location: Admin_doctor.php?success=" . urlencode("Doctor deleted successfully."));
+            } else {
+                header("Location: Admin_doctor.php?error=" . urlencode("Error deleting doctor: " . mysqli_error($conn)));
+            }
+            exit;
         }
-        exit;
     }
 }
 
@@ -501,10 +509,16 @@ include 'admin_sidebar.php';
 
     <?php include 'admin_header.php'; ?>
 
+    <?php if (isset($_GET['success'])): ?>
+        <div class="alert alert-success"><?php echo htmlspecialchars($_GET['success']); ?></div>
+    <?php endif; ?>
     <?php if (!empty($success_message)): ?>
         <div class="alert alert-success"><?php echo $success_message; ?></div>
     <?php endif; ?>
     
+    <?php if (isset($_GET['error'])): ?>
+        <div class="alert alert-danger"><?php echo htmlspecialchars($_GET['error']); ?></div>
+    <?php endif; ?>
     <?php if (!empty($error_message)): ?>
         <div class="alert alert-danger"><?php echo $error_message; ?></div>
     <?php endif; ?>
@@ -659,10 +673,23 @@ include 'admin_sidebar.php';
                 </div>
             </div>
             
-            <div class="form-group">
-                <label for="edit_education">Education</label>
-                <input type="text" id="edit_education" name="education" required>
-                <div class="error-message" id="edit_education_error"></div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="edit_education">Education</label>
+                    <input type="text" id="edit_education" name="education" required>
+                    <div class="error-message" id="edit_education_error"></div>
+                </div>
+                <div class="form-group">
+                    <label for="edit_specialization">Specialization</label>
+                    <select id="edit_specialization" name="specialization_id" class="form-control" required>
+                        <?php
+                        $spec_q2 = mysqli_query($conn, "SELECT * FROM specialisation_tbl ORDER BY SPECIALISATION_NAME");
+                        while ($spec2 = mysqli_fetch_assoc($spec_q2)) {
+                            echo "<option value='{$spec2['SPECIALISATION_ID']}'>{$spec2['SPECIALISATION_NAME']}</option>";
+                        }
+                        ?>
+                    </select>
+                </div>
             </div>
             
             <div class="form-row">
@@ -699,6 +726,7 @@ function openEditModal(id, firstName, lastName, education, phone, email, special
     document.getElementById('edit_education').value = education;
     document.getElementById('edit_phone').value = phone;
     document.getElementById('edit_email').value = email;
+    document.getElementById('edit_specialization').value = specializationId;
     
     document.getElementById('current_image').value = profileImage;
     

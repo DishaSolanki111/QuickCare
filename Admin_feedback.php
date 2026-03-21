@@ -64,37 +64,7 @@ $adminName = $_SESSION['USER_NAME'] ?? 'Admin';
         text-align: left;
     }
 
-    .filter-container {
-        background: white;
-        padding: 20px;
-        border-radius: 10px;
-        margin-bottom: 20px;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    }
 
-    .filter-container form {
-        display: flex;
-        gap: 15px;
-        flex-wrap: wrap;
-    }
-
-    .filter-container select {
-        padding: 10px;
-        border: 1px solid #D0D7E1;
-        border-radius: 5px;
-    }
-
-    .filter-container button {
-        padding: 10px 15px;
-        background: var(--dark-blue);
-        color: white;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-    }
 
     .rating {
         color: #f39c12;
@@ -196,25 +166,7 @@ $adminName = $_SESSION['USER_NAME'] ?? 'Admin';
         </p>
     </div>
 
-    <!-- FILTER (FIXED) -->
-    <div class="filter-container">
-        <form method="POST" action="">
-            <select name="rating_filter">
-                <option value="">All Ratings</option>
-                <?php
-                $selectedRating = $_POST['rating_filter'] ?? '';
-                for ($i = 5; $i >= 1; $i--) {
-                    $sel = ($selectedRating == $i) ? "selected" : "";
-                    echo "<option value='$i' $sel>$i Star</option>";
-                }
-                ?>
-            </select>
-            <button type="submit">
-                <i class="bi bi-funnel"></i>
-                Filter
-            </button>
-        </form>
-    </div>
+
 
     <!-- FEEDBACK GROUPED BY DOCTOR -->
     <div class="feedback-groups">
@@ -238,11 +190,6 @@ $adminName = $_SESSION['USER_NAME'] ?? 'Admin';
                   JOIN doctor_tbl d ON a.DOCTOR_ID = d.DOCTOR_ID
                   JOIN specialisation_tbl s ON d.SPECIALISATION_ID = s.SPECIALISATION_ID
                   WHERE 1=1";
-
-        if (!empty($_POST['rating_filter'])) {
-            $rating = (int) $_POST['rating_filter'];
-            $query .= " AND f.RATING = $rating";
-        }
 
         $query .= " ORDER BY d.LAST_NAME, d.FIRST_NAME, a.APPOINTMENT_DATE DESC, f.FEEDBACK_ID DESC";
 

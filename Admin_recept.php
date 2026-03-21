@@ -25,6 +25,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
     $receptionist_id = (int)$_POST['id'];
 
     if ($receptionist_id > 0) {
+        // Cascade delete manually to fix foreign key constraint block
+        mysqli_query($conn, "DELETE FROM appointment_reminder_tbl WHERE RECEPTIONIST_ID = $receptionist_id");
+        mysqli_query($conn, "DELETE FROM medicine_reminder_tbl WHERE CREATOR_ROLE = 'RECEPTIONIST' AND CREATOR_ID = $receptionist_id");
+        mysqli_query($conn, "DELETE FROM doctor_schedule_tbl WHERE RECEPTIONIST_ID = $receptionist_id");
+        mysqli_query($conn, "DELETE FROM medicine_tbl WHERE RECEPTIONIST_ID = $receptionist_id");
+
         $stmt = mysqli_prepare($conn, "DELETE FROM receptionist_tbl WHERE RECEPTIONIST_ID = ?");
         mysqli_stmt_bind_param($stmt, "i", $receptionist_id);
 
