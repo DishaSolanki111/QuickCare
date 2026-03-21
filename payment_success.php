@@ -1,6 +1,12 @@
 <?php
 session_start();
 
+// Prevent doctors from accessing payment success
+if (isset($_SESSION['USER_TYPE']) && $_SESSION['USER_TYPE'] === 'doctor') {
+    header("Location: doctor_dashboard.php");
+    exit();
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
