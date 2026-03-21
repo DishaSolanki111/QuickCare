@@ -201,6 +201,7 @@
         'IsUpload' => false,
         'InputTextType' => 'text',
         'Sortable' => false,
+        'UseFilter' => true,
         'SearchOperators' => [
             '=',
             '<>',
@@ -310,6 +311,7 @@
         'IsUpload' => false,
         'InputTextType' => 'text',
         'Sortable' => false,
+        'UseFilter' => true,
         'SearchOperators' => [
             '=',
             '<>',

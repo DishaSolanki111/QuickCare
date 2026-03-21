@@ -384,8 +384,6 @@ class ViewAppointmentReport extends DbTable implements LookupTableInterface
                 'IsAutoIncrement' => true,
                 'Nullable' => false,
                 'Sortable' => false,
-
-                // 'UseAdvancedSearch' => true,
                 'SearchOperators' => ["=", "<>", "IN", "NOT IN", "<", "<=", ">", ">=", "BETWEEN", "NOT BETWEEN"],
             ],
             'Patient_Name' => [
@@ -538,8 +536,6 @@ class ViewAppointmentReport extends DbTable implements LookupTableInterface
                 'InputTextType' => 'text',
                 'Raw' => true,
                 'Sortable' => false,
-
-                // 'UseAdvancedSearch' => true,
                 'SearchOperators' => ["=", "<>", "IN", "NOT IN", "<", "<=", ">", ">=", "BETWEEN", "NOT BETWEEN", "IS NULL", "IS NOT NULL"],
             ],
             'Month_Number' => [
@@ -1551,6 +1547,7 @@ class ViewAppointmentReport extends DbTable implements LookupTableInterface
         // Day_Name
 
         // Week_Number
+        $this->Week_Number->CellCssClass = "text-nowrap";
 
         // Month_Number
         $this->Month_Number->CellCssClass = "text-nowrap";
@@ -1692,19 +1689,16 @@ class ViewAppointmentReport extends DbTable implements LookupTableInterface
                     $doc->exportCaption($this->Specialisation);
                     $doc->exportCaption($this->APPOINTMENT_DATE);
                     $doc->exportCaption($this->Day_Name);
-                    $doc->exportCaption($this->Week_Number);
                     $doc->exportCaption($this->Month_Name);
                     $doc->exportCaption($this->Year);
                     $doc->exportCaption($this->APPOINTMENT_TIME);
                     $doc->exportCaption($this->STATUS);
                 } else {
-                    $doc->exportCaption($this->APPOINTMENT_ID);
                     $doc->exportCaption($this->Patient_Name);
                     $doc->exportCaption($this->Doctor_Name);
                     $doc->exportCaption($this->Specialisation);
                     $doc->exportCaption($this->APPOINTMENT_DATE);
                     $doc->exportCaption($this->Day_Name);
-                    $doc->exportCaption($this->Week_Number);
                     $doc->exportCaption($this->Month_Name);
                     $doc->exportCaption($this->Year);
                     $doc->exportCaption($this->APPOINTMENT_TIME);
@@ -1743,19 +1737,16 @@ class ViewAppointmentReport extends DbTable implements LookupTableInterface
                         $doc->exportField($this->Specialisation);
                         $doc->exportField($this->APPOINTMENT_DATE);
                         $doc->exportField($this->Day_Name);
-                        $doc->exportField($this->Week_Number);
                         $doc->exportField($this->Month_Name);
                         $doc->exportField($this->Year);
                         $doc->exportField($this->APPOINTMENT_TIME);
                         $doc->exportField($this->STATUS);
                     } else {
-                        $doc->exportField($this->APPOINTMENT_ID);
                         $doc->exportField($this->Patient_Name);
                         $doc->exportField($this->Doctor_Name);
                         $doc->exportField($this->Specialisation);
                         $doc->exportField($this->APPOINTMENT_DATE);
                         $doc->exportField($this->Day_Name);
-                        $doc->exportField($this->Week_Number);
                         $doc->exportField($this->Month_Name);
                         $doc->exportField($this->Year);
                         $doc->exportField($this->APPOINTMENT_TIME);

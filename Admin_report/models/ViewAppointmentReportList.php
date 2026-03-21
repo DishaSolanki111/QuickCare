@@ -334,13 +334,13 @@ class ViewAppointmentReportList extends ViewAppointmentReport implements PageInt
     // Set field visibility
     public function setVisibility(): void
     {
-        $this->APPOINTMENT_ID->setVisibility();
+        $this->APPOINTMENT_ID->Visible = false;
         $this->Patient_Name->setVisibility();
         $this->Doctor_Name->setVisibility();
         $this->Specialisation->setVisibility();
         $this->APPOINTMENT_DATE->setVisibility();
         $this->Day_Name->setVisibility();
-        $this->Week_Number->setVisibility();
+        $this->Week_Number->Visible = false;
         $this->Month_Number->Visible = false;
         $this->Month_Name->setVisibility();
         $this->Year->setVisibility();
@@ -1006,13 +1006,11 @@ class ViewAppointmentReportList extends ViewAppointmentReport implements PageInt
         // Initialize
         $filterList = "";
         $savedFilterList = "";
-        $filterList = Concat($filterList, $this->APPOINTMENT_ID->AdvancedSearch->toJson(), ","); // Field APPOINTMENT_ID
         $filterList = Concat($filterList, $this->Patient_Name->AdvancedSearch->toJson(), ","); // Field Patient_Name
         $filterList = Concat($filterList, $this->Doctor_Name->AdvancedSearch->toJson(), ","); // Field Doctor_Name
         $filterList = Concat($filterList, $this->Specialisation->AdvancedSearch->toJson(), ","); // Field Specialisation
         $filterList = Concat($filterList, $this->APPOINTMENT_DATE->AdvancedSearch->toJson(), ","); // Field APPOINTMENT_DATE
         $filterList = Concat($filterList, $this->Day_Name->AdvancedSearch->toJson(), ","); // Field Day_Name
-        $filterList = Concat($filterList, $this->Week_Number->AdvancedSearch->toJson(), ","); // Field Week_Number
         $filterList = Concat($filterList, $this->Month_Name->AdvancedSearch->toJson(), ","); // Field Month_Name
         $filterList = Concat($filterList, $this->Year->AdvancedSearch->toJson(), ","); // Field Year
         $filterList = Concat($filterList, $this->APPOINTMENT_TIME->AdvancedSearch->toJson(), ","); // Field APPOINTMENT_TIME
@@ -1072,13 +1070,11 @@ class ViewAppointmentReportList extends ViewAppointmentReport implements PageInt
         }
         $filter = json_decode(Post("filter"), true);
         $this->Command = "search";
-        $this->applyFilterToAdvancedSearch("APPOINTMENT_ID", $filter); // APPOINTMENT_ID
         $this->applyFilterToAdvancedSearch("Patient_Name", $filter); // Patient_Name
         $this->applyFilterToAdvancedSearch("Doctor_Name", $filter); // Doctor_Name
         $this->applyFilterToAdvancedSearch("Specialisation", $filter); // Specialisation
         $this->applyFilterToAdvancedSearch("APPOINTMENT_DATE", $filter); // APPOINTMENT_DATE
         $this->applyFilterToAdvancedSearch("Day_Name", $filter); // Day_Name
-        $this->applyFilterToAdvancedSearch("Week_Number", $filter); // Week_Number
         $this->applyFilterToAdvancedSearch("Month_Name", $filter); // Month_Name
         $this->applyFilterToAdvancedSearch("Year", $filter); // Year
         $this->applyFilterToAdvancedSearch("APPOINTMENT_TIME", $filter); // APPOINTMENT_TIME
@@ -1091,13 +1087,11 @@ class ViewAppointmentReportList extends ViewAppointmentReport implements PageInt
     public function advancedSearchWhere(bool $default = false): string
     {
         $where = "";
-        $this->buildSearchSql($where, $this->APPOINTMENT_ID, $default, false); // APPOINTMENT_ID
         $this->buildSearchSql($where, $this->Patient_Name, $default, false); // Patient_Name
         $this->buildSearchSql($where, $this->Doctor_Name, $default, true); // Doctor_Name
         $this->buildSearchSql($where, $this->Specialisation, $default, false); // Specialisation
         $this->buildSearchSql($where, $this->APPOINTMENT_DATE, $default, true); // APPOINTMENT_DATE
         $this->buildSearchSql($where, $this->Day_Name, $default, true); // Day_Name
-        $this->buildSearchSql($where, $this->Week_Number, $default, false); // Week_Number
         $this->buildSearchSql($where, $this->Month_Name, $default, true); // Month_Name
         $this->buildSearchSql($where, $this->Year, $default, false); // Year
         $this->buildSearchSql($where, $this->APPOINTMENT_TIME, $default, false); // APPOINTMENT_TIME
@@ -1108,13 +1102,11 @@ class ViewAppointmentReportList extends ViewAppointmentReport implements PageInt
             $this->Command = "search";
         }
         if (!$default && $this->Command == "search") {
-            $this->APPOINTMENT_ID->AdvancedSearch->save(); // APPOINTMENT_ID
             $this->Patient_Name->AdvancedSearch->save(); // Patient_Name
             $this->Doctor_Name->AdvancedSearch->save(); // Doctor_Name
             $this->Specialisation->AdvancedSearch->save(); // Specialisation
             $this->APPOINTMENT_DATE->AdvancedSearch->save(); // APPOINTMENT_DATE
             $this->Day_Name->AdvancedSearch->save(); // Day_Name
-            $this->Week_Number->AdvancedSearch->save(); // Week_Number
             $this->Month_Name->AdvancedSearch->save(); // Month_Name
             $this->Year->AdvancedSearch->save(); // Year
             $this->APPOINTMENT_TIME->AdvancedSearch->save(); // APPOINTMENT_TIME
@@ -1141,13 +1133,11 @@ class ViewAppointmentReportList extends ViewAppointmentReport implements PageInt
         // Clear other search and save rules to session
         if ($where && $fieldName == "") { // Skip if get query for specific field
             $this->resetSearchParms();
-            $this->APPOINTMENT_ID->AdvancedSearch->save(); // APPOINTMENT_ID
             $this->Patient_Name->AdvancedSearch->save(); // Patient_Name
             $this->Doctor_Name->AdvancedSearch->save(); // Doctor_Name
             $this->Specialisation->AdvancedSearch->save(); // Specialisation
             $this->APPOINTMENT_DATE->AdvancedSearch->save(); // APPOINTMENT_DATE
             $this->Day_Name->AdvancedSearch->save(); // Day_Name
-            $this->Week_Number->AdvancedSearch->save(); // Week_Number
             $this->Month_Name->AdvancedSearch->save(); // Month_Name
             $this->Year->AdvancedSearch->save(); // Year
             $this->APPOINTMENT_TIME->AdvancedSearch->save(); // APPOINTMENT_TIME
@@ -1210,15 +1200,6 @@ class ViewAppointmentReportList extends ViewAppointmentReport implements PageInt
         $captionClass = $this->isExport("email") ? "ew-filter-caption-email" : "ew-filter-caption";
         $captionSuffix = $this->isExport("email") ? ": " : "";
 
-        // Field APPOINTMENT_ID
-        $filter = $this->queryBuilderWhere("APPOINTMENT_ID");
-        if (!$filter) {
-            $this->buildSearchSql($filter, $this->APPOINTMENT_ID, false, false);
-        }
-        if ($filter != "") {
-            $filterList .= "<div><span class=\"" . $captionClass . "\">" . $this->APPOINTMENT_ID->caption() . "</span>" . $captionSuffix . $filter . "</div>";
-        }
-
         // Field Patient_Name
         $filter = $this->queryBuilderWhere("Patient_Name");
         if (!$filter) {
@@ -1262,15 +1243,6 @@ class ViewAppointmentReportList extends ViewAppointmentReport implements PageInt
         }
         if ($filter != "") {
             $filterList .= "<div><span class=\"" . $captionClass . "\">" . $this->Day_Name->caption() . "</span>" . $captionSuffix . $filter . "</div>";
-        }
-
-        // Field Week_Number
-        $filter = $this->queryBuilderWhere("Week_Number");
-        if (!$filter) {
-            $this->buildSearchSql($filter, $this->Week_Number, false, false);
-        }
-        if ($filter != "") {
-            $filterList .= "<div><span class=\"" . $captionClass . "\">" . $this->Week_Number->caption() . "</span>" . $captionSuffix . $filter . "</div>";
         }
 
         // Field Month_Name
@@ -1360,9 +1332,6 @@ class ViewAppointmentReportList extends ViewAppointmentReport implements PageInt
         if ($this->BasicSearch->issetSession()) {
             return true;
         }
-        if ($this->APPOINTMENT_ID->AdvancedSearch->issetSession()) {
-            return true;
-        }
         if ($this->Patient_Name->AdvancedSearch->issetSession()) {
             return true;
         }
@@ -1376,9 +1345,6 @@ class ViewAppointmentReportList extends ViewAppointmentReport implements PageInt
             return true;
         }
         if ($this->Day_Name->AdvancedSearch->issetSession()) {
-            return true;
-        }
-        if ($this->Week_Number->AdvancedSearch->issetSession()) {
             return true;
         }
         if ($this->Month_Name->AdvancedSearch->issetSession()) {
@@ -1428,13 +1394,11 @@ class ViewAppointmentReportList extends ViewAppointmentReport implements PageInt
     // Clear all advanced search parameters
     protected function resetAdvancedSearchParms(): void
     {
-        $this->APPOINTMENT_ID->AdvancedSearch->unsetSession();
         $this->Patient_Name->AdvancedSearch->unsetSession();
         $this->Doctor_Name->AdvancedSearch->unsetSession();
         $this->Specialisation->AdvancedSearch->unsetSession();
         $this->APPOINTMENT_DATE->AdvancedSearch->unsetSession();
         $this->Day_Name->AdvancedSearch->unsetSession();
-        $this->Week_Number->AdvancedSearch->unsetSession();
         $this->Month_Name->AdvancedSearch->unsetSession();
         $this->Year->AdvancedSearch->unsetSession();
         $this->APPOINTMENT_TIME->AdvancedSearch->unsetSession();
@@ -1450,13 +1414,11 @@ class ViewAppointmentReportList extends ViewAppointmentReport implements PageInt
         $this->BasicSearch->load();
 
         // Restore advanced search values
-        $this->APPOINTMENT_ID->AdvancedSearch->load();
         $this->Patient_Name->AdvancedSearch->load();
         $this->Doctor_Name->AdvancedSearch->load();
         $this->Specialisation->AdvancedSearch->load();
         $this->APPOINTMENT_DATE->AdvancedSearch->load();
         $this->Day_Name->AdvancedSearch->load();
-        $this->Week_Number->AdvancedSearch->load();
         $this->Month_Name->AdvancedSearch->load();
         $this->Year->AdvancedSearch->load();
         $this->APPOINTMENT_TIME->AdvancedSearch->load();
@@ -1478,13 +1440,11 @@ class ViewAppointmentReportList extends ViewAppointmentReport implements PageInt
         if (Get("order") !== null) {
             $this->CurrentOrder = Get("order");
             $this->CurrentOrderType = Get("ordertype", "");
-            $this->updateSort($this->APPOINTMENT_ID); // APPOINTMENT_ID
             $this->updateSort($this->Patient_Name); // Patient_Name
             $this->updateSort($this->Doctor_Name); // Doctor_Name
             $this->updateSort($this->Specialisation); // Specialisation
             $this->updateSort($this->APPOINTMENT_DATE); // APPOINTMENT_DATE
             $this->updateSort($this->Day_Name); // Day_Name
-            $this->updateSort($this->Week_Number); // Week_Number
             $this->updateSort($this->Month_Name); // Month_Name
             $this->updateSort($this->Year); // Year
             $this->updateSort($this->APPOINTMENT_TIME); // APPOINTMENT_TIME
@@ -1670,13 +1630,11 @@ class ViewAppointmentReportList extends ViewAppointmentReport implements PageInt
             $item = $option->addGroupOption();
             $item->Body = "";
             $item->Visible = $this->UseColumnVisibility;
-            $this->createColumnOption($option, "APPOINTMENT_ID");
             $this->createColumnOption($option, "Patient_Name");
             $this->createColumnOption($option, "Doctor_Name");
             $this->createColumnOption($option, "Specialisation");
             $this->createColumnOption($option, "APPOINTMENT_DATE");
             $this->createColumnOption($option, "Day_Name");
-            $this->createColumnOption($option, "Week_Number");
             $this->createColumnOption($option, "Month_Name");
             $this->createColumnOption($option, "Year");
             $this->createColumnOption($option, "APPOINTMENT_TIME");
@@ -2032,14 +1990,6 @@ class ViewAppointmentReportList extends ViewAppointmentReport implements PageInt
             $this->Command = "search";
         }
 
-        // APPOINTMENT_ID
-        if ($this->APPOINTMENT_ID->AdvancedSearch->get()) {
-            $hasValue = true;
-            if (($this->APPOINTMENT_ID->AdvancedSearch->SearchValue != "" || $this->APPOINTMENT_ID->AdvancedSearch->SearchValue2 != "") && $this->Command == "") {
-                $this->Command = "search";
-            }
-        }
-
         // Patient_Name
         if ($this->Patient_Name->AdvancedSearch->get()) {
             $hasValue = true;
@@ -2076,14 +2026,6 @@ class ViewAppointmentReportList extends ViewAppointmentReport implements PageInt
         if ($this->Day_Name->AdvancedSearch->get()) {
             $hasValue = true;
             if (($this->Day_Name->AdvancedSearch->SearchValue != "" || $this->Day_Name->AdvancedSearch->SearchValue2 != "") && $this->Command == "") {
-                $this->Command = "search";
-            }
-        }
-
-        // Week_Number
-        if ($this->Week_Number->AdvancedSearch->get()) {
-            $hasValue = true;
-            if (($this->Week_Number->AdvancedSearch->SearchValue != "" || $this->Week_Number->AdvancedSearch->SearchValue2 != "") && $this->Command == "") {
                 $this->Command = "search";
             }
         }
@@ -2298,6 +2240,7 @@ class ViewAppointmentReportList extends ViewAppointmentReport implements PageInt
         // Day_Name
 
         // Week_Number
+        $this->Week_Number->CellCssClass = "text-nowrap";
 
         // Month_Number
         $this->Month_Number->CellCssClass = "text-nowrap";
@@ -2312,9 +2255,6 @@ class ViewAppointmentReportList extends ViewAppointmentReport implements PageInt
 
         // View row
         if ($this->RowType == RowType::VIEW) {
-            // APPOINTMENT_ID
-            $this->APPOINTMENT_ID->ViewValue = $this->APPOINTMENT_ID->CurrentValue;
-
             // Patient_Name
             $this->Patient_Name->ViewValue = $this->Patient_Name->CurrentValue;
 
@@ -2330,10 +2270,6 @@ class ViewAppointmentReportList extends ViewAppointmentReport implements PageInt
 
             // Day_Name
             $this->Day_Name->ViewValue = $this->Day_Name->CurrentValue;
-
-            // Week_Number
-            $this->Week_Number->ViewValue = $this->Week_Number->CurrentValue;
-            $this->Week_Number->ViewValue = FormatNumber($this->Week_Number->ViewValue, $this->Week_Number->formatPattern());
 
             // Month_Name
             $this->Month_Name->ViewValue = $this->Month_Name->CurrentValue;
@@ -2352,10 +2288,6 @@ class ViewAppointmentReportList extends ViewAppointmentReport implements PageInt
             } else {
                 $this->STATUS->ViewValue = null;
             }
-
-            // APPOINTMENT_ID
-            $this->APPOINTMENT_ID->HrefValue = "";
-            $this->APPOINTMENT_ID->TooltipValue = "";
 
             // Patient_Name
             $this->Patient_Name->HrefValue = "";
@@ -2377,10 +2309,6 @@ class ViewAppointmentReportList extends ViewAppointmentReport implements PageInt
             $this->Day_Name->HrefValue = "";
             $this->Day_Name->TooltipValue = "";
 
-            // Week_Number
-            $this->Week_Number->HrefValue = "";
-            $this->Week_Number->TooltipValue = "";
-
             // Month_Name
             $this->Month_Name->HrefValue = "";
             $this->Month_Name->TooltipValue = "";
@@ -2397,11 +2325,6 @@ class ViewAppointmentReportList extends ViewAppointmentReport implements PageInt
             $this->STATUS->HrefValue = "";
             $this->STATUS->TooltipValue = "";
         } elseif ($this->RowType == RowType::SEARCH) {
-            // APPOINTMENT_ID
-            $this->APPOINTMENT_ID->setupEditAttributes();
-            $this->APPOINTMENT_ID->EditValue = $this->APPOINTMENT_ID->AdvancedSearch->SearchValue;
-            $this->APPOINTMENT_ID->PlaceHolder = RemoveHtml($this->APPOINTMENT_ID->caption());
-
             // Patient_Name
             $this->Patient_Name->setupEditAttributes();
             $this->Patient_Name->EditValue = !$this->Patient_Name->Raw ? HtmlDecode($this->Patient_Name->AdvancedSearch->SearchValue) : $this->Patient_Name->AdvancedSearch->SearchValue;
@@ -2435,11 +2358,6 @@ class ViewAppointmentReportList extends ViewAppointmentReport implements PageInt
                 }
                 $this->Day_Name->EditValue = explode(Config("FILTER_OPTION_SEPARATOR"), $this->Day_Name->AdvancedSearch->SearchValue);
             }
-
-            // Week_Number
-            $this->Week_Number->setupEditAttributes();
-            $this->Week_Number->EditValue = $this->Week_Number->AdvancedSearch->SearchValue;
-            $this->Week_Number->PlaceHolder = RemoveHtml($this->Week_Number->caption());
 
             // Month_Name
             if ($this->Month_Name->UseFilter && !IsEmpty($this->Month_Name->AdvancedSearch->SearchValue)) {
@@ -2497,13 +2415,11 @@ class ViewAppointmentReportList extends ViewAppointmentReport implements PageInt
     // Load advanced search
     public function loadAdvancedSearch(): void
     {
-        $this->APPOINTMENT_ID->AdvancedSearch->load();
         $this->Patient_Name->AdvancedSearch->load();
         $this->Doctor_Name->AdvancedSearch->load();
         $this->Specialisation->AdvancedSearch->load();
         $this->APPOINTMENT_DATE->AdvancedSearch->load();
         $this->Day_Name->AdvancedSearch->load();
-        $this->Week_Number->AdvancedSearch->load();
         $this->Month_Name->AdvancedSearch->load();
         $this->Year->AdvancedSearch->load();
         $this->APPOINTMENT_TIME->AdvancedSearch->load();

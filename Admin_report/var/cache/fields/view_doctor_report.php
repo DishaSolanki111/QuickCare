@@ -377,7 +377,6 @@
         'HtmlTag' => 'RADIO',
         'IsUpload' => false,
         'InputTextType' => 'text',
-        'Raw' => true,
         'UseFilter' => true,
         'SearchOperators' => [
             '=',

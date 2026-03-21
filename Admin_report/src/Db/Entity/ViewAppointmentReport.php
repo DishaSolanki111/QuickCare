@@ -47,7 +47,7 @@ use InvalidArgumentException;
 #[Table('view_appointment_report')]
 class ViewAppointmentReport extends BaseEntity
 {
-    #[Column(name: 'APPOINTMENT_ID', type: 'integer', insertable: false)]
+    #[Column(name: 'APPOINTMENT_ID', type: 'integer', insertable: false, updatable: false)]
     #[GeneratedValue]
     private int $appointmentId;
 

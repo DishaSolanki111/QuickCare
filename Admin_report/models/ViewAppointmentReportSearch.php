@@ -195,13 +195,13 @@ class ViewAppointmentReportSearch extends ViewAppointmentReport implements PageI
     // Set field visibility
     public function setVisibility(): void
     {
-        $this->APPOINTMENT_ID->setVisibility();
+        $this->APPOINTMENT_ID->Visible = false;
         $this->Patient_Name->setVisibility();
         $this->Doctor_Name->setVisibility();
         $this->Specialisation->setVisibility();
         $this->APPOINTMENT_DATE->setVisibility();
         $this->Day_Name->setVisibility();
-        $this->Week_Number->setVisibility();
+        $this->Week_Number->Visible = false;
         $this->Month_Number->Visible = false;
         $this->Month_Name->setVisibility();
         $this->Year->setVisibility();
@@ -538,13 +538,11 @@ class ViewAppointmentReportSearch extends ViewAppointmentReport implements PageI
     protected function buildAdvancedSearch(): string
     {
         $srchUrl = "";
-        $this->buildSearchUrl($srchUrl, $this->APPOINTMENT_ID); // APPOINTMENT_ID
         $this->buildSearchUrl($srchUrl, $this->Patient_Name); // Patient_Name
         $this->buildSearchUrl($srchUrl, $this->Doctor_Name); // Doctor_Name
         $this->buildSearchUrl($srchUrl, $this->Specialisation); // Specialisation
         $this->buildSearchUrl($srchUrl, $this->APPOINTMENT_DATE); // APPOINTMENT_DATE
         $this->buildSearchUrl($srchUrl, $this->Day_Name); // Day_Name
-        $this->buildSearchUrl($srchUrl, $this->Week_Number); // Week_Number
         $this->buildSearchUrl($srchUrl, $this->Month_Name); // Month_Name
         $this->buildSearchUrl($srchUrl, $this->Year); // Year
         $this->buildSearchUrl($srchUrl, $this->APPOINTMENT_TIME); // APPOINTMENT_TIME
@@ -623,11 +621,6 @@ class ViewAppointmentReportSearch extends ViewAppointmentReport implements PageI
         // Load search values
         $hasValue = false;
 
-        // APPOINTMENT_ID
-        if ($this->APPOINTMENT_ID->AdvancedSearch->get()) {
-            $hasValue = true;
-        }
-
         // Patient_Name
         if ($this->Patient_Name->AdvancedSearch->get()) {
             $hasValue = true;
@@ -650,11 +643,6 @@ class ViewAppointmentReportSearch extends ViewAppointmentReport implements PageI
 
         // Day_Name
         if ($this->Day_Name->AdvancedSearch->get()) {
-            $hasValue = true;
-        }
-
-        // Week_Number
-        if ($this->Week_Number->AdvancedSearch->get()) {
             $hasValue = true;
         }
 
@@ -744,9 +732,6 @@ class ViewAppointmentReportSearch extends ViewAppointmentReport implements PageI
 
         // View row
         if ($this->RowType == RowType::VIEW) {
-            // APPOINTMENT_ID
-            $this->APPOINTMENT_ID->ViewValue = $this->APPOINTMENT_ID->CurrentValue;
-
             // Patient_Name
             $this->Patient_Name->ViewValue = $this->Patient_Name->CurrentValue;
 
@@ -762,10 +747,6 @@ class ViewAppointmentReportSearch extends ViewAppointmentReport implements PageI
 
             // Day_Name
             $this->Day_Name->ViewValue = $this->Day_Name->CurrentValue;
-
-            // Week_Number
-            $this->Week_Number->ViewValue = $this->Week_Number->CurrentValue;
-            $this->Week_Number->ViewValue = FormatNumber($this->Week_Number->ViewValue, $this->Week_Number->formatPattern());
 
             // Month_Name
             $this->Month_Name->ViewValue = $this->Month_Name->CurrentValue;
@@ -784,10 +765,6 @@ class ViewAppointmentReportSearch extends ViewAppointmentReport implements PageI
             } else {
                 $this->STATUS->ViewValue = null;
             }
-
-            // APPOINTMENT_ID
-            $this->APPOINTMENT_ID->HrefValue = "";
-            $this->APPOINTMENT_ID->TooltipValue = "";
 
             // Patient_Name
             $this->Patient_Name->HrefValue = "";
@@ -809,10 +786,6 @@ class ViewAppointmentReportSearch extends ViewAppointmentReport implements PageI
             $this->Day_Name->HrefValue = "";
             $this->Day_Name->TooltipValue = "";
 
-            // Week_Number
-            $this->Week_Number->HrefValue = "";
-            $this->Week_Number->TooltipValue = "";
-
             // Month_Name
             $this->Month_Name->HrefValue = "";
             $this->Month_Name->TooltipValue = "";
@@ -829,11 +802,6 @@ class ViewAppointmentReportSearch extends ViewAppointmentReport implements PageI
             $this->STATUS->HrefValue = "";
             $this->STATUS->TooltipValue = "";
         } elseif ($this->RowType == RowType::SEARCH) {
-            // APPOINTMENT_ID
-            $this->APPOINTMENT_ID->setupEditAttributes();
-            $this->APPOINTMENT_ID->EditValue = $this->APPOINTMENT_ID->AdvancedSearch->SearchValue;
-            $this->APPOINTMENT_ID->PlaceHolder = RemoveHtml($this->APPOINTMENT_ID->caption());
-
             // Patient_Name
             $this->Patient_Name->setupEditAttributes();
             $this->Patient_Name->EditValue = !$this->Patient_Name->Raw ? HtmlDecode($this->Patient_Name->AdvancedSearch->SearchValue) : $this->Patient_Name->AdvancedSearch->SearchValue;
@@ -858,11 +826,6 @@ class ViewAppointmentReportSearch extends ViewAppointmentReport implements PageI
             $this->Day_Name->setupEditAttributes();
             $this->Day_Name->EditValue = !$this->Day_Name->Raw ? HtmlDecode($this->Day_Name->AdvancedSearch->SearchValue) : $this->Day_Name->AdvancedSearch->SearchValue;
             $this->Day_Name->PlaceHolder = RemoveHtml($this->Day_Name->caption());
-
-            // Week_Number
-            $this->Week_Number->setupEditAttributes();
-            $this->Week_Number->EditValue = $this->Week_Number->AdvancedSearch->SearchValue;
-            $this->Week_Number->PlaceHolder = RemoveHtml($this->Week_Number->caption());
 
             // Month_Name
             $this->Month_Name->setupEditAttributes();
@@ -900,14 +863,8 @@ class ViewAppointmentReportSearch extends ViewAppointmentReport implements PageI
         if (!Config("SERVER_VALIDATE")) {
             return true;
         }
-        if (!CheckInteger($this->APPOINTMENT_ID->AdvancedSearch->SearchValue)) {
-            $this->APPOINTMENT_ID->addErrorMessage($this->APPOINTMENT_ID->getErrorMessage(false));
-        }
         if (!CheckDate($this->APPOINTMENT_DATE->AdvancedSearch->SearchValue, $this->APPOINTMENT_DATE->formatPattern())) {
             $this->APPOINTMENT_DATE->addErrorMessage($this->APPOINTMENT_DATE->getErrorMessage(false));
-        }
-        if (!CheckInteger($this->Week_Number->AdvancedSearch->SearchValue)) {
-            $this->Week_Number->addErrorMessage($this->Week_Number->getErrorMessage(false));
         }
         if (!CheckInteger($this->Year->AdvancedSearch->SearchValue)) {
             $this->Year->addErrorMessage($this->Year->getErrorMessage(false));
@@ -931,13 +888,11 @@ class ViewAppointmentReportSearch extends ViewAppointmentReport implements PageI
     // Load advanced search
     public function loadAdvancedSearch(): void
     {
-        $this->APPOINTMENT_ID->AdvancedSearch->load();
         $this->Patient_Name->AdvancedSearch->load();
         $this->Doctor_Name->AdvancedSearch->load();
         $this->Specialisation->AdvancedSearch->load();
         $this->APPOINTMENT_DATE->AdvancedSearch->load();
         $this->Day_Name->AdvancedSearch->load();
-        $this->Week_Number->AdvancedSearch->load();
         $this->Month_Name->AdvancedSearch->load();
         $this->Year->AdvancedSearch->load();
         $this->APPOINTMENT_TIME->AdvancedSearch->load();

@@ -400,9 +400,6 @@ $Page->renderListOptions();
 // Render list options (header, left)
 $Page->ListOptions->render("header", "left");
 ?>
-<?php if ($Page->APPOINTMENT_ID->Visible) { // APPOINTMENT_ID ?>
-        <th data-name="APPOINTMENT_ID" class="<?= $Page->APPOINTMENT_ID->headerCellClass() ?>"><div id="elh_view_appointment_report_APPOINTMENT_ID" class="view_appointment_report_APPOINTMENT_ID"><?= $Page->renderFieldHeader($Page->APPOINTMENT_ID) ?></div></th>
-<?php } ?>
 <?php if ($Page->Patient_Name->Visible) { // Patient_Name ?>
         <th data-name="Patient_Name" class="<?= $Page->Patient_Name->headerCellClass() ?>"><div id="elh_view_appointment_report_Patient_Name" class="view_appointment_report_Patient_Name"><?= $Page->renderFieldHeader($Page->Patient_Name) ?></div></th>
 <?php } ?>
@@ -417,9 +414,6 @@ $Page->ListOptions->render("header", "left");
 <?php } ?>
 <?php if ($Page->Day_Name->Visible) { // Day_Name ?>
         <th data-name="Day_Name" class="<?= $Page->Day_Name->headerCellClass() ?>"><div id="elh_view_appointment_report_Day_Name" class="view_appointment_report_Day_Name"><?= $Page->renderFieldHeader($Page->Day_Name) ?></div></th>
-<?php } ?>
-<?php if ($Page->Week_Number->Visible) { // Week_Number ?>
-        <th data-name="Week_Number" class="<?= $Page->Week_Number->headerCellClass() ?>"><div id="elh_view_appointment_report_Week_Number" class="view_appointment_report_Week_Number"><?= $Page->renderFieldHeader($Page->Week_Number) ?></div></th>
 <?php } ?>
 <?php if ($Page->Month_Name->Visible) { // Month_Name ?>
         <th data-name="Month_Name" class="<?= $Page->Month_Name->headerCellClass() ?>"><div id="elh_view_appointment_report_Month_Name" class="view_appointment_report_Month_Name"><?= $Page->renderFieldHeader($Page->Month_Name) ?></div></th>
@@ -448,14 +442,6 @@ while ($Page->getRowData()) {
 // Render list options (body, left)
 $Page->ListOptions->render("body", "left", $Page->RowCount);
 ?>
-    <?php if ($Page->APPOINTMENT_ID->Visible) { // APPOINTMENT_ID ?>
-        <td data-name="APPOINTMENT_ID"<?= $Page->APPOINTMENT_ID->cellAttributes() ?>>
-<span id="el<?= $Page->RowIndex == '$rowindex$' ? '$rowindex$' : $Page->RowCount ?>_view_appointment_report_APPOINTMENT_ID" class="el_view_appointment_report_APPOINTMENT_ID">
-<span<?= $Page->APPOINTMENT_ID->viewAttributes() ?>>
-<?= $Page->APPOINTMENT_ID->getViewValue() ?></span>
-</span>
-</td>
-    <?php } ?>
     <?php if ($Page->Patient_Name->Visible) { // Patient_Name ?>
         <td data-name="Patient_Name"<?= $Page->Patient_Name->cellAttributes() ?>>
 <span id="el<?= $Page->RowIndex == '$rowindex$' ? '$rowindex$' : $Page->RowCount ?>_view_appointment_report_Patient_Name" class="el_view_appointment_report_Patient_Name">
@@ -493,14 +479,6 @@ $Page->ListOptions->render("body", "left", $Page->RowCount);
 <span id="el<?= $Page->RowIndex == '$rowindex$' ? '$rowindex$' : $Page->RowCount ?>_view_appointment_report_Day_Name" class="el_view_appointment_report_Day_Name">
 <span<?= $Page->Day_Name->viewAttributes() ?>>
 <?= $Page->Day_Name->getViewValue() ?></span>
-</span>
-</td>
-    <?php } ?>
-    <?php if ($Page->Week_Number->Visible) { // Week_Number ?>
-        <td data-name="Week_Number"<?= $Page->Week_Number->cellAttributes() ?>>
-<span id="el<?= $Page->RowIndex == '$rowindex$' ? '$rowindex$' : $Page->RowCount ?>_view_appointment_report_Week_Number" class="el_view_appointment_report_Week_Number">
-<span<?= $Page->Week_Number->viewAttributes() ?>>
-<?= $Page->Week_Number->getViewValue() ?></span>
 </span>
 </td>
     <?php } ?>

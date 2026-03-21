@@ -16,7 +16,7 @@ if (!\class_exists(PHPMaker2026_Project2_KernelDevDebugContainer::class, false))
 
 return new \ContainerJw01ix8\PHPMaker2026_Project2_KernelDevDebugContainer([
     'container.build_hash' => 'Jw01ix8',
-    'container.build_id' => '0116c68f',
-    'container.build_time' => 1774111985,
+    'container.build_id' => '32474a95',
+    'container.build_time' => 1774116451,
     'container.runtime_mode' => \in_array(\PHP_SAPI, ['cli', 'phpdbg', 'embed'], true) ? 'web=0' : 'web=1',
 ], __DIR__.\DIRECTORY_SEPARATOR.'ContainerJw01ix8');

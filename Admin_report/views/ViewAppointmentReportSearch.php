@@ -22,13 +22,11 @@ ew.on("wrapper", () => {
 
         // Add fields
         .addFields([
-            ["APPOINTMENT_ID", [ew.Validators.integer], fields.APPOINTMENT_ID.isInvalid],
             ["Patient_Name", [], fields.Patient_Name.isInvalid],
             ["Doctor_Name", [], fields.Doctor_Name.isInvalid],
             ["Specialisation", [], fields.Specialisation.isInvalid],
             ["APPOINTMENT_DATE", [ew.Validators.datetime(fields.APPOINTMENT_DATE.clientFormatPattern)], fields.APPOINTMENT_DATE.isInvalid],
             ["Day_Name", [], fields.Day_Name.isInvalid],
-            ["Week_Number", [ew.Validators.integer], fields.Week_Number.isInvalid],
             ["Month_Name", [], fields.Month_Name.isInvalid],
             ["Year", [ew.Validators.integer], fields.Year.isInvalid],
             ["APPOINTMENT_TIME", [ew.Validators.time(fields.APPOINTMENT_TIME.clientFormatPattern)], fields.APPOINTMENT_TIME.isInvalid],
@@ -83,26 +81,6 @@ ew.on("head", function () {
 <input type="hidden" name="modal" value="1">
 <?php } ?>
 <div class="ew-search-div"><!-- page* -->
-<?php if ($Page->APPOINTMENT_ID->Visible) { // APPOINTMENT_ID ?>
-    <div id="r_APPOINTMENT_ID" class="row"<?= $Page->APPOINTMENT_ID->rowAttributes() ?>>
-        <label for="x_APPOINTMENT_ID" class="<?= $Page->LeftColumnClass ?>"><span id="elh_view_appointment_report_APPOINTMENT_ID"><?= $Page->APPOINTMENT_ID->caption() ?></span>
-        <span class="ew-search-operator">
-        <?= Language()->phrase("=") ?>
-        <input type="hidden" name="z_APPOINTMENT_ID" id="z_APPOINTMENT_ID" value="=">
-        </span>
-        </label>
-        <div class="<?= $Page->RightColumnClass ?>">
-            <div<?= $Page->APPOINTMENT_ID->cellAttributes() ?>>
-                <div class="d-flex align-items-start">
-                <span id="el_view_appointment_report_APPOINTMENT_ID" class="ew-search-field ew-search-field-single">
-                <input type="<?= $Page->APPOINTMENT_ID->getInputTextType() ?>" name="x_APPOINTMENT_ID" id="x_APPOINTMENT_ID" data-table="view_appointment_report" data-field="x_APPOINTMENT_ID" value="<?= $Page->APPOINTMENT_ID->getEditValue() ?>" placeholder="<?= HtmlEncode($Page->APPOINTMENT_ID->getPlaceHolder()) ?>" data-format-pattern="<?= HtmlEncode($Page->APPOINTMENT_ID->formatPattern()) ?>"<?= $Page->APPOINTMENT_ID->editAttributes() ?>>
-                <div class="invalid-feedback"><?= $Page->APPOINTMENT_ID->getErrorMessage(false) ?></div>
-                </span>
-                </div>
-            </div>
-        </div>
-    </div>
-<?php } ?>
 <?php if ($Page->Patient_Name->Visible) { // Patient_Name ?>
     <div id="r_Patient_Name" class="row"<?= $Page->Patient_Name->rowAttributes() ?>>
         <label for="x_Patient_Name" class="<?= $Page->LeftColumnClass ?>"><span id="elh_view_appointment_report_Patient_Name"><?= $Page->Patient_Name->caption() ?></span>
@@ -231,26 +209,6 @@ ew.on("head", function () {
                 <span id="el_view_appointment_report_Day_Name" class="ew-search-field ew-search-field-single">
                 <input type="<?= $Page->Day_Name->getInputTextType() ?>" name="x_Day_Name" id="x_Day_Name" data-table="view_appointment_report" data-field="x_Day_Name" value="<?= $Page->Day_Name->getEditValue() ?>" size="30" maxlength="9" placeholder="<?= HtmlEncode($Page->Day_Name->getPlaceHolder()) ?>" data-format-pattern="<?= HtmlEncode($Page->Day_Name->formatPattern()) ?>"<?= $Page->Day_Name->editAttributes() ?>>
                 <div class="invalid-feedback"><?= $Page->Day_Name->getErrorMessage(false) ?></div>
-                </span>
-                </div>
-            </div>
-        </div>
-    </div>
-<?php } ?>
-<?php if ($Page->Week_Number->Visible) { // Week_Number ?>
-    <div id="r_Week_Number" class="row"<?= $Page->Week_Number->rowAttributes() ?>>
-        <label for="x_Week_Number" class="<?= $Page->LeftColumnClass ?>"><span id="elh_view_appointment_report_Week_Number"><?= $Page->Week_Number->caption() ?></span>
-        <span class="ew-search-operator">
-        <?= Language()->phrase("=") ?>
-        <input type="hidden" name="z_Week_Number" id="z_Week_Number" value="=">
-        </span>
-        </label>
-        <div class="<?= $Page->RightColumnClass ?>">
-            <div<?= $Page->Week_Number->cellAttributes() ?>>
-                <div class="d-flex align-items-start">
-                <span id="el_view_appointment_report_Week_Number" class="ew-search-field ew-search-field-single">
-                <input type="<?= $Page->Week_Number->getInputTextType() ?>" name="x_Week_Number" id="x_Week_Number" data-table="view_appointment_report" data-field="x_Week_Number" value="<?= $Page->Week_Number->getEditValue() ?>" size="30" placeholder="<?= HtmlEncode($Page->Week_Number->getPlaceHolder()) ?>" data-format-pattern="<?= HtmlEncode($Page->Week_Number->formatPattern()) ?>"<?= $Page->Week_Number->editAttributes() ?>>
-                <div class="invalid-feedback"><?= $Page->Week_Number->getErrorMessage(false) ?></div>
                 </span>
                 </div>
             </div>
