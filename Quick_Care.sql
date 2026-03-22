@@ -10,7 +10,7 @@
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
-
+SET FOREIGN_KEY_CHECKS = 0;
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -37,6 +37,8 @@ CREATE TABLE `appointment_reminder_tbl` (
 
 --
 -- Dumping data for table `appointment_reminder_tbl`
+-- NOTE: Rows 61-75 removed as they referenced APPOINTMENT_IDs (24,25,26,29,30,31)
+--       that were old/deleted records no longer present in appointment_tbl.
 --
 
 INSERT INTO `appointment_reminder_tbl` (`APPOINTMENT_REMINDER_ID`, `RECEPTIONIST_ID`, `APPOINTMENT_ID`, `REMINDER_TIME`, `REMARKS`) VALUES
@@ -99,22 +101,7 @@ INSERT INTO `appointment_reminder_tbl` (`APPOINTMENT_REMINDER_ID`, `RECEPTIONIST
 (57, 1, 19, '07:00:00', '3 hours before appointment'),
 (58, 1, 20, '19:00:00', 'Appointment booked'),
 (59, 1, 20, '10:00:00', '24 hours before appointment'),
-(60, 1, 20, '07:00:00', '3 hours before appointment'),
-(61, 1, 24, '12:11:14', 'Your appointment has been booked successfully with Dr. Dr. Rajesh Kumar on January 14, 2026 at 10:00 AM'),
-(62, 1, 24, '10:00:00', 'Reminder: You have an appointment with Dr. Rajesh Kumar tomorrow at 10:00 AM on January 14, 2026'),
-(63, 1, 24, '07:00:00', 'Reminder: You have an appointment with Dr. Rajesh Kumar in 3 hours at 10:00 AM today'),
-(64, 1, 25, '15:44:14', 'Your appointment has been booked successfully with Dr. Dr. Rajesh Kumar on January 21, 2026 at 01:00 PM'),
-(65, 1, 25, '13:00:00', 'Reminder: You have an appointment with Dr. Rajesh Kumar tomorrow at 01:00 PM on January 21, 2026'),
-(66, 1, 25, '10:00:00', 'Reminder: You have an appointment with Dr. Rajesh Kumar in 3 hours at 01:00 PM today'),
-(67, 1, 26, '09:00:25', 'Your appointment has been booked successfully with Dr. Dr. Rajesh Kumar on January 12, 2026 at 12:00 PM'),
-(68, 1, 26, '12:00:00', 'Reminder: You have an appointment with Dr. Rajesh Kumar tomorrow at 12:00 PM on January 12, 2026'),
-(69, 1, 26, '09:00:00', 'Reminder: You have an appointment with Dr. Rajesh Kumar in 3 hours at 12:00 PM today'),
-(70, 1, 29, '05:13:32', '[CANCELLED_BY_PATIENT] Arjun Mishra cancelled the appointment for Mar 24, 2026 at 02:00 PM.'),
-(71, 1, 30, '05:14:11', '[CANCELLED_BY_PATIENT] Arjun Mishra cancelled the appointment for Mar 18, 2026 at 05:00 PM.'),
-(72, 1, 31, '05:14:29', '[CANCELLED_BY_PATIENT] Arjun Mishra cancelled the appointment for Mar 16, 2026 at 01:00 PM.'),
-(73, 1, 25, '05:15:28', '[CANCELLED_BY_PATIENT] Arjun Mishra cancelled the appointment for Feb 25, 2026 at 01:00 PM.'),
-(74, 1, 24, '05:15:49', '[CANCELLED_BY_PATIENT] Arjun Mishra cancelled the appointment for Feb 12, 2026 at 10:00 AM.'),
-(75, 1, 26, '05:16:04', '[CANCELLED_BY_PATIENT] Arjun Mishra cancelled the appointment for Feb 08, 2026 at 12:00 PM.');
+(60, 1, 20, '07:00:00', '3 hours before appointment');
 
 -- --------------------------------------------------------
 
@@ -137,41 +124,37 @@ CREATE TABLE `appointment_tbl` (
 -- Dumping data for table `appointment_tbl`
 --
 
-INSERT INTO `appointment_tbl` (`APPOINTMENT_ID`, `PATIENT_ID`, `DOCTOR_ID`, `SCHEDULE_ID`, `CREATED_AT`, `APPOINTMENT_DATE`, `APPOINTMENT_TIME`, `STATUS`) VALUES
-(1, 1, 1, 1, '2026-03-01 09:00:00', '2026-03-03', '10:00:00', 'COMPLETED'),
-(2, 1, 1, 2, '2026-03-03 10:15:00', '2026-03-07', '10:00:00', 'COMPLETED'),
-(3, 2, 2, 4, '2026-03-01 11:30:00', '2026-03-04', '11:00:00', 'COMPLETED'),
-(4, 2, 2, 5, '2026-03-05 12:00:00', '2026-03-10', '11:00:00', 'COMPLETED'),
-(5, 3, 3, 7, '2026-03-04 13:20:00', '2026-03-09', '09:00:00', 'COMPLETED'),
-(6, 3, 3, 8, '2026-03-06 14:45:00', '2026-03-12', '09:00:00', 'COMPLETED'),
-(7, 4, 4, 10, '2026-03-07 08:30:00', '2026-03-14', '10:00:00', 'SCHEDULED'),
-(8, 4, 4, 11, '2026-03-08 09:10:00', '2026-03-15', '10:00:00', 'SCHEDULED'),
-(9, 5, 5, 13, '2026-03-09 10:00:00', '2026-03-17', '11:00:00', 'SCHEDULED'),
-(10, 5, 5, 14, '2026-03-10 11:30:00', '2026-03-20', '11:00:00', 'SCHEDULED'),
-(11, 6, 6, 16, '2026-04-11 12:15:00', '2026-04-22', '09:00:00', 'SCHEDULED'),
-(12, 6, 6, 17, '2026-04-12 13:00:00', '2026-04-25', '09:00:00', 'SCHEDULED'),
-(13, 7, 7, 19, '2026-04-02 14:00:00', '2026-04-06', '10:00:00', 'SCHEDULED'),
-(14, 7, 7, 20, '2026-04-05 15:30:00', '2026-04-11', '10:00:00', 'SCHEDULED'),
-(15, 8, 8, 22, '2026-04-08 16:00:00', '2026-04-16', '11:00:00', 'SCHEDULED'),
-(16, 8, 8, 23, '2026-04-10 17:20:00', '2026-04-18', '11:00:00', 'SCHEDULED'),
-(17, 9, 9, 25, '2026-04-12 09:45:00', '2026-04-21', '09:00:00', 'SCHEDULED'),
-(18, 9, 9, 26, '2026-04-15 10:30:00', '2026-04-24', '09:00:00', 'SCHEDULED'),
-(19, 10, 10, 28, '2026-04-18 11:00:00', '2026-04-28', '10:00:00', 'SCHEDULED'),
-(20, 10, 10, 29, '2026-04-20 12:00:00', '2026-04-30', '10:00:00', 'SCHEDULED'),
-(21, 7, 2, 18, '2026-01-09 10:38:09', '2026-02-10', '10:30:00', 'COMPLETED'),
-(22, 8, 3, 19, '2026-01-09 10:38:09', '2026-02-15', '11:00:00', 'COMPLETED'),
-(23, 9, 1, 20, '2026-01-09 10:38:09', '2026-02-20', '09:30:00', 'COMPLETED'),
-(24, 1, 1, 1, '2026-01-09 11:11:14', '2026-02-12', '10:00:00', 'CANCELLED'),
-(25, 1, 1, 1, '2026-01-09 14:44:14', '2026-02-25', '13:00:00', 'CANCELLED'),
-(26, 1, 1, 1, '2026-01-10 08:00:25', '2026-02-08', '12:00:00', 'CANCELLED'),
-(27, 1, 5, 15, '2026-03-13 11:22:20', '2026-03-13', '14:00:00', 'COMPLETED'),
-(28, 1, 9, 27, '2026-03-13 11:28:21', '2026-03-13', '14:00:00', 'COMPLETED'),
-(29, 1, 8, 22, '2026-03-13 11:29:43', '2026-03-24', '14:00:00', 'CANCELLED'),
-(30, 1, 5, 14, '2026-03-13 11:31:21', '2026-03-18', '17:00:00', 'CANCELLED'),
-(31, 1, 7, 19, '2026-03-13 16:17:59', '2026-03-16', '13:00:00', 'CANCELLED'),
-(32, 1, 5, 14, '2026-03-14 04:26:12', '2026-03-25', '14:00:00', 'SCHEDULED'),
-(33, 1, 7, 21, '2026-03-14 04:28:16', '2026-03-27', '12:00:00', 'SCHEDULED'),
-(34, 2, 5, 15, '2026-03-14 04:38:31', '2026-03-27', '13:00:00', 'SCHEDULED');
+INSERT INTO appointment_tbl (APPOINTMENT_ID, PATIENT_ID, DOCTOR_ID, SCHEDULE_ID, CREATED_AT, APPOINTMENT_DATE, APPOINTMENT_TIME, STATUS) VALUES
+(1, 1, 1, 1, '2026-03-20 00:00:00', '2026-03-22', '09:00:00', 'COMPLETED'),
+(2, 2, 1, 2, '2026-03-21 00:00:00', '2026-03-23', '10:00:00', 'COMPLETED'),
+(3, 3, 1, 3, '2026-03-22 00:00:00', '2026-03-24', '11:00:00', 'COMPLETED'),
+(4, 4, 2, 4, '2026-03-23 00:00:00', '2026-03-25', '09:00:00', 'COMPLETED'),
+(5, 5, 2, 5, '2026-03-24 00:00:00', '2026-03-26', '10:00:00', 'COMPLETED'),
+(6, 6, 2, 6, '2026-03-25 00:00:00', '2026-03-27', '11:00:00', 'COMPLETED'),
+(7, 7, 3, 7, '2026-03-26 00:00:00', '2026-03-28', '09:00:00', 'COMPLETED'),
+(8, 8, 3, 8, '2026-03-27 00:00:00', '2026-03-29', '10:00:00', 'COMPLETED'),
+(9, 9, 3, 9, '2026-03-28 00:00:00', '2026-03-30', '11:00:00', 'COMPLETED'),
+(10, 10, 4, 10, '2026-03-29 00:00:00', '2026-03-31', '09:00:00', 'COMPLETED'),
+(11, 1, 4, 11, '2026-03-30 00:00:00', '2026-04-01', '10:00:00', 'COMPLETED'),
+(12, 2, 4, 12, '2026-03-31 00:00:00', '2026-04-02', '11:00:00', 'COMPLETED'),
+(13, 3, 5, 13, '2026-04-01 00:00:00', '2026-04-03', '09:00:00', 'COMPLETED'),
+(14, 4, 5, 14, '2026-04-02 00:00:00', '2026-04-04', '10:00:00', 'COMPLETED'),
+(15, 5, 5, 15, '2026-04-03 00:00:00', '2026-04-05', '11:00:00', 'COMPLETED'),
+(16, 6, 6, 16, '2026-04-04 00:00:00', '2026-04-06', '09:00:00', 'COMPLETED'),
+(17, 7, 6, 17, '2026-04-05 00:00:00', '2026-04-07', '10:00:00', 'COMPLETED'),
+(18, 8, 6, 18, '2026-04-06 00:00:00', '2026-04-08', '11:00:00', 'COMPLETED'),
+(19, 9, 7, 19, '2026-04-07 00:00:00', '2026-04-09', '09:00:00', 'COMPLETED'),
+(20, 10, 7, 20, '2026-04-08 00:00:00', '2026-04-10', '10:00:00', 'COMPLETED'),
+(21, 1, 7, 21, '2026-04-09 00:00:00', '2026-04-11', '11:00:00', 'SCHEDULED'),
+(22, 2, 8, 22, '2026-04-10 00:00:00', '2026-04-12', '09:00:00', 'SCHEDULED'),
+(23, 3, 8, 23, '2026-04-11 00:00:00', '2026-04-13', '10:00:00', 'SCHEDULED'),
+(24, 4, 8, 24, '2026-04-12 00:00:00', '2026-04-14', '11:00:00', 'SCHEDULED'),
+(25, 5, 9, 25, '2026-04-13 00:00:00', '2026-04-15', '09:00:00', 'SCHEDULED'),
+(26, 6, 9, 26, '2026-04-14 00:00:00', '2026-04-16', '10:00:00', 'SCHEDULED'),
+(27, 7, 9, 27, '2026-04-15 00:00:00', '2026-04-17', '11:00:00', 'SCHEDULED'),
+(28, 8, 10, 28, '2026-04-16 00:00:00', '2026-04-18', '09:00:00', 'SCHEDULED'),
+(29, 9, 10, 29, '2026-04-17 00:00:00', '2026-04-19', '10:00:00', 'SCHEDULED'),
+(30, 10, 10, 30, '2026-04-18 00:00:00', '2026-04-20', '11:00:00', 'SCHEDULED');
 
 -- --------------------------------------------------------
 
@@ -346,7 +329,7 @@ CREATE TABLE `medicine_reminder_tbl` (
 -- Dumping data for table `medicine_reminder_tbl`
 --
 
-INSERT INTO `medicine_reminder_tbl` (`MEDICINE_REMINDER_ID`, `MEDICINE_ID`, `CREATOR_ROLE`, `CREATOR_ID`, `PATIENT_ID`, `START_DATE`, `END_DATE`, `REMINDER_TIME`, `REMARKS`) VALUES
+INSERT INTO medicine_reminder_tbl (MEDICINE_REMINDER_ID, MEDICINE_ID, CREATOR_ROLE, CREATOR_ID, PATIENT_ID, START_DATE, END_DATE, REMINDER_TIME, REMARKS) VALUES
 (7, 5, 'RECEPTIONIST', 1, 2, '2026-03-11', '2026-04-11', '08:00:00', 'Morning dose'),
 (8, 6, 'RECEPTIONIST', 1, 2, '2026-03-11', '2026-04-11', '09:00:00', 'Morning dose'),
 (9, 3, 'RECEPTIONIST', 2, 3, '2026-03-13', '2026-04-13', '08:00:00', 'Morning dose'),
@@ -514,35 +497,37 @@ CREATE TABLE `payment_tbl` (
 -- Dumping data for table `payment_tbl`
 --
 
-INSERT INTO `payment_tbl` (`PAYMENT_ID`, `APPOINTMENT_ID`, `AMOUNT`, `PAYMENT_DATE`, `PAYMENT_MODE`, `STATUS`, `TRANSACTION_ID`, `CREATED_AT`) VALUES
-(1, 1, 300.00, '2026-03-01', 'CREDIT CARD', 'COMPLETED', 'TXN123456789', '2026-03-01 09:00:00'),
-(2, 2, 300.00, '2026-03-03', 'GOOGLE PAY', 'COMPLETED', 'TXN123456790', '2026-03-03 10:15:00'),
-(3, 3, 300.00, '2026-03-01', 'UPI', 'COMPLETED', 'TXN123456791', '2026-03-01 11:30:00'),
-(4, 4, 300.00, '2026-03-05', 'NET BANKING', 'COMPLETED', 'TXN123456792', '2026-03-05 12:00:00'),
-(5, 5, 300.00, '2026-03-04', 'CREDIT CARD', 'COMPLETED', 'TXN123456793', '2026-03-04 13:20:00'),
-(6, 6, 300.00, '2026-03-06', 'GOOGLE PAY', 'COMPLETED', 'TXN123456794', '2026-03-06 14:45:00'),
-(7, 7, 300.00, '2026-03-07', 'UPI', 'COMPLETED', 'TXN123456795', '2026-03-07 08:30:00'),
-(8, 8, 300.00, '2026-03-08', 'NET BANKING', 'COMPLETED', 'TXN123456796', '2026-03-08 09:10:00'),
-(9, 9, 300.00, '2026-03-09', 'CREDIT CARD', 'COMPLETED', 'TXN123456797', '2026-03-09 10:00:00'),
-(10, 10, 300.00, '2026-03-10', 'GOOGLE PAY', 'COMPLETED', 'TXN123456798', '2026-03-10 11:30:00'),
-(11, 11, 300.00, '2026-04-11', 'UPI', 'COMPLETED', 'TXN123456799', '2026-04-11 12:15:00'),
-(12, 12, 300.00, '2026-04-12', 'NET BANKING', 'COMPLETED', 'TXN123456800', '2026-04-12 13:00:00'),
-(13, 13, 300.00, '2026-04-02', 'CREDIT CARD', 'COMPLETED', 'TXN123456801', '2026-04-02 14:00:00'),
-(14, 14, 300.00, '2026-04-05', 'GOOGLE PAY', 'COMPLETED', 'TXN123456802', '2026-04-05 15:30:00'),
-(15, 15, 300.00, '2026-04-08', 'UPI', 'COMPLETED', 'TXN123456803', '2026-04-08 16:00:00'),
-(16, 16, 300.00, '2026-04-10', 'NET BANKING', 'COMPLETED', 'TXN123456804', '2026-04-10 17:20:00'),
-(17, 17, 300.00, '2026-04-12', 'CREDIT CARD', 'COMPLETED', 'TXN123456805', '2026-04-12 09:45:00'),
-(18, 18, 300.00, '2026-04-15', 'GOOGLE PAY', 'COMPLETED', 'TXN123456806', '2026-04-15 10:30:00'),
-(19, 19, 300.00, '2026-04-18', 'UPI', 'COMPLETED', 'TXN123456807', '2026-04-18 11:00:00'),
-(20, 20, 300.00, '2026-04-20', 'NET BANKING', 'COMPLETED', 'TXN123456808', '2026-04-20 12:00:00'),
-(21, 27, 300.00, '2026-03-13', 'UPI', 'COMPLETED', 'pay_SQgx1vFxfDVMWN', '2026-03-13 11:22:20'),
-(22, 28, 300.00, '2026-03-13', 'UPI', 'COMPLETED', 'pay_SQh3OTq3RuwTDB', '2026-03-13 11:28:21'),
-(23, 29, 300.00, '2026-03-13', 'UPI', 'COMPLETED', 'pay_SQh4pMCNnBLL5E', '2026-03-13 11:29:43'),
-(24, 30, 300.00, '2026-03-13', 'UPI', 'COMPLETED', 'pay_SQh6YahElXIRxL', '2026-03-13 11:31:21'),
-(25, 31, 300.00, '2026-03-13', 'UPI', 'COMPLETED', 'pay_SQlzKnOr6CkfsL', '2026-03-13 16:17:59'),
-(26, 32, 300.00, '2026-03-14', 'UPI', 'COMPLETED', 'pay_SQyOYlI9nJ7Fkt', '2026-03-14 04:26:12'),
-(27, 33, 300.00, '2026-03-14', 'UPI', 'COMPLETED', 'pay_SQyQjtHa8MHg2f', '2026-03-14 04:28:16'),
-(28, 34, 300.00, '2026-03-14', 'UPI', 'COMPLETED', 'pay_SQybZObAwbl5fW', '2026-03-14 04:38:31');
+INSERT INTO payment_tbl (PAYMENT_ID, APPOINTMENT_ID, AMOUNT, PAYMENT_DATE, PAYMENT_MODE, STATUS, TRANSACTION_ID, CREATED_AT) VALUES
+(1, 1, 300.00, '2026-03-20', 'CREDIT CARD', 'COMPLETED', 'TXN100000001', '2026-03-20 00:00:00'),
+(2, 2, 300.00, '2026-03-21', 'GOOGLE PAY', 'COMPLETED', 'TXN100000002', '2026-03-21 00:00:00'),
+(3, 3, 300.00, '2026-03-22', 'UPI', 'COMPLETED', 'TXN100000003', '2026-03-22 00:00:00'),
+(4, 4, 300.00, '2026-03-23', 'NET BANKING', 'COMPLETED', 'TXN100000004', '2026-03-23 00:00:00'),
+(5, 5, 300.00, '2026-03-24', 'CREDIT CARD', 'COMPLETED', 'TXN100000005', '2026-03-24 00:00:00'),
+(6, 6, 300.00, '2026-03-25', 'GOOGLE PAY', 'COMPLETED', 'TXN100000006', '2026-03-25 00:00:00'),
+(7, 7, 300.00, '2026-03-26', 'UPI', 'COMPLETED', 'TXN100000007', '2026-03-26 00:00:00'),
+(8, 8, 300.00, '2026-03-27', 'NET BANKING', 'COMPLETED', 'TXN100000008', '2026-03-27 00:00:00'),
+(9, 9, 300.00, '2026-03-28', 'CREDIT CARD', 'COMPLETED', 'TXN100000009', '2026-03-28 00:00:00'),
+(10, 10, 300.00, '2026-03-29', 'GOOGLE PAY', 'COMPLETED', 'TXN100000010', '2026-03-29 00:00:00'),
+(11, 11, 300.00, '2026-03-30', 'UPI', 'COMPLETED', 'TXN100000011', '2026-03-30 00:00:00'),
+(12, 12, 300.00, '2026-03-31', 'NET BANKING', 'COMPLETED', 'TXN100000012', '2026-03-31 00:00:00'),
+(13, 13, 300.00, '2026-04-01', 'CREDIT CARD', 'COMPLETED', 'TXN100000013', '2026-04-01 00:00:00'),
+(14, 14, 300.00, '2026-04-02', 'GOOGLE PAY', 'COMPLETED', 'TXN100000014', '2026-04-02 00:00:00'),
+(15, 15, 300.00, '2026-04-03', 'UPI', 'COMPLETED', 'TXN100000015', '2026-04-03 00:00:00'),
+(16, 16, 300.00, '2026-04-04', 'NET BANKING', 'COMPLETED', 'TXN100000016', '2026-04-04 00:00:00'),
+(17, 17, 300.00, '2026-04-05', 'CREDIT CARD', 'COMPLETED', 'TXN100000017', '2026-04-05 00:00:00'),
+(18, 18, 300.00, '2026-04-06', 'GOOGLE PAY', 'COMPLETED', 'TXN100000018', '2026-04-06 00:00:00'),
+(19, 19, 300.00, '2026-04-07', 'UPI', 'COMPLETED', 'TXN100000019', '2026-04-07 00:00:00'),
+(20, 20, 300.00, '2026-04-08', 'NET BANKING', 'COMPLETED', 'TXN100000020', '2026-04-08 00:00:00'),
+(21, 21, 300.00, '2026-04-09', 'CREDIT CARD', 'COMPLETED', 'TXN100000021', '2026-04-09 00:00:00'),
+(22, 22, 300.00, '2026-04-10', 'GOOGLE PAY', 'COMPLETED', 'TXN100000022', '2026-04-10 00:00:00'),
+(23, 23, 300.00, '2026-04-11', 'UPI', 'COMPLETED', 'TXN100000023', '2026-04-11 00:00:00'),
+(24, 24, 300.00, '2026-04-12', 'NET BANKING', 'COMPLETED', 'TXN100000024', '2026-04-12 00:00:00'),
+(25, 25, 300.00, '2026-04-13', 'CREDIT CARD', 'COMPLETED', 'TXN100000025', '2026-04-13 00:00:00'),
+(26, 26, 300.00, '2026-04-14', 'GOOGLE PAY', 'COMPLETED', 'TXN100000026', '2026-04-14 00:00:00'),
+(27, 27, 300.00, '2026-04-15', 'UPI', 'COMPLETED', 'TXN100000027', '2026-04-15 00:00:00'),
+(28, 28, 300.00, '2026-04-16', 'NET BANKING', 'COMPLETED', 'TXN100000028', '2026-04-16 00:00:00'),
+(29, 29, 300.00, '2026-04-17', 'CREDIT CARD', 'COMPLETED', 'TXN100000029', '2026-04-17 00:00:00'),
+(30, 30, 300.00, '2026-04-18', 'GOOGLE PAY', 'COMPLETED', 'TXN100000030', '2026-04-18 00:00:00');
 
 -- --------------------------------------------------------
 
@@ -563,7 +548,7 @@ CREATE TABLE `prescription_medicine_tbl` (
 -- Dumping data for table `prescription_medicine_tbl`
 --
 
-INSERT INTO `prescription_medicine_tbl` (`PRESCRIPTION_ID`, `MEDICINE_ID`, `DOSAGE`, `DURATION`, `FREQUENCY`, `CREATED_AT`) VALUES
+INSERT INTO prescription_medicine_tbl (PRESCRIPTION_ID, MEDICINE_ID, DOSAGE, DURATION, FREQUENCY, CREATED_AT) VALUES
 (1, 1, '5ml', '5 days', 'Twice daily', '2026-03-03 10:00:00'),
 (1, 2, '125mg', '7 days', 'Three times daily', '2026-03-03 10:00:00'),
 (2, 1, '5ml', '3 days', 'As needed', '2026-03-07 10:00:00'),
@@ -629,7 +614,7 @@ CREATE TABLE `prescription_tbl` (
 -- Dumping data for table `prescription_tbl`
 --
 
-INSERT INTO `prescription_tbl` (`PRESCRIPTION_ID`, `APPOINTMENT_ID`, `ISSUE_DATE`, `HEIGHT_CM`, `WEIGHT_KG`, `BLOOD_PRESSURE`, `DIABETES`, `SYMPTOMS`, `DIAGNOSIS`, `ADDITIONAL_NOTES`, `CREATED_AT`) VALUES
+INSERT INTO prescription_tbl (PRESCRIPTION_ID, APPOINTMENT_ID, ISSUE_DATE, HEIGHT_CM, WEIGHT_KG, BLOOD_PRESSURE, DIABETES, SYMPTOMS, DIAGNOSIS, ADDITIONAL_NOTES, CREATED_AT) VALUES
 (1, 1, '2026-03-03', 120, 25.00, 110, 'NO', 'Fever, cough, and cold', 'Upper respiratory tract infection', 'Advise plenty of rest and fluids', '2026-03-03 10:00:00'),
 (2, 2, '2026-03-07', 120, 25.00, 110, 'NO', 'Follow-up check', 'Recovering well', 'Continue prescribed medication', '2026-03-07 10:00:00'),
 (3, 3, '2026-03-04', 160, 55.00, 120, 'NO', 'Chest pain, shortness of breath', 'Angina', 'Stress management recommended', '2026-03-04 11:00:00'),
@@ -720,250 +705,193 @@ INSERT INTO `specialisation_tbl` (`SPECIALISATION_ID`, `SPECIALISATION_NAME`) VA
 -- --------------------------------------------------------
 
 --
--- Stand-in structure for view `view_appointment_report`
--- (See below for the actual view)
---
-CREATE TABLE `view_appointment_report` (
-`APPOINTMENT_ID` int(11)
-,`Patient_Name` varchar(41)
-,`Doctor_Name` varchar(41)
-,`Specialisation` varchar(50)
-,`APPOINTMENT_DATE` date
-,`Day_Name` varchar(9)
-,`Week_Number` int(2)
-,`Month_Number` int(2)
-,`Month_Name` varchar(9)
-,`Year` int(4)
-,`APPOINTMENT_TIME` time
-,`STATUS` enum('SCHEDULED','COMPLETED','CANCELLED')
-);
-
--- --------------------------------------------------------
-
---
--- Stand-in structure for view `view_doctor_report`
--- (See below for the actual view)
---
-CREATE TABLE `view_doctor_report` (
-`DOCTOR_ID` int(11)
-,`Doctor_Name` varchar(41)
-,`Specialisation` varchar(50)
-,`EDUCATION` varchar(50)
-,`Doctor_Status` enum('pending','approved','rejected')
-,`APPOINTMENT_ID` int(11)
-,`APPOINTMENT_DATE` date
-,`Month_Name` varchar(9)
-,`Month_Number` int(2)
-,`Year` int(4)
-,`Appointment_Status` varchar(9)
-,`Total_Patients` bigint(21)
-,`Avg_Rating` decimal(12,1)
-);
-
--- --------------------------------------------------------
-
---
--- Stand-in structure for view `view_patient_report`
--- (See below for the actual view)
---
-CREATE TABLE `view_patient_report` (
-`PATIENT_ID` int(11)
-,`Patient_Name` varchar(41)
-,`GENDER` enum('MALE','FEMALE','OTHER')
-,`BLOOD_GROUP` enum('A+','A-','B+','B-','O+','O-','AB+','AB-')
-,`PHONE` bigint(20)
-,`EMAIL` varchar(50)
-,`ADDRESS` text
-,`Total_Appointments` bigint(21)
-,`Completed_Visits` decimal(22,0)
-,`Upcoming_Visits` decimal(22,0)
-,`Cancelled_Visits` decimal(22,0)
-,`Last_Visit_Date` date
-,`First_Visit_Date` date
-,`Doctors_Visited` bigint(21)
-,`Total_Prescriptions` bigint(21)
-,`Total_Amount_Paid` decimal(32,2)
-,`Successful_Payments` bigint(21)
-,`Total_Feedback_Given` bigint(21)
-,`Avg_Rating_Given` decimal(12,1)
-,`Medicine_Reminders` bigint(21)
-);
-
--- --------------------------------------------------------
-
---
--- Stand-in structure for view `view_payment_report`
--- (See below for the actual view)
---
-CREATE TABLE `view_payment_report` (
-`PAYMENT_ID` int(11)
-,`TRANSACTION_ID` varchar(36)
-,`Patient_Name` varchar(41)
-,`Doctor_Name` varchar(41)
-,`AMOUNT` decimal(10,2)
-,`PAYMENT_MODE` enum('CREDIT CARD','GOOGLE PAY','UPI','NET BANKING')
-,`Payment_Status` enum('COMPLETED','FAILED')
-,`PAYMENT_DATE` date
-,`Day_Name` varchar(9)
-,`Week_Number` int(2)
-,`Month_Number` int(2)
-,`Month_Name` varchar(9)
-,`Year` int(4)
-);
-
--- --------------------------------------------------------
-
---
 -- Structure for view `view_appointment_report`
 --
-DROP TABLE IF EXISTS `view_appointment_report`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `view_appointment_report`  AS SELECT `a`.`APPOINTMENT_ID` AS `APPOINTMENT_ID`, concat(`p`.`FIRST_NAME`,' ',`p`.`LAST_NAME`) AS `Patient_Name`, concat(`d`.`FIRST_NAME`,' ',`d`.`LAST_NAME`) AS `Doctor_Name`, `s`.`SPECIALISATION_NAME` AS `Specialisation`, `a`.`APPOINTMENT_DATE` AS `APPOINTMENT_DATE`, dayname(`a`.`APPOINTMENT_DATE`) AS `Day_Name`, week(`a`.`APPOINTMENT_DATE`) AS `Week_Number`, month(`a`.`APPOINTMENT_DATE`) AS `Month_Number`, monthname(`a`.`APPOINTMENT_DATE`) AS `Month_Name`, year(`a`.`APPOINTMENT_DATE`) AS `Year`, `a`.`APPOINTMENT_TIME` AS `APPOINTMENT_TIME`, `a`.`STATUS` AS `STATUS` FROM (((`appointment_tbl` `a` join `patient_tbl` `p` on(`a`.`PATIENT_ID` = `p`.`PATIENT_ID`)) join `doctor_tbl` `d` on(`a`.`DOCTOR_ID` = `d`.`DOCTOR_ID`)) join `specialisation_tbl` `s` on(`d`.`SPECIALISATION_ID` = `s`.`SPECIALISATION_ID`)) ;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `view_appointment_report` AS
+SELECT
+  `a`.`APPOINTMENT_ID` AS `APPOINTMENT_ID`,
+  CONCAT(`p`.`FIRST_NAME`,' ',`p`.`LAST_NAME`) AS `Patient_Name`,
+  CONCAT(`d`.`FIRST_NAME`,' ',`d`.`LAST_NAME`) AS `Doctor_Name`,
+  `s`.`SPECIALISATION_NAME` AS `Specialisation`,
+  `a`.`APPOINTMENT_DATE` AS `APPOINTMENT_DATE`,
+  DAYNAME(`a`.`APPOINTMENT_DATE`) AS `Day_Name`,
+  WEEK(`a`.`APPOINTMENT_DATE`) AS `Week_Number`,
+  MONTH(`a`.`APPOINTMENT_DATE`) AS `Month_Number`,
+  MONTHNAME(`a`.`APPOINTMENT_DATE`) AS `Month_Name`,
+  YEAR(`a`.`APPOINTMENT_DATE`) AS `Year`,
+  `a`.`APPOINTMENT_TIME` AS `APPOINTMENT_TIME`,
+  `a`.`STATUS` AS `STATUS`
+FROM (((`appointment_tbl` `a`
+  JOIN `patient_tbl` `p` ON(`a`.`PATIENT_ID` = `p`.`PATIENT_ID`))
+  JOIN `doctor_tbl` `d` ON(`a`.`DOCTOR_ID` = `d`.`DOCTOR_ID`))
+  JOIN `specialisation_tbl` `s` ON(`d`.`SPECIALISATION_ID` = `s`.`SPECIALISATION_ID`));
 
 -- --------------------------------------------------------
 
 --
 -- Structure for view `view_doctor_report`
 --
-DROP TABLE IF EXISTS `view_doctor_report`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `view_doctor_report`  AS SELECT `d`.`DOCTOR_ID` AS `DOCTOR_ID`, concat(`d`.`FIRST_NAME`,' ',`d`.`LAST_NAME`) AS `Doctor_Name`, `s`.`SPECIALISATION_NAME` AS `Specialisation`, `d`.`EDUCATION` AS `EDUCATION`, `d`.`STATUS` AS `Doctor_Status`, `a`.`APPOINTMENT_ID` AS `APPOINTMENT_ID`, `a`.`APPOINTMENT_DATE` AS `APPOINTMENT_DATE`, coalesce(monthname(`a`.`APPOINTMENT_DATE`),'N/A') AS `Month_Name`, coalesce(month(`a`.`APPOINTMENT_DATE`),0) AS `Month_Number`, coalesce(year(`a`.`APPOINTMENT_DATE`),0) AS `Year`, coalesce(`a`.`STATUS`,'NONE') AS `Appointment_Status`, coalesce(`doc_stats`.`Total_Patients`,0) AS `Total_Patients`, coalesce(`doc_stats`.`Avg_Rating`,0) AS `Avg_Rating` FROM (((`doctor_tbl` `d` join `specialisation_tbl` `s` on(`d`.`SPECIALISATION_ID` = `s`.`SPECIALISATION_ID`)) left join `appointment_tbl` `a` on(`d`.`DOCTOR_ID` = `a`.`DOCTOR_ID`)) left join (select `a2`.`DOCTOR_ID` AS `DOCTOR_ID`,count(distinct `a2`.`PATIENT_ID`) AS `Total_Patients`,round(avg(`f2`.`RATING`),1) AS `Avg_Rating` from (`appointment_tbl` `a2` left join `feedback_tbl` `f2` on(`a2`.`APPOINTMENT_ID` = `f2`.`APPOINTMENT_ID`)) group by `a2`.`DOCTOR_ID`) `doc_stats` on(`d`.`DOCTOR_ID` = `doc_stats`.`DOCTOR_ID`)) ;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `view_doctor_report` AS
+SELECT
+  `d`.`DOCTOR_ID` AS `DOCTOR_ID`,
+  CONCAT(`d`.`FIRST_NAME`,' ',`d`.`LAST_NAME`) AS `Doctor_Name`,
+  `s`.`SPECIALISATION_NAME` AS `Specialisation`,
+  `d`.`EDUCATION` AS `EDUCATION`,
+  `d`.`STATUS` AS `Doctor_Status`,
+  `a`.`APPOINTMENT_ID` AS `APPOINTMENT_ID`,
+  `a`.`APPOINTMENT_DATE` AS `APPOINTMENT_DATE`,
+  COALESCE(MONTHNAME(`a`.`APPOINTMENT_DATE`),'N/A') AS `Month_Name`,
+  COALESCE(MONTH(`a`.`APPOINTMENT_DATE`),0) AS `Month_Number`,
+  COALESCE(YEAR(`a`.`APPOINTMENT_DATE`),0) AS `Year`,
+  COALESCE(`a`.`STATUS`,'NONE') AS `Appointment_Status`,
+  COALESCE(`doc_stats`.`Total_Patients`,0) AS `Total_Patients`,
+  COALESCE(`doc_stats`.`Avg_Rating`,0) AS `Avg_Rating`
+FROM (((`doctor_tbl` `d`
+  JOIN `specialisation_tbl` `s` ON(`d`.`SPECIALISATION_ID` = `s`.`SPECIALISATION_ID`))
+  LEFT JOIN `appointment_tbl` `a` ON(`d`.`DOCTOR_ID` = `a`.`DOCTOR_ID`))
+  LEFT JOIN (
+    SELECT `a2`.`DOCTOR_ID` AS `DOCTOR_ID`,
+      COUNT(DISTINCT `a2`.`PATIENT_ID`) AS `Total_Patients`,
+      ROUND(AVG(`f2`.`RATING`),1) AS `Avg_Rating`
+    FROM (`appointment_tbl` `a2`
+      LEFT JOIN `feedback_tbl` `f2` ON(`a2`.`APPOINTMENT_ID` = `f2`.`APPOINTMENT_ID`))
+    GROUP BY `a2`.`DOCTOR_ID`
+  ) `doc_stats` ON(`d`.`DOCTOR_ID` = `doc_stats`.`DOCTOR_ID`));
 
 -- --------------------------------------------------------
 
 --
 -- Structure for view `view_patient_report`
 --
-DROP TABLE IF EXISTS `view_patient_report`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `view_patient_report`  AS SELECT `p`.`PATIENT_ID` AS `PATIENT_ID`, concat(`p`.`FIRST_NAME`,' ',`p`.`LAST_NAME`) AS `Patient_Name`, `p`.`GENDER` AS `GENDER`, `p`.`BLOOD_GROUP` AS `BLOOD_GROUP`, `p`.`PHONE` AS `PHONE`, `p`.`EMAIL` AS `EMAIL`, `p`.`ADDRESS` AS `ADDRESS`, count(distinct `a`.`APPOINTMENT_ID`) AS `Total_Appointments`, sum(case when `a`.`STATUS` = 'COMPLETED' then 1 else 0 end) AS `Completed_Visits`, sum(case when `a`.`STATUS` = 'SCHEDULED' then 1 else 0 end) AS `Upcoming_Visits`, sum(case when `a`.`STATUS` = 'CANCELLED' then 1 else 0 end) AS `Cancelled_Visits`, max(`a`.`APPOINTMENT_DATE`) AS `Last_Visit_Date`, min(`a`.`APPOINTMENT_DATE`) AS `First_Visit_Date`, count(distinct `a`.`DOCTOR_ID`) AS `Doctors_Visited`, count(distinct `pr`.`PRESCRIPTION_ID`) AS `Total_Prescriptions`, coalesce(sum(case when `py`.`STATUS` = 'COMPLETED' then `py`.`AMOUNT` else 0 end),0) AS `Total_Amount_Paid`, count(distinct case when `py`.`STATUS` = 'COMPLETED' then `py`.`PAYMENT_ID` end) AS `Successful_Payments`, count(distinct `f`.`FEEDBACK_ID`) AS `Total_Feedback_Given`, round(avg(`f`.`RATING`),1) AS `Avg_Rating_Given`, count(distinct `mr`.`MEDICINE_REMINDER_ID`) AS `Medicine_Reminders` FROM (((((`patient_tbl` `p` left join `appointment_tbl` `a` on(`p`.`PATIENT_ID` = `a`.`PATIENT_ID`)) left join `prescription_tbl` `pr` on(`a`.`APPOINTMENT_ID` = `pr`.`APPOINTMENT_ID`)) left join `payment_tbl` `py` on(`a`.`APPOINTMENT_ID` = `py`.`APPOINTMENT_ID`)) left join `feedback_tbl` `f` on(`a`.`APPOINTMENT_ID` = `f`.`APPOINTMENT_ID`)) left join `medicine_reminder_tbl` `mr` on(`p`.`PATIENT_ID` = `mr`.`PATIENT_ID`)) GROUP BY `p`.`PATIENT_ID` ORDER BY count(distinct `a`.`APPOINTMENT_ID`) DESC ;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `view_patient_report` AS
+SELECT
+  `p`.`PATIENT_ID` AS `PATIENT_ID`,
+  CONCAT(`p`.`FIRST_NAME`,' ',`p`.`LAST_NAME`) AS `Patient_Name`,
+  `p`.`GENDER` AS `GENDER`,
+  `p`.`BLOOD_GROUP` AS `BLOOD_GROUP`,
+  `p`.`PHONE` AS `PHONE`,
+  `p`.`EMAIL` AS `EMAIL`,
+  `p`.`ADDRESS` AS `ADDRESS`,
+  COUNT(DISTINCT `a`.`APPOINTMENT_ID`) AS `Total_Appointments`,
+  SUM(CASE WHEN `a`.`STATUS` = 'COMPLETED' THEN 1 ELSE 0 END) AS `Completed_Visits`,
+  SUM(CASE WHEN `a`.`STATUS` = 'SCHEDULED' THEN 1 ELSE 0 END) AS `Upcoming_Visits`,
+  SUM(CASE WHEN `a`.`STATUS` = 'CANCELLED' THEN 1 ELSE 0 END) AS `Cancelled_Visits`,
+  MAX(`a`.`APPOINTMENT_DATE`) AS `Last_Visit_Date`,
+  MIN(`a`.`APPOINTMENT_DATE`) AS `First_Visit_Date`,
+  COUNT(DISTINCT `a`.`DOCTOR_ID`) AS `Doctors_Visited`,
+  COUNT(DISTINCT `pr`.`PRESCRIPTION_ID`) AS `Total_Prescriptions`,
+  COALESCE(SUM(CASE WHEN `py`.`STATUS` = 'COMPLETED' THEN `py`.`AMOUNT` ELSE 0 END),0) AS `Total_Amount_Paid`,
+  COUNT(DISTINCT CASE WHEN `py`.`STATUS` = 'COMPLETED' THEN `py`.`PAYMENT_ID` END) AS `Successful_Payments`,
+  COUNT(DISTINCT `f`.`FEEDBACK_ID`) AS `Total_Feedback_Given`,
+  ROUND(AVG(`f`.`RATING`),1) AS `Avg_Rating_Given`,
+  COUNT(DISTINCT `mr`.`MEDICINE_REMINDER_ID`) AS `Medicine_Reminders`
+FROM (((((`patient_tbl` `p`
+  LEFT JOIN `appointment_tbl` `a` ON(`p`.`PATIENT_ID` = `a`.`PATIENT_ID`))
+  LEFT JOIN `prescription_tbl` `pr` ON(`a`.`APPOINTMENT_ID` = `pr`.`APPOINTMENT_ID`))
+  LEFT JOIN `payment_tbl` `py` ON(`a`.`APPOINTMENT_ID` = `py`.`APPOINTMENT_ID`))
+  LEFT JOIN `feedback_tbl` `f` ON(`a`.`APPOINTMENT_ID` = `f`.`APPOINTMENT_ID`))
+  LEFT JOIN `medicine_reminder_tbl` `mr` ON(`p`.`PATIENT_ID` = `mr`.`PATIENT_ID`))
+GROUP BY `p`.`PATIENT_ID`
+ORDER BY COUNT(DISTINCT `a`.`APPOINTMENT_ID`) DESC;
 
 -- --------------------------------------------------------
 
 --
 -- Structure for view `view_payment_report`
 --
-DROP TABLE IF EXISTS `view_payment_report`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `view_payment_report`  AS SELECT `py`.`PAYMENT_ID` AS `PAYMENT_ID`, `py`.`TRANSACTION_ID` AS `TRANSACTION_ID`, concat(`p`.`FIRST_NAME`,' ',`p`.`LAST_NAME`) AS `Patient_Name`, concat(`d`.`FIRST_NAME`,' ',`d`.`LAST_NAME`) AS `Doctor_Name`, `py`.`AMOUNT` AS `AMOUNT`, `py`.`PAYMENT_MODE` AS `PAYMENT_MODE`, `py`.`STATUS` AS `Payment_Status`, `py`.`PAYMENT_DATE` AS `PAYMENT_DATE`, dayname(`py`.`PAYMENT_DATE`) AS `Day_Name`, week(`py`.`PAYMENT_DATE`) AS `Week_Number`, month(`py`.`PAYMENT_DATE`) AS `Month_Number`, monthname(`py`.`PAYMENT_DATE`) AS `Month_Name`, year(`py`.`PAYMENT_DATE`) AS `Year` FROM (((`payment_tbl` `py` join `appointment_tbl` `a` on(`py`.`APPOINTMENT_ID` = `a`.`APPOINTMENT_ID`)) join `patient_tbl` `p` on(`a`.`PATIENT_ID` = `p`.`PATIENT_ID`)) join `doctor_tbl` `d` on(`a`.`DOCTOR_ID` = `d`.`DOCTOR_ID`)) ;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `view_payment_report` AS
+SELECT
+  `py`.`PAYMENT_ID` AS `PAYMENT_ID`,
+  `py`.`TRANSACTION_ID` AS `TRANSACTION_ID`,
+  CONCAT(`p`.`FIRST_NAME`,' ',`p`.`LAST_NAME`) AS `Patient_Name`,
+  CONCAT(`d`.`FIRST_NAME`,' ',`d`.`LAST_NAME`) AS `Doctor_Name`,
+  `py`.`AMOUNT` AS `AMOUNT`,
+  `py`.`PAYMENT_MODE` AS `PAYMENT_MODE`,
+  `py`.`STATUS` AS `Payment_Status`,
+  `py`.`PAYMENT_DATE` AS `PAYMENT_DATE`,
+  DAYNAME(`py`.`PAYMENT_DATE`) AS `Day_Name`,
+  WEEK(`py`.`PAYMENT_DATE`) AS `Week_Number`,
+  MONTH(`py`.`PAYMENT_DATE`) AS `Month_Number`,
+  MONTHNAME(`py`.`PAYMENT_DATE`) AS `Month_Name`,
+  YEAR(`py`.`PAYMENT_DATE`) AS `Year`
+FROM (((`payment_tbl` `py`
+  JOIN `appointment_tbl` `a` ON(`py`.`APPOINTMENT_ID` = `a`.`APPOINTMENT_ID`))
+  JOIN `patient_tbl` `p` ON(`a`.`PATIENT_ID` = `p`.`PATIENT_ID`))
+  JOIN `doctor_tbl` `d` ON(`a`.`DOCTOR_ID` = `d`.`DOCTOR_ID`));
 
 --
 -- Indexes for dumped tables
 --
 
---
--- Indexes for table `appointment_reminder_tbl`
---
 ALTER TABLE `appointment_reminder_tbl`
   ADD PRIMARY KEY (`APPOINTMENT_REMINDER_ID`),
   ADD KEY `RECEPTIONIST_ID` (`RECEPTIONIST_ID`),
   ADD KEY `APPOINTMENT_ID` (`APPOINTMENT_ID`);
 
---
--- Indexes for table `appointment_tbl`
---
 ALTER TABLE `appointment_tbl`
   ADD PRIMARY KEY (`APPOINTMENT_ID`),
   ADD KEY `PATIENT_ID` (`PATIENT_ID`),
   ADD KEY `DOCTOR_ID` (`DOCTOR_ID`),
   ADD KEY `SCHEDULE_ID` (`SCHEDULE_ID`);
 
---
--- Indexes for table `doctor_schedule_tbl`
---
 ALTER TABLE `doctor_schedule_tbl`
   ADD PRIMARY KEY (`SCHEDULE_ID`),
   ADD KEY `DOCTOR_ID` (`DOCTOR_ID`),
   ADD KEY `RECEPTIONIST_ID` (`RECEPTIONIST_ID`);
 
---
--- Indexes for table `doctor_tbl`
---
 ALTER TABLE `doctor_tbl`
   ADD PRIMARY KEY (`DOCTOR_ID`),
   ADD UNIQUE KEY `USERNAME` (`USERNAME`),
   ADD KEY `SPECIALISATION_ID` (`SPECIALISATION_ID`);
 
---
--- Indexes for table `feedback_tbl`
---
 ALTER TABLE `feedback_tbl`
   ADD PRIMARY KEY (`FEEDBACK_ID`),
   ADD KEY `APPOINTMENT_ID` (`APPOINTMENT_ID`);
 
---
--- Indexes for table `medicine_reminder_tbl`
---
 ALTER TABLE `medicine_reminder_tbl`
   ADD PRIMARY KEY (`MEDICINE_REMINDER_ID`),
   ADD KEY `MEDICINE_ID` (`MEDICINE_ID`),
   ADD KEY `PATIENT_ID` (`PATIENT_ID`);
 
---
--- Indexes for table `medicine_tbl`
---
 ALTER TABLE `medicine_tbl`
   ADD PRIMARY KEY (`MEDICINE_ID`),
   ADD KEY `RECEPTIONIST_ID` (`RECEPTIONIST_ID`);
 
---
--- Indexes for table `notification_seen_tbl`
---
 ALTER TABLE `notification_seen_tbl`
   ADD PRIMARY KEY (`SEEN_ID`),
   ADD UNIQUE KEY `uniq_user_notif` (`USER_TYPE`,`USER_ID`,`NOTIF_KEY`);
 
---
--- Indexes for table `password_resets`
---
 ALTER TABLE `password_resets`
   ADD PRIMARY KEY (`id`);
 
---
--- Indexes for table `patient_tbl`
---
 ALTER TABLE `patient_tbl`
   ADD PRIMARY KEY (`PATIENT_ID`),
   ADD UNIQUE KEY `USERNAME` (`USERNAME`);
 
---
--- Indexes for table `payment_tbl`
---
 ALTER TABLE `payment_tbl`
   ADD PRIMARY KEY (`PAYMENT_ID`),
   ADD UNIQUE KEY `TRANSACTION_ID` (`TRANSACTION_ID`),
   ADD KEY `APPOINTMENT_ID` (`APPOINTMENT_ID`);
 
---
--- Indexes for table `prescription_medicine_tbl`
---
 ALTER TABLE `prescription_medicine_tbl`
   ADD PRIMARY KEY (`PRESCRIPTION_ID`,`MEDICINE_ID`),
   ADD KEY `MEDICINE_ID` (`MEDICINE_ID`);
 
---
--- Indexes for table `prescription_tbl`
---
 ALTER TABLE `prescription_tbl`
   ADD PRIMARY KEY (`PRESCRIPTION_ID`),
   ADD KEY `APPOINTMENT_ID` (`APPOINTMENT_ID`);
 
---
--- Indexes for table `receptionist_notifications`
---
 ALTER TABLE `receptionist_notifications`
   ADD PRIMARY KEY (`RECEPTIONIST_NOTIFICATION_ID`);
 
---
--- Indexes for table `receptionist_tbl`
---
 ALTER TABLE `receptionist_tbl`
   ADD PRIMARY KEY (`RECEPTIONIST_ID`),
   ADD UNIQUE KEY `USERNAME` (`USERNAME`);
 
---
--- Indexes for table `specialisation_tbl`
---
 ALTER TABLE `specialisation_tbl`
   ADD PRIMARY KEY (`SPECIALISATION_ID`);
 
@@ -971,93 +899,48 @@ ALTER TABLE `specialisation_tbl`
 -- AUTO_INCREMENT for dumped tables
 --
 
---
--- AUTO_INCREMENT for table `appointment_reminder_tbl`
---
 ALTER TABLE `appointment_reminder_tbl`
   MODIFY `APPOINTMENT_REMINDER_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=76;
 
---
--- AUTO_INCREMENT for table `appointment_tbl`
---
 ALTER TABLE `appointment_tbl`
   MODIFY `APPOINTMENT_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
 
---
--- AUTO_INCREMENT for table `doctor_schedule_tbl`
---
 ALTER TABLE `doctor_schedule_tbl`
   MODIFY `SCHEDULE_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=46;
 
---
--- AUTO_INCREMENT for table `doctor_tbl`
---
 ALTER TABLE `doctor_tbl`
   MODIFY `DOCTOR_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
---
--- AUTO_INCREMENT for table `feedback_tbl`
---
 ALTER TABLE `feedback_tbl`
   MODIFY `FEEDBACK_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
---
--- AUTO_INCREMENT for table `medicine_reminder_tbl`
---
 ALTER TABLE `medicine_reminder_tbl`
   MODIFY `MEDICINE_REMINDER_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
 
---
--- AUTO_INCREMENT for table `medicine_tbl`
---
 ALTER TABLE `medicine_tbl`
   MODIFY `MEDICINE_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
---
--- AUTO_INCREMENT for table `notification_seen_tbl`
---
 ALTER TABLE `notification_seen_tbl`
   MODIFY `SEEN_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
---
--- AUTO_INCREMENT for table `password_resets`
---
 ALTER TABLE `password_resets`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
---
--- AUTO_INCREMENT for table `patient_tbl`
---
 ALTER TABLE `patient_tbl`
   MODIFY `PATIENT_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
---
--- AUTO_INCREMENT for table `payment_tbl`
---
 ALTER TABLE `payment_tbl`
   MODIFY `PAYMENT_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
 
---
--- AUTO_INCREMENT for table `prescription_tbl`
---
 ALTER TABLE `prescription_tbl`
   MODIFY `PRESCRIPTION_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
---
--- AUTO_INCREMENT for table `receptionist_notifications`
---
 ALTER TABLE `receptionist_notifications`
   MODIFY `RECEPTIONIST_NOTIFICATION_ID` int(11) NOT NULL AUTO_INCREMENT;
 
---
--- AUTO_INCREMENT for table `receptionist_tbl`
---
 ALTER TABLE `receptionist_tbl`
   MODIFY `RECEPTIONIST_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
---
--- AUTO_INCREMENT for table `specialisation_tbl`
---
 ALTER TABLE `specialisation_tbl`
   MODIFY `SPECIALISATION_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
@@ -1065,71 +948,44 @@ ALTER TABLE `specialisation_tbl`
 -- Constraints for dumped tables
 --
 
---
--- Constraints for table `appointment_reminder_tbl`
---
 ALTER TABLE `appointment_reminder_tbl`
   ADD CONSTRAINT `appointment_reminder_tbl_ibfk_1` FOREIGN KEY (`RECEPTIONIST_ID`) REFERENCES `receptionist_tbl` (`RECEPTIONIST_ID`) ON UPDATE CASCADE,
   ADD CONSTRAINT `appointment_reminder_tbl_ibfk_2` FOREIGN KEY (`APPOINTMENT_ID`) REFERENCES `appointment_tbl` (`APPOINTMENT_ID`) ON DELETE CASCADE ON UPDATE CASCADE;
 
---
--- Constraints for table `appointment_tbl`
---
 ALTER TABLE `appointment_tbl`
   ADD CONSTRAINT `appointment_tbl_ibfk_1` FOREIGN KEY (`PATIENT_ID`) REFERENCES `patient_tbl` (`PATIENT_ID`) ON UPDATE CASCADE,
   ADD CONSTRAINT `appointment_tbl_ibfk_2` FOREIGN KEY (`DOCTOR_ID`) REFERENCES `doctor_tbl` (`DOCTOR_ID`) ON UPDATE CASCADE,
   ADD CONSTRAINT `appointment_tbl_ibfk_3` FOREIGN KEY (`SCHEDULE_ID`) REFERENCES `doctor_schedule_tbl` (`SCHEDULE_ID`) ON UPDATE CASCADE;
 
---
--- Constraints for table `doctor_schedule_tbl`
---
 ALTER TABLE `doctor_schedule_tbl`
   ADD CONSTRAINT `doctor_schedule_tbl_ibfk_1` FOREIGN KEY (`DOCTOR_ID`) REFERENCES `doctor_tbl` (`DOCTOR_ID`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `doctor_schedule_tbl_ibfk_2` FOREIGN KEY (`RECEPTIONIST_ID`) REFERENCES `receptionist_tbl` (`RECEPTIONIST_ID`) ON UPDATE CASCADE;
 
---
--- Constraints for table `doctor_tbl`
---
 ALTER TABLE `doctor_tbl`
   ADD CONSTRAINT `doctor_tbl_ibfk_1` FOREIGN KEY (`SPECIALISATION_ID`) REFERENCES `specialisation_tbl` (`SPECIALISATION_ID`) ON UPDATE CASCADE;
 
---
--- Constraints for table `feedback_tbl`
---
 ALTER TABLE `feedback_tbl`
   ADD CONSTRAINT `feedback_tbl_ibfk_1` FOREIGN KEY (`APPOINTMENT_ID`) REFERENCES `appointment_tbl` (`APPOINTMENT_ID`) ON DELETE CASCADE ON UPDATE CASCADE;
 
---
--- Constraints for table `medicine_reminder_tbl`
---
 ALTER TABLE `medicine_reminder_tbl`
   ADD CONSTRAINT `medicine_reminder_tbl_ibfk_1` FOREIGN KEY (`MEDICINE_ID`) REFERENCES `medicine_tbl` (`MEDICINE_ID`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `medicine_reminder_tbl_ibfk_2` FOREIGN KEY (`PATIENT_ID`) REFERENCES `patient_tbl` (`PATIENT_ID`) ON DELETE CASCADE ON UPDATE CASCADE;
 
---
--- Constraints for table `medicine_tbl`
---
 ALTER TABLE `medicine_tbl`
   ADD CONSTRAINT `medicine_tbl_ibfk_1` FOREIGN KEY (`RECEPTIONIST_ID`) REFERENCES `receptionist_tbl` (`RECEPTIONIST_ID`) ON UPDATE CASCADE;
 
---
--- Constraints for table `payment_tbl`
---
 ALTER TABLE `payment_tbl`
   ADD CONSTRAINT `payment_tbl_ibfk_1` FOREIGN KEY (`APPOINTMENT_ID`) REFERENCES `appointment_tbl` (`APPOINTMENT_ID`) ON UPDATE CASCADE;
 
---
--- Constraints for table `prescription_medicine_tbl`
---
 ALTER TABLE `prescription_medicine_tbl`
   ADD CONSTRAINT `prescription_medicine_tbl_ibfk_1` FOREIGN KEY (`PRESCRIPTION_ID`) REFERENCES `prescription_tbl` (`PRESCRIPTION_ID`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `prescription_medicine_tbl_ibfk_2` FOREIGN KEY (`MEDICINE_ID`) REFERENCES `medicine_tbl` (`MEDICINE_ID`) ON UPDATE CASCADE;
 
---
--- Constraints for table `prescription_tbl`
---
 ALTER TABLE `prescription_tbl`
   ADD CONSTRAINT `prescription_tbl_ibfk_1` FOREIGN KEY (`APPOINTMENT_ID`) REFERENCES `appointment_tbl` (`APPOINTMENT_ID`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+SET FOREIGN_KEY_CHECKS = 1;
+
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
