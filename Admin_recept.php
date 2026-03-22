@@ -455,7 +455,7 @@ if (empty($error_message) && isset($_GET['error'])) {
         <div class="alert alert-danger"><?php echo $error_message; ?></div>
     <?php endif; ?>
 
-    <a href="recpt_regis.php" class="add-btn">+ Add New Receptionist</a>
+    <!-- Add New Receptionist button removed as requested -->
 
     <!-- Filter -->
     <div class="filter-container">

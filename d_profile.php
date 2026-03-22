@@ -481,12 +481,14 @@ $spec_back_id = (int)($doctor['SPECIALISATION_ID'] ?? 0);
                         <span class="badge"><?php echo htmlspecialchars($doctor['SPECIALISATION_NAME']); ?></span>
                         
                         <!-- Book Now Button -->
+                        <?php if (!isset($_SESSION['USER_TYPE']) || $_SESSION['USER_TYPE'] !== 'doctor'): ?>
                         <form id="goBookForm" method="POST" action="book_appointment_date.php">
                             <input type="hidden" name="doctor_id" value="<?php echo $doctor_id; ?>">
                         </form>
                         <button class="book-now-btn" type="button" onclick="document.getElementById('goBookForm').submit()">
                             <i class="fas fa-calendar-check"></i> Book Appointment
                         </button>
+                        <?php endif; ?>
                     </div>
 
                     <!-- RIGHT -->

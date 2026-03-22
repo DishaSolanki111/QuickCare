@@ -3,6 +3,12 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+// Prevent doctors from booking appointments
+if (isset($_SESSION['USER_TYPE']) && $_SESSION['USER_TYPE'] === 'doctor') {
+    header("Location: doctor_dashboard.php");
+    exit();
+}
+
 // Entry point when coming from schedule.php with doctor_id, date, time
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['doctor_id']) && isset($_POST['date']) && isset($_POST['time'])) {
     $_SESSION['booking_doctor_id'] = (int) $_POST['doctor_id'];

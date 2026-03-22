@@ -519,6 +519,10 @@ body {
                         // Enable the book button
                         const doctorId = this.getAttribute('data-doctor-id');
                         const bookBtn = document.getElementById(`book-btn-${doctorId}`);
+                        // Hide book button for logged-in doctors
+                        <?php if (isset($_SESSION['USER_TYPE']) && $_SESSION['USER_TYPE'] === 'doctor'): ?>
+                        if (bookBtn) bookBtn.style.display = 'none';
+                        <?php else: ?>
                         bookBtn.disabled = false;
                         bookBtn.textContent = 'Book Appointment';
                         
@@ -548,6 +552,7 @@ body {
                             document.body.appendChild(form);
                             form.submit();
                         };
+                        <?php endif; ?>
                     });
                 });
             }

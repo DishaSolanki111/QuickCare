@@ -523,7 +523,7 @@ include 'admin_sidebar.php';
         <div class="alert alert-danger"><?php echo $error_message; ?></div>
     <?php endif; ?>
 
-    <a href="doctorform.php" class="add-btn">+ Add New Doctor</a>
+    <!-- Add New Doctor button removed as requested -->
 
     <div class="filter-container">
         <form method="POST">

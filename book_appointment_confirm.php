@@ -1,5 +1,12 @@
 <?php
 session_start();
+
+// Prevent doctors from accessing appointment booking
+if (isset($_SESSION['USER_TYPE']) && $_SESSION['USER_TYPE'] === 'doctor') {
+    header("Location: doctor_dashboard.php");
+    exit();
+}
+
 include "config.php";
 include "header.php";
 if (!isset($_SESSION['PATIENT_ID'])) {
