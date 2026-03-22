@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 14, 2026 at 07:50 AM
+-- Generation Time: Mar 21, 2026 at 05:56 PM
 -- Server version: 10.4.32-MariaDB
--- PHP Version: 8.0.30
+-- PHP Version: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -407,6 +407,32 @@ INSERT INTO `medicine_tbl` (`MEDICINE_ID`, `RECEPTIONIST_ID`, `MED_NAME`, `DESCR
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `notification_seen_tbl`
+--
+
+CREATE TABLE `notification_seen_tbl` (
+  `SEEN_ID` int(11) NOT NULL,
+  `USER_TYPE` varchar(30) NOT NULL,
+  `USER_ID` int(11) NOT NULL,
+  `NOTIF_KEY` varchar(100) NOT NULL,
+  `SEEN_AT` datetime NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `notification_seen_tbl`
+--
+
+INSERT INTO `notification_seen_tbl` (`SEEN_ID`, `USER_TYPE`, `USER_ID`, `NOTIF_KEY`, `SEEN_AT`) VALUES
+(1, 'receptionist', 1, '7a9179318e086fe25dc79ff557cfab3e875ebb6c', '2026-03-21 21:36:29'),
+(2, 'receptionist', 1, '3d28211dafd8e0fc5edf406098f33662ef94ea4a', '2026-03-21 21:36:29'),
+(3, 'receptionist', 1, '3a14bfa5d3a7f6736f3bbdcba9654e91fa7f9822', '2026-03-21 21:36:29'),
+(4, 'receptionist', 1, 'ae2ea64493b68d5d5e844f09381a7c99de4aef98', '2026-03-21 21:36:29'),
+(5, 'receptionist', 1, '0c3660fbfc92e106ddd5b4dcf3f094fabcd942c4', '2026-03-21 21:36:29'),
+(6, 'receptionist', 1, '7b314175825024447f75593b0c0803d0013ae963', '2026-03-21 21:36:29');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `password_resets`
 --
 
@@ -628,6 +654,19 @@ INSERT INTO `prescription_tbl` (`PRESCRIPTION_ID`, `APPOINTMENT_ID`, `ISSUE_DATE
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `receptionist_notifications`
+--
+
+CREATE TABLE `receptionist_notifications` (
+  `RECEPTIONIST_NOTIFICATION_ID` int(11) NOT NULL,
+  `MESSAGE` text NOT NULL,
+  `TYPE` varchar(50) DEFAULT 'schedule_deleted',
+  `CREATED_AT` timestamp NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `receptionist_tbl`
 --
 
@@ -677,6 +716,136 @@ INSERT INTO `specialisation_tbl` (`SPECIALISATION_ID`, `SPECIALISATION_NAME`) VA
 (2, 'Cardiologist'),
 (3, 'Orthopedics'),
 (4, 'Neurologist');
+
+-- --------------------------------------------------------
+
+--
+-- Stand-in structure for view `view_appointment_report`
+-- (See below for the actual view)
+--
+CREATE TABLE `view_appointment_report` (
+`APPOINTMENT_ID` int(11)
+,`Patient_Name` varchar(41)
+,`Doctor_Name` varchar(41)
+,`Specialisation` varchar(50)
+,`APPOINTMENT_DATE` date
+,`Day_Name` varchar(9)
+,`Week_Number` int(2)
+,`Month_Number` int(2)
+,`Month_Name` varchar(9)
+,`Year` int(4)
+,`APPOINTMENT_TIME` time
+,`STATUS` enum('SCHEDULED','COMPLETED','CANCELLED')
+);
+
+-- --------------------------------------------------------
+
+--
+-- Stand-in structure for view `view_doctor_report`
+-- (See below for the actual view)
+--
+CREATE TABLE `view_doctor_report` (
+`DOCTOR_ID` int(11)
+,`Doctor_Name` varchar(41)
+,`Specialisation` varchar(50)
+,`EDUCATION` varchar(50)
+,`Doctor_Status` enum('pending','approved','rejected')
+,`APPOINTMENT_ID` int(11)
+,`APPOINTMENT_DATE` date
+,`Month_Name` varchar(9)
+,`Month_Number` int(2)
+,`Year` int(4)
+,`Appointment_Status` varchar(9)
+,`Total_Patients` bigint(21)
+,`Avg_Rating` decimal(12,1)
+);
+
+-- --------------------------------------------------------
+
+--
+-- Stand-in structure for view `view_patient_report`
+-- (See below for the actual view)
+--
+CREATE TABLE `view_patient_report` (
+`PATIENT_ID` int(11)
+,`Patient_Name` varchar(41)
+,`GENDER` enum('MALE','FEMALE','OTHER')
+,`BLOOD_GROUP` enum('A+','A-','B+','B-','O+','O-','AB+','AB-')
+,`PHONE` bigint(20)
+,`EMAIL` varchar(50)
+,`ADDRESS` text
+,`Total_Appointments` bigint(21)
+,`Completed_Visits` decimal(22,0)
+,`Upcoming_Visits` decimal(22,0)
+,`Cancelled_Visits` decimal(22,0)
+,`Last_Visit_Date` date
+,`First_Visit_Date` date
+,`Doctors_Visited` bigint(21)
+,`Total_Prescriptions` bigint(21)
+,`Total_Amount_Paid` decimal(32,2)
+,`Successful_Payments` bigint(21)
+,`Total_Feedback_Given` bigint(21)
+,`Avg_Rating_Given` decimal(12,1)
+,`Medicine_Reminders` bigint(21)
+);
+
+-- --------------------------------------------------------
+
+--
+-- Stand-in structure for view `view_payment_report`
+-- (See below for the actual view)
+--
+CREATE TABLE `view_payment_report` (
+`PAYMENT_ID` int(11)
+,`TRANSACTION_ID` varchar(36)
+,`Patient_Name` varchar(41)
+,`Doctor_Name` varchar(41)
+,`AMOUNT` decimal(10,2)
+,`PAYMENT_MODE` enum('CREDIT CARD','GOOGLE PAY','UPI','NET BANKING')
+,`Payment_Status` enum('COMPLETED','FAILED')
+,`PAYMENT_DATE` date
+,`Day_Name` varchar(9)
+,`Week_Number` int(2)
+,`Month_Number` int(2)
+,`Month_Name` varchar(9)
+,`Year` int(4)
+);
+
+-- --------------------------------------------------------
+
+--
+-- Structure for view `view_appointment_report`
+--
+DROP TABLE IF EXISTS `view_appointment_report`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `view_appointment_report`  AS SELECT `a`.`APPOINTMENT_ID` AS `APPOINTMENT_ID`, concat(`p`.`FIRST_NAME`,' ',`p`.`LAST_NAME`) AS `Patient_Name`, concat(`d`.`FIRST_NAME`,' ',`d`.`LAST_NAME`) AS `Doctor_Name`, `s`.`SPECIALISATION_NAME` AS `Specialisation`, `a`.`APPOINTMENT_DATE` AS `APPOINTMENT_DATE`, dayname(`a`.`APPOINTMENT_DATE`) AS `Day_Name`, week(`a`.`APPOINTMENT_DATE`) AS `Week_Number`, month(`a`.`APPOINTMENT_DATE`) AS `Month_Number`, monthname(`a`.`APPOINTMENT_DATE`) AS `Month_Name`, year(`a`.`APPOINTMENT_DATE`) AS `Year`, `a`.`APPOINTMENT_TIME` AS `APPOINTMENT_TIME`, `a`.`STATUS` AS `STATUS` FROM (((`appointment_tbl` `a` join `patient_tbl` `p` on(`a`.`PATIENT_ID` = `p`.`PATIENT_ID`)) join `doctor_tbl` `d` on(`a`.`DOCTOR_ID` = `d`.`DOCTOR_ID`)) join `specialisation_tbl` `s` on(`d`.`SPECIALISATION_ID` = `s`.`SPECIALISATION_ID`)) ;
+
+-- --------------------------------------------------------
+
+--
+-- Structure for view `view_doctor_report`
+--
+DROP TABLE IF EXISTS `view_doctor_report`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `view_doctor_report`  AS SELECT `d`.`DOCTOR_ID` AS `DOCTOR_ID`, concat(`d`.`FIRST_NAME`,' ',`d`.`LAST_NAME`) AS `Doctor_Name`, `s`.`SPECIALISATION_NAME` AS `Specialisation`, `d`.`EDUCATION` AS `EDUCATION`, `d`.`STATUS` AS `Doctor_Status`, `a`.`APPOINTMENT_ID` AS `APPOINTMENT_ID`, `a`.`APPOINTMENT_DATE` AS `APPOINTMENT_DATE`, coalesce(monthname(`a`.`APPOINTMENT_DATE`),'N/A') AS `Month_Name`, coalesce(month(`a`.`APPOINTMENT_DATE`),0) AS `Month_Number`, coalesce(year(`a`.`APPOINTMENT_DATE`),0) AS `Year`, coalesce(`a`.`STATUS`,'NONE') AS `Appointment_Status`, coalesce(`doc_stats`.`Total_Patients`,0) AS `Total_Patients`, coalesce(`doc_stats`.`Avg_Rating`,0) AS `Avg_Rating` FROM (((`doctor_tbl` `d` join `specialisation_tbl` `s` on(`d`.`SPECIALISATION_ID` = `s`.`SPECIALISATION_ID`)) left join `appointment_tbl` `a` on(`d`.`DOCTOR_ID` = `a`.`DOCTOR_ID`)) left join (select `a2`.`DOCTOR_ID` AS `DOCTOR_ID`,count(distinct `a2`.`PATIENT_ID`) AS `Total_Patients`,round(avg(`f2`.`RATING`),1) AS `Avg_Rating` from (`appointment_tbl` `a2` left join `feedback_tbl` `f2` on(`a2`.`APPOINTMENT_ID` = `f2`.`APPOINTMENT_ID`)) group by `a2`.`DOCTOR_ID`) `doc_stats` on(`d`.`DOCTOR_ID` = `doc_stats`.`DOCTOR_ID`)) ;
+
+-- --------------------------------------------------------
+
+--
+-- Structure for view `view_patient_report`
+--
+DROP TABLE IF EXISTS `view_patient_report`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `view_patient_report`  AS SELECT `p`.`PATIENT_ID` AS `PATIENT_ID`, concat(`p`.`FIRST_NAME`,' ',`p`.`LAST_NAME`) AS `Patient_Name`, `p`.`GENDER` AS `GENDER`, `p`.`BLOOD_GROUP` AS `BLOOD_GROUP`, `p`.`PHONE` AS `PHONE`, `p`.`EMAIL` AS `EMAIL`, `p`.`ADDRESS` AS `ADDRESS`, count(distinct `a`.`APPOINTMENT_ID`) AS `Total_Appointments`, sum(case when `a`.`STATUS` = 'COMPLETED' then 1 else 0 end) AS `Completed_Visits`, sum(case when `a`.`STATUS` = 'SCHEDULED' then 1 else 0 end) AS `Upcoming_Visits`, sum(case when `a`.`STATUS` = 'CANCELLED' then 1 else 0 end) AS `Cancelled_Visits`, max(`a`.`APPOINTMENT_DATE`) AS `Last_Visit_Date`, min(`a`.`APPOINTMENT_DATE`) AS `First_Visit_Date`, count(distinct `a`.`DOCTOR_ID`) AS `Doctors_Visited`, count(distinct `pr`.`PRESCRIPTION_ID`) AS `Total_Prescriptions`, coalesce(sum(case when `py`.`STATUS` = 'COMPLETED' then `py`.`AMOUNT` else 0 end),0) AS `Total_Amount_Paid`, count(distinct case when `py`.`STATUS` = 'COMPLETED' then `py`.`PAYMENT_ID` end) AS `Successful_Payments`, count(distinct `f`.`FEEDBACK_ID`) AS `Total_Feedback_Given`, round(avg(`f`.`RATING`),1) AS `Avg_Rating_Given`, count(distinct `mr`.`MEDICINE_REMINDER_ID`) AS `Medicine_Reminders` FROM (((((`patient_tbl` `p` left join `appointment_tbl` `a` on(`p`.`PATIENT_ID` = `a`.`PATIENT_ID`)) left join `prescription_tbl` `pr` on(`a`.`APPOINTMENT_ID` = `pr`.`APPOINTMENT_ID`)) left join `payment_tbl` `py` on(`a`.`APPOINTMENT_ID` = `py`.`APPOINTMENT_ID`)) left join `feedback_tbl` `f` on(`a`.`APPOINTMENT_ID` = `f`.`APPOINTMENT_ID`)) left join `medicine_reminder_tbl` `mr` on(`p`.`PATIENT_ID` = `mr`.`PATIENT_ID`)) GROUP BY `p`.`PATIENT_ID` ORDER BY count(distinct `a`.`APPOINTMENT_ID`) DESC ;
+
+-- --------------------------------------------------------
+
+--
+-- Structure for view `view_payment_report`
+--
+DROP TABLE IF EXISTS `view_payment_report`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `view_payment_report`  AS SELECT `py`.`PAYMENT_ID` AS `PAYMENT_ID`, `py`.`TRANSACTION_ID` AS `TRANSACTION_ID`, concat(`p`.`FIRST_NAME`,' ',`p`.`LAST_NAME`) AS `Patient_Name`, concat(`d`.`FIRST_NAME`,' ',`d`.`LAST_NAME`) AS `Doctor_Name`, `py`.`AMOUNT` AS `AMOUNT`, `py`.`PAYMENT_MODE` AS `PAYMENT_MODE`, `py`.`STATUS` AS `Payment_Status`, `py`.`PAYMENT_DATE` AS `PAYMENT_DATE`, dayname(`py`.`PAYMENT_DATE`) AS `Day_Name`, week(`py`.`PAYMENT_DATE`) AS `Week_Number`, month(`py`.`PAYMENT_DATE`) AS `Month_Number`, monthname(`py`.`PAYMENT_DATE`) AS `Month_Name`, year(`py`.`PAYMENT_DATE`) AS `Year` FROM (((`payment_tbl` `py` join `appointment_tbl` `a` on(`py`.`APPOINTMENT_ID` = `a`.`APPOINTMENT_ID`)) join `patient_tbl` `p` on(`a`.`PATIENT_ID` = `p`.`PATIENT_ID`)) join `doctor_tbl` `d` on(`a`.`DOCTOR_ID` = `d`.`DOCTOR_ID`)) ;
 
 --
 -- Indexes for dumped tables
@@ -738,6 +907,13 @@ ALTER TABLE `medicine_tbl`
   ADD KEY `RECEPTIONIST_ID` (`RECEPTIONIST_ID`);
 
 --
+-- Indexes for table `notification_seen_tbl`
+--
+ALTER TABLE `notification_seen_tbl`
+  ADD PRIMARY KEY (`SEEN_ID`),
+  ADD UNIQUE KEY `uniq_user_notif` (`USER_TYPE`,`USER_ID`,`NOTIF_KEY`);
+
+--
 -- Indexes for table `password_resets`
 --
 ALTER TABLE `password_resets`
@@ -771,6 +947,12 @@ ALTER TABLE `prescription_medicine_tbl`
 ALTER TABLE `prescription_tbl`
   ADD PRIMARY KEY (`PRESCRIPTION_ID`),
   ADD KEY `APPOINTMENT_ID` (`APPOINTMENT_ID`);
+
+--
+-- Indexes for table `receptionist_notifications`
+--
+ALTER TABLE `receptionist_notifications`
+  ADD PRIMARY KEY (`RECEPTIONIST_NOTIFICATION_ID`);
 
 --
 -- Indexes for table `receptionist_tbl`
@@ -832,6 +1014,12 @@ ALTER TABLE `medicine_tbl`
   MODIFY `MEDICINE_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
+-- AUTO_INCREMENT for table `notification_seen_tbl`
+--
+ALTER TABLE `notification_seen_tbl`
+  MODIFY `SEEN_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+--
 -- AUTO_INCREMENT for table `password_resets`
 --
 ALTER TABLE `password_resets`
@@ -854,6 +1042,12 @@ ALTER TABLE `payment_tbl`
 --
 ALTER TABLE `prescription_tbl`
   MODIFY `PRESCRIPTION_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+
+--
+-- AUTO_INCREMENT for table `receptionist_notifications`
+--
+ALTER TABLE `receptionist_notifications`
+  MODIFY `RECEPTIONIST_NOTIFICATION_ID` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `receptionist_tbl`
