@@ -172,9 +172,7 @@ $fullName = $receptionist['FIRST_NAME'] . ' ' . $receptionist['LAST_NAME'];
             </div>
             <div>
                 <div class="profile-main-name"><?php echo htmlspecialchars($fullName); ?></div>
-                <div class="profile-id" style="margin-top:4px;color:#64748b;font-size:0.85rem;">
-                    ID: <?php echo (int)$receptionist['RECEPTIONIST_ID']; ?>
-                </div>
+
             </div>
         </div>
 
