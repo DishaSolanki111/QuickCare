@@ -1,8 +1,6 @@
 <?php
 ob_start();
 include 'config.php'; ?>
-<?php require_once 'username_validation.php'; ?>
-<?php require_once 'account_validation.php'; ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
