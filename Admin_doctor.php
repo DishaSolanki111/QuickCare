@@ -615,8 +615,9 @@ include 'admin_sidebar.php';
                     Edit
                 </button>
 
-                <form method="POST" action="admin_doctor_profile_view.php" style="display:inline;">
-                    <input type="hidden" name="doctor_id" value="<?php echo (int)$row['DOCTOR_ID']; ?>">
+                <form method="POST" action="d_profile.php" style="display:inline;">
+                    <input type="hidden" name="id" value="<?php echo (int)$row['DOCTOR_ID']; ?>">
+                    <input type="hidden" name="source" value="admin_doctor">
                     <button type="submit" class="action-btn view-btn">
                         <i class="bi bi-eye"></i>
                         View

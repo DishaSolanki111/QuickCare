@@ -466,7 +466,15 @@ $spec_back_id = (int)($doctor['SPECIALISATION_ID'] ?? 0);
         
         <div class="content-wrapper">
             <div class="container">
-                <form id="backDoctorsForm" method="POST" action="<?php echo ($source === 'view_doctor_patient') ? 'view_doctor_patient.php' : 'doctors.php'; ?>" style="display:inline;">
+                <?php
+                $backTarget = 'doctors.php';
+                if ($source === 'view_doctor_patient') {
+                    $backTarget = 'view_doctor_patient.php';
+                } elseif ($source === 'admin_doctor') {
+                    $backTarget = 'Admin_doctor.php';
+                }
+                ?>
+                <form id="backDoctorsForm" method="POST" action="<?php echo $backTarget; ?>" style="display:inline;">
                     <input type="hidden" name="spec_id" value="<?php echo htmlspecialchars($spec_id); ?>">
                 </form>
                 <button type="button" class="back-btn" onclick="document.getElementById('backDoctorsForm').submit()">
