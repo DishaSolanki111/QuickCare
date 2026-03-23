@@ -447,7 +447,7 @@ if ($spec_id > 0) {
                                 <input type="hidden" name="doctor_id" value="<?php echo $row['DOCTOR_ID']; ?>">
                                 <button type="submit" class="btn-primary"><i class="fas fa-calendar-check"></i> Book Now</button>
                             </form>
-                            <form method="GET" action="doctor_visitor_feedback.php">
+                            <form method="POST" action="doctor_visitor_feedback.php">
                                 <input type="hidden" name="doctor_id" value="<?php echo $row['DOCTOR_ID']; ?>">
                                 <button type="submit" class="btn-secondary btn-feedback"><i class="fas fa-star"></i> View Feedback</button>
                             </form>

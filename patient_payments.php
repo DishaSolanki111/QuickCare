@@ -14,8 +14,8 @@ include 'config.php';
  $patient_query = mysqli_query($conn, "SELECT * FROM patient_tbl WHERE PATIENT_ID = '$patient_id'");
  $patient = mysqli_fetch_assoc($patient_query);
 
-// Filter by name (GET param)
-$filter_name = isset($_GET['filter_name']) ? trim(mysqli_real_escape_string($conn, $_GET['filter_name'])) : '';
+// Filter by name (POST param)
+$filter_name = isset($_POST['filter_name']) ? trim(mysqli_real_escape_string($conn, $_POST['filter_name'])) : '';
 
 $payments_where = "a.PATIENT_ID = '$patient_id'";
 if (!empty($filter_name)) {
@@ -509,7 +509,7 @@ html {
             <?php endif; ?>
         
             <!-- Filter by Name and Date -->
-            <form method="GET" action="patient_payments.php" class="filter-form" style="display:flex; gap:15px; flex-wrap:wrap; margin-bottom:20px; align-items:flex-end;">
+            <form method="POST" action="patient_payments.php" class="filter-form" style="display:flex; gap:15px; flex-wrap:wrap; margin-bottom:20px; align-items:flex-end;">
                 <div class="form-group" style="margin-bottom:0; flex:1; min-width:180px;">
                     <label for="filter_name" style="margin-bottom:5px; display:block;">Filter by Doctor Name</label>
                     <input type="text" class="form-control" id="filter_name" name="filter_name" placeholder="Doctor name..." value="<?php echo htmlspecialchars($filter_name); ?>">

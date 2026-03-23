@@ -29,9 +29,9 @@ if ($conn->connect_error) {
 $conn->set_charset("utf8mb4");
 
 // ── FILTER: Month / Year / Week ───────────────────────────
-$selected_year  = isset($_GET['year'])  ? (int)$_GET['year']  : (int)date('Y');
-$selected_month = isset($_GET['month']) ? (int)$_GET['month'] : (int)date('m');
-$selected_week  = isset($_GET['week'])  ? (int)$_GET['week']  : 0; // 0 = full month
+$selected_year  = isset($_POST['year'])  ? (int)$_POST['year']  : (int)date('Y');
+$selected_month = isset($_POST['month']) ? (int)$_POST['month'] : (int)date('m');
+$selected_week  = isset($_POST['week'])  ? (int)$_POST['week']  : 0; // 0 = full month
 
 $month_start = sprintf('%04d-%02d-01', $selected_year, $selected_month);
 $month_end   = date('Y-m-t', strtotime($month_start));
@@ -604,7 +604,7 @@ canvas { max-width: 100%; }
 
   <!-- FILTER BAR -->
   <div class="filter-bar">
-    <form method="GET" style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;width:100%">
+    <form method="POST" style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;width:100%">
       <label>Month</label>
       <select name="month">
         <?php for($m=1;$m<=12;$m++): ?>

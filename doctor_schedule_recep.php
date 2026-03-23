@@ -70,9 +70,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 
 // Get search parameters with sanitization
- $doctor_name = isset($_GET['doctor_name']) ? trim(mysqli_real_escape_string($conn, $_GET['doctor_name'])) : '';
- $specialization_id = isset($_GET['specialization']) ? mysqli_real_escape_string($conn, $_GET['specialization']) : '';
- $schedule_date = isset($_GET['schedule_date']) ? mysqli_real_escape_string($conn, $_GET['schedule_date']) : '';
+ $doctor_name = isset($_POST['doctor_name']) ? trim(mysqli_real_escape_string($conn, $_POST['doctor_name'])) : '';
+ $specialization_id = isset($_POST['specialization']) ? mysqli_real_escape_string($conn, $_POST['specialization']) : '';
+ $schedule_date = isset($_POST['schedule_date']) ? mysqli_real_escape_string($conn, $_POST['schedule_date']) : '';
 
 // Build the base query
  $query = "
@@ -952,12 +952,12 @@ if ($doctors_query && mysqli_num_rows($doctors_query) > 0) {
         </div>
 
         <div class="filter-container">
-            <form method="GET" action="doctor_schedule_recep.php">
+            <form method="POST" action="doctor_schedule_recep.php">
                 <input
                     type="text"
                     name="doctor_name"
                     placeholder="Filter by Doctor Name"
-                    value="<?php echo isset($_GET['doctor_name']) ? htmlspecialchars($_GET['doctor_name']) : ''; ?>"
+                    value="<?php echo isset($_POST['doctor_name']) ? htmlspecialchars($_POST['doctor_name']) : ''; ?>"
                 >
 
                 <select name="specialization">
@@ -966,7 +966,7 @@ if ($doctors_query && mysqli_num_rows($doctors_query) > 0) {
                     $spec_query = mysqli_query($conn, "SELECT SPECIALISATION_ID, SPECIALISATION_NAME FROM specialisation_tbl ORDER BY SPECIALISATION_NAME");
                     if (mysqli_num_rows($spec_query) > 0) {
                         while ($spec = mysqli_fetch_assoc($spec_query)) {
-                            $selected = (isset($_GET['specialization']) && $_GET['specialization'] == $spec['SPECIALISATION_ID']) ? 'selected' : '';
+                            $selected = (isset($_POST['specialization']) && $_POST['specialization'] == $spec['SPECIALISATION_ID']) ? 'selected' : '';
                             echo '<option value="' . $spec['SPECIALISATION_ID'] . '" ' . $selected . '>' . 
                                  htmlspecialchars($spec['SPECIALISATION_NAME']) . '</option>';
                         }
@@ -977,7 +977,7 @@ if ($doctors_query && mysqli_num_rows($doctors_query) > 0) {
                 <input
                     type="date"
                     name="schedule_date"
-                    value="<?php echo isset($_GET['schedule_date']) ? htmlspecialchars($_GET['schedule_date']) : ''; ?>"
+                    value="<?php echo isset($_POST['schedule_date']) ? htmlspecialchars($_POST['schedule_date']) : ''; ?>"
                 >
 
                 <button type="submit">

@@ -6,7 +6,7 @@ include 'config.php';
 $doctor_id = isset($_SESSION['DOCTOR_ID']) ? (int)$_SESSION['DOCTOR_ID'] : 0;
 
 // Optional patient name filter
-$search = isset($_GET['q']) ? trim($_GET['q']) : '';
+$search = isset($_POST['q']) ? trim($_POST['q']) : '';
 
 // Only show patients who have appointments with this doctor
 $sql = "
@@ -274,7 +274,7 @@ $patients_result = $doctor_id > 0 ? mysqli_query($conn, $sql) : false;
             <!-- Filter/Search Panel -->
             <div class="filter-panel">
                 <div class="filter-label">Filter by Patient:</div>
-                <form id="patientSearchForm" method="get">
+                <form id="patientSearchForm" method="post">
                     <div class="filter-row">
                         <input
                             type="text"

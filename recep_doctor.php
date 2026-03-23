@@ -605,7 +605,7 @@ $receptionist_id = $_SESSION['RECEPTIONIST_ID'];
             <td><?php echo $row['EMAIL']; ?></td>
                     <td class="actions-td">
                 <div class="doctor-actions">
-                            <form method="GET" action="recep_doctor_profile_view.php" style="display:inline">
+                            <form method="POST" action="recep_doctor_profile_view.php" style="display:inline">
                                 <input type="hidden" name="doctor_id" value="<?php echo $row['DOCTOR_ID']; ?>">
                                 <button type="submit" class="action-btn view-btn">
                                     <i class="bi bi-eye"></i>

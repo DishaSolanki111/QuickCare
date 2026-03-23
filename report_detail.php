@@ -20,11 +20,11 @@ function qr($c,$s){$r=$c->query($s);if(!$r)return[];$d=[];while($row=$r->fetch_a
 function qn($c,$s){$r=$c->query($s);if(!$r)return 0;$row=$r->fetch_row();return $row?$row[0]:0;}
 
 /* ── FILTERS ─────────────────────────────────── */
-$type  = in_array($_GET['type']??'',['appointment','payment','prescription','reminder','feedback','doctor'])
-         ? $_GET['type'] : 'appointment';
-$yr    = isset($_GET['year'])  ? (int)$_GET['year']  : (int)date('Y');
-$mo    = isset($_GET['month']) ? (int)$_GET['month'] : (int)date('m');
-$wk    = isset($_GET['week'])  ? (int)$_GET['week']  : 0;
+$type  = in_array($_POST['type']??'',['appointment','payment','prescription','reminder','feedback','doctor'])
+         ? $_POST['type'] : 'appointment';
+$yr    = isset($_POST['year'])  ? (int)$_POST['year']  : (int)date('Y');
+$mo    = isset($_POST['month']) ? (int)$_POST['month'] : (int)date('m');
+$wk    = isset($_POST['week'])  ? (int)$_POST['week']  : 0;
 
 $ms    = sprintf('%04d-%02d-01',$yr,$mo);
 $me    = date('Y-m-t',strtotime($ms));
@@ -358,7 +358,7 @@ tr:hover td{background:#f6fafb}
 
   <!-- filter bar -->
   <div class="fb">
-    <form method="GET" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;width:100%">
+    <form method="POST" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;width:100%">
       <input type="hidden" name="type" value="<?=htmlspecialchars($type)?>">
       <label>Month</label>
       <select name="month">

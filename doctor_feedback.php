@@ -10,7 +10,7 @@ include 'config.php';
 $doctor_id = $_SESSION['DOCTOR_ID'];
 
 // Optional filter: patient name (first, last, or full)
-$filter_name = isset($_GET['filter_name']) ? trim($_GET['filter_name']) : '';
+$filter_name = isset($_POST['filter_name']) ? trim($_POST['filter_name']) : '';
 
 // Base query for this doctor's feedback (include PATIENT_ID for grouping)
 $feedback_query = "SELECT f.FEEDBACK_ID, f.RATING, f.COMMENTS, a.APPOINTMENT_DATE, p.PATIENT_ID, p.FIRST_NAME, p.LAST_NAME 
@@ -387,7 +387,7 @@ $conn->close();
                 <div class="feedback-section" >
                     <h3 style="margin-bottom: 20px;">Patient Feedback</h3>
                     
-                    <form method="GET" action="doctor_feedback.php" class="feedback-filter-form">
+                    <form method="POST" action="doctor_feedback.php" class="feedback-filter-form">
                         <div class="filter-group">
                             <label for="filter_name"><i class="fas fa-user"></i> Patient Name</label>
                             <input

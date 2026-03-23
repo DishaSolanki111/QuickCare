@@ -137,8 +137,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_medicine_remin
 }
 
 // Search filters (from header form)
-$search_type = isset($_GET['search_type']) ? mysqli_real_escape_string($conn, $_GET['search_type']) : '';
-$search_term = isset($_GET['search_term']) ? mysqli_real_escape_string($conn, trim($_GET['search_term'])) : '';
+$search_type = isset($_POST['search_type']) ? mysqli_real_escape_string($conn, $_POST['search_type']) : '';
+$search_term = isset($_POST['search_term']) ? mysqli_real_escape_string($conn, trim($_POST['search_term'])) : '';
 $search_where = '';
 if ($search_term !== '') {
     if ($search_type === 'patient') {
@@ -815,16 +815,16 @@ if (isset($_POST['edit_reminder_id'])) {
         
         <!-- Search Bar Section (same design as recep_doctor.php filter) -->
         <div class="reminder-search-section">
-            <form method="get" action="st_reminder.php" class="reminder-search-form">
+            <form method="post" action="st_reminder.php" class="reminder-search-form">
                 <select name="search_type" class="search-type-select" required>
                     <option value="">Search by...</option>
-                    <option value="patient" <?php echo (isset($_GET['search_type']) && $_GET['search_type'] === 'patient') ? 'selected' : ''; ?>>By Patient</option>
-                    <option value="doctor" <?php echo (isset($_GET['search_type']) && $_GET['search_type'] === 'doctor') ? 'selected' : ''; ?>>By Doctor</option>
-                    <option value="specialization" <?php echo (isset($_GET['search_type']) && $_GET['search_type'] === 'specialization') ? 'selected' : ''; ?>>By Specialization</option>
+                    <option value="patient" <?php echo (isset($_POST['search_type']) && $_POST['search_type'] === 'patient') ? 'selected' : ''; ?>>By Patient</option>
+                    <option value="doctor" <?php echo (isset($_POST['search_type']) && $_POST['search_type'] === 'doctor') ? 'selected' : ''; ?>>By Doctor</option>
+                    <option value="specialization" <?php echo (isset($_POST['search_type']) && $_POST['search_type'] === 'specialization') ? 'selected' : ''; ?>>By Specialization</option>
                 </select>
-                <input type="text" name="search_term" class="search-term-input" placeholder="Search..." value="<?php echo isset($_GET['search_term']) ? htmlspecialchars($_GET['search_term']) : ''; ?>">
+                <input type="text" name="search_term" class="search-term-input" placeholder="Search..." value="<?php echo isset($_POST['search_term']) ? htmlspecialchars($_POST['search_term']) : ''; ?>"
                 <button type="submit" class="btn-search">Search</button>
-                <?php if (!empty($_GET['search_type']) || !empty($_GET['search_term'])): ?>
+                <?php if (!empty($_POST['search_type']) || !empty($_POST['search_term'])): ?>
                 <a href="st_reminder.php" class="btn-clear">Clear</a>
                 <?php endif; ?>
             </form>

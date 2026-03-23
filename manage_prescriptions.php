@@ -38,8 +38,8 @@ if ($doc_result->num_rows === 1) {
 
 // Check for success message in URL
  $alert_message = '';
-if (isset($_GET['status'])) {
-    $status = $_GET['status'];
+if (isset($_POST['status'])) {
+    $status = $_POST['status'];
     if ($status === 'success') {
         $alert_message = "Prescription added successfully!";
     } elseif ($status === 'updated') {
@@ -49,9 +49,9 @@ if (isset($_GET['status'])) {
     }
 }
 
-// Filter parameters (GET)
-$filter_name = isset($_GET['filter_name']) ? trim(mysqli_real_escape_string($conn, $_GET['filter_name'])) : '';
-$filter_date = isset($_GET['filter_date']) ? mysqli_real_escape_string($conn, $_GET['filter_date']) : '';
+// Filter parameters (POST)
+$filter_name = isset($_POST['filter_name']) ? trim(mysqli_real_escape_string($conn, $_POST['filter_name'])) : '';
+$filter_date = isset($_POST['filter_date']) ? mysqli_real_escape_string($conn, $_POST['filter_date']) : '';
 
 // Fetch existing prescriptions for this doctor (one row per prescription)
 $conditions = ["a.DOCTOR_ID = ?"];
@@ -380,7 +380,7 @@ $stmt->close();
                 <h1>Manage Prescriptions</h1>
                 
                 
-                <form method="GET" action="manage_prescriptions.php" class="filter-form">
+                <form method="POST" action="manage_prescriptions.php" class="filter-form">
                     <div class="filter-group">
                         <label for="filter_name"><i class="fas fa-user"></i> Patient Name</label>
                         <input type="text" id="filter_name" name="filter_name" placeholder="Search by name..." value="<?php echo htmlspecialchars($filter_name); ?>">
