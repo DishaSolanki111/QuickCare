@@ -396,7 +396,7 @@ include 'header.php';?>
             $field_errors = [
                 'first_name' => '', 'last_name' => '', 'dob' => '', 'blood_group' => '',
                 'phone' => '', 'email' => '', 'address' => '',
-                'username' => '', 'password' => '', 'medical_history' => '',
+                'username' => '', 'password' => '', 
                 'security_question' => '', 'security_answer' => ''
             ];
             
@@ -431,74 +431,8 @@ include 'header.php';?>
                     'security_answer' => $_POST['security_answer'] ?? ''
                 ];
 
-                // ---------------- MEDICAL HISTORY FILE UPLOAD (OPTIONAL) ----------------
-                $medical_history_file_path = "";
-                if (isset($_FILES['medical_history']) && $_FILES['medical_history']['error'] == 0) {
-                    $medical_history_upload_dir = "uploads/medical_history/";
-                    if (!file_exists($medical_history_upload_dir)) {
-                        mkdir($medical_history_upload_dir, 0777, true);
-                    }
-
-                    $ext = strtolower(pathinfo($_FILES['medical_history']['name'], PATHINFO_EXTENSION));
-                    $allowed = ['pdf', 'jpg', 'jpeg', 'png'];
-                    
-                    // Validate file extension
-                    if (!in_array($ext, $allowed)) {
-                        $field_errors['medical_history'] = "Medical history file must be PDF, JPG, JPEG, or PNG format only.";
-                    } else {
-                        // Validate file size (max 10MB)
-                        $max_file_size = 10 * 1024 * 1024; // 10MB in bytes
-                        if ($_FILES['medical_history']['size'] > $max_file_size) {
-                            $field_errors['medical_history'] = "Medical history file size must not exceed 10MB.";
-                        } else {
-                            // Additional security: Check MIME type
-                            $finfo = finfo_open(FILEINFO_MIME_TYPE);
-                            $mime_type = finfo_file($finfo, $_FILES['medical_history']['tmp_name']);
-                            finfo_close($finfo);
-                            
-                            $allowed_mime_types = [
-                                'application/pdf',
-                                'image/jpeg',
-                                'image/jpg',
-                                'image/png'
-                            ];
-                            
-                            if (!in_array($mime_type, $allowed_mime_types)) {
-                                $field_errors['medical_history'] = "Invalid file type. Medical history file must be PDF, JPG, JPEG, or PNG format.";
-                            } else {
-                                // Generate unique filename
-                                $file_name = 'medical_history_' . time() . '_' . uniqid() . '.' . $ext;
-                                $target_file = $medical_history_upload_dir . $file_name;
-                                
-                                if (move_uploaded_file($_FILES['medical_history']['tmp_name'], $target_file)) {
-                                    $medical_history_file_path = $target_file;
-                                } else {
-                                    $field_errors['medical_history'] = "Failed to upload medical history file.";
-                                }
-                            }
-                        }
-                    }
-                } elseif (isset($_FILES['medical_history']) && $_FILES['medical_history']['error'] != UPLOAD_ERR_NO_FILE) {
-                    // Handle upload errors
-                    switch ($_FILES['medical_history']['error']) {
-                        case UPLOAD_ERR_INI_SIZE:
-                        case UPLOAD_ERR_FORM_SIZE:
-                            $field_errors['medical_history'] = "Medical history file size exceeds the maximum allowed size.";
-                            break;
-                        case UPLOAD_ERR_PARTIAL:
-                            $field_errors['medical_history'] = "Medical history file was only partially uploaded.";
-                            break;
-                        case UPLOAD_ERR_NO_TMP_DIR:
-                            $field_errors['medical_history'] = "Missing temporary folder for medical history file upload.";
-                            break;
-                        case UPLOAD_ERR_CANT_WRITE:
-                            $field_errors['medical_history'] = "Failed to write medical history file to disk.";
-                            break;
-                        default:
-                            $field_errors['medical_history'] = "Unknown error occurred while uploading medical history file.";
-                    }
-                }
-
+                
+               
                 // ---------------- SANITIZE ----------------
                 $first_name_raw = $_POST['first_name'] ?? '';
                 $last_name_raw  = $_POST['last_name'] ?? '';
@@ -591,16 +525,16 @@ include 'header.php';?>
                     $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
                    $blood_val = ($blood_group === '' || $blood_group === null) ? 'NULL' : "'$blood_group'";
-                   $medical_history_val = ($medical_history_file_path === '') ? 'NULL' : "'" . mysqli_real_escape_string($conn, $medical_history_file_path) . "'";
+                  
                    $sec_q = mysqli_real_escape_string($conn, $security_question);
                    $sec_a = mysqli_real_escape_string($conn, $security_answer);
                    
                    $sql = "
                 INSERT INTO patient_tbl
-                (FIRST_NAME, LAST_NAME, USERNAME, PSWD, DOB, GENDER, BLOOD_GROUP, PHONE, EMAIL, ADDRESS, MEDICAL_HISTORY_FILE, SECURITY_QUESTION, SECURITY_ANSWER)
+                (FIRST_NAME, LAST_NAME, USERNAME, PSWD, DOB, GENDER, BLOOD_GROUP, PHONE, EMAIL, ADDRESS,  SECURITY_QUESTION, SECURITY_ANSWER)
                 VALUES
                 ('$first_name','$last_name','$username','$hashed_password','$dob','$gender',
-                 $blood_val,'$phone','$email','$address',$medical_history_val,'$sec_q','$sec_a')
+                 $blood_val,'$phone','$email','$address','$sec_q','$sec_a')
             ";
                     if ($conn->query($sql) === TRUE) {
                         $conn->close();
@@ -609,17 +543,9 @@ include 'header.php';?>
                         exit;
                     } else {
                         $error = "Database error: " . mysqli_error($conn);
-                        // If database insert fails, delete uploaded file
-                        if (!empty($medical_history_file_path) && file_exists($medical_history_file_path)) {
-                            unlink($medical_history_file_path);
-                        }
+                        
                     }
-                } else {
-                    // If validation fails, delete uploaded file
-                    if (!empty($medical_history_file_path) && file_exists($medical_history_file_path)) {
-                        unlink($medical_history_file_path);
-                    }
-                }
+                } 
 
                 $conn->close();
             }
@@ -891,32 +817,7 @@ include 'header.php';?>
         }
     }
 
-    // --- Medical History File Upload Validation ---
-    document.getElementById('medical_history').addEventListener('change', function () {
-        const file = this.files[0];
-        const label = document.getElementById('medical-history-label');
-        hideError('medical_history');
-        
-        if (file) {
-            const ext = file.name.split('.').pop().toLowerCase();
-            const allowed = ['pdf', 'jpg', 'jpeg', 'png'];
-            const maxSize = 10 * 1024 * 1024; // 10MB
-            
-            if (allowed.indexOf(ext) === -1) {
-                showError('medical_history', "Medical history file must be PDF, JPG, JPEG, or PNG format only.");
-                this.value = '';
-                label.textContent = 'Choose Medical History File (PDF, JPG, JPEG, PNG - Max 10MB)';
-            } else if (file.size > maxSize) {
-                showError('medical_history', "Medical history file size must not exceed 10MB.");
-                this.value = '';
-                label.textContent = 'Choose Medical History File (PDF, JPG, JPEG, PNG - Max 10MB)';
-            } else {
-                label.textContent = file.name + ' (' + (file.size / 1024 / 1024).toFixed(2) + ' MB)';
-            }
-        } else {
-            label.textContent = 'Choose Medical History File (PDF, JPG, JPEG, PNG - Max 10MB)';
-        }
-    });
+   
 
     // --- Attach Real-time Listeners ---
     
