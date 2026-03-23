@@ -125,26 +125,26 @@ CREATE TABLE `appointment_tbl` (
 --
 
 INSERT INTO appointment_tbl (APPOINTMENT_ID, PATIENT_ID, DOCTOR_ID, SCHEDULE_ID, CREATED_AT, APPOINTMENT_DATE, APPOINTMENT_TIME, STATUS) VALUES
-(1, 1, 1, 1, '2026-03-20 00:00:00', '2026-03-22', '09:00:00', 'COMPLETED'),
-(2, 2, 1, 2, '2026-03-21 00:00:00', '2026-03-23', '10:00:00', 'COMPLETED'),
-(3, 3, 1, 3, '2026-03-22 00:00:00', '2026-03-24', '11:00:00', 'COMPLETED'),
-(4, 4, 2, 4, '2026-03-23 00:00:00', '2026-03-25', '09:00:00', 'COMPLETED'),
-(5, 5, 2, 5, '2026-03-24 00:00:00', '2026-03-26', '10:00:00', 'COMPLETED'),
-(6, 6, 2, 6, '2026-03-25 00:00:00', '2026-03-27', '11:00:00', 'COMPLETED'),
-(7, 7, 3, 7, '2026-03-26 00:00:00', '2026-03-28', '09:00:00', 'COMPLETED'),
-(8, 8, 3, 8, '2026-03-27 00:00:00', '2026-03-29', '10:00:00', 'COMPLETED'),
-(9, 9, 3, 9, '2026-03-28 00:00:00', '2026-03-30', '11:00:00', 'COMPLETED'),
-(10, 10, 4, 10, '2026-03-29 00:00:00', '2026-03-31', '09:00:00', 'COMPLETED'),
-(11, 1, 4, 11, '2026-03-30 00:00:00', '2026-04-01', '10:00:00', 'COMPLETED'),
-(12, 2, 4, 12, '2026-03-31 00:00:00', '2026-04-02', '11:00:00', 'COMPLETED'),
-(13, 3, 5, 13, '2026-04-01 00:00:00', '2026-04-03', '09:00:00', 'COMPLETED'),
-(14, 4, 5, 14, '2026-04-02 00:00:00', '2026-04-04', '10:00:00', 'COMPLETED'),
-(15, 5, 5, 15, '2026-04-03 00:00:00', '2026-04-05', '11:00:00', 'COMPLETED'),
-(16, 6, 6, 16, '2026-04-04 00:00:00', '2026-04-06', '09:00:00', 'COMPLETED'),
-(17, 7, 6, 17, '2026-04-05 00:00:00', '2026-04-07', '10:00:00', 'COMPLETED'),
-(18, 8, 6, 18, '2026-04-06 00:00:00', '2026-04-08', '11:00:00', 'COMPLETED'),
-(19, 9, 7, 19, '2026-04-07 00:00:00', '2026-04-09', '09:00:00', 'COMPLETED'),
-(20, 10, 7, 20, '2026-04-08 00:00:00', '2026-04-10', '10:00:00', 'COMPLETED'),
+(1, 1, 1, 3, '2026-03-19 10:00:00', '2026-03-20', '11:00:00', 'COMPLETED'),
+(2, 1, 1, 2, '2026-03-21 00:00:00', '2026-03-23', '10:00:00', 'CANCELLED'),
+(3, 1, 1, 1, '2026-03-20 00:00:00', '2026-03-25', '16:00:00', 'SCHEDULED'),
+(4, 4, 2, 4, '2026-03-23 00:00:00', '2026-03-25', '09:00:00', 'SCHEDULED'),
+(5, 5, 2, 5, '2026-03-24 00:00:00', '2026-03-26', '10:00:00', 'SCHEDULED'),
+(6, 6, 2, 6, '2026-03-25 00:00:00', '2026-03-27', '11:00:00', 'SCHEDULED'),
+(7, 7, 3, 7, '2026-03-26 00:00:00', '2026-03-28', '09:00:00', 'SCHEDULED'),
+(8, 8, 3, 8, '2026-03-27 00:00:00', '2026-03-29', '10:00:00', 'SCHEDULED'),
+(9, 9, 3, 9, '2026-03-28 00:00:00', '2026-03-30', '11:00:00', 'SCHEDULED'),
+(10, 10, 4, 10, '2026-03-29 00:00:00', '2026-03-31', '09:00:00', 'SCHEDULED'),
+(11, 1, 4, 11, '2026-03-30 00:00:00', '2026-04-01', '10:00:00', 'SCHEDULED'),
+(12, 2, 4, 12, '2026-03-31 00:00:00', '2026-04-02', '11:00:00', 'SCHEDULED'),
+(13, 3, 5, 13, '2026-04-01 00:00:00', '2026-04-03', '09:00:00', 'SCHEDULED'),
+(14, 4, 5, 14, '2026-04-02 00:00:00', '2026-04-04', '10:00:00', 'SCHEDULED'),
+(15, 5, 5, 15, '2026-04-03 00:00:00', '2026-04-05', '11:00:00', 'SCHEDULED'),
+(16, 6, 6, 16, '2026-04-04 00:00:00', '2026-04-06', '09:00:00', 'SCHEDULED'),
+(17, 7, 6, 17, '2026-04-05 00:00:00', '2026-04-07', '10:00:00', 'CANCELLED'),
+(18, 8, 6, 18, '2026-04-06 00:00:00', '2026-04-08', '11:00:00', 'SCHEDULED'),
+(19, 9, 7, 19, '2026-04-07 00:00:00', '2026-04-09', '09:00:00', 'CANCELLED'),
+(20, 10, 7, 20, '2026-04-08 00:00:00', '2026-04-10', '10:00:00', 'CANCELLED'),
 (21, 1, 7, 21, '2026-04-09 00:00:00', '2026-04-11', '11:00:00', 'SCHEDULED'),
 (22, 2, 8, 22, '2026-04-10 00:00:00', '2026-04-12', '09:00:00', 'SCHEDULED'),
 (23, 3, 8, 23, '2026-04-11 00:00:00', '2026-04-13', '10:00:00', 'SCHEDULED'),
@@ -330,27 +330,30 @@ CREATE TABLE `medicine_reminder_tbl` (
 --
 
 INSERT INTO medicine_reminder_tbl (MEDICINE_REMINDER_ID, MEDICINE_ID, CREATOR_ROLE, CREATOR_ID, PATIENT_ID, START_DATE, END_DATE, REMINDER_TIME, REMARKS) VALUES
-(7, 5, 'RECEPTIONIST', 1, 2, '2026-03-11', '2026-04-11', '08:00:00', 'Morning dose'),
-(8, 6, 'RECEPTIONIST', 1, 2, '2026-03-11', '2026-04-11', '09:00:00', 'Morning dose'),
-(9, 3, 'RECEPTIONIST', 2, 3, '2026-03-13', '2026-04-13', '08:00:00', 'Morning dose'),
-(10, 3, 'RECEPTIONIST', 2, 3, '2026-03-13', '2026-04-13', '20:00:00', 'Evening dose'),
-(11, 7, 'RECEPTIONIST', 2, 4, '2026-03-16', '2026-04-16', '08:00:00', 'Morning dose'),
-(12, 8, 'RECEPTIONIST', 2, 4, '2026-03-16', '2026-04-16', '21:00:00', 'Night dose'),
-(13, 9, 'RECEPTIONIST', 3, 5, '2026-03-21', '2026-04-21', '08:00:00', 'Morning dose'),
-(14, 9, 'RECEPTIONIST', 3, 5, '2026-03-21', '2026-04-21', '14:00:00', 'Afternoon dose'),
-(15, 9, 'RECEPTIONIST', 3, 5, '2026-03-21', '2026-04-21', '20:00:00', 'Evening dose'),
-(16, 10, 'RECEPTIONIST', 3, 5, '2026-03-22', '2026-04-22', '09:00:00', 'Morning dose'),
-(17, 10, 'RECEPTIONIST', 3, 5, '2026-03-22', '2026-04-22', '21:00:00', 'Night dose'),
-(18, 11, 'RECEPTIONIST', 3, 6, '2026-04-26', '2026-05-26', '08:00:00', 'Morning dose'),
-(19, 11, 'RECEPTIONIST', 3, 6, '2026-04-26', '2026-05-26', '14:00:00', 'Afternoon dose'),
-(20, 11, 'RECEPTIONIST', 3, 6, '2026-04-26', '2026-05-26', '20:00:00', 'Evening dose'),
-(21, 13, 'RECEPTIONIST', 1, 9, '2026-04-25', '2026-05-25', '08:00:00', 'Morning dose'),
-(22, 13, 'RECEPTIONIST', 1, 9, '2026-04-25', '2026-05-25', '20:00:00', 'Evening dose'),
-(23, 14, 'RECEPTIONIST', 1, 9, '2026-04-25', '2026-05-25', '21:00:00', 'Night dose'),
-(24, 15, 'RECEPTIONIST', 1, 10, '2026-05-01', '2026-05-31', '08:00:00', 'Morning dose'),
-(25, 15, 'RECEPTIONIST', 1, 10, '2026-05-01', '2026-05-31', '14:00:00', 'Afternoon dose'),
-(26, 15, 'RECEPTIONIST', 1, 10, '2026-05-01', '2026-05-31', '20:00:00', 'Evening dose'),
-(27, 16, 'RECEPTIONIST', 1, 10, '2026-05-01', '2026-05-31', '21:00:00', 'Night dose');
+(7, 5, 'RECEPTIONIST', 1, 1, '2026-03-20', '2026-03-22', '10:00:00', 'take your medicine after breakfast'),
+(8, 5, 'RECEPTIONIST', 1, 1, '2026-03-20', '2026-03-22', '14:00:00', 'Have your medicine if you have taken lunch'),
+(9, 17, 'RECEPTIONIST', 1, 1, '2026-03-20', '2026-03-25', '09:00:00', 'take your syrup after breakfast'),
+(10, 17, 'RECEPTIONIST', 1, 1, '2026-03-20', '2026-03-25', '14:00:00', 'take your syrup after lunch'),
+(11, 17, 'RECEPTIONIST', 1, 1, '2026-03-20', '2026-03-25', '21:00:00', 'take your syrup after dinner'),
+(12, 3, 'RECEPTIONIST', 2, 3, '2026-03-13', '2026-04-13', '08:00:00', 'Morning dose'),
+(13, 3, 'RECEPTIONIST', 2, 3, '2026-03-13', '2026-04-13', '20:00:00', 'Evening dose'),
+(14, 7, 'RECEPTIONIST', 2, 4, '2026-03-16', '2026-04-16', '08:00:00', 'Morning dose'),
+(15, 8, 'RECEPTIONIST', 2, 4, '2026-03-16', '2026-04-16', '21:00:00', 'Night dose'),
+(16, 9, 'RECEPTIONIST', 3, 5, '2026-03-21', '2026-04-21', '08:00:00', 'Morning dose'),
+(17, 9, 'RECEPTIONIST', 3, 5, '2026-03-21', '2026-04-21', '14:00:00', 'Afternoon dose'),
+(18, 9, 'RECEPTIONIST', 3, 5, '2026-03-21', '2026-04-21', '20:00:00', 'Evening dose'),
+(19, 10, 'RECEPTIONIST', 3, 5, '2026-03-22', '2026-04-22', '09:00:00', 'Morning dose'),
+(20, 10, 'RECEPTIONIST', 3, 5, '2026-03-22', '2026-04-22', '21:00:00', 'Night dose'),
+(21, 11, 'RECEPTIONIST', 3, 6, '2026-04-26', '2026-05-26', '08:00:00', 'Morning dose'),
+(22, 11, 'RECEPTIONIST', 3, 6, '2026-04-26', '2026-05-26', '14:00:00', 'Afternoon dose'),
+(23, 11, 'RECEPTIONIST', 3, 6, '2026-04-26', '2026-05-26', '20:00:00', 'Evening dose'),
+(24, 13, 'RECEPTIONIST', 1, 9, '2026-04-25', '2026-05-25', '08:00:00', 'Morning dose'),
+(25, 13, 'RECEPTIONIST', 1, 9, '2026-04-25', '2026-05-25', '20:00:00', 'Evening dose'),
+(26, 14, 'RECEPTIONIST', 1, 9, '2026-04-25', '2026-05-25', '21:00:00', 'Night dose'),
+(27, 15, 'RECEPTIONIST', 1, 10, '2026-05-01', '2026-05-31', '08:00:00', 'Morning dose'),
+(28, 15, 'RECEPTIONIST', 1, 10, '2026-05-01', '2026-05-31', '14:00:00', 'Afternoon dose'),
+(29, 15, 'RECEPTIONIST', 1, 10, '2026-05-01', '2026-05-31', '20:00:00', 'Evening dose'),
+(30, 16, 'RECEPTIONIST', 1, 10, '2026-05-01', '2026-05-31', '21:00:00', 'Night dose');
 
 -- --------------------------------------------------------
 
@@ -385,8 +388,8 @@ INSERT INTO `medicine_tbl` (`MEDICINE_ID`, `RECEPTIONIST_ID`, `MED_NAME`, `DESCR
 (13, 4, 'Levetiracetam', 'Anti-epileptic medication'),
 (14, 4, 'Amitriptyline', 'Tricyclic antidepressant for nerve pain'),
 (15, 4, 'Ropinirole', 'Medication for Parkinson\'s disease'),
-(16, 4, 'Topiramate', 'Anti-epileptic and migraine prevention');
-
+(16, 4, 'Topiramate', 'Anti-epileptic and migraine prevention'),
+(17, 1, 'Ambroxol Syrup', 'Loosen mucus and relieve cough');
 -- --------------------------------------------------------
 
 --
@@ -465,7 +468,7 @@ CREATE TABLE `patient_tbl` (
 --
 
 INSERT INTO `patient_tbl` (`PATIENT_ID`, `FIRST_NAME`, `LAST_NAME`, `USERNAME`, `PSWD`, `DOB`, `GENDER`, `BLOOD_GROUP`, `PHONE`, `EMAIL`, `ADDRESS`, `MEDICAL_HISTORY_FILE`, `SECURITY_QUESTION`, `SECURITY_ANSWER`) VALUES
-(1, 'Arjun', 'Mishra', 'Arjun_m01', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', '1990-05-15', 'MALE', 'B+', 9876543201, 'arjun.mishra@gmail.com', '123, Park Street, Mumbai', '', 'What was the name of your first school?', 'Sunrise Public School'),
+(1, 'Arjun', 'Mishra', 'Arjun_m01', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', '2022-02-01', 'MALE', 'B+', 9876543201, 'suchi.mishra@gmail.com', '123, Navrangpura, Ahmedabad', '', 'What was the name of your first school?', 'Sunrise Public School'),
 (2, 'Pooja', 'Sharma', 'Pooja_s02', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', '1985-08-22', 'FEMALE', 'A+', 9876543202, 'pooja.sharma@gmail.com', '456, MG Road, Delhi', '', 'What is your favorite food from childhood?', 'Mango ice cream'),
 (3, 'Rohan', 'Patel', 'Rohan_p03', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', '1992-12-10', 'MALE', 'O+', 9876543203, 'rohan.patel@gmail.com', '789, Brigade Road, Bangalore', '', 'Where did you go for your first school trip?', 'Mysore'),
 (4, 'Neha', 'Gupta', 'Neha_g04', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', '1988-03-18', 'FEMALE', 'AB+', 9876543204, 'neha.gupta@gmail.com', '321, FC Road, Pune', '', 'What was the nickname your family calls you?', 'Nehu'),
@@ -498,7 +501,7 @@ CREATE TABLE `payment_tbl` (
 --
 
 INSERT INTO payment_tbl (PAYMENT_ID, APPOINTMENT_ID, AMOUNT, PAYMENT_DATE, PAYMENT_MODE, STATUS, TRANSACTION_ID, CREATED_AT) VALUES
-(1, 1, 300.00, '2026-03-20', 'CREDIT CARD', 'COMPLETED', 'TXN100000001', '2026-03-20 00:00:00'),
+(1, 1, 300.00, '2026-03-19', 'CREDIT CARD', 'COMPLETED', 'TXN100000001', '2026-03-19 10:00:00'),
 (2, 2, 300.00, '2026-03-21', 'GOOGLE PAY', 'COMPLETED', 'TXN100000002', '2026-03-21 00:00:00'),
 (3, 3, 300.00, '2026-03-22', 'UPI', 'COMPLETED', 'TXN100000003', '2026-03-22 00:00:00'),
 (4, 4, 300.00, '2026-03-23', 'NET BANKING', 'COMPLETED', 'TXN100000004', '2026-03-23 00:00:00'),
@@ -549,8 +552,8 @@ CREATE TABLE `prescription_medicine_tbl` (
 --
 
 INSERT INTO prescription_medicine_tbl (PRESCRIPTION_ID, MEDICINE_ID, DOSAGE, DURATION, FREQUENCY, CREATED_AT) VALUES
-(1, 1, '5ml', '5 days', 'Twice daily', '2026-03-03 10:00:00'),
-(1, 2, '125mg', '7 days', 'Three times daily', '2026-03-03 10:00:00'),
+(1, 1, '5ml', '3 days', 'Twice daily after lunch and breakfast', '2026-03-20 11:40:00'),
+(1, 17, '125mg', '7 days', 'Three times daily after breakfast, lunch and dinner', '2026-03-20 11:40:00'),
 (2, 1, '5ml', '3 days', 'As needed', '2026-03-07 10:00:00'),
 (2, 4, '1ml', '30 days', 'Once daily', '2026-03-07 10:00:00'),
 (3, 5, '50mg', '30 days', 'Once daily', '2026-03-04 11:00:00'),
@@ -615,7 +618,7 @@ CREATE TABLE `prescription_tbl` (
 --
 
 INSERT INTO prescription_tbl (PRESCRIPTION_ID, APPOINTMENT_ID, ISSUE_DATE, HEIGHT_CM, WEIGHT_KG, BLOOD_PRESSURE, DIABETES, SYMPTOMS, DIAGNOSIS, ADDITIONAL_NOTES, CREATED_AT) VALUES
-(1, 1, '2026-03-03', 120, 25.00, 110, 'NO', 'Fever, cough, and cold', 'Upper respiratory tract infection', 'Advise plenty of rest and fluids', '2026-03-03 10:00:00'),
+(1, 1, '2026-03-20', 120, 25.00, 110, 'NO', 'Fever, cough, and cold', 'Upper respiratory tract infection', 'Advise plenty of rest and fluids', '2026-03-20 11:40:00'),
 (2, 2, '2026-03-07', 120, 25.00, 110, 'NO', 'Follow-up check', 'Recovering well', 'Continue prescribed medication', '2026-03-07 10:00:00'),
 (3, 3, '2026-03-04', 160, 55.00, 120, 'NO', 'Chest pain, shortness of breath', 'Angina', 'Stress management recommended', '2026-03-04 11:00:00'),
 (4, 4, '2026-03-10', 160, 55.00, 120, 'NO', 'Follow-up check', 'Stable condition', 'Continue medication as prescribed', '2026-03-10 11:00:00'),
