@@ -12,13 +12,18 @@ if (!isset($_SESSION['LOGGED_IN']) || $_SESSION['LOGGED_IN'] !== true || $_SESSI
 
 include 'config.php';
 
-// Get doctor ID from GET parameter
-if (!isset($_GET['id']) || empty($_GET['id'])) {
+// Determine doctor ID from POST (preferred on form submit) or GET for initial load
+$doctor_id = null;
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['doctor_id']) && is_numeric($_POST['doctor_id'])) {
+    $doctor_id = (int) $_POST['doctor_id'];
+} elseif (isset($_GET['id']) && is_numeric($_GET['id'])) {
+    $doctor_id = (int) $_GET['id'];
+}
+
+if ($doctor_id === null) {
     header("Location: Admin_doctor.php");
     exit();
 }
-
-$doctor_id = (int) $_GET['id'];
 
 // Fetch doctor data
 $query = "SELECT * FROM doctor_tbl WHERE DOCTOR_ID = $doctor_id";
@@ -67,17 +72,21 @@ if (isset($_POST['action']) && $_POST['action'] == 'edit_doctor') {
     
     // Validation
     $errors = [];
-    
-    if (empty($first_name)) {
-        $errors[] = "First name is required.";
-    } elseif (!preg_match('/^[a-zA-Z\s]+$/', $first_name)) {
-        $errors[] = "First name should contain only letters and spaces.";
+
+    $first_name_normalized = '';
+    $first_name_err = '';
+    if (!qc_validate_person_name($first_name, $first_name_normalized, $first_name_err)) {
+        $errors[] = $first_name_err;
+    } else {
+        $first_name = $first_name_normalized;
     }
-    
-    if (empty($last_name)) {
-        $errors[] = "Last name is required.";
-    } elseif (!preg_match('/^[a-zA-Z\s]+$/', $last_name)) {
-        $errors[] = "Last name should contain only letters and spaces.";
+
+    $last_name_normalized = '';
+    $last_name_err = '';
+    if (!qc_validate_person_name($last_name, $last_name_normalized, $last_name_err)) {
+        $errors[] = $last_name_err;
+    } else {
+        $last_name = $last_name_normalized;
     }
     
     if (empty($education)) {
@@ -327,6 +336,7 @@ $adminName = isset($_SESSION['USER_NAME']) ? $_SESSION['USER_NAME'] : 'Admin';
         
         <form method="post" enctype="multipart/form-data">
             <input type="hidden" name="action" value="edit_doctor">
+            <input type="hidden" name="doctor_id" value="<?php echo $doctor_id; ?>">
             
             <div class="form-group">
                 <label>Current Profile Image</label>
