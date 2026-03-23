@@ -48,7 +48,12 @@ if ($user_type === 'doctor') {
 
             // If security question not set, force profile completion first
             $needs_security = trim((string)($row['SECURITY_QUESTION'] ?? '')) === '';
-            $redirect_url = $needs_security ? 'doctor_profile.php?complete_security=1' : 'doctor_dashboard.php';
+            if ($needs_security) {
+                $_SESSION['COMPLETE_SECURITY'] = true;
+            } else {
+                unset($_SESSION['COMPLETE_SECURITY']);
+            }
+            $redirect_url = $needs_security ? 'doctor_profile.php' : 'doctor_dashboard.php';
 
             // ✅ Return JSON Success
             header('Content-Type: application/json');
@@ -140,7 +145,12 @@ if ($user_type === 'receptionist') {
 
             // If security question not set, force profile completion first
             $needs_security = trim((string)($row['SECURITY_QUESTION'] ?? '')) === '';
-            $redirect_url = $needs_security ? 'receptionist_profile.php?complete_security=1' : 'receptionist.php';
+            if ($needs_security) {
+                $_SESSION['COMPLETE_SECURITY'] = true;
+            } else {
+                unset($_SESSION['COMPLETE_SECURITY']);
+            }
+            $redirect_url = $needs_security ? 'receptionist_profile.php' : 'receptionist.php';
 
             // ✅ Return JSON Success
             header('Content-Type: application/json');
