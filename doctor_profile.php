@@ -989,22 +989,22 @@ echo $years_exp;
             }
             
             // Mobile menu toggle
-            const menuToggle = document.getElementById('menuToggle');
-            const sidebar = document.getElementById('sidebar');
+            // const menuToggle = document.getElementById('menuToggle');
+            // const sidebar = document.getElementById('sidebar');
             
-            if (menuToggle) {
-                menuToggle.addEventListener('click', () => {
-                    sidebar.classList.toggle('active');
-                });
-            }
+            // if (menuToggle) {
+            //     menuToggle.addEventListener('click', () => {
+            //         sidebar.classList.toggle('active');
+            //     });
+            // }
             
-            // Close sidebar when clicking outside on mobile
-            document.addEventListener('click', (e) => {
-                if (window.innerWidth <= 768) {
-                    if (!sidebar.contains(e.target) && !menuToggle.contains(e.target)) {
-                        sidebar.classList.remove('active');
-                    }
-                }
+            // // Close sidebar when clicking outside on mobile
+            // document.addEventListener('click', (e) => {
+            //     if (window.innerWidth <= 768) {
+            //         if (!sidebar.contains(e.target) && !menuToggle.contains(e.target)) {
+            //             sidebar.classList.remove('active');
+            //         }
+            //     }
             });
         });
     </script>

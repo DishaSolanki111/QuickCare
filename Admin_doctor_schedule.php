@@ -77,6 +77,7 @@ if ($doctors_query && mysqli_num_rows($doctors_query) > 0) {
     <title>Manage Doctor Schedule - QuickCare</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         :root {
             --dark-blue: #072D44;
@@ -97,16 +98,27 @@ if ($doctors_query && mysqli_num_rows($doctors_query) > 0) {
         
          body {
             margin: 0;
-            font-family:arial Verdana, Geneva, Tahoma, sans-serif;
+            font-family: 'Inter', 'Open Sans', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: var(--bg-gray);
             display: flex;
+        }
+
+        .doctor-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 15px;
+        }
+        @media (min-width: 1200px) {
+            .doctor-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
         }
 
         
        
         .main-content {
             margin-left: 250px;
-            padding: 30px;
+            padding: 15px;
             width: calc(100% - 250px);
         }
         
@@ -160,10 +172,10 @@ if ($doctors_query && mysqli_num_rows($doctors_query) > 0) {
         }
         .search-bar-container {
         background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-        border-radius: 12px;
-        padding: 18px 20px;
-        margin-bottom: 20px;
-        box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+        border-radius: 10px;
+        padding: 12px 15px;
+        margin-bottom: 15px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.06);
         border: 1px solid #e9ecef;
     }
     
@@ -376,197 +388,59 @@ if ($doctors_query && mysqli_num_rows($doctors_query) > 0) {
             transform: translateY(0);
         }
     }
-        .doctor-schedule-card {
-            background: var(--white);
-            border-radius: 12px;
-            padding: 0;
-            margin-bottom: 0;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        .doctor-card {
+            background: white;
+            border-radius: 10px;
             overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            border: 1px solid rgba(0,0,0,0.05);
             transition: all 0.3s ease;
         }
-        
-        .doctor-schedule-card:hover {
+
+        .doctor-card:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
         }
-        
-        /* Doctor Header: soft light background, rounded, clean spacing */
+
         .doctor-header {
             background: var(--dark-blue);
-            color: var(--white);
-            padding: 18px 22px;
+            color: white;
+            padding: 12px 15px;
             display: flex;
             align-items: center;
-            gap: 18px;
-            border-radius: 12px 12px 0 0;
+            gap: 15px;
         }
-        
-        .doctor-avatar {
-            width: 64px;
-            height: 64px;
-            border-radius: 50%;
-            border: 2px solid var(--light-blue);
-            object-fit: cover;
-        }
-        
-        .doctor-info h3 {
-            margin: 0;
-            font-size: 20px;
-            font-weight: 600;
-        }
+
+        .doctor-header i.header-icon { font-size: 20px; color: var(--light-blue); }
+        .doctor-header h3 { margin: 0; font-size: 1.1rem; }
         
         .doctor-specialization {
-            display: inline-block;
-            background: rgba(72, 41, 112, 0.12);
-            padding: 4px 10px;
-            border-radius: 16px;
-            font-size: 13px;
-            margin-top: 6px;
+            font-size: 0.85rem;
+            color: var(--light-blue);
+            margin-top: 2px;
         }
-        
-        .schedule-content {
-            padding: 20px;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
+
+        .appointment-list {
+            padding: 10px;
+            max-height: 350px;
+            overflow-y: auto;
         }
-        
-        .schedule-grid {
+
+        .patient-row {
             display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-bottom: 16px;
-            flex: 1;
-        }
-        
-        /* Schedule row: horizontal rounded card, light grey, blue left accent */
-        .day-schedule {
-            background: #f6f9fb;
-            border-radius: 10px;
-            padding: 14px 18px;
-            border-left: 3px solid var(--secondary-color);
-            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
             justify-content: space-between;
-            gap: 18px;
-            flex-wrap: wrap;
-        }
-        
-        .day-schedule:hover {
-            background: #eef4f8;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.06);
-        }
-        
-        /* Day: calendar icon, bold, dark blue */
-        .day-name {
-            font-weight: 600;
-            color: var(--dark-blue);
-            font-size: 16px;
-            display: flex;
             align-items: center;
-            gap: 8px;
-            flex-shrink: 0;
+            padding: 8px 10px;
+            border-bottom: 1px solid #eee;
+            transition: 0.2s;
         }
-        
-        .day-name i {
-            color: var(--secondary-color);
-        }
-        
-        /* Time: green clock icon, center area */
-        .time-range {
-            color: #4a5568;
-            font-size: 15px;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            flex-shrink: 0;
-        }
-        
-        .time-range i {
-            color: var(--accent-color);
-            font-size: 18px;
-        }
-        
-        .schedule-actions {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            flex-shrink: 0;
-        }
-        
-        .schedule-actions form {
-            display: inline-flex;
-        }
-        
-        /* Edit: orange, Delete: red, rounded, right-aligned */
-        .btn-edit, .btn-delete {
-            padding: 8px 14px;
-            border: none;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.25s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            color: white;
-        }
-        
-        .btn-edit {
-            background: #f39c12;
-        }
-        
-        .btn-edit:hover {
-            background: #e67e22;
-        }
-        
-        .btn-delete {
-            background: #e74c3c;
-        }
-        
-        .btn-delete:hover {
-            background: #c0392b;
-        }
-        
-        .no-schedule {
-            background: #f8f9fa;
-            border-radius: 10px;
-            padding: 24px 28px;
-            text-align: center;
-            color: #6c757d;
-            font-style: italic;
-            font-size: 16px;
-        }
-        
-        .no-schedule i {
-            font-size: 28px;
-            margin-bottom: 12px;
-            display: block;
-        }
-        
-        .add-schedule-btn {
-            background: var(--accent-color);
-            color: var(--white);
-            border: none;
-            padding: 12px 25px;
-            border-radius: 10px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .add-schedule-btn:hover {
-            background: #27ae60;
-            transform: translateY(-2px);
-        }
+
+        .patient-row:last-child { border-bottom: none; }
+        .patient-row:hover { background: #f9f9f9; }
+
+        .patient-info { display: flex; flex-direction: column; gap: 2px; }
+        .patient-name { font-weight: bold; color: var(--mid-blue); font-size: 0.95rem; }
+        .apt-time { font-size: 0.8rem; color: #666; }
         
         .alert {
             padding: 15px 20px;
@@ -707,7 +581,8 @@ if ($doctors_query && mysqli_num_rows($doctors_query) > 0) {
         /* Responsive: Desktop - wider cards across full width */
         @media (min-width: 1200px) {
             .schedule-cards-grid {
-                grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+                gap: 15px;
             }
         }
         
@@ -872,64 +747,59 @@ if ($doctors_query && mysqli_num_rows($doctors_query) > 0) {
         <!-- Doctor Schedules -->
         <?php if (!empty($doctors_with_schedules)): ?>
         <div class="schedule-cards-section">
-            <div class="schedule-cards-grid">
+            <div class="doctor-grid">
             <?php foreach ($doctors_with_schedules as $doctor_data): ?>
-                <div class="doctor-schedule-card">
+                <div class="doctor-card">
                     <div class="doctor-header">
-                        <img src="<?php echo !empty($doctor_data['doctor']['PROFILE_IMAGE']) ? $doctor_data['doctor']['PROFILE_IMAGE'] : 'https://picsum.photos/seed/doctor' . $doctor_data['doctor']['DOCTOR_ID'] . '/70/70.jpg'; ?>" 
-                             alt="Doctor" class="doctor-avatar">
-                        <div class="doctor-info">
+                        <i class="fa-solid fa-user-doctor header-icon"></i>
+                        <div>
                             <h3>Dr. <?php echo htmlspecialchars($doctor_data['doctor']['FIRST_NAME'] . ' ' . $doctor_data['doctor']['LAST_NAME']); ?></h3>
-                            <span class="doctor-specialization">
+                            <div class="doctor-specialization">
                                 <i class="bi bi-award"></i> 
                                 <?php echo htmlspecialchars($doctor_data['doctor']['SPECIALISATION_NAME']); ?>
-                            </span>
+                            </div>
                         </div>
                     </div>
                     
-                    <div class="schedule-content">
+                    <div class="appointment-list">
                         <?php if (!empty($doctor_data['schedules'])): ?>
-                            <div class="schedule-grid">
-                                <?php foreach ($doctor_data['schedules'] as $schedule): ?>
-                                    <div class="day-schedule">
-                                        <div class="day-name">
-                                            <?php 
-                                            $day_icons = [
-                                                'MON' => 'bi-calendar3',
-                                                'TUE' => 'bi-calendar3',
-                                                'WED' => 'bi-calendar3',
-                                                'THUR' => 'bi-calendar3',
-                                                'FRI' => 'bi-calendar3',
-                                                'SAT' => 'bi-calendar3',
-                                                'SUN' => 'bi-calendar3'
-                                            ];
-                                            $day_names = [
-                                                'MON' => 'Monday',
-                                                'TUE' => 'Tuesday',
-                                                'WED' => 'Wednesday',
-                                                'THUR' => 'Thursday',
-                                                'FRI' => 'Friday',
-                                                'SAT' => 'Saturday',
-                                                'SUN' => 'Sunday'
-                                            ];
-                                            ?>
-                                            <i class="bi <?php echo $day_icons[$schedule['AVAILABLE_DAY']]; ?>"></i>
+                            <?php foreach ($doctor_data['schedules'] as $schedule): ?>
+                                <?php 
+                                $day_icons = [
+                                    'MON' => 'fa-calendar-days',
+                                    'TUE' => 'fa-calendar-days',
+                                    'WED' => 'fa-calendar-days',
+                                    'THUR' => 'fa-calendar-days',
+                                    'FRI' => 'fa-calendar-days',
+                                    'SAT' => 'fa-calendar-days',
+                                    'SUN' => 'fa-calendar-days'
+                                ];
+                                $day_names = [
+                                    'MON' => 'Monday',
+                                    'TUE' => 'Tuesday',
+                                    'WED' => 'Wednesday',
+                                    'THUR' => 'Thursday',
+                                    'FRI' => 'Friday',
+                                    'SAT' => 'Saturday',
+                                    'SUN' => 'Sunday'
+                                ];
+                                ?>
+                                <div class="patient-row">
+                                    <div class="patient-info">
+                                        <span class="patient-name">
+                                            <i class="fa-regular <?php echo $day_icons[$schedule['AVAILABLE_DAY']]; ?>" style="color: var(--soft-blue); margin-right: 5px;"></i>
                                             <?php echo $day_names[$schedule['AVAILABLE_DAY']]; ?>
-                                        </div>
-                                        <div class="time-range">
-                                            <i class="bi bi-clock-fill"></i>
+                                        </span>
+                                        <span class="apt-time">
+                                            <i class="fa-regular fa-clock" style="color: #666; margin-right: 3px;"></i> 
                                             <?php echo date('h:i A', strtotime($schedule['START_TIME'])); ?> - 
                                             <?php echo date('h:i A', strtotime($schedule['END_TIME'])); ?>
-                                        </div>
-                                        
+                                        </span>
                                     </div>
-                                <?php endforeach; ?>
-                            </div>
+                                </div>
+                            <?php endforeach; ?>
                         <?php else: ?>
-                            <div class="no-schedule">
-                                <i class="bi bi-calendar-x"></i>
-                                No schedules assigned to this doctor yet
-                            </div>
+                            <p style='padding:20px; color:#999; text-align:center;'>No schedules assigned.</p>
                         <?php endif; ?>
                     </div>
                 </div>

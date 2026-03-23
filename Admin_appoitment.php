@@ -39,79 +39,80 @@ include 'config.php';
 
         .main {
             margin-left: 250px;
-            padding: 30px;
+            padding: 15px;
             width: calc(100% - 250px);
         }
 
-        /* Filter Section */
-        .filter-section {
+        .filter-container {
             background: white;
             padding: 20px;
-            border-radius: 15px;
-            margin-bottom: 30px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            display: flex;
-            align-items: center;
-            gap: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
 
-        .filter-section form {
+        .filter-container form {
             display: flex;
             gap: 15px;
-            width: 100%;
             flex-wrap: wrap;
         }
 
-        .filter-input {
+        .filter-container input,
+        .filter-container select {
             padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
+            border: 1px solid #D0D7E1;
+            border-radius: 5px;
         }
 
-        .filter-input.flex-1 { flex: 1; min-width: 120px; }
+        .filter-container select[name="doctor_filter"] {
+            min-width: 200px;
+        }
 
-        .btn-filter {
-            background: var(--mid-blue);
+        .filter-container button {
+            padding: 10px 15px;
+            background: var(--dark-blue);
             color: white;
             border: none;
-            padding: 10px 25px;
-            border-radius: 8px;
+            border-radius: 5px;
             cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
             transition: 0.3s;
         }
 
-        .btn-filter:hover { background: var(--soft-blue); }
+        .filter-container button:hover { background: var(--mid-blue); }
 
         /* Doctor Card Layout */
         .doctor-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
-            gap: 25px;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 15px;
         }
 
         .doctor-card {
             background: white;
-            border-radius: 15px;
+            border-radius: 10px;
             overflow: hidden;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
             border: 1px solid rgba(0,0,0,0.05);
         }
 
         .doctor-header {
             background: var(--dark-blue);
             color: white;
-            padding: 20px;
+            padding: 12px 15px;
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 10px;
         }
 
-        .doctor-header i { font-size: 24px; color: var(--light-blue); }
-        .doctor-header h3 { margin: 0; font-size: 1.2rem; }
+        .doctor-header i { font-size: 20px; color: var(--light-blue); }
+        .doctor-header h3 { margin: 0; font-size: 1.1rem; }
 
         .appointment-list {
-            padding: 15px;
-            max-height: 400px;
+            padding: 10px;
+            max-height: 350px;
             overflow-y: auto;
         }
 
@@ -119,7 +120,7 @@ include 'config.php';
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 12px;
+            padding: 8px 10px;
             border-bottom: 1px solid #eee;
             transition: 0.2s;
         }
@@ -158,16 +159,16 @@ include 'config.php';
 <div class="main">
     <?php include 'admin_header.php'; ?>
 
-    <div class="filter-section">
+    <div class="filter-container">
         <form method="POST">
-            <input type="date" name="date_filter" class="filter-input" value="<?php echo htmlspecialchars($_POST['date_filter'] ?? ''); ?>">
-            <select name="status_filter" class="filter-input">
+            <input type="date" name="date_filter" value="<?php echo htmlspecialchars($_POST['date_filter'] ?? ''); ?>">
+            <select name="status_filter">
                 <option value="">All Statuses</option>
                 <option value="SCHEDULED" <?php echo (isset($_POST['status_filter']) && $_POST['status_filter'] === 'SCHEDULED') ? 'selected' : ''; ?>>Scheduled</option>
                 <option value="COMPLETED" <?php echo (isset($_POST['status_filter']) && $_POST['status_filter'] === 'COMPLETED') ? 'selected' : ''; ?>>Completed</option>
                 <option value="CANCELLED" <?php echo (isset($_POST['status_filter']) && $_POST['status_filter'] === 'CANCELLED') ? 'selected' : ''; ?>>Cancelled</option>
             </select>
-            <select name="doctor_filter" class="filter-input flex-1">
+            <select name="doctor_filter">
                 <option value="">All Doctors</option>
                 <?php
                 $doctor_query = "SELECT DOCTOR_ID, FIRST_NAME, LAST_NAME FROM doctor_tbl ORDER BY FIRST_NAME, LAST_NAME";
@@ -179,7 +180,7 @@ include 'config.php';
                 }
                 ?>
             </select>
-            <button type="submit" class="btn-filter">Search Appointments</button>
+            <button type="submit">Search Appointments</button>
         </form>
     </div>
 
