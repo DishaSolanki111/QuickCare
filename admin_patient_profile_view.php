@@ -8,7 +8,13 @@ if (!isset($_SESSION['LOGGED_IN']) || $_SESSION['LOGGED_IN'] !== true || ($_SESS
     exit;
 }
 
-$patient_id = isset($_GET['patient_id']) ? (int)$_GET['patient_id'] : 0;
+$patient_id = 0;
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['patient_id'])) {
+    $patient_id = (int)$_POST['patient_id'];
+} elseif (isset($_GET['patient_id'])) {
+    // fallback if GET is used
+    $patient_id = (int)$_GET['patient_id'];
+}
 if ($patient_id <= 0) {
     die("Invalid patient.");
 }
