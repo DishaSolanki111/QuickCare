@@ -404,14 +404,6 @@ body::before {
             font-weight: 500;
         }
 
-        .calendar-day.holiday {
-            background-color: rgba(231, 76, 60, 0.35); /* red for holidays/sundays */
-            border: 1px solid #c0392b;
-            color: #c0392b;
-            font-weight: 500;
-            cursor: not-allowed;
-        }
-
         .calendar-day.disabled {
             color: #ccc;
             cursor: not-allowed;
@@ -592,9 +584,7 @@ body::before {
                                 <span style="display:inline-block;width:16px;height:12px;border-radius:3px;background-color:rgba(46, 204, 113, 0.3);border:1px solid #2ecc71;margin-right:6px;vertical-align:middle;"></span>
                                 Green = Available date&nbsp;&nbsp;
                                 <span style="display:inline-block;width:16px;height:12px;border-radius:3px;background-color:rgba(243, 156, 18, 0.35);border:1px solid #f39c12;margin:0 6px;vertical-align:middle;"></span>
-                                Yellow = Fully booked date&nbsp;&nbsp;
-                                <span style="display:inline-block;width:16px;height:12px;border-radius:3px;background-color:rgba(231, 76, 60, 0.35);border:1px solid #c0392b;margin:0 6px;vertical-align:middle;"></span>
-                                Red = Public holiday / Sunday
+                                Yellow = Fully booked date
                             </div>
                             <input type="hidden" id="selected_date" name="appointment_date" required>
                         </div>
@@ -654,16 +644,6 @@ body::before {
     let selectedDoctorId = <?php echo $doctor['DOCTOR_ID']; ?>;
     let doctorSchedule = [];
     let fullyBookedDates = [];
-    const publicHolidayDates = [
-        // Add public holiday dates (YYYY-MM-DD) here
-        '2026-03-03',
-        '2026-03-19',
-        '2026-03-20',
-        '2026-03-26', 
-        '2026-04-01',
-        '2026-04-03',
-        '2026-04-14',
-    ];
     
     function initCalendar() {
         renderCalendar(currentMonth, currentYear);
@@ -745,22 +725,35 @@ body::before {
             if (selectedDoctorId && !dayElement.classList.contains('disabled')) {
                 const dayOfWeek = currentDate.getDay();
                 const dayMap = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
-                const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-                const isSunday = dayOfWeek === 0;
-                const isPublicHoliday = publicHolidayDates.includes(dateStr);
-
-                if (isSunday || isPublicHoliday) {
-                    dayElement.classList.add('holiday');
-                    dayElement.title = isSunday ? 'Sunday (No doctor availability)' : 'Public holiday (No doctor availability)';
-                    dayElement.classList.add('disabled');
-                } else if (doctorSchedule.includes(dayMap[dayOfWeek])) {
+                
+            if (doctorSchedule.includes(dayMap[dayOfWeek])) {
                     dayElement.classList.add('available');
 
+                    const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
                     if (fullyBookedDates.includes(dateStr)) {
                         dayElement.classList.add('fully-booked');
-                    } else {
-                        dayElement.addEventListener('click', (evt) => selectDate(year, month, day, evt));
                     }
+
+                    dayElement.addEventListener('click', (evt) => selectDate(year, month, day, evt));
+                } else {
+                    dayElement.classList.add('disabled');
+                }
+            }
+            
+            calendarGrid.appendChild(dayElement);
+        }
+    }
+    
+    function loadDoctorSchedule(doctorId) {
+        selectedDoctorId = doctorId;
+        
+        fetch('get_doctor_schedule.php', { method: 'POST', headers: {'Content-Type': 'application/x-www-form-urlencoded'}, body: 'doctor_id=' + encodeURIComponent(doctorId) })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    doctorSchedule = data.available_days;
+                    renderCalendar(currentMonth, currentYear);
+                } else {
                     document.getElementById('calendarGrid').innerHTML = `
                         <div class="alert alert-danger">
                             Error loading doctor's schedule: ${data.message}
