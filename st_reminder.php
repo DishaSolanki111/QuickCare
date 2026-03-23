@@ -777,13 +777,6 @@ if (isset($_POST['edit_reminder_id'])) {
         }
         
         @media (max-width: 768px) {
-            .sidebar {
-                width: 70px;
-            }
-            
-            .sidebar h2, .sidebar a span {
-                display: none;
-            }
             
             .main-content {
                 margin-left: 70px;

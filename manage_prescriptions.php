@@ -350,14 +350,7 @@ $stmt->close();
         }
         
         @media (max-width: 992px) {
-            .sidebar {
-                width: 70px;
-            }
-            
-            .sidebar h2 span, .sidebar a span {
-                display: none;
-            }
-            
+        
             .main-content {
                 margin-left: 70px;
             }

@@ -164,39 +164,7 @@ if ($doctors_query && mysqli_num_rows($doctors_query) > 0) {
             min-height: 100vh;
         }
         
-        .sidebar {
-            width: 250px;
-            background: var(--dark-blue);
-            min-height: 100vh;
-            color: white;
-            padding-top: 30px;
-            position: fixed;
-            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
-            z-index: 1000;
-        }
-
-        .sidebar h2 {
-            text-align: center;
-            margin-bottom: 40px;
-            color: var(--light-blue);
-            font-size: 24px;
-        }
-
-        .sidebar a {
-            display: block;
-            padding: 15px 25px;
-            color: var(--gray-blue);
-            text-decoration: none;
-            font-size: 16px;
-            border-left: 4px solid transparent;
-            transition: all 0.3s ease;
-        }
-
-        .sidebar a:hover, .sidebar a.active {
-            background: var(--mid-blue);
-            border-left: 4px solid var(--light-blue);
-            color: var(--white);
-        }
+       
         
         .logout-btn:hover{
             background-color: var(--light-blue);
@@ -892,13 +860,8 @@ if ($doctors_query && mysqli_num_rows($doctors_query) > 0) {
                 font-size: 15px;
             }
             
-            .sidebar {
-                width: 70px;
-            }
+        
             
-            .sidebar h2, .sidebar a span {
-                display: none;
-            }
             
             .main-content {
                 margin-left: 70px;

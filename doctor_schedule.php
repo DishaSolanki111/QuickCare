@@ -48,14 +48,6 @@ body {
     background: #f5f7fb;
 }
 
-/* Sidebar already fixed */
-.sidebar {
-    width: 250px;
-    position: fixed;
-    left: 0;
-    top: 0;
-    height: 100vh;
-}
 
 /* Main content next to sidebar */
 .main {

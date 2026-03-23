@@ -19,15 +19,9 @@ $adminName = $_SESSION['USER_NAME'] ?? 'Admin';
 <head>
 <meta charset="UTF-8">
 <title>View Payments - QuickCare</title>
-<?php include 'admin_sidebar.php'; ?>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <style>
-    body {
-        margin: 0;
-        font-family: Arial, sans-serif;
-        background: #D0D7E1;
-        display: flex;
-    }
     :root {
         --dark-blue: #072D44;
         --mid-blue: #064469;
@@ -35,35 +29,34 @@ $adminName = $_SESSION['USER_NAME'] ?? 'Admin';
         --light-blue: #9CCDD8;
         --gray-blue: #D0D7E1;
         --white: #ffffff;
+        --bg-gray: #f4f7f6;
+    }
+
+    body {
+        margin: 0;
+        font-family: 'Inter', 'Open Sans', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: var(--bg-gray);
+        display: flex;
     }
 
     .main {
         margin-left: 250px;
-        padding: 20px;
+        padding: 15px;
         width: calc(100% - 250px);
     }
 
-    
-
-    table {
-        width: 100%;
-        border-collapse: collapse;
+    .revenue-card {
         background: white;
-        border-radius: 12px;
-        overflow: hidden;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        padding: 15px 20px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        border-left: 5px solid #2ecc71;
+        display: inline-block;
     }
 
-    th, td {
-        padding: 14px;
-        border-bottom: 1px solid #D0D7E1;
-    }
-
-    th {
-        background: #072D44;
-        color: white;
-        text-align: left;
-    }
+    .revenue-card h3 { margin: 0 0 5px 0; font-size: 1rem; color: var(--mid-blue); }
+    .revenue-card p { margin: 0; font-size: 1.5rem; font-weight: bold; color: #2ecc71; }
 
     .filter-container {
         background: white;
@@ -96,116 +89,101 @@ $adminName = $_SESSION['USER_NAME'] ?? 'Admin';
         display: inline-flex;
         align-items: center;
         gap: 6px;
+        transition: 0.3s;
     }
 
-    .status-badge {
-        padding: 5px 10px;
-        border-radius: 20px;
-        font-size: 12px;
-        font-weight: bold;
+    .filter-container button:hover { background: var(--mid-blue); }
+
+    .doctor-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 15px;
+    }
+    @media (min-width: 1200px) {
+        .doctor-grid {
+            grid-template-columns: repeat(3, 1fr);
+        }
     }
 
-    .status-completed {
-        background-color: #2ecc71;
-        color: white;
-    }
-
-    .status-failed {
-        background-color: #e74c3c;
-        color: white;
-    }
-
-    .payment-mode-badge {
-        padding: 3px 8px;
-        border-radius: 15px;
-        font-size: 12px;
-        font-weight: bold;
-        background-color: #3498db;
-        color: white;
-    }
-
-    .revenue-card {
+    .doctor-card {
         background: white;
-        padding: 10px;
-        border-radius: 12px;
-        margin-bottom: 20px;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        border-left: 8px solid #2ecc71;
-    }
-
-    .payment-groups {
-        margin-top: 10px;
-    }
-
-    .doctor-group {
-        margin-bottom: 28px;
-        background: #f8fafc;
         border-radius: 10px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
         overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        border: 1px solid rgba(0,0,0,0.05);
+        transition: all 0.3s ease;
     }
 
-    .doctor-header-bar {
+    .doctor-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    }
+
+    .doctor-header {
         background: var(--dark-blue);
-        color: #ffffff;
-        padding: 14px 18px;
-        border-radius: 10px 10px 0 0;
+        color: white;
+        padding: 12px 15px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .doctor-header i.header-icon { font-size: 20px; color: var(--light-blue); }
+    .doctor-header h3 { margin: 0; font-size: 1.1rem; }
+    
+    .doctor-specialization {
+        font-size: 0.85rem;
+        color: var(--light-blue);
+        margin-top: 2px;
+    }
+
+    .appointment-list {
+        padding: 10px;
+        max-height: 350px;
+        overflow-y: auto;
+    }
+
+    .patient-row {
         display: flex;
         justify-content: space-between;
         align-items: center;
+        padding: 8px 10px;
+        border-bottom: 1px solid #eee;
+        transition: 0.2s;
     }
 
-    .doctor-header-title {
-        font-weight: 600;
-        font-size: 1rem;
-    }
+    .patient-row:last-child { border-bottom: none; }
+    .patient-row:hover { background: #f9f9f9; }
 
-    .doctor-header-subtitle {
-        font-size: 0.9rem;
-        opacity: 0.95;
-    }
+    .patient-info { display: flex; flex-direction: column; gap: 4px; width: 100%; }
+    .patient-name { font-weight: bold; color: var(--mid-blue); font-size: 0.95rem; width: 100%; display: flex; justify-content: space-between; align-items: center; }
+    .payment-amount { color: #2ecc71; font-weight: 700; font-size: 1rem; }
+    .apt-time { font-size: 0.8rem; color: #666; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 2px; }
 
-    .payment-list {
-        margin-top: 0;
-        padding: 10px 16px 12px;
+    .status-badge {
+        padding: 3px 8px;
+        border-radius: 12px;
+        font-size: 10px;
+        font-weight: bold;
     }
+    .status-completed { background-color: #e8f5e9; color: #2e7d32; border: 1px solid #c8e6c9; }
+    .status-failed { background-color: #ffebee; color: #c62828; border: 1px solid #ffcdd2; }
 
-    .payment-card {
-        padding: 10px 0;
-        border-bottom: 1px solid #e1e7ef;
-    }
-
-    .payment-card:last-child {
-        border-bottom: none;
-    }
-
-    .payment-meta {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: space-between;
-        gap: 8px;
-        font-size: 0.9rem;
-        color: #555;
-        margin-bottom: 4px;
-    }
-
-    .payment-meta .payment-patient {
-        font-weight: 600;
-        font-size: 1.05rem;
-    }
-
-    .payment-meta .payment-date {
-        font-style: italic;
-    }
-
-    .payment-amount {
-        font-weight: 600;
+    .payment-mode-badge {
+        padding: 3px 8px;
+        border-radius: 12px;
+        font-size: 10px;
+        font-weight: bold;
+        background-color: #e3f2fd;
+        color: #1976d2;
+        border: 1px solid #bbdefb;
     }
 </style>
 </head>
 
 <body>
 
+<?php include 'admin_sidebar.php'; ?>
 <div class="main">
 
     <?php include 'admin_header.php'; ?>
@@ -219,15 +197,14 @@ $adminName = $_SESSION['USER_NAME'] ?? 'Admin';
                 "SELECT SUM(AMOUNT) AS total FROM payment_tbl WHERE STATUS='COMPLETED'");
             $row = mysqli_fetch_assoc($rev);
             echo number_format($row['total'], 2);
-            mysqli_close($conn);
         ?></p>
     </div>
 
-    <!-- FILTER (FIXED) -->
+    <!-- FILTER -->
     <div class="filter-container">
         <form method="POST" action="">
             <input type="date" name="date_filter"
-                value="<?php echo $_POST['date_filter'] ?? ''; ?>">
+                value="<?php echo htmlspecialchars($_POST['date_filter'] ?? ''); ?>">
 
             <select name="status_filter">
                 <option value="">All Status</option>
@@ -237,8 +214,7 @@ $adminName = $_SESSION['USER_NAME'] ?? 'Admin';
 
             <select name="mode_filter">
                 <option value="">All Payment Modes</option>
-                <option value="CARD" <?php if(($_POST['mode_filter'] ?? '')=='CREDIT CARD') echo 'selected'; ?>>Credit Card</option>
-                <!-- <option value="GOOGLE PAY" <?php if(($_POST['mode_filter'] ?? '')=='GOOGLE PAY') echo 'selected'; ?>>Google Pay</option> -->
+                <option value="CARD" <?php if(($_POST['mode_filter'] ?? '')=='CARD') echo 'selected'; ?>>Credit Card</option>
                 <option value="UPI" <?php if(($_POST['mode_filter'] ?? '')=='UPI') echo 'selected'; ?>>UPI</option>
                 <option value="NET BANKING" <?php if(($_POST['mode_filter'] ?? '')=='NET BANKING') echo 'selected'; ?>>Net Banking</option>
             </select>
@@ -251,10 +227,8 @@ $adminName = $_SESSION['USER_NAME'] ?? 'Admin';
     </div>
 
     <!-- PAYMENTS GROUPED BY DOCTOR -->
-    <div class="payment-groups">
+    <div class="doctor-grid">
         <?php
-        include 'config.php';
-
         $query = "SELECT
                     p.PAYMENT_ID,
                     p.AMOUNT,
@@ -308,12 +282,17 @@ $adminName = $_SESSION['USER_NAME'] ?? 'Admin';
 
                     $currentDoctorKey = $doctorKey;
 
-                    echo '<div class="doctor-group">';
-                    echo '  <div class="doctor-header-bar">';
-                    echo '      <div class="doctor-header-title">' . htmlspecialchars($doctorName) . '</div>';
-                    echo '      <div class="doctor-header-subtitle">' . htmlspecialchars($specialisation) . '</div>';
+                    echo '<div class="doctor-card">';
+                    echo '  <div class="doctor-header">';
+                    echo '      <i class="fa-solid fa-user-doctor header-icon"></i>';
+                    echo '      <div>';
+                    echo '          <h3>' . htmlspecialchars($doctorName) . '</h3>';
+                    echo '          <div class="doctor-specialization">';
+                    echo '              <i class="bi bi-award"></i> ' . htmlspecialchars($specialisation);
+                    echo '          </div>';
+                    echo '      </div>';
                     echo '  </div>';
-                    echo '  <div class="payment-list">';
+                    echo '  <div class="appointment-list">';
                 }
 
                 $statusClass = $row['STATUS'] == 'COMPLETED'
@@ -326,17 +305,17 @@ $adminName = $_SESSION['USER_NAME'] ?? 'Admin';
                     : '';
                 $amountText = '₹' . number_format($row['AMOUNT'], 2);
 
-                echo '      <div class="payment-card">';
-                echo '          <div class="payment-meta">';
-                echo '              <span class="payment-patient">' . htmlspecialchars($patientName) . '</span>';
+                echo '      <div class="patient-row">';
+                echo '          <div class="patient-info">';
+                echo '              <span class="patient-name">' . htmlspecialchars($patientName) . ' <span class="payment-amount">' . htmlspecialchars($amountText) . '</span></span>';
                 if ($dateText !== '') {
-                    echo '          <span class="payment-date">' . htmlspecialchars($dateText) . '</span>';
+                    echo '          <span class="apt-time">';
+                    echo '              <i class="fa-regular fa-calendar-days" style="color: var(--soft-blue);"></i> ' . htmlspecialchars($dateText);
+                    echo '              <span style="color:#ddd; margin:0 4px;">|</span>';
+                    echo '              <span class="payment-mode-badge">' . htmlspecialchars($row['PAYMENT_MODE']) . '</span>';
+                    echo '              <span class="status-badge ' . $statusClass . '">' . htmlspecialchars($row['STATUS']) . '</span>';
+                    echo '          </span>';
                 }
-                echo '              <span class="payment-amount">' . htmlspecialchars($amountText) . '</span>';
-                echo '          </div>';
-                echo '          <div>';
-                echo '              <span class="payment-mode-badge">' . htmlspecialchars($row['PAYMENT_MODE']) . '</span> ';
-                echo '              <span class="status-badge ' . $statusClass . '">' . htmlspecialchars($row['STATUS']) . '</span>';
                 echo '          </div>';
                 echo '      </div>';
             }
@@ -346,7 +325,7 @@ $adminName = $_SESSION['USER_NAME'] ?? 'Admin';
                 echo '  </div></div>';
             }
         } else {
-            echo "<p>No payments found</p>";
+            echo "<div style='grid-column: 1 / -1; background:white; padding: 40px; text-align:center; border-radius: 10px;'><h3 style='color: #888;'>No payments found matching the selected filters.</h3></div>";
         }
 
         mysqli_close($conn);

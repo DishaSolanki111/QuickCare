@@ -506,25 +506,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
 
         /* Responsive Design */
         @media (max-width: 992px) {
-            .sidebar {
-                width: 70px;
-            }
-            
-            .sidebar-header h2 {
-                display: none;
-            }
-            
-            .sidebar-nav a span {
-                display: none;
-            }
-            
-            .sidebar-nav a {
-                justify-content: center;
-            }
-            
-            .sidebar-nav a i {
-                margin: 0;
-            }
+           
             
             .main-content {
                 margin-left: 70px;
@@ -538,13 +520,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
         }
 
         @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-            }
-            
-            .sidebar.active {
-                transform: translateX(0);
-            }
+          
             
             .main-content {
                 margin-left: 0;

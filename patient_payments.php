@@ -466,9 +466,6 @@ html {
         }
         
         @media (max-width: 992px) {
-            .sidebar {
-                width: 70px;
-            }
             
             .logo h1 span, .nav-item span {
                 display: none;
@@ -510,7 +507,7 @@ html {
         
             <!-- Filter by Name and Date -->
             <form method="POST" action="patient_payments.php" class="filter-form" style="display:flex; gap:15px; flex-wrap:wrap; margin-bottom:20px; align-items:flex-end;">
-                <div class="form-group" style="margin-bottom:0; flex:1; min-width:180px;">
+                <div class="form-group" style="margin-bottom:0; flex:1; max-width:300px; min-width:180px;">
                     <label for="filter_name" style="margin-bottom:5px; display:block;">Filter by Doctor Name</label>
                     <input type="text" class="form-control" id="filter_name" name="filter_name" placeholder="Doctor name..." value="<?php echo htmlspecialchars($filter_name); ?>">
                 </div>
