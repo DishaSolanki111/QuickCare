@@ -42,7 +42,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
             $err = mysqli_error($conn);
             mysqli_stmt_close($stmt);
             mysqli_close($conn);
-            header("Location: Admin_recept.php?error=" . urlencode("Error deleting receptionist: " . $err));
+
+            // Friendly error message for FK constraint failures
+            if (stripos($err, 'foreign key constraint') !== false || stripos($err, 'cannot delete or update a parent row') !== false) {
+                $friendly = "Cannot delete this receptionist because there is existing work associated with it.";
+            } else {
+                $friendly = "Unable to delete receptionist right now. Please try again or contact support.";
+            }
+
+            header("Location: Admin_recept.php?error=" . urlencode($friendly));
         }
         exit();
     }
