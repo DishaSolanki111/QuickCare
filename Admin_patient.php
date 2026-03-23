@@ -501,7 +501,7 @@ if (empty($error_message) && isset($_GET['error'])) {
                         </button>
                         <button class='action-btn view-btn'
                             type='button'
-                            onclick=\"window.location.href='admin_patient_profile_view.php?patient_id={$row['PATIENT_ID']}';\">
+                            onclick="viewPatient({$row['PATIENT_ID']});">
                             <i class='bi bi-eye'></i>
                             View
                         </button>

@@ -8,7 +8,13 @@ if (!isset($_SESSION['LOGGED_IN']) || $_SESSION['LOGGED_IN'] !== true || ($_SESS
     exit;
 }
 
-$receptionist_id = isset($_GET['receptionist_id']) ? (int)$_GET['receptionist_id'] : 0;
+$receptionist_id = 0;
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['receptionist_id'])) {
+    $receptionist_id = (int)$_POST['receptionist_id'];
+} elseif (isset($_GET['receptionist_id'])) {
+    // fallback if GET used accidentally
+    $receptionist_id = (int)$_GET['receptionist_id'];
+}
 if ($receptionist_id <= 0) {
     die("Invalid receptionist.");
 }
