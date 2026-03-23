@@ -10,7 +10,6 @@ include 'config.php';
 // Get search parameters with sanitization
  $doctor_name = isset($_POST['doctor_name']) ? trim(mysqli_real_escape_string($conn, $_POST['doctor_name'])) : '';
  $specialization_id = isset($_POST['specialization']) ? mysqli_real_escape_string($conn, $_POST['specialization']) : '';
- $schedule_date = isset($_POST['schedule_date']) ? mysqli_real_escape_string($conn, $_POST['schedule_date']) : '';
 
 // Build the base query
  $query = "
@@ -27,15 +26,6 @@ if (!empty($doctor_name)) {
 }
 if (!empty($specialization_id)) {
     $conditions[] = "d.SPECIALISATION_ID = '$specialization_id'";
-}
-if (!empty($schedule_date)) {
-    // Convert date to day of week
-    $day_of_week = date('D', strtotime($schedule_date));
-    $conditions[] = "EXISTS (
-        SELECT 1 FROM doctor_schedule_tbl sch 
-        WHERE sch.DOCTOR_ID = d.DOCTOR_ID 
-        AND sch.AVAILABLE_DAY = '$day_of_week'
-    )";
 }
 
 // Apply conditions to query
@@ -731,12 +721,6 @@ if ($doctors_query && mysqli_num_rows($doctors_query) > 0) {
                     }
                     ?>
                 </select>
-
-                <input
-                    type="date"
-                    name="schedule_date"
-                    value="<?php echo isset($_POST['schedule_date']) ? htmlspecialchars($_POST['schedule_date']) : ''; ?>"
-                >
 
                 <button type="submit">
                     <i class="bi bi-funnel"></i>

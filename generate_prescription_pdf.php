@@ -232,9 +232,9 @@ function generatePDFAsHTML($prescription, $medicines) {
         }
         .header { 
             text-align: center; 
-            margin-bottom: 35px; 
+            margin-bottom: 15px; 
             border-bottom: 4px solid #064469;
-            padding-bottom: 20px;
+            padding-bottom: 15px;
         }
         .header h1 { 
             color: #064469; 
@@ -252,18 +252,19 @@ function generatePDFAsHTML($prescription, $medicines) {
         .content-wrapper {
             display: flex;
             flex-direction: column;
-            gap: 25px;
+            gap: 15px;
         }
         .two-column {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 25px;
+            row-gap: 4px;
+            column-gap: 15px;
             width: 100%;
             box-sizing: border-box;
         }
         .section { 
             margin-bottom: 0;
-            padding: 18px;
+            padding: 12px;
             background-color: #f8f9fa;
             border: 1px solid #e0e0e0;
             border-radius: 8px;
@@ -273,23 +274,23 @@ function generatePDFAsHTML($prescription, $medicines) {
         }
         .section h3 {
             color: #064469;
-            margin: 0 0 15px 0;
+            margin: 0 0 10px 0;
             font-size: 16px;
             text-transform: uppercase;
             font-weight: 700;
             letter-spacing: 0.5px;
             border-bottom: 2px solid #064469;
-            padding-bottom: 8px;
+            padding-bottom: 5px;
         }
         .info-row {
-            margin: 10px 0;
+            margin: 0;
             display: flex;
             align-items: flex-start;
         }
         .info-label {
             font-weight: 700;
             color: #064469;
-            min-width: 140px;
+            min-width: 110px;
             flex-shrink: 0;
             font-size: 13px;
         }
@@ -517,22 +518,22 @@ function generatePDFAsHTML($prescription, $medicines) {
     
     // Full-width fields below the two-column grid
     if (!empty($prescription['SYMPTOMS'])) {
-        $html .= '<div class="info-row" style="flex-direction: column; margin-top: 15px;">
-            <span class="info-label" style="margin-bottom: 5px;">Symptoms:</span>
+        $html .= '<div class="info-row" style="flex-direction: column; margin-top: 6px;">
+            <span class="info-label" style="margin-bottom: 0;">Symptoms:</span>
             <span class="info-value">' . nl2br(htmlspecialchars($prescription['SYMPTOMS'])) . '</span>
         </div>';
     }
     
     if (!empty($prescription['DIAGNOSIS'])) {
-        $html .= '<div class="info-row" style="flex-direction: column; margin-top: 15px;">
-            <span class="info-label" style="margin-bottom: 5px;">Diagnosis:</span>
+        $html .= '<div class="info-row" style="flex-direction: column; margin-top: 6px;">
+            <span class="info-label" style="margin-bottom: 0;">Diagnosis:</span>
             <span class="info-value">' . nl2br(htmlspecialchars($prescription['DIAGNOSIS'])) . '</span>
         </div>';
     }
     
     if (!empty($prescription['ADDITIONAL_NOTES'])) {
-        $html .= '<div class="info-row" style="flex-direction: column; margin-top: 15px;">
-            <span class="info-label" style="margin-bottom: 5px;">Additional Notes:</span>
+        $html .= '<div class="info-row" style="flex-direction: column; margin-top: 6px;">
+            <span class="info-label" style="margin-bottom: 0;">Additional Notes:</span>
             <span class="info-value">' . nl2br(htmlspecialchars($prescription['ADDITIONAL_NOTES'])) . '</span>
         </div>';
     }
