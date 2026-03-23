@@ -1,11 +1,6 @@
--- phpMyAdmin SQL Dump
--- version 5.2.1
--- https://www.phpmyadmin.net/
---
--- Host: 127.0.0.1
--- Generation Time: Mar 21, 2026 at 05:56 PM
--- Server version: 10.4.32-MariaDB
--- PHP Version: 8.2.12
+-- phpMyAdmin SQL Dump - FIXED VERSION
+-- Orphan payment records (APPOINTMENT_ID=2, 30) removed
+-- Foreign key checks disabled during import
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -17,15 +12,9 @@ SET FOREIGN_KEY_CHECKS = 0;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
 /*!40101 SET NAMES utf8mb4 */;
 
---
--- Database: `quick_care`
---
-
 -- --------------------------------------------------------
-
---
--- Table structure for table `appointment_reminder_tbl`
---
+-- Table: appointment_reminder_tbl
+-- --------------------------------------------------------
 
 CREATE TABLE `appointment_reminder_tbl` (
   `APPOINTMENT_REMINDER_ID` int(11) NOT NULL,
@@ -35,19 +24,10 @@ CREATE TABLE `appointment_reminder_tbl` (
   `REMARKS` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `appointment_reminder_tbl`
--- NOTE: Rows 61-75 removed as they referenced APPOINTMENT_IDs (24,25,26,29,30,31)
---       that were old/deleted records no longer present in appointment_tbl.
---
-
 INSERT INTO `appointment_reminder_tbl` (`APPOINTMENT_REMINDER_ID`, `RECEPTIONIST_ID`, `APPOINTMENT_ID`, `REMINDER_TIME`, `REMARKS`) VALUES
 (1, 1, 1, '10:00:00', 'Appointment booked'),
 (2, 1, 1, '10:00:00', '24 hours before appointment'),
 (3, 1, 1, '07:00:00', '3 hours before appointment'),
-(4, 1, 2, '10:00:00', 'Appointment booked'),
-(5, 1, 2, '10:00:00', '24 hours before appointment'),
-(6, 1, 2, '07:00:00', '3 hours before appointment'),
 (7, 1, 3, '11:00:00', 'Appointment booked'),
 (8, 1, 3, '11:00:00', '24 hours before appointment'),
 (9, 1, 3, '08:00:00', '3 hours before appointment'),
@@ -104,10 +84,8 @@ INSERT INTO `appointment_reminder_tbl` (`APPOINTMENT_REMINDER_ID`, `RECEPTIONIST
 (60, 1, 20, '07:00:00', '3 hours before appointment');
 
 -- --------------------------------------------------------
-
---
--- Table structure for table `appointment_tbl`
---
+-- Table: appointment_tbl
+-- --------------------------------------------------------
 
 CREATE TABLE `appointment_tbl` (
   `APPOINTMENT_ID` int(11) NOT NULL,
@@ -120,47 +98,40 @@ CREATE TABLE `appointment_tbl` (
   `STATUS` enum('SCHEDULED','COMPLETED','CANCELLED') DEFAULT 'SCHEDULED'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `appointment_tbl`
---
-
-INSERT INTO appointment_tbl (APPOINTMENT_ID, PATIENT_ID, DOCTOR_ID, SCHEDULE_ID, CREATED_AT, APPOINTMENT_DATE, APPOINTMENT_TIME, STATUS) VALUES
-(1, 1, 1, 1, '2026-03-20 00:00:00', '2026-03-22', '09:00:00', 'COMPLETED'),
-(2, 2, 1, 2, '2026-03-21 00:00:00', '2026-03-23', '10:00:00', 'COMPLETED'),
-(3, 3, 1, 3, '2026-03-22 00:00:00', '2026-03-24', '11:00:00', 'COMPLETED'),
-(4, 4, 2, 4, '2026-03-23 00:00:00', '2026-03-25', '09:00:00', 'COMPLETED'),
-(5, 5, 2, 5, '2026-03-24 00:00:00', '2026-03-26', '10:00:00', 'COMPLETED'),
-(6, 6, 2, 6, '2026-03-25 00:00:00', '2026-03-27', '11:00:00', 'COMPLETED'),
-(7, 7, 3, 7, '2026-03-26 00:00:00', '2026-03-28', '09:00:00', 'COMPLETED'),
-(8, 8, 3, 8, '2026-03-27 00:00:00', '2026-03-29', '10:00:00', 'COMPLETED'),
-(9, 9, 3, 9, '2026-03-28 00:00:00', '2026-03-30', '11:00:00', 'COMPLETED'),
-(10, 10, 4, 10, '2026-03-29 00:00:00', '2026-03-31', '09:00:00', 'COMPLETED'),
-(11, 1, 4, 11, '2026-03-30 00:00:00', '2026-04-01', '10:00:00', 'COMPLETED'),
-(12, 2, 4, 12, '2026-03-31 00:00:00', '2026-04-02', '11:00:00', 'COMPLETED'),
-(13, 3, 5, 13, '2026-04-01 00:00:00', '2026-04-03', '09:00:00', 'COMPLETED'),
-(14, 4, 5, 14, '2026-04-02 00:00:00', '2026-04-04', '10:00:00', 'COMPLETED'),
-(15, 5, 5, 15, '2026-04-03 00:00:00', '2026-04-05', '11:00:00', 'COMPLETED'),
-(16, 6, 6, 16, '2026-04-04 00:00:00', '2026-04-06', '09:00:00', 'COMPLETED'),
-(17, 7, 6, 17, '2026-04-05 00:00:00', '2026-04-07', '10:00:00', 'COMPLETED'),
-(18, 8, 6, 18, '2026-04-06 00:00:00', '2026-04-08', '11:00:00', 'COMPLETED'),
-(19, 9, 7, 19, '2026-04-07 00:00:00', '2026-04-09', '09:00:00', 'COMPLETED'),
-(20, 10, 7, 20, '2026-04-08 00:00:00', '2026-04-10', '10:00:00', 'COMPLETED'),
-(21, 1, 7, 21, '2026-04-09 00:00:00', '2026-04-11', '11:00:00', 'SCHEDULED'),
-(22, 2, 8, 22, '2026-04-10 00:00:00', '2026-04-12', '09:00:00', 'SCHEDULED'),
-(23, 3, 8, 23, '2026-04-11 00:00:00', '2026-04-13', '10:00:00', 'SCHEDULED'),
-(24, 4, 8, 24, '2026-04-12 00:00:00', '2026-04-14', '11:00:00', 'SCHEDULED'),
-(25, 5, 9, 25, '2026-04-13 00:00:00', '2026-04-15', '09:00:00', 'SCHEDULED'),
-(26, 6, 9, 26, '2026-04-14 00:00:00', '2026-04-16', '10:00:00', 'SCHEDULED'),
-(27, 7, 9, 27, '2026-04-15 00:00:00', '2026-04-17', '11:00:00', 'SCHEDULED'),
-(28, 8, 10, 28, '2026-04-16 00:00:00', '2026-04-18', '09:00:00', 'SCHEDULED'),
-(29, 9, 10, 29, '2026-04-17 00:00:00', '2026-04-19', '10:00:00', 'SCHEDULED'),
-(30, 10, 10, 30, '2026-04-18 00:00:00', '2026-04-20', '11:00:00', 'SCHEDULED');
+INSERT INTO `appointment_tbl` (`APPOINTMENT_ID`, `PATIENT_ID`, `DOCTOR_ID`, `SCHEDULE_ID`, `CREATED_AT`, `APPOINTMENT_DATE`, `APPOINTMENT_TIME`, `STATUS`) VALUES
+(1, 1, 1, 3, '2026-03-19 10:00:00', '2026-03-20', '11:00:00', 'COMPLETED'),
+(3, 4, 2, 4, '2026-03-23 00:00:00', '2026-03-25', '09:00:00', 'SCHEDULED'),
+(4, 5, 2, 5, '2026-03-24 00:00:00', '2026-03-26', '10:00:00', 'SCHEDULED'),
+(5, 6, 2, 6, '2026-03-25 00:00:00', '2026-03-27', '11:00:00', 'SCHEDULED'),
+(6, 7, 3, 7, '2026-03-26 00:00:00', '2026-03-28', '09:00:00', 'SCHEDULED'),
+(7, 8, 3, 8, '2026-03-27 00:00:00', '2026-03-29', '10:00:00', 'SCHEDULED'),
+(8, 9, 3, 9, '2026-03-28 00:00:00', '2026-03-30', '11:00:00', 'SCHEDULED'),
+(9, 10, 4, 10, '2026-03-29 00:00:00', '2026-03-31', '09:00:00', 'SCHEDULED'),
+(10, 1, 4, 11, '2026-03-30 00:00:00', '2026-04-01', '10:00:00', 'SCHEDULED'),
+(11, 2, 4, 12, '2026-03-31 00:00:00', '2026-04-02', '11:00:00', 'SCHEDULED'),
+(12, 3, 5, 13, '2026-04-01 00:00:00', '2026-04-03', '09:00:00', 'SCHEDULED'),
+(13, 4, 5, 14, '2026-04-02 00:00:00', '2026-04-04', '10:00:00', 'SCHEDULED'),
+(14, 5, 5, 15, '2026-04-03 00:00:00', '2026-04-05', '11:00:00', 'SCHEDULED'),
+(15, 6, 6, 16, '2026-04-04 00:00:00', '2026-04-06', '09:00:00', 'SCHEDULED'),
+(16, 7, 6, 17, '2026-04-05 00:00:00', '2026-04-07', '10:00:00', 'CANCELLED'),
+(17, 8, 6, 18, '2026-04-06 00:00:00', '2026-04-08', '11:00:00', 'SCHEDULED'),
+(18, 9, 7, 19, '2026-04-07 00:00:00', '2026-04-09', '09:00:00', 'CANCELLED'),
+(19, 10, 7, 20, '2026-04-08 00:00:00', '2026-04-10', '10:00:00', 'CANCELLED'),
+(20, 1, 7, 21, '2026-04-09 00:00:00', '2026-04-11', '11:00:00', 'SCHEDULED'),
+(21, 2, 8, 22, '2026-04-10 00:00:00', '2026-04-12', '09:00:00', 'SCHEDULED'),
+(22, 3, 8, 23, '2026-04-11 00:00:00', '2026-04-13', '10:00:00', 'SCHEDULED'),
+(23, 4, 8, 24, '2026-04-12 00:00:00', '2026-04-14', '11:00:00', 'SCHEDULED'),
+(24, 5, 9, 25, '2026-04-13 00:00:00', '2026-04-15', '09:00:00', 'SCHEDULED'),
+(25, 6, 9, 26, '2026-04-14 00:00:00', '2026-04-16', '10:00:00', 'SCHEDULED'),
+(26, 7, 9, 27, '2026-04-15 00:00:00', '2026-04-17', '11:00:00', 'SCHEDULED'),
+(27, 8, 10, 28, '2026-04-16 00:00:00', '2026-04-18', '09:00:00', 'SCHEDULED'),
+(28, 9, 10, 29, '2026-04-17 00:00:00', '2026-04-19', '10:00:00', 'SCHEDULED'),
+(29, 10, 10, 30, '2026-04-18 00:00:00', '2026-04-20', '11:00:00', 'SCHEDULED'),
+(35, 1, 1, 2, '2026-03-23 14:51:23', '2026-03-25', '16:00:00', 'SCHEDULED');
 
 -- --------------------------------------------------------
-
---
--- Table structure for table `doctor_schedule_tbl`
---
+-- Table: doctor_schedule_tbl
+-- --------------------------------------------------------
 
 CREATE TABLE `doctor_schedule_tbl` (
   `SCHEDULE_ID` int(11) NOT NULL,
@@ -170,10 +141,6 @@ CREATE TABLE `doctor_schedule_tbl` (
   `END_TIME` time NOT NULL,
   `AVAILABLE_DAY` enum('MON','TUE','WED','THUR','FRI','SAT','SUN') NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `doctor_schedule_tbl`
---
 
 INSERT INTO `doctor_schedule_tbl` (`SCHEDULE_ID`, `DOCTOR_ID`, `RECEPTIONIST_ID`, `START_TIME`, `END_TIME`, `AVAILABLE_DAY`) VALUES
 (1, 1, 1, '09:00:00', '17:00:00', 'MON'),
@@ -223,10 +190,8 @@ INSERT INTO `doctor_schedule_tbl` (`SCHEDULE_ID`, `DOCTOR_ID`, `RECEPTIONIST_ID`
 (45, 15, 3, '10:00:00', '18:00:00', 'FRI');
 
 -- --------------------------------------------------------
-
---
--- Table structure for table `doctor_tbl`
---
+-- Table: doctor_tbl
+-- --------------------------------------------------------
 
 CREATE TABLE `doctor_tbl` (
   `DOCTOR_ID` int(11) NOT NULL,
@@ -247,10 +212,6 @@ CREATE TABLE `doctor_tbl` (
   `SECURITY_ANSWER` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `doctor_tbl`
---
-
 INSERT INTO `doctor_tbl` (`DOCTOR_ID`, `SPECIALISATION_ID`, `PROFILE_IMAGE`, `FIRST_NAME`, `LAST_NAME`, `DOB`, `DOJ`, `USERNAME`, `PSWD`, `PHONE`, `EMAIL`, `GENDER`, `EDUCATION`, `STATUS`, `SECURITY_QUESTION`, `SECURITY_ANSWER`) VALUES
 (1, 1, 'uploads/rajesh.jpeg', 'Rajesh', 'Kumar', '1975-03-15', '2010-06-20', 'Dr_rajesh01', '$2y$10$J2Pa/v7n9cwMwGL/URSOjOhTImcZqkphMjKjdnPWsFWWY0uQYFiGG', 9876543210, 'rajesh.kumar@gmail.com', 'MALE', 'MBBS, MD (Pediatrics)', 'approved', 'What was the name of your first school?', 'St. Xavier School'),
 (2, 1, 'uploads/priya.jpeg', 'Priya', 'Sharma', '1980-07-22', '2012-09-15', 'Dr_priya02', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543211, 'priya.sharma@gmail.com', 'FEMALE', 'MBBS, DCH', 'approved', 'What is your favorite food from childhood?', 'Khichdi'),
@@ -269,10 +230,8 @@ INSERT INTO `doctor_tbl` (`DOCTOR_ID`, `SPECIALISATION_ID`, `PROFILE_IMAGE`, `FI
 (15, 1, 'uploads/karthik.jpeg', 'Karthik', 'Pillai', '1977-07-30', '2010-03-12', 'Dr_karthik15', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543224, 'karthik.pillai@gmail.com', 'MALE', 'MBBS, DCH', 'approved', 'Where did you go for your first school trip?', 'Munnar');
 
 -- --------------------------------------------------------
-
---
--- Table structure for table `feedback_tbl`
---
+-- Table: feedback_tbl
+-- --------------------------------------------------------
 
 CREATE TABLE `feedback_tbl` (
   `FEEDBACK_ID` int(11) NOT NULL,
@@ -281,13 +240,8 @@ CREATE TABLE `feedback_tbl` (
   `COMMENTS` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `feedback_tbl`
---
-
 INSERT INTO `feedback_tbl` (`FEEDBACK_ID`, `APPOINTMENT_ID`, `RATING`, `COMMENTS`) VALUES
 (1, 1, 5, 'Doctor was very patient with my child. Explained everything clearly.'),
-(2, 2, 2, 'Follow-up was thorough. Treatment is working well.'),
 (3, 3, 4, 'Good consultation, but waiting time was a bit long.'),
 (4, 4, 5, 'Doctor took time to explain the test results. Very satisfied.'),
 (5, 5, 5, 'Doctor handled my child`s asthma attack very professionally.'),
@@ -308,10 +262,8 @@ INSERT INTO `feedback_tbl` (`FEEDBACK_ID`, `APPOINTMENT_ID`, `RATING`, `COMMENTS
 (20, 20, 5, 'Medication is effective. No seizures since starting treatment.');
 
 -- --------------------------------------------------------
-
---
--- Table structure for table `medicine_reminder_tbl`
---
+-- Table: medicine_reminder_tbl
+-- --------------------------------------------------------
 
 CREATE TABLE `medicine_reminder_tbl` (
   `MEDICINE_REMINDER_ID` int(11) NOT NULL,
@@ -325,38 +277,35 @@ CREATE TABLE `medicine_reminder_tbl` (
   `REMARKS` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `medicine_reminder_tbl`
---
-
-INSERT INTO medicine_reminder_tbl (MEDICINE_REMINDER_ID, MEDICINE_ID, CREATOR_ROLE, CREATOR_ID, PATIENT_ID, START_DATE, END_DATE, REMINDER_TIME, REMARKS) VALUES
-(7, 5, 'RECEPTIONIST', 1, 2, '2026-03-11', '2026-04-11', '08:00:00', 'Morning dose'),
-(8, 6, 'RECEPTIONIST', 1, 2, '2026-03-11', '2026-04-11', '09:00:00', 'Morning dose'),
-(9, 3, 'RECEPTIONIST', 2, 3, '2026-03-13', '2026-04-13', '08:00:00', 'Morning dose'),
-(10, 3, 'RECEPTIONIST', 2, 3, '2026-03-13', '2026-04-13', '20:00:00', 'Evening dose'),
-(11, 7, 'RECEPTIONIST', 2, 4, '2026-03-16', '2026-04-16', '08:00:00', 'Morning dose'),
-(12, 8, 'RECEPTIONIST', 2, 4, '2026-03-16', '2026-04-16', '21:00:00', 'Night dose'),
-(13, 9, 'RECEPTIONIST', 3, 5, '2026-03-21', '2026-04-21', '08:00:00', 'Morning dose'),
-(14, 9, 'RECEPTIONIST', 3, 5, '2026-03-21', '2026-04-21', '14:00:00', 'Afternoon dose'),
-(15, 9, 'RECEPTIONIST', 3, 5, '2026-03-21', '2026-04-21', '20:00:00', 'Evening dose'),
-(16, 10, 'RECEPTIONIST', 3, 5, '2026-03-22', '2026-04-22', '09:00:00', 'Morning dose'),
-(17, 10, 'RECEPTIONIST', 3, 5, '2026-03-22', '2026-04-22', '21:00:00', 'Night dose'),
-(18, 11, 'RECEPTIONIST', 3, 6, '2026-04-26', '2026-05-26', '08:00:00', 'Morning dose'),
-(19, 11, 'RECEPTIONIST', 3, 6, '2026-04-26', '2026-05-26', '14:00:00', 'Afternoon dose'),
-(20, 11, 'RECEPTIONIST', 3, 6, '2026-04-26', '2026-05-26', '20:00:00', 'Evening dose'),
-(21, 13, 'RECEPTIONIST', 1, 9, '2026-04-25', '2026-05-25', '08:00:00', 'Morning dose'),
-(22, 13, 'RECEPTIONIST', 1, 9, '2026-04-25', '2026-05-25', '20:00:00', 'Evening dose'),
-(23, 14, 'RECEPTIONIST', 1, 9, '2026-04-25', '2026-05-25', '21:00:00', 'Night dose'),
-(24, 15, 'RECEPTIONIST', 1, 10, '2026-05-01', '2026-05-31', '08:00:00', 'Morning dose'),
-(25, 15, 'RECEPTIONIST', 1, 10, '2026-05-01', '2026-05-31', '14:00:00', 'Afternoon dose'),
-(26, 15, 'RECEPTIONIST', 1, 10, '2026-05-01', '2026-05-31', '20:00:00', 'Evening dose'),
-(27, 16, 'RECEPTIONIST', 1, 10, '2026-05-01', '2026-05-31', '21:00:00', 'Night dose');
+INSERT INTO `medicine_reminder_tbl` (`MEDICINE_REMINDER_ID`, `MEDICINE_ID`, `CREATOR_ROLE`, `CREATOR_ID`, `PATIENT_ID`, `START_DATE`, `END_DATE`, `REMINDER_TIME`, `REMARKS`) VALUES
+(7, 5, 'RECEPTIONIST', 1, 1, '2026-03-20', '2026-03-22', '10:00:00', 'take your medicine after breakfast'),
+(8, 5, 'RECEPTIONIST', 1, 1, '2026-03-20', '2026-03-22', '14:00:00', 'Have your medicine if you have taken lunch'),
+(9, 17, 'RECEPTIONIST', 1, 1, '2026-03-20', '2026-03-25', '09:00:00', 'take your syrup after breakfast'),
+(10, 17, 'RECEPTIONIST', 1, 1, '2026-03-20', '2026-03-25', '14:00:00', 'take your syrup after lunch'),
+(11, 17, 'RECEPTIONIST', 1, 1, '2026-03-20', '2026-03-25', '21:00:00', 'take your syrup after dinner'),
+(12, 3, 'RECEPTIONIST', 2, 3, '2026-03-13', '2026-04-13', '08:00:00', 'Morning dose'),
+(13, 3, 'RECEPTIONIST', 2, 3, '2026-03-13', '2026-04-13', '20:00:00', 'Evening dose'),
+(14, 7, 'RECEPTIONIST', 2, 4, '2026-03-16', '2026-04-16', '08:00:00', 'Morning dose'),
+(15, 8, 'RECEPTIONIST', 2, 4, '2026-03-16', '2026-04-16', '21:00:00', 'Night dose'),
+(16, 9, 'RECEPTIONIST', 3, 5, '2026-03-21', '2026-04-21', '08:00:00', 'Morning dose'),
+(17, 9, 'RECEPTIONIST', 3, 5, '2026-03-21', '2026-04-21', '14:00:00', 'Afternoon dose'),
+(18, 9, 'RECEPTIONIST', 3, 5, '2026-03-21', '2026-04-21', '20:00:00', 'Evening dose'),
+(19, 10, 'RECEPTIONIST', 3, 5, '2026-03-22', '2026-04-22', '09:00:00', 'Morning dose'),
+(20, 10, 'RECEPTIONIST', 3, 5, '2026-03-22', '2026-04-22', '21:00:00', 'Night dose'),
+(21, 11, 'RECEPTIONIST', 3, 6, '2026-04-26', '2026-05-26', '08:00:00', 'Morning dose'),
+(22, 11, 'RECEPTIONIST', 3, 6, '2026-04-26', '2026-05-26', '14:00:00', 'Afternoon dose'),
+(23, 11, 'RECEPTIONIST', 3, 6, '2026-04-26', '2026-05-26', '20:00:00', 'Evening dose'),
+(24, 13, 'RECEPTIONIST', 1, 9, '2026-04-25', '2026-05-25', '08:00:00', 'Morning dose'),
+(25, 13, 'RECEPTIONIST', 1, 9, '2026-04-25', '2026-05-25', '20:00:00', 'Evening dose'),
+(26, 14, 'RECEPTIONIST', 1, 9, '2026-04-25', '2026-05-25', '21:00:00', 'Night dose'),
+(27, 15, 'RECEPTIONIST', 1, 10, '2026-05-01', '2026-05-31', '08:00:00', 'Morning dose'),
+(28, 15, 'RECEPTIONIST', 1, 10, '2026-05-01', '2026-05-31', '14:00:00', 'Afternoon dose'),
+(29, 15, 'RECEPTIONIST', 1, 10, '2026-05-01', '2026-05-31', '20:00:00', 'Evening dose'),
+(30, 16, 'RECEPTIONIST', 1, 10, '2026-05-01', '2026-05-31', '21:00:00', 'Night dose');
 
 -- --------------------------------------------------------
-
---
--- Table structure for table `medicine_tbl`
---
+-- Table: medicine_tbl
+-- --------------------------------------------------------
 
 CREATE TABLE `medicine_tbl` (
   `MEDICINE_ID` int(11) NOT NULL,
@@ -364,10 +313,6 @@ CREATE TABLE `medicine_tbl` (
   `MED_NAME` varchar(25) NOT NULL,
   `DESCRIPTION` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `medicine_tbl`
---
 
 INSERT INTO `medicine_tbl` (`MEDICINE_ID`, `RECEPTIONIST_ID`, `MED_NAME`, `DESCRIPTION`) VALUES
 (1, 1, 'Paracetamol Syrup', 'Fever and pain relief for children'),
@@ -385,13 +330,12 @@ INSERT INTO `medicine_tbl` (`MEDICINE_ID`, `RECEPTIONIST_ID`, `MED_NAME`, `DESCR
 (13, 4, 'Levetiracetam', 'Anti-epileptic medication'),
 (14, 4, 'Amitriptyline', 'Tricyclic antidepressant for nerve pain'),
 (15, 4, 'Ropinirole', 'Medication for Parkinson\'s disease'),
-(16, 4, 'Topiramate', 'Anti-epileptic and migraine prevention');
+(16, 4, 'Topiramate', 'Anti-epileptic and migraine prevention'),
+(17, 1, 'Ambroxol Syrup', 'Loosen mucus and relieve cough');
 
 -- --------------------------------------------------------
-
---
--- Table structure for table `notification_seen_tbl`
---
+-- Table: notification_seen_tbl
+-- --------------------------------------------------------
 
 CREATE TABLE `notification_seen_tbl` (
   `SEEN_ID` int(11) NOT NULL,
@@ -400,10 +344,6 @@ CREATE TABLE `notification_seen_tbl` (
   `NOTIF_KEY` varchar(100) NOT NULL,
   `SEEN_AT` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `notification_seen_tbl`
---
 
 INSERT INTO `notification_seen_tbl` (`SEEN_ID`, `USER_TYPE`, `USER_ID`, `NOTIF_KEY`, `SEEN_AT`) VALUES
 (1, 'receptionist', 1, '7a9179318e086fe25dc79ff557cfab3e875ebb6c', '2026-03-21 21:36:29'),
@@ -414,10 +354,8 @@ INSERT INTO `notification_seen_tbl` (`SEEN_ID`, `USER_TYPE`, `USER_ID`, `NOTIF_K
 (6, 'receptionist', 1, '7b314175825024447f75593b0c0803d0013ae963', '2026-03-21 21:36:29');
 
 -- --------------------------------------------------------
-
---
--- Table structure for table `password_resets`
---
+-- Table: password_resets
+-- --------------------------------------------------------
 
 CREATE TABLE `password_resets` (
   `id` int(11) NOT NULL,
@@ -430,18 +368,12 @@ CREATE TABLE `password_resets` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `password_resets`
---
-
 INSERT INTO `password_resets` (`id`, `user_type`, `user_id`, `phone`, `otp_hash`, `expires_at`, `attempts`, `created_at`) VALUES
 (1, 'doctor', 1, '9876543210', '$2y$10$60fLZchkBICvTDdVbaR.8uFqDi2ND0uSa.Aiur2bh0QGYAuGEEG4i', '2026-03-13 15:09:30', 0, '2026-03-13 13:59:30');
 
 -- --------------------------------------------------------
-
---
--- Table structure for table `patient_tbl`
---
+-- Table: patient_tbl
+-- --------------------------------------------------------
 
 CREATE TABLE `patient_tbl` (
   `PATIENT_ID` int(11) NOT NULL,
@@ -460,12 +392,8 @@ CREATE TABLE `patient_tbl` (
   `SECURITY_ANSWER` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `patient_tbl`
---
-
 INSERT INTO `patient_tbl` (`PATIENT_ID`, `FIRST_NAME`, `LAST_NAME`, `USERNAME`, `PSWD`, `DOB`, `GENDER`, `BLOOD_GROUP`, `PHONE`, `EMAIL`, `ADDRESS`, `MEDICAL_HISTORY_FILE`, `SECURITY_QUESTION`, `SECURITY_ANSWER`) VALUES
-(1, 'Arjun', 'Mishra', 'Arjun_m01', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', '1990-05-15', 'MALE', 'B+', 9876543201, 'arjun.mishra@gmail.com', '123, Park Street, Mumbai', '', 'What was the name of your first school?', 'Sunrise Public School'),
+(1, 'Arjun', 'Mishra', 'Arjun_m01', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', '2022-02-01', 'MALE', 'B+', 9876543201, 'suchi.mishra@gmail.com', '123, Navrangpura, Ahmedabad', '', 'What was the name of your first school?', 'Sunrise Public School'),
 (2, 'Pooja', 'Sharma', 'Pooja_s02', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', '1985-08-22', 'FEMALE', 'A+', 9876543202, 'pooja.sharma@gmail.com', '456, MG Road, Delhi', '', 'What is your favorite food from childhood?', 'Mango ice cream'),
 (3, 'Rohan', 'Patel', 'Rohan_p03', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', '1992-12-10', 'MALE', 'O+', 9876543203, 'rohan.patel@gmail.com', '789, Brigade Road, Bangalore', '', 'Where did you go for your first school trip?', 'Mysore'),
 (4, 'Neha', 'Gupta', 'Neha_g04', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', '1988-03-18', 'FEMALE', 'AB+', 9876543204, 'neha.gupta@gmail.com', '321, FC Road, Pune', '', 'What was the nickname your family calls you?', 'Nehu'),
@@ -477,10 +405,10 @@ INSERT INTO `patient_tbl` (`PATIENT_ID`, `FIRST_NAME`, `LAST_NAME`, `USERNAME`, 
 (10, 'Kavita', 'Sharma', 'Kavita_s10', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', '1994-04-12', 'FEMALE', 'B+', 9876543210, 'kavita.sharma@gmail.com', '741, MG Road, Bangalore', '', 'What is your favorite food from childhood?', 'Pani puri');
 
 -- --------------------------------------------------------
-
---
--- Table structure for table `payment_tbl`
---
+-- Table: payment_tbl
+-- NOTE: Removed orphan records for APPOINTMENT_ID=2 and APPOINTMENT_ID=30
+--       as those appointments do not exist in appointment_tbl
+-- --------------------------------------------------------
 
 CREATE TABLE `payment_tbl` (
   `PAYMENT_ID` int(11) NOT NULL,
@@ -493,13 +421,9 @@ CREATE TABLE `payment_tbl` (
   `CREATED_AT` timestamp NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `payment_tbl`
---
-
-INSERT INTO payment_tbl (PAYMENT_ID, APPOINTMENT_ID, AMOUNT, PAYMENT_DATE, PAYMENT_MODE, STATUS, TRANSACTION_ID, CREATED_AT) VALUES
-(1, 1, 300.00, '2026-03-20', 'CREDIT CARD', 'COMPLETED', 'TXN100000001', '2026-03-20 00:00:00'),
-(2, 2, 300.00, '2026-03-21', 'GOOGLE PAY', 'COMPLETED', 'TXN100000002', '2026-03-21 00:00:00'),
+INSERT INTO `payment_tbl` (`PAYMENT_ID`, `APPOINTMENT_ID`, `AMOUNT`, `PAYMENT_DATE`, `PAYMENT_MODE`, `STATUS`, `TRANSACTION_ID`, `CREATED_AT`) VALUES
+(1, 1, 300.00, '2026-03-19', 'CREDIT CARD', 'COMPLETED', 'TXN100000001', '2026-03-19 10:00:00'),
+-- REMOVED: (2, 2, ...) -- appointment_id=2 was deleted
 (3, 3, 300.00, '2026-03-22', 'UPI', 'COMPLETED', 'TXN100000003', '2026-03-22 00:00:00'),
 (4, 4, 300.00, '2026-03-23', 'NET BANKING', 'COMPLETED', 'TXN100000004', '2026-03-23 00:00:00'),
 (5, 5, 300.00, '2026-03-24', 'CREDIT CARD', 'COMPLETED', 'TXN100000005', '2026-03-24 00:00:00'),
@@ -527,13 +451,12 @@ INSERT INTO payment_tbl (PAYMENT_ID, APPOINTMENT_ID, AMOUNT, PAYMENT_DATE, PAYME
 (27, 27, 300.00, '2026-04-15', 'UPI', 'COMPLETED', 'TXN100000027', '2026-04-15 00:00:00'),
 (28, 28, 300.00, '2026-04-16', 'NET BANKING', 'COMPLETED', 'TXN100000028', '2026-04-16 00:00:00'),
 (29, 29, 300.00, '2026-04-17', 'CREDIT CARD', 'COMPLETED', 'TXN100000029', '2026-04-17 00:00:00'),
-(30, 30, 300.00, '2026-04-18', 'GOOGLE PAY', 'COMPLETED', 'TXN100000030', '2026-04-18 00:00:00');
+-- REMOVED: (30, 30, ...) -- appointment_id=30 does not exist
+(31, 35, 300.00, '2026-03-23', 'UPI', 'COMPLETED', 'pay_SUhqxej69FCZLv', '2026-03-23 14:51:23');
 
 -- --------------------------------------------------------
-
---
--- Table structure for table `prescription_medicine_tbl`
---
+-- Table: prescription_medicine_tbl
+-- --------------------------------------------------------
 
 CREATE TABLE `prescription_medicine_tbl` (
   `PRESCRIPTION_ID` int(11) NOT NULL,
@@ -544,13 +467,9 @@ CREATE TABLE `prescription_medicine_tbl` (
   `CREATED_AT` timestamp NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `prescription_medicine_tbl`
---
-
-INSERT INTO prescription_medicine_tbl (PRESCRIPTION_ID, MEDICINE_ID, DOSAGE, DURATION, FREQUENCY, CREATED_AT) VALUES
-(1, 1, '5ml', '5 days', 'Twice daily', '2026-03-03 10:00:00'),
-(1, 2, '125mg', '7 days', 'Three times daily', '2026-03-03 10:00:00'),
+INSERT INTO `prescription_medicine_tbl` (`PRESCRIPTION_ID`, `MEDICINE_ID`, `DOSAGE`, `DURATION`, `FREQUENCY`, `CREATED_AT`) VALUES
+(1, 1, '5ml', '3 days', 'Twice daily after lunch and br', '2026-03-20 11:40:00'),
+(1, 17, '125mg', '7 days', 'Three times daily after breakf', '2026-03-20 11:40:00'),
 (2, 1, '5ml', '3 days', 'As needed', '2026-03-07 10:00:00'),
 (2, 4, '1ml', '30 days', 'Once daily', '2026-03-07 10:00:00'),
 (3, 5, '50mg', '30 days', 'Once daily', '2026-03-04 11:00:00'),
@@ -591,10 +510,8 @@ INSERT INTO prescription_medicine_tbl (PRESCRIPTION_ID, MEDICINE_ID, DOSAGE, DUR
 (20, 16, '100mg', '30 days', 'Once daily at night', '2026-04-30 10:00:00');
 
 -- --------------------------------------------------------
-
---
--- Table structure for table `prescription_tbl`
---
+-- Table: prescription_tbl
+-- --------------------------------------------------------
 
 CREATE TABLE `prescription_tbl` (
   `PRESCRIPTION_ID` int(11) NOT NULL,
@@ -610,13 +527,8 @@ CREATE TABLE `prescription_tbl` (
   `CREATED_AT` timestamp NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `prescription_tbl`
---
-
-INSERT INTO prescription_tbl (PRESCRIPTION_ID, APPOINTMENT_ID, ISSUE_DATE, HEIGHT_CM, WEIGHT_KG, BLOOD_PRESSURE, DIABETES, SYMPTOMS, DIAGNOSIS, ADDITIONAL_NOTES, CREATED_AT) VALUES
-(1, 1, '2026-03-03', 120, 25.00, 110, 'NO', 'Fever, cough, and cold', 'Upper respiratory tract infection', 'Advise plenty of rest and fluids', '2026-03-03 10:00:00'),
-(2, 2, '2026-03-07', 120, 25.00, 110, 'NO', 'Follow-up check', 'Recovering well', 'Continue prescribed medication', '2026-03-07 10:00:00'),
+INSERT INTO `prescription_tbl` (`PRESCRIPTION_ID`, `APPOINTMENT_ID`, `ISSUE_DATE`, `HEIGHT_CM`, `WEIGHT_KG`, `BLOOD_PRESSURE`, `DIABETES`, `SYMPTOMS`, `DIAGNOSIS`, `ADDITIONAL_NOTES`, `CREATED_AT`) VALUES
+(1, 1, '2026-03-20', 120, 25.00, 110, 'NO', 'Fever, cough, and cold', 'Upper respiratory tract infection', 'Advise plenty of rest and fluids', '2026-03-20 11:40:00'),
 (3, 3, '2026-03-04', 160, 55.00, 120, 'NO', 'Chest pain, shortness of breath', 'Angina', 'Stress management recommended', '2026-03-04 11:00:00'),
 (4, 4, '2026-03-10', 160, 55.00, 120, 'NO', 'Follow-up check', 'Stable condition', 'Continue medication as prescribed', '2026-03-10 11:00:00'),
 (5, 5, '2026-03-09', 110, 20.00, 100, 'NO', 'Wheezing, difficulty breathing', 'Asthma exacerbation', 'Avoid triggers like dust and pollen', '2026-03-09 09:00:00'),
@@ -637,10 +549,8 @@ INSERT INTO prescription_tbl (PRESCRIPTION_ID, APPOINTMENT_ID, ISSUE_DATE, HEIGH
 (20, 20, '2026-04-30', 165, 60.00, 120, 'NO', 'Follow-up check', 'Seizure controlled', 'Never skip medication', '2026-04-30 10:00:00');
 
 -- --------------------------------------------------------
-
---
--- Table structure for table `receptionist_notifications`
---
+-- Table: receptionist_notifications
+-- --------------------------------------------------------
 
 CREATE TABLE `receptionist_notifications` (
   `RECEPTIONIST_NOTIFICATION_ID` int(11) NOT NULL,
@@ -650,10 +560,8 @@ CREATE TABLE `receptionist_notifications` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
-
---
--- Table structure for table `receptionist_tbl`
---
+-- Table: receptionist_tbl
+-- --------------------------------------------------------
 
 CREATE TABLE `receptionist_tbl` (
   `RECEPTIONIST_ID` int(11) NOT NULL,
@@ -671,10 +579,6 @@ CREATE TABLE `receptionist_tbl` (
   `SECURITY_ANSWER` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `receptionist_tbl`
---
-
 INSERT INTO `receptionist_tbl` (`RECEPTIONIST_ID`, `FIRST_NAME`, `LAST_NAME`, `DOB`, `DOJ`, `GENDER`, `PHONE`, `EMAIL`, `ADDRESS`, `USERNAME`, `PSWD`, `SECURITY_QUESTION`, `SECURITY_ANSWER`) VALUES
 (1, 'Meena', 'Kumari', '1985-03-15', '2018-06-20', 'FEMALE', 9876543301, 'meena.k@gmail.com', '123, Staff Quarters, Mumbai', 'Meena_k01', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 'What was the name of your first school?', 'Delhi Public School'),
 (2, 'Ramesh', 'Kumar', '1987-07-22', '2019-09-15', 'MALE', 9876543302, 'ramesh.k@gmail.com', '456, Staff Quarters, Delhi', 'Ramesh_k02', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 'What is your favorite food from childhood?', 'Idli sambar'),
@@ -682,19 +586,13 @@ INSERT INTO `receptionist_tbl` (`RECEPTIONIST_ID`, `FIRST_NAME`, `LAST_NAME`, `D
 (4, 'Anil', 'Sharma', '1988-05-18', '2021-07-10', 'MALE', 9876543304, 'anil.s@gmail.com', '321, Staff Quarters, Pune', 'Anil_s04', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 'What was the nickname your family calls you?', 'Anu');
 
 -- --------------------------------------------------------
-
---
--- Table structure for table `specialisation_tbl`
---
+-- Table: specialisation_tbl
+-- --------------------------------------------------------
 
 CREATE TABLE `specialisation_tbl` (
   `SPECIALISATION_ID` int(11) NOT NULL,
   `SPECIALISATION_NAME` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `specialisation_tbl`
---
 
 INSERT INTO `specialisation_tbl` (`SPECIALISATION_ID`, `SPECIALISATION_NAME`) VALUES
 (1, 'Pediatrician'),
@@ -703,91 +601,48 @@ INSERT INTO `specialisation_tbl` (`SPECIALISATION_ID`, `SPECIALISATION_NAME`) VA
 (4, 'Neurologist');
 
 -- --------------------------------------------------------
-
---
--- Structure for view `view_appointment_report`
---
+-- Views
+-- --------------------------------------------------------
 
 CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `view_appointment_report` AS
-SELECT
-  `a`.`APPOINTMENT_ID` AS `APPOINTMENT_ID`,
-  CONCAT(`p`.`FIRST_NAME`,' ',`p`.`LAST_NAME`) AS `Patient_Name`,
-  CONCAT(`d`.`FIRST_NAME`,' ',`d`.`LAST_NAME`) AS `Doctor_Name`,
-  `s`.`SPECIALISATION_NAME` AS `Specialisation`,
-  `a`.`APPOINTMENT_DATE` AS `APPOINTMENT_DATE`,
-  DAYNAME(`a`.`APPOINTMENT_DATE`) AS `Day_Name`,
-  WEEK(`a`.`APPOINTMENT_DATE`) AS `Week_Number`,
-  MONTH(`a`.`APPOINTMENT_DATE`) AS `Month_Number`,
-  MONTHNAME(`a`.`APPOINTMENT_DATE`) AS `Month_Name`,
-  YEAR(`a`.`APPOINTMENT_DATE`) AS `Year`,
-  `a`.`APPOINTMENT_TIME` AS `APPOINTMENT_TIME`,
-  `a`.`STATUS` AS `STATUS`
+SELECT `a`.`APPOINTMENT_ID`, concat(`p`.`FIRST_NAME`,' ',`p`.`LAST_NAME`) AS `Patient_Name`,
+concat(`d`.`FIRST_NAME`,' ',`d`.`LAST_NAME`) AS `Doctor_Name`, `s`.`SPECIALISATION_NAME` AS `Specialisation`,
+`a`.`APPOINTMENT_DATE`, dayname(`a`.`APPOINTMENT_DATE`) AS `Day_Name`, week(`a`.`APPOINTMENT_DATE`) AS `Week_Number`,
+month(`a`.`APPOINTMENT_DATE`) AS `Month_Number`, monthname(`a`.`APPOINTMENT_DATE`) AS `Month_Name`,
+year(`a`.`APPOINTMENT_DATE`) AS `Year`, `a`.`APPOINTMENT_TIME`, `a`.`STATUS`
 FROM (((`appointment_tbl` `a`
   JOIN `patient_tbl` `p` ON(`a`.`PATIENT_ID` = `p`.`PATIENT_ID`))
   JOIN `doctor_tbl` `d` ON(`a`.`DOCTOR_ID` = `d`.`DOCTOR_ID`))
   JOIN `specialisation_tbl` `s` ON(`d`.`SPECIALISATION_ID` = `s`.`SPECIALISATION_ID`));
 
--- --------------------------------------------------------
-
---
--- Structure for view `view_doctor_report`
---
-
 CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `view_doctor_report` AS
-SELECT
-  `d`.`DOCTOR_ID` AS `DOCTOR_ID`,
-  CONCAT(`d`.`FIRST_NAME`,' ',`d`.`LAST_NAME`) AS `Doctor_Name`,
-  `s`.`SPECIALISATION_NAME` AS `Specialisation`,
-  `d`.`EDUCATION` AS `EDUCATION`,
-  `d`.`STATUS` AS `Doctor_Status`,
-  `a`.`APPOINTMENT_ID` AS `APPOINTMENT_ID`,
-  `a`.`APPOINTMENT_DATE` AS `APPOINTMENT_DATE`,
-  COALESCE(MONTHNAME(`a`.`APPOINTMENT_DATE`),'N/A') AS `Month_Name`,
-  COALESCE(MONTH(`a`.`APPOINTMENT_DATE`),0) AS `Month_Number`,
-  COALESCE(YEAR(`a`.`APPOINTMENT_DATE`),0) AS `Year`,
-  COALESCE(`a`.`STATUS`,'NONE') AS `Appointment_Status`,
-  COALESCE(`doc_stats`.`Total_Patients`,0) AS `Total_Patients`,
-  COALESCE(`doc_stats`.`Avg_Rating`,0) AS `Avg_Rating`
+SELECT `d`.`DOCTOR_ID`, concat(`d`.`FIRST_NAME`,' ',`d`.`LAST_NAME`) AS `Doctor_Name`,
+`s`.`SPECIALISATION_NAME` AS `Specialisation`, `d`.`EDUCATION`, `d`.`STATUS` AS `Doctor_Status`,
+`a`.`APPOINTMENT_ID`, `a`.`APPOINTMENT_DATE`, coalesce(monthname(`a`.`APPOINTMENT_DATE`),'N/A') AS `Month_Name`,
+coalesce(month(`a`.`APPOINTMENT_DATE`),0) AS `Month_Number`, coalesce(year(`a`.`APPOINTMENT_DATE`),0) AS `Year`,
+coalesce(`a`.`STATUS`,'NONE') AS `Appointment_Status`, coalesce(`doc_stats`.`Total_Patients`,0) AS `Total_Patients`,
+coalesce(`doc_stats`.`Avg_Rating`,0) AS `Avg_Rating`
 FROM (((`doctor_tbl` `d`
   JOIN `specialisation_tbl` `s` ON(`d`.`SPECIALISATION_ID` = `s`.`SPECIALISATION_ID`))
   LEFT JOIN `appointment_tbl` `a` ON(`d`.`DOCTOR_ID` = `a`.`DOCTOR_ID`))
-  LEFT JOIN (
-    SELECT `a2`.`DOCTOR_ID` AS `DOCTOR_ID`,
-      COUNT(DISTINCT `a2`.`PATIENT_ID`) AS `Total_Patients`,
-      ROUND(AVG(`f2`.`RATING`),1) AS `Avg_Rating`
-    FROM (`appointment_tbl` `a2`
-      LEFT JOIN `feedback_tbl` `f2` ON(`a2`.`APPOINTMENT_ID` = `f2`.`APPOINTMENT_ID`))
-    GROUP BY `a2`.`DOCTOR_ID`
-  ) `doc_stats` ON(`d`.`DOCTOR_ID` = `doc_stats`.`DOCTOR_ID`));
-
--- --------------------------------------------------------
-
---
--- Structure for view `view_patient_report`
---
+  LEFT JOIN (SELECT `a2`.`DOCTOR_ID`, count(distinct `a2`.`PATIENT_ID`) AS `Total_Patients`,
+    round(avg(`f2`.`RATING`),1) AS `Avg_Rating`
+    FROM (`appointment_tbl` `a2` LEFT JOIN `feedback_tbl` `f2` ON(`a2`.`APPOINTMENT_ID` = `f2`.`APPOINTMENT_ID`))
+    GROUP BY `a2`.`DOCTOR_ID`) `doc_stats` ON(`d`.`DOCTOR_ID` = `doc_stats`.`DOCTOR_ID`));
 
 CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `view_patient_report` AS
-SELECT
-  `p`.`PATIENT_ID` AS `PATIENT_ID`,
-  CONCAT(`p`.`FIRST_NAME`,' ',`p`.`LAST_NAME`) AS `Patient_Name`,
-  `p`.`GENDER` AS `GENDER`,
-  `p`.`BLOOD_GROUP` AS `BLOOD_GROUP`,
-  `p`.`PHONE` AS `PHONE`,
-  `p`.`EMAIL` AS `EMAIL`,
-  `p`.`ADDRESS` AS `ADDRESS`,
-  COUNT(DISTINCT `a`.`APPOINTMENT_ID`) AS `Total_Appointments`,
-  SUM(CASE WHEN `a`.`STATUS` = 'COMPLETED' THEN 1 ELSE 0 END) AS `Completed_Visits`,
-  SUM(CASE WHEN `a`.`STATUS` = 'SCHEDULED' THEN 1 ELSE 0 END) AS `Upcoming_Visits`,
-  SUM(CASE WHEN `a`.`STATUS` = 'CANCELLED' THEN 1 ELSE 0 END) AS `Cancelled_Visits`,
-  MAX(`a`.`APPOINTMENT_DATE`) AS `Last_Visit_Date`,
-  MIN(`a`.`APPOINTMENT_DATE`) AS `First_Visit_Date`,
-  COUNT(DISTINCT `a`.`DOCTOR_ID`) AS `Doctors_Visited`,
-  COUNT(DISTINCT `pr`.`PRESCRIPTION_ID`) AS `Total_Prescriptions`,
-  COALESCE(SUM(CASE WHEN `py`.`STATUS` = 'COMPLETED' THEN `py`.`AMOUNT` ELSE 0 END),0) AS `Total_Amount_Paid`,
-  COUNT(DISTINCT CASE WHEN `py`.`STATUS` = 'COMPLETED' THEN `py`.`PAYMENT_ID` END) AS `Successful_Payments`,
-  COUNT(DISTINCT `f`.`FEEDBACK_ID`) AS `Total_Feedback_Given`,
-  ROUND(AVG(`f`.`RATING`),1) AS `Avg_Rating_Given`,
-  COUNT(DISTINCT `mr`.`MEDICINE_REMINDER_ID`) AS `Medicine_Reminders`
+SELECT `p`.`PATIENT_ID`, concat(`p`.`FIRST_NAME`,' ',`p`.`LAST_NAME`) AS `Patient_Name`,
+`p`.`GENDER`, `p`.`BLOOD_GROUP`, `p`.`PHONE`, `p`.`EMAIL`, `p`.`ADDRESS`,
+count(distinct `a`.`APPOINTMENT_ID`) AS `Total_Appointments`,
+sum(case when `a`.`STATUS` = 'COMPLETED' then 1 else 0 end) AS `Completed_Visits`,
+sum(case when `a`.`STATUS` = 'SCHEDULED' then 1 else 0 end) AS `Upcoming_Visits`,
+sum(case when `a`.`STATUS` = 'CANCELLED' then 1 else 0 end) AS `Cancelled_Visits`,
+max(`a`.`APPOINTMENT_DATE`) AS `Last_Visit_Date`, min(`a`.`APPOINTMENT_DATE`) AS `First_Visit_Date`,
+count(distinct `a`.`DOCTOR_ID`) AS `Doctors_Visited`, count(distinct `pr`.`PRESCRIPTION_ID`) AS `Total_Prescriptions`,
+coalesce(sum(case when `py`.`STATUS` = 'COMPLETED' then `py`.`AMOUNT` else 0 end),0) AS `Total_Amount_Paid`,
+count(distinct case when `py`.`STATUS` = 'COMPLETED' then `py`.`PAYMENT_ID` end) AS `Successful_Payments`,
+count(distinct `f`.`FEEDBACK_ID`) AS `Total_Feedback_Given`, round(avg(`f`.`RATING`),1) AS `Avg_Rating_Given`,
+count(distinct `mr`.`MEDICINE_REMINDER_ID`) AS `Medicine_Reminders`
 FROM (((((`patient_tbl` `p`
   LEFT JOIN `appointment_tbl` `a` ON(`p`.`PATIENT_ID` = `a`.`PATIENT_ID`))
   LEFT JOIN `prescription_tbl` `pr` ON(`a`.`APPOINTMENT_ID` = `pr`.`APPOINTMENT_ID`))
@@ -795,37 +650,22 @@ FROM (((((`patient_tbl` `p`
   LEFT JOIN `feedback_tbl` `f` ON(`a`.`APPOINTMENT_ID` = `f`.`APPOINTMENT_ID`))
   LEFT JOIN `medicine_reminder_tbl` `mr` ON(`p`.`PATIENT_ID` = `mr`.`PATIENT_ID`))
 GROUP BY `p`.`PATIENT_ID`
-ORDER BY COUNT(DISTINCT `a`.`APPOINTMENT_ID`) DESC;
-
--- --------------------------------------------------------
-
---
--- Structure for view `view_payment_report`
---
+ORDER BY count(distinct `a`.`APPOINTMENT_ID`) DESC;
 
 CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `view_payment_report` AS
-SELECT
-  `py`.`PAYMENT_ID` AS `PAYMENT_ID`,
-  `py`.`TRANSACTION_ID` AS `TRANSACTION_ID`,
-  CONCAT(`p`.`FIRST_NAME`,' ',`p`.`LAST_NAME`) AS `Patient_Name`,
-  CONCAT(`d`.`FIRST_NAME`,' ',`d`.`LAST_NAME`) AS `Doctor_Name`,
-  `py`.`AMOUNT` AS `AMOUNT`,
-  `py`.`PAYMENT_MODE` AS `PAYMENT_MODE`,
-  `py`.`STATUS` AS `Payment_Status`,
-  `py`.`PAYMENT_DATE` AS `PAYMENT_DATE`,
-  DAYNAME(`py`.`PAYMENT_DATE`) AS `Day_Name`,
-  WEEK(`py`.`PAYMENT_DATE`) AS `Week_Number`,
-  MONTH(`py`.`PAYMENT_DATE`) AS `Month_Number`,
-  MONTHNAME(`py`.`PAYMENT_DATE`) AS `Month_Name`,
-  YEAR(`py`.`PAYMENT_DATE`) AS `Year`
+SELECT `py`.`PAYMENT_ID`, `py`.`TRANSACTION_ID`, concat(`p`.`FIRST_NAME`,' ',`p`.`LAST_NAME`) AS `Patient_Name`,
+concat(`d`.`FIRST_NAME`,' ',`d`.`LAST_NAME`) AS `Doctor_Name`, `py`.`AMOUNT`, `py`.`PAYMENT_MODE`,
+`py`.`STATUS` AS `Payment_Status`, `py`.`PAYMENT_DATE`, dayname(`py`.`PAYMENT_DATE`) AS `Day_Name`,
+week(`py`.`PAYMENT_DATE`) AS `Week_Number`, month(`py`.`PAYMENT_DATE`) AS `Month_Number`,
+monthname(`py`.`PAYMENT_DATE`) AS `Month_Name`, year(`py`.`PAYMENT_DATE`) AS `Year`
 FROM (((`payment_tbl` `py`
   JOIN `appointment_tbl` `a` ON(`py`.`APPOINTMENT_ID` = `a`.`APPOINTMENT_ID`))
   JOIN `patient_tbl` `p` ON(`a`.`PATIENT_ID` = `p`.`PATIENT_ID`))
   JOIN `doctor_tbl` `d` ON(`a`.`DOCTOR_ID` = `d`.`DOCTOR_ID`));
 
---
--- Indexes for dumped tables
---
+-- --------------------------------------------------------
+-- Indexes & Primary Keys
+-- --------------------------------------------------------
 
 ALTER TABLE `appointment_reminder_tbl`
   ADD PRIMARY KEY (`APPOINTMENT_REMINDER_ID`),
@@ -895,58 +735,29 @@ ALTER TABLE `receptionist_tbl`
 ALTER TABLE `specialisation_tbl`
   ADD PRIMARY KEY (`SPECIALISATION_ID`);
 
---
--- AUTO_INCREMENT for dumped tables
---
+-- --------------------------------------------------------
+-- AUTO_INCREMENT
+-- --------------------------------------------------------
 
-ALTER TABLE `appointment_reminder_tbl`
-  MODIFY `APPOINTMENT_REMINDER_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=76;
+ALTER TABLE `appointment_reminder_tbl` MODIFY `APPOINTMENT_REMINDER_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=76;
+ALTER TABLE `appointment_tbl` MODIFY `APPOINTMENT_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
+ALTER TABLE `doctor_schedule_tbl` MODIFY `SCHEDULE_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=46;
+ALTER TABLE `doctor_tbl` MODIFY `DOCTOR_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+ALTER TABLE `feedback_tbl` MODIFY `FEEDBACK_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+ALTER TABLE `medicine_reminder_tbl` MODIFY `MEDICINE_REMINDER_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+ALTER TABLE `medicine_tbl` MODIFY `MEDICINE_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+ALTER TABLE `notification_seen_tbl` MODIFY `SEEN_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+ALTER TABLE `password_resets` MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+ALTER TABLE `patient_tbl` MODIFY `PATIENT_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+ALTER TABLE `payment_tbl` MODIFY `PAYMENT_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
+ALTER TABLE `prescription_tbl` MODIFY `PRESCRIPTION_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+ALTER TABLE `receptionist_notifications` MODIFY `RECEPTIONIST_NOTIFICATION_ID` int(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `receptionist_tbl` MODIFY `RECEPTIONIST_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+ALTER TABLE `specialisation_tbl` MODIFY `SPECIALISATION_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
-ALTER TABLE `appointment_tbl`
-  MODIFY `APPOINTMENT_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
-
-ALTER TABLE `doctor_schedule_tbl`
-  MODIFY `SCHEDULE_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=46;
-
-ALTER TABLE `doctor_tbl`
-  MODIFY `DOCTOR_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
-
-ALTER TABLE `feedback_tbl`
-  MODIFY `FEEDBACK_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
-
-ALTER TABLE `medicine_reminder_tbl`
-  MODIFY `MEDICINE_REMINDER_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
-
-ALTER TABLE `medicine_tbl`
-  MODIFY `MEDICINE_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
-
-ALTER TABLE `notification_seen_tbl`
-  MODIFY `SEEN_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
-
-ALTER TABLE `password_resets`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
-
-ALTER TABLE `patient_tbl`
-  MODIFY `PATIENT_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
-
-ALTER TABLE `payment_tbl`
-  MODIFY `PAYMENT_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
-
-ALTER TABLE `prescription_tbl`
-  MODIFY `PRESCRIPTION_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
-
-ALTER TABLE `receptionist_notifications`
-  MODIFY `RECEPTIONIST_NOTIFICATION_ID` int(11) NOT NULL AUTO_INCREMENT;
-
-ALTER TABLE `receptionist_tbl`
-  MODIFY `RECEPTIONIST_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
-
-ALTER TABLE `specialisation_tbl`
-  MODIFY `SPECIALISATION_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
-
---
--- Constraints for dumped tables
---
+-- --------------------------------------------------------
+-- Foreign Key Constraints
+-- --------------------------------------------------------
 
 ALTER TABLE `appointment_reminder_tbl`
   ADD CONSTRAINT `appointment_reminder_tbl_ibfk_1` FOREIGN KEY (`RECEPTIONIST_ID`) REFERENCES `receptionist_tbl` (`RECEPTIONIST_ID`) ON UPDATE CASCADE,
@@ -985,7 +796,6 @@ ALTER TABLE `prescription_tbl`
   ADD CONSTRAINT `prescription_tbl_ibfk_1` FOREIGN KEY (`APPOINTMENT_ID`) REFERENCES `appointment_tbl` (`APPOINTMENT_ID`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 SET FOREIGN_KEY_CHECKS = 1;
-
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

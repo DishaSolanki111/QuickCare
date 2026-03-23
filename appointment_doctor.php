@@ -163,14 +163,12 @@ foreach ($all_appointments as $appt) {
         continue;
     }
 
-    // STATUS = SCHEDULED → Today (date = today) or Upcoming (date > today)
+    // STATUS = SCHEDULED → Today (date = today) or Upcoming for all scheduled entries
     if ($status === 'SCHEDULED') {
         if ($appt_date === $today_php) {
             $today_appointments[] = $appt;
-        } elseif ($appt_date > $today_php) {
-            $upcoming_appointments[] = $appt;
         } else {
-            $past_appointments[] = $appt;
+            $upcoming_appointments[] = $appt;
         }
     }
 }
@@ -188,6 +186,7 @@ $pr_complete_q = $conn->query("SELECT p.APPOINTMENT_ID FROM prescription_tbl p J
 if ($pr_complete_q) { while ($pr = $pr_complete_q->fetch_assoc()) $appointment_ids_with_complete_prescription[] = (int)$pr['APPOINTMENT_ID']; }
 
  $conn->close();
+error_log("doctor_id=$doctor_id today=$today_php upcoming:".count($upcoming_appointments));
 ?>
 
 <!DOCTYPE html>
