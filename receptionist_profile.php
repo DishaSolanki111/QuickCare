@@ -648,6 +648,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
 
             <?php
             $needs_security = trim((string)($receptionist['SECURITY_QUESTION'] ?? '')) === '';
+            if (isset($_SESSION['COMPLETE_SECURITY']) && !$needs_security) {
+                unset($_SESSION['COMPLETE_SECURITY']);
+            }
             if ($needs_security): ?>
             <div class="alert alert-danger" style="margin-top:20px;">
                 <i class="fas fa-exclamation-triangle"></i>
