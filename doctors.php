@@ -441,6 +441,7 @@ if ($spec_id > 0) {
                         <div class="card-actions">
                             <form method="POST" action="d_profile.php">
                                 <input type="hidden" name="id" value="<?php echo $row['DOCTOR_ID']; ?>">
+                                <input type="hidden" name="spec_id" value="<?php echo $spec_id; ?>">
                                 <button type="submit" class="btn-secondary"><i class="fas fa-user"></i> View Profile</button>
                             </form>
                             <form method="POST" action="book_appointment_date.php">
