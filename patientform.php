@@ -680,7 +680,7 @@ function qc_validate_password($password, $username, $email, &$error) {
                 <script>
                     // Show success message for 3 seconds, then redirect
                     setTimeout(function() {
-                        window.location.href = 'login_for_all.php';
+                        window.location.href = 'book_appointment_login.php';
                     }, 3000);
                 </script>
             <?php endif; ?>
