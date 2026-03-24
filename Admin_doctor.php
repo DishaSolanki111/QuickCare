@@ -536,7 +536,6 @@ include 'admin_sidebar.php';
     
     // Modal functions
     function openEditModal(id, firstName, lastName, education, phone, email, specializationId, profileImage) {
-        alert('Modal function called');
         try {
             const docId = document.getElementById('edit_doctor_id');
             const firstName_el = document.getElementById('edit_first_name');
