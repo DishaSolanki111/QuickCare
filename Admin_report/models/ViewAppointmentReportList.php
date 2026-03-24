@@ -759,7 +759,6 @@ class ViewAppointmentReportList extends ViewAppointmentReport implements PageInt
 
         // Hide list options
         if ($this->isExport()) {
-            $this->ListOptions->hideAllOptions(["sequence"]);
             $this->ListOptions->UseDropDownButton = false; // Disable drop down button
             $this->ListOptions->UseButtonGroup = false; // Disable button group
         } elseif ($this->isGridAdd() || $this->isGridEdit() || $this->isMultiEdit() || $this->isConfirm()) {
@@ -769,8 +768,7 @@ class ViewAppointmentReportList extends ViewAppointmentReport implements PageInt
         }
 
         // Hide options
-        if ($this->isExport() || !(IsEmpty($this->CurrentAction) || $this->isSearch())) {
-            $this->ExportOptions->hideAllOptions();
+        if (!(IsEmpty($this->CurrentAction) || $this->isSearch())) {
             $this->FilterOptions->hideAllOptions();
             $this->ImportOptions->hideAllOptions();
         }
@@ -923,12 +921,12 @@ class ViewAppointmentReportList extends ViewAppointmentReport implements PageInt
         } else {
             // Reset for template row
             if ($this->RowIndex === '$rowindex$') {
-                $this->RecordCount = $this->StartRecord;
+                $this->RecordCount = $this->StartRecord - 1;
                 $this->RowIndex = 0;
             }
             // Reset inline add/copy row
             if ($isInlineAddOrCopy && $this->RowIndex == 0) {
-                $this->RecordCount = $this->StartRecord;
+                $this->RecordCount = $this->StartRecord - 1;
                 $this->RowIndex = 1;
             }
         }
@@ -1563,7 +1561,7 @@ class ViewAppointmentReportList extends ViewAppointmentReport implements PageInt
         
         // Export to PDF
         $item = $this->ExportOptions->add("pdf");
-        $item->Body = "<a href=\"" . BuildUrl($pageUrl, "export=pdf") . "\" class=\"ew-export-link\" data-export=\"pdf\">" . $this->language->phrase("ExportToPdf") . "</a>";
+        $item->Body = "<a href=\"" . $pageUrl . "?export=pdf\" class=\"ew-export-link\" data-export=\"pdf\">" . $this->language->phrase("ExportToPdf") . "</a>";
         $item->Visible = true;
         $item->CssClass = "ew-export-link";
         $item->OnLeft = false;
@@ -1571,7 +1569,7 @@ class ViewAppointmentReportList extends ViewAppointmentReport implements PageInt
 
         // Export to Excel
         $item = $this->ExportOptions->add("excel");
-        $item->Body = "<a href=\"" . BuildUrl($pageUrl, "export=excel") . "\" class=\"ew-export-link\" data-export=\"excel\">" . $this->language->phrase("ExportToExcel") . "</a>";
+        $item->Body = "<a href=\"" . $pageUrl . "?export=excel\" class=\"ew-export-link\" data-export=\"excel\">" . $this->language->phrase("ExportToExcel") . "</a>";
         $item->Visible = true;
         $item->CssClass = "ew-export-link";
         $item->OnLeft = false;
@@ -1889,7 +1887,7 @@ class ViewAppointmentReportList extends ViewAppointmentReport implements PageInt
                 $this->StopRecord = $this->TotalRecords;
             }
         }
-        $this->RecordCount = $this->StartRecord;
+        $this->RecordCount = $this->StartRecord - 1;
         if ($this->CurrentRecord !== null) {
             // Nothing to do
         } elseif ($this->isGridAdd() && !$this->AllowAddDeleteRow && $this->StopRecord == 0) { // Grid-Add with no records
