@@ -96,7 +96,31 @@ INSERT INTO `appointment_reminder_tbl` (`APPOINTMENT_REMINDER_ID`, `RECEPTIONIST
 (57, 1, 19, '07:00:00', '3 hours before appointment'),
 (58, 1, 20, '19:00:00', 'Appointment booked'),
 (59, 1, 20, '10:00:00', '24 hours before appointment'),
-(60, 1, 20, '07:00:00', '3 hours before appointment');
+(60, 1, 20, '07:00:00', '3 hours before appointment'),
+(61, 3, 38, '10:00:00', 'Appointment booked'),
+(62, 3, 38, '10:00:00', '24 hours before appointment'),
+(63, 3, 38, '07:00:00', '3 hours before appointment'),
+(64, 4, 39, '09:00:00', 'Appointment booked'),
+(65, 4, 39, '09:00:00', '24 hours before appointment'),
+(66, 4, 39, '06:00:00', '3 hours before appointment'),
+(67, 1, 40, '08:00:00', 'Appointment booked'),
+(68, 1, 40, '08:00:00', '24 hours before appointment'),
+(69, 1, 40, '05:00:00', '3 hours before appointment'),
+(70, 3, 41, '10:00:00', 'Appointment booked'),
+(71, 3, 41, '10:00:00', '24 hours before appointment'),
+(72, 3, 41, '07:00:00', '3 hours before appointment'),
+(73, 3, 42, '11:00:00', 'Appointment booked'),
+(74, 3, 42, '11:00:00', '24 hours before appointment'),
+(75, 3, 42, '08:00:00', '3 hours before appointment'),
+(76, 4, 43, '10:00:00', 'Appointment booked'),
+(77, 4, 43, '10:00:00', '24 hours before appointment'),
+(78, 4, 43, '07:00:00', '3 hours before appointment'),
+(79, 1, 44, '09:00:00', 'Appointment booked'),
+(80, 1, 44, '09:00:00', '24 hours before appointment'),
+(81, 1, 44, '06:00:00', '3 hours before appointment'),
+(82, 3, 45, '11:00:00', 'Appointment booked'),
+(83, 3, 45, '11:00:00', '24 hours before appointment'),
+(84, 3, 45, '08:00:00', '3 hours before appointment');
 
 -- --------------------------------------------------------
 
@@ -158,6 +182,7 @@ INSERT INTO `appointment_tbl` (`APPOINTMENT_ID`, `PATIENT_ID`, `DOCTOR_ID`, `SCH
 (43, 7, 7, 19, '2026-03-15 06:30:00', '2026-03-16', '10:00:00', 'COMPLETED'),
 (44, 8, 9, 25, '2026-03-15 06:30:00', '2026-03-09', '09:00:00', 'COMPLETED'),
 (45, 9, 15, 44, '2026-03-15 06:30:00', '2026-03-18', '11:00:00', 'COMPLETED');
+
 -- --------------------------------------------------------
 
 --
@@ -288,7 +313,15 @@ CREATE TABLE `feedback_tbl` (
 --
 
 INSERT INTO `feedback_tbl` (`FEEDBACK_ID`, `APPOINTMENT_ID`, `RATING`, `COMMENTS`) VALUES
-(1, 1, 5, 'Doctor was very patient with my child. Explained everything clearly.');
+(1, 1, 5, 'Doctor was very patient with my child. Explained everything clearly.'),
+(2, 38, 5, 'Dr. was very thorough in explaining my heart condition. Felt very reassured about the treatment plan. Excellent care.'),
+(3, 39, 4, 'Good consultation. Doctor explained the knee problem clearly. Waiting time was a bit long but overall satisfied.'),
+(4, 40, 5, 'Very professional and caring. Took time to understand my migraine triggers. Prescribed effective medication.'),
+(5, 41, 5, 'Excellent pediatrician! Very gentle with my child. Explained everything clearly and put our minds at ease.'),
+(6, 42, 4, 'Competent doctor but appointment felt rushed. Medication seems to be working well though.'),
+(7, 43, 5, 'Great experience. Doctor listened carefully to my concerns and provided practical advice for managing back pain.'),
+(8, 44, 5, 'Very knowledgeable and empathetic. Helped us understand the diagnosis and next steps. Highly recommend.'),
+(9, 45, 5, 'Outstanding care for my child. Took time to teach us how to use the inhaler properly. Very patient and kind.');
 
 -- --------------------------------------------------------
 
@@ -498,15 +531,14 @@ INSERT INTO `payment_tbl` (`PAYMENT_ID`, `APPOINTMENT_ID`, `AMOUNT`, `PAYMENT_DA
 (29, 29, 300.00, '2026-03-17', 'CREDIT CARD', 'COMPLETED', 'TXN100000029', '2026-03-17 00:00:00'),
 (31, 35, 300.00, '2026-03-23', 'UPI', 'COMPLETED', 'pay_SUhqxej69FCZLv', '2026-03-23 14:51:23'),
 (32, 36, 300.00, '2026-03-24', 'UPI', 'COMPLETED', 'pay_SUzYSzukmeAVAx', '2026-03-24 08:10:21'),
-(33, 37, 300.00, '2026-03-24', 'UPI', 'COMPLETED', 'TXN100000030', '2026-03-24 06:30:00'),
 (34, 38, 300.00, '2026-03-15', 'UPI', 'COMPLETED', 'TXN100000031', '2026-03-15 06:30:00'),
-(35, 39, 300.00, '2026-03-15', 'UPI', 'COMPLETED', 'TXN100000032', '2026-03-15 06:30:00'),
-(36, 40, 300.00, '2026-03-15', 'UPI', 'COMPLETED', 'TXN100000033', '2026-03-15 06:30:00'),
-(37, 41, 300.00, '2026-03-15', 'UPI', 'COMPLETED', 'TXN100000034', '2026-03-15 06:30:00'),
+(35, 39, 300.00, '2026-03-15', 'CREDIT CARD', 'COMPLETED', 'TXN100000032', '2026-03-15 06:30:00'),
+(36, 40, 300.00, '2026-03-15', 'NET BANKING', 'COMPLETED', 'TXN100000033', '2026-03-15 06:30:00'),
+(37, 41, 300.00, '2026-03-15', 'GOOGLE PAY', 'COMPLETED', 'TXN100000034', '2026-03-15 06:30:00'),
 (38, 42, 300.00, '2026-03-15', 'UPI', 'COMPLETED', 'TXN100000035', '2026-03-15 06:30:00'),
-(39, 43, 300.00, '2026-03-15', 'UPI', 'COMPLETED', 'TXN100000036', '2026-03-15 06:30:00'),
-(40, 44, 300.00, '2026-03-15', 'UPI', 'COMPLETED', 'TXN100000037', '2026-03-15 06:30:00'),
-(41, 45, 300.00, '2026-03-15', 'UPI', 'COMPLETED', 'TXN100000038', '2026-03-15 06:30:00');
+(39, 43, 300.00, '2026-03-15', 'CREDIT CARD', 'COMPLETED', 'TXN100000036', '2026-03-15 06:30:00'),
+(40, 44, 300.00, '2026-03-15', 'NET BANKING', 'COMPLETED', 'TXN100000037', '2026-03-15 06:30:00'),
+(41, 45, 300.00, '2026-03-15', 'GOOGLE PAY', 'COMPLETED', 'TXN100000038', '2026-03-15 06:30:00');
 
 -- --------------------------------------------------------
 
@@ -528,14 +560,30 @@ CREATE TABLE `prescription_medicine_tbl` (
 --
 
 INSERT INTO `prescription_medicine_tbl` (`PRESCRIPTION_ID`, `MEDICINE_ID`, `DOSAGE`, `DURATION`, `FREQUENCY`, `CREATED_AT`) VALUES
-(1, 1, '5ml', '3 days', 'Twice daily after lunch and br', '2026-03-20 11:40:00'),
-(1, 17, '125mg', '7 days', 'Three times daily after breakf', '2026-03-20 11:40:00'),
-(21, 5, '20-20mg', '30 days', 'once daily', '2026-03-24 08:39:51'),
-(21, 6, '75mg', '30days', 'once daily', '2026-03-24 08:39:51'),
-(21, 7, '5-10mg', '30 days', 'once daily', '2026-03-24 08:39:51'),
-(22, 11, '300mg', '30 days', 'once daily', '2026-03-24 08:45:28'),
-(22, 13, '100mg', '30 days', 'twice daily', '2026-03-24 08:45:28'),
-(22, 14, '10-25mg', '30 days', 'at night', '2026-03-24 08:45:28');
+(1, 1, '5ml', '3 days', 'Twice daily after meals', '2026-03-20 11:40:00'),
+(1, 17, '5ml', '7 days', 'Three times daily', '2026-03-20 11:40:00'),
+(21, 5, '20mg', '30 days', 'Once daily', '2026-03-24 08:39:51'),
+(21, 6, '75mg', '30 days', 'Once daily', '2026-03-24 08:39:51'),
+(21, 7, '10mg', '30 days', 'Once daily', '2026-03-24 08:39:51'),
+(23, 5, '50mg', '30 days', 'Once daily morning', '2026-03-16 10:45:00'),
+(23, 6, '75mg', '30 days', 'Once daily evening', '2026-03-16 10:45:00'),
+(23, 7, '10mg', '30 days', 'Once daily morning', '2026-03-16 10:45:00'),
+(24, 9, '400mg', '14 days', 'Thrice daily after meals', '2026-03-16 09:50:00'),
+(24, 10, '500mg', '30 days', 'Twice daily', '2026-03-16 09:50:00'),
+(25, 14, '25mg', '30 days', 'Once daily at night', '2026-03-09 08:45:00'),
+(25, 16, '50mg', '30 days', 'Twice daily', '2026-03-09 08:45:00'),
+(26, 1, '5ml', '5 days', 'Thrice daily', '2026-03-18 10:40:00'),
+(26, 17, '5ml', '7 days', 'Twice daily', '2026-03-18 10:40:00'),
+(27, 5, '100mg', '30 days', 'Once daily morning', '2026-03-16 11:50:00'),
+(27, 6, '150mg', '30 days', 'Once daily morning', '2026-03-16 11:50:00'),
+(27, 7, '20mg', '30 days', 'Once daily morning', '2026-03-16 11:50:00'),
+(27, 8, '40mg', '30 days', 'Once daily at night', '2026-03-16 11:50:00'),
+(28, 9, '400mg', '10 days', 'Thrice daily after meals', '2026-03-16 10:45:00'),
+(28, 12, '50mg', '7 days', 'Twice daily', '2026-03-16 10:45:00'),
+(29, 13, '500mg', '30 days', 'Twice daily', '2026-03-09 09:55:00'),
+(29, 15, '2mg', '30 days', 'Thrice daily with food', '2026-03-09 09:55:00'),
+(30, 3, '2 puffs', '30 days', 'As needed', '2026-03-18 11:50:00'),
+(30, 17, '5ml', '14 days', 'Twice daily', '2026-03-18 11:50:00');
 
 -- --------------------------------------------------------
 
@@ -549,7 +597,7 @@ CREATE TABLE `prescription_tbl` (
   `ISSUE_DATE` date NOT NULL,
   `HEIGHT_CM` int(11) NOT NULL,
   `WEIGHT_KG` decimal(5,2) NOT NULL,
-  `BLOOD_PRESSURE` smallint(6) NOT NULL,
+  `BLOOD_PRESSURE` varchar(20) NOT NULL,
   `DIABETES` enum('NO','TYPE-1','TYPE-2','PRE-DIABTIC') NOT NULL,
   `SYMPTOMS` text NOT NULL,
   `DIAGNOSIS` text NOT NULL,
@@ -562,9 +610,16 @@ CREATE TABLE `prescription_tbl` (
 --
 
 INSERT INTO `prescription_tbl` (`PRESCRIPTION_ID`, `APPOINTMENT_ID`, `ISSUE_DATE`, `HEIGHT_CM`, `WEIGHT_KG`, `BLOOD_PRESSURE`, `DIABETES`, `SYMPTOMS`, `DIAGNOSIS`, `ADDITIONAL_NOTES`, `CREATED_AT`) VALUES
-(1, 1, '2026-03-20', 120, 25.00, 110, 'NO', 'Fever, cough, and cold', 'Upper respiratory tract infection', 'Advise plenty of rest and fluids', '2026-03-20 11:40:00'),
-(21, 36, '2026-03-24', 164, 78.00, 120, 'NO', 'Chest tightness\r\nPain radiating to left arm\r\nSweating\r\nBreathlessness\r\nIrregular pulse', 'Stage 1 Hypertension\r\nStable Angina\r\nAtrial Fibrillation', '', '2026-03-24 08:33:26'),
-(22, 37, '2026-03-24', 149, 60.00, 155, 'NO', 'Tingling / numbness\r\nSharp shooting pain\r\nLoss of consciousness\r\nNausea\r\nSlow movement', 'Peripheral Neuropathy\r\nGeneralized Seizure Disorder\r\nMigraine', '', '2026-03-24 08:33:46');
+(1, 1, '2026-03-20', 120, 25.00, '110/70', 'NO', 'Fever, cough, and cold', 'Upper respiratory tract infection', 'Advise plenty of rest and fluids', '2026-03-20 11:40:00'),
+(21, 36, '2026-03-24', 164, 78.00, '140/95', 'NO', 'Chest tightness, pain radiating to left arm, sweating, breathlessness, irregular pulse', 'Stage 1 Hypertension, Stable Angina, Atrial Fibrillation', 'Reduce salt intake, avoid stress, regular monitoring', '2026-03-24 08:33:26'),
+(23, 38, '2026-03-16', 172, 78.00, '145/92', 'NO', 'Chest pain, shortness of breath, fatigue', 'Hypertension, mild coronary artery disease', 'Patient advised to reduce salt intake and exercise regularly. Follow-up in 2 weeks.', '2026-03-16 10:45:00'),
+(24, 39, '2026-03-16', 165, 82.00, '128/84', 'NO', 'Knee pain, difficulty walking, swelling', 'Osteoarthritis of right knee', 'Recommend physiotherapy sessions. Avoid strenuous activities. Apply ice packs.', '2026-03-16 09:50:00'),
+(25, 40, '2026-03-09', 168, 71.00, '118/76', 'NO', 'Severe headache, dizziness, nausea', 'Migraine with aura', 'Patient advised to avoid triggers like bright lights and stress. Keep headache diary.', '2026-03-09 08:45:00'),
+(26, 41, '2026-03-18', 95, 15.00, '95/60', 'NO', 'High fever, cough, runny nose', 'Viral upper respiratory tract infection', 'Keep child hydrated. Monitor temperature. Rest advised. Return if fever persists beyond 3 days.', '2026-03-18 10:40:00'),
+(27, 42, '2026-03-16', 180, 95.00, '152/96', 'TYPE-2', 'Palpitations, chest discomfort, anxiety', 'Atrial fibrillation, poorly controlled hypertension', 'Strict medication compliance required. Regular BP monitoring at home. Low sodium diet essential.', '2026-03-16 11:50:00'),
+(28, 43, '2026-03-16', 158, 68.00, '122/78', 'NO', 'Lower back pain, stiffness, limited mobility', 'Lumbar strain with muscle spasm', 'Avoid heavy lifting. Apply heat therapy. Maintain good posture. Gentle stretching exercises recommended.', '2026-03-16 10:45:00'),
+(29, 44, '2026-03-09', 175, 85.00, '135/88', 'NO', 'Memory problems, confusion, tremors', 'Early stage Parkinson\'s disease', 'Patient enrolled in support group. Family counseling recommended. Regular neurological follow-ups scheduled.', '2026-03-09 09:55:00'),
+(30, 45, '2026-03-18', 110, 22.00, '100/65', 'NO', 'Persistent cough, wheezing, breathing difficulty', 'Bronchial asthma', 'Teach proper inhaler technique. Avoid allergens and cold air. Emergency action plan provided to parents.', '2026-03-18 11:50:00');
 
 -- --------------------------------------------------------
 
@@ -636,7 +691,6 @@ INSERT INTO `specialisation_tbl` (`SPECIALISATION_ID`, `SPECIALISATION_NAME`) VA
 
 --
 -- Stand-in structure for view `view_appointment_report`
--- (See below for the actual view)
 --
 CREATE TABLE `view_appointment_report` (
 `APPOINTMENT_ID` int(11)
@@ -657,7 +711,6 @@ CREATE TABLE `view_appointment_report` (
 
 --
 -- Stand-in structure for view `view_doctor_report`
--- (See below for the actual view)
 --
 CREATE TABLE `view_doctor_report` (
 `DOCTOR_ID` int(11)
@@ -679,7 +732,6 @@ CREATE TABLE `view_doctor_report` (
 
 --
 -- Stand-in structure for view `view_patient_report`
--- (See below for the actual view)
 --
 CREATE TABLE `view_patient_report` (
 `PATIENT_ID` int(11)
@@ -708,7 +760,6 @@ CREATE TABLE `view_patient_report` (
 
 --
 -- Stand-in structure for view `view_payment_report`
--- (See below for the actual view)
 --
 CREATE TABLE `view_payment_report` (
 `PAYMENT_ID` int(11)
@@ -890,13 +941,13 @@ ALTER TABLE `specialisation_tbl`
 -- AUTO_INCREMENT for table `appointment_reminder_tbl`
 --
 ALTER TABLE `appointment_reminder_tbl`
-  MODIFY `APPOINTMENT_REMINDER_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=76;
+  MODIFY `APPOINTMENT_REMINDER_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=85;
 
 --
 -- AUTO_INCREMENT for table `appointment_tbl`
 --
 ALTER TABLE `appointment_tbl`
-  MODIFY `APPOINTMENT_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
+  MODIFY `APPOINTMENT_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=46;
 
 --
 -- AUTO_INCREMENT for table `doctor_schedule_tbl`
@@ -914,13 +965,13 @@ ALTER TABLE `doctor_tbl`
 -- AUTO_INCREMENT for table `feedback_tbl`
 --
 ALTER TABLE `feedback_tbl`
-  MODIFY `FEEDBACK_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `FEEDBACK_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `medicine_reminder_tbl`
 --
 ALTER TABLE `medicine_reminder_tbl`
-  MODIFY `MEDICINE_REMINDER_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+  MODIFY `MEDICINE_REMINDER_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `medicine_tbl`
@@ -950,13 +1001,13 @@ ALTER TABLE `patient_tbl`
 -- AUTO_INCREMENT for table `payment_tbl`
 --
 ALTER TABLE `payment_tbl`
-  MODIFY `PAYMENT_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
+  MODIFY `PAYMENT_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=42;
 
 --
 -- AUTO_INCREMENT for table `prescription_tbl`
 --
 ALTER TABLE `prescription_tbl`
-  MODIFY `PRESCRIPTION_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+  MODIFY `PRESCRIPTION_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 
 --
 -- AUTO_INCREMENT for table `receptionist_notifications`
