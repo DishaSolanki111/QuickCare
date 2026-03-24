@@ -122,19 +122,19 @@ $adminName = $_SESSION['USER_NAME'] ?? 'Admin';
     .doctor-header {
         background: var(--dark-blue);
         color: white;
-        padding: 12px 15px;
+        padding: 8px 12px;
         display: flex;
         align-items: center;
-        gap: 15px;
+        gap: 10px;
     }
 
-    .doctor-header i.header-icon { font-size: 20px; color: var(--light-blue); }
-    .doctor-header h3 { margin: 0; font-size: 1.1rem; }
+    .doctor-header i.header-icon { font-size: 15px; color: var(--light-blue); }
+    .doctor-header h3 { margin: 0; font-size: 0.95rem; }
     
     .doctor-specialization {
-        font-size: 0.85rem;
+        font-size: 0.78rem;
         color: var(--light-blue);
-        margin-top: 2px;
+        margin-top: 1px;
     }
 
     .appointment-list {

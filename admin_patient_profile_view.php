@@ -75,12 +75,12 @@ $fullName = $patient['FIRST_NAME'] . ' ' . $patient['LAST_NAME'];
         }
 
         .sheet {
-            width: 794px;
+            width: 960px;
             max-width: 100%;
             background: #ffffff;
             box-shadow: 0 10px 25px rgba(15, 23, 42, 0.25);
-            border-radius: 10px;
-            padding: 24px 28px 28px;
+            border-radius: 12px;
+            padding: 36px 44px 40px;
         }
 
         .sheet-header {
@@ -97,15 +97,15 @@ $fullName = $patient['FIRST_NAME'] . ' ' . $patient['LAST_NAME'];
         }
 
         .avatar-lg {
-            width: 70px;
-            height: 70px;
+            width: 90px;
+            height: 90px;
             border-radius: 999px;
             background: #e0f2fe;
             border: 2px solid #bfdbfe;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 26px;
+            font-size: 34px;
             font-weight: 700;
             color: #1d4ed8;
             overflow: hidden;
@@ -113,7 +113,7 @@ $fullName = $patient['FIRST_NAME'] . ' ' . $patient['LAST_NAME'];
         }
 
         .profile-main-name {
-            font-size: 1.2rem;
+            font-size: 1.55rem;
             font-weight: 700;
             color: #0f172a;
         }
@@ -121,17 +121,17 @@ $fullName = $patient['FIRST_NAME'] . ' ' . $patient['LAST_NAME'];
         .grid-2 {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 10px 32px;
-            font-size: 0.86rem;
+            gap: 16px 48px;
+            font-size: 0.96rem;
         }
 
         .field-label {
-            font-size: 0.75rem;
+            font-size: 0.82rem;
             font-weight: 700;
             color: #000000;
             text-transform: uppercase;
             letter-spacing: 0.03em;
-            margin-bottom: 2px;
+            margin-bottom: 3px;
         }
 
         .field-value {
@@ -140,12 +140,12 @@ $fullName = $patient['FIRST_NAME'] . ' ' . $patient['LAST_NAME'];
         }
 
         .section-title {
-            font-size: 0.9rem;
+            font-size: 1.05rem;
             font-weight: 700;
             color: #0f172a;
-            margin-top: 14px;
-            margin-bottom: 8px;
-            padding-bottom: 4px;
+            margin-top: 20px;
+            margin-bottom: 12px;
+            padding-bottom: 6px;
             border-bottom: 1px solid #e2e8f0;
         }
 

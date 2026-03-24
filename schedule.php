@@ -93,8 +93,8 @@ if ($result->num_rows > 0) {
         .page-header {
             background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
             color: white;
-            height: 200px;
-            padding: 20px;
+            height: 120px;
+            padding: 10px 20px;
             text-align: center;
             position: relative;
             overflow: hidden;
@@ -123,8 +123,8 @@ if ($result->num_rows > 0) {
         }
         
         .page-header h1 {
-            font-size: 2.8rem;
-            margin-bottom: 1rem;
+            font-size: 2rem;
+            margin-bottom: 0.4rem;
             position: relative;
             z-index: 2;
         }
@@ -169,10 +169,10 @@ if ($result->num_rows > 0) {
 
         .filters {
             background-color: white;
-            padding: 1.25rem 1.5rem;
+            padding: 0.85rem 1.2rem;
             border-radius: 10px;
             box-shadow: var(--shadow);
-            margin: 2rem auto;
+            margin: 1rem auto;
             display: flex;
             flex-wrap: nowrap;
             gap: 1rem;
@@ -210,21 +210,21 @@ if ($result->num_rows > 0) {
 
         .date-display {
             background-color: var(--secondary-color);
-            padding: 1rem;
+            padding: 0.6rem 1rem;
             border-radius: 10px;
-            margin: 2rem auto 1.5rem;
+            margin: 0.5rem auto 0.75rem;
             text-align: center;
             font-weight: 600;
             color: var(--primary-color);
-            font-size: 1.5rem;
+            font-size: 1.1rem;
             max-width: 1200px;
         }
 
         .doctors-container {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 2rem;
-            margin: 2rem auto 2.5rem;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1rem;
+            margin: 0.75rem auto 1.5rem;
             max-width: 1200px;
             padding: 0 20px;
         }
@@ -256,18 +256,18 @@ if ($result->num_rows > 0) {
 
         .doctor-header {
             display: flex;
-            padding: 1.5rem;
+            padding: 0.85rem 1rem;
             background-color: var(--secondary-color);
             border-bottom: 1px solid #eee;
         }
 
         .doctor-image {
-            width: 80px;
-            height: 80px;
+            width: 55px;
+            height: 55px;
             border-radius: 50%;
             object-fit: cover;
-            margin-right: 1rem;
-            border: 3px solid white;
+            margin-right: 0.75rem;
+            border: 2px solid white;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
 
@@ -284,7 +284,7 @@ if ($result->num_rows > 0) {
         }
 
         .doctor-schedule {
-            padding: 1.5rem;
+            padding: 0.85rem 1rem;
         }
 
         .schedule-title {
@@ -423,9 +423,9 @@ if ($result->num_rows > 0) {
         footer {
             background: var(--gradient-1);
             color: white;
-            padding: 3rem 5%;
+            padding: 2rem 5%;
             position: relative;
-            margin-top: 3rem;
+            margin-top: 1rem;
         }
 
         footer::before {
