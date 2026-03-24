@@ -2,7 +2,13 @@
 session_start();
 include 'config.php';
 
-$patient_id = isset($_GET['patient_id']) ? (int)$_GET['patient_id'] : 0;
+$patient_id = 0;
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['patient_id'])) {
+    $patient_id = (int)$_POST['patient_id'];
+} elseif (isset($_GET['patient_id'])) {
+    // fallback if GET used accidentally
+    $patient_id = (int)$_GET['patient_id'];
+}
 
 if ($patient_id <= 0) {
     die("Invalid patient.");
