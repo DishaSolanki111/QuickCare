@@ -2,7 +2,135 @@
 ob_start();
 include 'config.php'; 
 
-include 'header.php';?>
+include 'header.php';
+
+// ---------------- VALIDATION FUNCTIONS ----------------
+
+function qc_validate_person_name($name, &$normalized, &$error) {
+    $name = trim($name);
+    
+    if (empty($name)) {
+        $error = "Name is required.";
+        return false;
+    }
+    
+    if (strlen($name) < 2 || strlen($name) > 50) {
+        $error = "Name must be between 2 and 50 characters.";
+        return false;
+    }
+    
+    if (!preg_match('/^[A-Za-z\s]+$/', $name)) {
+        $error = "Name can only contain letters and spaces.";
+        return false;
+    }
+    
+    if (preg_match('/(.)\1{3,}/', $name)) {
+        $error = "No character can repeat more than 3 times consecutively.";
+        return false;
+    }
+    
+    $normalized = ucwords(strtolower($name));
+    return true;
+}
+
+function qc_validate_username($username, &$normalized, &$error) {
+    $username = trim($username);
+    
+    if (empty($username)) {
+        $error = "Username is required.";
+        return false;
+    }
+    
+    if (strlen($username) < 3 || strlen($username) > 30) {
+        $error = "Username must be between 3 and 30 characters.";
+        return false;
+    }
+    
+    if (preg_match('/\s/', $username)) {
+        $error = "Username cannot contain spaces.";
+        return false;
+    }
+    
+    if (!preg_match('/^[A-Za-z0-9_.]+$/', $username)) {
+        $error = "Username can only contain letters, numbers, underscores, and dots.";
+        return false;
+    }
+    
+    if (preg_match('/^[_.]|[_.]$/', $username)) {
+        $error = "Username cannot start or end with underscore or dot.";
+        return false;
+    }
+    
+    if (preg_match('/[_.]{2,}/', $username)) {
+        $error = "Username cannot contain consecutive underscores or dots.";
+        return false;
+    }
+    
+    if (preg_match('/^\d+$/', $username)) {
+        $error = "Username cannot be only numbers.";
+        return false;
+    }
+    
+    $reserved = ['admin', 'root', 'support', 'api', 'system'];
+    if (in_array(strtolower($username), $reserved)) {
+        $error = "Username is reserved. Please choose another one.";
+        return false;
+    }
+    
+    $normalized = strtolower($username);
+    return true;
+}
+
+function qc_validate_password($password, $username, $email, &$error) {
+    if (empty($password)) {
+        $error = "Password is required.";
+        return false;
+    }
+    
+    if (strlen($password) < 8) {
+        $error = "Password must be at least 8 characters long.";
+        return false;
+    }
+    
+    if (!preg_match('/^[A-Z]/', $password)) {
+        $error = "Password must start with a capital letter.";
+        return false;
+    }
+    
+    if (!preg_match('/[A-Z]/', $password)) {
+        $error = "Password must contain at least one uppercase letter.";
+        return false;
+    }
+    
+    if (!preg_match('/[a-z]/', $password)) {
+        $error = "Password must contain at least one lowercase letter.";
+        return false;
+    }
+    
+    if (!preg_match('/[0-9]/', $password)) {
+        $error = "Password must contain at least one digit.";
+        return false;
+    }
+    
+    if (!preg_match('/[^A-Za-z0-9]/', $password)) {
+        $error = "Password must contain at least one special character.";
+        return false;
+    }
+    
+    if (strtolower($password) === strtolower($username)) {
+        $error = "Password cannot be same as username.";
+        return false;
+    }
+    
+    if (strtolower($password) === strtolower($email)) {
+        $error = "Password cannot be same as email.";
+        return false;
+    }
+    
+    return true;
+}
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -431,8 +559,6 @@ include 'header.php';?>
                     'security_answer' => $_POST['security_answer'] ?? ''
                 ];
 
-                
-               
                 // ---------------- SANITIZE ----------------
                 $first_name_raw = $_POST['first_name'] ?? '';
                 $last_name_raw  = $_POST['last_name'] ?? '';
@@ -462,7 +588,6 @@ include 'header.php';?>
                 }
 
                 // ---------------- DATE VALIDATION ----------------
-                // DOB must be BEFORE current date (not on or after)
                 if (empty($dob)) {
                     $field_errors['dob'] = "Date of Birth is required.";
                 } else {
@@ -479,7 +604,6 @@ include 'header.php';?>
                 if (!qc_validate_username($username, $usernameNormalized, $usernameError)) {
                     $field_errors['username'] = $usernameError;
                 } else {
-                    // Store lowercase internally for consistent case-insensitive behavior
                     $username = $usernameNormalized;
                 }
                 
@@ -524,29 +648,27 @@ include 'header.php';?>
                 if (empty(array_filter($field_errors))) {
                     $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
-                   $blood_val = ($blood_group === '' || $blood_group === null) ? 'NULL' : "'$blood_group'";
+                    $blood_val = ($blood_group === '' || $blood_group === null) ? 'NULL' : "'$blood_group'";
                   
-                   $sec_q = mysqli_real_escape_string($conn, $security_question);
-                   $sec_a = mysqli_real_escape_string($conn, $security_answer);
+                    $sec_q = mysqli_real_escape_string($conn, $security_question);
+                    $sec_a = mysqli_real_escape_string($conn, $security_answer);
                    
-                   $sql = "
-                INSERT INTO patient_tbl
-                (FIRST_NAME, LAST_NAME, USERNAME, PSWD, DOB, GENDER, BLOOD_GROUP, PHONE, EMAIL, ADDRESS,  SECURITY_QUESTION, SECURITY_ANSWER)
-                VALUES
-                ('$first_name','$last_name','$username','$hashed_password','$dob','$gender',
-                 $blood_val,'$phone','$email','$address','$sec_q','$sec_a')
-            ";
+                    $sql = "
+                        INSERT INTO patient_tbl
+                        (FIRST_NAME, LAST_NAME, USERNAME, PSWD, DOB, GENDER, BLOOD_GROUP, PHONE, EMAIL, ADDRESS, SECURITY_QUESTION, SECURITY_ANSWER)
+                        VALUES
+                        ('$first_name','$last_name','$username','$hashed_password','$dob','$gender',
+                         $blood_val,'$phone','$email','$address','$sec_q','$sec_a')
+                    ";
                     if ($conn->query($sql) === TRUE) {
-                        $conn->close();
-                        ob_end_clean();
-                        header("Location: login_for_all.php");
-                        exit;
+                        $success = true;
+                        // ✅ FIXED: Removed duplicate $conn->close() from here
                     } else {
                         $error = "Database error: " . mysqli_error($conn);
-                        
                     }
-                } 
+                }
 
+                // ✅ FIXED: Single $conn->close() at the end — called only once
                 $conn->close();
             }
             ?>
@@ -555,6 +677,12 @@ include 'header.php';?>
                 <div class="success-message" style="display: block;">
                     <i class="fas fa-check-circle"></i> Registration successful! Your account has been created.
                 </div>
+                <script>
+                    // Show success message for 3 seconds, then redirect
+                    setTimeout(function() {
+                        window.location.href = 'login_for_all.php';
+                    }, 3000);
+                </script>
             <?php endif; ?>
             
             <?php if (!empty($error)): ?>
@@ -681,8 +809,6 @@ include 'header.php';?>
                             <input type="text" id="security_answer" name="security_answer" placeholder="Your answer" value="<?php echo htmlspecialchars($form_data['security_answer']); ?>" required>
                             <div class="error-message" id="security_answer_error"<?php if (!empty($field_errors['security_answer'])) echo ' style="display:block"'; ?>><?php echo htmlspecialchars($field_errors['security_answer'] ?? ''); ?></div>
                         </div>
-                        
-                        
                     </div>
                 </div>
                 
@@ -817,8 +943,6 @@ include 'header.php';?>
         }
     }
 
-   
-
     // --- Attach Real-time Listeners ---
     
     document.getElementById('first_name').addEventListener('input', function() { validateFirstName(this); });
@@ -836,13 +960,12 @@ include 'header.php';?>
         if (this.value.trim() !== '') hideError('security_answer'); 
     });
 
-
     // --- Main Form Submission Validation ---
 
     document.getElementById('PatientForm').addEventListener('submit', function (e) {
         let isValid = true;
         
-        // 1. Validate First Name - must be capital letters only
+        // 1. Validate First Name
         const firstName = document.getElementById('first_name');
         if (firstName.value.trim() === '') {
             showError('first_name', "First name is required.");
@@ -854,7 +977,7 @@ include 'header.php';?>
             hideError('first_name');
         }
 
-        // 2. Validate Last Name - must be capital letters only
+        // 2. Validate Last Name
         const lastName = document.getElementById('last_name');
         if (lastName.value.trim() === '') {
             showError('last_name', "Last name is required.");
@@ -866,7 +989,7 @@ include 'header.php';?>
             hideError('last_name');
         }
 
-        // 3. Validate Date of Birth - must be BEFORE today (not on or after)
+        // 3. Validate Date of Birth
         const dob = document.getElementById('dob');
         if (dob.value === '') {
             showError('dob', "Date of Birth is required.");
@@ -883,8 +1006,7 @@ include 'header.php';?>
             }
         }
 
-        // 4. Blood Group - optional (no validation required)
-        const bloodGroup = document.querySelector('select[name="blood_group"]');
+        // 4. Blood Group - optional
         hideError('blood_group');
 
         // 5. Validate Phone Number
@@ -1007,7 +1129,7 @@ include 'header.php';?>
                 dateFormat: "Y-m-d",
                 maxDate: "today",
                 allowInput: true,
-                disableMobile: "true" // Use desktop style custom calendar even on mobile
+                disableMobile: "true"
             });
         });
     </script>
