@@ -3,7 +3,7 @@
 // Start session to store booking data
 session_start();
 
-// Prevent doctors from accessing appointment booking (except their own appointments)
+// Prevent doctors from accessing appointment booking (except their own appointments and rescheduling)
 if (isset($_SESSION['USER_TYPE']) && $_SESSION['USER_TYPE'] === 'doctor') {
     // Check if this is a reschedule for their own appointment
     $reschedule_appointment_id = isset($_POST['reschedule_appointment_id']) ? intval($_POST['reschedule_appointment_id']) : (isset($_SESSION['reschedule_appointment_id']) ? (int)$_SESSION['reschedule_appointment_id'] : 0);
@@ -11,6 +11,7 @@ if (isset($_SESSION['USER_TYPE']) && $_SESSION['USER_TYPE'] === 'doctor') {
         header("Location: doctor_dashboard.php");
         exit();
     }
+    // Allow access if it's a valid reschedule request
 }
 
 include "config.php";
