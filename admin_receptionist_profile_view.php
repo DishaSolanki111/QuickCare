@@ -1,7 +1,6 @@
 <?php
 session_start();
 include 'config.php';
-
 // Access control: only admin can view receptionist details
 if (!isset($_SESSION['LOGGED_IN']) || $_SESSION['LOGGED_IN'] !== true || ($_SESSION['USER_TYPE'] ?? '') !== 'admin') {
     header("Location: admin_login.php");
