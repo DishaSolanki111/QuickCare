@@ -528,7 +528,7 @@ if (empty($error_message) && isset($_GET['error'])) {
                         </button>
 
                         <button class="action-btn view-btn" type="button"
-                            onclick="window.location.href='admin_receptionist_profile_view.php?receptionist_id=<?php echo (int)$row['RECEPTIONIST_ID']; ?>';">
+                            onclick="viewReceptionist(<?php echo (int)$row['RECEPTIONIST_ID']; ?>)">
                             <i class="bi bi-eye"></i> View
                         </button>
 
@@ -551,6 +551,10 @@ if (empty($error_message) && isset($_GET['error'])) {
     </table>
 
 </div>
+
+<form id="viewReceptionistForm" method="POST" action="admin_receptionist_profile_view.php" style="display:none;">
+    <input type="hidden" name="receptionist_id" id="view_receptionist_id" value="">
+</form>
 
 <!-- Edit Modal -->
 <div id="editModal" class="modal">
@@ -813,6 +817,13 @@ document.getElementById('editForm').addEventListener('submit', function(e) {
 });
 </script>
 
+<script>
+function viewReceptionist(id) {
+    var form = document.getElementById('viewReceptionistForm');
+    document.getElementById('view_receptionist_id').value = id;
+    form.submit();
+}
+</script>
 </body>
 </html>
 <?php

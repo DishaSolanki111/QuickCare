@@ -322,10 +322,12 @@ $patients_result = $doctor_id > 0 ? mysqli_query($conn, $sql) : false;
                             </div>
                         </div>
                         <div class="card-actions">
-                            <button class="btn btn-view-profile"
-                                    onclick="window.location.href='doctor_patient_profile_view.php?patient_id=<?php echo (int)$p['PATIENT_ID']; ?>'">
-                                <i class="fas fa-user-circle"></i> View Patient Profile
-                            </button>
+                            <form method="POST" action="doctor_patient_profile_view.php" style="display:inline;">
+                                <input type="hidden" name="patient_id" value="<?php echo (int)$p['PATIENT_ID']; ?>">
+                                <button type="submit" class="btn btn-view-profile">
+                                    <i class="fas fa-user-circle"></i> View Patient Profile
+                                </button>
+                            </form>
                         </div>
                     </div>
                 <?php endwhile; ?>

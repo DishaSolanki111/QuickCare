@@ -226,10 +226,7 @@ $conn->close();
             <p>₹<?php echo number_format($total_revenue, 2); ?></p>
         </div>
         
-        <div class="card">
-          <h3>New Registrations</h3>
-          <p><?php echo $new_registrations; ?></p>
-        </div>
+     
     </div>
     <!-- Registration Links -->
     <div class="cards">

@@ -200,56 +200,57 @@ html {
         
         .payment-card {
             background-color: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            padding: 18px 20px;
-            margin-bottom: 18px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            padding: 12px 16px;
+            margin-bottom: 12px;
         }
         
         .payment-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 12px;
-            padding-bottom: 10px;
+            margin-bottom: 6px;
+            padding-bottom: 6px;
             border-bottom: 1px solid #edf2f7;
-            gap: 16px;
+            gap: 12px;
         }
         
         .payment-header h3 {
             color: var(--primary-color);
-            font-size: 1.05rem;
-            margin-bottom: 4px;
+            font-size: 0.95rem;
+            margin-bottom: 2px;
         }
 
         .payment-subtitle {
-            font-size: 0.85rem;
+            font-size: 0.78rem;
             color: #6b7280;
         }
 
         .payment-entry {
-            padding-top: 8px;
-            padding-bottom: 10px;
+            padding-top: 5px;
+            padding-bottom: 5px;
             border-top: 1px solid #edf2f7;
-            margin-top: 8px;
+            margin-top: 5px;
         }
         
         .payment-details {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 15px;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 6px;
         }
         
         .payment-item {
             display: flex;
             align-items: center;
             color: #666;
+            font-size: 0.85rem;
         }
         
         .payment-item i {
-            margin-right: 10px;
+            margin-right: 7px;
             color: var(--secondary-color);
-            font-size: 18px;
+            font-size: 14px;
         }
 
         .payment-appointment-date {
@@ -506,18 +507,14 @@ html {
             <?php endif; ?>
         
             <!-- Filter by Name and Date -->
-            <form method="POST" action="patient_payments.php" class="filter-form" style="display:flex; gap:15px; flex-wrap:wrap; margin-bottom:20px; align-items:flex-end;">
-                <div class="form-group" style="margin-bottom:0; flex:1; max-width:300px; min-width:180px;">
-                    <label for="filter_name" style="margin-bottom:5px; display:block;">Filter by Doctor Name</label>
-                    <input type="text" class="form-control" id="filter_name" name="filter_name" placeholder="Doctor name..." value="<?php echo htmlspecialchars($filter_name); ?>">
+            <form method="POST" action="patient_payments.php" class="filter-form" style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:12px; align-items:flex-end;">
+                <div class="form-group" style="margin-bottom:0; flex:1; max-width:220px; min-width:140px;">
+                    <label for="filter_name" style="margin-bottom:3px; display:block; font-size:0.8rem;">Filter by Doctor Name</label>
+                    <input type="text" class="form-control" id="filter_name" name="filter_name" placeholder="Doctor name..." value="<?php echo htmlspecialchars($filter_name); ?>" style="padding:6px 10px; font-size:0.85rem;">
                 </div>
-                <div style="display:flex; gap:10px;">
-                    <button type="submit" class="btn btn-primary">
-                        Search
-                    </button>
-                    <a href="patient_payments.php" class="btn btn-danger" style="text-decoration:none;">
-                         Clear
-                    </a>
+                <div style="display:flex; gap:8px;">
+                    <button type="submit" class="btn btn-primary" style="padding:6px 14px; font-size:0.85rem;">Search</button>
+                    <a href="patient_payments.php" class="btn btn-danger" style="text-decoration:none; padding:6px 14px; font-size:0.85rem;">Clear</a>
                 </div>
             </form>
             

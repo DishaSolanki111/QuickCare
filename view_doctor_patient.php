@@ -161,13 +161,13 @@ width: 100%;
 background-color: white;
 border-radius: 10px;
 box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-padding: 20px;
-margin-bottom: 25px;
+padding: 12px 16px;
+margin-bottom: 16px;
 }
 
 .filter-form {
 display: flex;
-gap: 15px;
+gap: 10px;
 flex-wrap: wrap;
 }
 
@@ -178,18 +178,19 @@ min-width: 200px;
 
 .form-group label {
 display: block;
-margin-bottom: 8px;
+margin-bottom: 4px;
 font-weight: 600;
+font-size: 0.82rem;
 color: var(--dark-color);
 }
 
 .form-control {
 width: 100%;
-height: 44px;
-padding: 10px 15px;
+height: 34px;
+padding: 6px 10px;
 border: 1px solid #ddd;
 border-radius: 5px;
-font-size: 16px;
+font-size: 0.85rem;
 transition: border-color 0.3s;
 }
 
@@ -200,12 +201,13 @@ box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
 }
 
 .btn {
-padding: 10px 20px;
-height: 44px;
+padding: 6px 14px;
+height: 34px;
 border: none;
 border-radius: 5px;
 cursor: pointer;
 font-weight: 600;
+font-size: 0.85rem;
 transition: all 0.3s ease;
 display: inline-flex;
 align-items: center;
@@ -491,6 +493,12 @@ display: flex;
 gap: 10px;
 flex-wrap: wrap;
 margin-top: 15px;
+}
+
+.doctor-actions .btn {
+padding: 6px 12px;
+height: auto;
+font-size: 0.82rem;
 }
 
 /* Responsive adjustments */

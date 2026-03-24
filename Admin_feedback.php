@@ -70,9 +70,29 @@ $adminName = $_SESSION['USER_NAME'] ?? 'Admin';
         color: #f39c12;
     }
 
+    .average-rating-card {
+        background: white;
+        padding: 20px 25px;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        margin-bottom: 30px;
+    }
+
+    .average-rating-card h3 {
+        margin-top: 0;
+        margin-bottom: 8px;
+        color: var(--dark-blue);
+    }
+
+    .average-rating-card .rating {
+        font-size: 1.3rem;
+        margin: 0;
+    }
+
     .feedback-card {
         padding: 10px 0;
         margin-bottom: 0;
+        border-bottom: 1px solid #f0f0f0;
     }
 
     .feedback-groups {
@@ -148,7 +168,7 @@ $adminName = $_SESSION['USER_NAME'] ?? 'Admin';
     <?php include 'admin_header.php'; ?>
 
     <!-- AVERAGE RATING -->
-    <div class="feedback-card">
+    <div class="average-rating-card">
         <h3>Average Rating</h3>
         <p class="rating">
             <?php

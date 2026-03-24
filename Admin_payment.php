@@ -122,19 +122,19 @@ $adminName = $_SESSION['USER_NAME'] ?? 'Admin';
     .doctor-header {
         background: var(--dark-blue);
         color: white;
-        padding: 12px 15px;
+        padding: 8px 12px;
         display: flex;
         align-items: center;
-        gap: 15px;
+        gap: 10px;
     }
 
-    .doctor-header i.header-icon { font-size: 20px; color: var(--light-blue); }
-    .doctor-header h3 { margin: 0; font-size: 1.1rem; }
+    .doctor-header i.header-icon { font-size: 15px; color: var(--light-blue); }
+    .doctor-header h3 { margin: 0; font-size: 0.95rem; }
     
     .doctor-specialization {
-        font-size: 0.85rem;
+        font-size: 0.78rem;
         color: var(--light-blue);
-        margin-top: 2px;
+        margin-top: 1px;
     }
 
     .appointment-list {
@@ -206,15 +206,9 @@ $adminName = $_SESSION['USER_NAME'] ?? 'Admin';
             <input type="date" name="date_filter"
                 value="<?php echo htmlspecialchars($_POST['date_filter'] ?? ''); ?>">
 
-            <select name="status_filter">
-                <option value="">All Status</option>
-                <option value="COMPLETED" <?php if(($_POST['status_filter'] ?? '')=='COMPLETED') echo 'selected'; ?>>Completed</option>
-                <option value="FAILED" <?php if(($_POST['status_filter'] ?? '')=='FAILED') echo 'selected'; ?>>Failed</option>
-            </select>
-
             <select name="mode_filter">
                 <option value="">All Payment Modes</option>
-                <option value="CARD" <?php if(($_POST['mode_filter'] ?? '')=='CARD') echo 'selected'; ?>>Credit Card</option>
+                <option value="CREDIT CARD" <?php if(($_POST['mode_filter'] ?? '')=='CREDIT CARD') echo 'selected'; ?>>Credit Card</option>
                 <option value="UPI" <?php if(($_POST['mode_filter'] ?? '')=='UPI') echo 'selected'; ?>>UPI</option>
                 <option value="NET BANKING" <?php if(($_POST['mode_filter'] ?? '')=='NET BANKING') echo 'selected'; ?>>Net Banking</option>
             </select>
@@ -250,11 +244,6 @@ $adminName = $_SESSION['USER_NAME'] ?? 'Admin';
         if (!empty($_POST['date_filter'])) {
             $date = mysqli_real_escape_string($conn, $_POST['date_filter']);
             $query .= " AND DATE(p.PAYMENT_DATE) = '$date'";
-        }
-
-        if (!empty($_POST['status_filter'])) {
-            $status = mysqli_real_escape_string($conn, $_POST['status_filter']);
-            $query .= " AND p.STATUS = '$status'";
         }
 
         if (!empty($_POST['mode_filter'])) {

@@ -103,7 +103,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'edit_doctor') {
     }
     
     if (empty($errors)) {
-        // Update doctor data (align fields with doctorform.php except username/password)
+        // Update doctor data
         $dob     = isset($_POST['dob']) ? trim($_POST['dob']) : '';
         $doj     = isset($_POST['doj']) ? trim($_POST['doj']) : '';
         $gender  = isset($_POST['gender']) ? trim($_POST['gender']) : '';
@@ -176,7 +176,7 @@ $receptionist_id = $_SESSION['RECEPTIONIST_ID'];
     <meta charset="UTF-8">
     <title>Manage Doctors - QuickCare</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"></style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         body {
             margin: 0;
@@ -272,7 +272,6 @@ $receptionist_id = $_SESSION['RECEPTIONIST_ID'];
         }
 
         .edit-btn { background-color: #f39c12; }
-       
 
         .add-btn {
             background: #2ecc71;
@@ -311,7 +310,17 @@ $receptionist_id = $_SESSION['RECEPTIONIST_ID'];
             gap: 6px;
         }
 
-        .view-btn { background-color: #000000; }
+        .view-btn { 
+            background-color: #000000; 
+            text-decoration: none;
+            color: white;
+        }
+        
+        .view-btn:hover {
+            background-color: #222222;
+            color: white;
+            text-decoration: none;
+        }
 
         /* Modal Styles */
         .modal {
@@ -603,15 +612,13 @@ $receptionist_id = $_SESSION['RECEPTIONIST_ID'];
             <td><?php echo $row['EDUCATION']; ?></td>
             <td><?php echo $row['PHONE']; ?></td>
             <td><?php echo $row['EMAIL']; ?></td>
-                    <td class="actions-td">
+            <td class="actions-td">
                 <div class="doctor-actions">
-                            <form method="POST" action="recep_doctor_profile_view.php" style="display:inline">
-                                <input type="hidden" name="doctor_id" value="<?php echo $row['DOCTOR_ID']; ?>">
-                                <button type="submit" class="action-btn view-btn">
-                                    <i class="bi bi-eye"></i>
-                                    View
-                                </button>
-                            </form>
+                    <!-- ✅ FIXED: Changed method to GET so doctor_id reaches recep_doctor_profile_view.php via $_GET -->
+                    <a href="recep_doctor_profile_view.php?doctor_id=<?php echo (int)$row['DOCTOR_ID']; ?>" class="action-btn view-btn">
+                        <i class="bi bi-eye"></i>
+                        View
+                    </a>
                     <button type="button" class="action-btn edit-btn"
                         onclick="openEditModal(<?php echo $row['DOCTOR_ID']; ?>, 
                         '<?php echo addslashes($row['FIRST_NAME']); ?>', 
@@ -780,8 +787,6 @@ window.onclick = function(event) {
     }
 }
 
-
-
 // Toast notification function
 function showToast(message, isSuccess = false) {
     const toast = document.getElementById('toast');
@@ -947,7 +952,6 @@ document.getElementById('profile_image').addEventListener('change', function(e) 
 
 // Form submission validation
 document.getElementById('editForm').addEventListener('submit', function(e) {
-    // Run all validation functions
     const isFirstNameValid = validateFirstName();
     const isLastNameValid = validateLastName();
     const isEducationValid = validateEducation();
@@ -956,7 +960,6 @@ document.getElementById('editForm').addEventListener('submit', function(e) {
     const isSpecializationValid = validateSpecialization();
     const isImageValid = validateImage();
     
-    // If any validation fails, prevent form submission
     if (!isFirstNameValid || !isLastNameValid || !isEducationValid || !isPhoneValid || !isEmailValid || !isSpecializationValid || !isImageValid) {
         e.preventDefault();
         showToast('Please correct the errors in the form');

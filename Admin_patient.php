@@ -501,7 +501,7 @@ if (empty($error_message) && isset($_GET['error'])) {
                         </button>
                         <button class='action-btn view-btn'
                             type='button'
-                            onclick=\"window.location.href='admin_patient_profile_view.php?patient_id={$row['PATIENT_ID']}';\">
+                            onclick=\"viewPatient({$row['PATIENT_ID']});\">
                             <i class='bi bi-eye'></i>
                             View
                         </button>
@@ -520,6 +520,10 @@ if (empty($error_message) && isset($_GET['error'])) {
         mysqli_close($conn);
         ?>
     </table>
+
+    <form id="viewPatientForm" method="POST" action="admin_patient_profile_view.php" style="display:none;">
+        <input type="hidden" name="patient_id" id="view_patient_id" value="">
+    </form>
 </div>
 
 <!-- Edit Modal -->
@@ -635,6 +639,12 @@ window.onclick = function(event) {
     if (event.target == modal) {
         closeEditModal();
     }
+}
+
+function viewPatient(id) {
+    var form = document.getElementById('viewPatientForm');
+    document.getElementById('view_patient_id').value = id;
+    form.submit();
 }
 
 function deletePatient(id) {

@@ -143,9 +143,10 @@ if (isset($_POST['delete'])) {
             header("Location: Admin_doctor.php?error=" . urlencode("Cannot delete doctor with existing appointments."));
             exit;
         } else {
-            // Delete related
+            // Delete related feedback through appointment
+            mysqli_query($conn, "DELETE FROM feedback_tbl WHERE APPOINTMENT_ID IN (SELECT APPOINTMENT_ID FROM appointment_tbl WHERE DOCTOR_ID = $id)");
+            // Delete doctor schedule
             mysqli_query($conn, "DELETE FROM doctor_schedule_tbl WHERE DOCTOR_ID = $id");
-            mysqli_query($conn, "DELETE FROM feedback_tbl WHERE DOCTOR_ID = $id"); 
             
             if (mysqli_query($conn, "DELETE FROM doctor_tbl WHERE DOCTOR_ID = $id")) {
                 header("Location: Admin_doctor.php?success=" . urlencode("Doctor deleted successfully."));
@@ -270,10 +271,19 @@ include 'admin_sidebar.php';
             display: inline-flex;
             align-items: center;
             gap: 4px;
+            transition: all 0.2s ease;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
         }
 
         .edit-btn { background-color: #f39c12; }
+        .edit-btn:hover { background-color: #e67e22; }
+        
         .delete-btn { background-color: #e74c3c; }
+        .delete-btn:hover { background-color: #c0392b; }
 
         .add-btn {
             background: #2ecc71;
@@ -314,12 +324,13 @@ include 'admin_sidebar.php';
         }
 
         .view-btn { background-color: #000000; color: white; }
+        .view-btn:hover { background-color: #222222; }
 
         /* Modal Styles */
         .modal {
             display: none;
             position: fixed;
-            z-index: 1000;
+            z-index: 9999;
             left: 0;
             top: 0;
             width: 100%;
@@ -501,6 +512,77 @@ include 'admin_sidebar.php';
             display: none;
         }
     </style>
+    
+    <script>
+    // Load doctor data via AJAX and open modal
+    function loadEditModal(doctorId) {
+        // Create a hidden form to fetch the doctor data
+        const tempForm = document.createElement('form');
+        tempForm.method = 'POST';
+        tempForm.action = 'Admin_doctor.php';
+        
+        const hiddenInput = document.createElement('input');
+        hiddenInput.type = 'hidden';
+        hiddenInput.name = 'edit';
+        hiddenInput.value = doctorId;
+        
+        tempForm.appendChild(hiddenInput);
+        tempForm.style.display = 'none';
+        document.body.appendChild(tempForm);
+        
+        // Submit the form to get the data
+        tempForm.submit();
+    }
+    
+    // Modal functions
+    function openEditModal(id, firstName, lastName, education, phone, email, specializationId, profileImage) {
+        try {
+            const docId = document.getElementById('edit_doctor_id');
+            const firstName_el = document.getElementById('edit_first_name');
+            const lastName_el = document.getElementById('edit_last_name');
+            const education_el = document.getElementById('edit_education');
+            const phone_el = document.getElementById('edit_phone');
+            const email_el = document.getElementById('edit_email');
+            const spec_el = document.getElementById('edit_specialization');
+            const img_val = document.getElementById('current_image');
+            const modal = document.getElementById('editModal');
+            const imgDisplay = document.getElementById('current_img_display');
+            
+            if (!docId || !firstName_el || !lastName_el || !education_el || !phone_el || !email_el || !spec_el || !modal) {
+                console.error('Missing form elements');
+                return;
+            }
+            
+            docId.value = id;
+            firstName_el.value = firstName;
+            lastName_el.value = lastName;
+            education_el.value = education;
+            phone_el.value = phone;
+            email_el.value = email;
+            spec_el.value = specializationId;
+            
+            if (img_val) img_val.value = profileImage;
+            
+            // Display current image
+            if (imgDisplay) {
+                imgDisplay.src = profileImage && profileImage !== '' ? profileImage : 'uploads/default_doctor.png';
+            }
+            
+            // Clear any previous error messages
+            const errorElements = document.querySelectorAll('.error-message');
+            errorElements.forEach(el => el.style.display = 'none');
+            
+            modal.style.display = 'block';
+            console.log('Modal opened successfully');
+        } catch(err) {
+            console.error('Error opening modal:', err);
+        }
+    }
+    
+    function closeEditModal() {
+        document.getElementById('editModal').style.display = 'none';
+    }
+    </script>
 </head>
 
 <body>
@@ -602,33 +684,26 @@ include 'admin_sidebar.php';
             <td><?php echo $row['PHONE']; ?></td>
             <td><?php echo $row['EMAIL']; ?></td>
             <td class="actions-td">
-                <button type="button" class="action-btn edit-btn"
-                    onclick="openEditModal(<?php echo $row['DOCTOR_ID']; ?>, 
-                    '<?php echo addslashes($row['FIRST_NAME']); ?>', 
-                    '<?php echo addslashes($row['LAST_NAME']); ?>', 
-                    '<?php echo addslashes($row['EDUCATION']); ?>', 
-                    '<?php echo $row['PHONE']; ?>', 
-                    '<?php echo $row['EMAIL']; ?>', 
-                    '<?php echo $row['SPECIALISATION_ID']; ?>', 
-                    '<?php echo $row['PROFILE_IMAGE']; ?>')">
+                <a href="edit_doctor.php?id=<?php echo (int)$row['DOCTOR_ID']; ?>" class="action-btn edit-btn" style="text-decoration: none; display: inline-flex;">
                     <i class="bi bi-pencil"></i>
                     Edit
-                </button>
+                </a>
 
-                <form method="POST" action="d_profile.php" style="display:inline;">
-                    <input type="hidden" name="id" value="<?php echo (int)$row['DOCTOR_ID']; ?>">
-                    <input type="hidden" name="source" value="admin_doctor">
+                <form method="POST" action="admin_doctor_profile_view.php" style="display:inline;">
+                    <input type="hidden" name="doctor_id" value="<?php echo (int)$row['DOCTOR_ID']; ?>">
                     <button type="submit" class="action-btn view-btn">
                         <i class="bi bi-eye"></i>
                         View
                     </button>
                 </form>
 
-                <button type="button" class="action-btn delete-btn"
-                    onclick="confirmDelete(<?php echo $row['DOCTOR_ID']; ?>)">
-                    <i class="bi bi-trash"></i>
-                    Delete
-                </button>
+                <form method="POST" action="Admin_doctor.php" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this doctor?');">
+                    <input type="hidden" name="delete" value="<?php echo (int)$row['DOCTOR_ID']; ?>">
+                    <button type="submit" class="action-btn delete-btn">
+                        <i class="bi bi-trash"></i>
+                        Delete
+                    </button>
+                </form>
             </td>
         </tr>
         <?php
@@ -719,53 +794,11 @@ include 'admin_sidebar.php';
 <div id="toast" class="toast"></div>
 
 <script>
-// Modal functions
-function openEditModal(id, firstName, lastName, education, phone, email, specializationId, profileImage) {
-    document.getElementById('edit_doctor_id').value = id;
-    document.getElementById('edit_first_name').value = firstName;
-    document.getElementById('edit_last_name').value = lastName;
-    document.getElementById('edit_education').value = education;
-    document.getElementById('edit_phone').value = phone;
-    document.getElementById('edit_email').value = email;
-    document.getElementById('edit_specialization').value = specializationId;
-    
-    document.getElementById('current_image').value = profileImage;
-    
-    // Display current image
-    const imgDisplay = document.getElementById('current_img_display');
-    imgDisplay.src = profileImage && profileImage !== '' ? profileImage : 'uploads/default_doctor.png';
-    
-    // Clear any previous error messages
-    const errorElements = document.querySelectorAll('.error-message');
-    errorElements.forEach(el => el.style.display = 'none');
-    
-    document.getElementById('editModal').style.display = 'block';
-}
-
-function closeEditModal() {
-    document.getElementById('editModal').style.display = 'none';
-}
-
 // Close modal when clicking outside of it
 window.onclick = function(event) {
     const modal = document.getElementById('editModal');
     if (event.target == modal) {
         closeEditModal();
-    }
-}
-
-function confirmDelete(id) {
-    if (confirm("Are you sure you want to delete this doctor?")) {
-        var form = document.createElement('form');
-        form.method = 'POST';
-        form.action = 'Admin_doctor.php';
-        var input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = 'delete';
-        input.value = id;
-        form.appendChild(input);
-        document.body.appendChild(form);
-        form.submit();
     }
 }
 
@@ -912,58 +945,81 @@ function validateImage() {
 }
 
 // Add event listeners for real-time validation
-document.getElementById('edit_first_name').addEventListener('input', validateFirstName);
-document.getElementById('edit_last_name').addEventListener('input', validateLastName);
-document.getElementById('edit_education').addEventListener('input', validateEducation);
-document.getElementById('edit_phone').addEventListener('input', validatePhone);
-document.getElementById('edit_email').addEventListener('input', validateEmail);
-document.getElementById('edit_specialization').addEventListener('change', validateSpecialization);
-document.getElementById('profile_image').addEventListener('change', validateImage);
-
-// Preview image when selected
-document.getElementById('profile_image').addEventListener('change', function(e) {
-    const file = e.target.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            document.getElementById('current_img_display').src = e.target.result;
-        }
-        reader.readAsDataURL(file);
-    }
-});
-
-// Form submission validation
-document.getElementById('editForm').addEventListener('submit', function(e) {
-    // Run all validation functions
-    const isFirstNameValid = validateFirstName();
-    const isLastNameValid = validateLastName();
-    const isEducationValid = validateEducation();
-    const isPhoneValid = validatePhone();
-    const isEmailValid = validateEmail();
-    const isSpecializationValid = validateSpecialization();
-    const isImageValid = validateImage();
+document.addEventListener('DOMContentLoaded', function() {
+    const firstNameEl = document.getElementById('edit_first_name');
+    const lastNameEl = document.getElementById('edit_last_name');
+    const educationEl = document.getElementById('edit_education');
+    const phoneEl = document.getElementById('edit_phone');
+    const emailEl = document.getElementById('edit_email');
+    const specializationEl = document.getElementById('edit_specialization');
+    const profileImageEl = document.getElementById('profile_image');
+    const editFormEl = document.getElementById('editForm');
     
-    // If any validation fails, prevent form submission
-    if (!isFirstNameValid || !isLastNameValid || !isEducationValid || !isPhoneValid || !isEmailValid || !isSpecializationValid || !isImageValid) {
-        e.preventDefault();
-        showToast('Please correct the errors in the form');
+    if (firstNameEl) firstNameEl.addEventListener('input', validateFirstName);
+    if (lastNameEl) lastNameEl.addEventListener('input', validateLastName);
+    if (educationEl) educationEl.addEventListener('input', validateEducation);
+    if (phoneEl) phoneEl.addEventListener('input', validatePhone);
+    if (emailEl) emailEl.addEventListener('input', validateEmail);
+    if (specializationEl) specializationEl.addEventListener('change', validateSpecialization);
+    if (profileImageEl) profileImageEl.addEventListener('change', validateImage);
+    
+    // Preview image when selected
+    if (profileImageEl) {
+        profileImageEl.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('current_img_display').src = e.target.result;
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+    
+    // Form submission validation
+    if (editFormEl) {
+        editFormEl.addEventListener('submit', function(e) {
+            // Run all validation functions
+            const isFirstNameValid = validateFirstName();
+            const isLastNameValid = validateLastName();
+            const isEducationValid = validateEducation();
+            const isPhoneValid = validatePhone();
+            const isEmailValid = validateEmail();
+            const isSpecializationValid = validateSpecialization();
+            const isImageValid = validateImage();
+            
+            // If any validation fails, prevent form submission
+            if (!isFirstNameValid || !isLastNameValid || !isEducationValid || !isPhoneValid || !isEmailValid || !isSpecializationValid || !isImageValid) {
+                e.preventDefault();
+                showToast('Please correct the errors in the form');
+            }
+        });
     }
 });
-
-// Open edit modal if edit parameter is in POST
+// Auto-open modal if doctor data is available
 <?php if (isset($_POST['edit']) && $doctor_data): ?>
-window.addEventListener('load', function() {
-    openEditModal(
-        <?php echo $doctor_data['DOCTOR_ID']; ?>,
-        '<?php echo addslashes($doctor_data['FIRST_NAME']); ?>',
-        '<?php echo addslashes($doctor_data['LAST_NAME']); ?>',
-        '<?php echo addslashes($doctor_data['EDUCATION']); ?>',
-        '<?php echo $doctor_data['PHONE']; ?>',
-        '<?php echo $doctor_data['EMAIL']; ?>',
-      
-        '<?php echo $doctor_data['PROFILE_IMAGE']; ?>'
-    );
-});
+alert('DOCTOR DATA RECEIVED');
+console.log('Doctor data available, opening modal');
+console.log('Doctor ID:', <?php echo $doctor_data['DOCTOR_ID']; ?>);
+setTimeout(function() {
+    try {
+        openEditModal(
+            <?php echo $doctor_data['DOCTOR_ID']; ?>,
+            '<?php echo htmlspecialchars(addslashes($doctor_data['FIRST_NAME']), ENT_QUOTES, 'UTF-8'); ?>',
+            '<?php echo htmlspecialchars(addslashes($doctor_data['LAST_NAME']), ENT_QUOTES, 'UTF-8'); ?>',
+            '<?php echo htmlspecialchars(addslashes($doctor_data['EDUCATION']), ENT_QUOTES, 'UTF-8'); ?>',
+            '<?php echo htmlspecialchars($doctor_data['PHONE'], ENT_QUOTES, 'UTF-8'); ?>',
+            '<?php echo htmlspecialchars($doctor_data['EMAIL'], ENT_QUOTES, 'UTF-8'); ?>',
+            '<?php echo (int)$doctor_data['SPECIALISATION_ID']; ?>',
+            '<?php echo htmlspecialchars($doctor_data['PROFILE_IMAGE'], ENT_QUOTES, 'UTF-8'); ?>'
+        );
+    } catch(err) {
+        console.error('Error opening modal:', err);
+    }
+}, 100);
+<?php else: ?>
+console.log('NO DATA: POST[edit] exists?', <?php echo isset($_POST['edit']) ? 'YES' : 'NO'; ?>, ', doctor_data exists?', <?php echo $doctor_data ? 'YES' : 'NO'; ?>);
 <?php endif; ?>
 </script>
 

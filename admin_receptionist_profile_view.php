@@ -1,21 +1,26 @@
 <?php
 session_start();
 include 'config.php';
-
 // Access control: only admin can view receptionist details
 if (!isset($_SESSION['LOGGED_IN']) || $_SESSION['LOGGED_IN'] !== true || ($_SESSION['USER_TYPE'] ?? '') !== 'admin') {
     header("Location: admin_login.php");
     exit;
 }
 
-$receptionist_id = isset($_GET['receptionist_id']) ? (int)$_GET['receptionist_id'] : 0;
+$receptionist_id = 0;
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['receptionist_id'])) {
+    $receptionist_id = (int)$_POST['receptionist_id'];
+} elseif (isset($_GET['receptionist_id'])) {
+    // fallback if GET used accidentally
+    $receptionist_id = (int)$_GET['receptionist_id'];
+}
 if ($receptionist_id <= 0) {
     die("Invalid receptionist.");
 }
 
 $stmt = $conn->prepare("
     SELECT RECEPTIONIST_ID, FIRST_NAME, LAST_NAME, DOB, DOJ, GENDER, PHONE, EMAIL, ADDRESS
-        , SECURITY_QUESTION
+        
     FROM receptionist_tbl
     WHERE RECEPTIONIST_ID = ?
 ");
@@ -166,9 +171,7 @@ $fullName = $receptionist['FIRST_NAME'] . ' ' . $receptionist['LAST_NAME'];
             </div>
             <div>
                 <div class="profile-main-name"><?php echo htmlspecialchars($fullName); ?></div>
-                <div class="profile-id" style="margin-top:4px;color:#64748b;font-size:0.85rem;">
-                    ID: <?php echo (int)$receptionist['RECEPTIONIST_ID']; ?>
-                </div>
+
             </div>
         </div>
 
@@ -212,22 +215,7 @@ $fullName = $receptionist['FIRST_NAME'] . ' ' . $receptionist['LAST_NAME'];
             </div>
         </div>
 
-        <?php
-        $sec_q = trim((string)($receptionist['SECURITY_QUESTION'] ?? ''));
-        ?>
-        <div class="section-title" style="margin-top:16px;">Security</div>
-        <div class="grid-2">
-            <div>
-                <div class="field-label">Security Question</div>
-                <div class="field-value">
-                    <?php echo $sec_q !== '' ? htmlspecialchars($sec_q) : 'Not set'; ?>
-                </div>
-            </div>
-            <div>
-                <div class="field-label">Security Answer</div>
-                <div class="field-value">Hidden</div>
-            </div>
-        </div>
+       
 
         <div class="footer-actions">
             <a class="btn-back" href="Admin_recept.php">
