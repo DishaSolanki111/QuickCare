@@ -80,6 +80,9 @@ function generatePDFWithTCPDF($prescription, $medicines) {
     if (!empty($prescription['GENDER'])) {
         $pdf->Cell(0, 6, 'Gender: ' . $prescription['GENDER'], 0, 1);
     }
+    if (!empty($prescription['BLOOD_GROUP'])) {
+        $pdf->Cell(0, 6, 'Blood Group: ' . $prescription['BLOOD_GROUP'], 0, 1);
+    }
     if (!empty($prescription['PAT_PHONE'])) {
         $pdf->Cell(0, 6, 'Contact: ' . $prescription['PAT_PHONE'], 0, 1);
     }
@@ -448,7 +451,14 @@ function generatePDFAsHTML($prescription, $medicines) {
             <span class="info-value">' . htmlspecialchars($prescription['GENDER']) . '</span>
         </div>';
     }
-    
+
+    if (!empty($prescription['BLOOD_GROUP'])) {
+        $html .= '<div class="info-row">
+            <span class="info-label">Blood Group:</span>
+            <span class="info-value"><strong>' . htmlspecialchars($prescription['BLOOD_GROUP']) . '</strong></span>
+        </div>';
+    }
+
     if (!empty($prescription['PAT_PHONE'])) {
         $html .= '<div class="info-row">
             <span class="info-label">Contact:</span>
