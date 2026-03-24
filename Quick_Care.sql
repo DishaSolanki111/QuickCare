@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 23, 2026 at 08:53 PM
+-- Generation Time: Mar 24, 2026 at 09:45 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -148,7 +148,9 @@ INSERT INTO `appointment_tbl` (`APPOINTMENT_ID`, `PATIENT_ID`, `DOCTOR_ID`, `SCH
 (27, 8, 10, 28, '2026-03-15 00:00:00', '2026-04-18', '09:00:00', 'SCHEDULED'),
 (28, 9, 10, 29, '2026-03-16 00:00:00', '2026-04-19', '10:00:00', 'SCHEDULED'),
 (29, 10, 10, 30, '2026-03-17 00:00:00', '2026-04-20', '11:00:00', 'SCHEDULED'),
-(35, 1, 1, 2, '2026-03-23 14:51:23', '2026-03-25', '16:00:00', 'SCHEDULED');
+(35, 1, 1, 2, '2026-03-23 14:51:23', '2026-03-25', '16:00:00', 'SCHEDULED'),
+(36, 3, 4, 10, '2026-03-24 08:10:21', '2026-03-24', '14:00:00', 'COMPLETED'),
+(37, 6, 10, 2, '2026-03-24 06:30:00', '2026-03-24', '14:00:00', 'COMPLETED');
 
 -- --------------------------------------------------------
 
@@ -260,8 +262,8 @@ INSERT INTO `doctor_tbl` (`DOCTOR_ID`, `SPECIALISATION_ID`, `PROFILE_IMAGE`, `FI
 (12, 1, 'uploads/lakshmi.jpeg', 'Lakshmi', 'Iyer', '1983-09-05', '2014-02-20', 'Dr_lakshmi12', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543221, 'lakshmi.iyer@gmail.com', 'FEMALE', 'MBBS, DCH', 'approved', 'What was the nickname your family calls you?', 'Lakku'),
 (13, 1, 'uploads/arun.jpeg', 'Arun', 'Shah', '1979-12-22', '2013-08-15', 'Dr_arun13', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543222, 'arun.shah@gmail.com', 'MALE', 'MBBS, DNB (Pediatrics)', 'approved', 'What was the name of your first school?', 'Shree Ram School'),
 (14, 1, 'uploads/Deepa.jpeg', 'Deepa', 'Nair', '1981-04-08', '2016-11-01', 'Dr_deepa14', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543223, 'deepa.nair@gmail.com', 'FEMALE', 'MBBS, MD (Pediatrics)', 'approved', 'What is your favorite food from childhood?', 'Pav bhaji'),
-(15, 1, 'uploads/karthik.jpeg', 'Karthik', 'Pillai', '1977-07-30', '2010-03-12', 'Dr_karthik15', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543224, 'karthik.pillai@gmail.com', 'MALE', 'MBBS, DCH', 'approved', 'Where did you go for your first school trip?', 'Munnar'),
-(16, 2, 'uploads/1774287899_Akshat profile pic.jpeg', 'Akshat', 'Khotari', '1997-05-02', '2024-05-30', 'akshat_01', '$2y$10$iOhPFC0IWN5YiLD6olTKaeSJnBHf.7N2YykJf/VAqe5vD5Rh1iYmK', 9874562563, 'akshat01@gmail.com', 'MALE', 'MBBS MD', 'pending', '', '');
+(15, 1, 'uploads/karthik.jpeg', 'Karthik', 'Pillai', '1977-07-30', '2010-03-12', 'Dr_karthik15', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543224, 'karthik.pillai@gmail.com', 'MALE', 'MBBS, DCH', 'approved', 'Where did you go for your first school trip?', 'Munnar');
+
 -- --------------------------------------------------------
 
 --
@@ -281,7 +283,6 @@ CREATE TABLE `feedback_tbl` (
 
 INSERT INTO `feedback_tbl` (`FEEDBACK_ID`, `APPOINTMENT_ID`, `RATING`, `COMMENTS`) VALUES
 (1, 1, 5, 'Doctor was very patient with my child. Explained everything clearly.');
-
 
 -- --------------------------------------------------------
 
@@ -311,6 +312,7 @@ INSERT INTO `medicine_reminder_tbl` (`MEDICINE_REMINDER_ID`, `MEDICINE_ID`, `CRE
 (9, 17, 'RECEPTIONIST', 1, 1, '2026-03-20', '2026-03-25', '09:00:00', 'take your syrup after breakfast'),
 (10, 17, 'RECEPTIONIST', 1, 1, '2026-03-20', '2026-03-25', '14:00:00', 'take your syrup after lunch'),
 (11, 17, 'RECEPTIONIST', 1, 1, '2026-03-20', '2026-03-25', '21:00:00', 'take your syrup after dinner');
+
 -- --------------------------------------------------------
 
 --
@@ -371,7 +373,9 @@ INSERT INTO `notification_seen_tbl` (`SEEN_ID`, `USER_TYPE`, `USER_ID`, `NOTIF_K
 (3, 'receptionist', 1, '3a14bfa5d3a7f6736f3bbdcba9654e91fa7f9822', '2026-03-21 21:36:29'),
 (4, 'receptionist', 1, 'ae2ea64493b68d5d5e844f09381a7c99de4aef98', '2026-03-21 21:36:29'),
 (5, 'receptionist', 1, '0c3660fbfc92e106ddd5b4dcf3f094fabcd942c4', '2026-03-21 21:36:29'),
-(6, 'receptionist', 1, '7b314175825024447f75593b0c0803d0013ae963', '2026-03-21 21:36:29');
+(6, 'receptionist', 1, '7b314175825024447f75593b0c0803d0013ae963', '2026-03-21 21:36:29'),
+(7, 'receptionist', 1, '19cfccfbfdcb507d369dc44bad91ea6cf4867cb6', '2026-03-24 14:01:54'),
+(8, 'receptionist', 1, '6f455d53e1729ef5c8cd9610de5664303271e469', '2026-03-24 14:01:54');
 
 -- --------------------------------------------------------
 
@@ -459,7 +463,6 @@ CREATE TABLE `payment_tbl` (
 
 INSERT INTO `payment_tbl` (`PAYMENT_ID`, `APPOINTMENT_ID`, `AMOUNT`, `PAYMENT_DATE`, `PAYMENT_MODE`, `STATUS`, `TRANSACTION_ID`, `CREATED_AT`) VALUES
 (1, 1, 300.00, '2026-03-19', 'CREDIT CARD', 'COMPLETED', 'TXN100000001', '2026-03-19 10:00:00'),
--- REMOVED: (2, 2, ...) -- appointment_id=2 was deleted
 (3, 3, 300.00, '2026-03-22', 'UPI', 'COMPLETED', 'TXN100000003', '2026-03-22 00:00:00'),
 (4, 4, 300.00, '2026-03-23', 'NET BANKING', 'COMPLETED', 'TXN100000004', '2026-03-23 00:00:00'),
 (5, 5, 300.00, '2026-03-24', 'CREDIT CARD', 'COMPLETED', 'TXN100000005', '2026-03-24 00:00:00'),
@@ -487,9 +490,9 @@ INSERT INTO `payment_tbl` (`PAYMENT_ID`, `APPOINTMENT_ID`, `AMOUNT`, `PAYMENT_DA
 (27, 27, 300.00, '2026-03-15', 'UPI', 'COMPLETED', 'TXN100000027', '2026-03-15 00:00:00'),
 (28, 28, 300.00, '2026-03-16', 'NET BANKING', 'COMPLETED', 'TXN100000028', '2026-03-16 00:00:00'),
 (29, 29, 300.00, '2026-03-17', 'CREDIT CARD', 'COMPLETED', 'TXN100000029', '2026-03-17 00:00:00'),
--- REMOVED: (30, 30, ...) -- appointment_id=30 does not exist
-(31, 35, 300.00, '2026-03-23', 'UPI', 'COMPLETED', 'pay_SUhqxej69FCZLv', '2026-03-23 14:51:23');
-
+(31, 35, 300.00, '2026-03-23', 'UPI', 'COMPLETED', 'pay_SUhqxej69FCZLv', '2026-03-23 14:51:23'),
+(32, 36, 300.00, '2026-03-24', 'UPI', 'COMPLETED', 'pay_SUzYSzukmeAVAx', '2026-03-24 08:10:21'),
+(33, 37, 300.00, '2026-03-24', 'UPI', 'COMPLETED', 'pay_SUhqxej45FCZLv', '2026-03-24 06:30:00');
 
 -- --------------------------------------------------------
 
@@ -512,7 +515,13 @@ CREATE TABLE `prescription_medicine_tbl` (
 
 INSERT INTO `prescription_medicine_tbl` (`PRESCRIPTION_ID`, `MEDICINE_ID`, `DOSAGE`, `DURATION`, `FREQUENCY`, `CREATED_AT`) VALUES
 (1, 1, '5ml', '3 days', 'Twice daily after lunch and br', '2026-03-20 11:40:00'),
-(1, 17, '125mg', '7 days', 'Three times daily after breakf', '2026-03-20 11:40:00');
+(1, 17, '125mg', '7 days', 'Three times daily after breakf', '2026-03-20 11:40:00'),
+(21, 5, '20-20mg', '30 days', 'once daily', '2026-03-24 08:39:51'),
+(21, 6, '75mg', '30days', 'once daily', '2026-03-24 08:39:51'),
+(21, 7, '5-10mg', '30 days', 'once daily', '2026-03-24 08:39:51'),
+(22, 11, '300mg', '30 days', 'once daily', '2026-03-24 08:45:28'),
+(22, 13, '100mg', '30 days', 'twice daily', '2026-03-24 08:45:28'),
+(22, 14, '10-25mg', '30 days', 'at night', '2026-03-24 08:45:28');
 
 -- --------------------------------------------------------
 
@@ -539,7 +548,9 @@ CREATE TABLE `prescription_tbl` (
 --
 
 INSERT INTO `prescription_tbl` (`PRESCRIPTION_ID`, `APPOINTMENT_ID`, `ISSUE_DATE`, `HEIGHT_CM`, `WEIGHT_KG`, `BLOOD_PRESSURE`, `DIABETES`, `SYMPTOMS`, `DIAGNOSIS`, `ADDITIONAL_NOTES`, `CREATED_AT`) VALUES
-(1, 1, '2026-03-20', 120, 25.00, 110, 'NO', 'Fever, cough, and cold', 'Upper respiratory tract infection', 'Advise plenty of rest and fluids', '2026-03-20 11:40:00');
+(1, 1, '2026-03-20', 120, 25.00, 110, 'NO', 'Fever, cough, and cold', 'Upper respiratory tract infection', 'Advise plenty of rest and fluids', '2026-03-20 11:40:00'),
+(21, 36, '2026-03-24', 164, 78.00, 120, 'NO', 'Chest tightness\r\nPain radiating to left arm\r\nSweating\r\nBreathlessness\r\nIrregular pulse', 'Stage 1 Hypertension\r\nStable Angina\r\nAtrial Fibrillation', '', '2026-03-24 08:33:26'),
+(22, 37, '2026-03-24', 149, 60.00, 155, 'NO', 'Tingling / numbness\r\nSharp shooting pain\r\nLoss of consciousness\r\nNausea\r\nSlow movement', 'Peripheral Neuropathy\r\nGeneralized Seizure Disorder\r\nMigraine', '', '2026-03-24 08:33:46');
 
 -- --------------------------------------------------------
 
@@ -584,9 +595,8 @@ INSERT INTO `receptionist_tbl` (`RECEPTIONIST_ID`, `FIRST_NAME`, `LAST_NAME`, `D
 (1, 'Meena', 'Kumari', '1985-03-15', '2018-06-20', 'FEMALE', 9876543301, 'meena.k@gmail.com', '123, Staff Quarters, Mumbai', 'Meena_k01', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 'What was the name of your first school?', 'Delhi Public School'),
 (2, 'Ramesh', 'Kumar', '1987-07-22', '2019-09-15', 'MALE', 9876543302, 'ramesh.k@gmail.com', '456, Staff Quarters, Delhi', 'Ramesh_k02', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 'What is your favorite food from childhood?', 'Idli sambar'),
 (3, 'Sunita', 'Devi', '1990-11-10', '2020-03-25', 'FEMALE', 9876543303, 'sunita.d@gmail.com', '789, Staff Quarters, Bangalore', 'Sunita_d03', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 'Where did you go for your first school trip?', 'Ooty'),
-(4, 'Anil', 'Sharma', '1988-05-18', '2021-07-10', 'MALE', 9876543304, 'anil.s@gmail.com', '321, Staff Quarters, Pune', 'Anil_s04', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 'What was the nickname your family calls you?', 'Anu'),
-(5, 'Arpit', 'Patel', '1999-11-03', '2025-04-22', 'MALE', 9632587415, 'arpit01@gmail.com', 'F-204 Swastik Society Gathlodiya ,Ahemdabad', 'arpit_02', '$2y$10$TVuOgshwjIJ6WrQiyeyVHOpH5jLInbDwSKHsizRsZntYZSJnqqHXW', '', ''),
-(6, 'yash', 'Gupta', '1996-12-05', '2025-09-07', 'MALE', 9685552655, 'yash@gmail.com', 'c-101 vistra sheri vasna Ahemdabad', 'yash_01', '$2y$10$fLQkNCILT6U.DWLcccBUEehIGbsxYgaQ0fJiq7RBUBLqfmZB2Nvua', 'What was the nickname your family calls you?', 'monty');
+(4, 'Anil', 'Sharma', '1988-05-18', '2021-07-10', 'MALE', 9876543304, 'anil.s@gmail.com', '321, Staff Quarters, Pune', 'Anil_s04', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 'What was the nickname your family calls you?', 'Anu');
+
 -- --------------------------------------------------------
 
 --
@@ -872,7 +882,7 @@ ALTER TABLE `appointment_reminder_tbl`
 -- AUTO_INCREMENT for table `appointment_tbl`
 --
 ALTER TABLE `appointment_tbl`
-  MODIFY `APPOINTMENT_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
+  MODIFY `APPOINTMENT_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
 
 --
 -- AUTO_INCREMENT for table `doctor_schedule_tbl`
@@ -908,7 +918,7 @@ ALTER TABLE `medicine_tbl`
 -- AUTO_INCREMENT for table `notification_seen_tbl`
 --
 ALTER TABLE `notification_seen_tbl`
-  MODIFY `SEEN_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `SEEN_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `password_resets`
@@ -926,13 +936,13 @@ ALTER TABLE `patient_tbl`
 -- AUTO_INCREMENT for table `payment_tbl`
 --
 ALTER TABLE `payment_tbl`
-  MODIFY `PAYMENT_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
+  MODIFY `PAYMENT_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
 
 --
 -- AUTO_INCREMENT for table `prescription_tbl`
 --
 ALTER TABLE `prescription_tbl`
-  MODIFY `PRESCRIPTION_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `PRESCRIPTION_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
 -- AUTO_INCREMENT for table `receptionist_notifications`
