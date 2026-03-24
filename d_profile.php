@@ -40,7 +40,7 @@ if (!$doctor) {
     die("Doctor not found.");
 }
 
-$spec_back_id = (int)($doctor['SPECIALISATION_ID'] ?? 0);
+ $spec_back_id = (int)($doctor['SPECIALISATION_ID'] ?? 0);
 
 /* =========================
    FETCH DOCTOR SCHEDULE
@@ -98,23 +98,30 @@ $spec_back_id = (int)($doctor['SPECIALISATION_ID'] ?? 0);
             color: var(--text-dark);
             min-height: 100vh;
             padding-top: 80px; /* Account for fixed header */
+            display: flex;
+            justify-content: center;
         }
 
         .main-container {
             display: flex;
             min-height: 100vh;
+            width: 100%;
+            justify-content: center;
         }
 
         .content-wrapper {
             flex: 1;
-            margin-left: 250px; /* Width of the sidebar */
+            max-width: 900px; /* Reduced max-width */
             padding: 20px;
+            display: flex;
+            justify-content: center;
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 800px; /* Reduced max-width */
             margin: 0 auto;
-            padding: 40px 20px;
+            padding: 20px 15px; /* Reduced padding */
+            width: 100%;
         }
 
         .profile-card {
@@ -124,26 +131,28 @@ $spec_back_id = (int)($doctor['SPECIALISATION_ID'] ?? 0);
             box-shadow: var(--shadow);
             display: flex;
             flex-wrap: wrap;
+            width: 100%;
+            max-width: 800px; /* Reduced max-width */
         }
 
         .left {
             width: 35%;
             background: linear-gradient(135deg, var(--light-blue) 0%, #d4e6ff 100%);
             text-align: center;
-            padding: 30px;
+            padding: 20px; /* Reduced padding */
             display: flex;
             flex-direction: column;
             align-items: center;
         }
 
         .left img {
-            width: 220px;
-            height: 220px;
+            width: 160px; /* Reduced size */
+            height: 160px; /* Reduced size */
             object-fit: cover;
             border-radius: 12px;
             border: 5px solid white;
             box-shadow: var(--shadow);
-            margin-bottom: 20px;
+            margin-bottom: 15px; /* Reduced margin */
             transition: transform 0.3s ease;
         }
 
@@ -152,9 +161,9 @@ $spec_back_id = (int)($doctor['SPECIALISATION_ID'] ?? 0);
         }
 
         .left h2 {
-            margin-top: 15px;
+            margin-top: 10px; /* Reduced margin */
             color: var(--dark-blue);
-            font-size: 1.8rem;
+            font-size: 1.5rem; /* Reduced font size */
             font-weight: 700;
         }
 
@@ -162,28 +171,28 @@ $spec_back_id = (int)($doctor['SPECIALISATION_ID'] ?? 0);
             display: inline-block;
             background: var(--primary-blue);
             color: white;
-            padding: 8px 16px;
+            padding: 6px 12px; /* Reduced padding */
             border-radius: 20px;
-            margin-top: 15px;
+            margin-top: 10px; /* Reduced margin */
             font-weight: 500;
-            font-size: 1rem;
+            font-size: 0.9rem; /* Reduced font size */
         }
 
         /* Book Now Button */
         .book-now-btn {
-            margin-top: 25px;
-            padding: 14px 40px;
+            margin-top: 15px; /* Reduced margin */
+            padding: 10px 25px; /* Reduced padding */
             background: var(--primary-blue);
             color: white;
             border: none;
             border-radius: 8px;
             font-weight: 600;
-            font-size: 1.1rem;
+            font-size: 0.95rem; /* Reduced font size */
             cursor: pointer;
             transition: all 0.3s ease;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px; /* Reduced gap */
             box-shadow: 0 4px 10px rgba(26, 115, 232, 0.3);
         }
 
@@ -194,44 +203,45 @@ $spec_back_id = (int)($doctor['SPECIALISATION_ID'] ?? 0);
         }
 
         .book-now-btn i {
-            font-size: 1.2rem;
+            font-size: 1rem; /* Reduced font size */
         }
 
         .right {
             width: 65%;
-            padding: 30px;
+            padding: 20px; /* Reduced padding */
         }
 
         .section-title {
-            margin-top: 20px;
+            margin-top: 15px; /* Reduced margin */
             font-weight: 700;
             color: var(--dark-blue);
-            font-size: 1.3rem;
-            margin-bottom: 15px;
-            padding-bottom: 8px;
+            font-size: 1.1rem; /* Reduced font size */
+            margin-bottom: 10px; /* Reduced margin */
+            padding-bottom: 6px; /* Reduced padding */
             border-bottom: 2px solid var(--light-blue);
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px; /* Reduced gap */
         }
 
         .section-title i {
             color: var(--primary-blue);
+            font-size: 0.9rem; /* Reduced font size */
         }
 
         .contact-info {
             display: flex;
             flex-wrap: wrap;
-            gap: 20px;
-            margin-bottom: 25px;
+            gap: 15px; /* Reduced gap */
+            margin-bottom: 20px; /* Reduced margin */
         }
 
         .contact-item {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px; /* Reduced gap */
             background: var(--light-blue);
-            padding: 12px 20px;
+            padding: 10px 15px; /* Reduced padding */
             border-radius: 10px;
             transition: all 0.3s ease;
         }
@@ -243,13 +253,17 @@ $spec_back_id = (int)($doctor['SPECIALISATION_ID'] ?? 0);
 
         .contact-item i {
             color: var(--primary-blue);
-            font-size: 1.2rem;
+            font-size: 1rem; /* Reduced font size */
+        }
+
+        .contact-item span {
+            font-size: 0.9rem; /* Reduced font size */
         }
 
         .schedule-container {
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 8px; /* Reduced gap */
         }
 
         .schedule-item {
@@ -257,7 +271,7 @@ $spec_back_id = (int)($doctor['SPECIALISATION_ID'] ?? 0);
             justify-content: space-between;
             align-items: center;
             background: var(--light-blue);
-            padding: 12px 20px;
+            padding: 10px 15px; /* Reduced padding */
             border-radius: 10px;
             transition: all 0.3s ease;
         }
@@ -270,32 +284,34 @@ $spec_back_id = (int)($doctor['SPECIALISATION_ID'] ?? 0);
         .schedule-day {
             font-weight: 600;
             color: var(--dark-blue);
+            font-size: 0.9rem; /* Reduced font size */
         }
 
         .schedule-time {
             color: var(--primary-blue);
             font-weight: 500;
+            font-size: 0.9rem; /* Reduced font size */
         }
 
         /* Back button */
         .back-btn {
             display: inline-flex;
             align-items: center;
-            gap: 8px;
-            padding: 8px 16px;
+            gap: 6px; /* Reduced gap */
+            padding: 6px 12px; /* Reduced padding */
             margin-bottom: 15px;
             border-radius: 999px;
             border: 1px solid var(--primary-blue);
             background: transparent;
             color: var(--primary-blue);
-            font-size: 0.9rem;
+            font-size: 0.85rem; /* Reduced font size */
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s ease;
         }
 
         .back-btn i {
-            font-size: 0.95rem;
+            font-size: 0.85rem; /* Reduced font size */
         }
 
         .back-btn:hover {
@@ -391,12 +407,12 @@ $spec_back_id = (int)($doctor['SPECIALISATION_ID'] ?? 0);
             }
             
             .left {
-                padding: 20px;
+                padding: 15px; /* Reduced padding */
             }
             
             .left img {
-                width: 180px;
-                height: 180px;
+                width: 140px; /* Reduced size */
+                height: 140px; /* Reduced size */
             }
         }
 
@@ -406,41 +422,41 @@ $spec_back_id = (int)($doctor['SPECIALISATION_ID'] ?? 0);
             }
             
             .container {
-                padding: 20px 15px;
+                padding: 15px 10px; /* Reduced padding */
             }
             
             .left, .right {
-                padding: 20px;
+                padding: 15px; /* Reduced padding */
             }
             
             .left img {
-                width: 150px;
-                height: 150px;
+                width: 120px; /* Reduced size */
+                height: 120px; /* Reduced size */
             }
             
             .left h2 {
-                font-size: 1.5rem;
+                font-size: 1.3rem; /* Reduced font size */
             }
             
             .contact-info {
                 flex-direction: column;
-                gap: 10px;
+                gap: 8px; /* Reduced gap */
             }
 
             .book-now-btn {
-                padding: 12px 30px;
-                font-size: 1rem;
+                padding: 8px 20px; /* Reduced padding */
+                font-size: 0.9rem; /* Reduced font size */
             }
         }
 
         @media (max-width: 576px) {
             .left img {
-                width: 120px;
-                height: 120px;
+                width: 100px; /* Reduced size */
+                height: 100px; /* Reduced size */
             }
             
             .section-title {
-                font-size: 1.1rem;
+                font-size: 1rem; /* Reduced font size */
             }
         }
 
