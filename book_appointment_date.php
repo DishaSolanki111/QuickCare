@@ -348,6 +348,7 @@ body::before {
             justify-content: space-between;
             align-items: center;
             margin-bottom: 10px;
+            color: #333;
         }
 
         .calendar-nav {

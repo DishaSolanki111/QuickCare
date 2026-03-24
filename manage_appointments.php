@@ -61,11 +61,13 @@ $appointments_query = mysqli_query($conn, "
         d.FIRST_NAME as DOC_FNAME, 
         d.LAST_NAME as DOC_LNAME, 
         s.SPECIALISATION_NAME as SPECIALIZATION,
-        p.PRESCRIPTION_ID
+        p.PRESCRIPTION_ID,
+        f.FEEDBACK_ID
     FROM appointment_tbl a
     JOIN doctor_tbl d ON a.DOCTOR_ID = d.DOCTOR_ID
     JOIN specialisation_tbl s ON d.SPECIALISATION_ID = s.SPECIALISATION_ID
     LEFT JOIN prescription_tbl p ON p.APPOINTMENT_ID = a.APPOINTMENT_ID
+    LEFT JOIN feedback_tbl f ON f.APPOINTMENT_ID = a.APPOINTMENT_ID
     WHERE a.PATIENT_ID = '" . mysqli_real_escape_string($conn, $patient_id) . "'
     GROUP BY a.APPOINTMENT_ID
     ORDER BY a.APPOINTMENT_DATE DESC
@@ -846,9 +848,18 @@ html {
                                         </button>
                                     </form>
                                     <?php endif; ?>
-                                    <button class="btn btn-success">
-                                        <i class="fas fa-star"></i> Leave Feedback
-                                    </button>
+                                    <form method="POST" action="patient_feedback.php" style="display:inline">
+                                        <input type="hidden" name="appointment" value="<?php echo $appointment['APPOINTMENT_ID']; ?>">
+                                        <?php if (!empty($appointment['FEEDBACK_ID'])): ?>
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fas fa-edit"></i> Edit Feedback
+                                        </button>
+                                        <?php else: ?>
+                                        <button type="submit" class="btn btn-success">
+                                            <i class="fas fa-star"></i> Leave Feedback
+                                        </button>
+                                        <?php endif; ?>
+                                    </form>
                                 </div>
                             </div>
                         </div>
