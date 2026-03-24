@@ -692,6 +692,9 @@ ew.on("head", function() {
 <script<?= Nonce() ?>>
 ew.on("load", function () {
     // Write your table-specific startup script here, no need to add script tags.
+    
+    // Initialize export links
+    ew.initExportLinks();
 });
 </script>
 <?php } ?>

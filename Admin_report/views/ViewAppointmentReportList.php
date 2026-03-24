@@ -44,9 +44,6 @@ ew.on("head", function () {
 <div class="btn-toolbar ew-toolbar">
 <?php if ($Page->TotalRecords > 0) { ?>
 <?= $Page->ExportOptions->render("body") ?>
-<?php } else { ?>
-<!-- Debug: No records to export -->
-<span class="alert alert-info">No records available for export</span>
 <?php } ?>
 <?= $Page->ImportOptions->render("body") ?>
 <?= $Page->SearchOptions->render("body") ?>
@@ -571,6 +568,9 @@ ew.on("head", function() {
 <script<?= Nonce() ?>>
 ew.on("load", function () {
     // Write your table-specific startup script here, no need to add script tags.
+    
+    // Initialize export links
+    ew.initExportLinks();
 });
 </script>
 <?php } ?>

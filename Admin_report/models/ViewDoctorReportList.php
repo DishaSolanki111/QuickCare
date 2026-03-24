@@ -591,6 +591,7 @@ class ViewDoctorReportList extends ViewDoctorReport implements PageInterface
     {
         // Set up list options
         $this->setupListOptions();
+        $this->setupExportOptions();
 
         // Search options
         $this->setupSearchOptions();
@@ -712,6 +713,7 @@ class ViewDoctorReportList extends ViewDoctorReport implements PageInterface
 
         // Set up list options
         $this->setupListOptions();
+        $this->setupExportOptions();
         $this->setVisibility();
 
         // Global Page Loading event (in userfn*.php)
@@ -1633,6 +1635,34 @@ class ViewDoctorReportList extends ViewDoctorReport implements PageInterface
         $this->listOptionsLoad();
         $item = $this->ListOptions[$this->ListOptions->GroupOptionName];
         $item->Visible = $this->ListOptions->groupOptionVisible();
+    }
+
+    // Set up export options
+    protected function setupExportOptions(): void
+    {
+        // Page URL for export
+        $pageUrl = $this->pageUrl(false);
+        
+        // Export to PDF
+        $item = $this->ExportOptions->add("pdf");
+        $item->Body = "<a href=\"" . BuildUrl($pageUrl, "export=pdf") . "\" class=\"ew-export-link\" data-export=\"pdf\">" . $this->language->phrase("ExportToPdf") . "</a>";
+        $item->Visible = true;
+        $item->CssClass = "ew-export-link";
+        $item->OnLeft = false;
+        $item->UseImageAndText = true;
+
+        // Export to Excel
+        $item = $this->ExportOptions->add("excel");
+        $item->Body = "<a href=\"" . BuildUrl($pageUrl, "export=excel") . "\" class=\"ew-export-link\" data-export=\"excel\">" . $this->language->phrase("ExportToExcel") . "</a>";
+        $item->Visible = true;
+        $item->CssClass = "ew-export-link";
+        $item->OnLeft = false;
+        $item->UseImageAndText = true;
+
+        // Use button group instead of dropdown
+        $this->ExportOptions->UseDropDownButton = false;
+        $this->ExportOptions->UseButtonGroup = true;
+        $this->ExportOptions->ButtonGroupClass = "btn-group";
     }
 
     // Add "hash" parameter to URL

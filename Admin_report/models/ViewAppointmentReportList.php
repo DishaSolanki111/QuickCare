@@ -923,12 +923,12 @@ class ViewAppointmentReportList extends ViewAppointmentReport implements PageInt
         } else {
             // Reset for template row
             if ($this->RowIndex === '$rowindex$') {
-                $this->RecordCount = $this->StartRecord - 1;
+                $this->RecordCount = $this->StartRecord;
                 $this->RowIndex = 0;
             }
             // Reset inline add/copy row
             if ($isInlineAddOrCopy && $this->RowIndex == 0) {
-                $this->RecordCount = $this->StartRecord - 1;
+                $this->RecordCount = $this->StartRecord;
                 $this->RowIndex = 1;
             }
         }
@@ -1558,48 +1558,29 @@ class ViewAppointmentReportList extends ViewAppointmentReport implements PageInt
     // Set up export options
     protected function setupExportOptions(): void
     {
-        // Export to HTML
-        $item = $this->ExportOptions->add("html");
-        $item->Body = $this->language->phrase("ExportToHtml");
+        // Page URL for export
+        $pageUrl = $this->pageUrl(false);
+        
+        // Export to PDF
+        $item = $this->ExportOptions->add("pdf");
+        $item->Body = "<a href=\"" . BuildUrl($pageUrl, "export=pdf") . "\" class=\"ew-export-link\" data-export=\"pdf\">" . $this->language->phrase("ExportToPdf") . "</a>";
         $item->Visible = true;
-
-        // Export to Word
-        $item = $this->ExportOptions->add("word");
-        $item->Body = $this->language->phrase("ExportToWord");
-        $item->Visible = true;
+        $item->CssClass = "ew-export-link";
+        $item->OnLeft = false;
+        $item->UseImageAndText = true;
 
         // Export to Excel
         $item = $this->ExportOptions->add("excel");
-        $item->Body = $this->language->phrase("ExportToExcel");
+        $item->Body = "<a href=\"" . BuildUrl($pageUrl, "export=excel") . "\" class=\"ew-export-link\" data-export=\"excel\">" . $this->language->phrase("ExportToExcel") . "</a>";
         $item->Visible = true;
+        $item->CssClass = "ew-export-link";
+        $item->OnLeft = false;
+        $item->UseImageAndText = true;
 
-        // Export to PDF
-        $item = $this->ExportOptions->add("pdf");
-        $item->Body = $this->language->phrase("ExportToPdf");
-        $item->Visible = true;
-
-        // Export to CSV
-        $item = $this->ExportOptions->add("csv");
-        $item->Body = $this->language->phrase("ExportToCsv");
-        $item->Visible = true;
-
-        // Export to XML
-        $item = $this->ExportOptions->add("xml");
-        $item->Body = $this->language->phrase("ExportToXml");
-        $item->Visible = true;
-
-        // Export to JSON
-        $item = $this->ExportOptions->add("json");
-        $item->Body = $this->language->phrase("ExportToJson");
-        $item->Visible = true;
-
-        // Drop down button for export options
-        $this->ExportOptions->UseDropDownButton = true;
-        $this->ExportOptions->DropDownButtonPhrase = $this->language->phrase("ButtonExport");
-        $this->ExportOptions->UseButtonGroup = false;
-        if ($this->ExportOptions->UseButtonGroup && IsMobile()) {
-            $this->ExportOptions->UseDropDownButton = true;
-        }
+        // Use button group instead of dropdown
+        $this->ExportOptions->UseDropDownButton = false;
+        $this->ExportOptions->UseButtonGroup = true;
+        $this->ExportOptions->ButtonGroupClass = "btn-group";
     }
 
     // Add "hash" parameter to URL
@@ -1908,7 +1889,7 @@ class ViewAppointmentReportList extends ViewAppointmentReport implements PageInt
                 $this->StopRecord = $this->TotalRecords;
             }
         }
-        $this->RecordCount = $this->StartRecord - 1;
+        $this->RecordCount = $this->StartRecord;
         if ($this->CurrentRecord !== null) {
             // Nothing to do
         } elseif ($this->isGridAdd() && !$this->AllowAddDeleteRow && $this->StopRecord == 0) { // Grid-Add with no records
