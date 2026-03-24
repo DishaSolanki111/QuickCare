@@ -229,7 +229,7 @@
     <?php if (isset($_SESSION['vitals_saved_msg'])) { echo '<div class="alert alert-success" style="background:#d4edda;color:#155724;padding:12px 20px;border-radius:8px;margin-bottom:20px;">' . htmlspecialchars($_SESSION['vitals_saved_msg']) . '</div>'; unset($_SESSION['vitals_saved_msg']); } ?>
     <?php if (!empty($scheduled_appointments)): ?>
     <div class="vitals-section">
-        <h3><i class="fa-solid fa-heart-pulse"></i> Add vitals for appointment (Receptionist)</h3>
+        <h3><i class="fa-solid fa-heart-pulse"></i> Add vitals for appointment</h3>
         <table class="vitals-table">
             <thead><tr><th>Date & Time</th><th>Patient</th><th>Doctor</th><th>Vitals</th><th>Action</th></tr></thead>
             <tbody>
