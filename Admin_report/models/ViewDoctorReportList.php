@@ -138,7 +138,7 @@ class ViewDoctorReportList extends ViewDoctorReport implements PageInterface
     public int $StopRecord = 0;
     public int $TotalRecords = 0;
     public ?int $RecordOffset = null; // Record offset (for View/Edit paging)
-    public array $PagerOptions = ["proximity" => 20, "show_dots" => true];
+    public array $PagerOptions = ["proximity" => 2, "show_dots" => true];
     public string $PageSizes = "10,20,50,-1"; // Page sizes (comma separated)
     public string $UserIDFilter = "";
     public string $DefaultSearchWhere = ""; // Default search WHERE clause
@@ -165,9 +165,9 @@ class ViewDoctorReportList extends ViewDoctorReport implements PageInterface
     public bool $RestoreSearch = false;
     public ?string $HashValue = null; // Hash value
     public ?SubPages $DetailPages = null;
-    public string $TopContentClass = "ew-top d-flex";
-    public string $MiddleContentClass = "ew-middle d-flex";
-    public string $BottomContentClass = "ew-bottom d-flex";
+    public string $TopContentClass = "ew-top";
+    public string $MiddleContentClass = "ew-middle";
+    public string $BottomContentClass = "ew-bottom";
     public bool $IsModal = false;
     private bool $UseInfiniteScroll = false;
 
@@ -591,6 +591,7 @@ class ViewDoctorReportList extends ViewDoctorReport implements PageInterface
     {
         // Set up list options
         $this->setupListOptions();
+        $this->setupExportOptions();
 
         // Search options
         $this->setupSearchOptions();
@@ -712,6 +713,7 @@ class ViewDoctorReportList extends ViewDoctorReport implements PageInterface
 
         // Set up list options
         $this->setupListOptions();
+        $this->setupExportOptions();
         $this->setVisibility();
 
         // Global Page Loading event (in userfn*.php)
@@ -759,7 +761,6 @@ class ViewDoctorReportList extends ViewDoctorReport implements PageInterface
 
         // Hide list options
         if ($this->isExport()) {
-            $this->ListOptions->hideAllOptions(["sequence"]);
             $this->ListOptions->UseDropDownButton = false; // Disable drop down button
             $this->ListOptions->UseButtonGroup = false; // Disable button group
         } elseif ($this->isGridAdd() || $this->isGridEdit() || $this->isMultiEdit() || $this->isConfirm()) {
@@ -769,8 +770,7 @@ class ViewDoctorReportList extends ViewDoctorReport implements PageInterface
         }
 
         // Hide options
-        if ($this->isExport() || !(IsEmpty($this->CurrentAction) || $this->isSearch())) {
-            $this->ExportOptions->hideAllOptions();
+        if (!(IsEmpty($this->CurrentAction) || $this->isSearch())) {
             $this->FilterOptions->hideAllOptions();
             $this->ImportOptions->hideAllOptions();
         }
@@ -1618,7 +1618,7 @@ class ViewDoctorReportList extends ViewDoctorReport implements PageInterface
         $item->ShowInButtonGroup = false;
 
         // Drop down button for ListOptions
-        $this->ListOptions->UseDropDownButton = false;
+        $this->ListOptions->UseDropDownButton = true;
         $this->ListOptions->DropDownButtonPhrase = $this->language->phrase("ButtonListOptions");
         $this->ListOptions->UseButtonGroup = false;
         if ($this->ListOptions->UseButtonGroup && IsMobile()) {
@@ -1633,6 +1633,34 @@ class ViewDoctorReportList extends ViewDoctorReport implements PageInterface
         $this->listOptionsLoad();
         $item = $this->ListOptions[$this->ListOptions->GroupOptionName];
         $item->Visible = $this->ListOptions->groupOptionVisible();
+    }
+
+    // Set up export options
+    protected function setupExportOptions(): void
+    {
+        // Page URL for export
+        $pageUrl = $this->pageUrl(false);
+        
+        // Export to PDF
+        $item = $this->ExportOptions->add("pdf");
+        $item->Body = "<a href=\"" . $pageUrl . "?export=pdf\" class=\"ew-export-link\" data-export=\"pdf\">" . $this->language->phrase("ExportToPdf") . "</a>";
+        $item->Visible = true;
+        $item->CssClass = "ew-export-link";
+        $item->OnLeft = false;
+        $item->UseImageAndText = true;
+
+        // Export to Excel
+        $item = $this->ExportOptions->add("excel");
+        $item->Body = "<a href=\"" . $pageUrl . "?export=excel\" class=\"ew-export-link\" data-export=\"excel\">" . $this->language->phrase("ExportToExcel") . "</a>";
+        $item->Visible = true;
+        $item->CssClass = "ew-export-link";
+        $item->OnLeft = false;
+        $item->UseImageAndText = true;
+
+        // Use button group instead of dropdown
+        $this->ExportOptions->UseDropDownButton = false;
+        $this->ExportOptions->UseButtonGroup = true;
+        $this->ExportOptions->ButtonGroupClass = "btn-group";
     }
 
     // Add "hash" parameter to URL

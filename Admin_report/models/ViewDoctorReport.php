@@ -235,11 +235,11 @@ class ViewDoctorReport extends DbTable implements LookupTableInterface
             '',
             0,
             'COUNT',
-            800,
+            400,
             400
         );
-        $this->Chart1->Position = 1;
-        $this->Chart1->PageBreakType = "after";
+        $this->Chart1->Position = 4;
+        $this->Chart1->PageBreakType = "before";
         $this->Chart1->YAxisFormat = [""];
         $this->Chart1->YFieldFormat = [""];
         $this->Chart1->SortType = 0;
@@ -281,11 +281,11 @@ class ViewDoctorReport extends DbTable implements LookupTableInterface
             '',
             0,
             'COUNT',
-            800,
+            400,
             400
         );
-        $this->Chart2->Position = 1;
-        $this->Chart2->PageBreakType = "after";
+        $this->Chart2->Position = 4;
+        $this->Chart2->PageBreakType = "before";
         $this->Chart2->YAxisFormat = [""];
         $this->Chart2->YFieldFormat = [""];
         $this->Chart2->SortType = 0;
@@ -327,10 +327,10 @@ class ViewDoctorReport extends DbTable implements LookupTableInterface
             '',
             0,
             'MAX',
-            800,
+            400,
             400
         );
-        $this->Chart3->Position = 3;
+        $this->Chart3->Position = 4;
         $this->Chart3->PageBreakType = "before";
         $this->Chart3->YAxisFormat = ["Number"];
         $this->Chart3->YFieldFormat = ["Number"];

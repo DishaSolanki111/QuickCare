@@ -219,6 +219,16 @@
         <parameter type="string">-2</parameter>
         <parameter type="string">0</parameter>
       </parameter>
+      <parameter type="collection">
+        <parameter>{A46002E4-B4F6-47F2-B55F-A3278D4B1DC4}notification_seen_tbl</parameter>
+        <parameter type="string">-2</parameter>
+        <parameter type="string">0</parameter>
+      </parameter>
+      <parameter type="collection">
+        <parameter>{A46002E4-B4F6-47F2-B55F-A3278D4B1DC4}receptionist_notifications</parameter>
+        <parameter type="string">-2</parameter>
+        <parameter type="string">0</parameter>
+      </parameter>
     </parameter>
     <parameter key="user.level.tables" type="collection">
       <parameter type="collection">
@@ -372,6 +382,22 @@
         <parameter>true</parameter>
         <parameter>{A46002E4-B4F6-47F2-B55F-A3278D4B1DC4}</parameter>
         <parameter>ViewDoctorReportList</parameter>
+      </parameter>
+      <parameter type="collection">
+        <parameter>notification_seen_tbl</parameter>
+        <parameter>notification_seen_tbl</parameter>
+        <parameter>notification seen tbl</parameter>
+        <parameter>true</parameter>
+        <parameter>{A46002E4-B4F6-47F2-B55F-A3278D4B1DC4}</parameter>
+        <parameter/>
+      </parameter>
+      <parameter type="collection">
+        <parameter>receptionist_notifications</parameter>
+        <parameter>receptionist_notifications</parameter>
+        <parameter>receptionist notifications</parameter>
+        <parameter>true</parameter>
+        <parameter>{A46002E4-B4F6-47F2-B55F-A3278D4B1DC4}</parameter>
+        <parameter/>
       </parameter>
     </parameter>
     <parameter key="app.notifications.email_sender"/>

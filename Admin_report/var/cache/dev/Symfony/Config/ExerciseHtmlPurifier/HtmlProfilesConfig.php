@@ -18,7 +18,7 @@ class HtmlProfilesConfig
     private $blankElements;
     private $parents;
     private $_usedProperties = [];
-
+    
     /**
      * @return $this
      */
@@ -26,10 +26,10 @@ class HtmlProfilesConfig
     {
         $this->_usedProperties['config'] = true;
         $this->config[$parameter] = $value;
-
+    
         return $this;
     }
-
+    
     /**
      * @return $this
      */
@@ -37,10 +37,10 @@ class HtmlProfilesConfig
     {
         $this->_usedProperties['attributes'] = true;
         $this->attributes[$tag_name] = $value;
-
+    
         return $this;
     }
-
+    
     /**
      * An array represents a definition, with three required elements: a type ("Inline", "Block", ...), a content type ("Empty", "Optional: #PCDATA", ...), an attributes set ("Core", "Common", ...), a fourth optional may define attributes rules as array, and fifth for forbidden attributes.
      */
@@ -52,10 +52,10 @@ class HtmlProfilesConfig
         } elseif (1 < \func_num_args()) {
             throw new InvalidConfigurationException('The node created by "elements()" has already been initialized. You cannot pass values the second time you call elements().');
         }
-
+    
         return $this->elements[$tag_name];
     }
-
+    
     /**
      * @param ParamConfigurator|list<ParamConfigurator|mixed> $value
      *
@@ -65,10 +65,10 @@ class HtmlProfilesConfig
     {
         $this->_usedProperties['blankElements'] = true;
         $this->blankElements = $value;
-
+    
         return $this;
     }
-
+    
     /**
      * @param ParamConfigurator|list<ParamConfigurator|mixed> $value
      *
@@ -78,10 +78,10 @@ class HtmlProfilesConfig
     {
         $this->_usedProperties['parents'] = true;
         $this->parents = $value;
-
+    
         return $this;
     }
-
+    
     public function __construct(array $config = [])
     {
         if (array_key_exists('config', $config)) {
@@ -89,36 +89,36 @@ class HtmlProfilesConfig
             $this->config = $config['config'];
             unset($config['config']);
         }
-
+    
         if (array_key_exists('attributes', $config)) {
             $this->_usedProperties['attributes'] = true;
             $this->attributes = $config['attributes'];
             unset($config['attributes']);
         }
-
+    
         if (array_key_exists('elements', $config)) {
             $this->_usedProperties['elements'] = true;
             $this->elements = array_map(fn ($v) => new \Symfony\Config\ExerciseHtmlPurifier\HtmlProfilesConfig\ElementsConfig($v), $config['elements']);
             unset($config['elements']);
         }
-
+    
         if (array_key_exists('blank_elements', $config)) {
             $this->_usedProperties['blankElements'] = true;
             $this->blankElements = $config['blank_elements'];
             unset($config['blank_elements']);
         }
-
+    
         if (array_key_exists('parents', $config)) {
             $this->_usedProperties['parents'] = true;
             $this->parents = $config['parents'];
             unset($config['parents']);
         }
-
+    
         if ($config) {
             throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($config)));
         }
     }
-
+    
     public function toArray(): array
     {
         $output = [];
@@ -137,7 +137,7 @@ class HtmlProfilesConfig
         if (isset($this->_usedProperties['parents'])) {
             $output['parents'] = $this->parents;
         }
-
+    
         return $output;
     }
 

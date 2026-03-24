@@ -13994,7 +13994,7 @@ body:not(.layout-fixed) .main-sidebar .sidebar {
   text-decoration: none;
 }
 [class*=sidebar-light-] .nav-treeview > .nav-item > .nav-link {
-  color: #777777;
+  color: #191970;
 }
 [class*=sidebar-light-] .nav-treeview > .nav-item > .nav-link:hover, [class*=sidebar-light-] .nav-treeview > .nav-item > .nav-link:focus {
   background-color: rgba(0, 0, 0, 0.1);

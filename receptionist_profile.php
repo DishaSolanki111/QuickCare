@@ -217,66 +217,66 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
         /* Profile Content */
         .profile-content {
             background: var(--white);
-            border-radius: 12px;
-            padding: 25px 30px 15px 30px; /* Reduced bottom padding */
+            border-radius: 10px;
+            padding: 18px 22px 12px 22px;
             box-shadow: var(--shadow-md);
-          
-            height: fit-content; /* Fit snugly after buttons */
+            height: fit-content;
         }
 
         .profile-header {
             display: flex;
             align-items: center;
-            margin-bottom: 30px;
-            padding-bottom: 20px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
             border-bottom: 1px solid #eee;
+            justify-content: flex-start;
         }
 
         .profile-avatar {
-            width: 120px;
-            height: 120px;
+            width: 100px;
+            height: 100px;
             border-radius: 50%;
             background-color: var(--secondary);
             color: var(--white);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 42px;
+            font-size: 36px;
             font-weight: bold;
-            margin-right: 30px;
+            margin-right: 20px;
             box-shadow: var(--shadow-md);
         }
 
         .profile-info h2 {
-            font-size: 32px;
+            font-size: 28px;
             color: var(--primary);
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
 
         .profile-info p {
             color: var(--gray);
-            font-size: 16px;
-            margin-bottom: 5px;
+            font-size: 15px;
+            margin-bottom: 4px;
         }
 
         /* Form Styles */
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
         .form-group label {
             display: block;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             font-weight: 600;
             color: var(--primary);
         }
 
         .form-control {
             width: 100%;
-            padding: 12px 15px;
+            padding: 10px 12px;
             border: 1px solid #ddd;
             border-radius: 6px;
-            font-size: 16px;
+            font-size: 15px;
             transition: border-color 0.3s;
         }
 
@@ -292,7 +292,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
         }
 
         .btn {
-            padding: 12px 24px;
+            padding: 10px 20px;
             border: none;
             border-radius: 6px;
             cursor: pointer;
@@ -301,8 +301,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            font-size: 16px;
-            gap: 8px;
+            font-size: 15px;
+            gap: 6px;
         }
 
         .btn-primary {
@@ -340,17 +340,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
 
         .btn-group {
             display: flex;
-            gap: 15px;
-            margin-top: 25px;
+            gap: 12px;
+            margin-top: 20px;
+            justify-content: center;
         }
 
         .alert {
-            padding: 15px 20px;
-            margin-bottom: 20px;
+            padding: 12px 18px;
+            margin-bottom: 15px;
             border-radius: 6px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
 
         .alert-success {
@@ -368,26 +369,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
         .info-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 25px;
+            gap: 20px;
         }
 
         .info-item {
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
         .info-label {
             font-weight: 600;
             color: var(--primary);
-            margin-bottom: 5px;
+            margin-bottom: 4px;
             display: block;
-            font-size: 14px;
+            font-size: 13px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
 
         .info-value {
             color: #555;
-            font-size: 16px;
+            font-size: 15px;
         }
 
         /* Edit Form Styles */
@@ -415,10 +416,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
 
         .modal-content {
             background: #ffffff;
-            border-radius: 10px;
-            padding: 25px 30px;
+            border-radius: 8px;
+            padding: 20px 25px;
             width: 100%;
-            max-width: 450px;
+            max-width: 420px;
             box-shadow: var(--shadow-lg);
         }
 
@@ -426,27 +427,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
         }
 
         .modal-header h3 {
             margin: 0;
-            font-size: 20px;
+            font-size: 18px;
             color: var(--primary);
         }
 
         .modal-close {
             background: none;
             border: none;
-            font-size: 22px;
+            font-size: 20px;
             cursor: pointer;
             color: var(--gray);
         }
 
         .error-message {
             color: var(--danger);
-            font-size: 13px;
-            margin-top: 5px;
+            font-size: 12px;
+            margin-top: 4px;
             display: none;
         }
 

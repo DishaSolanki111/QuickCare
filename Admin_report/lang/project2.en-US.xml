@@ -1,6 +1,6 @@
-<ew-language date="2026/3/21" id="en-US" author="e.World Technology Limited">
+<ew-language date="2026/3/24" id="en-US" author="e.World Technology Limited">
   <project>
-    <phrase id="footertext" value="&amp;copy;2025 e.World Technology Limited. All rights reserved." />
+    <phrase id="bodytitle" value="Admin" />
     <menu id="1">
       <phrase id="menutext" value="appointment reminder tbl" />
     </menu>
@@ -57,6 +57,12 @@
     </menu>
     <menu id="22">
       <phrase id="menutext" value="view doctor report" />
+    </menu>
+    <menu id="23">
+      <phrase id="menutext" value="notification seen tbl" />
+    </menu>
+    <menu id="24">
+      <phrase id="menutext" value="receptionist notifications" />
     </menu>
     <table id="appointment_reminder_tbl">
       <phrase id="tblcaption" value="appointment reminder tbl" />
@@ -856,6 +862,39 @@
       </field>
       <field id="avg_rating">
         <phrase id="fldcaption" value="Avg Rating" />
+      </field>
+    </table>
+    <table id="notification_seen_tbl">
+      <phrase id="tblcaption" value="notification seen tbl" />
+      <field id="seen_id">
+        <phrase id="fldcaption" value="SEEN ID" />
+      </field>
+      <field id="user_type">
+        <phrase id="fldcaption" value="USER TYPE" />
+      </field>
+      <field id="user_id">
+        <phrase id="fldcaption" value="USER ID" />
+      </field>
+      <field id="notif_key">
+        <phrase id="fldcaption" value="NOTIF KEY" />
+      </field>
+      <field id="seen_at">
+        <phrase id="fldcaption" value="SEEN AT" />
+      </field>
+    </table>
+    <table id="receptionist_notifications">
+      <phrase id="tblcaption" value="receptionist notifications" />
+      <field id="receptionist_notification_id">
+        <phrase id="fldcaption" value="RECEPTIONIST NOTIFICATION ID" />
+      </field>
+      <field id="message">
+        <phrase id="fldcaption" value="MESSAGE" />
+      </field>
+      <field id="type">
+        <phrase id="fldcaption" value="TYPE" />
+      </field>
+      <field id="created_at">
+        <phrase id="fldcaption" value="CREATED AT" />
       </field>
     </table>
   </project>

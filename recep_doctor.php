@@ -59,9 +59,8 @@ if (isset($_POST['action']) && $_POST['action'] == 'edit_doctor') {
     // ---------------- EDUCATION VALIDATION ----------------
     if (empty($education)) {
         $errors[] = "Education is required.";
-    } elseif (!preg_match('/^[a-zA-Z\s\.\,]+$/', $education)) {
-        $errors[] = "Education should contain only letters, spaces, dots, and commas.";
     }
+    // Education can contain any character including dot, comma, brackets, etc.
     
     // ---------------- PHONE VALIDATION ----------------
     if (empty($phone)) {

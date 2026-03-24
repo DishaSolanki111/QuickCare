@@ -457,28 +457,6 @@ if (!$Page->Year->UseFilter) {
 </div>
 <div id="ew-list">
 <?php if (!$Page->isExport() || $Page->isExport("print")) { ?>
-<!-- Top Container -->
-<div id="ew-top" class="<?= $Page->TopContentClass ?>">
-<?php } ?>
-<?php
-if (!$DashboardReport) {
-    // Set up chart drilldown
-    $Page->Chart1->DrillDownInPanel = $Page->DrillDownInPanel;
-    echo $Page->Chart1->render($Page->ChartData, "ew-chart-top");
-}
-?>
-<?php
-if (!$DashboardReport) {
-    // Set up chart drilldown
-    $Page->Chart2->DrillDownInPanel = $Page->DrillDownInPanel;
-    echo $Page->Chart2->render($Page->ChartData, "ew-chart-top");
-}
-?>
-<?php if (!$Page->isExport() || $Page->isExport("print")) { ?>
-</div>
-<!-- /#ew-top -->
-<?php } ?>
-<?php if (!$Page->isExport() || $Page->isExport("print")) { ?>
 <!-- Middle Container -->
 <div id="ew-middle" class="<?= $Page->MiddleContentClass ?>">
 <?php } ?>
@@ -488,6 +466,14 @@ if (!$DashboardReport) {
 <?php } ?>
 <?php if ($Page->TotalRecords > 0 || $Page->CurrentAction) { ?>
 <div class="card ew-card ew-grid<?= $Page->isAddOrEdit() ? " ew-grid-add-edit" : "" ?> <?= $Page->TableGridClass ?>">
+<?php if (!$Page->isExport()) { ?>
+<div class="card-header ew-grid-upper-panel">
+<?= $Page->Pager?->render() ?>
+<div class="ew-list-other-options">
+<?= $Page->OtherOptions->render("body") ?>
+</div>
+</div>
+<?php } ?>
 <?php $formAction = GetUrl(UrlFor("list.view_payment_report", $Page->getUrlKey(true))) ?>
 <form name="<?= $Page->FormName ?>" id="<?= $Page->FormName ?>" class="ew-form ew-list-form" action="<?= $formAction ?>" method="post" novalidate autocomplete="off">
 <?php if (Config("CSRF_PROTECTION")) { ?>
@@ -687,14 +673,6 @@ $Page->ListOptions->render("body", "right", $Page->RowCount);
 <input type="hidden" name="action" id="action" value="">
 <?php } ?>
 </form><!-- /.ew-list-form -->
-<?php if (!$Page->isExport()) { ?>
-<div class="card-footer ew-grid-lower-panel">
-<?= $Page->Pager?->render() ?>
-<div class="ew-list-other-options">
-<?= $Page->OtherOptions->render("body", "bottom") ?>
-</div>
-</div>
-<?php } ?>
 </div><!-- /.ew-grid -->
 <?php } else { ?>
 <div class="ew-list-other-options">
@@ -713,6 +691,20 @@ $Page->ListOptions->render("body", "right", $Page->RowCount);
 <!-- Bottom Container -->
 <div id="ew-bottom" class="<?= $Page->BottomContentClass ?>">
 <?php } ?>
+<?php
+if (!$DashboardReport) {
+    // Set up chart drilldown
+    $Page->Chart1->DrillDownInPanel = $Page->DrillDownInPanel;
+    echo $Page->Chart1->render($Page->ChartData, "ew-chart-bottom");
+}
+?>
+<?php
+if (!$DashboardReport) {
+    // Set up chart drilldown
+    $Page->Chart2->DrillDownInPanel = $Page->DrillDownInPanel;
+    echo $Page->Chart2->render($Page->ChartData, "ew-chart-bottom");
+}
+?>
 <?php
 if (!$DashboardReport) {
     // Set up chart drilldown
@@ -740,6 +732,9 @@ ew.on("head", function() {
 <script<?= Nonce() ?>>
 ew.on("load", function () {
     // Write your table-specific startup script here, no need to add script tags.
+    
+    // Initialize export links
+    ew.initExportLinks();
 });
 </script>
 <?php } ?>

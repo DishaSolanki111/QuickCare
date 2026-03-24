@@ -233,9 +233,19 @@ class ExportPdf extends AbstractExport
     {
         @set_time_limit(Config("PDF_TIME_LIMIT"));
         $this->adjustHtml();
+        
+        // Clean output buffer to prevent HTML content corruption
+        if (ob_get_length()) {
+            ob_clean();
+        }
+        
         $options = new \Dompdf\Options(self::$Options);
         $options->set("pdfBackend", $this->PdfBackend);
         $options->set("isRemoteEnabled", true); // Support remote images such as S3
+        $options->set("isHtml5ParserEnabled", true); // Enable HTML5 parser
+        $options->set("defaultFont", "Arial"); // Set default font
+        $options->set("fontDir", []); // Use system font directories
+        $options->set("fontCache", sys_get_temp_dir()); // Set font cache directory
         $chroot = $options->getChroot();
         $chroot[] = PrefixDirectoryPath(UploadTempPathRoot());
         $chroot[] = PrefixDirectoryPath(UploadTempPath());
