@@ -192,17 +192,17 @@ if ($doctors_query && mysqli_num_rows($doctors_query) > 0) {
         
         .page-header {
             background: var(--white);
-            border-radius: 10px;
-            padding: 14px 18px;
-            margin-bottom: 18px;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.06);
+            border-radius: 8px;
+            padding: 10px 14px;
+            margin-bottom: 14px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
         
         .page-title {
-            font-size: 22px;
+            font-size: 18px;
             font-weight: 600;
             color: var(--dark-blue);
             margin: 0;
@@ -210,35 +210,37 @@ if ($doctors_query && mysqli_num_rows($doctors_query) > 0) {
 
         .filter-container {
             background: white;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            padding: 14px;
+            border-radius: 8px;
+            margin-bottom: 14px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
         }
 
         .filter-container form {
             display: flex;
-            gap: 15px;
+            gap: 12px;
             flex-wrap: wrap;
         }
 
         .filter-container input,
         .filter-container select {
-            padding: 10px;
+            padding: 8px 10px;
             border: 1px solid #D0D7E1;
-            border-radius: 5px;
+            border-radius: 4px;
+            font-size: 14px;
         }
 
         .filter-container button {
-            padding: 10px 15px;
+            padding: 8px 12px;
             background: var(--dark-blue);
             color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: 4px;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
-            gap: 6px;
+            gap: 5px;
+            font-size: 14px;
         }
     
     .search-header {
@@ -469,16 +471,16 @@ if ($doctors_query && mysqli_num_rows($doctors_query) > 0) {
         .doctor-header {
             background: var(--dark-blue);
             color: white;
-            padding: 18px 22px;
+            padding: 12px 16px;
             display: flex;
             align-items: center;
-            gap: 18px;
+            gap: 14px;
             border-radius: 12px 12px 0 0;
         }
         
         .doctor-avatar {
-            width: 64px;
-            height: 64px;
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
             border: 2px solid var(--light-blue);
             object-fit: cover;
@@ -486,21 +488,21 @@ if ($doctors_query && mysqli_num_rows($doctors_query) > 0) {
         
         .doctor-info h3 {
             margin: 0;
-            font-size: 20px;
+            font-size: 16px;
             font-weight: 600;
         }
         
         .doctor-specialization {
             display: inline-block;
             background: rgba(72, 41, 112, 0.12);
-            padding: 4px 10px;
-            border-radius: 16px;
-            font-size: 13px;
-            margin-top: 6px;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            margin-top: 4px;
         }
         
         .schedule-content {
-            padding: 20px;
+            padding: 14px;
             flex: 1;
             display: flex;
             flex-direction: column;
@@ -509,23 +511,23 @@ if ($doctors_query && mysqli_num_rows($doctors_query) > 0) {
         .schedule-grid {
             display: flex;
             flex-direction: column;
-            gap: 10px;
-            margin-bottom: 16px;
+            gap: 8px;
+            margin-bottom: 12px;
             flex: 1;
         }
         
         /* Schedule row: horizontal rounded card, light grey, blue left accent */
         .day-schedule {
             background: #f6f9fb;
-            border-radius: 10px;
-            padding: 14px 18px;
+            border-radius: 8px;
+            padding: 10px 14px;
             border-left: 3px solid var(--secondary-color);
             box-shadow: 0 1px 3px rgba(0,0,0,0.04);
             transition: all 0.3s ease;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 18px;
+            gap: 14px;
             flex-wrap: wrap;
         }
         
@@ -538,10 +540,10 @@ if ($doctors_query && mysqli_num_rows($doctors_query) > 0) {
         .day-name {
             font-weight: 600;
             color: var(--dark-blue);
-            font-size: 16px;
+            font-size: 14px;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             flex-shrink: 0;
         }
         
@@ -552,23 +554,23 @@ if ($doctors_query && mysqli_num_rows($doctors_query) > 0) {
         /* Time: green clock icon, center area */
         .time-range {
             color: #4a5568;
-            font-size: 15px;
+            font-size: 13px;
             font-weight: 500;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 5px;
             flex-shrink: 0;
         }
         
         .time-range i {
             color: var(--accent-color);
-            font-size: 18px;
+            font-size: 14px;
         }
         
         .schedule-actions {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 8px;
             flex-shrink: 0;
         }
         
@@ -578,16 +580,16 @@ if ($doctors_query && mysqli_num_rows($doctors_query) > 0) {
         
         /* Edit: orange, Delete: red, rounded, right-aligned */
         .btn-edit, .btn-delete {
-            padding: 8px 14px;
+            padding: 6px 10px;
             border: none;
-            border-radius: 8px;
-            font-size: 14px;
+            border-radius: 6px;
+            font-size: 12px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.25s ease;
             display: inline-flex;
             align-items: center;
-            gap: 6px;
+            gap: 4px;
             color: white;
         }
         
@@ -609,17 +611,17 @@ if ($doctors_query && mysqli_num_rows($doctors_query) > 0) {
         
         .no-schedule {
             background: #f8f9fa;
-            border-radius: 10px;
-            padding: 24px 28px;
+            border-radius: 8px;
+            padding: 16px 20px;
             text-align: center;
             color: #6c757d;
             font-style: italic;
-            font-size: 16px;
+            font-size: 14px;
         }
         
         .no-schedule i {
-            font-size: 28px;
-            margin-bottom: 12px;
+            font-size: 22px;
+            margin-bottom: 8px;
             display: block;
         }
         
@@ -627,14 +629,15 @@ if ($doctors_query && mysqli_num_rows($doctors_query) > 0) {
             background: var(--accent-color);
             color: var(--white);
             border: none;
-            padding: 12px 25px;
-            border-radius: 10px;
+            padding: 8px 16px;
+            border-radius: 6px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
             display: inline-flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
+            font-size: 14px;
         }
         
         .add-schedule-btn:hover {
@@ -826,38 +829,38 @@ if ($doctors_query && mysqli_num_rows($doctors_query) > 0) {
             }
             
             .doctor-header {
-                padding: 16px 18px;
+                padding: 10px 12px;
                 gap: 16px;
             }
             
             .doctor-avatar {
-                width: 60px;
-                height: 60px;
+                width: 45px;
+                height: 45px;
             }
             
             .doctor-info h3 {
-                font-size: 18px;
+                font-size: 15px;
             }
             
             .schedule-content {
-                padding: 18px;
+                padding: 12px;
             }
             
             .schedule-grid {
-                gap: 10px;
+                gap: 6px;
             }
             
             .day-schedule {
-                padding: 14px 16px;
-                gap: 16px;
+                padding: 8px 12px;
+                gap: 12px;
             }
             
             .day-name {
-                font-size: 16px;
+                font-size: 13px;
             }
             
             .time-range {
-                font-size: 15px;
+                font-size: 12px;
             }
             
         
@@ -936,12 +939,6 @@ if ($doctors_query && mysqli_num_rows($doctors_query) > 0) {
                     }
                     ?>
                 </select>
-
-                <input
-                    type="date"
-                    name="schedule_date"
-                    value="<?php echo isset($_POST['schedule_date']) ? htmlspecialchars($_POST['schedule_date']) : ''; ?>"
-                >
 
                 <button type="submit">
                     <i class="bi bi-funnel"></i>

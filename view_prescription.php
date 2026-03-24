@@ -230,7 +230,6 @@
     <?php if (!empty($scheduled_appointments)): ?>
     <div class="vitals-section">
         <h3><i class="fa-solid fa-heart-pulse"></i> Add vitals for appointment (Receptionist)</h3>
-        <p style="margin-bottom:12px; color:#666; font-size:0.9rem;">Add <strong>Blood Pressure (BP)</strong>, <strong>Height (cm)</strong> and <strong>Weight (kg)</strong> here before the patient sees the doctor. These are stored in the same prescription record and will appear <strong>pre-filled in the prescription form</strong> when the doctor opens it and selects this appointment.</p>
         <table class="vitals-table">
             <thead><tr><th>Date & Time</th><th>Patient</th><th>Doctor</th><th>Vitals</th><th>Action</th></tr></thead>
             <tbody>

@@ -41,43 +41,45 @@ $receptionist = mysqli_fetch_assoc($receptionist_query);
 
         .main {
             margin-left: 250px;
-            padding: 30px;
+            padding: 20px;
             width: calc(100% - 250px);
         }
 
         /* Filter Section */
         .filter-section {
             background: white;
-            padding: 20px;
-            border-radius: 15px;
-            margin-bottom: 30px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            padding: 14px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
             display: flex;
             align-items: center;
-            gap: 20px;
+            gap: 15px;
         }
 
         .filter-section form {
             display: flex;
-            gap: 15px;
+            gap: 12px;
             width: 100%;
         }
 
         .filter-input {
-            padding: 10px;
+            padding: 8px 10px;
             border: 1px solid #ddd;
-            border-radius: 8px;
+            border-radius: 6px;
             flex: 1;
+            font-size: 14px;
         }
 
         .btn-filter {
             background: var(--mid-blue);
             color: white;
             border: none;
-            padding: 10px 25px;
-            border-radius: 8px;
+            padding: 8px 18px;
+            border-radius: 6px;
             cursor: pointer;
             transition: 0.3s;
+            font-size: 14px;
         }
 
         .btn-filter:hover { background: var(--soft-blue); }
@@ -85,33 +87,33 @@ $receptionist = mysqli_fetch_assoc($receptionist_query);
         /* Doctor Card Layout */
         .doctor-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
-            gap: 25px;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 18px;
         }
 
         .doctor-card {
             background: white;
-            border-radius: 15px;
+            border-radius: 10px;
             overflow: hidden;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.06);
             border: 1px solid rgba(0,0,0,0.05);
         }
 
         .doctor-header {
             background: var(--dark-blue);
             color: white;
-            padding: 20px;
+            padding: 14px;
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 12px;
         }
 
-        .doctor-header i { font-size: 24px; color: var(--light-blue); }
-        .doctor-header h3 { margin: 0; font-size: 1.2rem; }
+        .doctor-header i { font-size: 20px; color: var(--light-blue); }
+        .doctor-header h3 { margin: 0; font-size: 1rem; }
 
         .appointment-list {
-            padding: 15px;
-            max-height: 400px;
+            padding: 12px;
+            max-height: 350px;
             overflow-y: auto;
         }
 
@@ -119,7 +121,7 @@ $receptionist = mysqli_fetch_assoc($receptionist_query);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 12px;
+            padding: 10px;
             border-bottom: 1px solid #eee;
             transition: 0.2s;
         }
@@ -128,13 +130,13 @@ $receptionist = mysqli_fetch_assoc($receptionist_query);
         .patient-row:hover { background: #f9f9f9; }
 
         .patient-info { display: flex; flex-direction: column; }
-        .patient-name { font-weight: bold; color: var(--mid-blue); }
-        .apt-time { font-size: 0.85rem; color: #666; }
+        .patient-name { font-weight: bold; color: var(--mid-blue); font-size: 14px; }
+        .apt-time { font-size: 0.8rem; color: #666; }
 
         .status-pill {
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 0.75rem;
+            padding: 3px 8px;
+            border-radius: 15px;
+            font-size: 0.7rem;
             font-weight: 600;
             text-transform: uppercase;
         }
