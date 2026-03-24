@@ -14,7 +14,7 @@ class FlysystemConfig implements \Symfony\Component\Config\Builder\ConfigBuilder
     private $storages;
     private $_usedProperties = [];
     private $_hasDeprecatedCalls = false;
-
+    
     /**
      * @deprecated since Symfony 7.4
      */
@@ -27,15 +27,15 @@ class FlysystemConfig implements \Symfony\Component\Config\Builder\ConfigBuilder
         } elseif (1 < \func_num_args()) {
             throw new InvalidConfigurationException('The node created by "storage()" has already been initialized. You cannot pass values the second time you call storage().');
         }
-
+    
         return $this->storages[$name];
     }
-
+    
     public function getExtensionAlias(): string
     {
         return 'flysystem';
     }
-
+    
     public function __construct(array $config = [])
     {
         if (array_key_exists('storages', $config)) {
@@ -43,12 +43,12 @@ class FlysystemConfig implements \Symfony\Component\Config\Builder\ConfigBuilder
             $this->storages = array_map(fn ($v) => new \Symfony\Config\Flysystem\StorageConfig($v), $config['storages']);
             unset($config['storages']);
         }
-
+    
         if ($config) {
             throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($config)));
         }
     }
-
+    
     public function toArray(): array
     {
         $output = [];
@@ -58,7 +58,7 @@ class FlysystemConfig implements \Symfony\Component\Config\Builder\ConfigBuilder
         if ($this->_hasDeprecatedCalls) {
             trigger_deprecation('symfony/config', '7.4', 'Calling any fluent method on "%s" is deprecated; pass the configuration to the constructor instead.', $this::class);
         }
-
+    
         return $output;
     }
 

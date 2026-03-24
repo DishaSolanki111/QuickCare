@@ -478,8 +478,8 @@ return [
     'ROUTE_COMPOSITE_KEY_SEPARATOR' => '/', // Route composite key separator
     'LAZY_LOAD' => true, // Lazy loading of images
     'BODY_CLASS' => "hold-transition layout-fixed", // CSS class(es) for <body> tag
-    'SIDEBAR_CLASS' => "main-sidebar sidebar-dark-red", // CSS class(es) for sidebar
-    'NAVBAR_CLASS' => "main-header navbar navbar-expand navbar-red navbar-dark border-bottom-0", // CSS class(es) for navbar
+    'SIDEBAR_CLASS' => "main-sidebar sidebar-dark-navy", // CSS class(es) for sidebar
+    'NAVBAR_CLASS' => "main-header navbar navbar-expand navbar-navy navbar-dark border-bottom-0", // CSS class(es) for navbar
     'USE_JAVASCRIPT_MESSAGE' => true, // Use JavaScript message (toast)
     'REDIRECT_STATUS_CODE' => 302, // Redirect status code
 

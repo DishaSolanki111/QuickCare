@@ -1096,12 +1096,12 @@ class AppointmentReportSummary extends AppointmentReport implements PageInterfac
         // Printer friendly
         $item = $this->ExportOptions->add("print");
         $item->Body = $this->getExportTag("print");
-        $item->Visible = true;
+        $item->Visible = false;
 
         // Export to Excel
         $item = $this->ExportOptions->add("excel");
         $item->Body = $this->getExportTag("excel");
-        $item->Visible = true;
+        $item->Visible = false;
 
         // Export to Word
         $item = $this->ExportOptions->add("word");
@@ -1125,7 +1125,7 @@ class AppointmentReportSummary extends AppointmentReport implements PageInterfac
 
         // Drop down button for export
         $this->ExportOptions->UseButtonGroup = true;
-        $this->ExportOptions->UseDropDownButton = true;
+        $this->ExportOptions->UseDropDownButton = false;
         if ($this->ExportOptions->UseButtonGroup && IsMobile()) {
             $this->ExportOptions->UseDropDownButton = true;
         }

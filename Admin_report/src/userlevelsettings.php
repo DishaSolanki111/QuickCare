@@ -54,7 +54,9 @@ return [
     ['{A46002E4-B4F6-47F2-B55F-A3278D4B1DC4}view_appointment_report', '-2', '0'],
     ['{A46002E4-B4F6-47F2-B55F-A3278D4B1DC4}view_patient_report', '-2', '0'],
     ['{A46002E4-B4F6-47F2-B55F-A3278D4B1DC4}view_payment_report', '-2', '0'],
-    ['{A46002E4-B4F6-47F2-B55F-A3278D4B1DC4}view_doctor_report', '-2', '0']
+    ['{A46002E4-B4F6-47F2-B55F-A3278D4B1DC4}view_doctor_report', '-2', '0'],
+    ['{A46002E4-B4F6-47F2-B55F-A3278D4B1DC4}notification_seen_tbl', '-2', '0'],
+    ['{A46002E4-B4F6-47F2-B55F-A3278D4B1DC4}receptionist_notifications', '-2', '0']
 ],
 
     /**
@@ -87,6 +89,8 @@ return [
     ['view_appointment_report', 'view_appointment_report', 'view appointment report', true, '{A46002E4-B4F6-47F2-B55F-A3278D4B1DC4}', 'ViewAppointmentReportList'],
     ['view_patient_report', 'view_patient_report', 'view patient report', true, '{A46002E4-B4F6-47F2-B55F-A3278D4B1DC4}', ''],
     ['view_payment_report', 'view_payment_report', 'view payment report', true, '{A46002E4-B4F6-47F2-B55F-A3278D4B1DC4}', 'ViewPaymentReportList'],
-    ['view_doctor_report', 'view_doctor_report', 'view doctor report', true, '{A46002E4-B4F6-47F2-B55F-A3278D4B1DC4}', 'ViewDoctorReportList']
+    ['view_doctor_report', 'view_doctor_report', 'view doctor report', true, '{A46002E4-B4F6-47F2-B55F-A3278D4B1DC4}', 'ViewDoctorReportList'],
+    ['notification_seen_tbl', 'notification_seen_tbl', 'notification seen tbl', true, '{A46002E4-B4F6-47F2-B55F-A3278D4B1DC4}', ''],
+    ['receptionist_notifications', 'receptionist_notifications', 'receptionist notifications', true, '{A46002E4-B4F6-47F2-B55F-A3278D4B1DC4}', '']
 ],
 ];

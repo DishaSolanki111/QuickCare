@@ -125,6 +125,8 @@ ew.emit("head");
     </ul>
 </li>
 </script>
+<link rel="shortcut icon" type="image/png" href="<?= BasePath() ?>/logo.JPG">
+<link rel="icon" type="image/png" href="<?= BasePath() ?>/logo.JPG">
 <meta name="generator" content="PHPMaker 2026.7.0">
 </head>
 <body class="<?= Config("BODY_CLASS") ?>">
@@ -140,7 +142,7 @@ ew.emit("head");
                     <a class="nav-link" data-widget="pushmenu" data-enable-remember="true" data-ew-action="none"><i class="fa-solid fa-bars ew-icon"></i></a>
                 </li>
                 <a class="navbar-brand d-none" href="#" data-ew-action="none">
-                    <span class="brand-text">PHPMaker 2026</span>
+                    <span class="brand-text">QuickCare</span>
                 </a>
             </ul>
             <!-- Right navbar links -->
@@ -153,7 +155,7 @@ ew.emit("head");
         <div class="brand-container">
             <!-- Brand Logo //** Note: Only licensed users are allowed to change the logo ** -->
             <a href="#" class="brand-link">
-                <span class="brand-text">PHPMaker 2026</span>
+                <span class="brand-text">QuickCare</span>
             </a>
             <?php if (preg_match('/\bsidebar-mini\b/', Config("BODY_CLASS"))) { ?>
             <a class="pushmenu mx-1" data-pushmenu="mini" role="button"><i class="fa-solid fa-angle-double-left"></i></a>

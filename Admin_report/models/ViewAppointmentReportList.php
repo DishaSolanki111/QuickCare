@@ -165,9 +165,9 @@ class ViewAppointmentReportList extends ViewAppointmentReport implements PageInt
     public bool $RestoreSearch = false;
     public ?string $HashValue = null; // Hash value
     public ?SubPages $DetailPages = null;
-    public string $TopContentClass = "ew-top d-flex";
+    public string $TopContentClass = "ew-top";
     public string $MiddleContentClass = "ew-middle";
-    public string $BottomContentClass = "ew-bottom d-flex";
+    public string $BottomContentClass = "ew-bottom";
     public bool $IsModal = false;
     private bool $UseInfiniteScroll = false;
 
@@ -590,6 +590,7 @@ class ViewAppointmentReportList extends ViewAppointmentReport implements PageInt
     {
         // Set up list options
         $this->setupListOptions();
+        $this->setupExportOptions();
 
         // Search options
         $this->setupSearchOptions();
@@ -711,6 +712,7 @@ class ViewAppointmentReportList extends ViewAppointmentReport implements PageInt
 
         // Set up list options
         $this->setupListOptions();
+        $this->setupExportOptions();
         $this->setVisibility();
 
         // Global Page Loading event (in userfn*.php)
@@ -757,7 +759,6 @@ class ViewAppointmentReportList extends ViewAppointmentReport implements PageInt
 
         // Hide list options
         if ($this->isExport()) {
-            $this->ListOptions->hideAllOptions(["sequence"]);
             $this->ListOptions->UseDropDownButton = false; // Disable drop down button
             $this->ListOptions->UseButtonGroup = false; // Disable button group
         } elseif ($this->isGridAdd() || $this->isGridEdit() || $this->isMultiEdit() || $this->isConfirm()) {
@@ -767,8 +768,7 @@ class ViewAppointmentReportList extends ViewAppointmentReport implements PageInt
         }
 
         // Hide options
-        if ($this->isExport() || !(IsEmpty($this->CurrentAction) || $this->isSearch())) {
-            $this->ExportOptions->hideAllOptions();
+        if (!(IsEmpty($this->CurrentAction) || $this->isSearch())) {
             $this->FilterOptions->hideAllOptions();
             $this->ImportOptions->hideAllOptions();
         }
@@ -1536,7 +1536,7 @@ class ViewAppointmentReportList extends ViewAppointmentReport implements PageInt
         $item->ShowInButtonGroup = false;
 
         // Drop down button for ListOptions
-        $this->ListOptions->UseDropDownButton = false;
+        $this->ListOptions->UseDropDownButton = true;
         $this->ListOptions->DropDownButtonPhrase = $this->language->phrase("ButtonListOptions");
         $this->ListOptions->UseButtonGroup = false;
         if ($this->ListOptions->UseButtonGroup && IsMobile()) {
@@ -1551,6 +1551,34 @@ class ViewAppointmentReportList extends ViewAppointmentReport implements PageInt
         $this->listOptionsLoad();
         $item = $this->ListOptions[$this->ListOptions->GroupOptionName];
         $item->Visible = $this->ListOptions->groupOptionVisible();
+    }
+
+    // Set up export options
+    protected function setupExportOptions(): void
+    {
+        // Page URL for export
+        $pageUrl = $this->pageUrl(false);
+        
+        // Export to PDF
+        $item = $this->ExportOptions->add("pdf");
+        $item->Body = "<a href=\"" . $pageUrl . "?export=pdf\" class=\"ew-export-link\" data-export=\"pdf\">" . $this->language->phrase("ExportToPdf") . "</a>";
+        $item->Visible = true;
+        $item->CssClass = "ew-export-link";
+        $item->OnLeft = false;
+        $item->UseImageAndText = true;
+
+        // Export to Excel
+        $item = $this->ExportOptions->add("excel");
+        $item->Body = "<a href=\"" . $pageUrl . "?export=excel\" class=\"ew-export-link\" data-export=\"excel\">" . $this->language->phrase("ExportToExcel") . "</a>";
+        $item->Visible = true;
+        $item->CssClass = "ew-export-link";
+        $item->OnLeft = false;
+        $item->UseImageAndText = true;
+
+        // Use button group instead of dropdown
+        $this->ExportOptions->UseDropDownButton = false;
+        $this->ExportOptions->UseButtonGroup = true;
+        $this->ExportOptions->ButtonGroupClass = "btn-group";
     }
 
     // Add "hash" parameter to URL
