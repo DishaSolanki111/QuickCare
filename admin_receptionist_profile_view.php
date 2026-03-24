@@ -20,7 +20,7 @@ if ($receptionist_id <= 0) {
 
 $stmt = $conn->prepare("
     SELECT RECEPTIONIST_ID, FIRST_NAME, LAST_NAME, DOB, DOJ, GENDER, PHONE, EMAIL, ADDRESS
-        , SECURITY_QUESTION
+        
     FROM receptionist_tbl
     WHERE RECEPTIONIST_ID = ?
 ");
@@ -215,22 +215,7 @@ $fullName = $receptionist['FIRST_NAME'] . ' ' . $receptionist['LAST_NAME'];
             </div>
         </div>
 
-        <?php
-        $sec_q = trim((string)($receptionist['SECURITY_QUESTION'] ?? ''));
-        ?>
-        <div class="section-title" style="margin-top:16px;">Security</div>
-        <div class="grid-2">
-            <div>
-                <div class="field-label">Security Question</div>
-                <div class="field-value">
-                    <?php echo $sec_q !== '' ? htmlspecialchars($sec_q) : 'Not set'; ?>
-                </div>
-            </div>
-            <div>
-                <div class="field-label">Security Answer</div>
-                <div class="field-value">Hidden</div>
-            </div>
-        </div>
+       
 
         <div class="footer-actions">
             <a class="btn-back" href="Admin_recept.php">
