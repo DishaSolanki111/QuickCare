@@ -12,6 +12,17 @@ if (!isset($_SESSION['LOGGED_IN']) || $_SESSION['LOGGED_IN'] !== true || $_SESSI
 
 include 'config.php';
 
+// Add the missing validation function
+function qc_validate_person_name($raw, &$normalized, &$error) {
+    $val = trim($raw);
+    if ($val === '') { $error = "This field is required."; return false; }
+    if (strlen($val) < 2 || strlen($val) > 50) { $error = "Must be 2–50 characters."; return false; }
+    if (!preg_match('/^[A-Za-z\s]+$/', $val)) { $error = "Only letters are allowed."; return false; }
+    if (preg_match('/(.)\1{3,}/', $val)) { $error = "No letter may repeat more than 3 times consecutively."; return false; }
+    $normalized = $val;
+    return true;
+}
+
 // Determine doctor ID from POST (preferred on form submit) or GET for initial load
 $doctor_id = null;
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['doctor_id']) && is_numeric($_POST['doctor_id'])) {
@@ -91,8 +102,8 @@ if (isset($_POST['action']) && $_POST['action'] == 'edit_doctor') {
     
     if (empty($education)) {
         $errors[] = "Education is required.";
-    } elseif (!preg_match('/^[a-zA-Z\s\.\,]+$/', $education)) {
-        $errors[] = "Education should contain only letters, spaces, dots, and commas.";
+    } elseif (!preg_match('/^[a-zA-Z\s\.\,\(\)]+$/', $education)) {
+        $errors[] = "Education should contain only letters, spaces, dots, commas, and parentheses.";
     }
     
     if (empty($phone)) {
