@@ -7,7 +7,7 @@ namespace Proxies\__CG__\PHPMaker2026\Project2\Db\Entity;
  */
 class ViewAppointmentReport extends \PHPMaker2026\Project2\Db\Entity\ViewAppointmentReport implements \Doctrine\ORM\Proxy\InternalProxy
 {
-    use \Symfony\Component\VarExporter\LazyGhostTrait {
+     use \Symfony\Component\VarExporter\LazyGhostTrait {
         initializeLazyObject as private;
         setLazyObjectAsInitialized as public __setInitialized;
         isLazyObjectInitialized as private;
@@ -52,7 +52,7 @@ class ViewAppointmentReport extends \PHPMaker2026\Project2\Db\Entity\ViewAppoint
         'status' => [parent::class, 'status', null, 16],
         'weekNumber' => [parent::class, 'weekNumber', null, 16],
         'year' => [parent::class, 'year', null, 16],
-    ];
+    ];
 
     public function __isInitialized(): bool
     {

@@ -201,52 +201,6 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;
 /* ── include your sidebar or render fallback ── */
 if (file_exists('Admin_sidebar.php')) {
     include 'Admin_sidebar.php';
-} else {
-    /* Fallback: visually identical to your screenshots */
-    $nav = [
-        ['Home',           'fa-house',             'Admin_home.php'],
-        ['Dashboard',      'fa-gauge',             'Admin_dashboard.php'],
-        ['Appointments',   'fa-calendar-check',    'Admin_appointment.php'],
-        ['Doctors',        'fa-user-doctor',       'Admin_doctor.php'],
-        ['Receptionist',   'fa-headset',           'Admin_receptionist.php'],
-        ['Patients',       'fa-hospital-user',     'Admin_patient.php'],
-        ['Doctor Schedule','fa-calendar-days',     'Admin_schedule.php'],
-        ['Prescriptions',  'fa-file-prescription', 'Admin_prescription.php'],
-        ['Payments',       'fa-credit-card',       'Admin_payment.php'],
-        ['Feedback',       'fa-star',              'Admin_feedback.php'],
-        ['Reports',        'fa-chart-bar',         'report.php'],
-    ];
-    $cur = basename($_SERVER['PHP_SELF']);
-    echo '<div style="display:flex;flex-direction:column;height:100%">';
-
-    /* logo */
-    echo '<div style="padding:18px 14px 16px;text-align:center;border-bottom:1px solid rgba(255,255,255,.09)">';
-    echo '<div style="width:54px;height:54px;border-radius:50%;background:#064469;margin:0 auto 8px;'
-        .'display:flex;align-items:center;justify-content:center;font-size:22px;color:#9CCDDB">'
-        .'<i class="fas fa-kit-medical"></i></div>';
-    echo '<div style="color:#fff;font-size:15px;font-weight:700">QuickCare</div></div>';
-
-    /* nav items */
-    echo '<nav style="padding:10px 8px;flex:1">';
-    foreach ($nav as $n) {
-        $a  = ($cur === basename($n[2]));
-        $bg = $a ? 'background:rgba(87,144,171,.22);' : '';
-        $cl = $a ? 'color:#9CCDDB;font-weight:600;' : 'color:rgba(255,255,255,.70);';
-        echo "<a href='{$n[2]}' style='display:flex;align-items:center;gap:10px;"
-            ."padding:9px 11px;border-radius:7px;text-decoration:none;"
-            ."font-size:13px;margin-bottom:2px;{$bg}{$cl}'>"
-            ."<i class='fas {$n[1]}' style='width:15px;text-align:center;font-size:13px'></i>"
-            ."{$n[0]}</a>";
-    }
-    echo '</nav>';
-
-    /* logout */
-    echo '<div style="padding:10px 8px;border-top:1px solid rgba(255,255,255,.08)">';
-    echo "<a href='logout.php' style='display:flex;align-items:center;justify-content:center;"
-        ."gap:8px;padding:9px;border-radius:7px;background:#064469;color:#fff;"
-        ."text-decoration:none;font-size:13px;font-weight:600'>"
-        ."<i class='fas fa-right-from-bracket'></i> Logout</a>";
-    echo '</div></div>';
 }
 ?>
 </div>
@@ -280,12 +234,9 @@ if (file_exists('Admin_sidebar.php')) {
         <div><div class="ov-v"><?=$total_appt?></div><div class="ov-l">Appointments</div></div></div>
       <div class="ov-c"><div class="ov-ic"><i class="fas fa-indian-rupee-sign"></i></div>
         <div><div class="ov-v">₹<?=number_format($revenue)?></div><div class="ov-l">Revenue</div></div></div>
-      <div class="ov-c"><div class="ov-ic"><i class="fas fa-file-prescription"></i></div>
-        <div><div class="ov-v"><?=$total_presc?></div><div class="ov-l">Prescriptions</div></div></div>
-      <div class="ov-c"><div class="ov-ic"><i class="fas fa-bell"></i></div>
-        <div><div class="ov-v"><?=$appt_rem+$med_rem?></div><div class="ov-l">Reminders</div></div></div>
-      <div class="ov-c"><div class="ov-ic"><i class="fas fa-star"></i></div>
-        <div><div class="ov-v"><?=$avg_rating?>/5</div><div class="ov-l">Avg Rating</div></div></div>
+      <div class="ov-c"><div class="ov-ic"><i class="fas fa-user-doctor"></i></div>
+        <div><div class="ov-v"><?=$total_docs?></div><div class="ov-l">Doctors</div></div></div>
+      
     </div>
 
     <!-- report cards -->
@@ -331,59 +282,7 @@ if (file_exists('Admin_sidebar.php')) {
 </a>
       </div>
 
-      <!-- 3. PRESCRIPTION -->
-      <div class="card t3">
-        <div class="bar"></div>
-        <div class="ci">
-          <div class="ci-top">
-            <div class="ci-ico"><i class="fas fa-file-prescription"></i></div>
-            <div class="ci-title">Prescription Report</div>
-          </div>
-          <div class="ci-desc">Prescriptions per month, doctor-wise count, diagnosis trends, full records with symptoms, diagnosis, BP, diabetes status and doctor notes.</div>
-        </div>
-        <div class="msr">
-          <div class="ms"><div class="ms-v"><?=$total_presc?></div><div class="ms-l">Total</div></div>
-          <div class="ms"><div class="ms-v"><?=$presc_docs?></div><div class="ms-l">Doctors</div></div>
-          <div class="ms"><div class="ms-v"><?=$presc_meds?></div><div class="ms-l">Medicines</div></div>
-        </div>
-        <a href="report_detail.php?type=prescription" class="vbtn" style="background:var(--c3)"><i class="fas fa-arrow-right"></i>View Prescription Report</a>
-      </div>
-
-      <!-- 4. REMINDER -->
-      <div class="card t4">
-        <div class="bar"></div>
-        <div class="ci">
-          <div class="ci-top">
-            <div class="ci-ico"><i class="fas fa-bell"></i></div>
-            <div class="ci-title">Reminder Report</div>
-          </div>
-          <div class="ci-desc">Appointment reminder counts by week, medicine reminder activity per patient, creator breakdown (Receptionist / Patient) and full reminder tables.</div>
-        </div>
-        <div class="msr">
-          <div class="ms"><div class="ms-v"><?=$appt_rem?></div><div class="ms-l">Appt Rem</div></div>
-          <div class="ms"><div class="ms-v"><?=$med_rem?></div><div class="ms-l">Med Rem</div></div>
-          <div class="ms"><div class="ms-v"><?=$appt_rem+$med_rem?></div><div class="ms-l">Total</div></div>
-        </div>
-        <a href="report_detail.php?type=reminder" class="vbtn" style="background:var(--red)"><i class="fas fa-arrow-right"></i>View Reminder Report</a>
-      </div>
-
-      <!-- 5. FEEDBACK -->
-      <div class="card t5">
-        <div class="bar"></div>
-        <div class="ci">
-          <div class="ci-top">
-            <div class="ci-ico"><i class="fas fa-star"></i></div>
-            <div class="ci-title">Feedback Report</div>
-          </div>
-          <div class="ci-desc">Patient ratings per doctor, star distribution chart, average rating by specialisation and all patient feedback comments with appointment details.</div>
-        </div>
-        <div class="msr">
-          <div class="ms"><div class="ms-v"><?=$total_fb?></div><div class="ms-l">Reviews</div></div>
-          <div class="ms"><div class="ms-v"><?=$avg_rating?></div><div class="ms-l">Avg Stars</div></div>
-          <div class="ms"><div class="ms-v" style="color:var(--green)"><?=$five_star?></div><div class="ms-l">5-Star</div></div>
-        </div>
-        <a href="report_detail.php?type=feedback" class="vbtn" style="background:var(--gold)"><i class="fas fa-arrow-right"></i>View Feedback Report</a>
-      </div>
+     
 
       <!-- 6. DOCTOR SUMMARY -->
       <div class="card t6">

@@ -17,7 +17,7 @@ class ExerciseHtmlPurifierConfig implements \Symfony\Component\Config\Builder\Co
     private $htmlProfiles;
     private $_usedProperties = [];
     private $_hasDeprecatedCalls = false;
-
+    
     /**
      * @default '%kernel.cache_dir%/htmlpurifier'
      * @param ParamConfigurator|mixed $value
@@ -29,10 +29,10 @@ class ExerciseHtmlPurifierConfig implements \Symfony\Component\Config\Builder\Co
         $this->_hasDeprecatedCalls = true;
         $this->_usedProperties['defaultCacheSerializerPath'] = true;
         $this->defaultCacheSerializerPath = $value;
-
+    
         return $this;
     }
-
+    
     /**
      * @default 493
      * @param ParamConfigurator|mixed $value
@@ -44,10 +44,10 @@ class ExerciseHtmlPurifierConfig implements \Symfony\Component\Config\Builder\Co
         $this->_hasDeprecatedCalls = true;
         $this->_usedProperties['defaultCacheSerializerPermissions'] = true;
         $this->defaultCacheSerializerPermissions = $value;
-
+    
         return $this;
     }
-
+    
     /**
      * @deprecated since Symfony 7.4
      */
@@ -60,15 +60,15 @@ class ExerciseHtmlPurifierConfig implements \Symfony\Component\Config\Builder\Co
         } elseif (1 < \func_num_args()) {
             throw new InvalidConfigurationException('The node created by "htmlProfiles()" has already been initialized. You cannot pass values the second time you call htmlProfiles().');
         }
-
+    
         return $this->htmlProfiles[$name];
     }
-
+    
     public function getExtensionAlias(): string
     {
         return 'exercise_html_purifier';
     }
-
+    
     public function __construct(array $config = [])
     {
         if (array_key_exists('default_cache_serializer_path', $config)) {
@@ -76,24 +76,24 @@ class ExerciseHtmlPurifierConfig implements \Symfony\Component\Config\Builder\Co
             $this->defaultCacheSerializerPath = $config['default_cache_serializer_path'];
             unset($config['default_cache_serializer_path']);
         }
-
+    
         if (array_key_exists('default_cache_serializer_permissions', $config)) {
             $this->_usedProperties['defaultCacheSerializerPermissions'] = true;
             $this->defaultCacheSerializerPermissions = $config['default_cache_serializer_permissions'];
             unset($config['default_cache_serializer_permissions']);
         }
-
+    
         if (array_key_exists('html_profiles', $config)) {
             $this->_usedProperties['htmlProfiles'] = true;
             $this->htmlProfiles = array_map(fn ($v) => new \Symfony\Config\ExerciseHtmlPurifier\HtmlProfilesConfig($v), $config['html_profiles']);
             unset($config['html_profiles']);
         }
-
+    
         if ($config) {
             throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($config)));
         }
     }
-
+    
     public function toArray(): array
     {
         $output = [];
@@ -109,7 +109,7 @@ class ExerciseHtmlPurifierConfig implements \Symfony\Component\Config\Builder\Co
         if ($this->_hasDeprecatedCalls) {
             trigger_deprecation('symfony/config', '7.4', 'Calling any fluent method on "%s" is deprecated; pass the configuration to the constructor instead.', $this::class);
         }
-
+    
         return $output;
     }
 

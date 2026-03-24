@@ -165,9 +165,9 @@ class ViewAppointmentReportList extends ViewAppointmentReport implements PageInt
     public bool $RestoreSearch = false;
     public ?string $HashValue = null; // Hash value
     public ?SubPages $DetailPages = null;
-    public string $TopContentClass = "ew-top d-flex";
+    public string $TopContentClass = "ew-top";
     public string $MiddleContentClass = "ew-middle";
-    public string $BottomContentClass = "ew-bottom d-flex";
+    public string $BottomContentClass = "ew-bottom";
     public bool $IsModal = false;
     private bool $UseInfiniteScroll = false;
 
@@ -590,6 +590,7 @@ class ViewAppointmentReportList extends ViewAppointmentReport implements PageInt
     {
         // Set up list options
         $this->setupListOptions();
+        $this->setupExportOptions();
 
         // Search options
         $this->setupSearchOptions();
@@ -711,6 +712,7 @@ class ViewAppointmentReportList extends ViewAppointmentReport implements PageInt
 
         // Set up list options
         $this->setupListOptions();
+        $this->setupExportOptions();
         $this->setVisibility();
 
         // Global Page Loading event (in userfn*.php)
@@ -1536,7 +1538,7 @@ class ViewAppointmentReportList extends ViewAppointmentReport implements PageInt
         $item->ShowInButtonGroup = false;
 
         // Drop down button for ListOptions
-        $this->ListOptions->UseDropDownButton = false;
+        $this->ListOptions->UseDropDownButton = true;
         $this->ListOptions->DropDownButtonPhrase = $this->language->phrase("ButtonListOptions");
         $this->ListOptions->UseButtonGroup = false;
         if ($this->ListOptions->UseButtonGroup && IsMobile()) {
@@ -1551,6 +1553,53 @@ class ViewAppointmentReportList extends ViewAppointmentReport implements PageInt
         $this->listOptionsLoad();
         $item = $this->ListOptions[$this->ListOptions->GroupOptionName];
         $item->Visible = $this->ListOptions->groupOptionVisible();
+    }
+
+    // Set up export options
+    protected function setupExportOptions(): void
+    {
+        // Export to HTML
+        $item = $this->ExportOptions->add("html");
+        $item->Body = $this->language->phrase("ExportToHtml");
+        $item->Visible = true;
+
+        // Export to Word
+        $item = $this->ExportOptions->add("word");
+        $item->Body = $this->language->phrase("ExportToWord");
+        $item->Visible = true;
+
+        // Export to Excel
+        $item = $this->ExportOptions->add("excel");
+        $item->Body = $this->language->phrase("ExportToExcel");
+        $item->Visible = true;
+
+        // Export to PDF
+        $item = $this->ExportOptions->add("pdf");
+        $item->Body = $this->language->phrase("ExportToPdf");
+        $item->Visible = true;
+
+        // Export to CSV
+        $item = $this->ExportOptions->add("csv");
+        $item->Body = $this->language->phrase("ExportToCsv");
+        $item->Visible = true;
+
+        // Export to XML
+        $item = $this->ExportOptions->add("xml");
+        $item->Body = $this->language->phrase("ExportToXml");
+        $item->Visible = true;
+
+        // Export to JSON
+        $item = $this->ExportOptions->add("json");
+        $item->Body = $this->language->phrase("ExportToJson");
+        $item->Visible = true;
+
+        // Drop down button for export options
+        $this->ExportOptions->UseDropDownButton = true;
+        $this->ExportOptions->DropDownButtonPhrase = $this->language->phrase("ButtonExport");
+        $this->ExportOptions->UseButtonGroup = false;
+        if ($this->ExportOptions->UseButtonGroup && IsMobile()) {
+            $this->ExportOptions->UseDropDownButton = true;
+        }
     }
 
     // Add "hash" parameter to URL

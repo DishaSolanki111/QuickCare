@@ -7,7 +7,7 @@ namespace Proxies\__CG__\PHPMaker2026\Project2\Db\Entity;
  */
 class ViewDoctorReport extends \PHPMaker2026\Project2\Db\Entity\ViewDoctorReport implements \Doctrine\ORM\Proxy\InternalProxy
 {
-    use \Symfony\Component\VarExporter\LazyGhostTrait {
+     use \Symfony\Component\VarExporter\LazyGhostTrait {
         initializeLazyObject as private;
         setLazyObjectAsInitialized as public __setInitialized;
         isLazyObjectInitialized as private;
@@ -54,7 +54,7 @@ class ViewDoctorReport extends \PHPMaker2026\Project2\Db\Entity\ViewDoctorReport
         'specialisation' => [parent::class, 'specialisation', null, 16],
         'totalPatients' => [parent::class, 'totalPatients', null, 16],
         'year' => [parent::class, 'year', null, 16],
-    ];
+    ];
 
     public function __isInitialized(): bool
     {

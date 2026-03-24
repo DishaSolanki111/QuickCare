@@ -165,9 +165,9 @@ class ViewPaymentReportList extends ViewPaymentReport implements PageInterface
     public bool $RestoreSearch = false;
     public ?string $HashValue = null; // Hash value
     public ?SubPages $DetailPages = null;
-    public string $TopContentClass = "ew-top d-flex";
+    public string $TopContentClass = "ew-top";
     public string $MiddleContentClass = "ew-middle";
-    public string $BottomContentClass = "ew-bottom d-flex";
+    public string $BottomContentClass = "ew-bottom";
     public bool $IsModal = false;
     private bool $UseInfiniteScroll = false;
 
@@ -1619,7 +1619,7 @@ class ViewPaymentReportList extends ViewPaymentReport implements PageInterface
         $item->ShowInButtonGroup = false;
 
         // Drop down button for ListOptions
-        $this->ListOptions->UseDropDownButton = false;
+        $this->ListOptions->UseDropDownButton = true;
         $this->ListOptions->DropDownButtonPhrase = $this->language->phrase("ButtonListOptions");
         $this->ListOptions->UseButtonGroup = false;
         if ($this->ListOptions->UseButtonGroup && IsMobile()) {

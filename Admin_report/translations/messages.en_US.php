@@ -2453,8 +2453,8 @@
         ],
     ],
     'project' => [
-        'footertext' => [
-            'value' => '&copy;2025 e.World Technology Limited. All rights reserved.',
+        'bodytitle' => [
+            'value' => 'Admin',
         ],
         'menu' => [
             1 => [
@@ -2550,6 +2550,16 @@
             [
                 'menutext' => [
                     'value' => 'view doctor report',
+                ],
+            ],
+            [
+                'menutext' => [
+                    'value' => 'notification seen tbl',
+                ],
+            ],
+            [
+                'menutext' => [
+                    'value' => 'receptionist notifications',
                 ],
             ],
         ],
@@ -4158,6 +4168,65 @@
                     'avg_rating' => [
                         'fldcaption' => [
                             'value' => 'Avg Rating',
+                        ],
+                    ],
+                ],
+            ],
+            'notification_seen_tbl' => [
+                'tblcaption' => [
+                    'value' => 'notification seen tbl',
+                ],
+                'field' => [
+                    'seen_id' => [
+                        'fldcaption' => [
+                            'value' => 'SEEN ID',
+                        ],
+                    ],
+                    'user_type' => [
+                        'fldcaption' => [
+                            'value' => 'USER TYPE',
+                        ],
+                    ],
+                    'user_id' => [
+                        'fldcaption' => [
+                            'value' => 'USER ID',
+                        ],
+                    ],
+                    'notif_key' => [
+                        'fldcaption' => [
+                            'value' => 'NOTIF KEY',
+                        ],
+                    ],
+                    'seen_at' => [
+                        'fldcaption' => [
+                            'value' => 'SEEN AT',
+                        ],
+                    ],
+                ],
+            ],
+            'receptionist_notifications' => [
+                'tblcaption' => [
+                    'value' => 'receptionist notifications',
+                ],
+                'field' => [
+                    'receptionist_notification_id' => [
+                        'fldcaption' => [
+                            'value' => 'RECEPTIONIST NOTIFICATION ID',
+                        ],
+                    ],
+                    'message' => [
+                        'fldcaption' => [
+                            'value' => 'MESSAGE',
+                        ],
+                    ],
+                    'type' => [
+                        'fldcaption' => [
+                            'value' => 'TYPE',
+                        ],
+                    ],
+                    'created_at' => [
+                        'fldcaption' => [
+                            'value' => 'CREATED AT',
                         ],
                     ],
                 ],

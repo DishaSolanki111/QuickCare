@@ -138,7 +138,7 @@ class ViewDoctorReportList extends ViewDoctorReport implements PageInterface
     public int $StopRecord = 0;
     public int $TotalRecords = 0;
     public ?int $RecordOffset = null; // Record offset (for View/Edit paging)
-    public array $PagerOptions = ["proximity" => 20, "show_dots" => true];
+    public array $PagerOptions = ["proximity" => 2, "show_dots" => true];
     public string $PageSizes = "10,20,50,-1"; // Page sizes (comma separated)
     public string $UserIDFilter = "";
     public string $DefaultSearchWhere = ""; // Default search WHERE clause
@@ -165,9 +165,9 @@ class ViewDoctorReportList extends ViewDoctorReport implements PageInterface
     public bool $RestoreSearch = false;
     public ?string $HashValue = null; // Hash value
     public ?SubPages $DetailPages = null;
-    public string $TopContentClass = "ew-top d-flex";
-    public string $MiddleContentClass = "ew-middle d-flex";
-    public string $BottomContentClass = "ew-bottom d-flex";
+    public string $TopContentClass = "ew-top";
+    public string $MiddleContentClass = "ew-middle";
+    public string $BottomContentClass = "ew-bottom";
     public bool $IsModal = false;
     private bool $UseInfiniteScroll = false;
 
@@ -1618,7 +1618,7 @@ class ViewDoctorReportList extends ViewDoctorReport implements PageInterface
         $item->ShowInButtonGroup = false;
 
         // Drop down button for ListOptions
-        $this->ListOptions->UseDropDownButton = false;
+        $this->ListOptions->UseDropDownButton = true;
         $this->ListOptions->DropDownButtonPhrase = $this->language->phrase("ButtonListOptions");
         $this->ListOptions->UseButtonGroup = false;
         if ($this->ListOptions->UseButtonGroup && IsMobile()) {

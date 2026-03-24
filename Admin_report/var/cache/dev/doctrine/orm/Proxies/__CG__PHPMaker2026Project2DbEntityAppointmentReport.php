@@ -7,7 +7,7 @@ namespace Proxies\__CG__\PHPMaker2026\Project2\Db\Entity;
  */
 class AppointmentReport extends \PHPMaker2026\Project2\Db\Entity\AppointmentReport implements \Doctrine\ORM\Proxy\InternalProxy
 {
-    use \Symfony\Component\VarExporter\LazyGhostTrait {
+     use \Symfony\Component\VarExporter\LazyGhostTrait {
         initializeLazyObject as private;
         setLazyObjectAsInitialized as public __setInitialized;
         isLazyObjectInitialized as private;
@@ -42,7 +42,7 @@ class AppointmentReport extends \PHPMaker2026\Project2\Db\Entity\AppointmentRepo
         'patientId' => [parent::class, 'patientId', null, 16],
         'scheduleId' => [parent::class, 'scheduleId', null, 16],
         'status' => [parent::class, 'status', null, 16],
-    ];
+    ];
 
     public function __isInitialized(): bool
     {

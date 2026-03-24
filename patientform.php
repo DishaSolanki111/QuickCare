@@ -447,19 +447,7 @@ include 'header.php';?>
                 $security_question = $_POST['security_question'] ?? '';
                 $security_answer   = trim($_POST['security_answer'] ?? '');
 
-                // ---------------- FIRST NAME / LAST NAME ----------------
-                $first_nameNormalized = '';
-                $last_nameNormalized = '';
-                if (!qc_validate_person_name($first_name_raw, $first_nameNormalized, $first_nameErr)) {
-                    $field_errors['first_name'] = $first_nameErr;
-                } else {
-                    $first_name = strtoupper(mysqli_real_escape_string($conn, $first_nameNormalized));
-                }
-                if (!qc_validate_person_name($last_name_raw, $last_nameNormalized, $last_nameErr)) {
-                    $field_errors['last_name'] = $last_nameErr;
-                } else {
-                    $last_name = strtoupper(mysqli_real_escape_string($conn, $last_nameNormalized));
-                }
+              
 
                 // ---------------- DATE VALIDATION ----------------
                 // DOB must be BEFORE current date (not on or after)
@@ -487,7 +475,7 @@ include 'header.php';?>
                 $passwordError = '';
                 $emailLower = strtolower((string)trim($email));
                 if (!qc_validate_password($password, $username, $emailLower, $passwordError)) {
-                    $field_errors['password'] = $passwordError;
+                    $field_errors['passwor  d'] = $passwordError;
                 }
 
                 // ---------------- PHONE VALIDATION ----------------

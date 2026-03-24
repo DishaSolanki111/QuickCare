@@ -55,17 +55,17 @@ foreach ($Page->ReportData->appointmentDateGroups as $appointmentDateGroup) {
 </div>
 <!-- /.ew-grid-middle-panel -->
 <!-- Report grid (end) -->
-<?php if (!$Page->isExport() && !($Page->DrillDown && $Page->TotalGroups > 0) && $Page->Pager->Visible) { ?>
-<!-- Bottom pager -->
-<div class="card-footer ew-grid-lower-panel">
-<?= $Page->Pager?->render() ?>
-</div>
-<?php } ?>
 </div>
 <!-- /.ew-grid -->
 <?= $Page->PageBreakHtml ?>
 <?php } ?>
 <div class="<?= $Page->ReportContainerClass ?>">
+<?php if (!$Page->isExport() && !($Page->DrillDown && $Page->TotalGroups > 0) && $Page->Pager->Visible) { ?>
+<!-- Top pager -->
+<div class="card-header ew-grid-upper-panel">
+<?= $Page->Pager?->render() ?>
+</div>
+<?php } ?>
 <!-- Report grid (begin) -->
 <div id="gmp_Appointment_report" class="card-body ew-grid-middle-panel <?= $Page->TableContainerClass ?>">
 <table class="<?= $Page->TableClass ?>">
@@ -391,12 +391,6 @@ foreach ($Page->ReportData->appointmentDateGroups as $appointmentDateGroup) {
 </div>
 <!-- /.ew-grid-middle-panel -->
 <!-- Report grid (end) -->
-<?php if (!$Page->isExport() && !($Page->DrillDown && $Page->TotalGroups > 0) && $Page->Pager->Visible) { ?>
-<!-- Bottom pager -->
-<div class="card-footer ew-grid-lower-panel">
-<?= $Page->Pager?->render() ?>
-</div>
-<?php } ?>
 </div>
 <!-- /.ew-grid -->
 <?php } ?>
