@@ -110,6 +110,7 @@ if (mysqli_num_rows($doctor_query) == 0) {
             --light-blue: #9CCDD8;
             --gray-blue: #D0D7E1;
             --white: #ffffff;
+            --holiday-color: #e74c3c;
         }
 
         * {
@@ -406,6 +407,14 @@ body::before {
             font-weight: 500;
         }
 
+        /* NEW: Public holiday styling */
+        .calendar-day.public-holiday {
+            background-color: rgba(255, 116, 101, 0.79); /* red for public holidays */
+            color: #000 !important; /* dark black text */
+            font-weight: 500;
+            cursor: not-allowed;
+        }
+
         .calendar-day.disabled {
             color: #ccc;
             cursor: not-allowed;
@@ -584,9 +593,11 @@ body::before {
                             </div>
                             <div style="margin-top:10px; font-size: 0.9rem; color:#555;">
                                 <span style="display:inline-block;width:16px;height:12px;border-radius:3px;background-color:rgba(46, 204, 113, 0.3);border:1px solid #2ecc71;margin-right:6px;vertical-align:middle;"></span>
-                                Green = Available date&nbsp;&nbsp;
+                                Green = Available&nbsp;&nbsp;
                                 <span style="display:inline-block;width:16px;height:12px;border-radius:3px;background-color:rgba(243, 156, 18, 0.35);border:1px solid #f39c12;margin:0 6px;vertical-align:middle;"></span>
-                                Yellow = Fully booked date
+                                Yellow = Fully booked&nbsp;&nbsp;
+                                <span style="display:inline-block;width:16px;height:12px;border-radius:3px;background-color:rgba(231, 76, 60, 0.25);border:1px solid #e74c3c;margin:0 6px;vertical-align:middle;"></span>
+                                Red = Public holiday
                             </div>
                             <input type="hidden" id="selected_date" name="appointment_date" required>
                         </div>
@@ -629,6 +640,39 @@ body::before {
     <script>
     function goBackFromDate() {
         window.location.href = 'doctors.php';
+    }
+
+    // PUBLIC HOLIDAYS CONFIGURATION
+    // You can add more public holidays here in 'YYYY-MM-DD' format
+    const publicHolidays = [
+        // Example holidays - modify these according to your needs
+        '2026-01-01', // New Year's Day
+        '2026-01-26', // Republic Day (India)
+        '2026-03-08', // Maha Shivaratri
+        '2026-03-25', // Holi
+        '2026-04-02', // Ram Navami
+        '2026-04-06', // Mahavir Jayanti
+        '2026-04-10', // Good Friday
+        '2026-04-14', // Ambedkar Jayanti
+        '2026-05-01', // May Day
+        '2026-08-15', // Independence Day
+        '2026-08-16', // Raksha Bandhan
+        '2026-10-02', // Gandhi Jayanti
+        '2026-10-24', // Dussehra
+        '2026-11-12', // Diwali
+        '2026-11-19', // Guru Nanak Jayanti
+        '2026-12-25', // Christmas
+        // Add more holidays as needed
+    ];
+
+    // Function to check if a date is a public holiday
+    function isPublicHoliday(dateStr) {
+        return publicHolidays.includes(dateStr);
+    }
+
+    // Function to check if a date is Sunday
+    function isSunday(dayOfWeek) {
+        return dayOfWeek === 0; // 0 = Sunday
     }
 
     // Initialize the page
@@ -713,6 +757,7 @@ body::before {
         const maxDate = new Date();
         maxDate.setMonth(maxDate.getMonth() + 1);
         maxDate.setHours(23, 59, 59, 999);
+        
         for (let day = 1; day <= daysInMonth; day++) {
             const dayElement = document.createElement('div');
             dayElement.className = 'calendar-day';
@@ -720,23 +765,35 @@ body::before {
             
             const currentDate = new Date(year, month, day);
             currentDate.setHours(0, 0, 0, 0);
+            const dayOfWeek = currentDate.getDay();
+            const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+            
+            // Check if date is in the past or beyond max date
             if (currentDate < today || currentDate > maxDate) {
                 dayElement.classList.add('disabled');
             }
-            
-            if (selectedDoctorId && !dayElement.classList.contains('disabled')) {
-                const dayOfWeek = currentDate.getDay();
+            // Check if it's a Sunday or public holiday
+            else if (isSunday(dayOfWeek) || isPublicHoliday(dateStr)) {
+                dayElement.classList.add('public-holiday');
+                dayElement.classList.add('disabled');
+                dayElement.title = isSunday(dayOfWeek) ? 'Sunday - Closed' : 'Public Holiday';
+            }
+            // Check doctor schedule and booking status
+            else if (selectedDoctorId && !dayElement.classList.contains('disabled')) {
                 const dayMap = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
                 
-            if (doctorSchedule.includes(dayMap[dayOfWeek])) {
+                if (doctorSchedule.includes(dayMap[dayOfWeek])) {
                     dayElement.classList.add('available');
 
-                    const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                    // Check if fully booked
                     if (fullyBookedDates.includes(dateStr)) {
+                        dayElement.classList.remove('available');
                         dayElement.classList.add('fully-booked');
+                        dayElement.classList.add('disabled');
+                        dayElement.title = 'Fully booked';
+                    } else {
+                        dayElement.addEventListener('click', (evt) => selectDate(year, month, day, evt));
                     }
-
-                    dayElement.addEventListener('click', (evt) => selectDate(year, month, day, evt));
                 } else {
                     dayElement.classList.add('disabled');
                 }
@@ -798,6 +855,20 @@ body::before {
     
     function selectDate(year, month, day, evt) {
         const date = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        
+        // Double-check if it's a public holiday or Sunday before allowing selection
+        const currentDate = new Date(year, month, day);
+        if (isSunday(currentDate.getDay()) || isPublicHoliday(date)) {
+            alert('Cannot book appointments on Sundays or public holidays.');
+            return;
+        }
+        
+        // Check if fully booked
+        if (fullyBookedDates.includes(date)) {
+            alert('This date is fully booked. Please select another date.');
+            return;
+        }
+        
         document.getElementById('selected_date').value = date;
         
         document.querySelectorAll('.calendar-day').forEach(el => {
