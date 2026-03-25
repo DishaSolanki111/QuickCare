@@ -100,8 +100,6 @@ if (!isset($reminder_query) && isset($conn)) {
         }
     }
 
-    // Add vitals reminders: only at or after the exact appointment time (e.g. 5 PM on 14th),
-    // not before. Only for appointments where vitals are not yet recorded (reminder removed once added).
     $vitals_q = @mysqli_query($conn, "
         SELECT a.APPOINTMENT_DATE, a.APPOINTMENT_TIME,
                CONCAT(p.FIRST_NAME, ' ', p.LAST_NAME) AS PATIENT_NAME
@@ -169,7 +167,6 @@ if (!isset($reminder_query) && isset($conn)) {
     }
 }
 
-// Optional notifications (e.g. reminders or tasks) if a query is provided
 $notif_count = isset($reminder_query)
     ? (is_array($reminder_query) ? count($reminder_query) : mysqli_num_rows($reminder_query))
     : 0;
@@ -189,7 +186,6 @@ $show_reminder_search = ($current_script === 'st_reminder.php');
 <header class="topbar">
     <h2>Welcome back</h2>
 
-    
     <div class="topbar-right">
         <div class="user-info">
             <div class="user-avatar">
@@ -197,18 +193,12 @@ $show_reminder_search = ($current_script === 'st_reminder.php');
             </div>
 
             <div class="user-details">
-                <div class="name-row">
-                    <span class="user-name">
-                        <?php echo htmlspecialchars($receptionist_full_name); ?>
-                    </span>
-                </div>
-
-                <span class="date">
-                    <?php echo date("F d, Y"); ?>
+                <span class="user-name">
+                    <?php echo htmlspecialchars($receptionist_full_name); ?>
                 </span>
             </div>
 
-            <!-- Notification bell + dropdown, aligned like patient header -->
+            <!-- Notification bell + dropdown -->
             <div class="notification-bell" onclick="toggleNotifications()">
                 <i class="fas fa-bell"></i>
 
@@ -357,20 +347,10 @@ $show_reminder_search = ($current_script === 'st_reminder.php');
     flex-direction: column;
 }
 
-.name-row {
-    display: flex;
-    align-items: center;
-}
-
 .user-name {
     font-weight: 600;
     color: #1a3a5f;
     font-size: 16px;
-}
-
-.date {
-    color: #6b7280;
-    font-size: 14px;
 }
 
 .notification-bell {
