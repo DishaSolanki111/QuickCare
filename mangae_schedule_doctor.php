@@ -14,42 +14,39 @@ if (
 // ================== DATABASE CONNECTION ==================
 include 'config.php';
 
-
 // ================== DOCTOR INFO ==================
- $doctor_id = $_SESSION['DOCTOR_ID'];
- $doctor_name = "Doctor";
- $doctor_data = null;
+$doctor_id   = $_SESSION['DOCTOR_ID'];
+$doctor_name = "Doctor";
+$doctor_data = null;
 
- $doc_sql = "SELECT d.*, s.SPECIALISATION_NAME FROM doctor_tbl d JOIN specialisation_tbl s ON d.SPECIALISATION_ID = s.SPECIALISATION_ID WHERE d.DOCTOR_ID = ?";
- $doc_stmt = $conn->prepare($doc_sql);
- $doc_stmt->bind_param("i", $doctor_id);
- $doc_stmt->execute();
- $doc_result = $doc_stmt->get_result();
+$doc_sql  = "SELECT d.*, s.SPECIALISATION_NAME FROM doctor_tbl d JOIN specialisation_tbl s ON d.SPECIALISATION_ID = s.SPECIALISATION_ID WHERE d.DOCTOR_ID = ?";
+$doc_stmt = $conn->prepare($doc_sql);
+$doc_stmt->bind_param("i", $doctor_id);
+$doc_stmt->execute();
+$doc_result = $doc_stmt->get_result();
 
 if ($doc_result->num_rows === 1) {
     $doctor_data = $doc_result->fetch_assoc();
     $doctor_name = htmlspecialchars($doctor_data['FIRST_NAME'] . ' ' . $doctor_data['LAST_NAME']);
 }
- $doc_stmt->close();
+$doc_stmt->close();
 
 // ================== HANDLE SCHEDULE ADDITION ==================
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_schedule'])) {
-    $start_time = $_POST['start_time'];
-    $end_time = $_POST['end_time'];
+    $start_time    = $_POST['start_time'];
+    $end_time      = $_POST['end_time'];
     $available_day = $_POST['available_day'];
-    
-    // Get receptionist ID from database (first active receptionist)
+
     $receptionist_id = 1;
     $rec_result = $conn->query("SELECT RECEPTIONIST_ID FROM receptionist_tbl ORDER BY RECEPTIONIST_ID ASC LIMIT 1");
     if ($rec_result && $rec_row = $rec_result->fetch_assoc()) {
         $receptionist_id = (int) $rec_row['RECEPTIONIST_ID'];
     }
-    
-    $add_sql = "INSERT INTO doctor_schedule_tbl (DOCTOR_ID, RECEPTIONIST_ID, START_TIME, END_TIME, AVAILABLE_DAY) 
-                VALUES (?, ?, ?, ?, ?)";
+
+    $add_sql  = "INSERT INTO doctor_schedule_tbl (DOCTOR_ID, RECEPTIONIST_ID, START_TIME, END_TIME, AVAILABLE_DAY) VALUES (?, ?, ?, ?, ?)";
     $add_stmt = $conn->prepare($add_sql);
     $add_stmt->bind_param("iisss", $doctor_id, $receptionist_id, $start_time, $end_time, $available_day);
-    
+
     if ($add_stmt->execute()) {
         $success_message = "Schedule added successfully!";
     } else {
@@ -60,40 +57,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_schedule'])) {
 
 // ================== HANDLE SCHEDULE UPDATE ==================
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_schedule'])) {
-    $schedule_id = $_POST['schedule_id'];
-    $start_time = $_POST['start_time'];
-    $end_time = $_POST['end_time'];
+    $schedule_id   = $_POST['schedule_id'];
+    $start_time    = $_POST['start_time'];
+    $end_time      = $_POST['end_time'];
     $available_day = $_POST['available_day'];
-    
-    $update_sql = "UPDATE doctor_schedule_tbl SET 
-                   START_TIME = ?, 
-                   END_TIME = ?, 
-                   AVAILABLE_DAY = ? 
-                   WHERE SCHEDULE_ID = ? AND DOCTOR_ID = ?";
+
+    $update_sql  = "UPDATE doctor_schedule_tbl SET START_TIME = ?, END_TIME = ?, AVAILABLE_DAY = ? WHERE SCHEDULE_ID = ? AND DOCTOR_ID = ?";
     $update_stmt = $conn->prepare($update_sql);
     $update_stmt->bind_param("sssii", $start_time, $end_time, $available_day, $schedule_id, $doctor_id);
-    
+
     if ($update_stmt->execute()) {
         $success_message = "Schedule updated successfully!";
+
         $day_names = ['MON' => 'Monday', 'TUE' => 'Tuesday', 'WED' => 'Wednesday', 'THUR' => 'Thursday', 'FRI' => 'Friday', 'SAT' => 'Saturday', 'SUN' => 'Sunday'];
         $day_label = $day_names[$available_day] ?? $available_day;
-        $rec_msg = "[SCHEDULE_RESCHEDULED_BY_DOCTOR] Dr. " . $doctor_name . " rescheduled " . $day_label . " schedule to " . date('h:i A', strtotime($start_time)) . " - " . date('h:i A', strtotime($end_time)) . ".";
+        $rec_msg   = "[SCHEDULE_RESCHEDULED_BY_DOCTOR] Dr. " . $doctor_name . " rescheduled " . $day_label . " schedule to " . date('h:i A', strtotime($start_time)) . " - " . date('h:i A', strtotime($end_time)) . ".";
+
         $pat_row = null;
-        $pat_q = $conn->query("SELECT PATIENT_ID FROM appointment_tbl WHERE SCHEDULE_ID = " . (int)$schedule_id . " LIMIT 1");
+        $pat_q   = $conn->query("SELECT PATIENT_ID FROM appointment_tbl WHERE SCHEDULE_ID = " . (int)$schedule_id . " LIMIT 1");
         if ($pat_q) $pat_row = $pat_q->fetch_assoc();
         $pat_id = $pat_row ? (int)$pat_row['PATIENT_ID'] : 0;
         if ($pat_id <= 0) {
-            $p2 = $conn->query("SELECT PATIENT_ID FROM patient_tbl ORDER BY PATIENT_ID ASC LIMIT 1")->fetch_assoc();
+            $p2     = $conn->query("SELECT PATIENT_ID FROM patient_tbl ORDER BY PATIENT_ID ASC LIMIT 1")->fetch_assoc();
             $pat_id = $p2 ? (int)$p2['PATIENT_ID'] : 1;
         }
+
         $med_id = 1;
-        $med_r = $conn->query("SELECT MEDICINE_ID FROM medicine_tbl ORDER BY MEDICINE_ID ASC LIMIT 1");
+        $med_r  = $conn->query("SELECT MEDICINE_ID FROM medicine_tbl ORDER BY MEDICINE_ID ASC LIMIT 1");
         if ($med_r && ($mr = $med_r->fetch_assoc())) $med_id = (int)$mr['MEDICINE_ID'];
+
         $rec_id = 1;
-        $rec_r = $conn->query("SELECT RECEPTIONIST_ID FROM receptionist_tbl ORDER BY RECEPTIONIST_ID ASC LIMIT 1");
+        $rec_r  = $conn->query("SELECT RECEPTIONIST_ID FROM receptionist_tbl ORDER BY RECEPTIONIST_ID ASC LIMIT 1");
         if ($rec_r && ($rr = $rec_r->fetch_assoc())) $rec_id = (int)$rr['RECEPTIONIST_ID'];
-        $today = date('Y-m-d');
-        $now = date('H:i:s');
+
+        $today   = date('Y-m-d');
+        $now     = date('H:i:s');
         $ins_rec = $conn->prepare("INSERT INTO medicine_reminder_tbl (MEDICINE_ID, CREATOR_ROLE, CREATOR_ID, PATIENT_ID, START_DATE, END_DATE, REMINDER_TIME, REMARKS) VALUES (?, 'RECEPTIONIST', ?, ?, ?, ?, ?, ?)");
         $ins_rec->bind_param("iiissss", $med_id, $rec_id, $pat_id, $today, $today, $now, $rec_msg);
         $ins_rec->execute();
@@ -111,12 +109,12 @@ if (isset($_SESSION['schedule_success_message'])) {
 }
 
 // ================== FETCH DOCTOR SCHEDULE ==================
- $schedule_query = "SELECT * FROM doctor_schedule_tbl WHERE DOCTOR_ID = ? ORDER BY FIELD(AVAILABLE_DAY, 'MON', 'TUE', 'WED', 'THUR', 'FRI', 'SAT', 'SUN')";
- $schedule_stmt = $conn->prepare($schedule_query);
- $schedule_stmt->bind_param("i", $doctor_id);
- $schedule_stmt->execute();
- $schedule_result = $schedule_stmt->get_result();
- $conn->close();
+$schedule_query = "SELECT * FROM doctor_schedule_tbl WHERE DOCTOR_ID = ? ORDER BY FIELD(AVAILABLE_DAY, 'MON', 'TUE', 'WED', 'THUR', 'FRI', 'SAT', 'SUN')";
+$schedule_stmt  = $conn->prepare($schedule_query);
+$schedule_stmt->bind_param("i", $doctor_id);
+$schedule_stmt->execute();
+$schedule_result = $schedule_stmt->get_result();
+$conn->close();
 ?>
 
 <!DOCTYPE html>
@@ -140,9 +138,6 @@ if (isset($_SESSION['schedule_success_message'])) {
             --white: #ffffff;
             --text: #2c5282;
             --text-light: #4a6fa5;
-            --gradient-1: linear-gradient(135deg, #0066cc 0%, #00a8cc 100%);
-            --gradient-2: linear-gradient(135deg, #00a8cc 0%, #00a86b 100%);
-            --gradient-3: linear-gradient(135deg, #0066cc 0%, #0052a3 100%);
             --shadow-sm: 0 2px 4px rgba(0,0,0,0.06);
             --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
             --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
@@ -153,7 +148,6 @@ if (isset($_SESSION['schedule_success_message'])) {
             --soft-blue: #5790AB;
             --light-blue: #9CCDD8;
             --gray-blue: #D0D7E1;
-            --white: #ffffff;
             --card-bg: #F6F9FB;
             --primary-color: #1a3a5f;
             --secondary-color: #3498db;
@@ -169,39 +163,36 @@ if (isset($_SESSION['schedule_success_message'])) {
             box-sizing: border-box;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-        
+
         body {
             background-color: #f5f7fa;
             color: #333;
             line-height: 1.6;
         }
-        
+
         .container {
             display: flex;
             min-height: 100vh;
         }
-        
-       
-        /* Main Content */
+
         .main-content {
             flex: 1;
             margin-left: 250px;
             padding: 20px;
-            margin-top:-15px;
+            margin-top: -15px;
         }
-        
-        
+
         .welcome-msg {
             font-size: 24px;
             font-weight: 600;
             color: var(--primary-color);
         }
-        
+
         .user-actions {
             display: flex;
             align-items: center;
         }
-        
+
         .notification-btn {
             position: relative;
             background: none;
@@ -211,7 +202,7 @@ if (isset($_SESSION['schedule_success_message'])) {
             margin-right: 20px;
             cursor: pointer;
         }
-        
+
         .notification-badge {
             position: absolute;
             top: -5px;
@@ -227,13 +218,13 @@ if (isset($_SESSION['schedule_success_message'])) {
             font-size: 11px;
             font-weight: bold;
         }
-        
+
         .user-dropdown {
             display: flex;
             align-items: center;
             cursor: pointer;
         }
-        
+
         .user-avatar {
             width: 40px;
             height: 40px;
@@ -246,7 +237,8 @@ if (isset($_SESSION['schedule_success_message'])) {
             margin-right: 10px;
             font-weight: bold;
         }
-            .profile-header {
+
+        .profile-header {
             display: flex;
             align-items: center;
             margin-bottom: 30px;
@@ -256,7 +248,6 @@ if (isset($_SESSION['schedule_success_message'])) {
             box-shadow: var(--shadow-md);
         }
 
-        /* Schedule Content */
         .schedule-content {
             padding: 10px;
         }
@@ -273,7 +264,6 @@ if (isset($_SESSION['schedule_success_message'])) {
             color: var(--dark);
         }
 
-        /* Doctor Profile Section */
         .doctor-profile-card {
             background: var(--white);
             border-radius: 10px;
@@ -283,7 +273,6 @@ if (isset($_SESSION['schedule_success_message'])) {
             overflow: hidden;
         }
 
-        /* Doctor Header: soft light background */
         .doctor-header {
             background: #1a3a5f;
             color: white;
@@ -315,10 +304,9 @@ if (isset($_SESSION['schedule_success_message'])) {
             border-radius: 16px;
             font-size: 12px;
             margin-top: 4px;
-            color:white;
+            color: white;
         }
 
-        /* Schedule List - Horizontal Bars */
         .schedule-list-container {
             background: var(--white);
             border-radius: 10px;
@@ -333,7 +321,6 @@ if (isset($_SESSION['schedule_success_message'])) {
             gap: 8px;
         }
 
-        /* Schedule row: horizontal rounded card, light grey, blue left accent */
         .day-schedule {
             background: #f6f9fb;
             border-radius: 8px;
@@ -466,7 +453,6 @@ if (isset($_SESSION['schedule_success_message'])) {
             background-color: #e67e22;
         }
 
-
         .empty-state {
             text-align: center;
             padding: 40px;
@@ -500,7 +486,6 @@ if (isset($_SESSION['schedule_success_message'])) {
             border: 1px solid #f5c6cb;
         }
 
-        /* Modal Styles */
         .modal {
             display: none;
             position: fixed;
@@ -564,7 +549,6 @@ if (isset($_SESSION['schedule_success_message'])) {
             box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.2);
         }
 
-        /* Responsive: Schedule row - stack on mobile */
         @media (max-width: 576px) {
             .day-schedule {
                 flex-direction: column;
@@ -585,7 +569,6 @@ if (isset($_SESSION['schedule_success_message'])) {
             }
         }
 
-        /* Responsive Design */
         @media (max-width: 992px) {
             .main-content {
                 margin-left: 70px;
@@ -618,7 +601,6 @@ if (isset($_SESSION['schedule_success_message'])) {
             }
         }
 
-        /* Mobile Menu Toggle */
         .menu-toggle {
             display: none;
             background: none;
@@ -637,38 +619,30 @@ if (isset($_SESSION['schedule_success_message'])) {
 </head>
 <body>
     <?php include 'doctor_sidebar.php'; ?>
-    
-    <!-- Main Content -->
+
     <div class="main-content">
-    <?php include 'doctor_header.php'; ?>    
-        <!-- Schedule Content -->
+        <?php include 'doctor_header.php'; ?>
+
         <div class="schedule-content">
-            <!-- Success/Error Messages -->
             <?php if (isset($success_message)): ?>
-                <div class="alert alert-success">
-                    <?php echo $success_message; ?>
-                </div>
+                <div class="alert alert-success"><?php echo $success_message; ?></div>
             <?php endif; ?>
-            
+
             <?php if (isset($error_message)): ?>
-                <div class="alert alert-danger">
-                    <?php echo $error_message; ?>
-                </div>
+                <div class="alert alert-danger"><?php echo $error_message; ?></div>
             <?php endif; ?>
-            
-            <!-- Schedule Header -->
+
             <div class="schedule-header">
                 <h2>My Weekly Schedule</h2>
                 <button class="btn btn-primary" onclick="openAddModal()">
                     <i class="fas fa-plus"></i> Add Schedule
                 </button>
             </div>
-            
+
             <?php if ($doctor_data): ?>
-            <!-- Doctor Profile Section -->
             <div class="doctor-profile-card">
                 <div class="doctor-header">
-                    <img src="<?php echo !empty($doctor_data['PROFILE_IMAGE']) ? htmlspecialchars($doctor_data['PROFILE_IMAGE']) : 'https://picsum.photos/seed/doctor' . $doctor_id . '/80/80.jpg'; ?>" 
+                    <img src="<?php echo !empty($doctor_data['PROFILE_IMAGE']) ? htmlspecialchars($doctor_data['PROFILE_IMAGE']) : 'https://picsum.photos/seed/doctor' . $doctor_id . '/80/80.jpg'; ?>"
                          alt="Doctor" class="doctor-avatar">
                     <div class="doctor-info">
                         <h3>Dr. <?php echo htmlspecialchars($doctor_data['FIRST_NAME'] . ' ' . $doctor_data['LAST_NAME']); ?></h3>
@@ -679,15 +653,13 @@ if (isset($_SESSION['schedule_success_message'])) {
                 </div>
             </div>
             <?php endif; ?>
-            
-            <!-- Schedule List -->
+
             <?php if ($schedule_result->num_rows > 0): ?>
                 <div class="schedule-list-container">
                     <div class="schedule-grid">
-                        <?php 
-                        $day_icons = ['MON' => 'bi-calendar-week', 'TUE' => 'bi-calendar2-week', 'WED' => 'bi-calendar3', 'THUR' => 'bi-calendar4', 'FRI' => 'bi-calendar5', 'SAT' => 'bi-calendar6', 'SUN' => 'bi-calendar'];
+                        <?php
                         $day_names_map = ['MON' => 'Monday', 'TUE' => 'Tuesday', 'WED' => 'Wednesday', 'THUR' => 'Thursday', 'FRI' => 'Friday', 'SAT' => 'Saturday', 'SUN' => 'Sunday'];
-                        while ($schedule = $schedule_result->fetch_assoc()): 
+                        while ($schedule = $schedule_result->fetch_assoc()):
                             $day_name = $day_names_map[$schedule['AVAILABLE_DAY']] ?? $schedule['AVAILABLE_DAY'];
                         ?>
                             <div class="day-schedule">
@@ -699,11 +671,14 @@ if (isset($_SESSION['schedule_success_message'])) {
                                     <?php echo date('h:i A', strtotime($schedule['START_TIME'])); ?> - <?php echo date('h:i A', strtotime($schedule['END_TIME'])); ?>
                                 </div>
                                 <div class="schedule-actions">
-                                    <button class="btn-edit-schedule" onclick="openEditModal(<?php echo $schedule['SCHEDULE_ID']; ?>, '<?php echo $schedule['START_TIME']; ?>', '<?php echo $schedule['END_TIME']; ?>', '<?php echo $schedule['AVAILABLE_DAY']; ?>')">
-                                      Edit
-                                    </button>
+                                    <button class="btn-edit-schedule" onclick="openEditModal(
+                                        <?php echo $schedule['SCHEDULE_ID']; ?>,
+                                        '<?php echo $schedule['START_TIME']; ?>',
+                                        '<?php echo $schedule['END_TIME']; ?>',
+                                        '<?php echo $schedule['AVAILABLE_DAY']; ?>'
+                                    )">Edit</button>
                                     <button type="button" class="btn btn-danger" onclick="openDeleteOptionsModal(<?php echo $schedule['SCHEDULE_ID']; ?>, '<?php echo addslashes($day_name); ?>')">
-                                       Delete
+                                        Delete
                                     </button>
                                 </div>
                             </div>
@@ -719,7 +694,7 @@ if (isset($_SESSION['schedule_success_message'])) {
             <?php endif; ?>
         </div>
     </div>
-    
+
     <!-- Delete Schedule Options Modal -->
     <div id="deleteOptionsModal" class="modal">
         <div class="modal-content">
@@ -748,7 +723,7 @@ if (isset($_SESSION['schedule_success_message'])) {
             <button type="button" class="btn btn-secondary" style="margin-top: 15px; background: #6c757d; color: white;" onclick="closeDeleteOptionsModal()">Cancel</button>
         </div>
     </div>
-    
+
     <!-- Add Schedule Modal -->
     <div id="addModal" class="modal">
         <div class="modal-content">
@@ -756,7 +731,6 @@ if (isset($_SESSION['schedule_success_message'])) {
             <h2>Add New Schedule</h2>
             <form method="POST" action="mangae_schedule_doctor.php">
                 <input type="hidden" name="add_schedule" value="1">
-                
                 <div class="form-group">
                     <label for="available_day">Day</label>
                     <select class="form-control" id="available_day" name="available_day" required>
@@ -770,24 +744,21 @@ if (isset($_SESSION['schedule_success_message'])) {
                         <option value="SUN">Sunday</option>
                     </select>
                 </div>
-                
                 <div class="form-group">
                     <label for="start_time">Start Time</label>
                     <input type="time" class="form-control" id="start_time" name="start_time" required>
                 </div>
-                
                 <div class="form-group">
                     <label for="end_time">End Time</label>
                     <input type="time" class="form-control" id="end_time" name="end_time" required>
                 </div>
-                
                 <button type="submit" class="btn btn-success">
                     <i class="fas fa-save"></i> Add Schedule
                 </button>
             </form>
         </div>
     </div>
-    
+
     <!-- Edit Schedule Modal -->
     <div id="editModal" class="modal">
         <div class="modal-content">
@@ -796,7 +767,6 @@ if (isset($_SESSION['schedule_success_message'])) {
             <form method="POST" action="mangae_schedule_doctor.php">
                 <input type="hidden" id="edit_schedule_id" name="schedule_id">
                 <input type="hidden" name="update_schedule" value="1">
-                
                 <div class="form-group">
                     <label for="edit_available_day">Day</label>
                     <select class="form-control" id="edit_available_day" name="available_day" required>
@@ -810,17 +780,14 @@ if (isset($_SESSION['schedule_success_message'])) {
                         <option value="SUN">Sunday</option>
                     </select>
                 </div>
-                
                 <div class="form-group">
                     <label for="edit_start_time">Start Time</label>
                     <input type="time" class="form-control" id="edit_start_time" name="start_time" required>
                 </div>
-                
                 <div class="form-group">
                     <label for="edit_end_time">End Time</label>
                     <input type="time" class="form-control" id="edit_end_time" name="end_time" required>
                 </div>
-                
                 <button type="submit" class="btn btn-success">
                     <i class="fas fa-save"></i> Update Schedule
                 </button>
@@ -829,15 +796,12 @@ if (isset($_SESSION['schedule_success_message'])) {
     </div>
 
     <script>
-        // Modal functions
         function openAddModal() {
             document.getElementById('addModal').style.display = 'block';
         }
-        
         function closeAddModal() {
             document.getElementById('addModal').style.display = 'none';
         }
-        
         function openEditModal(scheduleId, startTime, endTime, availableDay) {
             document.getElementById('edit_schedule_id').value = scheduleId;
             document.getElementById('edit_start_time').value = startTime;
@@ -845,50 +809,44 @@ if (isset($_SESSION['schedule_success_message'])) {
             document.getElementById('edit_available_day').value = availableDay;
             document.getElementById('editModal').style.display = 'block';
         }
-        
         function closeEditModal() {
             document.getElementById('editModal').style.display = 'none';
         }
-        
         function openDeleteOptionsModal(scheduleId, dayName) {
             document.getElementById('delete_schedule_id_entire').value = scheduleId;
             document.getElementById('deleteDayName').textContent = dayName;
             document.getElementById('deleteParticularLink').href = 'delete_schedule_slots.php?schedule_id=' + scheduleId;
             document.getElementById('deleteOptionsModal').style.display = 'block';
         }
-        
         function closeDeleteOptionsModal() {
             document.getElementById('deleteOptionsModal').style.display = 'none';
         }
-        
-        // Mobile menu toggle
-        document.addEventListener('DOMContentLoaded', function() {
+
+        document.addEventListener('DOMContentLoaded', function () {
             const menuToggle = document.getElementById('menuToggle');
-            const sidebar = document.getElementById('sidebar');
-            
-            menuToggle.addEventListener('click', () => {
-                sidebar.classList.toggle('active');
-            });
-            
-            // Close sidebar when clicking outside on mobile
-            document.addEventListener('click', (e) => {
-                if (window.innerWidth <= 768) {
-                    if (!sidebar.contains(e.target) && !menuToggle.contains(e.target)) {
-                        sidebar.classList.remove('active');
+            const sidebar    = document.getElementById('sidebar');
+
+            if (menuToggle && sidebar) {
+                menuToggle.addEventListener('click', () => {
+                    sidebar.classList.toggle('active');
+                });
+                document.addEventListener('click', (e) => {
+                    if (window.innerWidth <= 768) {
+                        if (!sidebar.contains(e.target) && !menuToggle.contains(e.target)) {
+                            sidebar.classList.remove('active');
+                        }
                     }
-                }
-            });
-            
-            // Close modals when clicking outside
-            window.onclick = function(event) {
-                const addModal = document.getElementById('addModal');
-                const editModal = document.getElementById('editModal');
-                const deleteOptionsModal = document.getElementById('deleteOptionsModal');
-                
-                if (event.target == addModal) addModal.style.display = 'none';
-                if (event.target == editModal) editModal.style.display = 'none';
-                if (event.target == deleteOptionsModal) deleteOptionsModal.style.display = 'none';
+                });
             }
+
+            window.onclick = function (event) {
+                const addModal           = document.getElementById('addModal');
+                const editModal          = document.getElementById('editModal');
+                const deleteOptionsModal = document.getElementById('deleteOptionsModal');
+                if (event.target == addModal)           addModal.style.display           = 'none';
+                if (event.target == editModal)          editModal.style.display          = 'none';
+                if (event.target == deleteOptionsModal) deleteOptionsModal.style.display = 'none';
+            };
         });
     </script>
 </body>

@@ -593,7 +593,16 @@ body::before {
             </div>
         `;
         
-        fetch('get_time_slots.php', { method: 'POST', headers: {'Content-Type': 'application/x-www-form-urlencoded'}, body: 'doctor_id=' + encodeURIComponent(doctorId) + '&date=' + encodeURIComponent(date) })
+        // Include reschedule appointment ID if in reschedule mode
+        const rescheduleId = <?php echo $is_reschedule ? (int)$_SESSION['reschedule_appointment_id'] : '0'; ?>;
+        const body = 'doctor_id=' + encodeURIComponent(doctorId) + '&date=' + encodeURIComponent(date);
+        const fullBody = rescheduleId > 0 ? body + '&reschedule_appointment_id=' + encodeURIComponent(rescheduleId) : body;
+        
+        fetch('get_time_slots.php', { 
+            method: 'POST', 
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'}, 
+            body: fullBody
+        })
             .then(response => response.json())
             .then(data => {
                 if (data.status === 'success') {
@@ -603,17 +612,17 @@ body::before {
                     if (data.time_slots.length > 0) {
                         data.time_slots.forEach(slot => {
                             const timeSlotElement = document.createElement('div');
-                            const timeLabel = slot.time || slot; // support both {time, booked} and plain string
-                            const isBooked  = !!slot.booked;
+                            const timeLabel = slot.time || slot; // support both {time, available} and plain string
+                            const isAvailable = !!slot.available; // true if available, false if booked
 
                             timeSlotElement.textContent = timeLabel;
 
-                            if (isBooked) {
-                                timeSlotElement.className = 'time-slot booked';
-                                timeSlotElement.title = 'Already booked';
-                            } else {
+                            if (isAvailable) {
                                 timeSlotElement.className = 'time-slot available';
                                 timeSlotElement.addEventListener('click', (event) => selectTimeSlot(timeLabel, event));
+                            } else {
+                                timeSlotElement.className = 'time-slot booked';
+                                timeSlotElement.title = 'Already booked';
                             }
 
                             timeSlotsContainer.appendChild(timeSlotElement);
