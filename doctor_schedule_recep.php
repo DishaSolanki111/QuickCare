@@ -596,12 +596,6 @@ if ($doctors_query && mysqli_num_rows($doctors_query) > 0) {
                     ?>
                 </select>
 
-                <input
-                    type="date"
-                    name="schedule_date"
-                    value="<?php echo isset($_POST['schedule_date']) ? htmlspecialchars($_POST['schedule_date']) : ''; ?>"
-                >
-
                 <button type="submit">
                     <i class="bi bi-funnel"></i> Filter
                 </button>
