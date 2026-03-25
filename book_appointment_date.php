@@ -731,8 +731,7 @@ body::before {
         const daysInMonth = new Date(year, month + 1, 0).getDate();
         const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 
                            'July', 'August', 'September', 'October', 'November', 'December'];
-        const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-        
+        const dayNames = ['SUN', 'MON', 'TUE', 'WED', 'THUR', 'FRI', 'SAT'];
         document.getElementById('currentMonth').textContent = `${monthNames[month]} ${year}`;
         
         const calendarGrid = document.getElementById('calendarGrid');

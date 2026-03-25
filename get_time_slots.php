@@ -5,6 +5,7 @@ header('Content-Type: application/json');
 
 $doctor_id = $_POST['doctor_id'] ?? '';
 $date      = $_POST['date'] ?? '';
+$reschedule_appointment_id = isset($_POST['reschedule_appointment_id']) ? (int)$_POST['reschedule_appointment_id'] : 0;
 
 if (empty($doctor_id) || empty($date)) {
     echo json_encode(['status' => 'error', 'message' => 'Doctor ID and date are required']);
@@ -36,14 +37,16 @@ while ($start_time < $end_time) {
     $start_time = strtotime('+1 hour', $start_time);
 }
 
-// Find booked appointments for this doctor/date
+// Find booked appointments for this doctor/date (exclude current appointment if rescheduling)
 $booked = [];
+$exclude_clause = $reschedule_appointment_id > 0 ? " AND APPOINTMENT_ID != $reschedule_appointment_id" : "";
 $apptQuery = "
     SELECT APPOINTMENT_TIME 
     FROM appointment_tbl 
     WHERE DOCTOR_ID = '" . mysqli_real_escape_string($conn, $doctor_id) . "'
       AND APPOINTMENT_DATE = '" . mysqli_real_escape_string($conn, $date) . "'
       AND STATUS IN ('SCHEDULED','COMPLETED')
+      $exclude_clause
 ";
 $apptResult = mysqli_query($conn, $apptQuery);
 if ($apptResult && mysqli_num_rows($apptResult) > 0) {
@@ -58,7 +61,7 @@ $responseSlots = [];
 foreach ($time_slots as $slot) {
     $responseSlots[] = [
         'time'   => $slot,
-        'booked' => !empty($booked[$slot])
+        'available' => empty($booked[$slot]) // false if slot is booked, true if available
     ];
 }
 
