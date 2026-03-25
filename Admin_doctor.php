@@ -684,10 +684,14 @@ include 'admin_sidebar.php';
             <td><?php echo $row['PHONE']; ?></td>
             <td><?php echo $row['EMAIL']; ?></td>
             <td class="actions-td">
-                <a href="edit_doctor.php?id=<?php echo (int)$row['DOCTOR_ID']; ?>" class="action-btn edit-btn" style="text-decoration: none; display: inline-flex;">
-                    <i class="bi bi-pencil"></i>
-                    Edit
-                </a>
+                <!-- ✅ SECURITY: Changed from GET to POST to hide doctor_id from URL -->
+                <form method="POST" action="edit_doctor.php" style="display:inline;">
+                    <input type="hidden" name="doctor_id" value="<?php echo (int)$row['DOCTOR_ID']; ?>">
+                    <button type="submit" class="action-btn edit-btn" style="text-decoration: none; display: inline-flex;">
+                        <i class="bi bi-pencil"></i>
+                        Edit
+                    </button>
+                </form>
 
                 <form method="POST" action="admin_doctor_profile_view.php" style="display:inline;">
                     <input type="hidden" name="doctor_id" value="<?php echo (int)$row['DOCTOR_ID']; ?>">
