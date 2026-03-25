@@ -784,7 +784,7 @@ if (!empty($prescription_id)) {
                             </div>
                         </div>
                         <div class="btn-group">
-                            <button class="btn btn-primary" onclick="openEditModal(<?php echo $reminder['MEDICINE_REMINDER_ID']; ?>, <?php echo json_encode($reminder['MED_NAME']); ?>, <?php echo json_encode($reminder['START_DATE']); ?>, <?php echo json_encode($reminder['END_DATE']); ?>, <?php echo json_encode($reminder['REMINDER_TIME']); ?>, <?php echo json_encode($reminder['REMARKS']); ?>)">
+                            <button class="btn btn-primary" onclick="openEditModal(<?php echo $reminder['MEDICINE_REMINDER_ID']; ?>, '<?php echo addslashes($reminder['MED_NAME']); ?>', '<?php echo addslashes($reminder['START_DATE']); ?>', '<?php echo addslashes($reminder['END_DATE']); ?>', '<?php echo addslashes($reminder['REMINDER_TIME']); ?>', '<?php echo addslashes($reminder['REMARKS']); ?>')">
                                 <i class="fas fa-edit"></i>
                             </button>
                             <form method="POST" style="display: inline;">
