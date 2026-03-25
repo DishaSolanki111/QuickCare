@@ -613,11 +613,14 @@ $receptionist_id = $_SESSION['RECEPTIONIST_ID'];
             <td><?php echo $row['EMAIL']; ?></td>
             <td class="actions-td">
                 <div class="doctor-actions">
-                    <!-- ✅ FIXED: Changed method to GET so doctor_id reaches recep_doctor_profile_view.php via $_GET -->
-                    <a href="recep_doctor_profile_view.php?doctor_id=<?php echo (int)$row['DOCTOR_ID']; ?>" class="action-btn view-btn">
-                        <i class="bi bi-eye"></i>
-                        View
-                    </a>
+                    <!-- ✅ SECURITY: Changed from GET to POST to hide doctor_id from URL -->
+                    <form method="POST" action="recep_doctor_profile_view.php" style="display:inline;">
+                        <input type="hidden" name="doctor_id" value="<?php echo (int)$row['DOCTOR_ID']; ?>">
+                        <button type="submit" class="action-btn view-btn">
+                            <i class="bi bi-eye"></i>
+                            View
+                        </button>
+                    </form>
                     <button type="button" class="action-btn edit-btn"
                         onclick="openEditModal(<?php echo $row['DOCTOR_ID']; ?>, 
                         '<?php echo addslashes($row['FIRST_NAME']); ?>', 

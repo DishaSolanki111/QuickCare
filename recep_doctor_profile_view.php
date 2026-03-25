@@ -8,7 +8,8 @@ if (!isset($_SESSION['RECEPTIONIST_ID'])) {
     exit;
 }
 
-$doctor_id = isset($_GET['doctor_id']) ? (int)$_GET['doctor_id'] : 0;
+// ✅ SECURITY: Changed from GET to POST to hide doctor_id from URL
+$doctor_id = isset($_POST['doctor_id']) ? (int)$_POST['doctor_id'] : 0;
 if ($doctor_id <= 0) {
     die("Invalid doctor.");
 }
