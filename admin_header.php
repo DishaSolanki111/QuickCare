@@ -4,7 +4,6 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Static admin display (no DB needed)
 $admin_full_name = 'Admin';
 $initials = 'AD';
 ?>
@@ -19,14 +18,8 @@ $initials = 'AD';
             </div>
 
             <div class="user-details">
-                <div class="name-row">
-                    <span class="user-name">
-                        <?php echo htmlspecialchars($admin_full_name); ?>
-                    </span>
-                </div>
-
-                <span class="date">
-                    <?php echo date("F d, Y"); ?>
+                <span class="user-name">
+                    <?php echo htmlspecialchars($admin_full_name); ?>
                 </span>
             </div>
         </div>
@@ -73,20 +66,9 @@ $initials = 'AD';
     flex-direction: column;
 }
 
-.name-row {
-    display: flex;
-    align-items: center;
-}
-
 .user-name {
     font-weight: 600;
     color: #1a3a5f;
     font-size: 16px;
 }
-
-.date {
-    color: #6b7280;
-    font-size: 14px;
-}
 </style>
-

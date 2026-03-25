@@ -649,7 +649,6 @@ body::before {
         '2026-01-01', // New Year's Day
         '2026-01-26', // Republic Day (India)
         '2026-03-08', // Maha Shivaratri
-        '2026-03-25', // Holi
         '2026-04-02', // Ram Navami
         '2026-04-06', // Mahavir Jayanti
         '2026-04-10', // Good Friday
@@ -780,7 +779,7 @@ body::before {
             }
             // Check doctor schedule and booking status
             else if (selectedDoctorId && !dayElement.classList.contains('disabled')) {
-                const dayMap = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+                const dayMap = ['SUN', 'MON', 'TUE', 'WED', 'THUR', 'FRI', 'SAT'];
                 
                 if (doctorSchedule.includes(dayMap[dayOfWeek])) {
                     dayElement.classList.add('available');

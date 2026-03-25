@@ -50,7 +50,7 @@ while ($row = $apt_result->fetch_assoc()) {
 }
 $apt_stmt->close();
 
-// Notify patients using medicine_reminder_tbl (existing table)
+// Notify patients using medicine_reminder_tbl
 $rec_id = 1;
 $rec_r = $conn->query("SELECT RECEPTIONIST_ID FROM receptionist_tbl ORDER BY RECEPTIONIST_ID ASC LIMIT 1");
 if ($rec_r && $rec_row = $rec_r->fetch_assoc()) {
@@ -75,12 +75,13 @@ $day_name = $day_names[$schedule_row['AVAILABLE_DAY']] ?? $schedule_row['AVAILAB
 foreach ($deleted_appointments as $a) {
     $date_time = date('M d, Y', strtotime($a['APPOINTMENT_DATE'])) . ' at ' . date('h:i A', strtotime($a['APPOINTMENT_TIME']));
     $msg = "[CANCELLED] Your appointment with " . $doctor_name . " on " . $date_time . " was cancelled. Please reschedule your visit.";
-    $ins->bind_param("iiissss", $med_id, $rec_id, (int)$a['PATIENT_ID'], $today, $today, $now, $msg);
+    $patient_id = (int)$a['PATIENT_ID']; // ✅ Fixed: assigned to variable so it can be passed by reference
+    $ins->bind_param("iiissss", $med_id, $rec_id, $patient_id, $today, $today, $now, $msg);
     $ins->execute();
 }
 $ins->close();
 
-// Always notify receptionist via receptionist_notifications (no dependency on patient/medicine)
+// Always notify receptionist via receptionist_notifications
 $conn->query("CREATE TABLE IF NOT EXISTS receptionist_notifications (
     RECEPTIONIST_NOTIFICATION_ID int(11) NOT NULL AUTO_INCREMENT,
     MESSAGE text NOT NULL,
@@ -113,7 +114,7 @@ if ($all_apt && $all_apt->num_rows > 0) {
 // Delete ALL appointments for this schedule
 $conn->query("DELETE FROM appointment_tbl WHERE SCHEDULE_ID = " . (int)$schedule_id);
 
-// Delete the schedule itself (whole schedule for that day is removed)
+// Delete the schedule itself
 $conn->query("DELETE FROM doctor_schedule_tbl WHERE SCHEDULE_ID = " . (int)$schedule_id . " AND DOCTOR_ID = " . (int)$doctor_id);
 
 $conn->close();

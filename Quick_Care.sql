@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 24, 2026 at 09:18 PM
+-- Generation Time: Mar 25, 2026 at 07:25 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -253,7 +253,8 @@ INSERT INTO `doctor_schedule_tbl` (`SCHEDULE_ID`, `DOCTOR_ID`, `RECEPTIONIST_ID`
 (42, 14, 2, '09:00:00', '17:00:00', 'SAT'),
 (43, 15, 3, '10:00:00', '18:00:00', 'MON'),
 (44, 15, 3, '10:00:00', '18:00:00', 'WED'),
-(45, 15, 3, '10:00:00', '18:00:00', 'FRI');
+(45, 15, 3, '10:00:00', '18:00:00', 'FRI'),
+(51, 2, 8, '09:00:00', '15:00:00', 'WED');
 
 -- --------------------------------------------------------
 
@@ -422,7 +423,8 @@ INSERT INTO `notification_seen_tbl` (`SEEN_ID`, `USER_TYPE`, `USER_ID`, `NOTIF_K
 (8, 'receptionist', 1, '6f455d53e1729ef5c8cd9610de5664303271e469', '2026-03-24 14:01:54'),
 (9, 'receptionist', 8, 'c73720737a8137ecf1f702d6013b69cd6f61594c', '2026-03-25 00:10:34'),
 (10, 'receptionist', 8, '920f582567a1093e23e120c74efb21043143a6f7', '2026-03-25 00:10:34'),
-(11, 'receptionist', 8, '24b6fbe380996737cdcaa0bc61c684511b3609af', '2026-03-25 00:10:34');
+(11, 'receptionist', 8, '24b6fbe380996737cdcaa0bc61c684511b3609af', '2026-03-25 00:10:34'),
+(12, 'receptionist', 8, '73340221ec502b63e3c340513baee8a5cdba0c78', '2026-03-25 11:10:30');
 
 -- --------------------------------------------------------
 
@@ -969,7 +971,7 @@ ALTER TABLE `appointment_tbl`
 -- AUTO_INCREMENT for table `doctor_schedule_tbl`
 --
 ALTER TABLE `doctor_schedule_tbl`
-  MODIFY `SCHEDULE_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=50;
+  MODIFY `SCHEDULE_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=52;
 
 --
 -- AUTO_INCREMENT for table `doctor_tbl`
@@ -999,7 +1001,7 @@ ALTER TABLE `medicine_tbl`
 -- AUTO_INCREMENT for table `notification_seen_tbl`
 --
 ALTER TABLE `notification_seen_tbl`
-  MODIFY `SEEN_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `SEEN_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `password_resets`

@@ -35,7 +35,6 @@ if ((!isset($reminder_query) || !isset($medicine_reminder_query) || !isset($canc
             LIMIT 5
         ");
     }
-    // Cancellation notifications (stored in medicine_reminder_tbl with [CANCELLED] prefix)
     if (!isset($cancellation_query)) {
         $cancellation_query = @mysqli_query($conn, "
             SELECT REMARKS, REMINDER_TIME, START_DATE
@@ -47,13 +46,11 @@ if ((!isset($reminder_query) || !isset($medicine_reminder_query) || !isset($canc
     }
 }
 
-// Expect $patient (and optional $page_title, $reminder_query, $medicine_reminder_query) to be set
 $patient_full_name = isset($patient)
     ? trim(($patient['FIRST_NAME'] ?? '') . ' ' . ($patient['LAST_NAME'] ?? ''))
     : 'Patient';
 $patient_full_name = $patient_full_name !== '' ? $patient_full_name : 'Patient';
 
-// Simple initials avatar from name
 $initials = '';
 if (!empty($patient['FIRST_NAME']) || !empty($patient['LAST_NAME'])) {
     $initials .= strtoupper(substr($patient['FIRST_NAME'] ?? '', 0, 1));
@@ -62,7 +59,6 @@ if (!empty($patient['FIRST_NAME']) || !empty($patient['LAST_NAME'])) {
     $initials = 'PT';
 }
 
-// Build arrays first so we can hide already-seen notifications for this patient.
 $pidForSeen = (int)($patient['PATIENT_ID'] ?? 0);
 $appointment_items = [];
 $medicine_items = [];
@@ -129,7 +125,6 @@ if (!empty($toMarkSeen)) {
     qc_notification_mark_seen($conn, 'patient', $pidForSeen, $toMarkSeen);
 }
 
-// Notification count (appointment + medicine + cancellation reminders)
 $reminder_count = count($appointment_items) + count($medicine_items) + count($cancellation_items);
 ?>
 
@@ -143,18 +138,12 @@ $reminder_count = count($appointment_items) + count($medicine_items) + count($ca
             </div>
 
             <div class="user-details">
-                <div class="name-row">
-                    <span class="user-name">
-                        <?php echo htmlspecialchars($patient_full_name); ?>
-                    </span>
-                </div>
-
-                <span class="date">
-                    <?php echo date("F d, Y"); ?>
+                <span class="user-name">
+                    <?php echo htmlspecialchars($patient_full_name); ?>
                 </span>
             </div>
 
-            <!-- Notification bell + dropdown, aligned like doctor header -->
+            <!-- Notification bell + dropdown -->
             <div class="notification-bell" onclick="toggleNotifications()">
                 <i class="fas fa-bell"></i>
 
@@ -269,20 +258,10 @@ $reminder_count = count($appointment_items) + count($medicine_items) + count($ca
     flex-direction: column;
 }
 
-.name-row {
-    display: flex;
-    align-items: center;
-}
-
 .user-name {
     font-weight: 600;
     color: #1a3a5f;
     font-size: 16px;
-}
-
-.date {
-    color: #6b7280;
-    font-size: 14px;
 }
 
 .notification-bell {
@@ -394,7 +373,7 @@ $reminder_count = count($appointment_items) + count($medicine_items) + count($ca
 }
 </style>
 
-<!-- Notification popup (appointment + medicine reminders) -->
+<!-- Notification popup -->
 <div class="notification-popup" id="notificationPopup">
     <div style="display:flex; align-items:flex-start; gap:10px;">
         <i class="fas fa-bell" style="font-size:18px; color:#1a3a5f;"></i>
@@ -418,7 +397,7 @@ $reminder_count = count($appointment_items) + count($medicine_items) + count($ca
         });
     }
     window.toggleNotifications = toggleNotifications;
-    
+
     function checkReminders() {
         fetch('check_reminders.php')
             .then(function(r){ return r.json(); })

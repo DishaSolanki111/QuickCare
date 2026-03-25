@@ -5,10 +5,9 @@ if (session_status() === PHP_SESSION_NONE) {
 
 include 'config.php';
 
-// Use the same session variable name as in your login
- $doctor_id = $_SESSION['DOCTOR_ID'] ?? null;
- $doctor_name = 'Doctor';
- $profile_image = 'uploads/.png';
+$doctor_id    = $_SESSION['DOCTOR_ID'] ?? null;
+$doctor_name  = 'Doctor';
+$profile_image = 'uploads/.png';
 
 if ($doctor_id) {
     $stmt = $conn->prepare("SELECT FIRST_NAME, LAST_NAME, PROFILE_IMAGE FROM doctor_tbl WHERE DOCTOR_ID = ?");
@@ -25,7 +24,7 @@ if ($doctor_id) {
     }
 }
 ?>
-<!-- ✅ HEADER HTML YAHI RAHEGA -->
+
 <header class="topbar">
     <h2><?php echo htmlspecialchars($page_title ?? 'Welcome back'); ?></h2>
 
@@ -34,18 +33,12 @@ if ($doctor_id) {
             <img src="<?php echo $profile_image; ?>" alt="Doctor" class="user-avatar">
 
             <div class="user-details">
-                <div class="name-row">
-                    <span class="doctor-name">
-                        <?php echo $doctor_name; ?>
-                    </span>
-                </div>
-
-                <span class="date">
-                    <?php echo date("F d, Y"); ?>
+                <span class="doctor-name">
+                    <?php echo $doctor_name; ?>
                 </span>
             </div>
-            
-            <!-- 🔔 Bell - MOVED TO RIGHT SIDE -->
+
+            <!-- 🔔 Bell - Right Side -->
             <?php include 'appointment_notification.php'; ?>
         </div>
     </div>
@@ -53,7 +46,6 @@ if ($doctor_id) {
 
 <style>
 .topbar {
-   
     background: #ffffff;
     padding: 18px 30px;
     display: flex;
@@ -87,23 +79,12 @@ if ($doctor_id) {
     flex-direction: column;
 }
 
-.name-row {
-    display: flex;
-    align-items: center;
-}
-
 .doctor-name {
     font-weight: 600;
     color: #1a3a5f;
     font-size: 16px;
 }
 
-.date {
-    color: #6b7280;
-    font-size: 14px;
-}
-
-/* Notification bell styles - adjust as needed */
 .notification-container {
     margin-left: 100px;
 }
