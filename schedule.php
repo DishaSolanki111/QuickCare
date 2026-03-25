@@ -283,6 +283,17 @@ if ($result->num_rows > 0) {
             font-weight: 600;
         }
 
+        .slot-count-info {
+            color: var(--success-color);
+            font-size: 0.8rem;
+            font-weight: 500;
+            margin-top: 0.2rem;
+            background-color: rgba(40, 167, 69, 0.1);
+            padding: 0.2rem 0.5rem;
+            border-radius: 12px;
+            display: inline-block;
+        }
+
         .doctor-schedule {
             padding: 0.85rem 1rem;
         }
@@ -699,8 +710,31 @@ if ($result->num_rows > 0) {
                     return;
                 }
                 
+                // Calculate total slots for each doctor and sort
+                const doctorsWithSlotCount = doctors.map(doctor => {
+                    let totalSlots = 0;
+                    if (doctor.schedule && doctor.schedule.length > 0) {
+                        const schedule = doctor.schedule[0];
+                        const startTime = new Date(`2000-01-01T${schedule.start_time}`);
+                        const endTime = new Date(`2000-01-01T${schedule.end_time}`);
+                        const slotDuration = 30; // Default slot duration in minutes
+                        
+                        // Calculate total slots
+                        const totalMinutes = (endTime - startTime) / (1000 * 60);
+                        totalSlots = Math.floor(totalMinutes / slotDuration);
+                    }
+                    
+                    return {
+                        ...doctor,
+                        totalSlots: totalSlots
+                    };
+                });
+                
+                // Sort doctors by total slots (more slots first)
+                doctorsWithSlotCount.sort((a, b) => b.totalSlots - a.totalSlots);
+                
                 let html = '';
-                doctors.forEach(doctor => {
+                doctorsWithSlotCount.forEach(doctor => {
                     html += `
                         <div class="doctor-card">
                             <div class="doctor-header">
