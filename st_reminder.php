@@ -183,16 +183,21 @@ $medicine_reminders_query = mysqli_query($conn, "
 
 // Build map: [prescription_id][medicine_id] => reminder row (for reminders that have IDs in REMARKS)
 $reminder_by_prescription_medicine = [];
+// Track patients who have any active reminders
+$patients_with_active_reminders = [];
 $reminders_list = [];
 while ($mr = mysqli_fetch_assoc($medicine_reminders_query)) {
     $reminders_list[] = $mr;
-    if (!empty($mr['REMARKS']) && preg_match('/PRESCRIPTION_ID:\s*(\d+)/', $mr['REMARKS'], $m)) {
+    // Track patients with any active reminders
+    $patient_id = (int)$mr['PATIENT_ID'];
+    $patients_with_active_reminders[$patient_id] = true;
+    
+    if (!empty($mr['REMARKS']) && preg_match('/PRESCRIPTION_ID:\s*(\d+)\. MEDICINE_ID:\s*(\d+)/', $mr['REMARKS'], $m)) {
         $pres_id = (int)$m[1];
-        $med_id = (int)($mr['MEDICINE_ID'] ?? 0);
+        $med_id = (int)$m[2];
         if (!isset($reminder_by_prescription_medicine[$pres_id])) {
             $reminder_by_prescription_medicine[$pres_id] = [];
         }
-        // If MEDICINE_ID is 0 (older reminders), keep a generic entry under key 0
         $reminder_by_prescription_medicine[$pres_id][$med_id] = $mr;
     }
 }
@@ -813,9 +818,8 @@ if (isset($_POST['edit_reminder_id'])) {
                     <option value="">Search by...</option>
                     <option value="patient" <?php echo (isset($_POST['search_type']) && $_POST['search_type'] === 'patient') ? 'selected' : ''; ?>>By Patient</option>
                     <option value="doctor" <?php echo (isset($_POST['search_type']) && $_POST['search_type'] === 'doctor') ? 'selected' : ''; ?>>By Doctor</option>
-                    <option value="specialization" <?php echo (isset($_POST['search_type']) && $_POST['search_type'] === 'specialization') ? 'selected' : ''; ?>>By Specialization</option>
                 </select>
-                <input type="text" name="search_term" class="search-term-input" placeholder="Search..." value="<?php echo isset($_POST['search_term']) ? htmlspecialchars($_POST['search_term']) : ''; ?>"
+                <input type="text" name="search_term" class="search-term-input" placeholder="Search..." value="<?php echo isset($_POST['search_term']) ? htmlspecialchars($_POST['search_term']) : ''; ?>">
                 <button type="submit" class="btn-search">Search</button>
                 <?php if (!empty($_POST['search_type']) || !empty($_POST['search_term'])): ?>
                 <a href="st_reminder.php" class="btn-clear">Clear</a>
@@ -910,7 +914,10 @@ if (isset($_POST['edit_reminder_id'])) {
                                                                     </div>
                                                                 </div>
                                                                 <div class="reminder-action-row">
-                                                                    <?php if ($reminder_row): ?>
+                                                                    <?php 
+                                                                    // Check if this patient has ANY active reminder
+                                                                    $patient_has_active_reminder = isset($patients_with_active_reminders[$apt['PATIENT_ID']]);
+                                                                    if ($reminder_row): ?>
                                                                         <span class="reminder-set-badge me-2"><i class="bi bi-bell-fill me-1"></i>Reminder set</span>
                                                                         <button type="button" class="btn btn-warning btn-sm" onclick="openEditReminderModal(
                                                                             <?php echo (int)$reminder_row['MEDICINE_REMINDER_ID']; ?>,
@@ -926,7 +933,7 @@ if (isset($_POST['edit_reminder_id'])) {
                                                                                 <i class="bi bi-trash me-1"></i> Delete
                                                                             </button>
                                                                         </form>
-                                                                    <?php else: ?>
+                                                                    <?php elseif (!$patient_has_active_reminder): ?>
                                                                         <button class="btn-set-reminder" data-bs-toggle="modal" data-bs-target="#createPrescriptionReminderModal" 
                                                                                 data-patient-id="<?php echo (int)$apt['PATIENT_ID']; ?>"
                                                                                 data-patient-name="<?php echo htmlspecialchars($apt['PAT_FNAME'] . ' ' . $apt['PAT_LNAME']); ?>"
@@ -937,6 +944,9 @@ if (isset($_POST['edit_reminder_id'])) {
                                                                                 data-medicine-duration="<?php echo $med_duration_days; ?>">
                                                                             <i class="bi bi-bell-fill"></i><span>Set Reminder</span>
                                                                         </button>
+                                                                    <?php else: ?>
+                                                                        <!-- Patient has active reminder but not for this specific medicine -->
+                                                                        <span class="text-muted small"><i class="bi bi-bell-fill me-1"></i>Patient has active reminder</span>
                                                                     <?php endif; ?>
                                                                 </div>
                                                             </div>
