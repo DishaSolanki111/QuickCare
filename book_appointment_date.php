@@ -593,11 +593,11 @@ body::before {
                             </div>
                             <div style="margin-top:10px; font-size: 0.9rem; color:#555;">
                                 <span style="display:inline-block;width:16px;height:12px;border-radius:3px;background-color:rgba(46, 204, 113, 0.3);border:1px solid #2ecc71;margin-right:6px;vertical-align:middle;"></span>
-                                Green = Available&nbsp;&nbsp;
+                                Available&nbsp;&nbsp;
                                 <span style="display:inline-block;width:16px;height:12px;border-radius:3px;background-color:rgba(243, 156, 18, 0.35);border:1px solid #f39c12;margin:0 6px;vertical-align:middle;"></span>
-                                Yellow = Fully booked&nbsp;&nbsp;
+                                Fully booked&nbsp;&nbsp;
                                 <span style="display:inline-block;width:16px;height:12px;border-radius:3px;background-color:rgba(231, 76, 60, 0.25);border:1px solid #e74c3c;margin:0 6px;vertical-align:middle;"></span>
-                                Red = Public holiday
+                                Public holiday
                             </div>
                             <input type="hidden" id="selected_date" name="appointment_date" required>
                         </div>
