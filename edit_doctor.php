@@ -50,10 +50,14 @@ $doctor_data = mysqli_fetch_assoc($result);
 // Handle form submission
 $error_message = '';
 $success_message = '';
+$field_errors = [];
 
 if (isset($_POST['action']) && $_POST['action'] == 'edit_doctor') {
     $first_name = trim($_POST['first_name']);
     $last_name = trim($_POST['last_name']);
+    $dob = trim($_POST['dob']);
+    $doj = trim($_POST['doj']);
+    $gender = trim($_POST['gender']);
     $education = trim($_POST['education']);
     $phone = trim($_POST['phone']);
     $email = trim($_POST['email']);
@@ -87,6 +91,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'edit_doctor') {
     $first_name_normalized = '';
     $first_name_err = '';
     if (!qc_validate_person_name($first_name, $first_name_normalized, $first_name_err)) {
+        $field_errors['first_name'] = $first_name_err;
         $errors[] = $first_name_err;
     } else {
         $first_name = $first_name_normalized;
@@ -95,43 +100,84 @@ if (isset($_POST['action']) && $_POST['action'] == 'edit_doctor') {
     $last_name_normalized = '';
     $last_name_err = '';
     if (!qc_validate_person_name($last_name, $last_name_normalized, $last_name_err)) {
+        $field_errors['last_name'] = $last_name_err;
         $errors[] = $last_name_err;
     } else {
         $last_name = $last_name_normalized;
     }
     
     if (empty($education)) {
+        $field_errors['education'] = "Education is required.";
         $errors[] = "Education is required.";
     } elseif (!preg_match('/^[a-zA-Z\s\.\,\(\)]+$/', $education)) {
+        $field_errors['education'] = "Education should contain only letters, spaces, dots, commas, and parentheses.";
         $errors[] = "Education should contain only letters, spaces, dots, commas, and parentheses.";
     }
     
     if (empty($phone)) {
+        $field_errors['phone'] = "Phone number is required.";
         $errors[] = "Phone number is required.";
     } elseif (!preg_match('/^[0-9]{10}$/', $phone)) {
+        $field_errors['phone'] = "Phone number must be exactly 10 digits.";
         $errors[] = "Phone number must be exactly 10 digits.";
     }
     
     if (empty($email)) {
+        $field_errors['email'] = "Email is required.";
         $errors[] = "Email is required.";
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $errors[] = "Invalid email format.";
+        $field_errors['email'] = "email should be in example@gmail.com format.";
+        $errors[] = "email should be in example@gmail.com format.";
     }
     
     if (empty($specialization_id)) {
+        $field_errors['specialization_id'] = "Specialization is required.";
         $errors[] = "Specialization is required.";
     } else {
         $spec_check = mysqli_query($conn, "SELECT COUNT(*) as count FROM specialisation_tbl WHERE SPECIALISATION_ID = $specialization_id");
         $spec_row = mysqli_fetch_assoc($spec_check);
         if ($spec_row['count'] == 0) {
+            $field_errors['specialization_id'] = "Invalid specialization selected.";
             $errors[] = "Invalid specialization selected.";
         }
+    }
+    
+    // Validation for new fields
+    if (empty($dob)) {
+        $field_errors['dob'] = "Date of birth is required.";
+        $errors[] = "Date of birth is required.";
+    } elseif (!strtotime($dob)) {
+        $field_errors['dob'] = "Invalid date of birth format.";
+        $errors[] = "Invalid date of birth format.";
+    }
+    
+    if (empty($doj)) {
+        $field_errors['doj'] = "Date of joining is required.";
+        $errors[] = "Date of joining is required.";
+    } elseif (!strtotime($doj)) {
+        $field_errors['doj'] = "Invalid date of joining format.";
+        $errors[] = "Invalid date of joining format.";
+    }
+    
+    // Validate DOJ is after DOB
+    if (!empty($dob) && !empty($doj) && strtotime($dob) && strtotime($doj)) {
+        if (strtotime($doj) < strtotime($dob)) {
+            $field_errors['doj'] = "Date of joining cannot be before date of birth.";
+            $errors[] = "Date of joining cannot be before date of birth.";
+        }
+    }
+    
+    // Gender is optional, but if provided, validate
+    if (!empty($gender) && !in_array($gender, ['MALE', 'FEMALE', 'OTHER'])) {
+        $field_errors['gender'] = "Invalid gender selection.";
+        $errors[] = "Invalid gender selection.";
     }
     
     // Check for duplicate email (excluding current doctor)
     $email_check = mysqli_query($conn, "SELECT COUNT(*) as count FROM doctor_tbl WHERE EMAIL = '$email' AND DOCTOR_ID != $doctor_id");
     $email_row = mysqli_fetch_assoc($email_check);
     if ($email_row['count'] > 0) {
+        $field_errors['email'] = "Email already exists.";
         $errors[] = "Email already exists.";
     }
     
@@ -139,6 +185,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'edit_doctor') {
     $phone_check = mysqli_query($conn, "SELECT COUNT(*) as count FROM doctor_tbl WHERE PHONE = '$phone' AND DOCTOR_ID != $doctor_id");
     $phone_row = mysqli_fetch_assoc($phone_check);
     if ($phone_row['count'] > 0) {
+        $field_errors['phone'] = "Phone number already exists.";
         $errors[] = "Phone number already exists.";
     }
     
@@ -147,6 +194,9 @@ if (isset($_POST['action']) && $_POST['action'] == 'edit_doctor') {
         $query = "UPDATE doctor_tbl SET 
                  FIRST_NAME = ?, 
                  LAST_NAME = ?, 
+                 DOB = ?, 
+                 DOJ = ?, 
+                 GENDER = ?, 
                  EDUCATION = ?, 
                  PHONE = ?, 
                  EMAIL = ?, 
@@ -155,7 +205,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'edit_doctor') {
                  WHERE DOCTOR_ID = ?";
         
         $stmt = mysqli_prepare($conn, $query);
-        mysqli_stmt_bind_param($stmt, "sssssssi", $first_name, $last_name, $education, $phone, $email, $specialization_id, $profile_image, $doctor_id);
+        mysqli_stmt_bind_param($stmt, "sssssssssi", $first_name, $last_name, $dob, $doj, $gender, $education, $phone, $email, $specialization_id, $profile_image, $doctor_id);
         
         if (mysqli_stmt_execute($stmt)) {
             header("Location: Admin_doctor.php?success=" . urlencode("Doctor information updated successfully."));
@@ -305,6 +355,19 @@ $adminName = isset($_SESSION['USER_NAME']) ? $_SESSION['USER_NAME'] : 'Admin';
             border: 1px solid #f5c6cb;
         }
 
+        .error-message {
+            color: #dc3545;
+            font-size: 13px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .form-group.error input,
+        .form-group.error select,
+        .form-group.error textarea {
+            border-color: #dc3545;
+        }
+
         .current-image {
             width: 100px;
             height: 100px;
@@ -363,10 +426,41 @@ $adminName = isset($_SESSION['USER_NAME']) ? $_SESSION['USER_NAME'] : 'Admin';
                 <div class="form-group">
                     <label for="first_name">First Name *</label>
                     <input type="text" id="first_name" name="first_name" value="<?php echo htmlspecialchars($doctor_data['FIRST_NAME']); ?>" required>
+                    <div class="error-message" id="first_name_error"><?php echo htmlspecialchars($field_errors['first_name'] ?? ''); ?></div>
                 </div>
                 <div class="form-group">
                     <label for="last_name">Last Name *</label>
                     <input type="text" id="last_name" name="last_name" value="<?php echo htmlspecialchars($doctor_data['LAST_NAME']); ?>" required>
+                    <div class="error-message" id="last_name_error"><?php echo htmlspecialchars($field_errors['last_name'] ?? ''); ?></div>
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="dob">Date of Birth *</label>
+                    <input type="date" id="dob" name="dob" value="<?php echo htmlspecialchars($doctor_data['DOB']); ?>" required>
+                    <div class="error-message" id="dob_error"><?php echo htmlspecialchars($field_errors['dob'] ?? ''); ?></div>
+                </div>
+                <div class="form-group">
+                    <label for="doj">Date of Joining *</label>
+                    <input type="date" id="doj" name="doj" value="<?php echo htmlspecialchars($doctor_data['DOJ']); ?>" required>
+                    <div class="error-message" id="doj_error"><?php echo htmlspecialchars($field_errors['doj'] ?? ''); ?></div>
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="gender">Gender</label>
+                    <select id="gender" name="gender">
+                        <option value="">Select Gender</option>
+                        <option value="MALE" <?php echo ($doctor_data['GENDER'] == 'MALE') ? 'selected' : ''; ?>>Male</option>
+                        <option value="FEMALE" <?php echo ($doctor_data['GENDER'] == 'FEMALE') ? 'selected' : ''; ?>>Female</option>
+                        <option value="OTHER" <?php echo ($doctor_data['GENDER'] == 'OTHER') ? 'selected' : ''; ?>>Other</option>
+                    </select>
+                    <div class="error-message" id="gender_error"><?php echo htmlspecialchars($field_errors['gender'] ?? ''); ?></div>
+                </div>
+                <div class="form-group">
+                    <!-- Empty cell for layout balance -->
                 </div>
             </div>
             
@@ -374,6 +468,7 @@ $adminName = isset($_SESSION['USER_NAME']) ? $_SESSION['USER_NAME'] : 'Admin';
                 <div class="form-group">
                     <label for="education">Education *</label>
                     <input type="text" id="education" name="education" value="<?php echo htmlspecialchars($doctor_data['EDUCATION']); ?>" required>
+                    <div class="error-message" id="education_error"><?php echo htmlspecialchars($field_errors['education'] ?? ''); ?></div>
                 </div>
                 <div class="form-group">
                     <label for="specialization_id">Specialization *</label>
@@ -387,6 +482,7 @@ $adminName = isset($_SESSION['USER_NAME']) ? $_SESSION['USER_NAME'] : 'Admin';
                         }
                         ?>
                     </select>
+                    <div class="error-message" id="specialization_id_error"><?php echo htmlspecialchars($field_errors['specialization_id'] ?? ''); ?></div>
                 </div>
             </div>
             
@@ -394,10 +490,12 @@ $adminName = isset($_SESSION['USER_NAME']) ? $_SESSION['USER_NAME'] : 'Admin';
                 <div class="form-group">
                     <label for="phone">Phone *</label>
                     <input type="tel" id="phone" name="phone" value="<?php echo htmlspecialchars($doctor_data['PHONE']); ?>" required>
+                    <div class="error-message" id="phone_error"><?php echo htmlspecialchars($field_errors['phone'] ?? ''); ?></div>
                 </div>
                 <div class="form-group">
                     <label for="email">Email *</label>
                     <input type="email" id="email" name="email" value="<?php echo htmlspecialchars($doctor_data['EMAIL']); ?>" required>
+                    <div class="error-message" id="email_error"><?php echo htmlspecialchars($field_errors['email'] ?? ''); ?></div>
                 </div>
             </div>
             
@@ -414,6 +512,136 @@ $adminName = isset($_SESSION['USER_NAME']) ? $_SESSION['USER_NAME'] : 'Admin';
 </div>
 
 <script>
+// Error message handling functions
+function hideError(fieldId) {
+    const errorElement = document.getElementById(fieldId + '_error');
+    const formGroup = errorElement.closest('.form-group');
+    if (errorElement) {
+        errorElement.style.display = 'none';
+        errorElement.textContent = '';
+    }
+    if (formGroup) {
+        formGroup.classList.remove('error');
+    }
+}
+
+function showError(fieldId, message) {
+    const errorElement = document.getElementById(fieldId + '_error');
+    const formGroup = errorElement.closest('.form-group');
+    if (errorElement) {
+        errorElement.textContent = message;
+        errorElement.style.display = 'block';
+    }
+    if (formGroup) {
+        formGroup.classList.add('error');
+    }
+}
+
+// Real-time validation
+document.addEventListener('DOMContentLoaded', function() {
+    // First Name validation
+    const firstName = document.getElementById('first_name');
+    if (firstName) {
+        firstName.addEventListener('input', function() {
+            const value = this.value.trim();
+            if (value.length >= 2 && value.length <= 50 && /^[A-Za-z\s]+$/.test(value) && !/(.)\1{3,}/.test(value)) {
+                hideError('first_name');
+            }
+        });
+    }
+
+    // Last Name validation
+    const lastName = document.getElementById('last_name');
+    if (lastName) {
+        lastName.addEventListener('input', function() {
+            const value = this.value.trim();
+            if (value.length >= 2 && value.length <= 50 && /^[A-Za-z\s]+$/.test(value) && !/(.)\1{3,}/.test(value)) {
+                hideError('last_name');
+            }
+        });
+    }
+
+    // Education validation
+    const education = document.getElementById('education');
+    if (education) {
+        education.addEventListener('input', function() {
+            const value = this.value.trim();
+            if (value && /^[a-zA-Z\s\.\,\(\)]+$/.test(value)) {
+                hideError('education');
+            }
+        });
+    }
+
+    // Phone validation
+    const phone = document.getElementById('phone');
+    if (phone) {
+        phone.addEventListener('input', function() {
+            const value = this.value.trim();
+            if (/^[0-9]{10}$/.test(value)) {
+                hideError('phone');
+            }
+        });
+    }
+
+    // Email validation
+    const email = document.getElementById('email');
+    if (email) {
+        email.addEventListener('input', function() {
+            const value = this.value.trim();
+            if (value && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+                hideError('email');
+            }
+        });
+    }
+
+    // Specialization validation
+    const specialization = document.getElementById('specialization_id');
+    if (specialization) {
+        specialization.addEventListener('change', function() {
+            if (this.value) {
+                hideError('specialization_id');
+            }
+        });
+    }
+
+    // DOB validation
+    const dob = document.getElementById('dob');
+    if (dob) {
+        dob.addEventListener('change', function() {
+            const value = this.value;
+            if (value && !isNaN(Date.parse(value))) {
+                hideError('dob');
+            }
+        });
+    }
+
+    // DOJ validation
+    const doj = document.getElementById('doj');
+    if (doj) {
+        doj.addEventListener('change', function() {
+            const value = this.value;
+            const dobValue = document.getElementById('dob').value;
+            if (value && !isNaN(Date.parse(value))) {
+                hideError('doj');
+                // Check DOJ vs DOB
+                if (dobValue && Date.parse(value) < Date.parse(dobValue)) {
+                    showError('doj', 'Date of joining cannot be before date of birth.');
+                }
+            }
+        });
+    }
+
+    // Gender validation
+    const gender = document.getElementById('gender');
+    if (gender) {
+        gender.addEventListener('change', function() {
+            if (this.value) {
+                hideError('gender');
+            }
+        });
+    }
+});
+
 // Preview image when selected
 document.getElementById('profile_image').addEventListener('change', function(e) {
     const file = e.target.files[0];
