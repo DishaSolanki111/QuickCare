@@ -847,14 +847,9 @@ function validateEducation() {
         errorElement.textContent = 'Education is required';
         errorElement.style.display = 'block';
         return false;
-    } else if (!/^[a-zA-Z\s\.\,]+$/.test(education.value.trim())) {
-        errorElement.textContent = 'Education should contain only letters, spaces, dots, and commas';
-        errorElement.style.display = 'block';
-        return false;
-    } else {
-        errorElement.style.display = 'none';
-        return true;
     }
+    errorElement.style.display = 'none';
+    return true;
 }
 
 function validatePhone() {
