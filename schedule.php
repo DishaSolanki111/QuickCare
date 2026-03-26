@@ -814,7 +814,7 @@ if ($result->num_rows > 0) {
                 // Generate time slots based on start_time, end_time and slot_duration (default 30 minutes)
                 const startTime = new Date(`2000-01-01T${schedule.start_time}`);
                 const endTime = new Date(`2000-01-01T${schedule.end_time}`);
-                const slotDuration = 30; // Default slot duration in minutes
+                const slotDuration = 60; // Default slot duration in minutes
                 
                 const currentTime = new Date(startTime);
                 
