@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 25, 2026 at 07:25 AM
+-- Generation Time: Mar 26, 2026 at 04:01 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -43,15 +43,9 @@ INSERT INTO `appointment_reminder_tbl` (`APPOINTMENT_REMINDER_ID`, `RECEPTIONIST
 (1, 1, 1, '10:00:00', 'Appointment booked'),
 (2, 1, 1, '10:00:00', '24 hours before appointment'),
 (3, 1, 1, '07:00:00', '3 hours before appointment'),
-(7, 1, 3, '11:00:00', 'Appointment booked'),
-(8, 1, 3, '11:00:00', '24 hours before appointment'),
-(9, 1, 3, '08:00:00', '3 hours before appointment'),
 (10, 1, 4, '11:00:00', 'Appointment booked'),
 (11, 1, 4, '11:00:00', '24 hours before appointment'),
 (12, 1, 4, '08:00:00', '3 hours before appointment'),
-(13, 2, 5, '12:00:00', 'Appointment booked'),
-(14, 2, 5, '09:00:00', '24 hours before appointment'),
-(15, 2, 5, '06:00:00', '3 hours before appointment'),
 (16, 2, 6, '12:00:00', 'Appointment booked'),
 (17, 2, 6, '09:00:00', '24 hours before appointment'),
 (18, 2, 6, '06:00:00', '3 hours before appointment'),
@@ -123,7 +117,21 @@ INSERT INTO `appointment_reminder_tbl` (`APPOINTMENT_REMINDER_ID`, `RECEPTIONIST
 (84, 3, 45, '08:00:00', '3 hours before appointment'),
 (85, 1, 14, '19:15:10', '[RESCHEDULED_BY_PATIENT] Amit Kumar rescheduled this appointment to March 27, 2026 at 5:00 PM.'),
 (86, 1, 13, '19:17:30', '[RESCHEDULED_BY_PATIENT] Neha Gupta rescheduled this appointment to March 25, 2026 at 2:00 PM.'),
-(87, 1, 12, '19:18:48', '[RESCHEDULED_BY_PATIENT] Rohan Patel rescheduled this appointment to March 27, 2026 at 3:00 PM.');
+(87, 1, 12, '19:18:48', '[RESCHEDULED_BY_PATIENT] Rohan Patel rescheduled this appointment to March 27, 2026 at 3:00 PM.'),
+(88, 1, 4, '07:34:11', 'Your appointment with Dr. Priya Sharma has been rescheduled from March 26, 2026 at 10:00 AM to March 28, 2026 at 5:00 PM.'),
+(89, 1, 4, '07:34:11', '[RESCHEDULED_BY_DOCTOR] Dr. Priya Sharma rescheduled appointment for Amit Kumar to March 28, 2026 at 5:00 PM.'),
+(92, 1, 6, '09:50:16', 'Your appointment with Dr. Amit Patel has been rescheduled from March 28, 2026 at 9:00 AM to March 28, 2026 at 9:00 AM.'),
+(93, 1, 6, '09:50:16', '[RESCHEDULED_BY_DOCTOR] Dr. Amit Patel rescheduled appointment for Vikas Singh to March 28, 2026 at 9:00 AM.'),
+(94, 1, 7, '09:56:16', 'Your appointment with Dr. Amit Patel has been rescheduled from March 29, 2026 at 10:00 AM to March 28, 2026 at 12:00 PM.'),
+(95, 1, 7, '09:56:16', '[RESCHEDULED_BY_DOCTOR] Dr. Amit Patel rescheduled appointment for Anjali Desai to March 28, 2026 at 12:00 PM.'),
+(96, 1, 23, '10:13:12', 'Your appointment with Dr. Meera Joshi has been rescheduled from April 14, 2026 at 11:00 AM to April 07, 2026 at 4:00 PM.'),
+(97, 1, 23, '10:13:12', '[RESCHEDULED_BY_DOCTOR] Dr. Meera Joshi rescheduled appointment for Neha Gupta to April 07, 2026 at 4:00 PM.'),
+(98, 1, 28, '10:18:35', 'Your appointment with Dr. Kavita Nair has been rescheduled from April 19, 2026 at 10:00 AM to April 07, 2026 at 10:00 AM.'),
+(99, 1, 28, '10:18:35', '[RESCHEDULED_BY_DOCTOR] Dr. Kavita Nair rescheduled appointment for Rahul Verma to April 07, 2026 at 10:00 AM.'),
+(100, 1, 29, '10:18:57', 'Your appointment with Dr. Kavita Nair has been rescheduled from April 20, 2026 at 11:00 AM to April 07, 2026 at 1:00 PM.'),
+(101, 1, 29, '10:18:57', '[RESCHEDULED_BY_DOCTOR] Dr. Kavita Nair rescheduled appointment for Kavita Sharma to April 07, 2026 at 1:00 PM.'),
+(102, 1, 20, '11:06:22', '[RESCHEDULED_BY_PATIENT] Arjun Mishra rescheduled this appointment to March 27, 2026 at 4:00 PM.'),
+(103, 1, 35, '11:06:38', '[CANCELLED_BY_PATIENT] Arjun Mishra cancelled the appointment for Mar 25, 2026 at 04:00 PM.');
 
 -- --------------------------------------------------------
 
@@ -148,11 +156,9 @@ CREATE TABLE `appointment_tbl` (
 
 INSERT INTO `appointment_tbl` (`APPOINTMENT_ID`, `PATIENT_ID`, `DOCTOR_ID`, `SCHEDULE_ID`, `CREATED_AT`, `APPOINTMENT_DATE`, `APPOINTMENT_TIME`, `STATUS`) VALUES
 (1, 1, 1, 3, '2026-03-19 10:00:00', '2026-03-20', '11:00:00', 'COMPLETED'),
-(3, 4, 2, 4, '2026-03-22 00:00:00', '2026-03-25', '09:00:00', 'SCHEDULED'),
-(4, 5, 2, 5, '2026-03-23 00:00:00', '2026-03-26', '10:00:00', 'SCHEDULED'),
-(5, 6, 2, 6, '2026-03-24 00:00:00', '2026-03-27', '11:00:00', 'SCHEDULED'),
-(6, 7, 3, 7, '2026-03-23 00:00:00', '2026-03-28', '09:00:00', 'SCHEDULED'),
-(7, 8, 3, 8, '2026-03-24 00:00:00', '2026-03-29', '10:00:00', 'SCHEDULED'),
+(4, 5, 2, 6, '2026-03-23 00:00:00', '2026-03-28', '17:00:00', 'SCHEDULED'),
+(6, 7, 3, 57, '2026-03-23 00:00:00', '2026-03-28', '09:00:00', 'SCHEDULED'),
+(7, 8, 3, 57, '2026-03-24 00:00:00', '2026-03-28', '12:00:00', 'SCHEDULED'),
 (8, 9, 3, 9, '2026-03-23 00:00:00', '2026-03-30', '11:00:00', 'SCHEDULED'),
 (9, 10, 4, 10, '2026-03-20 00:00:00', '2026-03-31', '09:00:00', 'SCHEDULED'),
 (10, 1, 4, 11, '2026-03-21 00:00:00', '2026-04-01', '10:00:00', 'SCHEDULED'),
@@ -165,17 +171,17 @@ INSERT INTO `appointment_tbl` (`APPOINTMENT_ID`, `PATIENT_ID`, `DOCTOR_ID`, `SCH
 (17, 8, 6, 18, '2026-03-19 00:00:00', '2026-04-08', '11:00:00', 'SCHEDULED'),
 (18, 9, 7, 19, '2026-03-23 00:00:00', '2026-04-09', '09:00:00', 'CANCELLED'),
 (19, 10, 7, 20, '2026-03-24 00:00:00', '2026-04-10', '10:00:00', 'CANCELLED'),
-(20, 1, 7, 21, '2026-03-24 00:00:00', '2026-04-11', '11:00:00', 'SCHEDULED'),
+(20, 1, 7, 20, '2026-03-24 00:00:00', '2026-03-27', '16:00:00', 'SCHEDULED'),
 (21, 2, 8, 22, '2026-03-23 00:00:00', '2026-04-12', '09:00:00', 'SCHEDULED'),
 (22, 3, 8, 23, '2026-03-19 00:00:00', '2026-04-13', '10:00:00', 'SCHEDULED'),
-(23, 4, 8, 24, '2026-03-11 00:00:00', '2026-04-14', '11:00:00', 'SCHEDULED'),
+(23, 4, 8, 22, '2026-03-11 00:00:00', '2026-04-07', '16:00:00', 'SCHEDULED'),
 (24, 5, 9, 25, '2026-03-12 00:00:00', '2026-04-15', '09:00:00', 'SCHEDULED'),
 (25, 6, 9, 26, '2026-03-13 00:00:00', '2026-04-16', '10:00:00', 'SCHEDULED'),
 (26, 7, 9, 27, '2026-03-14 00:00:00', '2026-04-17', '11:00:00', 'SCHEDULED'),
 (27, 8, 10, 28, '2026-03-15 00:00:00', '2026-04-18', '09:00:00', 'SCHEDULED'),
-(28, 9, 10, 29, '2026-03-16 00:00:00', '2026-04-19', '10:00:00', 'SCHEDULED'),
-(29, 10, 10, 30, '2026-03-17 00:00:00', '2026-04-20', '11:00:00', 'SCHEDULED'),
-(35, 1, 1, 2, '2026-03-23 14:51:23', '2026-03-25', '16:00:00', 'SCHEDULED'),
+(28, 9, 10, 28, '2026-03-16 00:00:00', '2026-04-07', '10:00:00', 'SCHEDULED'),
+(29, 10, 10, 28, '2026-03-17 00:00:00', '2026-04-07', '13:00:00', 'SCHEDULED'),
+(35, 1, 1, 2, '2026-03-23 14:51:23', '2026-03-25', '16:00:00', 'CANCELLED'),
 (36, 3, 4, 10, '2026-03-24 08:10:21', '2026-03-24', '14:00:00', 'COMPLETED'),
 (38, 2, 5, 13, '2026-03-15 06:30:00', '2026-03-16', '10:00:00', 'COMPLETED'),
 (39, 3, 7, 19, '2026-03-15 06:30:00', '2026-03-16', '09:00:00', 'COMPLETED'),
@@ -212,24 +218,22 @@ INSERT INTO `doctor_schedule_tbl` (`SCHEDULE_ID`, `DOCTOR_ID`, `RECEPTIONIST_ID`
 (1, 1, 1, '09:00:00', '17:00:00', 'MON'),
 (2, 1, 1, '09:00:00', '17:00:00', 'WED'),
 (3, 1, 1, '09:00:00', '17:00:00', 'FRI'),
-(4, 2, 1, '10:00:00', '18:00:00', 'TUE'),
-(5, 2, 1, '10:00:00', '18:00:00', 'THUR'),
-(6, 2, 1, '10:00:00', '18:00:00', 'SAT'),
+(6, 2, 1, '10:00:00', '18:00:00', 'FRI'),
 (7, 3, 2, '08:00:00', '16:00:00', 'MON'),
 (8, 3, 2, '08:00:00', '16:00:00', 'WED'),
 (9, 3, 2, '08:00:00', '16:00:00', 'FRI'),
-(10, 4, 2, '09:00:00', '17:00:00', 'TUE'),
-(11, 4, 2, '09:00:00', '17:00:00', 'THUR'),
-(12, 4, 2, '09:00:00', '17:00:00', 'SAT'),
+(10, 4, 2, '09:00:00', '15:00:00', 'TUE'),
+(11, 4, 2, '09:00:00', '15:00:00', 'THUR'),
+(12, 4, 2, '09:00:00', '15:00:00', 'WED'),
 (13, 5, 3, '10:00:00', '18:00:00', 'MON'),
 (14, 5, 3, '10:00:00', '18:00:00', 'WED'),
 (15, 5, 3, '10:00:00', '18:00:00', 'FRI'),
 (16, 6, 3, '08:00:00', '16:00:00', 'TUE'),
-(17, 6, 3, '08:00:00', '16:00:00', 'THUR'),
-(18, 6, 3, '08:00:00', '16:00:00', 'SAT'),
+(17, 6, 3, '08:00:00', '16:00:00', 'MON'),
+(18, 6, 3, '08:00:00', '16:00:00', 'WED'),
 (19, 7, 4, '09:00:00', '17:00:00', 'MON'),
-(20, 7, 4, '09:00:00', '17:00:00', 'WED'),
-(21, 7, 4, '09:00:00', '17:00:00', 'FRI'),
+(20, 7, 4, '09:00:00', '17:00:00', 'FRI'),
+(21, 7, 4, '09:00:00', '15:00:00', 'THUR'),
 (22, 8, 4, '10:00:00', '18:00:00', 'TUE'),
 (23, 8, 4, '10:00:00', '18:00:00', 'THUR'),
 (24, 8, 4, '10:00:00', '18:00:00', 'SAT'),
@@ -245,16 +249,17 @@ INSERT INTO `doctor_schedule_tbl` (`SCHEDULE_ID`, `DOCTOR_ID`, `RECEPTIONIST_ID`
 (34, 12, 1, '10:00:00', '16:00:00', 'MON'),
 (35, 12, 1, '10:00:00', '18:00:00', 'THUR'),
 (36, 12, 1, '10:00:00', '18:00:00', 'SAT'),
-(37, 13, 2, '08:00:00', '16:00:00', 'MON'),
-(38, 13, 2, '08:00:00', '16:00:00', 'WED'),
-(39, 13, 2, '08:00:00', '16:00:00', 'FRI'),
 (40, 14, 2, '09:00:00', '17:00:00', 'TUE'),
 (41, 14, 2, '09:00:00', '17:00:00', 'THUR'),
 (42, 14, 2, '09:00:00', '17:00:00', 'SAT'),
 (43, 15, 3, '10:00:00', '18:00:00', 'MON'),
 (44, 15, 3, '10:00:00', '18:00:00', 'WED'),
-(45, 15, 3, '10:00:00', '18:00:00', 'FRI'),
-(51, 2, 8, '09:00:00', '15:00:00', 'WED');
+(45, 15, 3, '10:00:00', '18:00:00', 'SAT'),
+(52, 2, 1, '11:00:00', '18:00:00', 'WED'),
+(56, 2, 1, '11:00:00', '16:00:00', 'SAT'),
+(57, 3, 1, '08:00:00', '16:00:00', 'SAT'),
+(58, 7, 1, '09:00:00', '15:00:00', 'SAT'),
+(59, 9, 1, '09:00:00', '15:00:00', 'THUR');
 
 -- --------------------------------------------------------
 
@@ -290,7 +295,7 @@ INSERT INTO `doctor_tbl` (`DOCTOR_ID`, `SPECIALISATION_ID`, `PROFILE_IMAGE`, `FI
 (2, 1, 'uploads/priya.jpeg', 'Priya', 'Sharma', '1980-07-22', '2012-09-15', 'Dr_priya02', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543211, 'priya.sharma@gmail.com', 'FEMALE', 'MBBS, DCH', 'approved', 'What is your favorite food from childhood?', 'Khichdi'),
 (3, 1, 'uploads/amit.jpeg', 'Amit', 'Patel', '1978-11-10', '2015-03-25', 'Dr_amit03', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543212, 'amit.patel@gmail.com', 'MALE', 'MBBS, DNB (Pediatrics)', 'approved', 'Where did you go for your first school trip?', 'Ahmedabad'),
 (4, 2, 'uploads/sunita1.jpeg', 'Sunita', 'Reddy', '1976-05-18', '2011-07-10', 'Dr_sunita04', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543213, 'sunita.reddy@gmail.com', 'FEMALE', 'MBBS, MD (Cardiology)', 'approved', 'What was the nickname your family calls you?', 'Suni'),
-(5, 2, 'uploads/vikram1.jpeg', 'Vikram', 'Singh', '1973-09-25', '2009-12-05', 'Dr_vikram05', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543214, 'vikram.singh@gmail.com', 'MALE', 'MBBS, DM (Cardiology)', 'approved', 'What was the name of your first school?', 'Army Public School'),
+(5, 2, 'uploads/Akshat_profile_pic.jpeg', 'Akshat', 'Khotari', '1997-05-02', '2024-05-30', 'Akshat_01', '$2y$12$dMvtsuFiBSCe3ZkotzgD8OoJhHV/PtQw.js/J5hQysuRpdyubVbkO', 9874562563, 'akshat01@gmail.com', 'MALE', 'MBBS MD', 'approved', 'Where did you go for your first school trip?', 'kutch'),
 (6, 2, 'uploads/anjali.jpeg', 'Anjali', 'Gupta', '1982-02-14', '2014-08-20', 'Dr_anjali06', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543215, 'anjali.gupta@gmail.com', 'FEMALE', 'MBBS, MD (Cardiology)', 'approved', 'What is your favorite food from childhood?', 'Rajma chawal'),
 (7, 3, 'uploads/rahul.jpeg', 'Rahul', 'Verma', '1977-08-30', '2013-04-15', 'Dr_rahul07', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543216, 'rahul.verma@gmail.com', 'MALE', 'MBBS, MS (Orthopedics)', 'approved', 'Where did you go for your first school trip?', 'Agra'),
 (8, 3, 'uploads/meera.jpeg', 'Meera', 'Joshi', '1981-12-05', '2016-01-10', 'Dr_meera08', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543217, 'meera.joshi@gmail.com', 'FEMALE', 'MBBS, DNB (Orthopedics)', 'approved', 'What was the nickname your family calls you?', 'Meeru'),
@@ -298,7 +303,6 @@ INSERT INTO `doctor_tbl` (`DOCTOR_ID`, `SPECIALISATION_ID`, `PROFILE_IMAGE`, `FI
 (10, 4, 'uploads/kavita1.jpeg', 'Kavita', 'Nair', '1979-04-12', '2015-07-25', 'Dr_kavita10', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543219, 'kavita.nair@gmail.com', 'FEMALE', 'MBBS, MD (Neurology)', 'approved', 'What is your favorite food from childhood?', 'Appam'),
 (11, 1, 'uploads/suresh.jpeg', 'Suresh', 'Reddy', '1976-01-18', '2011-05-10', 'Dr_suresh11', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543220, 'suresh.reddy@gmail.com', 'MALE', 'MBBS, MD (Pediatrics)', 'approved', 'Where did you go for your first school trip?', 'Tirupati'),
 (12, 1, 'uploads/lakshmi.jpeg', 'Lakshmi', 'Iyer', '1983-09-05', '2014-02-20', 'Dr_lakshmi12', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543221, 'lakshmi.iyer@gmail.com', 'FEMALE', 'MBBS, DCH', 'approved', 'What was the nickname your family calls you?', 'Lakku'),
-(13, 1, 'uploads/arun.jpeg', 'Arun', 'Shah', '1979-12-22', '2013-08-15', 'Dr_arun13', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543222, 'arun.shah@gmail.com', 'MALE', 'MBBS, DNB (Pediatrics)', 'approved', 'What was the name of your first school?', 'Shree Ram School'),
 (14, 1, 'uploads/Deepa.jpeg', 'Deepa', 'Nair', '1981-04-08', '2016-11-01', 'Dr_deepa14', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543223, 'deepa.nair@gmail.com', 'FEMALE', 'MBBS, MD (Pediatrics)', 'approved', 'What is your favorite food from childhood?', 'Pav bhaji'),
 (15, 1, 'uploads/karthik.jpeg', 'Karthik', 'Pillai', '1977-07-30', '2010-03-12', 'Dr_karthik15', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543224, 'karthik.pillai@gmail.com', 'MALE', 'MBBS, DCH', 'approved', 'Where did you go for your first school trip?', 'Munnar');
 
@@ -355,7 +359,22 @@ CREATE TABLE `medicine_reminder_tbl` (
 INSERT INTO `medicine_reminder_tbl` (`MEDICINE_REMINDER_ID`, `MEDICINE_ID`, `CREATOR_ROLE`, `CREATOR_ID`, `PATIENT_ID`, `START_DATE`, `END_DATE`, `REMINDER_TIME`, `REMARKS`) VALUES
 (9, 17, 'RECEPTIONIST', 1, 1, '2026-03-20', '2026-03-25', '09:00:00', 'take your syrup after breakfast'),
 (10, 17, 'RECEPTIONIST', 1, 1, '2026-03-20', '2026-03-25', '14:00:00', 'take your syrup after lunch'),
-(11, 17, 'RECEPTIONIST', 1, 1, '2026-03-20', '2026-03-25', '21:00:00', 'take your syrup after dinner');
+(11, 17, 'RECEPTIONIST', 1, 1, '2026-03-20', '2026-03-25', '21:00:00', 'take your syrup after dinner'),
+(12, 1, 'RECEPTIONIST', 1, 4, '2026-03-25', '2026-03-25', '07:48:00', 'Duration: 1 days after appointment. time to take your medicine\r\n'),
+(13, 1, 'RECEPTIONIST', 1, 1, '2026-03-25', '2026-03-25', '07:50:41', '[SCHEDULE_RESCHEDULED_BY_DOCTOR] Dr. Priya Sharma rescheduled Tuesday schedule to 09:00 AM - 03:00 PM.'),
+(14, 1, 'RECEPTIONIST', 1, 4, '2026-03-25', '2026-03-25', '07:58:00', '[CANCELLED] Your appointment with Dr. Priya Sharma on Mar 25, 2026 at 09:00 AM was cancelled. Please reschedule your visit.'),
+(15, 1, 'RECEPTIONIST', 1, 5, '2026-03-25', '2026-03-25', '09:21:10', '[SCHEDULE_RESCHEDULED_BY_DOCTOR] Dr. Priya Sharma rescheduled Friday schedule to 10:00 AM - 06:00 PM.'),
+(16, 1, 'RECEPTIONIST', 1, 6, '2026-03-25', '2026-03-25', '09:21:16', '[CANCELLED] Your appointment with Dr. Priya Sharma on Mar 31, 2026 at 12:00 PM was cancelled. Please reschedule your visit.'),
+(17, 1, 'RECEPTIONIST', 1, 1, '2026-03-25', '2026-03-25', '09:34:55', '[SCHEDULE_RESCHEDULED_BY_DOCTOR] Dr. Priya Sharma rescheduled Thursday schedule to 11:00 AM - 06:00 PM.'),
+(18, 1, 'RECEPTIONIST', 1, 2, '2026-03-25', '2026-03-25', '09:59:22', '[SCHEDULE_RESCHEDULED_BY_DOCTOR] Dr. Sunita Reddy rescheduled Wednesday schedule to 09:00 AM - 03:00 PM.'),
+(19, 1, 'RECEPTIONIST', 1, 1, '2026-03-25', '2026-03-25', '09:59:32', '[SCHEDULE_RESCHEDULED_BY_DOCTOR] Dr. Sunita Reddy rescheduled Thursday schedule to 09:00 AM - 03:00 PM.'),
+(20, 1, 'RECEPTIONIST', 1, 10, '2026-03-25', '2026-03-25', '09:59:37', '[SCHEDULE_RESCHEDULED_BY_DOCTOR] Dr. Sunita Reddy rescheduled Tuesday schedule to 09:00 AM - 03:00 PM.'),
+(21, 1, 'RECEPTIONIST', 1, 7, '2026-03-25', '2026-03-25', '10:05:07', '[SCHEDULE_RESCHEDULED_BY_DOCTOR] Dr. Anjali Gupta rescheduled Monday schedule to 08:00 AM - 04:00 PM.'),
+(22, 1, 'RECEPTIONIST', 1, 8, '2026-03-25', '2026-03-25', '10:06:06', '[SCHEDULE_RESCHEDULED_BY_DOCTOR] Dr. Anjali Gupta rescheduled Wednesday schedule to 08:00 AM - 04:00 PM.'),
+(23, 1, 'RECEPTIONIST', 1, 1, '2026-03-25', '2026-03-25', '10:09:30', '[SCHEDULE_RESCHEDULED_BY_DOCTOR] Dr. Rahul Verma rescheduled Tuesday schedule to 09:00 AM - 03:00 PM.'),
+(24, 1, 'RECEPTIONIST', 1, 1, '2026-03-25', '2026-03-25', '10:10:42', '[SCHEDULE_RESCHEDULED_BY_DOCTOR] Dr. Rahul Verma rescheduled Thursday schedule to 09:00 AM - 03:00 PM.'),
+(25, 1, 'RECEPTIONIST', 1, 10, '2026-03-25', '2026-03-25', '10:10:49', '[SCHEDULE_RESCHEDULED_BY_DOCTOR] Dr. Rahul Verma rescheduled Friday schedule to 09:00 AM - 05:00 PM.'),
+(26, 1, 'RECEPTIONIST', 1, 1, '2026-03-25', '2026-03-25', '10:24:06', '[SCHEDULE_RESCHEDULED_BY_DOCTOR] Dr. Karthik Pillai rescheduled Saturday schedule to 10:00 AM - 06:00 PM.');
 
 -- --------------------------------------------------------
 
@@ -424,7 +443,40 @@ INSERT INTO `notification_seen_tbl` (`SEEN_ID`, `USER_TYPE`, `USER_ID`, `NOTIF_K
 (9, 'receptionist', 8, 'c73720737a8137ecf1f702d6013b69cd6f61594c', '2026-03-25 00:10:34'),
 (10, 'receptionist', 8, '920f582567a1093e23e120c74efb21043143a6f7', '2026-03-25 00:10:34'),
 (11, 'receptionist', 8, '24b6fbe380996737cdcaa0bc61c684511b3609af', '2026-03-25 00:10:34'),
-(12, 'receptionist', 8, '73340221ec502b63e3c340513baee8a5cdba0c78', '2026-03-25 11:10:30');
+(12, 'receptionist', 8, '73340221ec502b63e3c340513baee8a5cdba0c78', '2026-03-25 11:10:30'),
+(13, 'patient', 4, '3352d442b9937295c4d17fe0fe95fc554e83a5c3', '2026-03-25 12:29:04'),
+(14, 'receptionist', 2, '56c9b5e93febdb8aedd86ff5147e139e20c4b554', '2026-03-25 15:24:40'),
+(15, 'receptionist', 2, '76efbc862b82e1231a55370da9c19cbfb2f58b30', '2026-03-25 15:24:40'),
+(16, 'receptionist', 2, 'ab82bd60c78f87e7062a88fc02e762cea33f2f17', '2026-03-25 15:24:40'),
+(17, 'receptionist', 2, 'b9c68262dc75f0388e06e21e1bd01dd400966f63', '2026-03-25 15:24:40'),
+(18, 'receptionist', 2, '5a151b4b8326d59bfe95d74c1a31e4fde853ea1b', '2026-03-25 15:24:40'),
+(19, 'receptionist', 2, '4204ed95955e0259455ec0649bff3d688237675f', '2026-03-25 15:24:40'),
+(20, 'receptionist', 2, '66da18dd5be086bb4de54cb6283be836a40daadd', '2026-03-25 15:24:40'),
+(21, 'receptionist', 2, '749b4a77adedefd9eb31f876e0c9f1d157fe2741', '2026-03-25 15:24:40'),
+(22, 'receptionist', 2, '85513c80b47cf5c257a2a6d2c1feba804bd25e8b', '2026-03-25 15:24:40'),
+(23, 'receptionist', 2, 'b78f5e8b2cebf13fa735e290b1ad68b3b1db4b17', '2026-03-25 15:24:40'),
+(24, 'receptionist', 2, '71003c6fc6298fb7ef6be7aa8b72dff1269f6f83', '2026-03-25 15:24:40'),
+(25, 'receptionist', 2, 'd5f164775e549c6f7c5a195b1c65ebf68e120274', '2026-03-25 15:24:40'),
+(26, 'receptionist', 2, 'e29695bc219e1dfbc5404c5f054bc7741669df5f', '2026-03-25 15:24:40'),
+(27, 'receptionist', 2, '745a92d7027808397a9fa73a736c7e9da4ae106e', '2026-03-25 15:24:40'),
+(28, 'receptionist', 2, '036e603215da1a0133c0bbfa072de69d55333f3e', '2026-03-25 15:24:40'),
+(29, 'receptionist', 2, '751d215cd533c2804d912b3282e7b518a70970c7', '2026-03-25 15:24:40'),
+(30, 'receptionist', 2, 'e912f9c32a76eaad8e875205ca3efa80e30edae7', '2026-03-25 15:24:40'),
+(31, 'receptionist', 2, 'ab7e597aa832f1d60be06f387f6208006a8da713', '2026-03-25 15:24:40'),
+(32, 'receptionist', 2, '5ce1ecc0cf016ffae4cd863dcff02c46d0677740', '2026-03-25 15:24:40'),
+(33, 'receptionist', 2, 'ccd27ebe388c414e179fcd732504e94f7fa7adbb', '2026-03-25 15:24:40'),
+(34, 'receptionist', 2, '7bc3dd2449218d9a7963c339991c6ebf89806979', '2026-03-25 15:24:40'),
+(35, 'receptionist', 2, '3158e1c0e24a3512976d1ae40d8c3bf77486ea78', '2026-03-25 15:24:40'),
+(36, 'receptionist', 2, '6eceadf2c4b4ba9d79dc029b7ab32b40f5dcbd4a', '2026-03-25 15:24:40'),
+(37, 'receptionist', 2, 'f34232f49853d6d06b16a0bcd3ff8e49241f7b1b', '2026-03-25 15:24:40'),
+(38, 'receptionist', 2, 'd4d8d5576c97d829a5b72c0aba2e7fd2a9db71bd', '2026-03-25 15:24:40'),
+(39, 'receptionist', 2, 'caa2682f314001d5ca20ed608a19b08202489405', '2026-03-25 15:24:40'),
+(40, 'receptionist', 2, '5a200a5190d1777100932c77665f30d5ca7464c8', '2026-03-25 15:24:40'),
+(41, 'receptionist', 2, 'e3fbbff38e2d4c6f3ed5817fec55be4c82d37a2e', '2026-03-25 15:24:40'),
+(42, 'receptionist', 2, 'e8ea8bd0f7a55ef3eab8835c7a47da5347724aa0', '2026-03-25 15:24:40'),
+(43, 'receptionist', 2, 'd7ab6fcc45c6fe60d5b35e635001537282650532', '2026-03-25 15:59:34'),
+(44, 'receptionist', 2, 'f01f1f8ae34c6382756069aa3c4644c043b5255c', '2026-03-25 15:59:34'),
+(45, 'receptionist', 2, '8635bb7a26bc07c9f9f9c6b19f091d2b38b3a862', '2026-03-25 16:00:12');
 
 -- --------------------------------------------------------
 
@@ -478,7 +530,7 @@ CREATE TABLE `patient_tbl` (
 --
 
 INSERT INTO `patient_tbl` (`PATIENT_ID`, `FIRST_NAME`, `LAST_NAME`, `USERNAME`, `PSWD`, `DOB`, `GENDER`, `BLOOD_GROUP`, `PHONE`, `EMAIL`, `ADDRESS`, `MEDICAL_HISTORY_FILE`, `SECURITY_QUESTION`, `SECURITY_ANSWER`) VALUES
-(1, 'Arjun', 'Mishra', 'Arjun_m01', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', '2022-02-01', 'MALE', 'B+', 9632587415, 'suchi.mishra@gmail.com', '123 swati nagar, Navrangpura, Ahmedabad', '', 'What was the name of your first school?', 'Sunrise Public School'),
+(1, 'ARJUN', 'MISHRA', 'Arjun_m01', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', '2022-02-01', 'MALE', 'B+', 9632587415, 'suchi.mishra@gmail.com', '123 swati nagar, Navrangpura, Ahmedabad', '', 'What was the name of your first school?', 'Sunrise Public School'),
 (2, 'Pooja', 'Sharma', 'Pooja_s02', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', '1985-08-22', 'FEMALE', 'A+', 9876543202, 'pooja.sharma@gmail.com', '456, MG Road, Delhi', '', 'What is your favorite food from childhood?', 'Mango ice cream'),
 (3, 'Rohan', 'Patel', 'Rohan_p03', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', '1992-12-10', 'MALE', 'O+', 9876543203, 'rohan.patel@gmail.com', '789, Brigade Road, Bangalore', '', 'Where did you go for your first school trip?', 'Mysore'),
 (4, 'Neha', 'Gupta', 'Neha_g04', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', '1988-03-18', 'FEMALE', 'AB+', 9876543204, 'neha.gupta@gmail.com', '321, FC Road, Pune', '', 'What was the nickname your family calls you?', 'Nehu'),
@@ -513,9 +565,7 @@ CREATE TABLE `payment_tbl` (
 
 INSERT INTO `payment_tbl` (`PAYMENT_ID`, `APPOINTMENT_ID`, `AMOUNT`, `PAYMENT_DATE`, `PAYMENT_MODE`, `STATUS`, `TRANSACTION_ID`, `CREATED_AT`) VALUES
 (1, 1, 300.00, '2026-03-19', 'CREDIT CARD', 'COMPLETED', 'TXN100000001', '2026-03-19 10:00:00'),
-(3, 3, 300.00, '2026-03-22', 'UPI', 'COMPLETED', 'TXN100000003', '2026-03-22 00:00:00'),
 (4, 4, 300.00, '2026-03-23', 'NET BANKING', 'COMPLETED', 'TXN100000004', '2026-03-23 00:00:00'),
-(5, 5, 300.00, '2026-03-24', 'CREDIT CARD', 'COMPLETED', 'TXN100000005', '2026-03-24 00:00:00'),
 (6, 6, 300.00, '2026-03-23', 'GOOGLE PAY', 'COMPLETED', 'TXN100000006', '2026-03-23 00:00:00'),
 (7, 7, 300.00, '2026-03-24', 'UPI', 'COMPLETED', 'TXN100000007', '2026-03-24 00:00:00'),
 (8, 8, 300.00, '2026-03-23', 'NET BANKING', 'COMPLETED', 'TXN100000008', '2026-03-23 00:00:00'),
@@ -645,6 +695,18 @@ CREATE TABLE `receptionist_notifications` (
   `TYPE` varchar(50) DEFAULT 'schedule_deleted',
   `CREATED_AT` timestamp NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `receptionist_notifications`
+--
+
+INSERT INTO `receptionist_notifications` (`RECEPTIONIST_NOTIFICATION_ID`, `MESSAGE`, `TYPE`, `CREATED_AT`) VALUES
+(1, '[SCHEDULE_DELETED_BY_DOCTOR] Dr. Priya Sharma\'s Thursday schedule was deleted. Cancelled appointments: None', 'schedule_deleted', '2026-03-25 06:45:11'),
+(2, '[SCHEDULE_DELETED_BY_DOCTOR] Dr. Priya Sharma\'s Thursday schedule was deleted. Cancelled appointments: Neha Gupta - Mar 25, 2026 at 09:00 AM', 'schedule_deleted', '2026-03-25 06:58:00'),
+(3, '[SCHEDULE_DELETED_BY_DOCTOR] Dr. Priya Sharma\'s Tuesday schedule was deleted. Cancelled appointments: Sneha Reddy - Mar 31, 2026 at 12:00 PM', 'schedule_deleted', '2026-03-25 08:21:16'),
+(4, '[SCHEDULE_DELETED_BY_DOCTOR] Dr. Priya Sharma\'s Saturday schedule was deleted. Cancelled appointments: None', 'schedule_deleted', '2026-03-25 08:38:41'),
+(5, '[SCHEDULE_DELETED_BY_DOCTOR] Dr. Priya Sharma\'s Thursday schedule was deleted. Cancelled appointments: None', 'schedule_deleted', '2026-03-25 08:39:02'),
+(6, '[SCHEDULE_DELETED_BY_DOCTOR] Dr. Priya Sharma\'s Thursday schedule was deleted. Cancelled appointments: None', 'schedule_deleted', '2026-03-25 08:47:03');
 
 -- --------------------------------------------------------
 
@@ -959,7 +1021,7 @@ ALTER TABLE `specialisation_tbl`
 -- AUTO_INCREMENT for table `appointment_reminder_tbl`
 --
 ALTER TABLE `appointment_reminder_tbl`
-  MODIFY `APPOINTMENT_REMINDER_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=88;
+  MODIFY `APPOINTMENT_REMINDER_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=104;
 
 --
 -- AUTO_INCREMENT for table `appointment_tbl`
@@ -971,7 +1033,7 @@ ALTER TABLE `appointment_tbl`
 -- AUTO_INCREMENT for table `doctor_schedule_tbl`
 --
 ALTER TABLE `doctor_schedule_tbl`
-  MODIFY `SCHEDULE_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=52;
+  MODIFY `SCHEDULE_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=60;
 
 --
 -- AUTO_INCREMENT for table `doctor_tbl`
@@ -989,7 +1051,7 @@ ALTER TABLE `feedback_tbl`
 -- AUTO_INCREMENT for table `medicine_reminder_tbl`
 --
 ALTER TABLE `medicine_reminder_tbl`
-  MODIFY `MEDICINE_REMINDER_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `MEDICINE_REMINDER_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
 --
 -- AUTO_INCREMENT for table `medicine_tbl`
@@ -1001,7 +1063,7 @@ ALTER TABLE `medicine_tbl`
 -- AUTO_INCREMENT for table `notification_seen_tbl`
 --
 ALTER TABLE `notification_seen_tbl`
-  MODIFY `SEEN_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `SEEN_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=46;
 
 --
 -- AUTO_INCREMENT for table `password_resets`
@@ -1031,7 +1093,7 @@ ALTER TABLE `prescription_tbl`
 -- AUTO_INCREMENT for table `receptionist_notifications`
 --
 ALTER TABLE `receptionist_notifications`
-  MODIFY `RECEPTIONIST_NOTIFICATION_ID` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `RECEPTIONIST_NOTIFICATION_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `receptionist_tbl`
