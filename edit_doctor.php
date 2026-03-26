@@ -205,7 +205,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'edit_doctor') {
                  WHERE DOCTOR_ID = ?";
         
         $stmt = mysqli_prepare($conn, $query);
-        mysqli_stmt_bind_param($stmt, "sssssssssi", $first_name, $last_name, $dob, $doj, $gender, $education, $phone, $email, $specialization_id, $profile_image, $doctor_id);
+        mysqli_stmt_bind_param($stmt, "ssssssssisi", $first_name, $last_name, $dob, $doj, $gender, $education, $phone, $email, $specialization_id, $profile_image, $doctor_id);
         
         if (mysqli_stmt_execute($stmt)) {
             header("Location: Admin_doctor.php?success=" . urlencode("Doctor information updated successfully."));

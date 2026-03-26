@@ -120,7 +120,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'edit_doctor') {
                  WHERE DOCTOR_ID = ?";
         
         $stmt = mysqli_prepare($conn, $query);
-        mysqli_stmt_bind_param($stmt, "sssssssi", $first_name, $last_name, $education, $phone, $email, $specialization_id, $profile_image, $doctor_id);
+        mysqli_stmt_bind_param($stmt, "ssssssssisi", $first_name, $last_name, $education, $phone, $email, $specialization_id, $profile_image, $doctor_id);
         
         if (mysqli_stmt_execute($stmt)) {
             $success_message = "Doctor information updated successfully.";
