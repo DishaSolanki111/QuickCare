@@ -717,7 +717,7 @@ if ($result->num_rows > 0) {
                         const schedule = doctor.schedule[0];
                         const startTime = new Date(`2000-01-01T${schedule.start_time}`);
                         const endTime = new Date(`2000-01-01T${schedule.end_time}`);
-                        const slotDuration = 30; // Default slot duration in minutes
+                        const slotDuration = 60; // Default slot duration in minutes
                         
                         // Calculate total slots
                         const totalMinutes = (endTime - startTime) / (1000 * 60);
