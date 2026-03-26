@@ -16,7 +16,11 @@ $sql = "
         p.LAST_NAME,
         p.DOB,
         p.PHONE,
-        MAX(a.APPOINTMENT_DATE) AS LAST_VISIT
+        CASE 
+            WHEN a.APPOINTMENT_DATE > CURDATE() THEN 'Upcoming Visit'
+            ELSE 'Last Visit'
+        END AS VISIT_STATUS,
+        MAX(a.APPOINTMENT_DATE) AS VISIT_DATE
     FROM appointment_tbl a
     JOIN patient_tbl p ON p.PATIENT_ID = a.PATIENT_ID
     WHERE a.DOCTOR_ID = {$doctor_id}
@@ -314,10 +318,10 @@ $patients_result = $doctor_id > 0 ? mysqli_query($conn, $sql) : false;
                                 <span><?php echo htmlspecialchars($p['DOB']); ?></span>
                             </div>
                             <div class="detail-row">
-                                <i class="fas fa-phone-alt"></i>
-                                <span class="detail-label">Last Visit:</span>
+                                <i class="fas fa-calendar-alt"></i>
+                                <span class="detail-label"><?php echo htmlspecialchars($p['VISIT_STATUS']); ?>:</span>
                                 <span>
-                                    <?php echo $p['LAST_VISIT'] ? htmlspecialchars($p['LAST_VISIT']) : 'No visits yet'; ?>
+                                    <?php echo $p['VISIT_DATE'] ? htmlspecialchars($p['VISIT_DATE']) : 'No visits yet'; ?>
                                 </span>
                             </div>
                         </div>
