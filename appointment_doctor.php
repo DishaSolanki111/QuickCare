@@ -78,7 +78,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_status'])) {
                 }
             }
 
-            header('Location: appointment_doctor.php' . ($status === 'COMPLETED' ? '?tab=past' : ($status === 'CANCELLED' ? '?tab=cancelled' : '')));
+            if ($status === 'COMPLETED') $_SESSION['ACTIVE_TAB'] = 'past';
+            elseif ($status === 'CANCELLED') $_SESSION['ACTIVE_TAB'] = 'cancelled';
+            header('Location: appointment_doctor.php');
             exit;
         }
         $error_message = "Error updating appointment status: " . $conn->error;
@@ -173,7 +175,18 @@ foreach ($all_appointments as $appt) {
     }
 }
 
-$active_tab = (isset($_GET['tab']) && in_array($_GET['tab'], ['today', 'upcoming', 'past', 'cancelled'], true)) ? $_GET['tab'] : 'today';
+// Read tab from POST first, then session, then GET (fallback only), default 'today'
+if (isset($_POST['tab']) && in_array($_POST['tab'], ['today', 'upcoming', 'past', 'cancelled'], true)) {
+    $active_tab = $_POST['tab'];
+    $_SESSION['ACTIVE_TAB'] = $active_tab;
+} elseif (isset($_SESSION['ACTIVE_TAB']) && in_array($_SESSION['ACTIVE_TAB'], ['today', 'upcoming', 'past', 'cancelled'], true)) {
+    $active_tab = $_SESSION['ACTIVE_TAB'];
+    unset($_SESSION['ACTIVE_TAB']);
+} elseif (isset($_GET['tab']) && in_array($_GET['tab'], ['today', 'upcoming', 'past', 'cancelled'], true)) {
+    $active_tab = $_GET['tab'];
+} else {
+    $active_tab = 'today';
+}
 
 // Appointment IDs that have any prescription row + map to prescription_id (for direct link to edit form)
 $appointment_ids_with_prescription = [];

@@ -639,7 +639,20 @@ body::before {
 
     <script>
     function goBackFromDate() {
-        window.location.href = 'doctors.php';
+        <?php if ($is_reschedule && !$is_patient_reschedule): ?>
+            var f = document.createElement('form');
+            f.method = 'POST';
+            f.action = 'appointment_doctor.php';
+            var t = document.createElement('input');
+            t.type = 'hidden'; t.name = 'tab'; t.value = 'upcoming';
+            f.appendChild(t);
+            document.body.appendChild(f);
+            f.submit();
+        <?php elseif ($is_patient_reschedule): ?>
+            window.location.href = 'manage_appointments.php';
+        <?php else: ?>
+            window.location.href = 'doctors.php';
+        <?php endif; ?>
     }
 
     // PUBLIC HOLIDAYS CONFIGURATION
