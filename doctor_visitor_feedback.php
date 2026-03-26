@@ -3,12 +3,19 @@ session_start();
 include 'config.php';
 include 'header.php';
 
-$doctor_id = isset($_GET['doctor_id']) ? (int)$_GET['doctor_id'] : 0;
+// Get doctor_id from POST (to hide from URL) or GET (fallback)
+$doctor_id = isset($_POST['doctor_id']) ? (int)$_POST['doctor_id'] : (isset($_GET['doctor_id']) ? (int)$_GET['doctor_id'] : 0);
+
+// Get star filter from POST
+$star_filter = isset($_POST['star_filter']) ? (int)$_POST['star_filter'] : 0; // 0 = all stars, 1-5 = specific stars
 
 if ($doctor_id <= 0) {
     header("Location: doctors.php");
     exit();
 }
+
+// Store doctor_id in session for filtering
+$_SESSION['feedback_doctor_id'] = $doctor_id;
 
 // Fetch doctor name (optional, for context if needed later)
 $doc_name = '';
@@ -26,8 +33,8 @@ if ($doc_res && $doc_res->num_rows > 0) {
 }
 $doc_stmt->close();
 
-// Fetch feedback records for this doctor's appointments, including more patient details
-$fb_stmt = $conn->prepare("
+// Fetch feedback records for this doctor's appointments with star filtering
+$fb_query = "
     SELECT 
         f.FEEDBACK_ID,
         f.RATING,
@@ -39,13 +46,46 @@ $fb_stmt = $conn->prepare("
     FROM feedback_tbl f
     JOIN appointment_tbl a ON f.APPOINTMENT_ID = a.APPOINTMENT_ID
     JOIN patient_tbl p ON a.PATIENT_ID = p.PATIENT_ID
-    WHERE a.DOCTOR_ID = ?
-    ORDER BY a.APPOINTMENT_DATE DESC, f.FEEDBACK_ID DESC
-");
-$fb_stmt->bind_param("i", $doctor_id);
+    WHERE a.DOCTOR_ID = ?";
+
+// Add star filter if specified
+if ($star_filter > 0 && $star_filter <= 5) {
+    $fb_query .= " AND f.RATING = ?";
+}
+
+$fb_query .= " ORDER BY a.APPOINTMENT_DATE DESC, f.FEEDBACK_ID DESC";
+
+$fb_stmt = $conn->prepare($fb_query);
+if ($star_filter > 0 && $star_filter <= 5) {
+    $fb_stmt->bind_param("ii", $doctor_id, $star_filter);
+} else {
+    $fb_stmt->bind_param("i", $doctor_id);
+}
 $fb_stmt->execute();
 $feedback_result = $fb_stmt->get_result();
 $fb_stmt->close();
+
+// Calculate feedback statistics for star-wise filtering
+$stats_query = "
+    SELECT 
+        RATING,
+        COUNT(*) as count
+    FROM feedback_tbl f
+    JOIN appointment_tbl a ON f.APPOINTMENT_ID = a.APPOINTMENT_ID
+    WHERE a.DOCTOR_ID = ?
+    GROUP BY RATING
+    ORDER BY RATING DESC";
+$stats_stmt = $conn->prepare($stats_query);
+$stats_stmt->bind_param("i", $doctor_id);
+$stats_stmt->execute();
+$stats_result = $stats_stmt->get_result();
+$star_counts = [1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0];
+$total_feedback = 0;
+while ($stat = $stats_result->fetch_assoc()) {
+    $star_counts[$stat['RATING']] = $stat['count'];
+    $total_feedback += $stat['count'];
+}
+$stats_stmt->close();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -248,9 +288,35 @@ $fb_stmt->close();
             </a>
             <div class="page-title">Patient Feedback Records</div>
         </div>
-        <?php if ($doc_name): ?>
-            <div class="subtitle"><?php echo htmlspecialchars($doc_name); ?> – Latest patient feedback.</div>
-        <?php endif; ?>
+
+        <!-- Star Filter Section -->
+        <div style="background: white; padding: 16px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #e5e7eb;">
+            <form method="POST" action="" style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px;">
+                <input type="hidden" name="doctor_id" value="<?php echo $doctor_id; ?>">
+                
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <label for="star_filter" style="font-weight: 600; color: #374151;">Filter by Rating:</label>
+                    <select name="star_filter" id="star_filter" style="padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px; background: white; color: #374151; cursor: pointer; font-size: 14px; min-width: 150px;">
+                        <option value="0" <?php echo $star_filter == 0 ? 'selected' : ''; ?>>All Stars</option>
+                        <?php for ($stars = 5; $stars >= 1; $stars--): ?>
+                            <option value="<?php echo $stars; ?>" <?php echo $star_filter == $stars ? 'selected' : ''; ?>>
+                                <?php echo $stars; ?> Star<?php echo $stars > 1 ? 's' : ''; ?>
+                            </option>
+                        <?php endfor; ?>
+                    </select>
+                </div>
+                
+                <button type="submit" style="padding: 8px 16px; border: none; border-radius: 6px; background: #072d44; color: white; cursor: pointer; font-size: 14px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px;">
+                    <i class="fas fa-search"></i> Search
+                </button>
+                
+                <?php if ($star_filter > 0): ?>
+                    <button type="submit" name="star_filter" value="0" style="padding: 8px 16px; border: none; border-radius: 6px; background: #dc3545; color: white; cursor: pointer; font-size: 14px; font-weight: 600;">
+                        <i class="fas fa-times"></i> Clear
+                    </button>
+                <?php endif; ?>
+            </form>
+        </div>
 
         <?php if ($feedback_result && $feedback_result->num_rows > 0): ?>
             <div class="cards-grid">
