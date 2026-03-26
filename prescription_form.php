@@ -23,15 +23,65 @@ if (!$conn) {
 // Get doctor ID from session
 $doctor_id = $_SESSION['DOCTOR_ID'];
 
-// --- GET PATIENT ID FROM URL ---
-$patient_id_val = isset($_POST['patient_id']) ? $_POST['patient_id'] : (isset($_GET['patient_id']) ? $_GET['patient_id'] : null);
+// --- GET PATIENT ID (POST first, then session, then GET as last resort for initial entry only) ---
+// Priority: POST > session > GET (GET only allowed on first load, never exposed in links)
+if (isset($_POST['patient_id']) && is_numeric($_POST['patient_id'])) {
+    $patient_id_val = $_POST['patient_id'];
+    $_SESSION['PFORM_PATIENT_ID'] = intval($patient_id_val);
+} elseif (isset($_SESSION['PFORM_PATIENT_ID']) && is_numeric($_SESSION['PFORM_PATIENT_ID'])) {
+    $patient_id_val = $_SESSION['PFORM_PATIENT_ID'];
+} elseif (isset($_GET['patient_id']) && is_numeric($_GET['patient_id'])) {
+    // Allow GET only on initial navigation (e.g., from appointment_doctor.php)
+    $patient_id_val = $_GET['patient_id'];
+    $_SESSION['PFORM_PATIENT_ID'] = intval($patient_id_val);
+} else {
+    $patient_id_val = null;
+}
+
 if (!$patient_id_val || !is_numeric($patient_id_val)) {
     die("<div style='font-family: Arial, sans-serif; color: #d9534f; padding: 20px; border: 1px solid #d9534f; background-color: #f2dede; border-radius: 5px;'><strong>Error:</strong> Invalid or missing Patient ID. Please go back and select a patient.</div>");
 }
- $patient_id = intval($patient_id_val);
+$patient_id = intval($patient_id_val);
+
+// --- GET PRESCRIPTION ID (POST first, then session, then GET for initial edit link) ---
+if (isset($_POST['prescription_id']) && is_numeric($_POST['prescription_id'])) {
+    $prescription_id_param = intval($_POST['prescription_id']);
+    if ($prescription_id_param > 0) {
+        $_SESSION['PFORM_PRESCRIPTION_ID'] = $prescription_id_param;
+    } else {
+        unset($_SESSION['PFORM_PRESCRIPTION_ID']);
+        $prescription_id_param = 0;
+    }
+} elseif (isset($_GET['prescription_id']) && is_numeric($_GET['prescription_id'])) {
+    // Allow GET only on initial navigation (e.g., from manage_prescriptions.php edit link)
+    $prescription_id_param = intval($_GET['prescription_id']);
+    if ($prescription_id_param > 0) {
+        $_SESSION['PFORM_PRESCRIPTION_ID'] = $prescription_id_param;
+    } else {
+        unset($_SESSION['PFORM_PRESCRIPTION_ID']);
+        $prescription_id_param = 0;
+    }
+} elseif (isset($_SESSION['PFORM_PRESCRIPTION_ID']) && is_numeric($_SESSION['PFORM_PRESCRIPTION_ID'])) {
+    $prescription_id_param = intval($_SESSION['PFORM_PRESCRIPTION_ID']);
+} else {
+    $prescription_id_param = 0;
+}
+
+// --- GET APPOINTMENT ID (POST first, then session, then GET for initial link from appointment_doctor.php) ---
+if (isset($_POST['appointment_id']) && is_numeric($_POST['appointment_id'])) {
+    $preselected_appointment_id = intval($_POST['appointment_id']);
+    $_SESSION['PFORM_APPOINTMENT_ID'] = $preselected_appointment_id;
+} elseif (isset($_GET['appointment_id']) && is_numeric($_GET['appointment_id'])) {
+    $preselected_appointment_id = intval($_GET['appointment_id']);
+    $_SESSION['PFORM_APPOINTMENT_ID'] = $preselected_appointment_id;
+} elseif (isset($_SESSION['PFORM_APPOINTMENT_ID']) && is_numeric($_SESSION['PFORM_APPOINTMENT_ID'])) {
+    $preselected_appointment_id = intval($_SESSION['PFORM_APPOINTMENT_ID']);
+} else {
+    $preselected_appointment_id = null;
+}
 
 // --- FETCH PATIENT DETAILS ---
- $stmt = $conn->prepare("SELECT pt.PATIENT_ID, pt.FIRST_NAME, pt.LAST_NAME, pt.DOB, pt.GENDER, 
+$stmt = $conn->prepare("SELECT pt.PATIENT_ID, pt.FIRST_NAME, pt.LAST_NAME, pt.DOB, pt.GENDER, 
                                 pt.BLOOD_GROUP, pt.PHONE, pt.EMAIL, pt.ADDRESS,
                                 MAX(a.APPOINTMENT_DATE) AS LAST_APPOINTMENT_DATE
                          FROM patient_tbl pt
@@ -43,11 +93,12 @@ if (!$patient_id_val || !is_numeric($patient_id_val)) {
 if ($stmt === false) {
     die("Error preparing patient query: " . $conn->error);
 }
- $stmt->bind_param("ii", $patient_id, $doctor_id);
- $stmt->execute();
- $result = $stmt->get_result();
- $patient = $result->fetch_assoc();
- $stmt->close();
+$stmt->bind_param("ii", $patient_id, $doctor_id);
+$stmt->execute();
+$result = $stmt->get_result();
+$patient = $result->fetch_assoc();
+$stmt->close();
+
 if (!$patient) {
     die("<div style='font-family: Arial, sans-serif; color: #d9534f; padding: 20px; border: 1px solid #d9534f; background-color: #f2dede; border-radius: 5px;'><strong>Error:</strong> Patient not found or access denied.</div>");
 }
@@ -67,13 +118,13 @@ if (!empty($patient['LAST_APPOINTMENT_DATE']) && $patient['LAST_APPOINTMENT_DATE
     $last_appointment_formatted = $last_appt->format('F d, Y');
 }
 
- $message = '';
+$message = '';
 
-// --- EDIT MODE: load prescription by prescription_id (from Manage Prescriptions → Edit) ---
+// --- EDIT MODE: load prescription by prescription_id ---
 $edit_mode = false;
 $edit_prescription = null;
 $edit_medicines = [];
-$prescription_id_param = isset($_GET['prescription_id']) ? (int)$_GET['prescription_id'] : 0;
+
 if ($prescription_id_param > 0) {
     $eq = $conn->prepare("SELECT p.* FROM prescription_tbl p INNER JOIN appointment_tbl a ON p.APPOINTMENT_ID = a.APPOINTMENT_ID WHERE p.PRESCRIPTION_ID = ? AND a.PATIENT_ID = ? AND a.DOCTOR_ID = ?");
     $eq->bind_param("iii", $prescription_id_param, $patient_id, $doctor_id);
@@ -95,7 +146,7 @@ if ($prescription_id_param > 0) {
 // --- HANDLE UPDATE PRESCRIPTION (edit mode submit) ---
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_prescription'])) {
     $prescription_id = (int)$_POST['prescription_id'];
-    $appointment_id = (int)$_POST['appointment_id'];
+    $appointment_id  = (int)$_POST['appointment_id'];
     $verify = $conn->prepare("SELECT p.PRESCRIPTION_ID FROM prescription_tbl p INNER JOIN appointment_tbl a ON p.APPOINTMENT_ID = a.APPOINTMENT_ID WHERE p.PRESCRIPTION_ID = ? AND a.PATIENT_ID = ? AND a.DOCTOR_ID = ?");
     $verify->bind_param("iii", $prescription_id, $patient_id, $doctor_id);
     $verify->execute();
@@ -107,7 +158,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_prescription']
             $conn->begin_transaction();
             $height = !empty($_POST['height_cm']) ? $_POST['height_cm'] : null;
             $weight = !empty($_POST['weight_kg']) ? $_POST['weight_kg'] : null;
-            $bp = !empty($_POST['blood_pressure']) ? trim($_POST['blood_pressure']) : null;
+            $bp     = !empty($_POST['blood_pressure']) ? trim($_POST['blood_pressure']) : null;
             $upd = $conn->prepare("UPDATE prescription_tbl SET ISSUE_DATE=?, HEIGHT_CM=?, WEIGHT_KG=?, BLOOD_PRESSURE=?, DIABETES=?, SYMPTOMS=?, DIAGNOSIS=?, ADDITIONAL_NOTES=? WHERE PRESCRIPTION_ID=?");
             $upd->bind_param("ssssssssi", $_POST['issue_date'], $height, $weight, $bp, $_POST['diabetes'], $_POST['symptoms'], $_POST['diagnosis'], $_POST['additional_notes'], $prescription_id);
             $upd->execute();
@@ -123,9 +174,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_prescription']
                 }
                 $med_stmt->close();
             }
-            // Ensure appointment is marked COMPLETED when prescription is saved (edit flow)
             $conn->query("UPDATE appointment_tbl SET STATUS = 'COMPLETED' WHERE APPOINTMENT_ID = $appointment_id AND DOCTOR_ID = " . (int)$doctor_id);
             $conn->commit();
+            // Clear session IDs after successful save
+            unset($_SESSION['PFORM_PRESCRIPTION_ID'], $_SESSION['PFORM_APPOINTMENT_ID']);
             header("Location: manage_prescriptions.php?status=updated");
             exit();
         } catch (Exception $e) {
@@ -135,15 +187,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_prescription']
     }
 }
 
-// --- HANDLE FORM SUBMISSION (MULTIPLE MEDICINES) ---
+// --- HANDLE FORM SUBMISSION (ADD NEW PRESCRIPTION) ---
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_prescription'])) {
     $appointment_id = intval($_POST['appointment_id']);
-    // Block adding another prescription if this appointment already has a completed one (doctor already submitted)
+    // Block adding another prescription if this appointment already has a completed one
     $chk = $conn->query("SELECT PRESCRIPTION_ID, DIAGNOSIS FROM prescription_tbl WHERE APPOINTMENT_ID = $appointment_id LIMIT 1");
     if ($chk && $chk->num_rows > 0) {
         $row = $chk->fetch_assoc();
         if (!empty(trim($row['DIAGNOSIS'] ?? ''))) {
             $_SESSION['PRESCRIPTION_ALREADY_ADDED'] = 'A prescription has already been added for this appointment. You cannot add another.';
+            unset($_SESSION['PFORM_PATIENT_ID'], $_SESSION['PFORM_APPOINTMENT_ID'], $_SESSION['PFORM_PRESCRIPTION_ID']);
             header('Location: appointment_doctor.php?tab=today');
             exit;
         }
@@ -152,7 +205,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_prescription'])) 
         $conn->begin_transaction();
         $height = !empty($_POST['height_cm']) ? $_POST['height_cm'] : null;
         $weight = !empty($_POST['weight_kg']) ? $_POST['weight_kg'] : null;
-        $bp = !empty($_POST['blood_pressure']) ? $_POST['blood_pressure'] : null;
+        $bp     = !empty($_POST['blood_pressure']) ? $_POST['blood_pressure'] : null;
 
         $existing = $conn->query("SELECT PRESCRIPTION_ID FROM prescription_tbl WHERE APPOINTMENT_ID = $appointment_id LIMIT 1");
         $prescription_id = null;
@@ -166,20 +219,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_prescription'])) 
         } else {
             $sql = "INSERT INTO prescription_tbl (APPOINTMENT_ID, ISSUE_DATE, HEIGHT_CM, WEIGHT_KG, BLOOD_PRESSURE, DIABETES, SYMPTOMS, DIAGNOSIS, ADDITIONAL_NOTES) 
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-            $stmt = $conn->prepare($sql);
-            $stmt->bind_param("isissssss", $appointment_id, $_POST['issue_date'], $height, $weight, $bp, $_POST['diabetes'], $_POST['symptoms'], $_POST['diagnosis'], $_POST['additional_notes']);
-            $stmt->execute();
+            $stmt2 = $conn->prepare($sql);
+            $stmt2->bind_param("isissssss", $appointment_id, $_POST['issue_date'], $height, $weight, $bp, $_POST['diabetes'], $_POST['symptoms'], $_POST['diagnosis'], $_POST['additional_notes']);
+            $stmt2->execute();
             $prescription_id = $conn->insert_id;
-            $stmt->close();
+            $stmt2->close();
         }
 
         if (isset($_POST['medicine_id']) && is_array($_POST['medicine_id'])) {
-            $med_sql = "INSERT INTO prescription_medicine_tbl (PRESCRIPTION_ID, MEDICINE_ID, DOSAGE, DURATION, FREQUENCY) VALUES (?, ?, ?, ?, ?)";
+            $med_sql  = "INSERT INTO prescription_medicine_tbl (PRESCRIPTION_ID, MEDICINE_ID, DOSAGE, DURATION, FREQUENCY) VALUES (?, ?, ?, ?, ?)";
             $med_stmt = $conn->prepare($med_sql);
             foreach ($_POST['medicine_id'] as $key => $mid) {
                 if (!empty($mid)) {
-                    $dos = $_POST['dosage'][$key];
-                    $dur = $_POST['duration'][$key];
+                    $dos  = $_POST['dosage'][$key];
+                    $dur  = $_POST['duration'][$key];
                     $freq = $_POST['frequency'][$key];
                     $med_stmt->bind_param("iisss", $prescription_id, $mid, $dos, $dur, $freq);
                     $med_stmt->execute();
@@ -188,10 +241,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_prescription'])) 
             $med_stmt->close();
         }
 
-        // Mark appointment as COMPLETED when doctor adds prescription
         $conn->query("UPDATE appointment_tbl SET STATUS = 'COMPLETED' WHERE APPOINTMENT_ID = $appointment_id AND DOCTOR_ID = " . (int)$doctor_id);
-
         $conn->commit();
+        // Clear session IDs after successful save
+        unset($_SESSION['PFORM_PATIENT_ID'], $_SESSION['PFORM_APPOINTMENT_ID'], $_SESSION['PFORM_PRESCRIPTION_ID']);
         header("Location: manage_prescriptions.php?status=success");
         exit();
     } catch (Exception $e) {
@@ -206,6 +259,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_prescription_i
     $stmt = $conn->prepare("DELETE FROM prescription_tbl WHERE PRESCRIPTION_ID = ?");
     $stmt->bind_param("i", $delete_id);
     $stmt->execute();
+    unset($_SESSION['PFORM_PATIENT_ID'], $_SESSION['PFORM_APPOINTMENT_ID'], $_SESSION['PFORM_PRESCRIPTION_ID']);
     header("Location: manage_prescriptions.php?status=deleted_success");
     exit();
 }
@@ -223,7 +277,7 @@ $stmt->execute();
 $prescriptions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 $stmt->close();
 
-// Fetch medicines for each existing prescription (for display in list)
+// Fetch medicines for each existing prescription
 $prescription_medicines = [];
 if (!empty($prescriptions)) {
     $prescription_ids = array_column($prescriptions, 'PRESCRIPTION_ID');
@@ -241,9 +295,7 @@ if (!empty($prescriptions)) {
         $resMedList = $stmtMedList->get_result();
         while ($rowMed = $resMedList->fetch_assoc()) {
             $pid = $rowMed['PRESCRIPTION_ID'];
-            if (!isset($prescription_medicines[$pid])) {
-                $prescription_medicines[$pid] = [];
-            }
+            if (!isset($prescription_medicines[$pid])) $prescription_medicines[$pid] = [];
             $prescription_medicines[$pid][] = $rowMed;
         }
         $stmtMedList->close();
@@ -251,40 +303,38 @@ if (!empty($prescriptions)) {
 }
 
 // --- FETCH MEDICINES & APPOINTMENTS ---
- $medicines = $conn->query("SELECT MEDICINE_ID, MED_NAME FROM medicine_tbl ORDER BY MED_NAME")->fetch_all(MYSQLI_ASSOC);
- $appointment_sql = "SELECT a.APPOINTMENT_ID, a.APPOINTMENT_DATE, d.FIRST_NAME, d.LAST_NAME, s.SPECIALISATION_NAME 
+$medicines = $conn->query("SELECT MEDICINE_ID, MED_NAME FROM medicine_tbl ORDER BY MED_NAME")->fetch_all(MYSQLI_ASSOC);
+$appointment_sql = "SELECT a.APPOINTMENT_ID, a.APPOINTMENT_DATE, d.FIRST_NAME, d.LAST_NAME, s.SPECIALISATION_NAME 
                      FROM appointment_tbl a 
                      JOIN doctor_tbl d ON a.DOCTOR_ID = d.DOCTOR_ID 
                      JOIN specialisation_tbl s ON d.SPECIALISATION_ID = s.SPECIALISATION_ID 
                      WHERE a.PATIENT_ID = ? AND a.DOCTOR_ID = ? AND (a.STATUS = 'COMPLETED' OR a.STATUS = 'SCHEDULED') 
                      ORDER BY a.APPOINTMENT_DATE DESC";
- $appointment_stmt = $conn->prepare($appointment_sql);
- $appointment_stmt->bind_param("ii", $patient_id, $doctor_id);
- $appointment_stmt->execute();
- $completed_appointments = $appointment_stmt->get_result()->fetch_all(MYSQLI_ASSOC);
- $appointment_stmt->close();
+$appointment_stmt = $conn->prepare($appointment_sql);
+$appointment_stmt->bind_param("ii", $patient_id, $doctor_id);
+$appointment_stmt->execute();
+$completed_appointments = $appointment_stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+$appointment_stmt->close();
 
-// When coming from appointment_doctor.php with appointment_id, pre-select it
- $preselected_appointment_id = isset($_POST['appointment_id']) ? (int)$_POST['appointment_id'] : (isset($_GET['appointment_id']) ? (int)$_GET['appointment_id'] : null);
+// If opening form for an appointment that already has a completed prescription, redirect
+if ($preselected_appointment_id) {
+    $already = $conn->query("SELECT 1 FROM prescription_tbl WHERE APPOINTMENT_ID = $preselected_appointment_id AND TRIM(COALESCE(DIAGNOSIS,'')) != '' LIMIT 1");
+    if ($already && $already->num_rows > 0 && !$edit_mode) {
+        $_SESSION['PRESCRIPTION_ALREADY_ADDED'] = 'A prescription has already been added for this appointment. You cannot add another.';
+        unset($_SESSION['PFORM_PATIENT_ID'], $_SESSION['PFORM_APPOINTMENT_ID'], $_SESSION['PFORM_PRESCRIPTION_ID']);
+        header('Location: appointment_doctor.php?tab=today');
+        exit;
+    }
+}
 
- // If opening form for an appointment that already has a completed prescription, redirect (do not allow adding another)
- if ($preselected_appointment_id) {
-     $already = $conn->query("SELECT 1 FROM prescription_tbl WHERE APPOINTMENT_ID = $preselected_appointment_id AND TRIM(COALESCE(DIAGNOSIS,'')) != '' LIMIT 1");
-     if ($already && $already->num_rows > 0) {
-         $_SESSION['PRESCRIPTION_ALREADY_ADDED'] = 'A prescription has already been added for this appointment. You cannot add another.';
-         header('Location: appointment_doctor.php?tab=today');
-         exit;
-     }
- }
-
- // Fetch vitals from prescription_tbl (receptionist may have added them in view_prescription) for pre-fill
- $appointment_vitals = [];
- $apt_ids = array_column($completed_appointments, 'APPOINTMENT_ID');
- if ($preselected_appointment_id && !in_array($preselected_appointment_id, $apt_ids)) {
-     $apt_ids[] = $preselected_appointment_id;
- }
- if (!empty($apt_ids)) {
- $vq = @$conn->query("SELECT APPOINTMENT_ID, BLOOD_PRESSURE, WEIGHT_KG, HEIGHT_CM FROM prescription_tbl WHERE APPOINTMENT_ID IN (" . implode(',', array_map('intval', $apt_ids)) . ")");
+// Fetch vitals from prescription_tbl for pre-fill
+$appointment_vitals = [];
+$apt_ids = array_column($completed_appointments, 'APPOINTMENT_ID');
+if ($preselected_appointment_id && !in_array($preselected_appointment_id, $apt_ids)) {
+    $apt_ids[] = $preselected_appointment_id;
+}
+if (!empty($apt_ids)) {
+    $vq = @$conn->query("SELECT APPOINTMENT_ID, BLOOD_PRESSURE, WEIGHT_KG, HEIGHT_CM FROM prescription_tbl WHERE APPOINTMENT_ID IN (" . implode(',', array_map('intval', $apt_ids)) . ")");
     if ($vq) while ($v = $vq->fetch_assoc()) $appointment_vitals[$v['APPOINTMENT_ID']] = $v;
 }
 $preselected_vitals = ($preselected_appointment_id && isset($appointment_vitals[$preselected_appointment_id])) ? $appointment_vitals[$preselected_appointment_id] : null;
@@ -328,6 +378,8 @@ $conn->close();
         .btn-add { background-color: var(--accent-color); margin-bottom: 15px; }
         .btn-delete { background-color: #dc3545; float: right; }
         .prescription-item { border: 1px solid #eee; padding: 15px; margin-bottom: 15px; background-color: #fafafa; }
+        .message { padding: 10px 15px; border-radius: 5px; margin-bottom: 15px; }
+        .message.error { background-color: #f2dede; border: 1px solid #d9534f; color: #d9534f; }
     </style>
 </head>
 <body>
@@ -336,8 +388,11 @@ $conn->close();
         <div class="main-content">
             <?php include 'doctor_header.php'; ?>
             <div class="content-card">
-                <a href="manage_prescriptions.php" style="display:inline-block; margin-bottom:20px; background-color: var(--primary-color); color:#fff; text-decoration:none; font-weight:bold; padding:8px 16px; border:1px solid var(--primary-color); border-radius:5px;">&larr; Back to Manage Prescriptions</a>
-                
+                <!-- Back button uses POST to avoid exposing patient_id in URL -->
+                <form method="POST" action="manage_prescriptions.php" style="display:inline; margin-bottom:20px;">
+                    <button type="submit" style="background-color: var(--primary-color); color:#fff; font-weight:bold; padding:8px 16px; border:none; border-radius:5px; cursor:pointer;">&larr; Back to Manage Prescriptions</button>
+                </form>
+
                 <?php echo $message; ?>
 
                 <div class="patient-details-card">
@@ -363,24 +418,26 @@ $conn->close();
                 </div>
 
                 <?php if ($edit_mode && $edit_prescription): ?>
+                <!-- ===== EDIT PRESCRIPTION FORM ===== -->
                 <div class="form-container">
                     <h2 style="color:var(--soft-blue); border-bottom:2px solid #f0f0f0; padding-bottom:10px; margin-bottom:20px;"><i class="fas fa-edit"></i> Edit Prescription</h2>
                     <form action="prescription_form.php" method="POST" id="prescriptionForm">
-                        <input type="hidden" name="patient_id" value="<?php echo $patient_id; ?>">
+                        <!-- IDs passed via hidden POST fields only — never in the URL -->
+                        <input type="hidden" name="patient_id"      value="<?php echo $patient_id; ?>">
                         <input type="hidden" name="prescription_id" value="<?php echo (int)$edit_prescription['PRESCRIPTION_ID']; ?>">
-                        <input type="hidden" name="appointment_id" value="<?php echo (int)$edit_prescription['APPOINTMENT_ID']; ?>">
+                        <input type="hidden" name="appointment_id"  value="<?php echo (int)$edit_prescription['APPOINTMENT_ID']; ?>">
                         <div class="form-grid">
                             <div class="form-group"><label>Issue Date:</label><input type="date" name="issue_date" required readonly value="<?php echo htmlspecialchars($edit_prescription['ISSUE_DATE'] ?? date('Y-m-d')); ?>"></div>
                             <div class="form-group"><label>Blood Pressure (BP):</label><input type="text" name="blood_pressure" id="form_blood_pressure" readonly value="<?php echo htmlspecialchars($edit_prescription['BLOOD_PRESSURE'] ?? ''); ?>"></div>
-                            <div class="form-group"><label>Height (cm):</label><input type="number" name="height_cm" id="form_height_cm" step="0.1" readonly value="<?php echo $edit_prescription['HEIGHT_CM'] !== null && $edit_prescription['HEIGHT_CM'] !== '' ? htmlspecialchars($edit_prescription['HEIGHT_CM']) : ''; ?>"></div>
-                            <div class="form-group"><label>Weight (kg):</label><input type="number" step="0.1" name="weight_kg" id="form_weight_kg" readonly value="<?php echo $edit_prescription['WEIGHT_KG'] !== null && $edit_prescription['WEIGHT_KG'] !== '' ? htmlspecialchars($edit_prescription['WEIGHT_KG']) : ''; ?>"></div>
+                            <div class="form-group"><label>Height (cm):</label><input type="number" name="height_cm" id="form_height_cm" step="0.1" readonly value="<?php echo ($edit_prescription['HEIGHT_CM'] !== null && $edit_prescription['HEIGHT_CM'] !== '') ? htmlspecialchars($edit_prescription['HEIGHT_CM']) : ''; ?>"></div>
+                            <div class="form-group"><label>Weight (kg):</label><input type="number" step="0.1" name="weight_kg" id="form_weight_kg" readonly value="<?php echo ($edit_prescription['WEIGHT_KG'] !== null && $edit_prescription['WEIGHT_KG'] !== '') ? htmlspecialchars($edit_prescription['WEIGHT_KG']) : ''; ?>"></div>
                             <div class="form-group">
                                 <label>Diabetes:</label>
                                 <select name="diabetes">
                                     <?php $d = $edit_prescription['DIABETES'] ?? 'NO'; ?>
-                                    <option value="NO" <?php echo $d === 'NO' ? 'selected' : ''; ?>>No</option>
-                                    <option value="TYPE-1" <?php echo $d === 'TYPE-1' ? 'selected' : ''; ?>>Type-1</option>
-                                    <option value="TYPE-2" <?php echo $d === 'TYPE-2' ? 'selected' : ''; ?>>Type-2</option>
+                                    <option value="NO"          <?php echo $d === 'NO'          ? 'selected' : ''; ?>>No</option>
+                                    <option value="TYPE-1"      <?php echo $d === 'TYPE-1'      ? 'selected' : ''; ?>>Type-1</option>
+                                    <option value="TYPE-2"      <?php echo $d === 'TYPE-2'      ? 'selected' : ''; ?>>Type-2</option>
                                     <option value="PRE-DIABTIC" <?php echo $d === 'PRE-DIABTIC' ? 'selected' : ''; ?>>Pre-Diabetic</option>
                                 </select>
                             </div>
@@ -397,7 +454,9 @@ $conn->close();
                                             <label>Medicine:</label>
                                             <select name="medicine_id[]" required>
                                                 <option value="">--Select--</option>
-                                                <?php foreach ($medicines as $m): ?><option value="<?php echo $m['MEDICINE_ID']; ?>" <?php echo (isset($med['MEDICINE_ID']) && (int)$med['MEDICINE_ID'] === (int)$m['MEDICINE_ID']) ? 'selected' : ''; ?>><?php echo htmlspecialchars($m['MED_NAME']); ?></option><?php endforeach; ?>
+                                                <?php foreach ($medicines as $m): ?>
+                                                    <option value="<?php echo $m['MEDICINE_ID']; ?>" <?php echo (isset($med['MEDICINE_ID']) && (int)$med['MEDICINE_ID'] === (int)$m['MEDICINE_ID']) ? 'selected' : ''; ?>><?php echo htmlspecialchars($m['MED_NAME']); ?></option>
+                                                <?php endforeach; ?>
                                             </select>
                                         </div>
                                         <div class="form-group"><label>Dosage:</label><input type="text" name="dosage[]" required value="<?php echo htmlspecialchars($med['DOSAGE'] ?? ''); ?>"></div>
@@ -428,30 +487,33 @@ $conn->close();
                         <button type="submit" name="update_prescription" class="btn btn-submit">Update Prescription</button>
                     </form>
                 </div>
+
                 <?php else: ?>
+                <!-- ===== ADD NEW PRESCRIPTION FORM ===== -->
                 <div class="form-container">
                     <h2 style="color:var(--soft-blue); border-bottom:2px solid #f0f0f0; padding-bottom:10px; margin-bottom:20px;">Add New Prescription</h2>
                     <form action="prescription_form.php" method="POST" id="prescriptionForm">
+                        <!-- IDs passed via hidden POST fields only — never in the URL -->
                         <input type="hidden" name="patient_id" value="<?php echo $patient_id; ?>">
                         <?php if ($preselected_appointment_id): ?>
-                        <input type="hidden" name="appointment_id" value="<?php echo $preselected_appointment_id; ?>">
-                        <p style="margin-bottom:15px; padding:10px; background:#e8f4f8; border-radius:6px; color:var(--primary-color);"><i class="fas fa-calendar-check"></i> <strong>Linked to appointment</strong> (from Today's Appointments)</p>
+                            <input type="hidden" name="appointment_id" value="<?php echo $preselected_appointment_id; ?>">
+                            <p style="margin-bottom:15px; padding:10px; background:#e8f4f8; border-radius:6px; color:var(--primary-color);"><i class="fas fa-calendar-check"></i> <strong>Linked to appointment</strong> (from Today's Appointments)</p>
                         <?php else: ?>
-                        <div class="form-group">
-                            <label>Link to Appointment:</label>
-                            <select name="appointment_id" required>
-                                <option value="">--Select--</option>
-                                <?php foreach ($completed_appointments as $apt): ?>
-                                    <option value="<?php echo $apt['APPOINTMENT_ID']; ?>"><?php echo $apt['APPOINTMENT_DATE'] . " (Dr. " . $apt['LAST_NAME'] . ")"; ?></option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
+                            <div class="form-group">
+                                <label>Link to Appointment:</label>
+                                <select name="appointment_id" id="appointment_select" required>
+                                    <option value="">--Select--</option>
+                                    <?php foreach ($completed_appointments as $apt): ?>
+                                        <option value="<?php echo $apt['APPOINTMENT_ID']; ?>"><?php echo $apt['APPOINTMENT_DATE'] . " (Dr. " . $apt['LAST_NAME'] . ")"; ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
                         <?php endif; ?>
                         <div class="form-grid">
                             <div class="form-group"><label>Issue Date:</label><input type="date" name="issue_date" required readonly value="<?php echo date('Y-m-d'); ?>"></div>
                             <div class="form-group"><label>Blood Pressure (BP):</label><input type="text" name="blood_pressure" id="form_blood_pressure" readonly placeholder="120/80" value="<?php echo $preselected_vitals && isset($preselected_vitals['BLOOD_PRESSURE']) ? htmlspecialchars($preselected_vitals['BLOOD_PRESSURE']) : ''; ?>"></div>
-                            <div class="form-group"><label>Height (cm):</label><input type="number" name="height_cm" id="form_height_cm" step="0.1" readonly value="<?php echo $preselected_vitals && isset($preselected_vitals['HEIGHT_CM']) && $preselected_vitals['HEIGHT_CM'] !== null && $preselected_vitals['HEIGHT_CM'] !== '' ? htmlspecialchars($preselected_vitals['HEIGHT_CM']) : ''; ?>"></div>
-                            <div class="form-group"><label>Weight (kg):</label><input type="number" step="0.1" name="weight_kg" id="form_weight_kg" readonly value="<?php echo $preselected_vitals && isset($preselected_vitals['WEIGHT_KG']) && $preselected_vitals['WEIGHT_KG'] !== null && $preselected_vitals['WEIGHT_KG'] !== '' ? htmlspecialchars($preselected_vitals['WEIGHT_KG']) : ''; ?>"></div>
+                            <div class="form-group"><label>Height (cm):</label><input type="number" name="height_cm" id="form_height_cm" step="0.1" readonly value="<?php echo ($preselected_vitals && isset($preselected_vitals['HEIGHT_CM']) && $preselected_vitals['HEIGHT_CM'] !== null && $preselected_vitals['HEIGHT_CM'] !== '') ? htmlspecialchars($preselected_vitals['HEIGHT_CM']) : ''; ?>"></div>
+                            <div class="form-group"><label>Weight (kg):</label><input type="number" step="0.1" name="weight_kg" id="form_weight_kg" readonly value="<?php echo ($preselected_vitals && isset($preselected_vitals['WEIGHT_KG']) && $preselected_vitals['WEIGHT_KG'] !== null && $preselected_vitals['WEIGHT_KG'] !== '') ? htmlspecialchars($preselected_vitals['WEIGHT_KG']) : ''; ?>"></div>
                             <div class="form-group">
                                 <label>Diabetes:</label>
                                 <select name="diabetes">
@@ -491,64 +553,81 @@ $conn->close();
                 </div>
                 <?php endif; ?>
 
+                <!-- ===== EXISTING PRESCRIPTIONS LIST ===== -->
                 <div class="prescription-list" style="margin-top:40px;">
                     <h2 style="color:var(--soft-blue); border-bottom:2px solid #f0f0f0; padding-bottom:10px; margin-bottom:20px;">Existing Prescriptions</h2>
-                    <?php foreach ($prescriptions as $p): ?>
-                        <div class="prescription-item">
-                            <div style="display:flex; justify-content:space-between; align-items:center;">
-                                <span><strong>Issue Date:</strong> <?php echo $p['ISSUE_DATE']; ?> | <strong>Doctor:</strong> <?php echo $p['DOC_FNAME'] . ' ' . $p['DOC_LNAME']; ?></span>
-                                <a href="prescription_form.php?patient_id=<?php echo $patient_id; ?>&prescription_id=<?php echo $p['PRESCRIPTION_ID']; ?>" class="btn btn-add" style="background-color:#072d44; padding:6px 12px; font-size:13px; text-decoration:none;">
-                                    Edit
-                                </a>
-                            </div>
-                            <p style="margin-top:10px;"><strong>Diagnosis:</strong> <?php echo nl2br(htmlspecialchars($p['DIAGNOSIS'])); ?></p>
-                            <p><strong>Symptoms:</strong> <?php echo nl2br(htmlspecialchars($p['SYMPTOMS'])); ?></p>
-                            <?php if (!empty($prescription_medicines[$p['PRESCRIPTION_ID']])): ?>
-                                <div style="margin-top:10px;">
-                                    <strong>Medicines:</strong>
-                                    <ul style="margin-top:5px; padding-left:18px;">
-                                        <?php foreach ($prescription_medicines[$p['PRESCRIPTION_ID']] as $med): ?>
-                                            <li>
-                                                <?php echo htmlspecialchars($med['MED_NAME']); ?>
-                                                (<?php echo htmlspecialchars($med['DOSAGE']); ?>,
-                                                <?php echo htmlspecialchars($med['DURATION']); ?>,
-                                                <?php echo htmlspecialchars($med['FREQUENCY']); ?>)
-                                            </li>
-                                        <?php endforeach; ?>
-                                    </ul>
+                    <?php if (empty($prescriptions)): ?>
+                        <p style="color:#777; text-align:center; padding:20px;">No prescriptions found for this patient.</p>
+                    <?php else: ?>
+                        <?php foreach ($prescriptions as $p): ?>
+                            <div class="prescription-item">
+                                <div style="display:flex; justify-content:space-between; align-items:center;">
+                                    <span><strong>Issue Date:</strong> <?php echo $p['ISSUE_DATE']; ?> | <strong>Doctor:</strong> <?php echo htmlspecialchars($p['DOC_FNAME'] . ' ' . $p['DOC_LNAME']); ?></span>
+                                    <!-- Edit uses POST form — prescription_id never appears in URL -->
+                                    <form method="POST" action="prescription_form.php" style="display:inline;">
+                                        <input type="hidden" name="patient_id"      value="<?php echo $patient_id; ?>">
+                                        <input type="hidden" name="prescription_id" value="<?php echo (int)$p['PRESCRIPTION_ID']; ?>">
+                                        <button type="submit" class="btn btn-add" style="background-color:#072d44; padding:6px 12px; font-size:13px;">
+                                            Edit
+                                        </button>
+                                    </form>
                                 </div>
-                            <?php endif; ?>
-                        </div>
-                    <?php endforeach; ?>
+                                <p style="margin-top:10px;"><strong>Diagnosis:</strong> <?php echo nl2br(htmlspecialchars($p['DIAGNOSIS'])); ?></p>
+                                <p><strong>Symptoms:</strong> <?php echo nl2br(htmlspecialchars($p['SYMPTOMS'])); ?></p>
+                                <?php if (!empty($prescription_medicines[$p['PRESCRIPTION_ID']])): ?>
+                                    <div style="margin-top:10px;">
+                                        <strong>Medicines:</strong>
+                                        <ul style="margin-top:5px; padding-left:18px;">
+                                            <?php foreach ($prescription_medicines[$p['PRESCRIPTION_ID']] as $med): ?>
+                                                <li>
+                                                    <?php echo htmlspecialchars($med['MED_NAME']); ?>
+                                                    (<?php echo htmlspecialchars($med['DOSAGE']); ?>,
+                                                    <?php echo htmlspecialchars($med['DURATION']); ?>,
+                                                    <?php echo htmlspecialchars($med['FREQUENCY']); ?>)
+                                                </li>
+                                            <?php endforeach; ?>
+                                        </ul>
+                                    </div>
+                                <?php endif; ?>
+                            </div>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
                 </div>
+
             </div>
         </div>
     </div>
     <script>
         var appointmentVitals = <?= json_encode($appointment_vitals); ?>;
+
         function fillVitalsForAppointment(aptId) {
             if (!aptId) return;
             var v = appointmentVitals[aptId];
             document.getElementById('form_blood_pressure').value = v && v.BLOOD_PRESSURE ? v.BLOOD_PRESSURE : '';
-            document.getElementById('form_height_cm').value = v && v.HEIGHT_CM != null && v.HEIGHT_CM !== '' ? v.HEIGHT_CM : '';
-            document.getElementById('form_weight_kg').value = v && v.WEIGHT_KG != null && v.WEIGHT_KG !== '' ? v.WEIGHT_KG : '';
+            document.getElementById('form_height_cm').value      = (v && v.HEIGHT_CM != null && v.HEIGHT_CM !== '') ? v.HEIGHT_CM : '';
+            document.getElementById('form_weight_kg').value      = (v && v.WEIGHT_KG != null && v.WEIGHT_KG !== '') ? v.WEIGHT_KG : '';
         }
-        var aptSelect = document.querySelector('select[name="appointment_id"]');
+
+        var aptSelect = document.getElementById('appointment_select');
         if (aptSelect) {
-            aptSelect.addEventListener('change', function() { fillVitalsForAppointment(this.value); });
+            aptSelect.addEventListener('change', function () { fillVitalsForAppointment(this.value); });
         }
-        var preselectedAptId = document.querySelector('input[name="appointment_id"][type="hidden"]');
-        if (preselectedAptId && preselectedAptId.value) { fillVitalsForAppointment(preselectedAptId.value); }
+
+        var preselectedAptInput = document.querySelector('input[name="appointment_id"][type="hidden"]');
+        if (preselectedAptInput && preselectedAptInput.value) {
+            fillVitalsForAppointment(preselectedAptInput.value);
+        }
+
         function addMedRow() {
             const area = document.getElementById('medicine-area');
-            const row = document.querySelector('.medicine-block').cloneNode(true);
+            const row  = document.querySelector('.medicine-block').cloneNode(true);
             row.querySelectorAll('input').forEach(i => i.value = '');
             row.querySelectorAll('select').forEach(s => s.selectedIndex = 0);
             const delBtn = document.createElement('button');
-            delBtn.type = 'button';
-            delBtn.style = 'background:red; color:white; border:none; padding:5px 10px; border-radius:3px; cursor:pointer; margin-top:5px;';
+            delBtn.type      = 'button';
+            delBtn.style     = 'background:red; color:white; border:none; padding:5px 10px; border-radius:3px; cursor:pointer; margin-top:5px;';
             delBtn.innerHTML = 'Remove Row';
-            delBtn.onclick = function() { this.parentElement.remove(); };
+            delBtn.onclick   = function () { this.parentElement.remove(); };
             row.appendChild(delBtn);
             area.appendChild(row);
         }

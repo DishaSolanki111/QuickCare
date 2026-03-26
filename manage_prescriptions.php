@@ -20,67 +20,67 @@ if (!$conn) {
 }
 
 // Get doctor information from session
- $doctor_id = $_SESSION['DOCTOR_ID'];
- $doctor_name = "Doctor";
+$doctor_id   = $_SESSION['DOCTOR_ID'];
+$doctor_name = "Doctor";
 
 // Fetch doctor's name from database
- $doc_sql = "SELECT FIRST_NAME, LAST_NAME FROM doctor_tbl WHERE DOCTOR_ID = ?";
- $doc_stmt = $conn->prepare($doc_sql);
- $doc_stmt->bind_param("i", $doctor_id);
- $doc_stmt->execute();
- $doc_result = $doc_stmt->get_result();
-
+$doc_sql  = "SELECT FIRST_NAME, LAST_NAME FROM doctor_tbl WHERE DOCTOR_ID = ?";
+$doc_stmt = $conn->prepare($doc_sql);
+$doc_stmt->bind_param("i", $doctor_id);
+$doc_stmt->execute();
+$doc_result = $doc_stmt->get_result();
 if ($doc_result->num_rows === 1) {
-    $doc = $doc_result->fetch_assoc();
+    $doc         = $doc_result->fetch_assoc();
     $doctor_name = htmlspecialchars($doc['FIRST_NAME'] . ' ' . $doc['LAST_NAME']);
 }
- $doc_stmt->close();
+$doc_stmt->close();
 
 // Check for success message in URL
- $alert_message = '';
-if (isset($_POST['status'])) {
-    $status = $_POST['status'];
-    if ($status === 'success') {
-        $alert_message = "Prescription added successfully!";
-    } elseif ($status === 'updated') {
-        $alert_message = "Prescription updated successfully!";
-    } elseif ($status === 'deleted_success') {
-        $alert_message = "Prescription deleted successfully!";
-    }
+$alert_message = '';
+if (isset($_GET['status'])) {
+    $status = $_GET['status'];
+    if ($status === 'success')        $alert_message = "Prescription added successfully!";
+    elseif ($status === 'updated')    $alert_message = "Prescription updated successfully!";
+    elseif ($status === 'deleted_success') $alert_message = "Prescription deleted successfully!";
 }
 
-// Filter parameters (POST)
-$filter_name = isset($_POST['filter_name']) ? trim(mysqli_real_escape_string($conn, $_POST['filter_name'])) : '';
-$filter_date = isset($_POST['filter_date']) ? mysqli_real_escape_string($conn, $_POST['filter_date']) : '';
+// -------------------------------------------------------
+// Filter parameters — use POST for searching
+// -------------------------------------------------------
+// Detect whether the filter form was actually submitted
+$filter_submitted = ($_SERVER['REQUEST_METHOD'] === 'POST' && (isset($_POST['filter_name']) || isset($_POST['filter_date'])));
 
-// Fetch existing prescriptions for this doctor (one row per prescription)
+$filter_name = $filter_submitted ? trim($_POST['filter_name'] ?? '') : '';
+$filter_date = $filter_submitted ? trim($_POST['filter_date'] ?? '') : '';
+
+// Build query with optional filters
 $conditions = ["a.DOCTOR_ID = ?"];
-$types = "i";
-$params = [$doctor_id];
+$types      = "i";
+$params     = [$doctor_id];
 
-if (!empty($filter_name)) {
+if ($filter_name !== '') {
     $conditions[] = "(pt.FIRST_NAME LIKE ? OR pt.LAST_NAME LIKE ? OR CONCAT(pt.FIRST_NAME, ' ', pt.LAST_NAME) LIKE ?)";
-    $types .= "sss";
-    $name_pattern = '%' . $filter_name . '%';
-    $params[] = $name_pattern;
-    $params[] = $name_pattern;
-    $params[] = $name_pattern;
+    $types        .= "sss";
+    $name_pattern  = '%' . $filter_name . '%';
+    $params[]      = $name_pattern;
+    $params[]      = $name_pattern;
+    $params[]      = $name_pattern;
 }
-if (!empty($filter_date)) {
+if ($filter_date !== '') {
     $conditions[] = "a.APPOINTMENT_DATE = ?";
-    $types .= "s";
-    $params[] = $filter_date;
+    $types        .= "s";
+    $params[]      = $filter_date;
 }
 
 $sql = "SELECT p.PRESCRIPTION_ID, pt.PATIENT_ID, pt.FIRST_NAME, pt.LAST_NAME, pt.PHONE, pt.EMAIL,
                 a.APPOINTMENT_ID, a.APPOINTMENT_DATE, a.APPOINTMENT_TIME
          FROM prescription_tbl p
          INNER JOIN appointment_tbl a ON p.APPOINTMENT_ID = a.APPOINTMENT_ID
-         INNER JOIN patient_tbl pt ON a.PATIENT_ID = pt.PATIENT_ID
+         INNER JOIN patient_tbl pt    ON a.PATIENT_ID = pt.PATIENT_ID
          WHERE " . implode(" AND ", $conditions) . "
          ORDER BY a.APPOINTMENT_DATE DESC, a.APPOINTMENT_TIME DESC";
-$stmt = $conn->prepare($sql);
 
+$stmt = $conn->prepare($sql);
 if (!$stmt) {
     die("Error preparing query: " . $conn->error);
 }
@@ -90,12 +90,22 @@ $result = $stmt->get_result();
 
 $prescriptions_list = [];
 if ($result && $result->num_rows > 0) {
-    while($row = $result->fetch_assoc()) {
+    while ($row = $result->fetch_assoc()) {
         $prescriptions_list[] = $row;
     }
 }
 $stmt->close();
- $conn->close(); // Close connection when done
+$conn->close();
+
+// Determine the "no results" message to show
+$no_results_message = '';
+if (empty($prescriptions_list)) {
+    if ($filter_submitted && ($filter_name !== '' || $filter_date !== '')) {
+        $no_results_message = "No prescriptions found matching your search.";
+    } else {
+        $no_results_message = "No prescriptions found.";
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -121,127 +131,37 @@ $stmt->close();
             --warning-color: #f39c12;
             --info-color: #17a2b8;
         }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
-        body {
-            background-color: #f5f7fa;
-            color: #333;
-            line-height: 1.6;
-        }
-        
-        .container {
-            display: flex;
-            min-height: 100vh;
-        }
-        
-       
-        /* Main Content */
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #f5f7fa; color: #333; line-height: 1.6; }
+        .container { display: flex; min-height: 100vh; }
+
         .main-content {
             flex: 1;
             margin-left: 250px;
             padding: 20px;
-            margin-top:-15px;
+            margin-top: -15px;
         }
-        
-        
-        .welcome-msg {
-            font-size: 24px;
-            font-weight: 600;
-            color: var(--primary-color);
-        }
-        
-        .user-actions {
-            display: flex;
-            align-items: center;
-        }
-        
-        .notification-btn {
-            position: relative;
-            background: none;
-            border: none;
-            font-size: 20px;
-            color: var(--dark-color);
-            margin-right: 20px;
-            cursor: pointer;
-        }
-        
-        .notification-badge {
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            background-color: var(--danger-color);
-            color: white;
-            border-radius: 50%;
-            width: 18px;
-            height: 18px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 11px;
-            font-weight: bold;
-        }
-        
-        .user-dropdown {
-            display: flex;
-            align-items: center;
-            cursor: pointer;
-        }
-        
-        .user-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background-color: var(--secondary-color);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 10px;
-            font-weight: bold;
-        }
-        
-        /* Table Styles */
+
         .content-card {
             background: #fff;
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
-        
+
         h1 {
             color: #072d44;
             border-bottom: 2px solid #eee;
             padding-bottom: 10px;
             margin-bottom: 20px;
         }
-        
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        
-        th, td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-        
-        thead {
-            background-color: #072d44;
-            color: white;
-        }
-        
-        tbody tr:hover {
-            background-color: #f5f5f5;
-        }
-        
+
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+        thead { background-color: #072d44; color: white; }
+        tbody tr:hover { background-color: #f5f5f5; }
+
         .btn {
             display: inline-block;
             padding: 8px 15px;
@@ -253,24 +173,12 @@ $stmt->close();
             cursor: pointer;
             font-size: 14px;
         }
-        
-        .btn:hover {
-            background-color: #218838;
-        }
-        
-        .btn-primary {
-            background-color: #072d44;
-        }
-        .btn-primary:hover {
-            background-color: #0056b3;
-        }
-        .btn-secondary {
-            background-color: #6c757d;
-        }
-        .btn-secondary:hover {
-            background-color: #5a6268;
-        }
-        
+        .btn:hover          { background-color: #218838; }
+        .btn-primary        { background-color: #072d44; }
+        .btn-primary:hover  { background-color: #0056b3; }
+        .btn-secondary      { background-color: #6c757d; }
+        .btn-secondary:hover{ background-color: #5a6268; }
+
         .filter-form {
             display: flex;
             flex-wrap: wrap;
@@ -282,112 +190,57 @@ $stmt->close();
             border-radius: 8px;
             border: 1px solid #e9ecef;
         }
-        .filter-group {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        }
-        .filter-group label {
-            font-weight: 600;
-            color: var(--primary-color);
-            font-size: 14px;
-        }
-        .filter-group input {
-            padding: 8px 12px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 14px;
-            min-width: 180px;
-        }
-        .filter-actions {
-            display: flex;
-            gap: 10px;
-            align-items: flex-end;
-        }
+        .filter-group { display: flex; flex-direction: column; gap: 5px; }
+        .filter-group label { font-weight: 600; color: var(--primary-color); font-size: 14px; }
+        .filter-group input { padding: 8px 12px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px; min-width: 180px; }
+        .filter-actions { display: flex; gap: 10px; align-items: flex-end; }
+
         
-        /* Footer Styles */
-        footer {
-            background: var(--dark);
-            color: white;
-            padding: 3rem 5%;
+
+        /* No results */
+        .no-results {
             text-align: center;
+            color: #777;
+            padding: 30px 0;
+            font-size: 15px;
         }
+        .no-results i { font-size: 36px; display: block; margin-bottom: 10px; color: #ccc; }
 
-        .footer-content {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .social-links {
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-            margin-top: 1.5rem;
-        }
-
-        .social-link {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.1);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            transition: all 0.3s ease;
-            text-decoration: none;
-        }
-
-        .social-link:hover {
-            background: var(--primary);
-            transform: translateY(-3px);
-        }
-        
-        .logo-img {
-            height: 40px;
-            margin-right: 12px;
-            border-radius: 5px;
-        }
-        
-        @media (max-width: 992px) {
-        
-            .main-content {
-                margin-left: 70px;
-            }
-        }
+        @media (max-width: 992px) { .main-content { margin-left: 70px; } }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Sidebar -->
-        
         <?php include 'doctor_sidebar.php'; ?>
-        <!-- Main Content -->
         <div class="main-content">
-        <?php include 'doctor_header.php'; ?>    
-            
-            <!-- Content Card -->
+            <?php include 'doctor_header.php'; ?>
+
             <div class="content-card">
-         
-                
                 <h1>Manage Prescriptions</h1>
-                
-                
+
+
+                <!-- Filter Form (POST to avoid exposing values in URL) -->
                 <form method="POST" action="manage_prescriptions.php" class="filter-form">
                     <div class="filter-group">
                         <label for="filter_name"><i class="fas fa-user"></i> Patient Name</label>
-                        <input type="text" id="filter_name" name="filter_name" placeholder="Search by name..." value="<?php echo htmlspecialchars($filter_name); ?>">
+                        <input type="text" id="filter_name" name="filter_name"
+                               placeholder="Search by name..."
+                               value="<?php echo htmlspecialchars($filter_name); ?>">
                     </div>
                     <div class="filter-group">
                         <label for="filter_date"><i class="fas fa-calendar"></i> Appointment Date</label>
-                        <input type="date" id="filter_date" name="filter_date" value="<?php echo htmlspecialchars($filter_date); ?>">
+                        <input type="date" id="filter_date" name="filter_date"
+                               value="<?php echo htmlspecialchars($filter_date); ?>">
                     </div>
                     <div class="filter-actions">
-                        <button type="submit" class="btn btn-primary">Search</button>
-                        <button type="button" class="btn btn-secondary" onclick="window.location.href='manage_prescriptions.php'">Clear</button>
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i> Search</button>
+                        <button type="button" class="btn btn-secondary"
+                                onclick="window.location.href='manage_prescriptions.php'">
+                            <i class="fas fa-times"></i> Clear
+                        </button>
                     </div>
                 </form>
-                
+
                 <table>
                     <thead>
                         <tr>
@@ -398,54 +251,56 @@ $stmt->close();
                         </tr>
                     </thead>
                     <tbody>
-                        <?php if (count($prescriptions_list) > 0): ?>
+                        <?php if (!empty($prescriptions_list)): ?>
                             <?php foreach ($prescriptions_list as $row): ?>
                                 <tr>
                                     <td><?php echo htmlspecialchars($row['FIRST_NAME'] . ' ' . $row['LAST_NAME']); ?></td>
-                                    <td><?php 
+                                    <td><?php
                                         $dt = !empty($row['APPOINTMENT_DATE']) ? $row['APPOINTMENT_DATE'] : '';
                                         $tm = !empty($row['APPOINTMENT_TIME']) ? $row['APPOINTMENT_TIME'] : '';
                                         if ($dt) echo htmlspecialchars((new DateTime($dt))->format('F d, Y') . ($tm ? ' ' . date('h:i A', strtotime($tm)) : ''));
                                         else echo 'N/A';
                                     ?></td>
-                                    <td>
-                                        <?php 
+                                    <td><?php
                                         $contact_parts = [];
                                         if (!empty($row['PHONE'])) $contact_parts[] = 'Ph: ' . htmlspecialchars($row['PHONE']);
                                         if (!empty($row['EMAIL'])) $contact_parts[] = htmlspecialchars($row['EMAIL']);
                                         echo implode(' | ', $contact_parts ?: ['N/A']);
-                                        ?>
-                                    </td>
+                                    ?></td>
                                     <td>
-                                        <a href="prescription_form.php?patient_id=<?php echo (int)$row['PATIENT_ID']; ?>&prescription_id=<?php echo (int)$row['PRESCRIPTION_ID']; ?>" class="btn btn-primary"><i class="fas fa-edit"></i> Edit Prescription</a>
+                                        <!-- Edit uses POST form — IDs never shown in URL -->
+                                        <form method="POST" action="prescription_form.php" style="display:inline;">
+                                            <input type="hidden" name="patient_id"      value="<?php echo (int)$row['PATIENT_ID']; ?>">
+                                            <input type="hidden" name="prescription_id" value="<?php echo (int)$row['PRESCRIPTION_ID']; ?>">
+                                            <button type="submit" class="btn btn-primary">
+                                                <i class="fas fa-edit"></i> Edit Prescription
+                                            </button>
+                                        </form>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>
                         <?php else: ?>
                             <tr>
-                                <td colspan="4" style="text-align: center;">No prescriptions found.</td>
+                                <td colspan="4">
+                                    <div class="no-results">
+                                        <i class="fas fa-file-medical-alt"></i>
+                                        <?php echo htmlspecialchars($no_results_message); ?>
+                                    </div>
+                                </td>
                             </tr>
                         <?php endif; ?>
                     </tbody>
                 </table>
             </div>
-            
-           
         </div>
     </div>
 
-    <!-- JavaScript to show pop-up alert -->
     <?php if (!empty($alert_message)): ?>
         <script>
-            // Wait for page to fully load before showing alert
-            window.onload = function() {
+            window.onload = function () {
                 alert('<?php echo addslashes($alert_message); ?>');
-            }
+            };
         </script>
     <?php endif; ?>
-    
-    <script>
-        document.getElementById('year').textContent = new Date().getFullYear();
-    </script>
 </body>
 </html>
