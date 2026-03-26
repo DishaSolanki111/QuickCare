@@ -16,7 +16,7 @@ if (!\class_exists(PHPMaker2026_Project2_KernelDevDebugContainer::class, false))
 
 return new \ContainerJZsQGll\PHPMaker2026_Project2_KernelDevDebugContainer([
     'container.build_hash' => 'JZsQGll',
-    'container.build_id' => '260c498c',
-    'container.build_time' => 1774382220,
+    'container.build_id' => 'f8526df3',
+    'container.build_time' => 1774435879,
     'container.runtime_mode' => \in_array(\PHP_SAPI, ['cli', 'phpdbg', 'embed'], true) ? 'web=0' : 'web=1',
 ], __DIR__.\DIRECTORY_SEPARATOR.'ContainerJZsQGll');
