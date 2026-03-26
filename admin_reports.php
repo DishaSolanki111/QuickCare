@@ -174,7 +174,7 @@ tbody td{padding:12px 16px;font-size:13px;color:var(--text)}
 <!-- ─── SIDEBAR ──────────────────────────────────────────────── -->
 <nav id="sidebar">
   <div class="sidebar-brand">
-    <div class="brand-icon">🏥</div>
+    <div class="brand-icon" style="background:none;padding:0;overflow:hidden"><img src="uploads/logo.jpg" alt="Quick Care Logo" style="width:40px;height:40px;object-fit:cover;border-radius:10px;display:block"/></div>
     <div class="brand-title">Quick Care</div>
     <div class="brand-sub">Analytics &amp; Reports</div>
   </div>
@@ -426,10 +426,9 @@ function renderDoctor() {
 function renderPayment() {
   const s = reportData.summary||{};
   renderKPIs([
-    {label:'Total Revenue',     value:`₹${parseFloat(s.total_revenue||0).toLocaleString('en-IN')}`, icon:'💰', color:'green'},
-    {label:'Transactions',      value: s.total_transactions||0,  icon:'🧾', color:'blue'},
-    {label:'Avg. Amount',       value:`₹${parseFloat(s.avg_amount||0).toFixed(0)}`, icon:'📊', color:'amber'},
-    {label:'Failed',            value: s.failed_count||0,         icon:'⚠️',  color:'red'},
+    {label:'Total Revenue',  value:`₹${parseFloat(s.total_revenue||0).toLocaleString('en-IN')}`, icon:'💰', color:'green'},
+    {label:'Transactions',   value: s.total_transactions||0,  icon:'🧾', color:'blue'},
+    {label:'Avg. Amount',    value:`₹${parseFloat(s.avg_amount||0).toFixed(0)}`, icon:'📊', color:'amber'},
   ]);
   const trend = reportData.trend||[];
   renderBarChart(trend.map(r=>r.pay_date), trend.map(r=>parseFloat(r.revenue)), 'Revenue (₹)', '#5eead4');
@@ -453,25 +452,36 @@ function renderPayment() {
 function renderPatient() {
   const s = reportData.summary||{};
   renderKPIs([
-    {label:'Total Patients',     value: s.total_patients||0,          icon:'🧑‍🤝‍🧑', color:'blue'},
-    {label:'Total Visits',       value: s.total_appointments||0,      icon:'📅',  color:'green'},
-    {label:'Avg Visits/Patient', value: s.avg_visits_per_patient||0,  icon:'📊',  color:'amber'},
-    {label:'Top Medicines',      value: (reportData.top_medicines||[]).length, icon:'💊', color:'red'},
+    {label:'Total Patients',           value: s.total_patients||0,         icon:'🧑', color:'blue'},
+    {label:'Total Appointments',       value: s.total_appointments||0,     icon:'📅', color:'green'},
+    {label:'Avg Appointments/Patient', value: s.avg_visits_per_patient||0, icon:'📊', color:'amber'},
   ]);
   const bd = reportData.by_doctor||[];
   renderBarChart(bd.map(r=>r.doctor_name.split(' ').pop()), bd.map(r=>r.unique_patients), 'Patients', '#f9a8d4');
   const gd = reportData.gender_dist||[];
   renderPieChart(gd.map(r=>r.GENDER), gd.map(r=>r.count), ['#60a5fa','#f9a8d4','#a78bfa']);
 
-  document.getElementById('tableTitle').textContent = 'Patient Visit Summary';
+  document.getElementById('tableTitle').textContent = 'Patient Appointment Summary';
   renderTable(
-    ['#','Patient','Gender','Blood Group','Visits','Completed','Cancelled','Last Visit','Doctors'],
-    (reportData.rows||[]).map((r,i)=>[i+1, r.patient_name, r.GENDER, r.BLOOD_GROUP,
-      r.visit_count,
-      `<span class="badge badge-completed">${r.completed}</span>`,
-      `<span class="badge badge-cancelled">${r.cancelled}</span>`,
-      fmtDate(r.last_visit), r.doctors_visited
-    ])
+    ['#','Patient','Gender','Blood Group','Total Appointments','Completed','Upcoming','Cancelled','Last Visit','Next Visit','Doctors'],
+    (reportData.rows||[]).map((r,i) => {
+
+      const lastVisitCell = r.last_visit
+        ? `<span style="color:#059669;font-weight:500">${fmtDate(r.last_visit)}</span>`
+        : '<span style="color:#94a3b8">—</span>';
+
+      const nextVisitCell = r.next_visit
+        ? `<span style="color:#2563eb;font-weight:500">${fmtDate(r.next_visit)}</span>`
+        : '<span style="color:#94a3b8">—</span>';
+
+      return [i+1, r.patient_name, r.GENDER, r.BLOOD_GROUP,
+        `<strong>${r.visit_count}</strong>`,
+        `<span class="badge badge-completed">${r.completed}</span>`,
+        `<span class="badge badge-scheduled">${r.scheduled||0}</span>`,
+        `<span class="badge badge-cancelled">${r.cancelled}</span>`,
+        lastVisitCell, nextVisitCell, r.doctors_visited
+      ];
+    })
   );
 }
 
