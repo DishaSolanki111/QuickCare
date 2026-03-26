@@ -65,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_status'])) {
                     $now = date('H:i:s');
                     $ins = $conn->prepare("INSERT INTO medicine_reminder_tbl (MEDICINE_ID, CREATOR_ROLE, CREATOR_ID, PATIENT_ID, START_DATE, END_DATE, REMINDER_TIME, REMARKS) VALUES (?, 'RECEPTIONIST', 1, ?, ?, ?, ?, ?)");
                     $pat_id = (int) $row['PATIENT_ID'];
-                    $ins->bind_param("iisssss", $med_id, $pat_id, $today, $today, $now, $msg);
+                    $ins->bind_param("iissss", $med_id, $pat_id, $today, $today, $now, $msg);
                     $ins->execute();
                     $ins->close();
 
