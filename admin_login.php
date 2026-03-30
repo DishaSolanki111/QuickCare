@@ -1,6 +1,3 @@
-<?php
-include 'header.php';
-?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -412,9 +409,7 @@ include 'header.php';
 </head>
 <body>
 
-<?php
-include 'header.php';
-?>
+
 
 <div class="stage">
     <div class="hero">
