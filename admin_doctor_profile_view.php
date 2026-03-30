@@ -46,6 +46,106 @@ $img = !empty($doctor['PROFILE_IMAGE']) ? $doctor['PROFILE_IMAGE'] : 'uploads/de
     <title>Doctor Profile PDF View - Dr. <?php echo htmlspecialchars($doctor_name); ?></title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        /* ====== LAYOUT FIX ====== */
+        .layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar width must match your sidebar file */
+        .sidebar {
+            width: 240px;
+            min-height: 100vh;
+            flex-shrink: 0;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Main content area (if sidebar is fixed width 240px) */
+.content {
+    margin-left: 240px;
+    width: calc(100% - 240px);
+    min-height: 100vh;
+    background: #eef2f6;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+/* Header / topbar */
+.topbar {
+    background: #ffffff;
+    border: 1px solid #d9dee5;
+    border-radius: 0px;
+    padding: 22px 35px;
+    margin-bottom: 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+}
+
+/* Left heading */
+.topbar h1,
+.topbar .welcome-title {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 700;
+    color: #000;
+}
+
+/* Right side user section */
+.topbar-right,
+.admin-profile {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+/* Circle avatar */
+.admin-avatar,
+.profile-circle {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: #143b6d; /* dark blue */
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+/* Admin text */
+.admin-name,
+.profile-name {
+    font-size: 18px;
+    font-weight: 600;
+    color: #143b6d;
+    margin: 0;
+}
+
+        /* Main area */
+        .main {
+            margin-left: 240px; /* same as sidebar width */
+            width: calc(100% - 240px);
+            min-height: 100vh;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        /* Sheet stays perfectly centered */
+        .sheet {
+            width: 100%;
+            background: #ffffff;
+            border: 1px solid #d9dee5;
+            border-radius: 12px;
+            padding: 24px 28px 28px;
+            box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+            margin-top: 18px;
+        }
+
         @page {
             size: A4;
             margin: 1.5cm;
@@ -61,19 +161,8 @@ $img = !empty($doctor['PROFILE_IMAGE']) ? $doctor['PROFILE_IMAGE'] : 'uploads/de
         body {
             background: #e5edf5;
             min-height: 100vh;
-            padding: 20px 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .sheet {
-            width: 794px;
-            max-width: 100%;
-            background: #ffffff;
-            box-shadow: 0 10px 25px rgba(15, 23, 42, 0.25);
-            border-radius: 10px;
-            padding: 24px 28px 28px;
+            margin: 0;
+            padding: 0;
         }
 
         .sheet-header {
@@ -217,63 +306,76 @@ $img = !empty($doctor['PROFILE_IMAGE']) ? $doctor['PROFILE_IMAGE'] : 'uploads/de
     </style>
 </head>
 <body>
-    <div class="sheet">
-        <div class="sheet-header">
-            <div></div>
-        </div>
 
-        <div class="profile-header">
-            <div class="avatar-lg">
-                <img src="<?php echo htmlspecialchars($img); ?>" alt="Doctor">
-            </div>
-            <div>
-                <div class="profile-main-name">Dr. <?php echo htmlspecialchars($doctor_name); ?></div>
-                <div class="profile-id">Specialization: <?php echo htmlspecialchars($doctor['SPECIALISATION_NAME']); ?></div>
-                <div class="badge-chip">
-                    <i class="fas fa-user-md"></i>
-                    Verified Doctor
+<div class="layout">
+
+    <?php include 'admin_sidebar.php'; ?>
+
+    <div class="content">
+
+        <?php include 'admin_header.php'; ?>
+
+        <div class="main">
+
+            <div class="sheet">
+
+                <div class="profile-header">
+                    <div class="avatar-lg">
+                        <img src="<?php echo htmlspecialchars($img); ?>" alt="Doctor">
+                    </div>
+                    <div>
+                        <div class="profile-main-name">Dr. <?php echo htmlspecialchars($doctor_name); ?></div>
+                        <div class="profile-id">Specialization: <?php echo htmlspecialchars($doctor['SPECIALISATION_NAME']); ?></div>
+                        <div class="badge-chip">
+                            <i class="fas fa-user-md"></i>
+                            Verified Doctor
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
 
-        <div class="section-title">Personal Information</div>
-        <div class="grid-2">
-            <div>
-                <div class="field-label">Date of Birth</div>
-                <div class="field-value"><?php echo htmlspecialchars($doctor['DOB']); ?></div>
-            </div>
-            <div>
-                <div class="field-label">Gender</div>
-                <div class="field-value"><?php echo htmlspecialchars($doctor['GENDER']); ?></div>
-            </div>
-            <div>
-                <div class="field-label">Date of Joining</div>
-                <div class="field-value"><?php echo htmlspecialchars($doctor['DOJ']); ?></div>
-            </div>
-            <div>
-                <div class="field-label">Education</div>
-                <div class="field-value"><?php echo htmlspecialchars($doctor['EDUCATION']); ?></div>
-            </div>
-        </div>
+                <div class="section-title">Personal Information</div>
+                <div class="grid-2">
+                    <div>
+                        <div class="field-label">Date of Birth</div>
+                        <div class="field-value"><?php echo htmlspecialchars($doctor['DOB']); ?></div>
+                    </div>
+                    <div>
+                        <div class="field-label">Gender</div>
+                        <div class="field-value"><?php echo htmlspecialchars($doctor['GENDER']); ?></div>
+                    </div>
+                    <div>
+                        <div class="field-label">Date of Joining</div>
+                        <div class="field-value"><?php echo htmlspecialchars($doctor['DOJ']); ?></div>
+                    </div>
+                    <div>
+                        <div class="field-label">Education</div>
+                        <div class="field-value"><?php echo htmlspecialchars($doctor['EDUCATION']); ?></div>
+                    </div>
+                </div>
 
-        <div class="section-title" style="margin-top:16px;">Contact Information</div>
-        <div class="grid-2">
-            <div>
-                <div class="field-label">Phone</div>
-                <div class="field-value"><?php echo htmlspecialchars($doctor['PHONE']); ?></div>
-            </div>
-            <div>
-                <div class="field-label">Email</div>
-                <div class="field-value"><?php echo htmlspecialchars($doctor['EMAIL']); ?></div>
-            </div>
-        </div>
+                <div class="section-title">Contact Information</div>
+                <div class="grid-2">
+                    <div>
+                        <div class="field-label">Phone</div>
+                        <div class="field-value"><?php echo htmlspecialchars($doctor['PHONE']); ?></div>
+                    </div>
+                    <div>
+                        <div class="field-label">Email</div>
+                        <div class="field-value"><?php echo htmlspecialchars($doctor['EMAIL']); ?></div>
+                    </div>
+                </div>
 
-        <div class="footer-actions">
-            <a class="btn-back" href="Admin_doctor.php">
-                <i class="fas fa-arrow-left"></i> Back to Doctors
-            </a>
+                <div class="footer-actions">
+                    <a class="btn-back" href="Admin_doctor.php">
+                        <i class="fas fa-arrow-left"></i> Back to Doctors
+                    </a>
+                </div>
+
+            </div>
+
         </div>
     </div>
+</div>
+
 </body>
 </html>
-
