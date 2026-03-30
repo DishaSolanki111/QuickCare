@@ -352,4 +352,3 @@ $stats_stmt->close();
     </div>
 </body>
 </html>
-
