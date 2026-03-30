@@ -184,7 +184,7 @@ $reminder_count = count($appointment_items)
 ?>
 
 <header class="topbar">
-    <h2><?php echo htmlspecialchars($page_title ?? 'Welcome back'); ?></h2>
+    <h2><?php echo htmlspecialchars($page_title ?? 'Welcome'); ?></h2>
 
     <div class="topbar-right">
         <div class="user-info">

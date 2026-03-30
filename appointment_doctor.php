@@ -373,10 +373,10 @@ error_log("doctor_id=$doctor_id today=$today_php upcoming:".count($upcoming_appo
 
         .appointment-card {
             background: var(--white);
-            border-radius: 12px;
-            padding: 25px;
-            margin-bottom: 20px;
-            box-shadow: var(--shadow-md);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: var(--shadow-sm);
             transition: all 0.3s ease;
         }
 
@@ -395,14 +395,15 @@ error_log("doctor_id=$doctor_id today=$today_php upcoming:".count($upcoming_appo
         }
 
         .patient-info h3 {
-            font-size: 20px;
+            font-size: 17px;
             color: var(--dark);
-            margin-bottom: 5px;
+            margin-bottom: 3px;
         }
 
         .patient-info p {
             color: var(--text-light);
-            margin-bottom: 4px;
+            font-size: 13px;
+            margin-bottom: 2px;
         }
 
         .patient-info p:last-child {
@@ -410,9 +411,9 @@ error_log("doctor_id=$doctor_id today=$today_php upcoming:".count($upcoming_appo
         }
 
         .status-badge {
-            padding: 6px 12px;
+            padding: 4px 10px;
             border-radius: 20px;
-            font-size: 14px;
+            font-size: 12px;
             font-weight: 600;
             text-transform: uppercase;
         }
@@ -437,15 +438,16 @@ error_log("doctor_id=$doctor_id today=$today_php upcoming:".count($upcoming_appo
             flex-wrap: wrap;
             align-items: center;
             justify-content: flex-start;
-            gap: 20px;
-            margin-bottom: 16px;
+            gap: 15px;
+            margin-bottom: 12px;
         }
 
         .appointment-detail {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 6px;
             color: #666;
+            font-size: 13.5px;
         }
 
         .appointment-detail i {
@@ -458,7 +460,7 @@ error_log("doctor_id=$doctor_id today=$today_php upcoming:".count($upcoming_appo
         }
 
         .btn {
-            padding: 10px 15px;
+            padding: 7px 12px;
             border: none;
             border-radius: 6px;
             cursor: pointer;
@@ -467,7 +469,8 @@ error_log("doctor_id=$doctor_id today=$today_php upcoming:".count($upcoming_appo
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 6px;
+            font-size: 13.5px;
         }
         .btn i {
             flex-shrink: 0;
@@ -801,13 +804,6 @@ error_log("doctor_id=$doctor_id today=$today_php upcoming:".count($upcoming_appo
                                     <input type="hidden" name="reschedule_appointment_id" value="<?php echo $appointment['APPOINTMENT_ID']; ?>">
                                     <button type="submit" class="btn btn-primary">
                                         <i class="fas fa-edit"></i> Reschedule
-                                    </button>
-                                </form>
-                                <form method="POST" style="display: inline;">
-                                    <input type="hidden" name="appointment_id" value="<?php echo $appointment['APPOINTMENT_ID']; ?>">
-                                    <input type="hidden" name="status" value="CANCELLED">
-                                    <button type="submit" name="update_status" class="btn btn-danger" onclick="return confirm('Are you sure you want to cancel this appointment?')">
-                                        <i class="fas fa-times"></i> Cancel
                                     </button>
                                 </form>
                             </div>

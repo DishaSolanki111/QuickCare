@@ -100,8 +100,10 @@ if (isset($_SESSION['USER_TYPE']) && $_SESSION['USER_TYPE'] === 'doctor') {
         }
 
         .success-section {
-            padding: 4rem 0;
+            padding: 2.5rem 0;
             flex-grow: 1;
+            position: relative;
+            z-index: 10;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -115,7 +117,7 @@ if (isset($_SESSION['USER_TYPE']) && $_SESSION['USER_TYPE'] === 'doctor') {
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             overflow: hidden;
             text-align: center;
-            padding: 3rem 2rem;
+            padding: 2rem 1.5rem;
             position: relative;
         }
 
@@ -130,9 +132,9 @@ if (isset($_SESSION['USER_TYPE']) && $_SESSION['USER_TYPE'] === 'doctor') {
         }
 
         .success-icon {
-            font-size: 5rem;
+            font-size: 3.5rem;
             color: var(--accent-color);
-            margin-bottom: 2rem;
+            margin-bottom: 1rem;
             animation: scaleIn 0.5s ease-out;
         }
 
@@ -151,24 +153,24 @@ if (isset($_SESSION['USER_TYPE']) && $_SESSION['USER_TYPE'] === 'doctor') {
         }
 
         .success-title {
-            font-size: 2.5rem;
+            font-size: 2rem;
             color: var(--primary-color);
-            margin-bottom: 1rem;
+            margin-bottom: 0.5rem;
             font-weight: 600;
         }
 
         .success-message {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             color: var(--dark-color);
-            margin-bottom: 2rem;
-            line-height: 1.6;
+            margin-bottom: 1rem;
+            line-height: 1.5;
         }
 
         .success-details {
             background-color: #f0f8ff;
             border-radius: 10px;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
             text-align: left;
         }
 
@@ -182,8 +184,8 @@ if (isset($_SESSION['USER_TYPE']) && $_SESSION['USER_TYPE'] === 'doctor') {
         .detail-row {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 0.8rem;
-            padding-bottom: 0.8rem;
+            margin-bottom: 0.5rem;
+            padding-bottom: 0.5rem;
             border-bottom: 1px solid #e0e0e0;
         }
 

@@ -218,7 +218,7 @@ body::before {
 
         .modal-content {
             background-color: #fefefe;
-            padding: 30px;
+            padding: 20px;
             width: 100%;
         }
 
@@ -314,7 +314,8 @@ body::before {
         .step-indicator {
             display: flex;
             justify-content: center;
-            margin-bottom: 30px;
+            margin-top: 5px;
+            margin-bottom: 15px;
         }
 
         .step {
@@ -567,7 +568,6 @@ body::before {
                     <input type="hidden" name="spec_id" value="<?php echo $doctor['SPECIALISATION_ID']; ?>">
                     <?php endif; ?>
                 </form>
-                    <h2><?php echo $is_reschedule ? 'Reschedule: Select New Date' : 'Select Appointment Date'; ?></h2>
                     
                     <!-- Step Indicator -->
                     <div class="step-indicator">

@@ -260,7 +260,8 @@ body::before {
         .step-indicator {
             display: flex;
             justify-content: center;
-            margin-bottom: 30px;
+            margin-top: 15px;
+            margin-bottom: 15px;
         }
 
         .step {
@@ -465,8 +466,6 @@ body::before {
                 </div>
 
                 <div class="modal-content">
-                    <h2>Login to Continue</h2>
-                    
                     <!-- Step Indicator -->
                     <div class="step-indicator">
                         <div class="step completed" id="step1">1</div>
