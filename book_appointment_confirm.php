@@ -286,7 +286,7 @@ body::before {
         }
 
         .confirmation-message {
-            color: var(--text-dark);
+            color: var(--primary-color);
             margin-bottom: 20px;
         }
 
@@ -436,7 +436,6 @@ body::before {
                 </div>
 
                 <div class="modal-content">
-                    <h2>Appointment Details</h2>
                     
                     <!-- Step Indicator -->
                     <div class="step-indicator">
@@ -450,7 +449,9 @@ body::before {
                     <div class="confirmation-container">
                         <i class="fas fa-check-circle confirmation-icon"></i>
                         <h3 class="confirmation-title">Appointment Details</h3>
-                        <p class="confirmation-message">Please review your appointment details and proceed to payment</p>
+                        <p class="confirmation-message">Please review your appointment details and proceed to payment.
+                            Make sure that the booking payment will not be refunded after cancellation
+                        </p>
                         
                         <div class="appointment-details">
                             <h4>Appointment Summary</h4>
