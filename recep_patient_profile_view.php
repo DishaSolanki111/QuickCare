@@ -1,6 +1,9 @@
 <?php
 session_start();
 include 'config.php';
+include 'recept_sidebar.php'; 
+
+
 
 // Receptionist access control
 if (!isset($_SESSION['RECEPTIONIST_ID'])) {
@@ -52,25 +55,22 @@ $fullName = $patient['FIRST_NAME'] . ' ' . $patient['LAST_NAME'];
         body {
             background: #e5edf5;
             min-height: 100vh;
-            padding: 20px 0;
+            margin: 0;
+            padding: 0;
             display: flex;
-            justify-content: center;
-            align-items: center;
         }
 
         .sheet {
-            width: 794px;
+            width: 960px;
             max-width: 100%;
             background: #ffffff;
             box-shadow: 0 10px 25px rgba(15, 23, 42, 0.25);
-            border-radius: 10px;
-            padding: 24px 28px 28px;
+            border-radius: 12px;
+            margin: 40px auto 40px;
+            padding: 24px 44px 28px;
         }
 
         .sheet-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
             border-bottom: none;
             padding-bottom: 0;
             margin-bottom: 0;
@@ -101,8 +101,8 @@ $fullName = $patient['FIRST_NAME'] . ' ' . $patient['LAST_NAME'];
         .profile-header {
             display: flex;
             align-items: center;
-            gap: 18px;
-            margin-bottom: 18px;
+            gap: 16px;
+            margin-bottom: 12px;
         }
 
         .avatar-lg {
@@ -148,8 +148,8 @@ $fullName = $patient['FIRST_NAME'] . ' ' . $patient['LAST_NAME'];
             font-size: 0.9rem;
             font-weight: 700;
             color: #0f172a;
-            margin-top: 14px;
-            margin-bottom: 8px;
+            margin-top: 8px;
+            margin-bottom: 6px;
             padding-bottom: 4px;
             border-bottom: 1px solid #e2e8f0;
         }
@@ -157,7 +157,7 @@ $fullName = $patient['FIRST_NAME'] . ' ' . $patient['LAST_NAME'];
         .grid-2 {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 10px 32px;
+            gap: 6px 32px;
             font-size: 0.86rem;
         }
 
@@ -176,12 +176,12 @@ $fullName = $patient['FIRST_NAME'] . ' ' . $patient['LAST_NAME'];
         }
 
         .address-block {
-            margin-top: 8px;
+            margin-top: 4px;
             font-size: 0.86rem;
         }
 
         .footer-actions {
-            margin-top: 18px;
+            margin-top: 12px;
             display: flex;
             justify-content: space-between;
             gap: 10px;
@@ -233,19 +233,26 @@ $fullName = $patient['FIRST_NAME'] . ' ' . $patient['LAST_NAME'];
                 box-shadow: none;
                 border-radius: 0;
                 width: auto;
+            
             }
             .footer-actions {
                 display: none;
             }
         }
+        
+        .main {
+            margin-left: 250px;
+            padding: 0 20px 20px 20px;
+            width: calc(100% - 250px);
+        }
     </style>
 </head>
 <body>
+    <div class="main">
+     <?php include 'receptionist_header.php'; ?>
     <div class="sheet">
-        <div class="sheet-header">
-            <div>
-            </div>
-        </div>
+       
+        <div class="sheet-header"></div>
 
         <div class="profile-header">
             <div class="avatar-lg">
@@ -281,7 +288,7 @@ $fullName = $patient['FIRST_NAME'] . ' ' . $patient['LAST_NAME'];
             </div>
         </div>
 
-        <div class="section-title" style="margin-top:16px;">Contact Information</div>
+        <div class="section-title" style="margin-top:10px;">Contact Information</div>
         <div class="grid-2">
             <div>
                 <div class="field-label">Phone</div>
@@ -293,7 +300,7 @@ $fullName = $patient['FIRST_NAME'] . ' ' . $patient['LAST_NAME'];
             </div>
         </div>
 
-        <div class="section-title" style="margin-top:16px;">Address</div>
+        <div class="section-title" style="margin-top:10px;">Address</div>
         <div class="address-block">
             <div class="field-label">Full Address</div>
             <div class="field-value"><?php echo nl2br(htmlspecialchars($patient['ADDRESS'])); ?></div>
@@ -305,6 +312,7 @@ $fullName = $patient['FIRST_NAME'] . ' ' . $patient['LAST_NAME'];
             </a>
         </div>
     </div>
+</div>
 </body>
 </html>
 

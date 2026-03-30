@@ -1,12 +1,14 @@
 <?php
 session_start();
 include 'config.php';
-
-// Receptionist access control
+ include 'recept_sidebar.php'; 
 if (!isset($_SESSION['RECEPTIONIST_ID'])) {
     header("Location: login.php");
     exit;
 }
+
+
+
 
 // ✅ SECURITY: Changed from GET to POST to hide doctor_id from URL
 $doctor_id = isset($_POST['doctor_id']) ? (int)$_POST['doctor_id'] : 0;
@@ -92,11 +94,11 @@ function recep_day_name($code) {
 
         .sheet {
             width: 794px;
-            max-width: 100%;
+            
             background: #ffffff;
             box-shadow: 0 10px 25px rgba(15, 23, 42, 0.25);
             border-radius: 10px;
-            padding: 24px 28px 28px;
+            
         }
 
         .sheet-header {
@@ -299,6 +301,8 @@ function recep_day_name($code) {
     </style>
 </head>
 <body>
+    <div>
+    <?php include 'doctor_header.php'; ?>
     <div class="sheet">
         <div class="sheet-header">
             <div>
@@ -359,6 +363,7 @@ function recep_day_name($code) {
             </a>
         </div>
     </div>
+</div>
 </body>
 </html>
 
