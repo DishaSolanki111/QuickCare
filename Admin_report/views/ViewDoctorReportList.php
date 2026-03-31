@@ -24,7 +24,6 @@ ew.on("wrapper", function () {
         .setLists({
             "Doctor_Name": <?= $Page->Doctor_Name->toClientList($Page) ?>,
             "Specialisation": <?= $Page->Specialisation->toClientList($Page) ?>,
-            "Doctor_Status": <?= $Page->Doctor_Status->toClientList($Page) ?>,
             "APPOINTMENT_DATE": <?= $Page->APPOINTMENT_DATE->toClientList($Page) ?>,
             "Month_Name": <?= $Page->Month_Name->toClientList($Page) ?>,
             "Year": <?= $Page->Year->toClientList($Page) ?>,
@@ -97,7 +96,6 @@ ew.on("wrapper", () => {
         .setLists({
             "Doctor_Name": <?= $Page->Doctor_Name->toClientList($Page) ?>,
             "Specialisation": <?= $Page->Specialisation->toClientList($Page) ?>,
-            "Doctor_Status": <?= $Page->Doctor_Status->toClientList($Page) ?>,
             "APPOINTMENT_DATE": <?= $Page->APPOINTMENT_DATE->toClientList($Page) ?>,
             "Month_Name": <?= $Page->Month_Name->toClientList($Page) ?>,
             "Year": <?= $Page->Year->toClientList($Page) ?>,
@@ -188,44 +186,6 @@ if (!$Page->Specialisation->UseFilter) {
                 ajax: { id: "x_Specialisation", form: "fview_doctor_reportsrch", limit: ew.FILTER_PAGE_SIZE, data: { ajax: "filter" } }
             };
             options = Object.assign({}, ew.filterOptions, options, ew.vars.tables.view_doctor_report.fields.Specialisation.filterOptions);
-            ew.createFilter(options);
-        });
-        </script>
-    </div><!-- /.col-sm-auto -->
-<?php } ?>
-<?php if ($Page->Doctor_Status->Visible) { // Doctor_Status ?>
-<?php
-if (!$Page->Doctor_Status->UseFilter) {
-    $Page->SearchColumnCount++;
-}
-?>
-    <div id="xs_Doctor_Status" class="col-sm-auto d-sm-flex align-items-start mb-3 px-0 pe-sm-2<?= $Page->Doctor_Status->UseFilter ? " ew-filter-field" : "" ?>">
-        <select
-            id="x_Doctor_Status"
-            name="x_Doctor_Status[]"
-            class="form-control ew-select<?= $Page->Doctor_Status->isInvalidClass() ?>"
-            data-select2-id="fview_doctor_reportsrch_x_Doctor_Status"
-            data-table="view_doctor_report"
-            data-field="x_Doctor_Status"
-            data-caption="<?= HtmlEncode(RemoveHtml($Page->Doctor_Status->caption())) ?>"
-            data-filter="true"
-            multiple
-            size="1"
-            data-value-separator="<?= $Page->Doctor_Status->displayValueSeparatorAttribute() ?>"
-            data-placeholder="<?= HtmlEncode($Page->Doctor_Status->getPlaceHolder()) ?>"
-            data-ew-action="update-options"
-            <?= $Page->Doctor_Status->editAttributes() ?>>
-            <?= $Page->Doctor_Status->selectOptionListHtml("x_Doctor_Status", true) ?>
-        </select>
-        <div class="invalid-feedback"><?= $Page->Doctor_Status->getErrorMessage(false) ?></div>
-        <script<?= Nonce() ?>>
-        ew.on("fview_doctor_reportsrch", function() {
-            let options = {
-                name: "x_Doctor_Status",
-                selectId: "fview_doctor_reportsrch_x_Doctor_Status",
-                ajax: { id: "x_Doctor_Status", form: "fview_doctor_reportsrch", limit: ew.FILTER_PAGE_SIZE, data: { ajax: "filter" } }
-            };
-            options = Object.assign({}, ew.filterOptions, options, ew.vars.tables.view_doctor_report.fields.Doctor_Status.filterOptions);
             ew.createFilter(options);
         });
         </script>
@@ -459,9 +419,6 @@ $Page->renderListOptions();
 // Render list options (header, left)
 $Page->ListOptions->render("header", "left");
 ?>
-<?php if ($Page->DOCTOR_ID->Visible) { // DOCTOR_ID ?>
-        <th data-name="DOCTOR_ID" class="<?= $Page->DOCTOR_ID->headerCellClass() ?>"><div id="elh_view_doctor_report_DOCTOR_ID" class="view_doctor_report_DOCTOR_ID"><?= $Page->renderFieldHeader($Page->DOCTOR_ID) ?></div></th>
-<?php } ?>
 <?php if ($Page->Doctor_Name->Visible) { // Doctor_Name ?>
         <th data-name="Doctor_Name" class="<?= $Page->Doctor_Name->headerCellClass() ?>"><div id="elh_view_doctor_report_Doctor_Name" class="view_doctor_report_Doctor_Name"><?= $Page->renderFieldHeader($Page->Doctor_Name) ?></div></th>
 <?php } ?>
@@ -471,20 +428,11 @@ $Page->ListOptions->render("header", "left");
 <?php if ($Page->EDUCATION->Visible) { // EDUCATION ?>
         <th data-name="EDUCATION" class="<?= $Page->EDUCATION->headerCellClass() ?>"><div id="elh_view_doctor_report_EDUCATION" class="view_doctor_report_EDUCATION"><?= $Page->renderFieldHeader($Page->EDUCATION) ?></div></th>
 <?php } ?>
-<?php if ($Page->Doctor_Status->Visible) { // Doctor_Status ?>
-        <th data-name="Doctor_Status" class="<?= $Page->Doctor_Status->headerCellClass() ?>"><div id="elh_view_doctor_report_Doctor_Status" class="view_doctor_report_Doctor_Status"><?= $Page->renderFieldHeader($Page->Doctor_Status) ?></div></th>
-<?php } ?>
-<?php if ($Page->APPOINTMENT_ID->Visible) { // APPOINTMENT_ID ?>
-        <th data-name="APPOINTMENT_ID" class="<?= $Page->APPOINTMENT_ID->headerCellClass() ?>"><div id="elh_view_doctor_report_APPOINTMENT_ID" class="view_doctor_report_APPOINTMENT_ID"><?= $Page->renderFieldHeader($Page->APPOINTMENT_ID) ?></div></th>
-<?php } ?>
 <?php if ($Page->APPOINTMENT_DATE->Visible) { // APPOINTMENT_DATE ?>
         <th data-name="APPOINTMENT_DATE" class="<?= $Page->APPOINTMENT_DATE->headerCellClass() ?>"><div id="elh_view_doctor_report_APPOINTMENT_DATE" class="view_doctor_report_APPOINTMENT_DATE"><?= $Page->renderFieldHeader($Page->APPOINTMENT_DATE) ?></div></th>
 <?php } ?>
 <?php if ($Page->Month_Name->Visible) { // Month_Name ?>
         <th data-name="Month_Name" class="<?= $Page->Month_Name->headerCellClass() ?>"><div id="elh_view_doctor_report_Month_Name" class="view_doctor_report_Month_Name"><?= $Page->renderFieldHeader($Page->Month_Name) ?></div></th>
-<?php } ?>
-<?php if ($Page->Month_Number->Visible) { // Month_Number ?>
-        <th data-name="Month_Number" class="<?= $Page->Month_Number->headerCellClass() ?>"><div id="elh_view_doctor_report_Month_Number" class="view_doctor_report_Month_Number"><?= $Page->renderFieldHeader($Page->Month_Number) ?></div></th>
 <?php } ?>
 <?php if ($Page->Year->Visible) { // Year ?>
         <th data-name="Year" class="<?= $Page->Year->headerCellClass() ?>"><div id="elh_view_doctor_report_Year" class="view_doctor_report_Year"><?= $Page->renderFieldHeader($Page->Year) ?></div></th>
@@ -494,9 +442,6 @@ $Page->ListOptions->render("header", "left");
 <?php } ?>
 <?php if ($Page->Total_Patients->Visible) { // Total_Patients ?>
         <th data-name="Total_Patients" class="<?= $Page->Total_Patients->headerCellClass() ?>"><div id="elh_view_doctor_report_Total_Patients" class="view_doctor_report_Total_Patients"><?= $Page->renderFieldHeader($Page->Total_Patients) ?></div></th>
-<?php } ?>
-<?php if ($Page->Avg_Rating->Visible) { // Avg_Rating ?>
-        <th data-name="Avg_Rating" class="<?= $Page->Avg_Rating->headerCellClass() ?>"><div id="elh_view_doctor_report_Avg_Rating" class="view_doctor_report_Avg_Rating"><?= $Page->renderFieldHeader($Page->Avg_Rating) ?></div></th>
 <?php } ?>
 <?php
 // Render list options (header, right)
@@ -513,14 +458,6 @@ while ($Page->getRowData()) {
 // Render list options (body, left)
 $Page->ListOptions->render("body", "left", $Page->RowCount);
 ?>
-    <?php if ($Page->DOCTOR_ID->Visible) { // DOCTOR_ID ?>
-        <td data-name="DOCTOR_ID"<?= $Page->DOCTOR_ID->cellAttributes() ?>>
-<span id="el<?= $Page->RowIndex == '$rowindex$' ? '$rowindex$' : $Page->RowCount ?>_view_doctor_report_DOCTOR_ID" class="el_view_doctor_report_DOCTOR_ID">
-<span<?= $Page->DOCTOR_ID->viewAttributes() ?>>
-<?= $Page->DOCTOR_ID->getViewValue() ?></span>
-</span>
-</td>
-    <?php } ?>
     <?php if ($Page->Doctor_Name->Visible) { // Doctor_Name ?>
         <td data-name="Doctor_Name"<?= $Page->Doctor_Name->cellAttributes() ?>>
 <span id="el<?= $Page->RowIndex == '$rowindex$' ? '$rowindex$' : $Page->RowCount ?>_view_doctor_report_Doctor_Name" class="el_view_doctor_report_Doctor_Name">
@@ -545,22 +482,6 @@ $Page->ListOptions->render("body", "left", $Page->RowCount);
 </span>
 </td>
     <?php } ?>
-    <?php if ($Page->Doctor_Status->Visible) { // Doctor_Status ?>
-        <td data-name="Doctor_Status"<?= $Page->Doctor_Status->cellAttributes() ?>>
-<span id="el<?= $Page->RowIndex == '$rowindex$' ? '$rowindex$' : $Page->RowCount ?>_view_doctor_report_Doctor_Status" class="el_view_doctor_report_Doctor_Status">
-<span<?= $Page->Doctor_Status->viewAttributes() ?>>
-<?= $Page->Doctor_Status->getViewValue() ?></span>
-</span>
-</td>
-    <?php } ?>
-    <?php if ($Page->APPOINTMENT_ID->Visible) { // APPOINTMENT_ID ?>
-        <td data-name="APPOINTMENT_ID"<?= $Page->APPOINTMENT_ID->cellAttributes() ?>>
-<span id="el<?= $Page->RowIndex == '$rowindex$' ? '$rowindex$' : $Page->RowCount ?>_view_doctor_report_APPOINTMENT_ID" class="el_view_doctor_report_APPOINTMENT_ID">
-<span<?= $Page->APPOINTMENT_ID->viewAttributes() ?>>
-<?= $Page->APPOINTMENT_ID->getViewValue() ?></span>
-</span>
-</td>
-    <?php } ?>
     <?php if ($Page->APPOINTMENT_DATE->Visible) { // APPOINTMENT_DATE ?>
         <td data-name="APPOINTMENT_DATE"<?= $Page->APPOINTMENT_DATE->cellAttributes() ?>>
 <span id="el<?= $Page->RowIndex == '$rowindex$' ? '$rowindex$' : $Page->RowCount ?>_view_doctor_report_APPOINTMENT_DATE" class="el_view_doctor_report_APPOINTMENT_DATE">
@@ -574,14 +495,6 @@ $Page->ListOptions->render("body", "left", $Page->RowCount);
 <span id="el<?= $Page->RowIndex == '$rowindex$' ? '$rowindex$' : $Page->RowCount ?>_view_doctor_report_Month_Name" class="el_view_doctor_report_Month_Name">
 <span<?= $Page->Month_Name->viewAttributes() ?>>
 <?= $Page->Month_Name->getViewValue() ?></span>
-</span>
-</td>
-    <?php } ?>
-    <?php if ($Page->Month_Number->Visible) { // Month_Number ?>
-        <td data-name="Month_Number"<?= $Page->Month_Number->cellAttributes() ?>>
-<span id="el<?= $Page->RowIndex == '$rowindex$' ? '$rowindex$' : $Page->RowCount ?>_view_doctor_report_Month_Number" class="el_view_doctor_report_Month_Number">
-<span<?= $Page->Month_Number->viewAttributes() ?>>
-<?= $Page->Month_Number->getViewValue() ?></span>
 </span>
 </td>
     <?php } ?>
@@ -606,14 +519,6 @@ $Page->ListOptions->render("body", "left", $Page->RowCount);
 <span id="el<?= $Page->RowIndex == '$rowindex$' ? '$rowindex$' : $Page->RowCount ?>_view_doctor_report_Total_Patients" class="el_view_doctor_report_Total_Patients">
 <span<?= $Page->Total_Patients->viewAttributes() ?>>
 <?= $Page->Total_Patients->getViewValue() ?></span>
-</span>
-</td>
-    <?php } ?>
-    <?php if ($Page->Avg_Rating->Visible) { // Avg_Rating ?>
-        <td data-name="Avg_Rating"<?= $Page->Avg_Rating->cellAttributes() ?>>
-<span id="el<?= $Page->RowIndex == '$rowindex$' ? '$rowindex$' : $Page->RowCount ?>_view_doctor_report_Avg_Rating" class="el_view_doctor_report_Avg_Rating">
-<span<?= $Page->Avg_Rating->viewAttributes() ?>>
-<?= $Page->Avg_Rating->getViewValue() ?></span>
 </span>
 </td>
     <?php } ?>
@@ -692,9 +597,6 @@ ew.on("head", function() {
 <script<?= Nonce() ?>>
 ew.on("load", function () {
     // Write your table-specific startup script here, no need to add script tags.
-    
-    // Initialize export links
-    ew.initExportLinks();
 });
 </script>
 <?php } ?>

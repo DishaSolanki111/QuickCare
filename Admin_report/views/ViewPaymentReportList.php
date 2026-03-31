@@ -25,7 +25,6 @@ ew.on("wrapper", function () {
             "Patient_Name": <?= $Page->Patient_Name->toClientList($Page) ?>,
             "Doctor_Name": <?= $Page->Doctor_Name->toClientList($Page) ?>,
             "PAYMENT_MODE": <?= $Page->PAYMENT_MODE->toClientList($Page) ?>,
-            "Payment_Status": <?= $Page->Payment_Status->toClientList($Page) ?>,
             "PAYMENT_DATE": <?= $Page->PAYMENT_DATE->toClientList($Page) ?>,
             "Day_Name": <?= $Page->Day_Name->toClientList($Page) ?>,
             "Month_Name": <?= $Page->Month_Name->toClientList($Page) ?>,
@@ -99,7 +98,6 @@ ew.on("wrapper", () => {
             "Patient_Name": <?= $Page->Patient_Name->toClientList($Page) ?>,
             "Doctor_Name": <?= $Page->Doctor_Name->toClientList($Page) ?>,
             "PAYMENT_MODE": <?= $Page->PAYMENT_MODE->toClientList($Page) ?>,
-            "Payment_Status": <?= $Page->Payment_Status->toClientList($Page) ?>,
             "PAYMENT_DATE": <?= $Page->PAYMENT_DATE->toClientList($Page) ?>,
             "Day_Name": <?= $Page->Day_Name->toClientList($Page) ?>,
             "Month_Name": <?= $Page->Month_Name->toClientList($Page) ?>,
@@ -228,44 +226,6 @@ if (!$Page->PAYMENT_MODE->UseFilter) {
                 ajax: { id: "x_PAYMENT_MODE", form: "fview_payment_reportsrch", limit: ew.FILTER_PAGE_SIZE, data: { ajax: "filter" } }
             };
             options = Object.assign({}, ew.filterOptions, options, ew.vars.tables.view_payment_report.fields.PAYMENT_MODE.filterOptions);
-            ew.createFilter(options);
-        });
-        </script>
-    </div><!-- /.col-sm-auto -->
-<?php } ?>
-<?php if ($Page->Payment_Status->Visible) { // Payment_Status ?>
-<?php
-if (!$Page->Payment_Status->UseFilter) {
-    $Page->SearchColumnCount++;
-}
-?>
-    <div id="xs_Payment_Status" class="col-sm-auto d-sm-flex align-items-start mb-3 px-0 pe-sm-2<?= $Page->Payment_Status->UseFilter ? " ew-filter-field" : "" ?>">
-        <select
-            id="x_Payment_Status"
-            name="x_Payment_Status[]"
-            class="form-control ew-select<?= $Page->Payment_Status->isInvalidClass() ?>"
-            data-select2-id="fview_payment_reportsrch_x_Payment_Status"
-            data-table="view_payment_report"
-            data-field="x_Payment_Status"
-            data-caption="<?= HtmlEncode(RemoveHtml($Page->Payment_Status->caption())) ?>"
-            data-filter="true"
-            multiple
-            size="1"
-            data-value-separator="<?= $Page->Payment_Status->displayValueSeparatorAttribute() ?>"
-            data-placeholder="<?= HtmlEncode($Page->Payment_Status->getPlaceHolder()) ?>"
-            data-ew-action="update-options"
-            <?= $Page->Payment_Status->editAttributes() ?>>
-            <?= $Page->Payment_Status->selectOptionListHtml("x_Payment_Status", true) ?>
-        </select>
-        <div class="invalid-feedback"><?= $Page->Payment_Status->getErrorMessage(false) ?></div>
-        <script<?= Nonce() ?>>
-        ew.on("fview_payment_reportsrch", function() {
-            let options = {
-                name: "x_Payment_Status",
-                selectId: "fview_payment_reportsrch_x_Payment_Status",
-                ajax: { id: "x_Payment_Status", form: "fview_payment_reportsrch", limit: ew.FILTER_PAGE_SIZE, data: { ajax: "filter" } }
-            };
-            options = Object.assign({}, ew.filterOptions, options, ew.vars.tables.view_payment_report.fields.Payment_Status.filterOptions);
             ew.createFilter(options);
         });
         </script>
@@ -499,12 +459,6 @@ $Page->renderListOptions();
 // Render list options (header, left)
 $Page->ListOptions->render("header", "left");
 ?>
-<?php if ($Page->PAYMENT_ID->Visible) { // PAYMENT_ID ?>
-        <th data-name="PAYMENT_ID" class="<?= $Page->PAYMENT_ID->headerCellClass() ?>"><div id="elh_view_payment_report_PAYMENT_ID" class="view_payment_report_PAYMENT_ID"><?= $Page->renderFieldHeader($Page->PAYMENT_ID) ?></div></th>
-<?php } ?>
-<?php if ($Page->TRANSACTION_ID->Visible) { // TRANSACTION_ID ?>
-        <th data-name="TRANSACTION_ID" class="<?= $Page->TRANSACTION_ID->headerCellClass() ?>"><div id="elh_view_payment_report_TRANSACTION_ID" class="view_payment_report_TRANSACTION_ID"><?= $Page->renderFieldHeader($Page->TRANSACTION_ID) ?></div></th>
-<?php } ?>
 <?php if ($Page->Patient_Name->Visible) { // Patient_Name ?>
         <th data-name="Patient_Name" class="<?= $Page->Patient_Name->headerCellClass() ?>"><div id="elh_view_payment_report_Patient_Name" class="view_payment_report_Patient_Name"><?= $Page->renderFieldHeader($Page->Patient_Name) ?></div></th>
 <?php } ?>
@@ -517,20 +471,11 @@ $Page->ListOptions->render("header", "left");
 <?php if ($Page->PAYMENT_MODE->Visible) { // PAYMENT_MODE ?>
         <th data-name="PAYMENT_MODE" class="<?= $Page->PAYMENT_MODE->headerCellClass() ?>"><div id="elh_view_payment_report_PAYMENT_MODE" class="view_payment_report_PAYMENT_MODE"><?= $Page->renderFieldHeader($Page->PAYMENT_MODE) ?></div></th>
 <?php } ?>
-<?php if ($Page->Payment_Status->Visible) { // Payment_Status ?>
-        <th data-name="Payment_Status" class="<?= $Page->Payment_Status->headerCellClass() ?>"><div id="elh_view_payment_report_Payment_Status" class="view_payment_report_Payment_Status"><?= $Page->renderFieldHeader($Page->Payment_Status) ?></div></th>
-<?php } ?>
 <?php if ($Page->PAYMENT_DATE->Visible) { // PAYMENT_DATE ?>
         <th data-name="PAYMENT_DATE" class="<?= $Page->PAYMENT_DATE->headerCellClass() ?>"><div id="elh_view_payment_report_PAYMENT_DATE" class="view_payment_report_PAYMENT_DATE"><?= $Page->renderFieldHeader($Page->PAYMENT_DATE) ?></div></th>
 <?php } ?>
 <?php if ($Page->Day_Name->Visible) { // Day_Name ?>
         <th data-name="Day_Name" class="<?= $Page->Day_Name->headerCellClass() ?>"><div id="elh_view_payment_report_Day_Name" class="view_payment_report_Day_Name"><?= $Page->renderFieldHeader($Page->Day_Name) ?></div></th>
-<?php } ?>
-<?php if ($Page->Week_Number->Visible) { // Week_Number ?>
-        <th data-name="Week_Number" class="<?= $Page->Week_Number->headerCellClass() ?>"><div id="elh_view_payment_report_Week_Number" class="view_payment_report_Week_Number"><?= $Page->renderFieldHeader($Page->Week_Number) ?></div></th>
-<?php } ?>
-<?php if ($Page->Month_Number->Visible) { // Month_Number ?>
-        <th data-name="Month_Number" class="<?= $Page->Month_Number->headerCellClass() ?>"><div id="elh_view_payment_report_Month_Number" class="view_payment_report_Month_Number"><?= $Page->renderFieldHeader($Page->Month_Number) ?></div></th>
 <?php } ?>
 <?php if ($Page->Month_Name->Visible) { // Month_Name ?>
         <th data-name="Month_Name" class="<?= $Page->Month_Name->headerCellClass() ?>"><div id="elh_view_payment_report_Month_Name" class="view_payment_report_Month_Name"><?= $Page->renderFieldHeader($Page->Month_Name) ?></div></th>
@@ -553,22 +498,6 @@ while ($Page->getRowData()) {
 // Render list options (body, left)
 $Page->ListOptions->render("body", "left", $Page->RowCount);
 ?>
-    <?php if ($Page->PAYMENT_ID->Visible) { // PAYMENT_ID ?>
-        <td data-name="PAYMENT_ID"<?= $Page->PAYMENT_ID->cellAttributes() ?>>
-<span id="el<?= $Page->RowIndex == '$rowindex$' ? '$rowindex$' : $Page->RowCount ?>_view_payment_report_PAYMENT_ID" class="el_view_payment_report_PAYMENT_ID">
-<span<?= $Page->PAYMENT_ID->viewAttributes() ?>>
-<?= $Page->PAYMENT_ID->getViewValue() ?></span>
-</span>
-</td>
-    <?php } ?>
-    <?php if ($Page->TRANSACTION_ID->Visible) { // TRANSACTION_ID ?>
-        <td data-name="TRANSACTION_ID"<?= $Page->TRANSACTION_ID->cellAttributes() ?>>
-<span id="el<?= $Page->RowIndex == '$rowindex$' ? '$rowindex$' : $Page->RowCount ?>_view_payment_report_TRANSACTION_ID" class="el_view_payment_report_TRANSACTION_ID">
-<span<?= $Page->TRANSACTION_ID->viewAttributes() ?>>
-<?= $Page->TRANSACTION_ID->getViewValue() ?></span>
-</span>
-</td>
-    <?php } ?>
     <?php if ($Page->Patient_Name->Visible) { // Patient_Name ?>
         <td data-name="Patient_Name"<?= $Page->Patient_Name->cellAttributes() ?>>
 <span id="el<?= $Page->RowIndex == '$rowindex$' ? '$rowindex$' : $Page->RowCount ?>_view_payment_report_Patient_Name" class="el_view_payment_report_Patient_Name">
@@ -601,14 +530,6 @@ $Page->ListOptions->render("body", "left", $Page->RowCount);
 </span>
 </td>
     <?php } ?>
-    <?php if ($Page->Payment_Status->Visible) { // Payment_Status ?>
-        <td data-name="Payment_Status"<?= $Page->Payment_Status->cellAttributes() ?>>
-<span id="el<?= $Page->RowIndex == '$rowindex$' ? '$rowindex$' : $Page->RowCount ?>_view_payment_report_Payment_Status" class="el_view_payment_report_Payment_Status">
-<span<?= $Page->Payment_Status->viewAttributes() ?>>
-<?= $Page->Payment_Status->getViewValue() ?></span>
-</span>
-</td>
-    <?php } ?>
     <?php if ($Page->PAYMENT_DATE->Visible) { // PAYMENT_DATE ?>
         <td data-name="PAYMENT_DATE"<?= $Page->PAYMENT_DATE->cellAttributes() ?>>
 <span id="el<?= $Page->RowIndex == '$rowindex$' ? '$rowindex$' : $Page->RowCount ?>_view_payment_report_PAYMENT_DATE" class="el_view_payment_report_PAYMENT_DATE">
@@ -622,22 +543,6 @@ $Page->ListOptions->render("body", "left", $Page->RowCount);
 <span id="el<?= $Page->RowIndex == '$rowindex$' ? '$rowindex$' : $Page->RowCount ?>_view_payment_report_Day_Name" class="el_view_payment_report_Day_Name">
 <span<?= $Page->Day_Name->viewAttributes() ?>>
 <?= $Page->Day_Name->getViewValue() ?></span>
-</span>
-</td>
-    <?php } ?>
-    <?php if ($Page->Week_Number->Visible) { // Week_Number ?>
-        <td data-name="Week_Number"<?= $Page->Week_Number->cellAttributes() ?>>
-<span id="el<?= $Page->RowIndex == '$rowindex$' ? '$rowindex$' : $Page->RowCount ?>_view_payment_report_Week_Number" class="el_view_payment_report_Week_Number">
-<span<?= $Page->Week_Number->viewAttributes() ?>>
-<?= $Page->Week_Number->getViewValue() ?></span>
-</span>
-</td>
-    <?php } ?>
-    <?php if ($Page->Month_Number->Visible) { // Month_Number ?>
-        <td data-name="Month_Number"<?= $Page->Month_Number->cellAttributes() ?>>
-<span id="el<?= $Page->RowIndex == '$rowindex$' ? '$rowindex$' : $Page->RowCount ?>_view_payment_report_Month_Number" class="el_view_payment_report_Month_Number">
-<span<?= $Page->Month_Number->viewAttributes() ?>>
-<?= $Page->Month_Number->getViewValue() ?></span>
 </span>
 </td>
     <?php } ?>
@@ -732,9 +637,6 @@ ew.on("head", function() {
 <script<?= Nonce() ?>>
 ew.on("load", function () {
     // Write your table-specific startup script here, no need to add script tags.
-    
-    // Initialize export links
-    ew.initExportLinks();
 });
 </script>
 <?php } ?>

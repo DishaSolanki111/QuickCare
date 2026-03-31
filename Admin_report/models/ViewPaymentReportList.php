@@ -54,6 +54,7 @@ use Traversable;
 use PHPMaker2026\Project2\Entity as BaseEntity;
 use PHPMaker2026\Project2\Db;
 use PHPMaker2026\Project2\Db\Entity;
+use PHPMaker2026\Project2\ReportHelper;
 
 /**
  * Page class
@@ -334,17 +335,17 @@ class ViewPaymentReportList extends ViewPaymentReport implements PageInterface
     // Set field visibility
     public function setVisibility(): void
     {
-        $this->PAYMENT_ID->setVisibility();
-        $this->TRANSACTION_ID->setVisibility();
+        $this->PAYMENT_ID->Visible = false;
+        $this->TRANSACTION_ID->Visible = false;
         $this->Patient_Name->setVisibility();
         $this->Doctor_Name->setVisibility();
         $this->AMOUNT->setVisibility();
         $this->PAYMENT_MODE->setVisibility();
-        $this->Payment_Status->setVisibility();
+        $this->Payment_Status->Visible = false;
         $this->PAYMENT_DATE->setVisibility();
         $this->Day_Name->setVisibility();
-        $this->Week_Number->setVisibility();
-        $this->Month_Number->setVisibility();
+        $this->Week_Number->Visible = false;
+        $this->Month_Number->Visible = false;
         $this->Month_Name->setVisibility();
         $this->Year->setVisibility();
     }
@@ -591,7 +592,6 @@ class ViewPaymentReportList extends ViewPaymentReport implements PageInterface
     {
         // Set up list options
         $this->setupListOptions();
-        $this->setupExportOptions();
 
         // Search options
         $this->setupSearchOptions();
@@ -713,6 +713,8 @@ class ViewPaymentReportList extends ViewPaymentReport implements PageInterface
 
         // Set up list options
         $this->setupListOptions();
+
+        // Setup export options
         $this->setupExportOptions();
         $this->setVisibility();
 
@@ -761,6 +763,7 @@ class ViewPaymentReportList extends ViewPaymentReport implements PageInterface
 
         // Hide list options
         if ($this->isExport()) {
+            $this->ListOptions->hideAllOptions(["sequence"]);
             $this->ListOptions->UseDropDownButton = false; // Disable drop down button
             $this->ListOptions->UseButtonGroup = false; // Disable button group
         } elseif ($this->isGridAdd() || $this->isGridEdit() || $this->isMultiEdit() || $this->isConfirm()) {
@@ -770,7 +773,8 @@ class ViewPaymentReportList extends ViewPaymentReport implements PageInterface
         }
 
         // Hide options
-        if (!(IsEmpty($this->CurrentAction) || $this->isSearch())) {
+        if ($this->isExport() || !(IsEmpty($this->CurrentAction) || $this->isSearch())) {
+            $this->ExportOptions->hideAllOptions();
             $this->FilterOptions->hideAllOptions();
             $this->ImportOptions->hideAllOptions();
         }
@@ -1103,7 +1107,7 @@ class ViewPaymentReportList extends ViewPaymentReport implements PageInterface
         $this->buildSearchSql($where, $this->Doctor_Name, $default, true); // Doctor_Name
         $this->buildSearchSql($where, $this->AMOUNT, $default, false); // AMOUNT
         $this->buildSearchSql($where, $this->PAYMENT_MODE, $default, true); // PAYMENT_MODE
-        $this->buildSearchSql($where, $this->Payment_Status, $default, true); // Payment_Status
+        $this->buildSearchSql($where, $this->Payment_Status, $default, false); // Payment_Status
         $this->buildSearchSql($where, $this->PAYMENT_DATE, $default, true); // PAYMENT_DATE
         $this->buildSearchSql($where, $this->Day_Name, $default, true); // Day_Name
         $this->buildSearchSql($where, $this->Week_Number, $default, false); // Week_Number
@@ -1222,24 +1226,6 @@ class ViewPaymentReportList extends ViewPaymentReport implements PageInterface
         $captionClass = $this->isExport("email") ? "ew-filter-caption-email" : "ew-filter-caption";
         $captionSuffix = $this->isExport("email") ? ": " : "";
 
-        // Field PAYMENT_ID
-        $filter = $this->queryBuilderWhere("PAYMENT_ID");
-        if (!$filter) {
-            $this->buildSearchSql($filter, $this->PAYMENT_ID, false, false);
-        }
-        if ($filter != "") {
-            $filterList .= "<div><span class=\"" . $captionClass . "\">" . $this->PAYMENT_ID->caption() . "</span>" . $captionSuffix . $filter . "</div>";
-        }
-
-        // Field TRANSACTION_ID
-        $filter = $this->queryBuilderWhere("TRANSACTION_ID");
-        if (!$filter) {
-            $this->buildSearchSql($filter, $this->TRANSACTION_ID, false, false);
-        }
-        if ($filter != "") {
-            $filterList .= "<div><span class=\"" . $captionClass . "\">" . $this->TRANSACTION_ID->caption() . "</span>" . $captionSuffix . $filter . "</div>";
-        }
-
         // Field Patient_Name
         $filter = $this->queryBuilderWhere("Patient_Name");
         if (!$filter) {
@@ -1276,15 +1262,6 @@ class ViewPaymentReportList extends ViewPaymentReport implements PageInterface
             $filterList .= "<div><span class=\"" . $captionClass . "\">" . $this->PAYMENT_MODE->caption() . "</span>" . $captionSuffix . $filter . "</div>";
         }
 
-        // Field Payment_Status
-        $filter = $this->queryBuilderWhere("Payment_Status");
-        if (!$filter) {
-            $this->buildSearchSql($filter, $this->Payment_Status, false, true);
-        }
-        if ($filter != "") {
-            $filterList .= "<div><span class=\"" . $captionClass . "\">" . $this->Payment_Status->caption() . "</span>" . $captionSuffix . $filter . "</div>";
-        }
-
         // Field PAYMENT_DATE
         $filter = $this->queryBuilderWhere("PAYMENT_DATE");
         if (!$filter) {
@@ -1301,24 +1278,6 @@ class ViewPaymentReportList extends ViewPaymentReport implements PageInterface
         }
         if ($filter != "") {
             $filterList .= "<div><span class=\"" . $captionClass . "\">" . $this->Day_Name->caption() . "</span>" . $captionSuffix . $filter . "</div>";
-        }
-
-        // Field Week_Number
-        $filter = $this->queryBuilderWhere("Week_Number");
-        if (!$filter) {
-            $this->buildSearchSql($filter, $this->Week_Number, false, false);
-        }
-        if ($filter != "") {
-            $filterList .= "<div><span class=\"" . $captionClass . "\">" . $this->Week_Number->caption() . "</span>" . $captionSuffix . $filter . "</div>";
-        }
-
-        // Field Month_Number
-        $filter = $this->queryBuilderWhere("Month_Number");
-        if (!$filter) {
-            $this->buildSearchSql($filter, $this->Month_Number, false, false);
-        }
-        if ($filter != "") {
-            $filterList .= "<div><span class=\"" . $captionClass . "\">" . $this->Month_Number->caption() . "</span>" . $captionSuffix . $filter . "</div>";
         }
 
         // Field Month_Name
@@ -1518,17 +1477,12 @@ class ViewPaymentReportList extends ViewPaymentReport implements PageInterface
         if (Get("order") !== null) {
             $this->CurrentOrder = Get("order");
             $this->CurrentOrderType = Get("ordertype", "");
-            $this->updateSort($this->PAYMENT_ID); // PAYMENT_ID
-            $this->updateSort($this->TRANSACTION_ID); // TRANSACTION_ID
             $this->updateSort($this->Patient_Name); // Patient_Name
             $this->updateSort($this->Doctor_Name); // Doctor_Name
             $this->updateSort($this->AMOUNT); // AMOUNT
             $this->updateSort($this->PAYMENT_MODE); // PAYMENT_MODE
-            $this->updateSort($this->Payment_Status); // Payment_Status
             $this->updateSort($this->PAYMENT_DATE); // PAYMENT_DATE
             $this->updateSort($this->Day_Name); // Day_Name
-            $this->updateSort($this->Week_Number); // Week_Number
-            $this->updateSort($this->Month_Number); // Month_Number
             $this->updateSort($this->Month_Name); // Month_Name
             $this->updateSort($this->Year); // Year
             $this->setStartRecordNumber(1); // Reset start position
@@ -1636,34 +1590,6 @@ class ViewPaymentReportList extends ViewPaymentReport implements PageInterface
         $item->Visible = $this->ListOptions->groupOptionVisible();
     }
 
-    // Set up export options
-    protected function setupExportOptions(): void
-    {
-        // Page URL for export
-        $pageUrl = $this->pageUrl(false);
-        
-        // Export to PDF
-        $item = $this->ExportOptions->add("pdf");
-        $item->Body = "<a href=\"" . $pageUrl . "?export=pdf\" class=\"ew-export-link\" data-export=\"pdf\">" . $this->language->phrase("ExportToPdf") . "</a>";
-        $item->Visible = true;
-        $item->CssClass = "ew-export-link";
-        $item->OnLeft = false;
-        $item->UseImageAndText = true;
-
-        // Export to Excel
-        $item = $this->ExportOptions->add("excel");
-        $item->Body = "<a href=\"" . $pageUrl . "?export=excel\" class=\"ew-export-link\" data-export=\"excel\">" . $this->language->phrase("ExportToExcel") . "</a>";
-        $item->Visible = true;
-        $item->CssClass = "ew-export-link";
-        $item->OnLeft = false;
-        $item->UseImageAndText = true;
-
-        // Use button group instead of dropdown
-        $this->ExportOptions->UseDropDownButton = false;
-        $this->ExportOptions->UseButtonGroup = true;
-        $this->ExportOptions->ButtonGroupClass = "btn-group";
-    }
-
     // Add "hash" parameter to URL
     public function urlAddHash(string $url, string $hash): string
     {
@@ -1741,17 +1667,12 @@ class ViewPaymentReportList extends ViewPaymentReport implements PageInterface
             $item = $option->addGroupOption();
             $item->Body = "";
             $item->Visible = $this->UseColumnVisibility;
-            $this->createColumnOption($option, "PAYMENT_ID");
-            $this->createColumnOption($option, "TRANSACTION_ID");
             $this->createColumnOption($option, "Patient_Name");
             $this->createColumnOption($option, "Doctor_Name");
             $this->createColumnOption($option, "AMOUNT");
             $this->createColumnOption($option, "PAYMENT_MODE");
-            $this->createColumnOption($option, "Payment_Status");
             $this->createColumnOption($option, "PAYMENT_DATE");
             $this->createColumnOption($option, "Day_Name");
-            $this->createColumnOption($option, "Week_Number");
-            $this->createColumnOption($option, "Month_Number");
             $this->createColumnOption($option, "Month_Name");
             $this->createColumnOption($option, "Year");
         }
@@ -2406,12 +2327,6 @@ class ViewPaymentReportList extends ViewPaymentReport implements PageInterface
 
         // View row
         if ($this->RowType == RowType::VIEW) {
-            // PAYMENT_ID
-            $this->PAYMENT_ID->ViewValue = $this->PAYMENT_ID->CurrentValue;
-
-            // TRANSACTION_ID
-            $this->TRANSACTION_ID->ViewValue = $this->TRANSACTION_ID->CurrentValue;
-
             // Patient_Name
             $this->Patient_Name->ViewValue = $this->Patient_Name->CurrentValue;
 
@@ -2429,13 +2344,6 @@ class ViewPaymentReportList extends ViewPaymentReport implements PageInterface
                 $this->PAYMENT_MODE->ViewValue = null;
             }
 
-            // Payment_Status
-            if (strval($this->Payment_Status->CurrentValue) != "") {
-                $this->Payment_Status->ViewValue = $this->Payment_Status->optionCaption($this->Payment_Status->CurrentValue);
-            } else {
-                $this->Payment_Status->ViewValue = null;
-            }
-
             // PAYMENT_DATE
             $this->PAYMENT_DATE->ViewValue = $this->PAYMENT_DATE->CurrentValue;
             $this->PAYMENT_DATE->ViewValue = FormatDateTime($this->PAYMENT_DATE->ViewValue, $this->PAYMENT_DATE->formatPattern());
@@ -2443,28 +2351,12 @@ class ViewPaymentReportList extends ViewPaymentReport implements PageInterface
             // Day_Name
             $this->Day_Name->ViewValue = $this->Day_Name->CurrentValue;
 
-            // Week_Number
-            $this->Week_Number->ViewValue = $this->Week_Number->CurrentValue;
-            $this->Week_Number->ViewValue = FormatNumber($this->Week_Number->ViewValue, $this->Week_Number->formatPattern());
-
-            // Month_Number
-            $this->Month_Number->ViewValue = $this->Month_Number->CurrentValue;
-            $this->Month_Number->ViewValue = FormatNumber($this->Month_Number->ViewValue, $this->Month_Number->formatPattern());
-
             // Month_Name
             $this->Month_Name->ViewValue = $this->Month_Name->CurrentValue;
 
             // Year
             $this->Year->ViewValue = $this->Year->CurrentValue;
             $this->Year->ViewValue = FormatNumber($this->Year->ViewValue, $this->Year->formatPattern());
-
-            // PAYMENT_ID
-            $this->PAYMENT_ID->HrefValue = "";
-            $this->PAYMENT_ID->TooltipValue = "";
-
-            // TRANSACTION_ID
-            $this->TRANSACTION_ID->HrefValue = "";
-            $this->TRANSACTION_ID->TooltipValue = "";
 
             // Patient_Name
             $this->Patient_Name->HrefValue = "";
@@ -2482,10 +2374,6 @@ class ViewPaymentReportList extends ViewPaymentReport implements PageInterface
             $this->PAYMENT_MODE->HrefValue = "";
             $this->PAYMENT_MODE->TooltipValue = "";
 
-            // Payment_Status
-            $this->Payment_Status->HrefValue = "";
-            $this->Payment_Status->TooltipValue = "";
-
             // PAYMENT_DATE
             $this->PAYMENT_DATE->HrefValue = "";
             $this->PAYMENT_DATE->TooltipValue = "";
@@ -2493,14 +2381,6 @@ class ViewPaymentReportList extends ViewPaymentReport implements PageInterface
             // Day_Name
             $this->Day_Name->HrefValue = "";
             $this->Day_Name->TooltipValue = "";
-
-            // Week_Number
-            $this->Week_Number->HrefValue = "";
-            $this->Week_Number->TooltipValue = "";
-
-            // Month_Number
-            $this->Month_Number->HrefValue = "";
-            $this->Month_Number->TooltipValue = "";
 
             // Month_Name
             $this->Month_Name->HrefValue = "";
@@ -2510,16 +2390,6 @@ class ViewPaymentReportList extends ViewPaymentReport implements PageInterface
             $this->Year->HrefValue = "";
             $this->Year->TooltipValue = "";
         } elseif ($this->RowType == RowType::SEARCH) {
-            // PAYMENT_ID
-            $this->PAYMENT_ID->setupEditAttributes();
-            $this->PAYMENT_ID->EditValue = $this->PAYMENT_ID->AdvancedSearch->SearchValue;
-            $this->PAYMENT_ID->PlaceHolder = RemoveHtml($this->PAYMENT_ID->caption());
-
-            // TRANSACTION_ID
-            $this->TRANSACTION_ID->setupEditAttributes();
-            $this->TRANSACTION_ID->EditValue = !$this->TRANSACTION_ID->Raw ? HtmlDecode($this->TRANSACTION_ID->AdvancedSearch->SearchValue) : $this->TRANSACTION_ID->AdvancedSearch->SearchValue;
-            $this->TRANSACTION_ID->PlaceHolder = RemoveHtml($this->TRANSACTION_ID->caption());
-
             // Patient_Name
             if ($this->Patient_Name->UseFilter && !IsEmpty($this->Patient_Name->AdvancedSearch->SearchValue)) {
                 if (is_array($this->Patient_Name->AdvancedSearch->SearchValue)) {
@@ -2549,14 +2419,6 @@ class ViewPaymentReportList extends ViewPaymentReport implements PageInterface
                 $this->PAYMENT_MODE->EditValue = explode(Config("FILTER_OPTION_SEPARATOR"), $this->PAYMENT_MODE->AdvancedSearch->SearchValue);
             }
 
-            // Payment_Status
-            if ($this->Payment_Status->UseFilter && !IsEmpty($this->Payment_Status->AdvancedSearch->SearchValue)) {
-                if (is_array($this->Payment_Status->AdvancedSearch->SearchValue)) {
-                    $this->Payment_Status->AdvancedSearch->SearchValue = implode(Config("FILTER_OPTION_SEPARATOR"), $this->Payment_Status->AdvancedSearch->SearchValue);
-                }
-                $this->Payment_Status->EditValue = explode(Config("FILTER_OPTION_SEPARATOR"), $this->Payment_Status->AdvancedSearch->SearchValue);
-            }
-
             // PAYMENT_DATE
             if ($this->PAYMENT_DATE->UseFilter && !IsEmpty($this->PAYMENT_DATE->AdvancedSearch->SearchValue)) {
                 if (is_array($this->PAYMENT_DATE->AdvancedSearch->SearchValue)) {
@@ -2572,16 +2434,6 @@ class ViewPaymentReportList extends ViewPaymentReport implements PageInterface
                 }
                 $this->Day_Name->EditValue = explode(Config("FILTER_OPTION_SEPARATOR"), $this->Day_Name->AdvancedSearch->SearchValue);
             }
-
-            // Week_Number
-            $this->Week_Number->setupEditAttributes();
-            $this->Week_Number->EditValue = $this->Week_Number->AdvancedSearch->SearchValue;
-            $this->Week_Number->PlaceHolder = RemoveHtml($this->Week_Number->caption());
-
-            // Month_Number
-            $this->Month_Number->setupEditAttributes();
-            $this->Month_Number->EditValue = $this->Month_Number->AdvancedSearch->SearchValue;
-            $this->Month_Number->PlaceHolder = RemoveHtml($this->Month_Number->caption());
 
             // Month_Name
             if ($this->Month_Name->UseFilter && !IsEmpty($this->Month_Name->AdvancedSearch->SearchValue)) {
@@ -2644,6 +2496,105 @@ class ViewPaymentReportList extends ViewPaymentReport implements PageInterface
         $this->Year->AdvancedSearch->load();
     }
 
+    // Get export HTML tag
+    protected function getExportTag(string $type, bool $custom = false): string
+    {
+        if ($type == "print" || $custom) { // Printer friendly / custom export
+            $pageUrl = $this->pageUrl(false);
+            $exportUrl = BuildUrl(GetUrl($pageUrl), "export=" . $type, $custom ? "custom=1" : "");
+        } else { // Export API URL
+            $exportUrl = GetApiUrl(Config("API_EXPORT_ACTION") . "/" . $type . "/" . $this->TableVar);
+        }
+        $exportUrl = HtmlEncode($exportUrl);
+        if (SameText($type, "excel")) {
+            if ($custom) {
+                return "<button type=\"button\" class=\"btn btn-default ew-export-link ew-excel\" title=\"" . HtmlEncode($this->language->phrase("ExportToExcel", true)) . "\" data-caption=\"" . HtmlEncode($this->language->phrase("ExportToExcel", true)) . "\" form=\"fview_payment_reportlist\" data-url=\"$exportUrl\" data-ew-action=\"export\" data-export=\"excel\" data-custom=\"true\" data-export-id=\"" . SessionId() . "\" data-export-selected=\"false\">" . $this->language->phrase("ExportToExcel") . "</button>";
+            } else {
+                return "<a href=\"$exportUrl\" class=\"btn btn-default ew-export-link ew-excel\" title=\"" . HtmlEncode($this->language->phrase("ExportToExcel", true)) . "\" data-caption=\"" . HtmlEncode($this->language->phrase("ExportToExcel", true)) . "\">" . $this->language->phrase("ExportToExcel") . "</a>";
+            }
+        } elseif (SameText($type, "word")) {
+            if ($custom) {
+                return "<button type=\"button\" class=\"btn btn-default ew-export-link ew-word\" title=\"" . HtmlEncode($this->language->phrase("ExportToWord", true)) . "\" data-caption=\"" . HtmlEncode($this->language->phrase("ExportToWord", true)) . "\" form=\"fview_payment_reportlist\" data-url=\"$exportUrl\" data-ew-action=\"export\" data-export=\"word\" data-custom=\"true\" data-export-id=\"" . SessionId() . "\" data-export-selected=\"false\">" . $this->language->phrase("ExportToWord") . "</button>";
+            } else {
+                return "<a href=\"$exportUrl\" class=\"btn btn-default ew-export-link ew-word\" title=\"" . HtmlEncode($this->language->phrase("ExportToWord", true)) . "\" data-caption=\"" . HtmlEncode($this->language->phrase("ExportToWord", true)) . "\">" . $this->language->phrase("ExportToWord") . "</a>";
+            }
+        } elseif (SameText($type, "pdf")) {
+            if ($custom) {
+                return "<button type=\"button\" class=\"btn btn-default ew-export-link ew-pdf\" title=\"" . HtmlEncode($this->language->phrase("ExportToPdf", true)) . "\" data-caption=\"" . HtmlEncode($this->language->phrase("ExportToPdf", true)) . "\" form=\"fview_payment_reportlist\" data-url=\"$exportUrl\" data-ew-action=\"export\" data-export=\"pdf\" data-custom=\"true\" data-export-id=\"" . SessionId() . "\" data-export-selected=\"false\">" . $this->language->phrase("ExportToPdf") . "</button>";
+            } else {
+                return "<a href=\"$exportUrl\" class=\"btn btn-default ew-export-link ew-pdf\" title=\"" . HtmlEncode($this->language->phrase("ExportToPdf", true)) . "\" data-caption=\"" . HtmlEncode($this->language->phrase("ExportToPdf", true)) . "\">" . $this->language->phrase("ExportToPdf") . "</a>";
+            }
+        } elseif (SameText($type, "html")) {
+            return "<a href=\"$exportUrl\" class=\"btn btn-default ew-export-link ew-html\" title=\"" . HtmlEncode($this->language->phrase("ExportToHtml", true)) . "\" data-caption=\"" . HtmlEncode($this->language->phrase("ExportToHtml", true)) . "\">" . $this->language->phrase("ExportToHtml") . "</a>";
+        } elseif (SameText($type, "xml")) {
+            return "<a href=\"$exportUrl\" class=\"btn btn-default ew-export-link ew-xml\" title=\"" . HtmlEncode($this->language->phrase("ExportToXml", true)) . "\" data-caption=\"" . HtmlEncode($this->language->phrase("ExportToXml", true)) . "\">" . $this->language->phrase("ExportToXml") . "</a>";
+        } elseif (SameText($type, "csv")) {
+            return "<a href=\"$exportUrl\" class=\"btn btn-default ew-export-link ew-csv\" title=\"" . HtmlEncode($this->language->phrase("ExportToCsv", true)) . "\" data-caption=\"" . HtmlEncode($this->language->phrase("ExportToCsv", true)) . "\">" . $this->language->phrase("ExportToCsv") . "</a>";
+        } elseif (SameText($type, "email")) {
+            $url = $custom ? ' data-url="' . $exportUrl . '"' : '';
+            return '<button type="button" class="btn btn-default ew-export-link ew-email" title="' . $this->language->phrase("ExportToEmail", true) . '" data-caption="' . $this->language->phrase("ExportToEmail", true) . '" form="fview_payment_reportlist" data-ew-action="email" data-custom="false" data-hdr="' . $this->language->phrase("ExportToEmail", true) . '" data-exported-selected="false"' . $url . '>' . $this->language->phrase("ExportToEmail") . '</button>';
+        } elseif (SameText($type, "print")) {
+            return "<a href=\"$exportUrl\" class=\"btn btn-default ew-export-link ew-print\" title=\"" . HtmlEncode($this->language->phrase("PrinterFriendly", true)) . "\" data-caption=\"" . HtmlEncode($this->language->phrase("PrinterFriendly", true)) . "\">" . $this->language->phrase("PrinterFriendly") . "</a>";
+        }
+    }
+
+    // Set up export options
+    protected function setupExportOptions(): void
+    {
+        // Printer friendly
+        $item = $this->ExportOptions->add("print");
+        $item->Body = $this->getExportTag("print");
+        $item->Visible = false;
+
+        // Export to Excel
+        $item = $this->ExportOptions->add("excel");
+        $item->Body = $this->getExportTag("excel");
+        $item->Visible = true;
+
+        // Export to Word
+        $item = $this->ExportOptions->add("word");
+        $item->Body = $this->getExportTag("word");
+        $item->Visible = false;
+
+        // Export to HTML
+        $item = $this->ExportOptions->add("html");
+        $item->Body = $this->getExportTag("html");
+        $item->Visible = false;
+
+        // Export to XML
+        $item = $this->ExportOptions->add("xml");
+        $item->Body = $this->getExportTag("xml");
+        $item->Visible = false;
+
+        // Export to CSV
+        $item = $this->ExportOptions->add("csv");
+        $item->Body = $this->getExportTag("csv");
+        $item->Visible = false;
+
+        // Export to PDF
+        $item = $this->ExportOptions->add("pdf");
+        $item->Body = $this->getExportTag("pdf");
+        $item->Visible = true;
+
+        // Export to Email
+        $item = $this->ExportOptions->add("email");
+        $item->Body = $this->getExportTag("email");
+        $item->Visible = false;
+
+        // Drop down button for export
+        $this->ExportOptions->UseButtonGroup = true;
+        $this->ExportOptions->UseDropDownButton = false;
+        if ($this->ExportOptions->UseButtonGroup && IsMobile()) {
+            $this->ExportOptions->UseDropDownButton = true;
+        }
+        $this->ExportOptions->DropDownButtonPhrase = $this->language->phrase("ButtonExport");
+
+        // Add group option item
+        $item = $this->ExportOptions->addGroupOption();
+        $item->Body = "";
+        $item->Visible = false;
+    }
+
     // Set up search options
     protected function setupSearchOptions(): void
     {
@@ -2703,6 +2654,61 @@ class ViewPaymentReportList extends ViewPaymentReport implements PageInterface
         if (!$this->hasSearchFields() && $this->SearchOptions["searchtoggle"]) {
             $this->SearchOptions["searchtoggle"]->Visible = false;
         }
+    }
+
+    /**
+    * Export data in HTML/CSV/Word/Excel/XML/Email/PDF format
+    */
+    public function exportData(object $doc): void
+    {
+        $records = [];
+        $this->TotalRecords = $this->listRecordCount();
+
+        // Export all
+        if ($this->ExportAll) {
+            if (Config("EXPORT_ALL_TIME_LIMIT") >= 0) {
+                @set_time_limit(Config("EXPORT_ALL_TIME_LIMIT"));
+            }
+            $this->StartRecord = 1;
+            $this->StopRecord = $this->TotalRecords;
+            $records = $this->loadRecords($this->StartRecord - 1, $this->TotalRecords);
+        } else { // Export one page only
+            $this->setupStartRecord(); // Set up start record position
+            $this->setupDisplayRecords(); // Set up records per page
+            // Set the last record to display
+            if ($this->DisplayRecords <= 0) {
+                $this->StopRecord = $this->TotalRecords;
+            } else {
+                $this->StopRecord = $this->StartRecord + $this->DisplayRecords - 1;
+            }
+            $records = $this->loadRecords($this->StartRecord - 1, $this->DisplayRecords <= 0 ? $this->TotalRecords : $this->DisplayRecords);
+        }
+        $this->StartRecord = 1;
+        $this->StopRecord = count($records);
+        if (count($records) == 0 || !$doc) {
+            echo $this->getHtmlMessage();
+            return;
+        }
+
+        // Call Page Exporting server event
+        $doc->ExportCustom = !$this->pageExporting($doc);
+
+        // Page header
+        $header = $this->PageHeader;
+        $this->pageDataRendering($header);
+        $doc->Text .= $header;
+        $this->exportDocument($doc, $records, $this->StartRecord, $this->StopRecord, "");
+
+        // Page footer
+        $footer = $this->PageFooter;
+        $this->pageDataRendered($footer);
+        $doc->Text .= $footer;
+
+        // Export header and footer
+        $doc->exportHeaderAndFooter();
+
+        // Call Page Exported server event
+        $this->pageExported($doc);
     }
 
     // Set up Breadcrumb
@@ -3132,18 +3138,20 @@ class ViewPaymentReportList extends ViewPaymentReport implements PageInterface
         //Log("Page Render");
     }
 
-    // Page Data Rendering event
-    public function pageDataRendering(string &$header): void
-    {
-        // Example:
-        //$header = "your header";
+    public function pageDataRendering(&$header) {
+        if ($this->Export == "pdf") {
+            $header = \PHPMaker2026\Project2\ReportHelper::pdfHeader($this);
+        } else {
+            $header = \PHPMaker2026\Project2\ReportHelper::screenHeader($this);
+        }
     }
 
-    // Page Data Rendered event
-    public function pageDataRendered(string &$footer): void
-    {
-        // Example:
-        //$footer = "your footer";
+    public function pageDataRendered(&$footer) {
+        if ($this->Export == "pdf") {
+            $footer = \PHPMaker2026\Project2\ReportHelper::pdfFooter($this);
+        } else {
+            $footer = \PHPMaker2026\Project2\ReportHelper::screenFooter($this);
+        }
     }
 
     // Page Breaking event

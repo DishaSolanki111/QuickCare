@@ -54,6 +54,7 @@ use Traversable;
 use PHPMaker2026\Project2\Entity as BaseEntity;
 use PHPMaker2026\Project2\Db;
 use PHPMaker2026\Project2\Db\Entity;
+use PHPMaker2026\Project2\ReportHelper;
 
 /**
  * Page class
@@ -138,7 +139,7 @@ class ViewAppointmentReportList extends ViewAppointmentReport implements PageInt
     public int $StopRecord = 0;
     public int $TotalRecords = 0;
     public ?int $RecordOffset = null; // Record offset (for View/Edit paging)
-    public array $PagerOptions = ["proximity" => 20, "show_dots" => true];
+    public array $PagerOptions = ["proximity" => 2, "show_dots" => true];
     public string $PageSizes = "10,20,50,-1"; // Page sizes (comma separated)
     public string $UserIDFilter = "";
     public string $DefaultSearchWhere = ""; // Default search WHERE clause
@@ -590,7 +591,6 @@ class ViewAppointmentReportList extends ViewAppointmentReport implements PageInt
     {
         // Set up list options
         $this->setupListOptions();
-        $this->setupExportOptions();
 
         // Search options
         $this->setupSearchOptions();
@@ -712,6 +712,8 @@ class ViewAppointmentReportList extends ViewAppointmentReport implements PageInt
 
         // Set up list options
         $this->setupListOptions();
+
+        // Setup export options
         $this->setupExportOptions();
         $this->setVisibility();
 
@@ -759,6 +761,7 @@ class ViewAppointmentReportList extends ViewAppointmentReport implements PageInt
 
         // Hide list options
         if ($this->isExport()) {
+            $this->ListOptions->hideAllOptions(["sequence"]);
             $this->ListOptions->UseDropDownButton = false; // Disable drop down button
             $this->ListOptions->UseButtonGroup = false; // Disable button group
         } elseif ($this->isGridAdd() || $this->isGridEdit() || $this->isMultiEdit() || $this->isConfirm()) {
@@ -768,7 +771,8 @@ class ViewAppointmentReportList extends ViewAppointmentReport implements PageInt
         }
 
         // Hide options
-        if (!(IsEmpty($this->CurrentAction) || $this->isSearch())) {
+        if ($this->isExport() || !(IsEmpty($this->CurrentAction) || $this->isSearch())) {
+            $this->ExportOptions->hideAllOptions();
             $this->FilterOptions->hideAllOptions();
             $this->ImportOptions->hideAllOptions();
         }
@@ -1087,9 +1091,9 @@ class ViewAppointmentReportList extends ViewAppointmentReport implements PageInt
     public function advancedSearchWhere(bool $default = false): string
     {
         $where = "";
-        $this->buildSearchSql($where, $this->Patient_Name, $default, false); // Patient_Name
+        $this->buildSearchSql($where, $this->Patient_Name, $default, true); // Patient_Name
         $this->buildSearchSql($where, $this->Doctor_Name, $default, true); // Doctor_Name
-        $this->buildSearchSql($where, $this->Specialisation, $default, false); // Specialisation
+        $this->buildSearchSql($where, $this->Specialisation, $default, true); // Specialisation
         $this->buildSearchSql($where, $this->APPOINTMENT_DATE, $default, true); // APPOINTMENT_DATE
         $this->buildSearchSql($where, $this->Day_Name, $default, true); // Day_Name
         $this->buildSearchSql($where, $this->Month_Name, $default, true); // Month_Name
@@ -1203,7 +1207,7 @@ class ViewAppointmentReportList extends ViewAppointmentReport implements PageInt
         // Field Patient_Name
         $filter = $this->queryBuilderWhere("Patient_Name");
         if (!$filter) {
-            $this->buildSearchSql($filter, $this->Patient_Name, false, false);
+            $this->buildSearchSql($filter, $this->Patient_Name, false, true);
         }
         if ($filter != "") {
             $filterList .= "<div><span class=\"" . $captionClass . "\">" . $this->Patient_Name->caption() . "</span>" . $captionSuffix . $filter . "</div>";
@@ -1221,7 +1225,7 @@ class ViewAppointmentReportList extends ViewAppointmentReport implements PageInt
         // Field Specialisation
         $filter = $this->queryBuilderWhere("Specialisation");
         if (!$filter) {
-            $this->buildSearchSql($filter, $this->Specialisation, false, false);
+            $this->buildSearchSql($filter, $this->Specialisation, false, true);
         }
         if ($filter != "") {
             $filterList .= "<div><span class=\"" . $captionClass . "\">" . $this->Specialisation->caption() . "</span>" . $captionSuffix . $filter . "</div>";
@@ -1551,34 +1555,6 @@ class ViewAppointmentReportList extends ViewAppointmentReport implements PageInt
         $this->listOptionsLoad();
         $item = $this->ListOptions[$this->ListOptions->GroupOptionName];
         $item->Visible = $this->ListOptions->groupOptionVisible();
-    }
-
-    // Set up export options
-    protected function setupExportOptions(): void
-    {
-        // Page URL for export
-        $pageUrl = $this->pageUrl(false);
-        
-        // Export to PDF
-        $item = $this->ExportOptions->add("pdf");
-        $item->Body = "<a href=\"" . $pageUrl . "?export=pdf\" class=\"ew-export-link\" data-export=\"pdf\">" . $this->language->phrase("ExportToPdf") . "</a>";
-        $item->Visible = true;
-        $item->CssClass = "ew-export-link";
-        $item->OnLeft = false;
-        $item->UseImageAndText = true;
-
-        // Export to Excel
-        $item = $this->ExportOptions->add("excel");
-        $item->Body = "<a href=\"" . $pageUrl . "?export=excel\" class=\"ew-export-link\" data-export=\"excel\">" . $this->language->phrase("ExportToExcel") . "</a>";
-        $item->Visible = true;
-        $item->CssClass = "ew-export-link";
-        $item->OnLeft = false;
-        $item->UseImageAndText = true;
-
-        // Use button group instead of dropdown
-        $this->ExportOptions->UseDropDownButton = false;
-        $this->ExportOptions->UseButtonGroup = true;
-        $this->ExportOptions->ButtonGroupClass = "btn-group";
     }
 
     // Add "hash" parameter to URL
@@ -2354,9 +2330,12 @@ class ViewAppointmentReportList extends ViewAppointmentReport implements PageInt
             $this->STATUS->TooltipValue = "";
         } elseif ($this->RowType == RowType::SEARCH) {
             // Patient_Name
-            $this->Patient_Name->setupEditAttributes();
-            $this->Patient_Name->EditValue = !$this->Patient_Name->Raw ? HtmlDecode($this->Patient_Name->AdvancedSearch->SearchValue) : $this->Patient_Name->AdvancedSearch->SearchValue;
-            $this->Patient_Name->PlaceHolder = RemoveHtml($this->Patient_Name->caption());
+            if ($this->Patient_Name->UseFilter && !IsEmpty($this->Patient_Name->AdvancedSearch->SearchValue)) {
+                if (is_array($this->Patient_Name->AdvancedSearch->SearchValue)) {
+                    $this->Patient_Name->AdvancedSearch->SearchValue = implode(Config("FILTER_OPTION_SEPARATOR"), $this->Patient_Name->AdvancedSearch->SearchValue);
+                }
+                $this->Patient_Name->EditValue = explode(Config("FILTER_OPTION_SEPARATOR"), $this->Patient_Name->AdvancedSearch->SearchValue);
+            }
 
             // Doctor_Name
             if ($this->Doctor_Name->UseFilter && !IsEmpty($this->Doctor_Name->AdvancedSearch->SearchValue)) {
@@ -2367,9 +2346,12 @@ class ViewAppointmentReportList extends ViewAppointmentReport implements PageInt
             }
 
             // Specialisation
-            $this->Specialisation->setupEditAttributes();
-            $this->Specialisation->EditValue = !$this->Specialisation->Raw ? HtmlDecode($this->Specialisation->AdvancedSearch->SearchValue) : $this->Specialisation->AdvancedSearch->SearchValue;
-            $this->Specialisation->PlaceHolder = RemoveHtml($this->Specialisation->caption());
+            if ($this->Specialisation->UseFilter && !IsEmpty($this->Specialisation->AdvancedSearch->SearchValue)) {
+                if (is_array($this->Specialisation->AdvancedSearch->SearchValue)) {
+                    $this->Specialisation->AdvancedSearch->SearchValue = implode(Config("FILTER_OPTION_SEPARATOR"), $this->Specialisation->AdvancedSearch->SearchValue);
+                }
+                $this->Specialisation->EditValue = explode(Config("FILTER_OPTION_SEPARATOR"), $this->Specialisation->AdvancedSearch->SearchValue);
+            }
 
             // APPOINTMENT_DATE
             if ($this->APPOINTMENT_DATE->UseFilter && !IsEmpty($this->APPOINTMENT_DATE->AdvancedSearch->SearchValue)) {
@@ -2454,6 +2436,105 @@ class ViewAppointmentReportList extends ViewAppointmentReport implements PageInt
         $this->STATUS->AdvancedSearch->load();
     }
 
+    // Get export HTML tag
+    protected function getExportTag(string $type, bool $custom = false): string
+    {
+        if ($type == "print" || $custom) { // Printer friendly / custom export
+            $pageUrl = $this->pageUrl(false);
+            $exportUrl = BuildUrl(GetUrl($pageUrl), "export=" . $type, $custom ? "custom=1" : "");
+        } else { // Export API URL
+            $exportUrl = GetApiUrl(Config("API_EXPORT_ACTION") . "/" . $type . "/" . $this->TableVar);
+        }
+        $exportUrl = HtmlEncode($exportUrl);
+        if (SameText($type, "excel")) {
+            if ($custom) {
+                return "<button type=\"button\" class=\"btn btn-default ew-export-link ew-excel\" title=\"" . HtmlEncode($this->language->phrase("ExportToExcel", true)) . "\" data-caption=\"" . HtmlEncode($this->language->phrase("ExportToExcel", true)) . "\" form=\"fview_appointment_reportlist\" data-url=\"$exportUrl\" data-ew-action=\"export\" data-export=\"excel\" data-custom=\"true\" data-export-id=\"" . SessionId() . "\" data-export-selected=\"false\">" . $this->language->phrase("ExportToExcel") . "</button>";
+            } else {
+                return "<a href=\"$exportUrl\" class=\"btn btn-default ew-export-link ew-excel\" title=\"" . HtmlEncode($this->language->phrase("ExportToExcel", true)) . "\" data-caption=\"" . HtmlEncode($this->language->phrase("ExportToExcel", true)) . "\">" . $this->language->phrase("ExportToExcel") . "</a>";
+            }
+        } elseif (SameText($type, "word")) {
+            if ($custom) {
+                return "<button type=\"button\" class=\"btn btn-default ew-export-link ew-word\" title=\"" . HtmlEncode($this->language->phrase("ExportToWord", true)) . "\" data-caption=\"" . HtmlEncode($this->language->phrase("ExportToWord", true)) . "\" form=\"fview_appointment_reportlist\" data-url=\"$exportUrl\" data-ew-action=\"export\" data-export=\"word\" data-custom=\"true\" data-export-id=\"" . SessionId() . "\" data-export-selected=\"false\">" . $this->language->phrase("ExportToWord") . "</button>";
+            } else {
+                return "<a href=\"$exportUrl\" class=\"btn btn-default ew-export-link ew-word\" title=\"" . HtmlEncode($this->language->phrase("ExportToWord", true)) . "\" data-caption=\"" . HtmlEncode($this->language->phrase("ExportToWord", true)) . "\">" . $this->language->phrase("ExportToWord") . "</a>";
+            }
+        } elseif (SameText($type, "pdf")) {
+            if ($custom) {
+                return "<button type=\"button\" class=\"btn btn-default ew-export-link ew-pdf\" title=\"" . HtmlEncode($this->language->phrase("ExportToPdf", true)) . "\" data-caption=\"" . HtmlEncode($this->language->phrase("ExportToPdf", true)) . "\" form=\"fview_appointment_reportlist\" data-url=\"$exportUrl\" data-ew-action=\"export\" data-export=\"pdf\" data-custom=\"true\" data-export-id=\"" . SessionId() . "\" data-export-selected=\"false\">" . $this->language->phrase("ExportToPdf") . "</button>";
+            } else {
+                return "<a href=\"$exportUrl\" class=\"btn btn-default ew-export-link ew-pdf\" title=\"" . HtmlEncode($this->language->phrase("ExportToPdf", true)) . "\" data-caption=\"" . HtmlEncode($this->language->phrase("ExportToPdf", true)) . "\">" . $this->language->phrase("ExportToPdf") . "</a>";
+            }
+        } elseif (SameText($type, "html")) {
+            return "<a href=\"$exportUrl\" class=\"btn btn-default ew-export-link ew-html\" title=\"" . HtmlEncode($this->language->phrase("ExportToHtml", true)) . "\" data-caption=\"" . HtmlEncode($this->language->phrase("ExportToHtml", true)) . "\">" . $this->language->phrase("ExportToHtml") . "</a>";
+        } elseif (SameText($type, "xml")) {
+            return "<a href=\"$exportUrl\" class=\"btn btn-default ew-export-link ew-xml\" title=\"" . HtmlEncode($this->language->phrase("ExportToXml", true)) . "\" data-caption=\"" . HtmlEncode($this->language->phrase("ExportToXml", true)) . "\">" . $this->language->phrase("ExportToXml") . "</a>";
+        } elseif (SameText($type, "csv")) {
+            return "<a href=\"$exportUrl\" class=\"btn btn-default ew-export-link ew-csv\" title=\"" . HtmlEncode($this->language->phrase("ExportToCsv", true)) . "\" data-caption=\"" . HtmlEncode($this->language->phrase("ExportToCsv", true)) . "\">" . $this->language->phrase("ExportToCsv") . "</a>";
+        } elseif (SameText($type, "email")) {
+            $url = $custom ? ' data-url="' . $exportUrl . '"' : '';
+            return '<button type="button" class="btn btn-default ew-export-link ew-email" title="' . $this->language->phrase("ExportToEmail", true) . '" data-caption="' . $this->language->phrase("ExportToEmail", true) . '" form="fview_appointment_reportlist" data-ew-action="email" data-custom="false" data-hdr="' . $this->language->phrase("ExportToEmail", true) . '" data-exported-selected="false"' . $url . '>' . $this->language->phrase("ExportToEmail") . '</button>';
+        } elseif (SameText($type, "print")) {
+            return "<a href=\"$exportUrl\" class=\"btn btn-default ew-export-link ew-print\" title=\"" . HtmlEncode($this->language->phrase("PrinterFriendly", true)) . "\" data-caption=\"" . HtmlEncode($this->language->phrase("PrinterFriendly", true)) . "\">" . $this->language->phrase("PrinterFriendly") . "</a>";
+        }
+    }
+
+    // Set up export options
+    protected function setupExportOptions(): void
+    {
+        // Printer friendly
+        $item = $this->ExportOptions->add("print");
+        $item->Body = $this->getExportTag("print");
+        $item->Visible = false;
+
+        // Export to Excel
+        $item = $this->ExportOptions->add("excel");
+        $item->Body = $this->getExportTag("excel");
+        $item->Visible = true;
+
+        // Export to Word
+        $item = $this->ExportOptions->add("word");
+        $item->Body = $this->getExportTag("word");
+        $item->Visible = false;
+
+        // Export to HTML
+        $item = $this->ExportOptions->add("html");
+        $item->Body = $this->getExportTag("html");
+        $item->Visible = false;
+
+        // Export to XML
+        $item = $this->ExportOptions->add("xml");
+        $item->Body = $this->getExportTag("xml");
+        $item->Visible = false;
+
+        // Export to CSV
+        $item = $this->ExportOptions->add("csv");
+        $item->Body = $this->getExportTag("csv");
+        $item->Visible = false;
+
+        // Export to PDF
+        $item = $this->ExportOptions->add("pdf");
+        $item->Body = $this->getExportTag("pdf");
+        $item->Visible = true;
+
+        // Export to Email
+        $item = $this->ExportOptions->add("email");
+        $item->Body = $this->getExportTag("email");
+        $item->Visible = false;
+
+        // Drop down button for export
+        $this->ExportOptions->UseButtonGroup = true;
+        $this->ExportOptions->UseDropDownButton = false;
+        if ($this->ExportOptions->UseButtonGroup && IsMobile()) {
+            $this->ExportOptions->UseDropDownButton = true;
+        }
+        $this->ExportOptions->DropDownButtonPhrase = $this->language->phrase("ButtonExport");
+
+        // Add group option item
+        $item = $this->ExportOptions->addGroupOption();
+        $item->Body = "";
+        $item->Visible = false;
+    }
+
     // Set up search options
     protected function setupSearchOptions(): void
     {
@@ -2513,6 +2594,61 @@ class ViewAppointmentReportList extends ViewAppointmentReport implements PageInt
         if (!$this->hasSearchFields() && $this->SearchOptions["searchtoggle"]) {
             $this->SearchOptions["searchtoggle"]->Visible = false;
         }
+    }
+
+    /**
+    * Export data in HTML/CSV/Word/Excel/XML/Email/PDF format
+    */
+    public function exportData(object $doc): void
+    {
+        $records = [];
+        $this->TotalRecords = $this->listRecordCount();
+
+        // Export all
+        if ($this->ExportAll) {
+            if (Config("EXPORT_ALL_TIME_LIMIT") >= 0) {
+                @set_time_limit(Config("EXPORT_ALL_TIME_LIMIT"));
+            }
+            $this->StartRecord = 1;
+            $this->StopRecord = $this->TotalRecords;
+            $records = $this->loadRecords($this->StartRecord - 1, $this->TotalRecords);
+        } else { // Export one page only
+            $this->setupStartRecord(); // Set up start record position
+            $this->setupDisplayRecords(); // Set up records per page
+            // Set the last record to display
+            if ($this->DisplayRecords <= 0) {
+                $this->StopRecord = $this->TotalRecords;
+            } else {
+                $this->StopRecord = $this->StartRecord + $this->DisplayRecords - 1;
+            }
+            $records = $this->loadRecords($this->StartRecord - 1, $this->DisplayRecords <= 0 ? $this->TotalRecords : $this->DisplayRecords);
+        }
+        $this->StartRecord = 1;
+        $this->StopRecord = count($records);
+        if (count($records) == 0 || !$doc) {
+            echo $this->getHtmlMessage();
+            return;
+        }
+
+        // Call Page Exporting server event
+        $doc->ExportCustom = !$this->pageExporting($doc);
+
+        // Page header
+        $header = $this->PageHeader;
+        $this->pageDataRendering($header);
+        $doc->Text .= $header;
+        $this->exportDocument($doc, $records, $this->StartRecord, $this->StopRecord, "");
+
+        // Page footer
+        $footer = $this->PageFooter;
+        $this->pageDataRendered($footer);
+        $doc->Text .= $footer;
+
+        // Export header and footer
+        $doc->exportHeaderAndFooter();
+
+        // Call Page Exported server event
+        $this->pageExported($doc);
     }
 
     // Set up Breadcrumb
@@ -2940,18 +3076,20 @@ class ViewAppointmentReportList extends ViewAppointmentReport implements PageInt
         //Log("Page Render");
     }
 
-    // Page Data Rendering event
-    public function pageDataRendering(string &$header): void
-    {
-        // Example:
-        //$header = "your header";
+    public function pageDataRendering(&$header) {
+        if ($this->Export == "pdf") {
+            $header = \PHPMaker2026\Project2\ReportHelper::pdfHeader($this);
+        } else {
+            $header = \PHPMaker2026\Project2\ReportHelper::screenHeader($this);
+        }
     }
 
-    // Page Data Rendered event
-    public function pageDataRendered(string &$footer): void
-    {
-        // Example:
-        //$footer = "your footer";
+    public function pageDataRendered(&$footer) {
+        if ($this->Export == "pdf") {
+            $footer = \PHPMaker2026\Project2\ReportHelper::pdfFooter($this);
+        } else {
+            $footer = \PHPMaker2026\Project2\ReportHelper::screenFooter($this);
+        }
     }
 
     // Page Breaking event

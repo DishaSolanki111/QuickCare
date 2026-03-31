@@ -56,6 +56,7 @@
         'InputTextType' => 'text',
         'Nullable' => false,
         'Required' => true,
+        'UseFilter' => true,
         'SearchOperators' => [
             '=',
             '<>',
@@ -130,6 +131,7 @@
         'Nullable' => false,
         'Required' => true,
         'Sortable' => false,
+        'UseFilter' => true,
         'SearchOperators' => [
             '=',
             '<>',
