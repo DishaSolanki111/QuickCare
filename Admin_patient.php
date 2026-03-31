@@ -447,7 +447,7 @@ if (empty($error_message) && isset($_GET['error'])) {
     </table>
 
     <!-- Hidden form for view navigation -->
-    <form id="viewPatientForm" method="POST" action="admin_patient_profile_view.php" style="display:none;">
+    <form id="viewPatientForm" method="POST" style="display:none;">
         <input type="hidden" name="patient_id" id="view_patient_id" value="">
     </form>
 </div>
@@ -532,8 +532,10 @@ if (empty($error_message) && isset($_GET['error'])) {
 
 <script>
 function viewPatient(id) {
+    const form = document.getElementById('viewPatientForm');
     document.getElementById('view_patient_id').value = id;
-    document.getElementById('viewPatientForm').submit();
+    form.action = 'admin_patient_profile_view.php';
+    form.submit();
 }
 
 function openEditModal(id, firstName, lastName, dob, gender, bloodGroup, phone, email, address) {
