@@ -197,24 +197,21 @@ while ($mr = mysqli_fetch_assoc($reminder_check_query)) {
 
         .container {
             display: flex;
-            min-height: 100vh;
+           max-width: 100% !important;
+           min-height:100vh;
+           margin:auto;
         }
-
-        .main-content {
-            flex: 1;
-            margin-left: 250px;
-            padding: 24px;
-        }
+.main-content {
+    flex: 1;
+    margin-left: 240px;
+    padding: 30px;
+    width: calc(100% - 250px);
+    background: #f7fafc;
+}
+       
         
         .prescription-card {
             background: var(--card-bg);
-            border-radius: 24px;
-            box-shadow:
-                0 24px 60px rgba(15, 23, 42, 0.25),
-                0 0 0 1px rgba(255,255,255,0.4);
-            border: 1px solid rgba(255,255,255,0.35);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
             padding: 22px 22px 18px;
             margin-bottom: 24px;
         }
@@ -590,16 +587,11 @@ while ($mr = mysqli_fetch_assoc($reminder_check_query)) {
             }
         }
         
+      
+        
         @media (max-width: 992px) {
             .main-content {
                 margin-left: 200px;
-            }
-        }
-        
-        @media (max-width: 768px) {
-            .main-content {
-                margin-left: 0;
-                padding: 16px;
             }
 
             .prescription-header {
@@ -664,7 +656,7 @@ while ($mr = mysqli_fetch_assoc($reminder_check_query)) {
                                 <div class="doctor-meta">
                                     <h3>
                                         Dr. <?php echo htmlspecialchars($prescription['DOC_FNAME'] . ' ' . $prescription['DOC_LNAME']); ?>
-                                        <span class="doc-badge"><i class="fas fa-stethoscope"></i> Doctor</span>
+                                        
                                     </h3>
                                     <div class="subline">
                                         Patient: <?php echo htmlspecialchars($patient['FIRST_NAME'] . ' ' . $patient['LAST_NAME']); ?>
