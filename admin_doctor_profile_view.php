@@ -132,19 +132,6 @@ $img = !empty($doctor['PROFILE_IMAGE']) ? $doctor['PROFILE_IMAGE'] : 'uploads/de
             margin-top: 4px;
         }
 
-        .badge-chip {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            padding: 3px 10px;
-            border-radius: 999px;
-            background: #eff6ff;
-            color: #1d4ed8;
-            font-size: 0.75rem;
-            font-weight: 600;
-            margin-top: 6px;
-        }
-
         .grid-2 {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -228,10 +215,6 @@ $img = !empty($doctor['PROFILE_IMAGE']) ? $doctor['PROFILE_IMAGE'] : 'uploads/de
                 <div>
                     <div class="profile-main-name">Dr. <?php echo htmlspecialchars($doctor_name); ?></div>
                     <div class="profile-id">Specialization: <?php echo htmlspecialchars($doctor['SPECIALISATION_NAME']); ?></div>
-                    <div class="badge-chip">
-                        <i class="fas fa-user-md"></i>
-                        Verified Doctor
-                    </div>
                 </div>
             </div>
 
