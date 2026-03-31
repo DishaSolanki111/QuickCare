@@ -233,53 +233,9 @@ class ExportPdf extends AbstractExport
     {
         @set_time_limit(Config("PDF_TIME_LIMIT"));
         $this->adjustHtml();
-        
-        // Clean output buffer to prevent HTML content corruption
-        if (ob_get_length()) {
-            ob_clean();
-        }
-        
-        // Add custom CSS for table formatting
-        $customStyles = "
-        <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        .report-header { text-align: center; margin-bottom: 30px; }
-        .report-logo { max-width: 50px; margin-bottom: 10px; }
-        .report-title { font-size: 18px; font-weight: bold; margin-bottom: 5px; }
-        .report-subtitle { font-size: 14px; color: #666; margin-bottom: 20px; }
-        table.ew-table { 
-            border-collapse: collapse; 
-            width: 100%; 
-            margin: 20px 0;
-            border: 1px solid #333;
-        }
-        table.ew-table th { 
-            background-color: #f2f2f2; 
-            border: 1px solid #333; 
-            padding: 8px; 
-            text-align: left; 
-            font-weight: bold;
-        }
-        table.ew-table td { 
-            border: 1px solid #333; 
-            padding: 6px; 
-            text-align: left;
-        }
-        table.ew-table tr:nth-child(even) { background-color: #f9f9f9; }
-        table.ew-table tr:hover { background-color: #f5f5f5; }
-        .sequence-col { text-align: center; width: 50px; }
-        </style>";
-        
-        // Prepend custom styles to HTML
-        $this->Text = $customStyles . $this->Text;
-        
         $options = new \Dompdf\Options(self::$Options);
         $options->set("pdfBackend", $this->PdfBackend);
         $options->set("isRemoteEnabled", true); // Support remote images such as S3
-        $options->set("isHtml5ParserEnabled", true); // Enable HTML5 parser
-        $options->set("defaultFont", "Arial"); // Set default font
-        $options->set("fontDir", []); // Use system font directories
-        $options->set("fontCache", sys_get_temp_dir()); // Set font cache directory
         $chroot = $options->getChroot();
         $chroot[] = PrefixDirectoryPath(UploadTempPathRoot());
         $chroot[] = PrefixDirectoryPath(UploadTempPath());

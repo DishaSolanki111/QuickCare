@@ -54,6 +54,7 @@ use Traversable;
 use PHPMaker2026\Project2\Entity as BaseEntity;
 use PHPMaker2026\Project2\Db;
 use PHPMaker2026\Project2\Db\Entity;
+use PHPMaker2026\Project2\ReportHelper;
 
 /**
  * Table class for view_appointment_report
@@ -173,6 +174,7 @@ class ViewAppointmentReport extends DbTable implements LookupTableInterface
 
         // Patient_Name
         $this->Patient_Name = $this->Fields['Patient_Name'];
+        $this->Patient_Name->Lookup = new Lookup($this->Patient_Name, 'view_appointment_report', true, 'Patient_Name', ["Patient_Name","","",""], '', "", [], [], [], [], [], [], false, '', '', "");
 
         // Doctor_Name
         $this->Doctor_Name = $this->Fields['Doctor_Name'];
@@ -180,6 +182,7 @@ class ViewAppointmentReport extends DbTable implements LookupTableInterface
 
         // Specialisation
         $this->Specialisation = $this->Fields['Specialisation'];
+        $this->Specialisation->Lookup = new Lookup($this->Specialisation, 'view_appointment_report', true, 'Specialisation', ["Specialisation","","",""], '', "", [], [], [], [], [], [], false, '', '', "");
 
         // APPOINTMENT_DATE
         $this->APPOINTMENT_DATE = $this->Fields['APPOINTMENT_DATE'];
@@ -407,6 +410,7 @@ class ViewAppointmentReport extends DbTable implements LookupTableInterface
                 'InputTextType' => 'text',
                 'Nullable' => false,
                 'Required' => true,
+                'UseFilter' => true,
 
                 // 'UseAdvancedSearch' => true,
                 'SearchOperators' => ["=", "<>", "IN", "NOT IN", "STARTS WITH", "NOT STARTS WITH", "LIKE", "NOT LIKE", "ENDS WITH", "NOT ENDS WITH", "IS EMPTY", "IS NOT EMPTY"],
@@ -459,6 +463,7 @@ class ViewAppointmentReport extends DbTable implements LookupTableInterface
                 'Nullable' => false,
                 'Required' => true,
                 'Sortable' => false,
+                'UseFilter' => true,
 
                 // 'UseAdvancedSearch' => true,
                 'SearchOperators' => ["=", "<>", "IN", "NOT IN", "STARTS WITH", "NOT STARTS WITH", "LIKE", "NOT LIKE", "ENDS WITH", "NOT ENDS WITH", "IS EMPTY", "IS NOT EMPTY"],

@@ -208,15 +208,19 @@ $img = !empty($doctor['PROFILE_IMAGE']) ? $doctor['PROFILE_IMAGE'] : 'uploads/de
         <div class="sheet">
             <div class="sheet-header"></div>
 
-            <div class="profile-header">
-                <div class="avatar-lg">
-                    <img src="<?php echo htmlspecialchars($img); ?>" alt="Doctor">
-                </div>
-                <div>
-                    <div class="profile-main-name">Dr. <?php echo htmlspecialchars($doctor_name); ?></div>
-                    <div class="profile-id">Specialization: <?php echo htmlspecialchars($doctor['SPECIALISATION_NAME']); ?></div>
+        <div class="profile-header">
+            <div class="avatar-lg">
+                <img src="<?php echo htmlspecialchars($img); ?>" alt="Doctor">
+            </div>
+            <div>
+                <div class="profile-main-name">Dr. <?php echo htmlspecialchars($doctor_name); ?></div>
+                <div class="profile-id">Specialization: <?php echo htmlspecialchars($doctor['SPECIALISATION_NAME']); ?></div>
+                <div class="badge-chip">
+                    <i class="fas fa-user-md"></i>
+                    Verified Doctor
                 </div>
             </div>
+        </div>
 
             <div class="section-title">Personal Information</div>
             <div class="grid-2">

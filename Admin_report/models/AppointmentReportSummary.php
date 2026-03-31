@@ -54,6 +54,7 @@ use Traversable;
 use PHPMaker2026\Project2\Entity as BaseEntity;
 use PHPMaker2026\Project2\Db;
 use PHPMaker2026\Project2\Db\Entity;
+use PHPMaker2026\Project2\ReportHelper;
 
 /**
  * Page class
@@ -1101,7 +1102,7 @@ class AppointmentReportSummary extends AppointmentReport implements PageInterfac
         // Export to Excel
         $item = $this->ExportOptions->add("excel");
         $item->Body = $this->getExportTag("excel");
-        $item->Visible = false;
+        $item->Visible = true;
 
         // Export to Word
         $item = $this->ExportOptions->add("word");

@@ -1,4 +1,4 @@
-<ew-language date="2026/3/24" id="en-US" author="e.World Technology Limited">
+<ew-language date="2026/3/31" id="en-US" author="e.World Technology Limited">
   <project>
     <phrase id="bodytitle" value="Admin" />
     <menu id="1">
@@ -47,16 +47,16 @@
       <phrase id="menutext" value="Appointment report" />
     </menu>
     <menu id="17">
-      <phrase id="menutext" value="view appointment report" />
+      <phrase id="menutext" value="Appointment Report" />
     </menu>
     <menu id="20">
-      <phrase id="menutext" value="view patient report" />
+      <phrase id="menutext" value="Patient Report" />
     </menu>
     <menu id="21">
-      <phrase id="menutext" value="view payment report" />
+      <phrase id="menutext" value="Payment report" />
     </menu>
     <menu id="22">
-      <phrase id="menutext" value="view doctor report" />
+      <phrase id="menutext" value="Doctor report" />
     </menu>
     <menu id="23">
       <phrase id="menutext" value="notification seen tbl" />
@@ -577,7 +577,7 @@
       </field>
     </table>
     <table id="view_appointment_report">
-      <phrase id="tblcaption" value="view appointment report" />
+      <phrase id="tblcaption" value="Appointment Report" />
       <chart id="chart1">
         <phrase id="chartcaption" value="Appointments by Month" />
         <phrase id="chartxaxisname" value="Month " />
@@ -637,7 +637,7 @@
       </field>
     </table>
     <table id="view_patient_report">
-      <phrase id="tblcaption" value="view patient report" />
+      <phrase id="tblcaption" value="Patient Report" />
       <chart id="chart1">
         <phrase id="chartcaption" value="Patient Visit Summary" />
         <phrase id="chartxaxisname" value="Patient Name" />
@@ -727,7 +727,7 @@
       </field>
     </table>
     <table id="view_payment_report">
-      <phrase id="tblcaption" value="view payment report" />
+      <phrase id="tblcaption" value="Payment report" />
       <chart id="chart1">
         <phrase id="chartcaption" value="Revenue by Month" />
         <phrase id="chartxaxisname" value="Month " />
@@ -796,7 +796,7 @@
       </field>
     </table>
     <table id="view_doctor_report">
-      <phrase id="tblcaption" value="view doctor report" />
+      <phrase id="tblcaption" value="Doctor report" />
       <chart id="chart1">
         <phrase id="chartcaption" value="Appointments per Doctor" />
         <phrase id="chartxaxisname" value="Doctor Name" />
