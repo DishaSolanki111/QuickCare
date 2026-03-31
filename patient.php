@@ -443,10 +443,7 @@ $medicine_reminder_query = mysqli_query($conn, "
             </div>
             
             <!-- STAT 1 -->
-            <div class="card stat">
-                <div>Total Appointments</div>
-                <div class="num"><?php echo $total_appointments; ?></div>
-            </div>
+           
             
             <!-- STAT 2 -->
             <div class="card stat">
