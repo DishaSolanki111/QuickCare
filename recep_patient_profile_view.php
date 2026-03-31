@@ -247,12 +247,18 @@ $fullName = $patient['FIRST_NAME'] . ' ' . $patient['LAST_NAME'];
             </div>
 
             <div class="footer-actions">
-                <a class="btn-back" href="recep_patient.php">
+                <a class="btn-back" onclick="goBackToPatients()" style="cursor: pointer;">
                     <i class="fas fa-arrow-left"></i> Back to Patients
                 </a>
             </div>
         </div>
     </div>
+
+<script>
+function goBackToPatients() {
+    window.location.href = 'recep_patient.php';
+}
+</script>
 </body>
 </html>
 
