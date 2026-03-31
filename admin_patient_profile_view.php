@@ -8,6 +8,9 @@ if (!isset($_SESSION['LOGGED_IN']) || $_SESSION['LOGGED_IN'] !== true || ($_SESS
     exit;
 }
 
+include 'admin_sidebar.php';
+$adminName = isset($_SESSION['USER_NAME']) ? $_SESSION['USER_NAME'] : 'Admin';
+
 $patient_id = 0;
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['patient_id'])) {
     $patient_id = (int)$_POST['patient_id'];
@@ -66,22 +69,28 @@ $fullName = $patient['FIRST_NAME'] . ' ' . $patient['LAST_NAME'];
         }
 
         body {
-            background: #e5edf5;
-            min-height: 100vh;
-            padding: 20px 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+    background: #e5edf5;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+}
 
+.main {
+    margin-left: 240px; /* same as sidebar width */
+    width: calc(100% - 240px);
+    min-height: 100vh;
+    padding: 20px;
+    box-sizing: border-box;
+}
         .sheet {
-            width: 960px;
-            max-width: 100%;
-            background: #ffffff;
-            box-shadow: 0 10px 25px rgba(15, 23, 42, 0.25);
-            border-radius: 12px;
-            padding: 36px 44px 40px;
-        }
+    width: 100%;
+    background: #ffffff;
+    border: 1px solid #d9dee5;
+    border-radius: 12px;
+    padding: 24px 28px 28px;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+    margin-top: 18px;
+}
 
         .sheet-header {
             border-bottom: none;
@@ -97,15 +106,15 @@ $fullName = $patient['FIRST_NAME'] . ' ' . $patient['LAST_NAME'];
         }
 
         .avatar-lg {
-            width: 90px;
-            height: 90px;
+            width: 70px;
+            height: 70px;
             border-radius: 999px;
             background: #e0f2fe;
             border: 2px solid #bfdbfe;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 34px;
+            font-size: 26px;
             font-weight: 700;
             color: #1d4ed8;
             overflow: hidden;
@@ -113,25 +122,31 @@ $fullName = $patient['FIRST_NAME'] . ' ' . $patient['LAST_NAME'];
         }
 
         .profile-main-name {
-            font-size: 1.55rem;
+            font-size: 1.2rem;
             font-weight: 700;
             color: #0f172a;
+        }
+
+        .profile-id {
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-top: 4px;
         }
 
         .grid-2 {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 16px 48px;
-            font-size: 0.96rem;
+            gap: 10px 32px;
+            font-size: 0.86rem;
         }
 
         .field-label {
-            font-size: 0.82rem;
+            font-size: 0.75rem;
             font-weight: 700;
             color: #000000;
             text-transform: uppercase;
             letter-spacing: 0.03em;
-            margin-bottom: 3px;
+            margin-bottom: 2px;
         }
 
         .field-value {
@@ -140,12 +155,12 @@ $fullName = $patient['FIRST_NAME'] . ' ' . $patient['LAST_NAME'];
         }
 
         .section-title {
-            font-size: 1.05rem;
+            font-size: 0.9rem;
             font-weight: 700;
             color: #0f172a;
-            margin-top: 20px;
-            margin-bottom: 12px;
-            padding-bottom: 6px;
+            margin-top: 14px;
+            margin-bottom: 8px;
+            padding-bottom: 4px;
             border-bottom: 1px solid #e2e8f0;
         }
 
@@ -169,68 +184,87 @@ $fullName = $patient['FIRST_NAME'] . ' ' . $patient['LAST_NAME'];
             gap: 6px;
             text-decoration: none;
         }
+
+        @media print {
+            body {
+                background: #ffffff;
+                padding: 0;
+            }
+            .sheet {
+                box-shadow: none;
+                border-radius: 0;
+                width: auto;
+                margin-top: 0;
+            }
+            .footer-actions {
+                display: none;
+            }
+        }
     </style>
 </head>
 <body>
-    <div class="sheet">
-        <div class="sheet-header"></div>
+    <div class="main">
+        <?php include 'admin_header.php'; ?>
+        <div class="sheet">
+            <div class="sheet-header"></div>
 
-        <div class="profile-header">
-            <div class="avatar-lg">
-                <?php echo strtoupper(substr($patient['FIRST_NAME'], 0, 1) . substr($patient['LAST_NAME'], 0, 1)); ?>
-            </div>
-            <div>
-                <div class="profile-main-name"><?php echo htmlspecialchars($fullName); ?></div>
-                <div class="profile-id" style="margin-top:4px;color:#64748b;font-size:0.85rem;">
-                    Username: <?php echo htmlspecialchars($patient['USERNAME']); ?>
+            <div class="profile-header">
+                <div class="avatar-lg">
+                    <?php echo strtoupper(substr($patient['FIRST_NAME'], 0, 1) . substr($patient['LAST_NAME'], 0, 1)); ?>
+                </div>
+                <div>
+                    <div class="profile-main-name"><?php echo htmlspecialchars($fullName); ?></div>
+                    <div class="profile-id">
+                        Username: <?php echo htmlspecialchars($patient['USERNAME']); ?>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div class="section-title">Personal Information</div>
-        <div class="grid-2">
-            <div>
-                <div class="field-label">First Name</div>
-                <div class="field-value"><?php echo htmlspecialchars($patient['FIRST_NAME']); ?></div>
+            <div class="section-title">Personal Information</div>
+            <div class="grid-2">
+                <div>
+                    <div class="field-label">First Name</div>
+                    <div class="field-value"><?php echo htmlspecialchars($patient['FIRST_NAME']); ?></div>
+                </div>
+                <div>
+                    <div class="field-label">Last Name</div>
+                    <div class="field-value"><?php echo htmlspecialchars($patient['LAST_NAME']); ?></div>
+                </div>
+                <div>
+                    <div class="field-label">Date of Birth</div>
+                    <div class="field-value"><?php echo htmlspecialchars($patient['DOB']); ?></div>
+                </div>
+                <div>
+                    <div class="field-label">Gender</div>
+                    <div class="field-value"><?php echo htmlspecialchars($patient['GENDER']); ?></div>
+                </div>
+                <div>
+                    <div class="field-label">Blood Group</div>
+                    <div class="field-value"><?php echo htmlspecialchars($patient['BLOOD_GROUP']); ?></div>
+                </div>
+                <div>
+                    <div class="field-label">Phone</div>
+                    <div class="field-value"><?php echo htmlspecialchars($patient['PHONE']); ?></div>
+                </div>
             </div>
-            <div>
-                <div class="field-label">Last Name</div>
-                <div class="field-value"><?php echo htmlspecialchars($patient['LAST_NAME']); ?></div>
-            </div>
-            <div>
-                <div class="field-label">Date of Birth</div>
-                <div class="field-value"><?php echo htmlspecialchars($patient['DOB']); ?></div>
-            </div>
-            <div>
-                <div class="field-label">Gender</div>
-                <div class="field-value"><?php echo htmlspecialchars($patient['GENDER']); ?></div>
-            </div>
-            <div>
-                <div class="field-label">Blood Group</div>
-                <div class="field-value"><?php echo htmlspecialchars($patient['BLOOD_GROUP']); ?></div>
-            </div>
-            <div>
-                <div class="field-label">Phone</div>
-                <div class="field-value"><?php echo htmlspecialchars($patient['PHONE']); ?></div>
-            </div>
-        </div>
 
-        <div class="section-title" style="margin-top:16px;">Contact Information</div>
-        <div class="grid-2">
-            <div>
-                <div class="field-label">Email</div>
-                <div class="field-value"><?php echo htmlspecialchars($patient['EMAIL']); ?></div>
+            <div class="section-title" style="margin-top:16px;">Contact Information</div>
+            <div class="grid-2">
+                <div>
+                    <div class="field-label">Email</div>
+                    <div class="field-value"><?php echo htmlspecialchars($patient['EMAIL']); ?></div>
+                </div>
+                <div>
+                    <div class="field-label">Address</div>
+                    <div class="field-value"><?php echo nl2br(htmlspecialchars($patient['ADDRESS'])); ?></div>
+                </div>
             </div>
-            <div>
-                <div class="field-label">Address</div>
-                <div class="field-value"><?php echo nl2br(htmlspecialchars($patient['ADDRESS'])); ?></div>
-            </div>
-        </div>
 
-        <div class="footer-actions">
-            <a class="btn-back" href="Admin_patient.php">
-                <i class="fas fa-arrow-left"></i> Back to Patients
-            </a>
+            <div class="footer-actions">
+                <a class="btn-back" href="Admin_patient.php">
+                    <i class="fas fa-arrow-left"></i> Back to Patients
+                </a>
+            </div>
         </div>
     </div>
 </body>

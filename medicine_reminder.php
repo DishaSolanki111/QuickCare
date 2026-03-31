@@ -316,8 +316,9 @@ if (!empty($prescription_id)) {
         .main-content {
             flex: 1;
             margin-left: 250px;
-            padding: 24px;
+            padding: 12px;
             width: calc(100% - 250px);
+            max-width: none;
             height: 100vh;
             overflow-y: auto;
         }
@@ -520,8 +521,8 @@ if (!empty($prescription_id)) {
         
         .form-row {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
             margin-bottom: 10px;
         }
         
