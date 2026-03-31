@@ -235,7 +235,7 @@
             '=',
             '<>',
         ],
-        'OptionCount' => 2,
+        'OptionCount' => 3,
     ],
     'PAYMENT_DATE' => [
         'FieldVar' => 'x_PAYMENT_DATE',

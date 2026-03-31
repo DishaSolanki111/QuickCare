@@ -28,6 +28,8 @@ Symfony\Component\DependencyInjection\Compiler\ResolveChildDefinitionsPass: Reso
 Symfony\Component\DependencyInjection\Compiler\ResolveChildDefinitionsPass: Resolving inheritance for "PHPMaker2026\Project2\AppController" (parent: .instanceof.PHPMaker2026\Project2\AppController.0.PHPMaker2026\Project2\AppController).
 Symfony\Component\DependencyInjection\Compiler\ResolveChildDefinitionsPass: Resolving inheritance for ".instanceof.PHPMaker2026\Project2\AppointmentReportController.0.PHPMaker2026\Project2\AppointmentReportController" (parent: .abstract.instanceof.PHPMaker2026\Project2\AppointmentReportController).
 Symfony\Component\DependencyInjection\Compiler\ResolveChildDefinitionsPass: Resolving inheritance for "PHPMaker2026\Project2\AppointmentReportController" (parent: .instanceof.PHPMaker2026\Project2\AppointmentReportController.0.PHPMaker2026\Project2\AppointmentReportController).
+Symfony\Component\DependencyInjection\Compiler\ResolveChildDefinitionsPass: Resolving inheritance for ".instanceof.PHPMaker2026\Project2\RefundTblController.0.PHPMaker2026\Project2\RefundTblController" (parent: .abstract.instanceof.PHPMaker2026\Project2\RefundTblController).
+Symfony\Component\DependencyInjection\Compiler\ResolveChildDefinitionsPass: Resolving inheritance for "PHPMaker2026\Project2\RefundTblController" (parent: .instanceof.PHPMaker2026\Project2\RefundTblController.0.PHPMaker2026\Project2\RefundTblController).
 Symfony\Component\DependencyInjection\Compiler\ResolveChildDefinitionsPass: Resolving inheritance for ".instanceof.PHPMaker2026\Project2\ViewAppointmentReportController.0.PHPMaker2026\Project2\ViewAppointmentReportController" (parent: .abstract.instanceof.PHPMaker2026\Project2\ViewAppointmentReportController).
 Symfony\Component\DependencyInjection\Compiler\ResolveChildDefinitionsPass: Resolving inheritance for "PHPMaker2026\Project2\ViewAppointmentReportController" (parent: .instanceof.PHPMaker2026\Project2\ViewAppointmentReportController.0.PHPMaker2026\Project2\ViewAppointmentReportController).
 Symfony\Component\DependencyInjection\Compiler\ResolveChildDefinitionsPass: Resolving inheritance for ".instanceof.PHPMaker2026\Project2\ViewDoctorReportController.0.PHPMaker2026\Project2\ViewDoctorReportController" (parent: .abstract.instanceof.PHPMaker2026\Project2\ViewDoctorReportController).
@@ -40,6 +42,8 @@ Symfony\Component\DependencyInjection\Compiler\ResolveChildDefinitionsPass: Reso
 Symfony\Component\DependencyInjection\Compiler\ResolveChildDefinitionsPass: Resolving inheritance for "PHPMaker2026\Project2\ViewPaymentReportController" (parent: .instanceof.PHPMaker2026\Project2\ViewPaymentReportController.0.PHPMaker2026\Project2\ViewPaymentReportController).
 Symfony\Component\DependencyInjection\Compiler\ResolveChildDefinitionsPass: Resolving inheritance for ".instanceof.PHPMaker2026\Project2\ViewPrescriptionReportController.0.PHPMaker2026\Project2\ViewPrescriptionReportController" (parent: .abstract.instanceof.PHPMaker2026\Project2\ViewPrescriptionReportController).
 Symfony\Component\DependencyInjection\Compiler\ResolveChildDefinitionsPass: Resolving inheritance for "PHPMaker2026\Project2\ViewPrescriptionReportController" (parent: .instanceof.PHPMaker2026\Project2\ViewPrescriptionReportController.0.PHPMaker2026\Project2\ViewPrescriptionReportController).
+Symfony\Component\DependencyInjection\Compiler\ResolveChildDefinitionsPass: Resolving inheritance for ".instanceof.PHPMaker2026\Project2\RefundTbl.0.PHPMaker2026\Project2\RefundTbl" (parent: .abstract.instanceof.PHPMaker2026\Project2\RefundTbl).
+Symfony\Component\DependencyInjection\Compiler\ResolveChildDefinitionsPass: Resolving inheritance for "PHPMaker2026\Project2\RefundTbl" (parent: .instanceof.PHPMaker2026\Project2\RefundTbl.0.PHPMaker2026\Project2\RefundTbl).
 Symfony\Component\DependencyInjection\Compiler\ResolveChildDefinitionsPass: Resolving inheritance for ".instanceof.PHPMaker2026\Project2\ViewAppointmentReport.0.PHPMaker2026\Project2\ViewAppointmentReport" (parent: .abstract.instanceof.PHPMaker2026\Project2\ViewAppointmentReport).
 Symfony\Component\DependencyInjection\Compiler\ResolveChildDefinitionsPass: Resolving inheritance for "PHPMaker2026\Project2\ViewAppointmentReport" (parent: .instanceof.PHPMaker2026\Project2\ViewAppointmentReport.0.PHPMaker2026\Project2\ViewAppointmentReport).
 Symfony\Component\DependencyInjection\Compiler\ResolveChildDefinitionsPass: Resolving inheritance for ".instanceof.PHPMaker2026\Project2\ViewDoctorReport.0.PHPMaker2026\Project2\ViewDoctorReport" (parent: .abstract.instanceof.PHPMaker2026\Project2\ViewDoctorReport).
@@ -370,7 +374,7 @@ Symfony\Component\DependencyInjection\Compiler\RemovePrivateAliasesPass: Removed
 Symfony\Component\DependencyInjection\Compiler\RemovePrivateAliasesPass: Removed service ".Psr\Log\LoggerInterface $deprecation.logger"; reason: private alias.
 Symfony\Component\DependencyInjection\Compiler\RemovePrivateAliasesPass: Removed service "Psr\Log\LoggerInterface $deprecationLogger"; reason: private alias.
 Symfony\Component\DependencyInjection\Compiler\RemovePrivateAliasesPass: Removed service "twig.loader"; reason: private alias.
-Symfony\Component\DependencyInjection\Compiler\RemovePrivateAliasesPass: Removed service ".service_locator.ajm3Lps"; reason: private alias.
+Symfony\Component\DependencyInjection\Compiler\RemovePrivateAliasesPass: Removed service ".service_locator.QTfDDOJ"; reason: private alias.
 Symfony\Component\DependencyInjection\Compiler\RemovePrivateAliasesPass: Removed service ".service_locator.E1wOT5Z"; reason: private alias.
 Symfony\Component\DependencyInjection\Compiler\RemovePrivateAliasesPass: Removed service ".service_locator.rmAA14o"; reason: private alias.
 Symfony\Component\DependencyInjection\Compiler\RemovePrivateAliasesPass: Removed service "http_client"; reason: private alias.
@@ -388,6 +392,11 @@ Symfony\Component\DependencyInjection\Compiler\RemovePrivateAliasesPass: Removed
 Symfony\Component\DependencyInjection\Compiler\RemovePrivateAliasesPass: Removed service ".service_locator.c0wzfI4"; reason: private alias.
 Symfony\Component\DependencyInjection\Compiler\RemovePrivateAliasesPass: Removed service ".service_locator.x1JwxOA"; reason: private alias.
 Symfony\Component\DependencyInjection\Compiler\RemovePrivateAliasesPass: Removed service ".service_locator.FKy7Jgu"; reason: private alias.
+Symfony\Component\DependencyInjection\Compiler\RemovePrivateAliasesPass: Removed service ".service_locator.6aaTRk2"; reason: private alias.
+Symfony\Component\DependencyInjection\Compiler\RemovePrivateAliasesPass: Removed service ".service_locator.yE20_mE"; reason: private alias.
+Symfony\Component\DependencyInjection\Compiler\RemovePrivateAliasesPass: Removed service ".service_locator.YAKvImD"; reason: private alias.
+Symfony\Component\DependencyInjection\Compiler\RemovePrivateAliasesPass: Removed service ".service_locator.LsQSZ9t"; reason: private alias.
+Symfony\Component\DependencyInjection\Compiler\RemovePrivateAliasesPass: Removed service ".service_locator.wupKH24"; reason: private alias.
 Symfony\Component\DependencyInjection\Compiler\RemovePrivateAliasesPass: Removed service ".service_locator.yHe9DfH"; reason: private alias.
 Symfony\Component\DependencyInjection\Compiler\RemovePrivateAliasesPass: Removed service ".service_locator.HsNwygH"; reason: private alias.
 Symfony\Component\DependencyInjection\Compiler\RemovePrivateAliasesPass: Removed service ".service_locator._W_eIqN"; reason: private alias.
@@ -613,6 +622,8 @@ Symfony\Component\DependencyInjection\Compiler\RemoveAbstractDefinitionsPass: Re
 Symfony\Component\DependencyInjection\Compiler\RemoveAbstractDefinitionsPass: Removed service ".abstract.instanceof.PHPMaker2026\Project2\AppController"; reason: abstract.
 Symfony\Component\DependencyInjection\Compiler\RemoveAbstractDefinitionsPass: Removed service ".instanceof.PHPMaker2026\Project2\AppointmentReportController.0.PHPMaker2026\Project2\AppointmentReportController"; reason: abstract.
 Symfony\Component\DependencyInjection\Compiler\RemoveAbstractDefinitionsPass: Removed service ".abstract.instanceof.PHPMaker2026\Project2\AppointmentReportController"; reason: abstract.
+Symfony\Component\DependencyInjection\Compiler\RemoveAbstractDefinitionsPass: Removed service ".instanceof.PHPMaker2026\Project2\RefundTblController.0.PHPMaker2026\Project2\RefundTblController"; reason: abstract.
+Symfony\Component\DependencyInjection\Compiler\RemoveAbstractDefinitionsPass: Removed service ".abstract.instanceof.PHPMaker2026\Project2\RefundTblController"; reason: abstract.
 Symfony\Component\DependencyInjection\Compiler\RemoveAbstractDefinitionsPass: Removed service ".instanceof.PHPMaker2026\Project2\ViewAppointmentReportController.0.PHPMaker2026\Project2\ViewAppointmentReportController"; reason: abstract.
 Symfony\Component\DependencyInjection\Compiler\RemoveAbstractDefinitionsPass: Removed service ".abstract.instanceof.PHPMaker2026\Project2\ViewAppointmentReportController"; reason: abstract.
 Symfony\Component\DependencyInjection\Compiler\RemoveAbstractDefinitionsPass: Removed service ".instanceof.PHPMaker2026\Project2\ViewDoctorReportController.0.PHPMaker2026\Project2\ViewDoctorReportController"; reason: abstract.
@@ -625,6 +636,8 @@ Symfony\Component\DependencyInjection\Compiler\RemoveAbstractDefinitionsPass: Re
 Symfony\Component\DependencyInjection\Compiler\RemoveAbstractDefinitionsPass: Removed service ".abstract.instanceof.PHPMaker2026\Project2\ViewPaymentReportController"; reason: abstract.
 Symfony\Component\DependencyInjection\Compiler\RemoveAbstractDefinitionsPass: Removed service ".instanceof.PHPMaker2026\Project2\ViewPrescriptionReportController.0.PHPMaker2026\Project2\ViewPrescriptionReportController"; reason: abstract.
 Symfony\Component\DependencyInjection\Compiler\RemoveAbstractDefinitionsPass: Removed service ".abstract.instanceof.PHPMaker2026\Project2\ViewPrescriptionReportController"; reason: abstract.
+Symfony\Component\DependencyInjection\Compiler\RemoveAbstractDefinitionsPass: Removed service ".instanceof.PHPMaker2026\Project2\RefundTbl.0.PHPMaker2026\Project2\RefundTbl"; reason: abstract.
+Symfony\Component\DependencyInjection\Compiler\RemoveAbstractDefinitionsPass: Removed service ".abstract.instanceof.PHPMaker2026\Project2\RefundTbl"; reason: abstract.
 Symfony\Component\DependencyInjection\Compiler\RemoveAbstractDefinitionsPass: Removed service ".instanceof.PHPMaker2026\Project2\ViewAppointmentReport.0.PHPMaker2026\Project2\ViewAppointmentReport"; reason: abstract.
 Symfony\Component\DependencyInjection\Compiler\RemoveAbstractDefinitionsPass: Removed service ".abstract.instanceof.PHPMaker2026\Project2\ViewAppointmentReport"; reason: abstract.
 Symfony\Component\DependencyInjection\Compiler\RemoveAbstractDefinitionsPass: Removed service ".instanceof.PHPMaker2026\Project2\ViewDoctorReport.0.PHPMaker2026\Project2\ViewDoctorReport"; reason: abstract.
@@ -817,7 +830,7 @@ Symfony\Component\DependencyInjection\Compiler\InlineServiceDefinitionsPass: Inl
 Symfony\Component\DependencyInjection\Compiler\InlineServiceDefinitionsPass: Inlined service "PHPMaker2026\Project2\EsmtpTransportFactoryDecorator.inner" to "PHPMaker2026\Project2\EsmtpTransportFactoryDecorator".
 Symfony\Component\DependencyInjection\Compiler\InlineServiceDefinitionsPass: Inlined service "argument_metadata_factory" to "argument_resolver".
 Symfony\Component\DependencyInjection\Compiler\InlineServiceDefinitionsPass: Inlined service ".service_locator.gxVyuXk" to "argument_resolver".
-Symfony\Component\DependencyInjection\Compiler\InlineServiceDefinitionsPass: Inlined service ".service_locator.q6L9pLP" to "argument_resolver.service".
+Symfony\Component\DependencyInjection\Compiler\InlineServiceDefinitionsPass: Inlined service ".service_locator.tJzf3P0" to "argument_resolver.service".
 Symfony\Component\DependencyInjection\Compiler\InlineServiceDefinitionsPass: Inlined service "error_handler.error_renderer.serializer" to "error_controller".
 Symfony\Component\DependencyInjection\Compiler\InlineServiceDefinitionsPass: Inlined service "controller_resolver" to "http_kernel".
 Symfony\Component\DependencyInjection\Compiler\InlineServiceDefinitionsPass: Inlined service "argument_resolver" to "http_kernel".
@@ -945,7 +958,7 @@ Symfony\Component\DependencyInjection\Compiler\InlineServiceDefinitionsPass: Inl
 Symfony\Component\DependencyInjection\Compiler\InlineServiceDefinitionsPass: Inlined service "doctrine.orm.quote_strategy.default" to "doctrine.orm.DB_configuration".
 Symfony\Component\DependencyInjection\Compiler\InlineServiceDefinitionsPass: Inlined service "doctrine.orm.typed_field_mapper.default" to "doctrine.orm.DB_configuration".
 Symfony\Component\DependencyInjection\Compiler\InlineServiceDefinitionsPass: Inlined service "doctrine.orm.container_repository_factory" to "doctrine.orm.DB_configuration".
-Symfony\Component\DependencyInjection\Compiler\InlineServiceDefinitionsPass: Inlined service ".service_locator.dEyM8Lw" to "doctrine.orm.DB_entity_listener_resolver".
+Symfony\Component\DependencyInjection\Compiler\InlineServiceDefinitionsPass: Inlined service ".service_locator.uzJKa88" to "doctrine.orm.DB_entity_listener_resolver".
 Symfony\Component\DependencyInjection\Compiler\InlineServiceDefinitionsPass: Inlined service "monolog.processor.psr_log_message" to "monolog.handler.file".
 Symfony\Component\DependencyInjection\Compiler\InlineServiceDefinitionsPass: Inlined service "lexik_jwt_authentication.payload_enrichment" to "lexik_jwt_authentication.jwt_manager".
 Symfony\Component\DependencyInjection\Compiler\InlineServiceDefinitionsPass: Inlined service "nelmio_cors.options_resolver" to "nelmio_cors.cors_listener".
@@ -988,6 +1001,11 @@ Symfony\Component\DependencyInjection\Compiler\InlineServiceDefinitionsPass: Inl
 Symfony\Component\DependencyInjection\Compiler\InlineServiceDefinitionsPass: Inlined service ".service_locator.VXDTPcr" to ".service_locator.VXDTPcr.kernel::setHttpContext()".
 Symfony\Component\DependencyInjection\Compiler\InlineServiceDefinitionsPass: Inlined service ".service_locator.wMz3Tov" to ".service_locator.wMz3Tov.PHPMaker2026\Project2\ApiController::processPage()".
 Symfony\Component\DependencyInjection\Compiler\InlineServiceDefinitionsPass: Inlined service ".service_locator.XmLm93f" to ".service_locator.XmLm93f.PHPMaker2026\Project2\AppointmentReportController::__invoke()".
+Symfony\Component\DependencyInjection\Compiler\InlineServiceDefinitionsPass: Inlined service ".service_locator.ywGGMP8" to ".service_locator.ywGGMP8.PHPMaker2026\Project2\RefundTblController::list()".
+Symfony\Component\DependencyInjection\Compiler\InlineServiceDefinitionsPass: Inlined service ".service_locator.n.d1zIo" to ".service_locator.n.d1zIo.PHPMaker2026\Project2\RefundTblController::add()".
+Symfony\Component\DependencyInjection\Compiler\InlineServiceDefinitionsPass: Inlined service ".service_locator.9AI0qsY" to ".service_locator.9AI0qsY.PHPMaker2026\Project2\RefundTblController::view()".
+Symfony\Component\DependencyInjection\Compiler\InlineServiceDefinitionsPass: Inlined service ".service_locator.3LL3WB0" to ".service_locator.3LL3WB0.PHPMaker2026\Project2\RefundTblController::edit()".
+Symfony\Component\DependencyInjection\Compiler\InlineServiceDefinitionsPass: Inlined service ".service_locator.vVNT3h6" to ".service_locator.vVNT3h6.PHPMaker2026\Project2\RefundTblController::delete()".
 Symfony\Component\DependencyInjection\Compiler\InlineServiceDefinitionsPass: Inlined service ".service_locator.EfXVwpA" to ".service_locator.EfXVwpA.PHPMaker2026\Project2\ViewAppointmentReportController::list()".
 Symfony\Component\DependencyInjection\Compiler\InlineServiceDefinitionsPass: Inlined service ".service_locator.8Sc5o65" to ".service_locator.8Sc5o65.PHPMaker2026\Project2\ViewAppointmentReportController::search()".
 Symfony\Component\DependencyInjection\Compiler\InlineServiceDefinitionsPass: Inlined service ".service_locator.gQniC2p" to ".service_locator.gQniC2p.PHPMaker2026\Project2\ViewDoctorReportController::list()".

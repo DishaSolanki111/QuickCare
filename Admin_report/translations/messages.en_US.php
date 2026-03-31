@@ -2562,6 +2562,11 @@
                     'value' => 'receptionist notifications',
                 ],
             ],
+            [
+                'menutext' => [
+                    'value' => 'refund tbl',
+                ],
+            ],
         ],
         'table' => [
             'appointment_reminder_tbl' => [
@@ -3258,6 +3263,12 @@
                         ],
                         'fldtagcaption2' => [
                             'value' => 'FAILED',
+                        ],
+                        'fldtagvalue3' => [
+                            'value' => 'REFUNDED',
+                        ],
+                        'fldtagcaption3' => [
+                            'value' => 'REFUNDED',
                         ],
                     ],
                     'transaction_id' => [
@@ -3996,6 +4007,12 @@
                         'fldtagcaption2' => [
                             'value' => 'FAILED',
                         ],
+                        'fldtagvalue3' => [
+                            'value' => 'REFUNDED',
+                        ],
+                        'fldtagcaption3' => [
+                            'value' => 'REFUNDED',
+                        ],
                     ],
                     'payment_date' => [
                         'fldcaption' => [
@@ -4222,6 +4239,81 @@
                     'type' => [
                         'fldcaption' => [
                             'value' => 'TYPE',
+                        ],
+                    ],
+                    'created_at' => [
+                        'fldcaption' => [
+                            'value' => 'CREATED AT',
+                        ],
+                    ],
+                ],
+            ],
+            'refund_tbl' => [
+                'tblcaption' => [
+                    'value' => 'refund tbl',
+                ],
+                'field' => [
+                    'refund_id' => [
+                        'fldcaption' => [
+                            'value' => 'REFUND ID',
+                        ],
+                    ],
+                    'payment_id' => [
+                        'fldcaption' => [
+                            'value' => 'PAYMENT ID',
+                        ],
+                    ],
+                    'appointment_id' => [
+                        'fldcaption' => [
+                            'value' => 'APPOINTMENT ID',
+                        ],
+                    ],
+                    'patient_id' => [
+                        'fldcaption' => [
+                            'value' => 'PATIENT ID',
+                        ],
+                    ],
+                    'refund_amount' => [
+                        'fldcaption' => [
+                            'value' => 'REFUND AMOUNT',
+                        ],
+                    ],
+                    'refund_date' => [
+                        'fldcaption' => [
+                            'value' => 'REFUND DATE',
+                        ],
+                    ],
+                    'refund_status' => [
+                        'fldcaption' => [
+                            'value' => 'REFUND STATUS',
+                        ],
+                        'fldtagvalue1' => [
+                            'value' => 'PENDING',
+                        ],
+                        'fldtagcaption1' => [
+                            'value' => 'PENDING',
+                        ],
+                        'fldtagvalue2' => [
+                            'value' => 'PROCESSED',
+                        ],
+                        'fldtagcaption2' => [
+                            'value' => 'PROCESSED',
+                        ],
+                        'fldtagvalue3' => [
+                            'value' => 'REJECTED',
+                        ],
+                        'fldtagcaption3' => [
+                            'value' => 'REJECTED',
+                        ],
+                    ],
+                    'refund_reason' => [
+                        'fldcaption' => [
+                            'value' => 'REFUND REASON',
+                        ],
+                    ],
+                    'refund_txn_id' => [
+                        'fldcaption' => [
+                            'value' => 'REFUND TXN ID',
                         ],
                     ],
                     'created_at' => [

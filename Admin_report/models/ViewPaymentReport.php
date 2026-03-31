@@ -196,7 +196,7 @@ class ViewPaymentReport extends DbTable implements LookupTableInterface
         // Payment_Status
         $this->Payment_Status = $this->Fields['Payment_Status'];
         $this->Payment_Status->Lookup = new Lookup($this->Payment_Status, 'view_payment_report', false, '', ["","","",""], '', "", [], [], [], [], [], [], false, '', '', "");
-        $this->Payment_Status->OptionCount = 2;
+        $this->Payment_Status->OptionCount = 3;
 
         // PAYMENT_DATE
         $this->PAYMENT_DATE = $this->Fields['PAYMENT_DATE'];
@@ -232,7 +232,7 @@ class ViewPaymentReport extends DbTable implements LookupTableInterface
             'Chart1',
             'Month_Name',
             'AMOUNT',
-            1004,
+            1002,
             '',
             0,
             'SUM',
@@ -253,7 +253,7 @@ class ViewPaymentReport extends DbTable implements LookupTableInterface
         $this->Chart1->SeriesDateType = "";
         $this->Chart1->ID = "view_payment_report_Chart1"; // Chart ID
         $this->Chart1->setParameters([
-            ["type", "1004"],
+            ["type", "1002"],
             ["seriestype", "0"]
         ]); // Chart type / Chart series type
         $this->Chart1->setParameters([
@@ -553,7 +553,7 @@ class ViewPaymentReport extends DbTable implements LookupTableInterface
 
                 // 'UseAdvancedSearch' => true,
                 'SearchOperators' => ["=", "<>"],
-                'OptionCount' => 2,
+                'OptionCount' => 3,
             ],
             'PAYMENT_DATE' => [
                 'FieldVar' => 'x_PAYMENT_DATE', // Field variable name

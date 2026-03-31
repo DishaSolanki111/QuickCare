@@ -229,6 +229,11 @@
         <parameter type="string">-2</parameter>
         <parameter type="string">0</parameter>
       </parameter>
+      <parameter type="collection">
+        <parameter>{A46002E4-B4F6-47F2-B55F-A3278D4B1DC4}refund_tbl</parameter>
+        <parameter type="string">-2</parameter>
+        <parameter type="string">0</parameter>
+      </parameter>
     </parameter>
     <parameter key="user.level.tables" type="collection">
       <parameter type="collection">
@@ -395,6 +400,14 @@
         <parameter>receptionist_notifications</parameter>
         <parameter>receptionist_notifications</parameter>
         <parameter>receptionist notifications</parameter>
+        <parameter>true</parameter>
+        <parameter>{A46002E4-B4F6-47F2-B55F-A3278D4B1DC4}</parameter>
+        <parameter/>
+      </parameter>
+      <parameter type="collection">
+        <parameter>refund_tbl</parameter>
+        <parameter>refund_tbl</parameter>
+        <parameter>refund tbl</parameter>
         <parameter>true</parameter>
         <parameter>{A46002E4-B4F6-47F2-B55F-A3278D4B1DC4}</parameter>
         <parameter/>
@@ -812,6 +825,13 @@
       <parameter key="AppointmentReport">AppointmentReport</parameter>
       <parameter key="Appointment_report">AppointmentReport</parameter>
       <parameter key="AppointmentReportSummary">AppointmentReportSummary</parameter>
+      <parameter key="RefundTbl">RefundTbl</parameter>
+      <parameter key="refund_tbl">RefundTbl</parameter>
+      <parameter key="RefundTblAdd">RefundTblAdd</parameter>
+      <parameter key="RefundTblDelete">RefundTblDelete</parameter>
+      <parameter key="RefundTblEdit">RefundTblEdit</parameter>
+      <parameter key="RefundTblList">RefundTblList</parameter>
+      <parameter key="RefundTblView">RefundTblView</parameter>
       <parameter key="ViewAppointmentReport">ViewAppointmentReport</parameter>
       <parameter key="view_appointment_report">ViewAppointmentReport</parameter>
       <parameter key="ViewAppointmentReportList">ViewAppointmentReportList</parameter>
@@ -1382,6 +1402,22 @@
       <argument type="service" id="http_kernel"/>
       <argument type="service" id="monolog.logger"/>
     </service>
+    <service id="PHPMaker2026\Project2\RefundTblController" class="PHPMaker2026\Project2\RefundTblController" public="true" autowire="true" autoconfigure="true">
+      <tag name="controller.service_arguments"/>
+      <tag name="routing.controller"/>
+      <argument type="service" id="kernel"/>
+      <argument type="service" id="PHPMaker2026\Project2\Language"/>
+      <argument type="service" id="PHPMaker2026\Project2\AdvancedSecurity"/>
+      <argument type="service" id="request_stack"/>
+      <argument type="service" id="PHPMaker2026\Project2\PhpRenderer"/>
+      <argument type="service" id="twig"/>
+      <argument type="service" id="PHPMaker2026\Project2\RuntimeLinkProvider"/>
+      <argument type="service" id="PHPMaker2026\Project2\AppServiceLocator"/>
+      <argument type="service" id="security.helper"/>
+      <argument type="service" id="parameter_bag"/>
+      <argument type="service" id="http_kernel"/>
+      <argument type="service" id="monolog.logger"/>
+    </service>
     <service id="PHPMaker2026\Project2\ViewAppointmentReportController" class="PHPMaker2026\Project2\ViewAppointmentReportController" public="true" autowire="true" autoconfigure="true">
       <tag name="controller.service_arguments"/>
       <tag name="routing.controller"/>
@@ -1497,6 +1533,65 @@
       <argument type="service" id="event_dispatcher"/>
     </service>
     <service id="PHPMaker2026\Project2\AppointmentReportSummary" class="PHPMaker2026\Project2\AppointmentReportSummary" public="true" autowire="true" autoconfigure="true">
+      <tag name="app.model"/>
+      <argument type="service" id="PHPMaker2026\Project2\Language"/>
+      <argument type="service" id="PHPMaker2026\Project2\AdvancedSecurity"/>
+      <argument type="service" id="ParagonIE\CSPBuilder\CSPBuilder"/>
+      <argument type="service" id="cache.app"/>
+      <argument type="service" id="PHPMaker2026\Project2\FieldFactory"/>
+      <argument type="service" id="event_dispatcher"/>
+    </service>
+    <service id="PHPMaker2026\Project2\RefundTbl" class="PHPMaker2026\Project2\RefundTbl" public="true" autowire="true" autoconfigure="true">
+      <tag name="app.model"/>
+      <tag name="doctrine.orm.entity_listener" event="postPersist" method="clearCache" lazy="" entity_manager="" entity="PHPMaker2026\Project2\Db\Entity\RefundTbl" priority=""/>
+      <tag name="doctrine.orm.entity_listener" event="postUpdate" method="clearCache" lazy="" entity_manager="" entity="PHPMaker2026\Project2\Db\Entity\RefundTbl" priority=""/>
+      <tag name="doctrine.orm.entity_listener" event="postRemove" method="clearCache" lazy="" entity_manager="" entity="PHPMaker2026\Project2\Db\Entity\RefundTbl" priority=""/>
+      <tag name="doctrine.orm.entity_listener" event="postPersist" method="updateLastInsertId" lazy="" entity_manager="" entity="PHPMaker2026\Project2\Db\Entity\RefundTbl" priority=""/>
+      <tag name="doctrine.orm.entity_listener" event="preUpdate" method="preUpdate" lazy="" entity_manager="" entity="PHPMaker2026\Project2\Db\Entity\RefundTbl" priority=""/>
+      <argument type="service" id="PHPMaker2026\Project2\Language"/>
+      <argument type="service" id="PHPMaker2026\Project2\AdvancedSecurity"/>
+      <argument type="service" id="ParagonIE\CSPBuilder\CSPBuilder"/>
+      <argument type="service" id="cache.app"/>
+      <argument type="service" id="PHPMaker2026\Project2\FieldFactory"/>
+      <argument type="service" id="event_dispatcher"/>
+    </service>
+    <service id="PHPMaker2026\Project2\RefundTblAdd" class="PHPMaker2026\Project2\RefundTblAdd" public="true" autowire="true" autoconfigure="true">
+      <tag name="app.model"/>
+      <argument type="service" id="PHPMaker2026\Project2\Language"/>
+      <argument type="service" id="PHPMaker2026\Project2\AdvancedSecurity"/>
+      <argument type="service" id="ParagonIE\CSPBuilder\CSPBuilder"/>
+      <argument type="service" id="cache.app"/>
+      <argument type="service" id="PHPMaker2026\Project2\FieldFactory"/>
+      <argument type="service" id="event_dispatcher"/>
+    </service>
+    <service id="PHPMaker2026\Project2\RefundTblDelete" class="PHPMaker2026\Project2\RefundTblDelete" public="true" autowire="true" autoconfigure="true">
+      <tag name="app.model"/>
+      <argument type="service" id="PHPMaker2026\Project2\Language"/>
+      <argument type="service" id="PHPMaker2026\Project2\AdvancedSecurity"/>
+      <argument type="service" id="ParagonIE\CSPBuilder\CSPBuilder"/>
+      <argument type="service" id="cache.app"/>
+      <argument type="service" id="PHPMaker2026\Project2\FieldFactory"/>
+      <argument type="service" id="event_dispatcher"/>
+    </service>
+    <service id="PHPMaker2026\Project2\RefundTblEdit" class="PHPMaker2026\Project2\RefundTblEdit" public="true" autowire="true" autoconfigure="true">
+      <tag name="app.model"/>
+      <argument type="service" id="PHPMaker2026\Project2\Language"/>
+      <argument type="service" id="PHPMaker2026\Project2\AdvancedSecurity"/>
+      <argument type="service" id="ParagonIE\CSPBuilder\CSPBuilder"/>
+      <argument type="service" id="cache.app"/>
+      <argument type="service" id="PHPMaker2026\Project2\FieldFactory"/>
+      <argument type="service" id="event_dispatcher"/>
+    </service>
+    <service id="PHPMaker2026\Project2\RefundTblList" class="PHPMaker2026\Project2\RefundTblList" public="true" autowire="true" autoconfigure="true">
+      <tag name="app.model"/>
+      <argument type="service" id="PHPMaker2026\Project2\Language"/>
+      <argument type="service" id="PHPMaker2026\Project2\AdvancedSecurity"/>
+      <argument type="service" id="ParagonIE\CSPBuilder\CSPBuilder"/>
+      <argument type="service" id="cache.app"/>
+      <argument type="service" id="PHPMaker2026\Project2\FieldFactory"/>
+      <argument type="service" id="event_dispatcher"/>
+    </service>
+    <service id="PHPMaker2026\Project2\RefundTblView" class="PHPMaker2026\Project2\RefundTblView" public="true" autowire="true" autoconfigure="true">
       <tag name="app.model"/>
       <argument type="service" id="PHPMaker2026\Project2\Language"/>
       <argument type="service" id="PHPMaker2026\Project2\AdvancedSecurity"/>
@@ -1876,6 +1971,19 @@
         <argument key="PHPMaker2026\Project2\AppointmentReportService" type="service_closure" id="PHPMaker2026\Project2\AppointmentReportService"/>
         <argument key="PHPMaker2026\Project2\AppointmentReportSummary" type="service_closure" id="PHPMaker2026\Project2\AppointmentReportSummary"/>
         <argument key="AppointmentReportSummary" type="service_closure" id="PHPMaker2026\Project2\AppointmentReportSummary"/>
+        <argument key="PHPMaker2026\Project2\RefundTbl" type="service_closure" id="PHPMaker2026\Project2\RefundTbl"/>
+        <argument key="RefundTbl" type="service_closure" id="PHPMaker2026\Project2\RefundTbl"/>
+        <argument key="refund_tbl" type="service_closure" id="PHPMaker2026\Project2\RefundTbl"/>
+        <argument key="PHPMaker2026\Project2\RefundTblAdd" type="service_closure" id="PHPMaker2026\Project2\RefundTblAdd"/>
+        <argument key="RefundTblAdd" type="service_closure" id="PHPMaker2026\Project2\RefundTblAdd"/>
+        <argument key="PHPMaker2026\Project2\RefundTblDelete" type="service_closure" id="PHPMaker2026\Project2\RefundTblDelete"/>
+        <argument key="RefundTblDelete" type="service_closure" id="PHPMaker2026\Project2\RefundTblDelete"/>
+        <argument key="PHPMaker2026\Project2\RefundTblEdit" type="service_closure" id="PHPMaker2026\Project2\RefundTblEdit"/>
+        <argument key="RefundTblEdit" type="service_closure" id="PHPMaker2026\Project2\RefundTblEdit"/>
+        <argument key="PHPMaker2026\Project2\RefundTblList" type="service_closure" id="PHPMaker2026\Project2\RefundTblList"/>
+        <argument key="RefundTblList" type="service_closure" id="PHPMaker2026\Project2\RefundTblList"/>
+        <argument key="PHPMaker2026\Project2\RefundTblView" type="service_closure" id="PHPMaker2026\Project2\RefundTblView"/>
+        <argument key="RefundTblView" type="service_closure" id="PHPMaker2026\Project2\RefundTblView"/>
         <argument key="PHPMaker2026\Project2\ViewAppointmentReport" type="service_closure" id="PHPMaker2026\Project2\ViewAppointmentReport"/>
         <argument key="ViewAppointmentReport" type="service_closure" id="PHPMaker2026\Project2\ViewAppointmentReport"/>
         <argument key="view_appointment_report" type="service_closure" id="PHPMaker2026\Project2\ViewAppointmentReport"/>
@@ -1950,6 +2058,7 @@
           <argument>PHPMaker2026\Project2\ApiController</argument>
           <argument>PHPMaker2026\Project2\AppController</argument>
           <argument>PHPMaker2026\Project2\AppointmentReportController</argument>
+          <argument>PHPMaker2026\Project2\RefundTblController</argument>
           <argument>PHPMaker2026\Project2\ViewAppointmentReportController</argument>
           <argument>PHPMaker2026\Project2\ViewDoctorReportController</argument>
           <argument>PHPMaker2026\Project2\ViewFeedbackReportController</argument>
@@ -2012,7 +2121,7 @@
     </service>
     <service id="argument_resolver.service" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\ServiceValueResolver">
       <tag name="Symfony\Component\HttpKernel\Controller\ArgumentResolver\ServiceValueResolver" priority="-50">controller.argument_value_resolver</tag>
-      <argument type="service" id=".service_locator.q6L9pLP"/>
+      <argument type="service" id=".service_locator.tJzf3P0"/>
     </service>
     <service id="argument_resolver.default" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\DefaultValueResolver">
       <tag name="Symfony\Component\HttpKernel\Controller\ArgumentResolver\DefaultValueResolver" priority="-100">controller.argument_value_resolver</tag>
@@ -4830,6 +4939,7 @@
         <argument>PHPMaker2026\Project2\ApiController</argument>
         <argument>PHPMaker2026\Project2\AppController</argument>
         <argument>PHPMaker2026\Project2\AppointmentReportController</argument>
+        <argument>PHPMaker2026\Project2\RefundTblController</argument>
         <argument>PHPMaker2026\Project2\ViewAppointmentReportController</argument>
         <argument>PHPMaker2026\Project2\ViewDoctorReportController</argument>
         <argument>PHPMaker2026\Project2\ViewFeedbackReportController</argument>
@@ -7370,7 +7480,27 @@
       <argument>true</argument>
     </service>
     <service id="doctrine.orm.DB_entity_listener_resolver" class="Doctrine\Bundle\DoctrineBundle\Mapping\ContainerEntityListenerResolver" public="true">
-      <argument type="service" id=".service_locator.dEyM8Lw"/>
+      <argument type="service" id=".service_locator.uzJKa88"/>
+      <call method="registerService">
+        <argument>PHPMaker2026\Project2\RefundTbl</argument>
+        <argument>PHPMaker2026\Project2\RefundTbl</argument>
+      </call>
+      <call method="registerService">
+        <argument>PHPMaker2026\Project2\RefundTbl</argument>
+        <argument>PHPMaker2026\Project2\RefundTbl</argument>
+      </call>
+      <call method="registerService">
+        <argument>PHPMaker2026\Project2\RefundTbl</argument>
+        <argument>PHPMaker2026\Project2\RefundTbl</argument>
+      </call>
+      <call method="registerService">
+        <argument>PHPMaker2026\Project2\RefundTbl</argument>
+        <argument>PHPMaker2026\Project2\RefundTbl</argument>
+      </call>
+      <call method="registerService">
+        <argument>PHPMaker2026\Project2\RefundTbl</argument>
+        <argument>PHPMaker2026\Project2\RefundTbl</argument>
+      </call>
       <call method="registerService">
         <argument>PHPMaker2026\Project2\ViewAppointmentReport</argument>
         <argument>PHPMaker2026\Project2\ViewAppointmentReport</argument>
@@ -7494,6 +7624,36 @@
     </service>
     <service id="doctrine.orm.DB_listeners.attach_entity_listeners" class="Doctrine\ORM\Tools\AttachEntityListenersListener">
       <tag name="doctrine.event_listener" event="loadClassMetadata" connection="DB"/>
+      <call method="addEntityListener">
+        <argument>PHPMaker2026\Project2\Db\Entity\RefundTbl</argument>
+        <argument>PHPMaker2026\Project2\RefundTbl</argument>
+        <argument>postPersist</argument>
+        <argument>clearCache</argument>
+      </call>
+      <call method="addEntityListener">
+        <argument>PHPMaker2026\Project2\Db\Entity\RefundTbl</argument>
+        <argument>PHPMaker2026\Project2\RefundTbl</argument>
+        <argument>postUpdate</argument>
+        <argument>clearCache</argument>
+      </call>
+      <call method="addEntityListener">
+        <argument>PHPMaker2026\Project2\Db\Entity\RefundTbl</argument>
+        <argument>PHPMaker2026\Project2\RefundTbl</argument>
+        <argument>postRemove</argument>
+        <argument>clearCache</argument>
+      </call>
+      <call method="addEntityListener">
+        <argument>PHPMaker2026\Project2\Db\Entity\RefundTbl</argument>
+        <argument>PHPMaker2026\Project2\RefundTbl</argument>
+        <argument>postPersist</argument>
+        <argument>updateLastInsertId</argument>
+      </call>
+      <call method="addEntityListener">
+        <argument>PHPMaker2026\Project2\Db\Entity\RefundTbl</argument>
+        <argument>PHPMaker2026\Project2\RefundTbl</argument>
+        <argument>preUpdate</argument>
+        <argument>preUpdate</argument>
+      </call>
       <call method="addEntityListener">
         <argument>PHPMaker2026\Project2\Db\Entity\ViewAppointmentReport</argument>
         <argument>PHPMaker2026\Project2\ViewAppointmentReport</argument>
@@ -8468,6 +8628,8 @@
     <service id=".abstract.instanceof.PHPMaker2026\Project2\AppController" class="PHPMaker2026\Project2\AppController" public="true" autowire="true" autoconfigure="true" abstract="true"/>
     <service id=".instanceof.PHPMaker2026\Project2\AppointmentReportController.0.PHPMaker2026\Project2\AppointmentReportController" class="PHPMaker2026\Project2\AppointmentReportController" public="true" autowire="true" abstract="true"/>
     <service id=".abstract.instanceof.PHPMaker2026\Project2\AppointmentReportController" class="PHPMaker2026\Project2\AppointmentReportController" public="true" autowire="true" autoconfigure="true" abstract="true"/>
+    <service id=".instanceof.PHPMaker2026\Project2\RefundTblController.0.PHPMaker2026\Project2\RefundTblController" class="PHPMaker2026\Project2\RefundTblController" public="true" autowire="true" abstract="true"/>
+    <service id=".abstract.instanceof.PHPMaker2026\Project2\RefundTblController" class="PHPMaker2026\Project2\RefundTblController" public="true" autowire="true" autoconfigure="true" abstract="true"/>
     <service id=".instanceof.PHPMaker2026\Project2\ViewAppointmentReportController.0.PHPMaker2026\Project2\ViewAppointmentReportController" class="PHPMaker2026\Project2\ViewAppointmentReportController" public="true" autowire="true" abstract="true"/>
     <service id=".abstract.instanceof.PHPMaker2026\Project2\ViewAppointmentReportController" class="PHPMaker2026\Project2\ViewAppointmentReportController" public="true" autowire="true" autoconfigure="true" abstract="true"/>
     <service id=".instanceof.PHPMaker2026\Project2\ViewDoctorReportController.0.PHPMaker2026\Project2\ViewDoctorReportController" class="PHPMaker2026\Project2\ViewDoctorReportController" public="true" autowire="true" abstract="true"/>
@@ -8480,6 +8642,8 @@
     <service id=".abstract.instanceof.PHPMaker2026\Project2\ViewPaymentReportController" class="PHPMaker2026\Project2\ViewPaymentReportController" public="true" autowire="true" autoconfigure="true" abstract="true"/>
     <service id=".instanceof.PHPMaker2026\Project2\ViewPrescriptionReportController.0.PHPMaker2026\Project2\ViewPrescriptionReportController" class="PHPMaker2026\Project2\ViewPrescriptionReportController" public="true" autowire="true" abstract="true"/>
     <service id=".abstract.instanceof.PHPMaker2026\Project2\ViewPrescriptionReportController" class="PHPMaker2026\Project2\ViewPrescriptionReportController" public="true" autowire="true" autoconfigure="true" abstract="true"/>
+    <service id=".instanceof.PHPMaker2026\Project2\RefundTbl.0.PHPMaker2026\Project2\RefundTbl" class="PHPMaker2026\Project2\RefundTbl" public="true" autowire="true" abstract="true"/>
+    <service id=".abstract.instanceof.PHPMaker2026\Project2\RefundTbl" class="PHPMaker2026\Project2\RefundTbl" public="true" autowire="true" autoconfigure="true" abstract="true"/>
     <service id=".instanceof.PHPMaker2026\Project2\ViewAppointmentReport.0.PHPMaker2026\Project2\ViewAppointmentReport" class="PHPMaker2026\Project2\ViewAppointmentReport" public="true" autowire="true" abstract="true"/>
     <service id=".abstract.instanceof.PHPMaker2026\Project2\ViewAppointmentReport" class="PHPMaker2026\Project2\ViewAppointmentReport" public="true" autowire="true" autoconfigure="true" abstract="true"/>
     <service id=".instanceof.PHPMaker2026\Project2\ViewDoctorReport.0.PHPMaker2026\Project2\ViewDoctorReport" class="PHPMaker2026\Project2\ViewDoctorReport" public="true" autowire="true" abstract="true"/>
@@ -8647,6 +8811,66 @@
       <argument type="service" id="service_container"/>
       <factory service=".service_locator.XmLm93f" method="withContext"/>
     </service>
+    <service id=".service_locator.ywGGMP8" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator"/>
+      <argument type="collection">
+        <argument key="page" type="service_closure" id="PHPMaker2026\Project2\RefundTblList"/>
+      </argument>
+    </service>
+    <service id=".service_locator.ywGGMP8.PHPMaker2026\Project2\RefundTblController::list()" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator_context" id="PHPMaker2026\Project2\RefundTblController::list()"/>
+      <argument>PHPMaker2026\Project2\RefundTblController::list()</argument>
+      <argument type="service" id="service_container"/>
+      <factory service=".service_locator.ywGGMP8" method="withContext"/>
+    </service>
+    <service id=".service_locator.n.d1zIo" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator"/>
+      <argument type="collection">
+        <argument key="page" type="service_closure" id="PHPMaker2026\Project2\RefundTblAdd"/>
+      </argument>
+    </service>
+    <service id=".service_locator.n.d1zIo.PHPMaker2026\Project2\RefundTblController::add()" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator_context" id="PHPMaker2026\Project2\RefundTblController::add()"/>
+      <argument>PHPMaker2026\Project2\RefundTblController::add()</argument>
+      <argument type="service" id="service_container"/>
+      <factory service=".service_locator.n.d1zIo" method="withContext"/>
+    </service>
+    <service id=".service_locator.9AI0qsY" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator"/>
+      <argument type="collection">
+        <argument key="page" type="service_closure" id="PHPMaker2026\Project2\RefundTblView"/>
+      </argument>
+    </service>
+    <service id=".service_locator.9AI0qsY.PHPMaker2026\Project2\RefundTblController::view()" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator_context" id="PHPMaker2026\Project2\RefundTblController::view()"/>
+      <argument>PHPMaker2026\Project2\RefundTblController::view()</argument>
+      <argument type="service" id="service_container"/>
+      <factory service=".service_locator.9AI0qsY" method="withContext"/>
+    </service>
+    <service id=".service_locator.3LL3WB0" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator"/>
+      <argument type="collection">
+        <argument key="page" type="service_closure" id="PHPMaker2026\Project2\RefundTblEdit"/>
+      </argument>
+    </service>
+    <service id=".service_locator.3LL3WB0.PHPMaker2026\Project2\RefundTblController::edit()" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator_context" id="PHPMaker2026\Project2\RefundTblController::edit()"/>
+      <argument>PHPMaker2026\Project2\RefundTblController::edit()</argument>
+      <argument type="service" id="service_container"/>
+      <factory service=".service_locator.3LL3WB0" method="withContext"/>
+    </service>
+    <service id=".service_locator.vVNT3h6" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator"/>
+      <argument type="collection">
+        <argument key="page" type="service_closure" id="PHPMaker2026\Project2\RefundTblDelete"/>
+      </argument>
+    </service>
+    <service id=".service_locator.vVNT3h6.PHPMaker2026\Project2\RefundTblController::delete()" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator_context" id="PHPMaker2026\Project2\RefundTblController::delete()"/>
+      <argument>PHPMaker2026\Project2\RefundTblController::delete()</argument>
+      <argument type="service" id="service_container"/>
+      <factory service=".service_locator.vVNT3h6" method="withContext"/>
+    </service>
     <service id=".service_locator.EfXVwpA" class="Symfony\Component\DependencyInjection\ServiceLocator">
       <tag name="container.service_locator"/>
       <argument type="collection">
@@ -8767,7 +8991,7 @@
       <argument type="service" id="service_container"/>
       <factory service=".service_locator.JoDynSJ" method="withContext"/>
     </service>
-    <service id=".service_locator.q6L9pLP" class="Symfony\Component\DependencyInjection\ServiceLocator">
+    <service id=".service_locator.tJzf3P0" class="Symfony\Component\DependencyInjection\ServiceLocator">
       <tag name="container.service_locator"/>
       <argument type="collection">
         <argument key="kernel::setHttpContext" type="service_closure" id=".service_locator.VXDTPcr.kernel::setHttpContext()"/>
@@ -8778,6 +9002,11 @@
         <argument key="PHPMaker2026\Project2\Kernel::loadRoutes" type="service_closure" id=".service_locator.1vYpZ1B.kernel::loadRoutes()"/>
         <argument key="PHPMaker2026\Project2\ApiController::processPage" type="service_closure" id=".service_locator.wMz3Tov.PHPMaker2026\Project2\ApiController::processPage()"/>
         <argument key="PHPMaker2026\Project2\AppointmentReportController::__invoke" type="service_closure" id=".service_locator.XmLm93f.PHPMaker2026\Project2\AppointmentReportController::__invoke()"/>
+        <argument key="PHPMaker2026\Project2\RefundTblController::list" type="service_closure" id=".service_locator.ywGGMP8.PHPMaker2026\Project2\RefundTblController::list()"/>
+        <argument key="PHPMaker2026\Project2\RefundTblController::add" type="service_closure" id=".service_locator.n.d1zIo.PHPMaker2026\Project2\RefundTblController::add()"/>
+        <argument key="PHPMaker2026\Project2\RefundTblController::view" type="service_closure" id=".service_locator.9AI0qsY.PHPMaker2026\Project2\RefundTblController::view()"/>
+        <argument key="PHPMaker2026\Project2\RefundTblController::edit" type="service_closure" id=".service_locator.3LL3WB0.PHPMaker2026\Project2\RefundTblController::edit()"/>
+        <argument key="PHPMaker2026\Project2\RefundTblController::delete" type="service_closure" id=".service_locator.vVNT3h6.PHPMaker2026\Project2\RefundTblController::delete()"/>
         <argument key="PHPMaker2026\Project2\ViewAppointmentReportController::list" type="service_closure" id=".service_locator.EfXVwpA.PHPMaker2026\Project2\ViewAppointmentReportController::list()"/>
         <argument key="PHPMaker2026\Project2\ViewAppointmentReportController::search" type="service_closure" id=".service_locator.8Sc5o65.PHPMaker2026\Project2\ViewAppointmentReportController::search()"/>
         <argument key="PHPMaker2026\Project2\ViewDoctorReportController::list" type="service_closure" id=".service_locator.gQniC2p.PHPMaker2026\Project2\ViewDoctorReportController::list()"/>
@@ -8794,6 +9023,11 @@
         <argument key="PHPMaker2026\Project2\ApiController:processPage" type="service_closure" id=".service_locator.wMz3Tov.PHPMaker2026\Project2\ApiController::processPage()"/>
         <argument key="PHPMaker2026\Project2\AppointmentReportController:__invoke" type="service_closure" id=".service_locator.XmLm93f.PHPMaker2026\Project2\AppointmentReportController::__invoke()"/>
         <argument key="PHPMaker2026\Project2\AppointmentReportController" type="service_closure" id=".service_locator.XmLm93f.PHPMaker2026\Project2\AppointmentReportController::__invoke()"/>
+        <argument key="PHPMaker2026\Project2\RefundTblController:list" type="service_closure" id=".service_locator.ywGGMP8.PHPMaker2026\Project2\RefundTblController::list()"/>
+        <argument key="PHPMaker2026\Project2\RefundTblController:add" type="service_closure" id=".service_locator.n.d1zIo.PHPMaker2026\Project2\RefundTblController::add()"/>
+        <argument key="PHPMaker2026\Project2\RefundTblController:view" type="service_closure" id=".service_locator.9AI0qsY.PHPMaker2026\Project2\RefundTblController::view()"/>
+        <argument key="PHPMaker2026\Project2\RefundTblController:edit" type="service_closure" id=".service_locator.3LL3WB0.PHPMaker2026\Project2\RefundTblController::edit()"/>
+        <argument key="PHPMaker2026\Project2\RefundTblController:delete" type="service_closure" id=".service_locator.vVNT3h6.PHPMaker2026\Project2\RefundTblController::delete()"/>
         <argument key="PHPMaker2026\Project2\ViewAppointmentReportController:list" type="service_closure" id=".service_locator.EfXVwpA.PHPMaker2026\Project2\ViewAppointmentReportController::list()"/>
         <argument key="PHPMaker2026\Project2\ViewAppointmentReportController:search" type="service_closure" id=".service_locator.8Sc5o65.PHPMaker2026\Project2\ViewAppointmentReportController::search()"/>
         <argument key="PHPMaker2026\Project2\ViewDoctorReportController:list" type="service_closure" id=".service_locator.gQniC2p.PHPMaker2026\Project2\ViewDoctorReportController::list()"/>
@@ -8883,9 +9117,10 @@
         <argument key="doctrine.orm.DB_listeners.attach_entity_listeners" type="service_closure" id="doctrine.orm.DB_listeners.attach_entity_listeners"/>
       </argument>
     </service>
-    <service id=".service_locator.dEyM8Lw" class="Symfony\Component\DependencyInjection\ServiceLocator">
+    <service id=".service_locator.uzJKa88" class="Symfony\Component\DependencyInjection\ServiceLocator">
       <tag name="container.service_locator"/>
       <argument type="collection">
+        <argument key="PHPMaker2026\Project2\RefundTbl" type="service_closure" id="PHPMaker2026\Project2\RefundTbl"/>
         <argument key="PHPMaker2026\Project2\ViewAppointmentReport" type="service_closure" id="PHPMaker2026\Project2\ViewAppointmentReport"/>
         <argument key="PHPMaker2026\Project2\ViewDoctorReport" type="service_closure" id="PHPMaker2026\Project2\ViewDoctorReport"/>
         <argument key="PHPMaker2026\Project2\ViewFeedbackReport" type="service_closure" id="PHPMaker2026\Project2\ViewFeedbackReport"/>
@@ -9343,7 +9578,7 @@
       <tag name="container.error" message="Cannot autowire service &quot;.service_locator.1vYpZ1B&quot;: it needs an instance of &quot;Symfony\Component\Config\Loader\LoaderInterface&quot; but this type has been excluded from autowiring."/>
     </service>
     <service id=".errored..service_locator.wMz3Tov.PHPMaker2026\Project2\PageInterface" class="PHPMaker2026\Project2\PageInterface">
-      <tag name="container.error" message="Cannot autowire service &quot;.service_locator.wMz3Tov&quot;: it references interface &quot;PHPMaker2026\Project2\PageInterface&quot; but no such service exists. You should maybe alias this interface to one of these existing services: &quot;PHPMaker2026\Project2\AppointmentReportSummary&quot;, &quot;PHPMaker2026\Project2\ViewAppointmentReportList&quot;, &quot;PHPMaker2026\Project2\ViewAppointmentReportSearch&quot;, &quot;PHPMaker2026\Project2\ViewDoctorReportList&quot;, &quot;PHPMaker2026\Project2\ViewDoctorReportSearch&quot;, &quot;PHPMaker2026\Project2\ViewFeedbackReportList&quot;, &quot;PHPMaker2026\Project2\ViewPatientReportList&quot;, &quot;PHPMaker2026\Project2\ViewPaymentReportList&quot;, &quot;PHPMaker2026\Project2\ViewPaymentReportSearch&quot;, &quot;PHPMaker2026\Project2\ViewPrescriptionReportList&quot;, &quot;PHPMaker2026\Project2\ViewPrescriptionReportSearch&quot;."/>
+      <tag name="container.error" message="Cannot autowire service &quot;.service_locator.wMz3Tov&quot;: it references interface &quot;PHPMaker2026\Project2\PageInterface&quot; but no such service exists. You should maybe alias this interface to one of these existing services: &quot;PHPMaker2026\Project2\AppointmentReportSummary&quot;, &quot;PHPMaker2026\Project2\RefundTblAdd&quot;, &quot;PHPMaker2026\Project2\RefundTblDelete&quot;, &quot;PHPMaker2026\Project2\RefundTblEdit&quot;, &quot;PHPMaker2026\Project2\RefundTblList&quot;, &quot;PHPMaker2026\Project2\RefundTblView&quot;, &quot;PHPMaker2026\Project2\ViewAppointmentReportList&quot;, &quot;PHPMaker2026\Project2\ViewAppointmentReportSearch&quot;, &quot;PHPMaker2026\Project2\ViewDoctorReportList&quot;, &quot;PHPMaker2026\Project2\ViewDoctorReportSearch&quot;, &quot;PHPMaker2026\Project2\ViewFeedbackReportList&quot;, &quot;PHPMaker2026\Project2\ViewPatientReportList&quot;, &quot;PHPMaker2026\Project2\ViewPaymentReportList&quot;, &quot;PHPMaker2026\Project2\ViewPaymentReportSearch&quot;, &quot;PHPMaker2026\Project2\ViewPrescriptionReportList&quot;, &quot;PHPMaker2026\Project2\ViewPrescriptionReportSearch&quot;."/>
     </service>
     <service id=".PHPMaker2026\Project2\Command\ConvertLocalEnvToSecretsCommand.lazy" class="Symfony\Component\Console\Command\LazyCommand">
       <argument>app:convert-local-secrets</argument>
@@ -9996,6 +10231,13 @@
     <service id="AppointmentReport" alias="PHPMaker2026\Project2\AppointmentReport" public="true"/>
     <service id="Appointment_report" alias="PHPMaker2026\Project2\AppointmentReport" public="true"/>
     <service id="AppointmentReportSummary" alias="PHPMaker2026\Project2\AppointmentReportSummary" public="true"/>
+    <service id="RefundTbl" alias="PHPMaker2026\Project2\RefundTbl" public="true"/>
+    <service id="refund_tbl" alias="PHPMaker2026\Project2\RefundTbl" public="true"/>
+    <service id="RefundTblAdd" alias="PHPMaker2026\Project2\RefundTblAdd" public="true"/>
+    <service id="RefundTblDelete" alias="PHPMaker2026\Project2\RefundTblDelete" public="true"/>
+    <service id="RefundTblEdit" alias="PHPMaker2026\Project2\RefundTblEdit" public="true"/>
+    <service id="RefundTblList" alias="PHPMaker2026\Project2\RefundTblList" public="true"/>
+    <service id="RefundTblView" alias="PHPMaker2026\Project2\RefundTblView" public="true"/>
     <service id="ViewAppointmentReport" alias="PHPMaker2026\Project2\ViewAppointmentReport" public="true"/>
     <service id="view_appointment_report" alias="PHPMaker2026\Project2\ViewAppointmentReport" public="true"/>
     <service id="ViewAppointmentReportList" alias="PHPMaker2026\Project2\ViewAppointmentReportList" public="true"/>
@@ -10196,7 +10438,7 @@
     <service id="HTMLPurifier" alias="exercise_html_purifier.default"/>
     <service id="container.env_var_processors_locator" alias=".service_locator.ryAvHi4" public="true"/>
     <service id="twig.loader.filesystem" alias="twig.loader.native_filesystem"/>
-    <service id="argument_resolver.controller_locator" alias=".service_locator.q6L9pLP"/>
+    <service id="argument_resolver.controller_locator" alias=".service_locator.tJzf3P0"/>
     <service id="doctrine.id_generator_locator" alias=".service_locator.W55Po6X"/>
     <service id=".Psr\Log\LoggerInterface $request.logger" alias="monolog.logger.request"/>
     <service id="Psr\Log\LoggerInterface $requestLogger" alias="monolog.logger.request"/>
@@ -10225,7 +10467,7 @@
     <service id=".Psr\Log\LoggerInterface $deprecation.logger" alias="monolog.logger.deprecation"/>
     <service id="Psr\Log\LoggerInterface $deprecationLogger" alias="monolog.logger.deprecation"/>
     <service id="twig.loader" alias="twig.loader.native_filesystem"/>
-    <service id=".service_locator.ajm3Lps" alias="app.internal_locator"/>
+    <service id=".service_locator.QTfDDOJ" alias="app.internal_locator"/>
     <service id=".service_locator.E1wOT5Z" alias="app.tagged_locator"/>
     <service id=".service_locator.rmAA14o" alias=".service_locator.acS6RMD"/>
     <service id="http_client" alias="http_client.uri_template"/>
@@ -10243,6 +10485,11 @@
     <service id=".service_locator.c0wzfI4" alias=".service_locator.1vYpZ1B"/>
     <service id=".service_locator.x1JwxOA" alias=".service_locator.wMz3Tov"/>
     <service id=".service_locator.FKy7Jgu" alias=".service_locator.XmLm93f"/>
+    <service id=".service_locator.6aaTRk2" alias=".service_locator.ywGGMP8"/>
+    <service id=".service_locator.yE20_mE" alias=".service_locator.n.d1zIo"/>
+    <service id=".service_locator.YAKvImD" alias=".service_locator.9AI0qsY"/>
+    <service id=".service_locator.LsQSZ9t" alias=".service_locator.3LL3WB0"/>
+    <service id=".service_locator.wupKH24" alias=".service_locator.vVNT3h6"/>
     <service id=".service_locator.yHe9DfH" alias=".service_locator.EfXVwpA"/>
     <service id=".service_locator.HsNwygH" alias=".service_locator.8Sc5o65"/>
     <service id=".service_locator._W_eIqN" alias=".service_locator.gQniC2p"/>

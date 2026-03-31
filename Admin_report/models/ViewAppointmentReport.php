@@ -226,11 +226,11 @@ class ViewAppointmentReport extends DbTable implements LookupTableInterface
             'Chart1',
             'Month_Name',
             'APPOINTMENT_ID',
-            1004,
+            1002,
             '',
             0,
             'COUNT',
-            400,
+            800,
             400
         );
         $this->Chart1->Position = 4;
@@ -247,7 +247,7 @@ class ViewAppointmentReport extends DbTable implements LookupTableInterface
         $this->Chart1->SeriesDateType = "";
         $this->Chart1->ID = "view_appointment_report_Chart1"; // Chart ID
         $this->Chart1->setParameters([
-            ["type", "1004"],
+            ["type", "1002"],
             ["seriestype", "0"]
         ]); // Chart type / Chart series type
         $this->Chart1->setParameters([

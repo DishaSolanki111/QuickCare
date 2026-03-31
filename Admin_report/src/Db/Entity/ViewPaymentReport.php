@@ -167,7 +167,7 @@ class ViewPaymentReport extends BaseEntity
 
     public function setPaymentStatus(string $value): static
     {
-        if (!in_array($value, ["COMPLETED", "FAILED"])) {
+        if (!in_array($value, ["COMPLETED", "FAILED", "REFUNDED"])) {
             throw new InvalidArgumentException("Invalid 'Payment_Status' value");
         }
         $this->paymentStatus = $value;

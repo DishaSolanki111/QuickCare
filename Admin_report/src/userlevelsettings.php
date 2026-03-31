@@ -56,7 +56,8 @@ return [
     ['{A46002E4-B4F6-47F2-B55F-A3278D4B1DC4}view_payment_report', '-2', '0'],
     ['{A46002E4-B4F6-47F2-B55F-A3278D4B1DC4}view_doctor_report', '-2', '0'],
     ['{A46002E4-B4F6-47F2-B55F-A3278D4B1DC4}notification_seen_tbl', '-2', '0'],
-    ['{A46002E4-B4F6-47F2-B55F-A3278D4B1DC4}receptionist_notifications', '-2', '0']
+    ['{A46002E4-B4F6-47F2-B55F-A3278D4B1DC4}receptionist_notifications', '-2', '0'],
+    ['{A46002E4-B4F6-47F2-B55F-A3278D4B1DC4}refund_tbl', '-2', '0']
 ],
 
     /**
@@ -91,6 +92,7 @@ return [
     ['view_payment_report', 'view_payment_report', 'Payment report', true, '{A46002E4-B4F6-47F2-B55F-A3278D4B1DC4}', 'ViewPaymentReportList'],
     ['view_doctor_report', 'view_doctor_report', 'Doctor report', true, '{A46002E4-B4F6-47F2-B55F-A3278D4B1DC4}', 'ViewDoctorReportList'],
     ['notification_seen_tbl', 'notification_seen_tbl', 'notification seen tbl', true, '{A46002E4-B4F6-47F2-B55F-A3278D4B1DC4}', ''],
-    ['receptionist_notifications', 'receptionist_notifications', 'receptionist notifications', true, '{A46002E4-B4F6-47F2-B55F-A3278D4B1DC4}', '']
+    ['receptionist_notifications', 'receptionist_notifications', 'receptionist notifications', true, '{A46002E4-B4F6-47F2-B55F-A3278D4B1DC4}', ''],
+    ['refund_tbl', 'refund_tbl', 'refund tbl', true, '{A46002E4-B4F6-47F2-B55F-A3278D4B1DC4}', '']
 ],
 ];
