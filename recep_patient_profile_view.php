@@ -117,19 +117,6 @@ $fullName = $patient['FIRST_NAME'] . ' ' . $patient['LAST_NAME'];
             margin-top: 4px;
         }
 
-        .badge-chip {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            padding: 3px 10px;
-            border-radius: 999px;
-            background: #eff6ff;
-            color: #1d4ed8;
-            font-size: 0.75rem;
-            font-weight: 600;
-            margin-top: 6px;
-        }
-
         .grid-2 {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -218,10 +205,6 @@ $fullName = $patient['FIRST_NAME'] . ' ' . $patient['LAST_NAME'];
                 <div>
                     <div class="profile-main-name"><?php echo htmlspecialchars($fullName); ?></div>
                     <div class="profile-id">Username: <?php echo htmlspecialchars($patient['USERNAME']); ?></div>
-                    <div class="badge-chip">
-                        <i class="fas fa-heartbeat"></i>
-                        Active Patient Record
-                    </div>
                 </div>
             </div>
 
