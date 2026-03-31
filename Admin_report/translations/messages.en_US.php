@@ -2534,22 +2534,22 @@
             ],
             [
                 'menutext' => [
-                    'value' => 'view appointment report',
+                    'value' => 'Appointment Report',
                 ],
             ],
             20 => [
                 'menutext' => [
-                    'value' => 'view patient report',
+                    'value' => 'Patient Report',
                 ],
             ],
             [
                 'menutext' => [
-                    'value' => 'view payment report',
+                    'value' => 'Payment report',
                 ],
             ],
             [
                 'menutext' => [
-                    'value' => 'view doctor report',
+                    'value' => 'Doctor report',
                 ],
             ],
             [
@@ -3582,7 +3582,7 @@
             ],
             'view_appointment_report' => [
                 'tblcaption' => [
-                    'value' => 'view appointment report',
+                    'value' => 'Appointment Report',
                 ],
                 'chart' => [
                     'chart1' => [
@@ -3702,7 +3702,7 @@
             ],
             'view_patient_report' => [
                 'tblcaption' => [
-                    'value' => 'view patient report',
+                    'value' => 'Patient Report',
                 ],
                 'chart' => [
                     'chart1' => [
@@ -3888,7 +3888,7 @@
             ],
             'view_payment_report' => [
                 'tblcaption' => [
-                    'value' => 'view payment report',
+                    'value' => 'Payment report',
                 ],
                 'chart' => [
                     'chart1' => [
@@ -4031,7 +4031,7 @@
             ],
             'view_doctor_report' => [
                 'tblcaption' => [
-                    'value' => 'view doctor report',
+                    'value' => 'Doctor report',
                 ],
                 'chart' => [
                     'chart1' => [

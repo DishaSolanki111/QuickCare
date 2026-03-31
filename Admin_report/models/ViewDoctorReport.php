@@ -54,6 +54,7 @@ use Traversable;
 use PHPMaker2026\Project2\Entity as BaseEntity;
 use PHPMaker2026\Project2\Db;
 use PHPMaker2026\Project2\Db\Entity;
+use PHPMaker2026\Project2\ReportHelper;
 
 /**
  * Table class for view_doctor_report
@@ -185,7 +186,7 @@ class ViewDoctorReport extends DbTable implements LookupTableInterface
 
         // Doctor_Status
         $this->Doctor_Status = $this->Fields['Doctor_Status'];
-        $this->Doctor_Status->Lookup = new Lookup($this->Doctor_Status, 'view_doctor_report', true, 'Doctor_Status', ["Doctor_Status","","",""], '', "", [], [], [], [], [], [], false, '', '', "");
+        $this->Doctor_Status->Lookup = new Lookup($this->Doctor_Status, 'view_doctor_report', false, '', ["","","",""], '', "", [], [], [], [], [], [], false, '', '', "");
         $this->Doctor_Status->OptionCount = 3;
 
         // APPOINTMENT_ID
@@ -493,7 +494,7 @@ class ViewDoctorReport extends DbTable implements LookupTableInterface
                 'IsUpload' => false, // Is upload field
                 'InputTextType' => 'text',
                 'Raw' => true,
-                'UseFilter' => true,
+                'Sortable' => false,
 
                 // 'UseAdvancedSearch' => true,
                 'SearchOperators' => ["=", "<>", "IS NULL", "IS NOT NULL"],
@@ -1732,29 +1733,15 @@ class ViewDoctorReport extends DbTable implements LookupTableInterface
             if ($doc->Horizontal) { // Horizontal format, write header
                 $doc->beginExportRow();
                 if ($exportPageType == "view") {
-                    $doc->exportCaption($this->Doctor_Name);
-                    $doc->exportCaption($this->Specialisation);
-                    $doc->exportCaption($this->Doctor_Status);
-                    $doc->exportCaption($this->APPOINTMENT_DATE);
-                    $doc->exportCaption($this->Month_Name);
-                    $doc->exportCaption($this->Year);
-                    $doc->exportCaption($this->Appointment_Status);
-                    $doc->exportCaption($this->Total_Patients);
-                    $doc->exportCaption($this->Avg_Rating);
                 } else {
-                    $doc->exportCaption($this->DOCTOR_ID);
                     $doc->exportCaption($this->Doctor_Name);
                     $doc->exportCaption($this->Specialisation);
                     $doc->exportCaption($this->EDUCATION);
-                    $doc->exportCaption($this->Doctor_Status);
-                    $doc->exportCaption($this->APPOINTMENT_ID);
                     $doc->exportCaption($this->APPOINTMENT_DATE);
                     $doc->exportCaption($this->Month_Name);
-                    $doc->exportCaption($this->Month_Number);
                     $doc->exportCaption($this->Year);
                     $doc->exportCaption($this->Appointment_Status);
                     $doc->exportCaption($this->Total_Patients);
-                    $doc->exportCaption($this->Avg_Rating);
                 }
                 $doc->endExportRow();
             }
@@ -1784,29 +1771,15 @@ class ViewDoctorReport extends DbTable implements LookupTableInterface
                 if (!$doc->ExportCustom) {
                     $doc->beginExportRow($rowCnt); // Allow CSS styles if enabled
                     if ($exportPageType == "view") {
-                        $doc->exportField($this->Doctor_Name);
-                        $doc->exportField($this->Specialisation);
-                        $doc->exportField($this->Doctor_Status);
-                        $doc->exportField($this->APPOINTMENT_DATE);
-                        $doc->exportField($this->Month_Name);
-                        $doc->exportField($this->Year);
-                        $doc->exportField($this->Appointment_Status);
-                        $doc->exportField($this->Total_Patients);
-                        $doc->exportField($this->Avg_Rating);
                     } else {
-                        $doc->exportField($this->DOCTOR_ID);
                         $doc->exportField($this->Doctor_Name);
                         $doc->exportField($this->Specialisation);
                         $doc->exportField($this->EDUCATION);
-                        $doc->exportField($this->Doctor_Status);
-                        $doc->exportField($this->APPOINTMENT_ID);
                         $doc->exportField($this->APPOINTMENT_DATE);
                         $doc->exportField($this->Month_Name);
-                        $doc->exportField($this->Month_Number);
                         $doc->exportField($this->Year);
                         $doc->exportField($this->Appointment_Status);
                         $doc->exportField($this->Total_Patients);
-                        $doc->exportField($this->Avg_Rating);
                     }
                     $doc->endExportRow($rowCnt);
                 }

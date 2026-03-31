@@ -54,6 +54,7 @@ use Traversable;
 use PHPMaker2026\Project2\Entity as BaseEntity;
 use PHPMaker2026\Project2\Db;
 use PHPMaker2026\Project2\Db\Entity;
+use PHPMaker2026\Project2\ReportHelper;
 
 /**
  * Table class for view_payment_report
@@ -194,7 +195,7 @@ class ViewPaymentReport extends DbTable implements LookupTableInterface
 
         // Payment_Status
         $this->Payment_Status = $this->Fields['Payment_Status'];
-        $this->Payment_Status->Lookup = new Lookup($this->Payment_Status, 'view_payment_report', true, 'Payment_Status', ["Payment_Status","","",""], '', "", [], [], [], [], [], [], false, '', '', "");
+        $this->Payment_Status->Lookup = new Lookup($this->Payment_Status, 'view_payment_report', false, '', ["","","",""], '', "", [], [], [], [], [], [], false, '', '', "");
         $this->Payment_Status->OptionCount = 2;
 
         // PAYMENT_DATE
@@ -549,7 +550,6 @@ class ViewPaymentReport extends DbTable implements LookupTableInterface
                 'Raw' => true,
                 'Nullable' => false,
                 'Required' => true,
-                'UseFilter' => true,
 
                 // 'UseAdvancedSearch' => true,
                 'SearchOperators' => ["=", "<>"],
@@ -1740,28 +1740,13 @@ class ViewPaymentReport extends DbTable implements LookupTableInterface
             if ($doc->Horizontal) { // Horizontal format, write header
                 $doc->beginExportRow();
                 if ($exportPageType == "view") {
-                    $doc->exportCaption($this->TRANSACTION_ID);
-                    $doc->exportCaption($this->Patient_Name);
-                    $doc->exportCaption($this->Doctor_Name);
-                    $doc->exportCaption($this->AMOUNT);
-                    $doc->exportCaption($this->PAYMENT_MODE);
-                    $doc->exportCaption($this->Payment_Status);
-                    $doc->exportCaption($this->PAYMENT_DATE);
-                    $doc->exportCaption($this->Day_Name);
-                    $doc->exportCaption($this->Month_Name);
-                    $doc->exportCaption($this->Year);
                 } else {
-                    $doc->exportCaption($this->PAYMENT_ID);
-                    $doc->exportCaption($this->TRANSACTION_ID);
                     $doc->exportCaption($this->Patient_Name);
                     $doc->exportCaption($this->Doctor_Name);
                     $doc->exportCaption($this->AMOUNT);
                     $doc->exportCaption($this->PAYMENT_MODE);
-                    $doc->exportCaption($this->Payment_Status);
                     $doc->exportCaption($this->PAYMENT_DATE);
                     $doc->exportCaption($this->Day_Name);
-                    $doc->exportCaption($this->Week_Number);
-                    $doc->exportCaption($this->Month_Number);
                     $doc->exportCaption($this->Month_Name);
                     $doc->exportCaption($this->Year);
                 }
@@ -1793,28 +1778,13 @@ class ViewPaymentReport extends DbTable implements LookupTableInterface
                 if (!$doc->ExportCustom) {
                     $doc->beginExportRow($rowCnt); // Allow CSS styles if enabled
                     if ($exportPageType == "view") {
-                        $doc->exportField($this->TRANSACTION_ID);
-                        $doc->exportField($this->Patient_Name);
-                        $doc->exportField($this->Doctor_Name);
-                        $doc->exportField($this->AMOUNT);
-                        $doc->exportField($this->PAYMENT_MODE);
-                        $doc->exportField($this->Payment_Status);
-                        $doc->exportField($this->PAYMENT_DATE);
-                        $doc->exportField($this->Day_Name);
-                        $doc->exportField($this->Month_Name);
-                        $doc->exportField($this->Year);
                     } else {
-                        $doc->exportField($this->PAYMENT_ID);
-                        $doc->exportField($this->TRANSACTION_ID);
                         $doc->exportField($this->Patient_Name);
                         $doc->exportField($this->Doctor_Name);
                         $doc->exportField($this->AMOUNT);
                         $doc->exportField($this->PAYMENT_MODE);
-                        $doc->exportField($this->Payment_Status);
                         $doc->exportField($this->PAYMENT_DATE);
                         $doc->exportField($this->Day_Name);
-                        $doc->exportField($this->Week_Number);
-                        $doc->exportField($this->Month_Number);
                         $doc->exportField($this->Month_Name);
                         $doc->exportField($this->Year);
                     }

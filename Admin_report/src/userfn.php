@@ -54,6 +54,7 @@ use Traversable;
 use PHPMaker2026\Project2\Entity as BaseEntity;
 use PHPMaker2026\Project2\Db;
 use PHPMaker2026\Project2\Db\Entity;
+use PHPMaker2026\Project2\ReportHelper;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Doctrine\DBAL\Driver\Connection as ConnectionInterface;
@@ -214,6 +215,7 @@ function Services_Config(AbstractConfigurator $services): void
     // Example:
     // $services->set(MyListener::class)->tag("kernel.event_listener"); // Make sure you tag your listener as "kernel.event_listener"
 }
+require_once __DIR__ . "/../helpers/ReportHelper.php";
 
 // Add listeners
 AddListener(DatabaseConnectingEvent::class, function(DatabaseConnectingEvent $event) {

@@ -22,7 +22,9 @@ ew.on("wrapper", function () {
 
         // Dynamic selection lists
         .setLists({
+            "Patient_Name": <?= $Page->Patient_Name->toClientList($Page) ?>,
             "Doctor_Name": <?= $Page->Doctor_Name->toClientList($Page) ?>,
+            "Specialisation": <?= $Page->Specialisation->toClientList($Page) ?>,
             "APPOINTMENT_DATE": <?= $Page->APPOINTMENT_DATE->toClientList($Page) ?>,
             "Day_Name": <?= $Page->Day_Name->toClientList($Page) ?>,
             "Month_Name": <?= $Page->Month_Name->toClientList($Page) ?>,
@@ -93,7 +95,9 @@ ew.on("wrapper", () => {
 
         // Dynamic selection lists
         .setLists({
+            "Patient_Name": <?= $Page->Patient_Name->toClientList($Page) ?>,
             "Doctor_Name": <?= $Page->Doctor_Name->toClientList($Page) ?>,
+            "Specialisation": <?= $Page->Specialisation->toClientList($Page) ?>,
             "APPOINTMENT_DATE": <?= $Page->APPOINTMENT_DATE->toClientList($Page) ?>,
             "Day_Name": <?= $Page->Day_Name->toClientList($Page) ?>,
             "Month_Name": <?= $Page->Month_Name->toClientList($Page) ?>,
@@ -113,6 +117,44 @@ ew.on("wrapper", () => {
 <div class="ew-extended-search container-fluid ps-2">
 <?php $Page->renderRow(RowType::SEARCH); ?>
 <div class="row mb-0<?= ($Page->SearchFieldsPerRow > 0) ? " row-cols-sm-" . $Page->SearchFieldsPerRow : "" ?>">
+<?php if ($Page->Patient_Name->Visible) { // Patient_Name ?>
+<?php
+if (!$Page->Patient_Name->UseFilter) {
+    $Page->SearchColumnCount++;
+}
+?>
+    <div id="xs_Patient_Name" class="col-sm-auto d-sm-flex align-items-start mb-3 px-0 pe-sm-2<?= $Page->Patient_Name->UseFilter ? " ew-filter-field" : "" ?>">
+        <select
+            id="x_Patient_Name"
+            name="x_Patient_Name[]"
+            class="form-control ew-select<?= $Page->Patient_Name->isInvalidClass() ?>"
+            data-select2-id="fview_appointment_reportsrch_x_Patient_Name"
+            data-table="view_appointment_report"
+            data-field="x_Patient_Name"
+            data-caption="<?= HtmlEncode(RemoveHtml($Page->Patient_Name->caption())) ?>"
+            data-filter="true"
+            multiple
+            size="1"
+            data-value-separator="<?= $Page->Patient_Name->displayValueSeparatorAttribute() ?>"
+            data-placeholder="<?= HtmlEncode($Page->Patient_Name->getPlaceHolder()) ?>"
+            data-ew-action="update-options"
+            <?= $Page->Patient_Name->editAttributes() ?>>
+            <?= $Page->Patient_Name->selectOptionListHtml("x_Patient_Name", true) ?>
+        </select>
+        <div class="invalid-feedback"><?= $Page->Patient_Name->getErrorMessage(false) ?></div>
+        <script<?= Nonce() ?>>
+        ew.on("fview_appointment_reportsrch", function() {
+            let options = {
+                name: "x_Patient_Name",
+                selectId: "fview_appointment_reportsrch_x_Patient_Name",
+                ajax: { id: "x_Patient_Name", form: "fview_appointment_reportsrch", limit: ew.FILTER_PAGE_SIZE, data: { ajax: "filter" } }
+            };
+            options = Object.assign({}, ew.filterOptions, options, ew.vars.tables.view_appointment_report.fields.Patient_Name.filterOptions);
+            ew.createFilter(options);
+        });
+        </script>
+    </div><!-- /.col-sm-auto -->
+<?php } ?>
 <?php if ($Page->Doctor_Name->Visible) { // Doctor_Name ?>
 <?php
 if (!$Page->Doctor_Name->UseFilter) {
@@ -146,6 +188,44 @@ if (!$Page->Doctor_Name->UseFilter) {
                 ajax: { id: "x_Doctor_Name", form: "fview_appointment_reportsrch", limit: ew.FILTER_PAGE_SIZE, data: { ajax: "filter" } }
             };
             options = Object.assign({}, ew.filterOptions, options, ew.vars.tables.view_appointment_report.fields.Doctor_Name.filterOptions);
+            ew.createFilter(options);
+        });
+        </script>
+    </div><!-- /.col-sm-auto -->
+<?php } ?>
+<?php if ($Page->Specialisation->Visible) { // Specialisation ?>
+<?php
+if (!$Page->Specialisation->UseFilter) {
+    $Page->SearchColumnCount++;
+}
+?>
+    <div id="xs_Specialisation" class="col-sm-auto d-sm-flex align-items-start mb-3 px-0 pe-sm-2<?= $Page->Specialisation->UseFilter ? " ew-filter-field" : "" ?>">
+        <select
+            id="x_Specialisation"
+            name="x_Specialisation[]"
+            class="form-control ew-select<?= $Page->Specialisation->isInvalidClass() ?>"
+            data-select2-id="fview_appointment_reportsrch_x_Specialisation"
+            data-table="view_appointment_report"
+            data-field="x_Specialisation"
+            data-caption="<?= HtmlEncode(RemoveHtml($Page->Specialisation->caption())) ?>"
+            data-filter="true"
+            multiple
+            size="1"
+            data-value-separator="<?= $Page->Specialisation->displayValueSeparatorAttribute() ?>"
+            data-placeholder="<?= HtmlEncode($Page->Specialisation->getPlaceHolder()) ?>"
+            data-ew-action="update-options"
+            <?= $Page->Specialisation->editAttributes() ?>>
+            <?= $Page->Specialisation->selectOptionListHtml("x_Specialisation", true) ?>
+        </select>
+        <div class="invalid-feedback"><?= $Page->Specialisation->getErrorMessage(false) ?></div>
+        <script<?= Nonce() ?>>
+        ew.on("fview_appointment_reportsrch", function() {
+            let options = {
+                name: "x_Specialisation",
+                selectId: "fview_appointment_reportsrch_x_Specialisation",
+                ajax: { id: "x_Specialisation", form: "fview_appointment_reportsrch", limit: ew.FILTER_PAGE_SIZE, data: { ajax: "filter" } }
+            };
+            options = Object.assign({}, ew.filterOptions, options, ew.vars.tables.view_appointment_report.fields.Specialisation.filterOptions);
             ew.createFilter(options);
         });
         </script>
@@ -568,9 +648,6 @@ ew.on("head", function() {
 <script<?= Nonce() ?>>
 ew.on("load", function () {
     // Write your table-specific startup script here, no need to add script tags.
-    
-    // Initialize export links
-    ew.initExportLinks();
 });
 </script>
 <?php } ?>

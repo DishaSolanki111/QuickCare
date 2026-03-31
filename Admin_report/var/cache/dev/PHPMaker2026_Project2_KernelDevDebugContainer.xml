@@ -354,7 +354,7 @@
       <parameter type="collection">
         <parameter>view_appointment_report</parameter>
         <parameter>view_appointment_report</parameter>
-        <parameter>view appointment report</parameter>
+        <parameter>Appointment Report</parameter>
         <parameter>true</parameter>
         <parameter>{A46002E4-B4F6-47F2-B55F-A3278D4B1DC4}</parameter>
         <parameter>ViewAppointmentReportList</parameter>
@@ -362,7 +362,7 @@
       <parameter type="collection">
         <parameter>view_patient_report</parameter>
         <parameter>view_patient_report</parameter>
-        <parameter>view patient report</parameter>
+        <parameter>Patient Report</parameter>
         <parameter>true</parameter>
         <parameter>{A46002E4-B4F6-47F2-B55F-A3278D4B1DC4}</parameter>
         <parameter/>
@@ -370,7 +370,7 @@
       <parameter type="collection">
         <parameter>view_payment_report</parameter>
         <parameter>view_payment_report</parameter>
-        <parameter>view payment report</parameter>
+        <parameter>Payment report</parameter>
         <parameter>true</parameter>
         <parameter>{A46002E4-B4F6-47F2-B55F-A3278D4B1DC4}</parameter>
         <parameter>ViewPaymentReportList</parameter>
@@ -378,7 +378,7 @@
       <parameter type="collection">
         <parameter>view_doctor_report</parameter>
         <parameter>view_doctor_report</parameter>
-        <parameter>view doctor report</parameter>
+        <parameter>Doctor report</parameter>
         <parameter>true</parameter>
         <parameter>{A46002E4-B4F6-47F2-B55F-A3278D4B1DC4}</parameter>
         <parameter>ViewDoctorReportList</parameter>

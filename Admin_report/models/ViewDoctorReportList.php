@@ -54,6 +54,7 @@ use Traversable;
 use PHPMaker2026\Project2\Entity as BaseEntity;
 use PHPMaker2026\Project2\Db;
 use PHPMaker2026\Project2\Db\Entity;
+use PHPMaker2026\Project2\ReportHelper;
 
 /**
  * Page class
@@ -334,19 +335,19 @@ class ViewDoctorReportList extends ViewDoctorReport implements PageInterface
     // Set field visibility
     public function setVisibility(): void
     {
-        $this->DOCTOR_ID->setVisibility();
+        $this->DOCTOR_ID->Visible = false;
         $this->Doctor_Name->setVisibility();
         $this->Specialisation->setVisibility();
         $this->EDUCATION->setVisibility();
-        $this->Doctor_Status->setVisibility();
-        $this->APPOINTMENT_ID->setVisibility();
+        $this->Doctor_Status->Visible = false;
+        $this->APPOINTMENT_ID->Visible = false;
         $this->APPOINTMENT_DATE->setVisibility();
         $this->Month_Name->setVisibility();
-        $this->Month_Number->setVisibility();
+        $this->Month_Number->Visible = false;
         $this->Year->setVisibility();
         $this->Appointment_Status->setVisibility();
         $this->Total_Patients->setVisibility();
-        $this->Avg_Rating->setVisibility();
+        $this->Avg_Rating->Visible = false;
     }
 
     // Is lookup
@@ -591,7 +592,6 @@ class ViewDoctorReportList extends ViewDoctorReport implements PageInterface
     {
         // Set up list options
         $this->setupListOptions();
-        $this->setupExportOptions();
 
         // Search options
         $this->setupSearchOptions();
@@ -713,6 +713,8 @@ class ViewDoctorReportList extends ViewDoctorReport implements PageInterface
 
         // Set up list options
         $this->setupListOptions();
+
+        // Setup export options
         $this->setupExportOptions();
         $this->setVisibility();
 
@@ -761,6 +763,7 @@ class ViewDoctorReportList extends ViewDoctorReport implements PageInterface
 
         // Hide list options
         if ($this->isExport()) {
+            $this->ListOptions->hideAllOptions(["sequence"]);
             $this->ListOptions->UseDropDownButton = false; // Disable drop down button
             $this->ListOptions->UseButtonGroup = false; // Disable button group
         } elseif ($this->isGridAdd() || $this->isGridEdit() || $this->isMultiEdit() || $this->isConfirm()) {
@@ -770,7 +773,8 @@ class ViewDoctorReportList extends ViewDoctorReport implements PageInterface
         }
 
         // Hide options
-        if (!(IsEmpty($this->CurrentAction) || $this->isSearch())) {
+        if ($this->isExport() || !(IsEmpty($this->CurrentAction) || $this->isSearch())) {
+            $this->ExportOptions->hideAllOptions();
             $this->FilterOptions->hideAllOptions();
             $this->ImportOptions->hideAllOptions();
         }
@@ -1101,7 +1105,7 @@ class ViewDoctorReportList extends ViewDoctorReport implements PageInterface
         $this->buildSearchSql($where, $this->Doctor_Name, $default, true); // Doctor_Name
         $this->buildSearchSql($where, $this->Specialisation, $default, true); // Specialisation
         $this->buildSearchSql($where, $this->EDUCATION, $default, false); // EDUCATION
-        $this->buildSearchSql($where, $this->Doctor_Status, $default, true); // Doctor_Status
+        $this->buildSearchSql($where, $this->Doctor_Status, $default, false); // Doctor_Status
         $this->buildSearchSql($where, $this->APPOINTMENT_ID, $default, false); // APPOINTMENT_ID
         $this->buildSearchSql($where, $this->APPOINTMENT_DATE, $default, true); // APPOINTMENT_DATE
         $this->buildSearchSql($where, $this->Month_Name, $default, true); // Month_Name
@@ -1222,15 +1226,6 @@ class ViewDoctorReportList extends ViewDoctorReport implements PageInterface
         $captionClass = $this->isExport("email") ? "ew-filter-caption-email" : "ew-filter-caption";
         $captionSuffix = $this->isExport("email") ? ": " : "";
 
-        // Field DOCTOR_ID
-        $filter = $this->queryBuilderWhere("DOCTOR_ID");
-        if (!$filter) {
-            $this->buildSearchSql($filter, $this->DOCTOR_ID, false, false);
-        }
-        if ($filter != "") {
-            $filterList .= "<div><span class=\"" . $captionClass . "\">" . $this->DOCTOR_ID->caption() . "</span>" . $captionSuffix . $filter . "</div>";
-        }
-
         // Field Doctor_Name
         $filter = $this->queryBuilderWhere("Doctor_Name");
         if (!$filter) {
@@ -1258,24 +1253,6 @@ class ViewDoctorReportList extends ViewDoctorReport implements PageInterface
             $filterList .= "<div><span class=\"" . $captionClass . "\">" . $this->EDUCATION->caption() . "</span>" . $captionSuffix . $filter . "</div>";
         }
 
-        // Field Doctor_Status
-        $filter = $this->queryBuilderWhere("Doctor_Status");
-        if (!$filter) {
-            $this->buildSearchSql($filter, $this->Doctor_Status, false, true);
-        }
-        if ($filter != "") {
-            $filterList .= "<div><span class=\"" . $captionClass . "\">" . $this->Doctor_Status->caption() . "</span>" . $captionSuffix . $filter . "</div>";
-        }
-
-        // Field APPOINTMENT_ID
-        $filter = $this->queryBuilderWhere("APPOINTMENT_ID");
-        if (!$filter) {
-            $this->buildSearchSql($filter, $this->APPOINTMENT_ID, false, false);
-        }
-        if ($filter != "") {
-            $filterList .= "<div><span class=\"" . $captionClass . "\">" . $this->APPOINTMENT_ID->caption() . "</span>" . $captionSuffix . $filter . "</div>";
-        }
-
         // Field APPOINTMENT_DATE
         $filter = $this->queryBuilderWhere("APPOINTMENT_DATE");
         if (!$filter) {
@@ -1292,15 +1269,6 @@ class ViewDoctorReportList extends ViewDoctorReport implements PageInterface
         }
         if ($filter != "") {
             $filterList .= "<div><span class=\"" . $captionClass . "\">" . $this->Month_Name->caption() . "</span>" . $captionSuffix . $filter . "</div>";
-        }
-
-        // Field Month_Number
-        $filter = $this->queryBuilderWhere("Month_Number");
-        if (!$filter) {
-            $this->buildSearchSql($filter, $this->Month_Number, false, false);
-        }
-        if ($filter != "") {
-            $filterList .= "<div><span class=\"" . $captionClass . "\">" . $this->Month_Number->caption() . "</span>" . $captionSuffix . $filter . "</div>";
         }
 
         // Field Year
@@ -1328,15 +1296,6 @@ class ViewDoctorReportList extends ViewDoctorReport implements PageInterface
         }
         if ($filter != "") {
             $filterList .= "<div><span class=\"" . $captionClass . "\">" . $this->Total_Patients->caption() . "</span>" . $captionSuffix . $filter . "</div>";
-        }
-
-        // Field Avg_Rating
-        $filter = $this->queryBuilderWhere("Avg_Rating");
-        if (!$filter) {
-            $this->buildSearchSql($filter, $this->Avg_Rating, false, false);
-        }
-        if ($filter != "") {
-            $filterList .= "<div><span class=\"" . $captionClass . "\">" . $this->Avg_Rating->caption() . "</span>" . $captionSuffix . $filter . "</div>";
         }
         if ($this->BasicSearch->Keyword != "") {
             $filterList .= "<div><span class=\"" . $captionClass . "\">" . $this->language->phrase("BasicSearchKeyword") . "</span>" . $captionSuffix . $this->BasicSearch->Keyword . "</div>";
@@ -1517,19 +1476,14 @@ class ViewDoctorReportList extends ViewDoctorReport implements PageInterface
         if (Get("order") !== null) {
             $this->CurrentOrder = Get("order");
             $this->CurrentOrderType = Get("ordertype", "");
-            $this->updateSort($this->DOCTOR_ID); // DOCTOR_ID
             $this->updateSort($this->Doctor_Name); // Doctor_Name
             $this->updateSort($this->Specialisation); // Specialisation
             $this->updateSort($this->EDUCATION); // EDUCATION
-            $this->updateSort($this->Doctor_Status); // Doctor_Status
-            $this->updateSort($this->APPOINTMENT_ID); // APPOINTMENT_ID
             $this->updateSort($this->APPOINTMENT_DATE); // APPOINTMENT_DATE
             $this->updateSort($this->Month_Name); // Month_Name
-            $this->updateSort($this->Month_Number); // Month_Number
             $this->updateSort($this->Year); // Year
             $this->updateSort($this->Appointment_Status); // Appointment_Status
             $this->updateSort($this->Total_Patients); // Total_Patients
-            $this->updateSort($this->Avg_Rating); // Avg_Rating
             $this->setStartRecordNumber(1); // Reset start position
         }
 
@@ -1635,34 +1589,6 @@ class ViewDoctorReportList extends ViewDoctorReport implements PageInterface
         $item->Visible = $this->ListOptions->groupOptionVisible();
     }
 
-    // Set up export options
-    protected function setupExportOptions(): void
-    {
-        // Page URL for export
-        $pageUrl = $this->pageUrl(false);
-        
-        // Export to PDF
-        $item = $this->ExportOptions->add("pdf");
-        $item->Body = "<a href=\"" . $pageUrl . "?export=pdf\" class=\"ew-export-link\" data-export=\"pdf\">" . $this->language->phrase("ExportToPdf") . "</a>";
-        $item->Visible = true;
-        $item->CssClass = "ew-export-link";
-        $item->OnLeft = false;
-        $item->UseImageAndText = true;
-
-        // Export to Excel
-        $item = $this->ExportOptions->add("excel");
-        $item->Body = "<a href=\"" . $pageUrl . "?export=excel\" class=\"ew-export-link\" data-export=\"excel\">" . $this->language->phrase("ExportToExcel") . "</a>";
-        $item->Visible = true;
-        $item->CssClass = "ew-export-link";
-        $item->OnLeft = false;
-        $item->UseImageAndText = true;
-
-        // Use button group instead of dropdown
-        $this->ExportOptions->UseDropDownButton = false;
-        $this->ExportOptions->UseButtonGroup = true;
-        $this->ExportOptions->ButtonGroupClass = "btn-group";
-    }
-
     // Add "hash" parameter to URL
     public function urlAddHash(string $url, string $hash): string
     {
@@ -1740,19 +1666,14 @@ class ViewDoctorReportList extends ViewDoctorReport implements PageInterface
             $item = $option->addGroupOption();
             $item->Body = "";
             $item->Visible = $this->UseColumnVisibility;
-            $this->createColumnOption($option, "DOCTOR_ID");
             $this->createColumnOption($option, "Doctor_Name");
             $this->createColumnOption($option, "Specialisation");
             $this->createColumnOption($option, "EDUCATION");
-            $this->createColumnOption($option, "Doctor_Status");
-            $this->createColumnOption($option, "APPOINTMENT_ID");
             $this->createColumnOption($option, "APPOINTMENT_DATE");
             $this->createColumnOption($option, "Month_Name");
-            $this->createColumnOption($option, "Month_Number");
             $this->createColumnOption($option, "Year");
             $this->createColumnOption($option, "Appointment_Status");
             $this->createColumnOption($option, "Total_Patients");
-            $this->createColumnOption($option, "Avg_Rating");
         }
 
         // Set up custom actions
@@ -2405,9 +2326,6 @@ class ViewDoctorReportList extends ViewDoctorReport implements PageInterface
 
         // View row
         if ($this->RowType == RowType::VIEW) {
-            // DOCTOR_ID
-            $this->DOCTOR_ID->ViewValue = $this->DOCTOR_ID->CurrentValue;
-
             // Doctor_Name
             $this->Doctor_Name->ViewValue = $this->Doctor_Name->CurrentValue;
 
@@ -2417,26 +2335,12 @@ class ViewDoctorReportList extends ViewDoctorReport implements PageInterface
             // EDUCATION
             $this->EDUCATION->ViewValue = $this->EDUCATION->CurrentValue;
 
-            // Doctor_Status
-            if (strval($this->Doctor_Status->CurrentValue) != "") {
-                $this->Doctor_Status->ViewValue = $this->Doctor_Status->optionCaption($this->Doctor_Status->CurrentValue);
-            } else {
-                $this->Doctor_Status->ViewValue = null;
-            }
-
-            // APPOINTMENT_ID
-            $this->APPOINTMENT_ID->ViewValue = $this->APPOINTMENT_ID->CurrentValue;
-
             // APPOINTMENT_DATE
             $this->APPOINTMENT_DATE->ViewValue = $this->APPOINTMENT_DATE->CurrentValue;
             $this->APPOINTMENT_DATE->ViewValue = FormatDateTime($this->APPOINTMENT_DATE->ViewValue, $this->APPOINTMENT_DATE->formatPattern());
 
             // Month_Name
             $this->Month_Name->ViewValue = $this->Month_Name->CurrentValue;
-
-            // Month_Number
-            $this->Month_Number->ViewValue = $this->Month_Number->CurrentValue;
-            $this->Month_Number->ViewValue = FormatNumber($this->Month_Number->ViewValue, $this->Month_Number->formatPattern());
 
             // Year
             $this->Year->ViewValue = $this->Year->CurrentValue;
@@ -2453,14 +2357,6 @@ class ViewDoctorReportList extends ViewDoctorReport implements PageInterface
             $this->Total_Patients->ViewValue = $this->Total_Patients->CurrentValue;
             $this->Total_Patients->ViewValue = FormatNumber($this->Total_Patients->ViewValue, $this->Total_Patients->formatPattern());
 
-            // Avg_Rating
-            $this->Avg_Rating->ViewValue = $this->Avg_Rating->CurrentValue;
-            $this->Avg_Rating->ViewValue = FormatNumber($this->Avg_Rating->ViewValue, $this->Avg_Rating->formatPattern());
-
-            // DOCTOR_ID
-            $this->DOCTOR_ID->HrefValue = "";
-            $this->DOCTOR_ID->TooltipValue = "";
-
             // Doctor_Name
             $this->Doctor_Name->HrefValue = "";
             $this->Doctor_Name->TooltipValue = "";
@@ -2473,14 +2369,6 @@ class ViewDoctorReportList extends ViewDoctorReport implements PageInterface
             $this->EDUCATION->HrefValue = "";
             $this->EDUCATION->TooltipValue = "";
 
-            // Doctor_Status
-            $this->Doctor_Status->HrefValue = "";
-            $this->Doctor_Status->TooltipValue = "";
-
-            // APPOINTMENT_ID
-            $this->APPOINTMENT_ID->HrefValue = "";
-            $this->APPOINTMENT_ID->TooltipValue = "";
-
             // APPOINTMENT_DATE
             $this->APPOINTMENT_DATE->HrefValue = "";
             $this->APPOINTMENT_DATE->TooltipValue = "";
@@ -2488,10 +2376,6 @@ class ViewDoctorReportList extends ViewDoctorReport implements PageInterface
             // Month_Name
             $this->Month_Name->HrefValue = "";
             $this->Month_Name->TooltipValue = "";
-
-            // Month_Number
-            $this->Month_Number->HrefValue = "";
-            $this->Month_Number->TooltipValue = "";
 
             // Year
             $this->Year->HrefValue = "";
@@ -2504,16 +2388,7 @@ class ViewDoctorReportList extends ViewDoctorReport implements PageInterface
             // Total_Patients
             $this->Total_Patients->HrefValue = "";
             $this->Total_Patients->TooltipValue = "";
-
-            // Avg_Rating
-            $this->Avg_Rating->HrefValue = "";
-            $this->Avg_Rating->TooltipValue = "";
         } elseif ($this->RowType == RowType::SEARCH) {
-            // DOCTOR_ID
-            $this->DOCTOR_ID->setupEditAttributes();
-            $this->DOCTOR_ID->EditValue = $this->DOCTOR_ID->AdvancedSearch->SearchValue;
-            $this->DOCTOR_ID->PlaceHolder = RemoveHtml($this->DOCTOR_ID->caption());
-
             // Doctor_Name
             if ($this->Doctor_Name->UseFilter && !IsEmpty($this->Doctor_Name->AdvancedSearch->SearchValue)) {
                 if (is_array($this->Doctor_Name->AdvancedSearch->SearchValue)) {
@@ -2535,19 +2410,6 @@ class ViewDoctorReportList extends ViewDoctorReport implements PageInterface
             $this->EDUCATION->EditValue = !$this->EDUCATION->Raw ? HtmlDecode($this->EDUCATION->AdvancedSearch->SearchValue) : $this->EDUCATION->AdvancedSearch->SearchValue;
             $this->EDUCATION->PlaceHolder = RemoveHtml($this->EDUCATION->caption());
 
-            // Doctor_Status
-            if ($this->Doctor_Status->UseFilter && !IsEmpty($this->Doctor_Status->AdvancedSearch->SearchValue)) {
-                if (is_array($this->Doctor_Status->AdvancedSearch->SearchValue)) {
-                    $this->Doctor_Status->AdvancedSearch->SearchValue = implode(Config("FILTER_OPTION_SEPARATOR"), $this->Doctor_Status->AdvancedSearch->SearchValue);
-                }
-                $this->Doctor_Status->EditValue = explode(Config("FILTER_OPTION_SEPARATOR"), $this->Doctor_Status->AdvancedSearch->SearchValue);
-            }
-
-            // APPOINTMENT_ID
-            $this->APPOINTMENT_ID->setupEditAttributes();
-            $this->APPOINTMENT_ID->EditValue = $this->APPOINTMENT_ID->AdvancedSearch->SearchValue;
-            $this->APPOINTMENT_ID->PlaceHolder = RemoveHtml($this->APPOINTMENT_ID->caption());
-
             // APPOINTMENT_DATE
             if ($this->APPOINTMENT_DATE->UseFilter && !IsEmpty($this->APPOINTMENT_DATE->AdvancedSearch->SearchValue)) {
                 if (is_array($this->APPOINTMENT_DATE->AdvancedSearch->SearchValue)) {
@@ -2563,11 +2425,6 @@ class ViewDoctorReportList extends ViewDoctorReport implements PageInterface
                 }
                 $this->Month_Name->EditValue = explode(Config("FILTER_OPTION_SEPARATOR"), $this->Month_Name->AdvancedSearch->SearchValue);
             }
-
-            // Month_Number
-            $this->Month_Number->setupEditAttributes();
-            $this->Month_Number->EditValue = $this->Month_Number->AdvancedSearch->SearchValue;
-            $this->Month_Number->PlaceHolder = RemoveHtml($this->Month_Number->caption());
 
             // Year
             if ($this->Year->UseFilter && !IsEmpty($this->Year->AdvancedSearch->SearchValue)) {
@@ -2589,11 +2446,6 @@ class ViewDoctorReportList extends ViewDoctorReport implements PageInterface
             $this->Total_Patients->setupEditAttributes();
             $this->Total_Patients->EditValue = $this->Total_Patients->AdvancedSearch->SearchValue;
             $this->Total_Patients->PlaceHolder = RemoveHtml($this->Total_Patients->caption());
-
-            // Avg_Rating
-            $this->Avg_Rating->setupEditAttributes();
-            $this->Avg_Rating->EditValue = $this->Avg_Rating->AdvancedSearch->SearchValue;
-            $this->Avg_Rating->PlaceHolder = RemoveHtml($this->Avg_Rating->caption());
         }
 
         // Call Row Rendered event
@@ -2638,6 +2490,105 @@ class ViewDoctorReportList extends ViewDoctorReport implements PageInterface
         $this->Appointment_Status->AdvancedSearch->load();
         $this->Total_Patients->AdvancedSearch->load();
         $this->Avg_Rating->AdvancedSearch->load();
+    }
+
+    // Get export HTML tag
+    protected function getExportTag(string $type, bool $custom = false): string
+    {
+        if ($type == "print" || $custom) { // Printer friendly / custom export
+            $pageUrl = $this->pageUrl(false);
+            $exportUrl = BuildUrl(GetUrl($pageUrl), "export=" . $type, $custom ? "custom=1" : "");
+        } else { // Export API URL
+            $exportUrl = GetApiUrl(Config("API_EXPORT_ACTION") . "/" . $type . "/" . $this->TableVar);
+        }
+        $exportUrl = HtmlEncode($exportUrl);
+        if (SameText($type, "excel")) {
+            if ($custom) {
+                return "<button type=\"button\" class=\"btn btn-default ew-export-link ew-excel\" title=\"" . HtmlEncode($this->language->phrase("ExportToExcel", true)) . "\" data-caption=\"" . HtmlEncode($this->language->phrase("ExportToExcel", true)) . "\" form=\"fview_doctor_reportlist\" data-url=\"$exportUrl\" data-ew-action=\"export\" data-export=\"excel\" data-custom=\"true\" data-export-id=\"" . SessionId() . "\" data-export-selected=\"false\">" . $this->language->phrase("ExportToExcel") . "</button>";
+            } else {
+                return "<a href=\"$exportUrl\" class=\"btn btn-default ew-export-link ew-excel\" title=\"" . HtmlEncode($this->language->phrase("ExportToExcel", true)) . "\" data-caption=\"" . HtmlEncode($this->language->phrase("ExportToExcel", true)) . "\">" . $this->language->phrase("ExportToExcel") . "</a>";
+            }
+        } elseif (SameText($type, "word")) {
+            if ($custom) {
+                return "<button type=\"button\" class=\"btn btn-default ew-export-link ew-word\" title=\"" . HtmlEncode($this->language->phrase("ExportToWord", true)) . "\" data-caption=\"" . HtmlEncode($this->language->phrase("ExportToWord", true)) . "\" form=\"fview_doctor_reportlist\" data-url=\"$exportUrl\" data-ew-action=\"export\" data-export=\"word\" data-custom=\"true\" data-export-id=\"" . SessionId() . "\" data-export-selected=\"false\">" . $this->language->phrase("ExportToWord") . "</button>";
+            } else {
+                return "<a href=\"$exportUrl\" class=\"btn btn-default ew-export-link ew-word\" title=\"" . HtmlEncode($this->language->phrase("ExportToWord", true)) . "\" data-caption=\"" . HtmlEncode($this->language->phrase("ExportToWord", true)) . "\">" . $this->language->phrase("ExportToWord") . "</a>";
+            }
+        } elseif (SameText($type, "pdf")) {
+            if ($custom) {
+                return "<button type=\"button\" class=\"btn btn-default ew-export-link ew-pdf\" title=\"" . HtmlEncode($this->language->phrase("ExportToPdf", true)) . "\" data-caption=\"" . HtmlEncode($this->language->phrase("ExportToPdf", true)) . "\" form=\"fview_doctor_reportlist\" data-url=\"$exportUrl\" data-ew-action=\"export\" data-export=\"pdf\" data-custom=\"true\" data-export-id=\"" . SessionId() . "\" data-export-selected=\"false\">" . $this->language->phrase("ExportToPdf") . "</button>";
+            } else {
+                return "<a href=\"$exportUrl\" class=\"btn btn-default ew-export-link ew-pdf\" title=\"" . HtmlEncode($this->language->phrase("ExportToPdf", true)) . "\" data-caption=\"" . HtmlEncode($this->language->phrase("ExportToPdf", true)) . "\">" . $this->language->phrase("ExportToPdf") . "</a>";
+            }
+        } elseif (SameText($type, "html")) {
+            return "<a href=\"$exportUrl\" class=\"btn btn-default ew-export-link ew-html\" title=\"" . HtmlEncode($this->language->phrase("ExportToHtml", true)) . "\" data-caption=\"" . HtmlEncode($this->language->phrase("ExportToHtml", true)) . "\">" . $this->language->phrase("ExportToHtml") . "</a>";
+        } elseif (SameText($type, "xml")) {
+            return "<a href=\"$exportUrl\" class=\"btn btn-default ew-export-link ew-xml\" title=\"" . HtmlEncode($this->language->phrase("ExportToXml", true)) . "\" data-caption=\"" . HtmlEncode($this->language->phrase("ExportToXml", true)) . "\">" . $this->language->phrase("ExportToXml") . "</a>";
+        } elseif (SameText($type, "csv")) {
+            return "<a href=\"$exportUrl\" class=\"btn btn-default ew-export-link ew-csv\" title=\"" . HtmlEncode($this->language->phrase("ExportToCsv", true)) . "\" data-caption=\"" . HtmlEncode($this->language->phrase("ExportToCsv", true)) . "\">" . $this->language->phrase("ExportToCsv") . "</a>";
+        } elseif (SameText($type, "email")) {
+            $url = $custom ? ' data-url="' . $exportUrl . '"' : '';
+            return '<button type="button" class="btn btn-default ew-export-link ew-email" title="' . $this->language->phrase("ExportToEmail", true) . '" data-caption="' . $this->language->phrase("ExportToEmail", true) . '" form="fview_doctor_reportlist" data-ew-action="email" data-custom="false" data-hdr="' . $this->language->phrase("ExportToEmail", true) . '" data-exported-selected="false"' . $url . '>' . $this->language->phrase("ExportToEmail") . '</button>';
+        } elseif (SameText($type, "print")) {
+            return "<a href=\"$exportUrl\" class=\"btn btn-default ew-export-link ew-print\" title=\"" . HtmlEncode($this->language->phrase("PrinterFriendly", true)) . "\" data-caption=\"" . HtmlEncode($this->language->phrase("PrinterFriendly", true)) . "\">" . $this->language->phrase("PrinterFriendly") . "</a>";
+        }
+    }
+
+    // Set up export options
+    protected function setupExportOptions(): void
+    {
+        // Printer friendly
+        $item = $this->ExportOptions->add("print");
+        $item->Body = $this->getExportTag("print");
+        $item->Visible = false;
+
+        // Export to Excel
+        $item = $this->ExportOptions->add("excel");
+        $item->Body = $this->getExportTag("excel");
+        $item->Visible = true;
+
+        // Export to Word
+        $item = $this->ExportOptions->add("word");
+        $item->Body = $this->getExportTag("word");
+        $item->Visible = false;
+
+        // Export to HTML
+        $item = $this->ExportOptions->add("html");
+        $item->Body = $this->getExportTag("html");
+        $item->Visible = false;
+
+        // Export to XML
+        $item = $this->ExportOptions->add("xml");
+        $item->Body = $this->getExportTag("xml");
+        $item->Visible = false;
+
+        // Export to CSV
+        $item = $this->ExportOptions->add("csv");
+        $item->Body = $this->getExportTag("csv");
+        $item->Visible = false;
+
+        // Export to PDF
+        $item = $this->ExportOptions->add("pdf");
+        $item->Body = $this->getExportTag("pdf");
+        $item->Visible = true;
+
+        // Export to Email
+        $item = $this->ExportOptions->add("email");
+        $item->Body = $this->getExportTag("email");
+        $item->Visible = false;
+
+        // Drop down button for export
+        $this->ExportOptions->UseButtonGroup = true;
+        $this->ExportOptions->UseDropDownButton = false;
+        if ($this->ExportOptions->UseButtonGroup && IsMobile()) {
+            $this->ExportOptions->UseDropDownButton = true;
+        }
+        $this->ExportOptions->DropDownButtonPhrase = $this->language->phrase("ButtonExport");
+
+        // Add group option item
+        $item = $this->ExportOptions->addGroupOption();
+        $item->Body = "";
+        $item->Visible = false;
     }
 
     // Set up search options
@@ -2699,6 +2650,61 @@ class ViewDoctorReportList extends ViewDoctorReport implements PageInterface
         if (!$this->hasSearchFields() && $this->SearchOptions["searchtoggle"]) {
             $this->SearchOptions["searchtoggle"]->Visible = false;
         }
+    }
+
+    /**
+    * Export data in HTML/CSV/Word/Excel/XML/Email/PDF format
+    */
+    public function exportData(object $doc): void
+    {
+        $records = [];
+        $this->TotalRecords = $this->listRecordCount();
+
+        // Export all
+        if ($this->ExportAll) {
+            if (Config("EXPORT_ALL_TIME_LIMIT") >= 0) {
+                @set_time_limit(Config("EXPORT_ALL_TIME_LIMIT"));
+            }
+            $this->StartRecord = 1;
+            $this->StopRecord = $this->TotalRecords;
+            $records = $this->loadRecords($this->StartRecord - 1, $this->TotalRecords);
+        } else { // Export one page only
+            $this->setupStartRecord(); // Set up start record position
+            $this->setupDisplayRecords(); // Set up records per page
+            // Set the last record to display
+            if ($this->DisplayRecords <= 0) {
+                $this->StopRecord = $this->TotalRecords;
+            } else {
+                $this->StopRecord = $this->StartRecord + $this->DisplayRecords - 1;
+            }
+            $records = $this->loadRecords($this->StartRecord - 1, $this->DisplayRecords <= 0 ? $this->TotalRecords : $this->DisplayRecords);
+        }
+        $this->StartRecord = 1;
+        $this->StopRecord = count($records);
+        if (count($records) == 0 || !$doc) {
+            echo $this->getHtmlMessage();
+            return;
+        }
+
+        // Call Page Exporting server event
+        $doc->ExportCustom = !$this->pageExporting($doc);
+
+        // Page header
+        $header = $this->PageHeader;
+        $this->pageDataRendering($header);
+        $doc->Text .= $header;
+        $this->exportDocument($doc, $records, $this->StartRecord, $this->StopRecord, "");
+
+        // Page footer
+        $footer = $this->PageFooter;
+        $this->pageDataRendered($footer);
+        $doc->Text .= $footer;
+
+        // Export header and footer
+        $doc->exportHeaderAndFooter();
+
+        // Call Page Exported server event
+        $this->pageExported($doc);
     }
 
     // Set up Breadcrumb
@@ -3128,18 +3134,20 @@ class ViewDoctorReportList extends ViewDoctorReport implements PageInterface
         //Log("Page Render");
     }
 
-    // Page Data Rendering event
-    public function pageDataRendering(string &$header): void
-    {
-        // Example:
-        //$header = "your header";
+    public function pageDataRendering(&$header) {
+        if ($this->Export == "pdf") {
+            $header = \PHPMaker2026\Project2\ReportHelper::pdfHeader($this);
+        } else {
+            $header = \PHPMaker2026\Project2\ReportHelper::screenHeader($this);
+        }
     }
 
-    // Page Data Rendered event
-    public function pageDataRendered(string &$footer): void
-    {
-        // Example:
-        //$footer = "your footer";
+    public function pageDataRendered(&$footer) {
+        if ($this->Export == "pdf") {
+            $footer = \PHPMaker2026\Project2\ReportHelper::pdfFooter($this);
+        } else {
+            $footer = \PHPMaker2026\Project2\ReportHelper::screenFooter($this);
+        }
     }
 
     // Page Breaking event
