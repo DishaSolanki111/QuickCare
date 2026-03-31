@@ -35,7 +35,7 @@ if ((!isset($reminder_query) || !isset($medicine_reminder_query) || !isset($canc
             LIMIT 5
         ");
     }
-    if (!isset($cancellation_query)) {
+        if (!isset($cancellation_query)) {
         $cancellation_query = @mysqli_query($conn, "
             SELECT REMARKS, REMINDER_TIME, START_DATE
             FROM medicine_reminder_tbl
@@ -44,34 +44,6 @@ if ((!isset($reminder_query) || !isset($medicine_reminder_query) || !isset($canc
             LIMIT 10
         ");
     }
-
-    // ── NEW: Refund notifications ─────────────────────────────────────────────
-    // Show a refund notification for up to 7 days after the refund was processed.
-    // Joins refund_tbl → payment_tbl → appointment_tbl so we have all the detail.
-    if (!isset($refund_query)) {
-        $refund_query = @mysqli_query($conn, "
-            SELECT  r.REFUND_ID,
-                    r.REFUND_TXN_ID,
-                    r.REFUND_AMOUNT,
-                    r.REFUND_DATE,
-                    r.REFUND_STATUS,
-                    r.CREATED_AT,
-                    a.APPOINTMENT_DATE,
-                    a.APPOINTMENT_TIME,
-                    d.FIRST_NAME  AS DOC_FIRST,
-                    d.LAST_NAME   AS DOC_LAST
-            FROM   refund_tbl r
-            JOIN   payment_tbl     p ON p.PAYMENT_ID     = r.PAYMENT_ID
-            JOIN   appointment_tbl a ON a.APPOINTMENT_ID = r.APPOINTMENT_ID
-            JOIN   doctor_tbl      d ON d.DOCTOR_ID      = a.DOCTOR_ID
-            WHERE  r.PATIENT_ID    = $pid
-            AND    r.REFUND_STATUS = 'PROCESSED'
-            AND    r.REFUND_DATE  >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
-            ORDER  BY r.CREATED_AT DESC
-            LIMIT  5
-        ");
-    }
-    // ─────────────────────────────────────────────────────────────────────────
 }
 
 $patient_full_name = isset($patient)
@@ -91,7 +63,6 @@ $pidForSeen = (int)($patient['PATIENT_ID'] ?? 0);
 $appointment_items  = [];
 $medicine_items     = [];
 $cancellation_items = [];
-$refund_items       = [];   // ← NEW
 $allKeys            = [];
 
 if (isset($reminder_query) && $reminder_query) {
@@ -128,20 +99,6 @@ if (isset($cancellation_query) && $cancellation_query) {
     }
 }
 
-// ── NEW: Build refund items using the same seen-key pattern ──────────────────
-if (isset($refund_query) && $refund_query) {
-    while ($row = mysqli_fetch_assoc($refund_query)) {
-        $k = qc_notification_make_key(
-            'refund',
-            $pidForSeen . '|' . ($row['REFUND_ID'] ?? '') . '|' . ($row['REFUND_TXN_ID'] ?? '') . '|' . ($row['REFUND_DATE'] ?? '')
-        );
-        $row['_notif_key'] = $k;
-        $refund_items[] = $row;
-        $allKeys[] = $k;
-    }
-}
-// ─────────────────────────────────────────────────────────────────────────────
-
 $seenMap    = qc_notification_seen_map($conn, 'patient', $pidForSeen, $allKeys);
 $toMarkSeen = [];
 
@@ -164,23 +121,13 @@ $cancellation_items = array_values(array_filter($cancellation_items, function ($
     return true;
 }));
 
-// ── NEW: Filter refund items through seen map ─────────────────────────────────
-$refund_items = array_values(array_filter($refund_items, function ($row) use ($seenMap, &$toMarkSeen) {
-    $k = $row['_notif_key'] ?? '';
-    if ($k !== '' && isset($seenMap[$k])) return false;
-    if ($k !== '') $toMarkSeen[] = $k;
-    return true;
-}));
-// ─────────────────────────────────────────────────────────────────────────────
-
 if (!empty($toMarkSeen)) {
     qc_notification_mark_seen($conn, 'patient', $pidForSeen, $toMarkSeen);
 }
 
 $reminder_count = count($appointment_items)
                 + count($medicine_items)
-                + count($cancellation_items)
-                + count($refund_items);   // ← NEW: refunds counted in badge
+                + count($cancellation_items);
 ?>
 
 <header class="topbar">
@@ -270,36 +217,6 @@ $reminder_count = count($appointment_items)
                                 </div>
                             <?php endforeach; ?>
                         <?php endif; ?>
-
-                        <!-- ── NEW: Refund notifications ───────────────────── -->
-                        <?php if (!empty($refund_items)): ?>
-                            <?php foreach ($refund_items as $refund): ?>
-                                <div class="notification-item refund-notification-item">
-                                    <div class="notification-icon" style="background: #dcfce7; color: #16a34a;">
-                                        <i class="fas fa-undo-alt"></i>
-                                    </div>
-                                    <div class="notification-content">
-                                        <div class="notification-title" style="color: #15803d;">
-                                            Refund Processed ✅
-                                        </div>
-                                        <div class="notification-message">
-                                            ₹<?php echo number_format((float)$refund['REFUND_AMOUNT'], 2); ?> refunded for your
-                                            cancelled appointment with
-                                            Dr. <?php echo htmlspecialchars($refund['DOC_FIRST'] . ' ' . $refund['DOC_LAST']); ?>
-                                            on <?php echo date('M d, Y', strtotime($refund['APPOINTMENT_DATE'])); ?>.
-                                        </div>
-                                        <div class="notification-message" style="margin-top: 3px; color: #6b7280; font-size: 11px;">
-                                            Txn: <?php echo htmlspecialchars($refund['REFUND_TXN_ID']); ?>
-                                        </div>
-                                        <div class="notification-time">
-                                            Refunded on <?php echo date('M d, Y', strtotime($refund['REFUND_DATE'])); ?>
-                                            &bull; Reflects in 5–7 business days
-                                        </div>
-                                    </div>
-                                </div>
-                            <?php endforeach; ?>
-                        <?php endif; ?>
-                        <!-- ───────────────────────────────────────────────── -->
 
                     <?php else: ?>
                         <div class="no-notifications">No new notifications</div>
@@ -404,12 +321,6 @@ $reminder_count = count($appointment_items)
     border-bottom: none;
 }
 
-/* Subtle green left-border for refund items to make them stand out */
-.refund-notification-item {
-    border-left: 3px solid #16a34a;
-    background: #f0fdf4;
-}
-
 .notification-icon {
     width: 28px;
     height: 28px;
@@ -473,22 +384,16 @@ $reminder_count = count($appointment_items)
 .notification-popup.show {
     display: block;
 }
-
-/* Green variant for refund popup */
-.notification-popup.refund-popup {
-    border-left: 4px solid #16a34a;
-    background: #f0fdf4;
-}
 </style>
 
-<!-- Notification popup (reused for reminders AND refunds) -->
+<!-- Notification popup (reused for reminders) -->
 <div class="notification-popup" id="notificationPopup">
     <div style="display:flex; align-items:flex-start; gap:10px;">
         <i class="fas fa-bell" id="notificationPopupIcon" style="font-size:18px; color:#1a3a5f;"></i>
         <div style="flex:1;">
             <div id="notificationPopupTitle" style="font-weight:600; font-size:13px; color:#333; margin-bottom:3px;"></div>
             <div id="notificationPopupMessage" style="font-weight:400; font-size:13px; color:#555;"></div>
-            <button onclick="document.getElementById('notificationPopup').classList.remove('show','refund-popup')" style="margin-top:8px; background:#f3f4f6; border:1px solid #e5e7eb; color:#374151; padding:4px 10px; border-radius:4px; cursor:pointer; font-size:12px;">Close</button>
+            <button onclick="document.getElementById('notificationPopup').classList.remove('show')" style="margin-top:8px; background:#f3f4f6; border:1px solid #e5e7eb; color:#374151; padding:4px 10px; border-radius:4px; cursor:pointer; font-size:12px;">Close</button>
         </div>
     </div>
 </div>
@@ -508,7 +413,7 @@ $reminder_count = count($appointment_items)
     window.toggleNotifications = toggleNotifications;
 
     // ── Show a popup notification ─────────────────────────────────────────────
-    function showPopup(title, message, isRefund) {
+    function showPopup(title, message) {
         var pop   = document.getElementById('notificationPopup');
         var icon  = document.getElementById('notificationPopupIcon');
         var ttl   = document.getElementById('notificationPopupTitle');
@@ -518,18 +423,11 @@ $reminder_count = count($appointment_items)
         ttl.textContent = title;
         msg.textContent = message;
 
-        if (isRefund) {
-            pop.classList.add('refund-popup');
-            icon.className      = 'fas fa-undo-alt';
-            icon.style.color    = '#16a34a';
-        } else {
-            pop.classList.remove('refund-popup');
-            icon.className      = 'fas fa-bell';
-            icon.style.color    = '#1a3a5f';
-        }
+        icon.className      = 'fas fa-bell';
+        icon.style.color    = '#1a3a5f';
 
         pop.classList.add('show');
-        setTimeout(function(){ pop.classList.remove('show', 'refund-popup'); }, 6000);
+        setTimeout(function(){ pop.classList.remove('show'); }, 6000);
     }
 
     // ── Poll check_reminders.php (your existing endpoint) ────────────────────
@@ -539,12 +437,9 @@ $reminder_count = count($appointment_items)
             .then(function(data) {
                 if (data.status === 'success' && data.reminders && data.reminders.length > 0) {
                     data.reminders.forEach(function(rem) {
-                        // Detect if this is a refund message from the server
-                        var isRefund = rem.type === 'refund' || (rem.message && rem.message.indexOf('Refund') !== -1);
                         showPopup(
-                            isRefund ? 'Refund Processed ✅' : 'Reminder',
-                            rem.message,
-                            isRefund
+                            'Reminder',
+                            rem.message
                         );
                     });
                 }
