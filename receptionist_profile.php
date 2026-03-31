@@ -162,72 +162,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
             width: calc(100% - 250px);
             min-height: 100vh;
         }
-
-        /* Top Bar - match doctor_dashboard/doctor_header */
-        .topbar {
-            background: #ffffff;
-            padding: 18px 30px;
-            
-            justify-content: space-between;
-            align-items: left;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.06);
-            margin-bottom: 20px;
-        }
-
-        .topbar-right {
-            display: flex;
-            align-items: center;
-        }
-
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .user-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid #f0f0f0;
-        }
-
-        .user-details {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .name-row {
-            display: flex;
-            align-items: center;
-        }
-
-        .doctor-name {
-            font-weight: 600;
-            color: #1a3a5f;
-            font-size: 16px;
-        }
-
-        .date {
-            color: #6b7280;
-            font-size: 14px;
-        }
-
         /* Profile Content */
         .profile-content {
             background: var(--white);
             border-radius: 10px;
-            padding: 18px 22px 12px 22px;
+            padding: 18px 22px 12px 30px;
             box-shadow: var(--shadow-md);
-            height: fit-content;
+           
         }
 
         .profile-header {
             display: flex;
             align-items: center;
             margin-bottom: 20px;
-            padding-bottom: 15px;
+        
             border-bottom: 1px solid #eee;
             justify-content: flex-start;
         }
@@ -528,9 +476,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
                 width: 100%;
             }
             
-            .topbar {
-                padding: 15px 20px;
-            }
+           
             
             .profile-content {
                 padding: 20px;
