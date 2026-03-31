@@ -14,6 +14,11 @@ include 'config.php';
  $success_message = "";
  $error_message = "";
 
+// Show success message after delete redirect
+if (isset($_GET['deleted']) && $_GET['deleted'] == '1') {
+    $success_message = "Patient deleted successfully!";
+}
+
 // Handle edit form submission
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['action'] == 'edit_patient') {
     $patient_id  = $_POST['patient_id'];
@@ -58,21 +63,74 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
 
 // Handle delete
 if (isset($_POST['action']) && $_POST['action'] == 'delete' && isset($_POST['id'])) {
-    $patient_id = $_POST['id'];
-    $query = "DELETE FROM patient_tbl WHERE PATIENT_ID = ?";
-    $stmt = mysqli_prepare($conn, $query);
-    mysqli_stmt_bind_param($stmt, "i", $patient_id);
-    
-    if (mysqli_stmt_execute($stmt)) {
-        $success_message = "Patient deleted successfully!";
-    } else {
-        $error_message = "Error deleting patient: " . mysqli_error($conn);
+    $patient_id = intval($_POST['id']);
+    $delete_error = "";
+
+    // Use a transaction to safely delete patient and all related records
+    mysqli_begin_transaction($conn);
+    try {
+        // 1. Get all appointment IDs for this patient
+        $appt_stmt = mysqli_prepare($conn, "SELECT APPOINTMENT_ID FROM appointment_tbl WHERE PATIENT_ID = ?");
+        mysqli_stmt_bind_param($appt_stmt, "i", $patient_id);
+        mysqli_stmt_execute($appt_stmt);
+        $appt_result = mysqli_stmt_get_result($appt_stmt);
+        $appointment_ids = [];
+        while ($row = mysqli_fetch_assoc($appt_result)) {
+            $appointment_ids[] = $row['APPOINTMENT_ID'];
+        }
+        mysqli_stmt_close($appt_stmt);
+
+        if (!empty($appointment_ids)) {
+            $ids_placeholder = implode(',', array_fill(0, count($appointment_ids), '?'));
+            $types = str_repeat('i', count($appointment_ids));
+
+            // 2. Delete prescription_tbl records linked to these appointments
+            $del_pres = mysqli_prepare($conn, "DELETE FROM prescription_tbl WHERE APPOINTMENT_ID IN ($ids_placeholder)");
+            mysqli_stmt_bind_param($del_pres, $types, ...$appointment_ids);
+            mysqli_stmt_execute($del_pres);
+            mysqli_stmt_close($del_pres);
+
+            // 3. Delete feedback_tbl records linked to these appointments
+            $del_fb = mysqli_prepare($conn, "DELETE FROM feedback_tbl WHERE APPOINTMENT_ID IN ($ids_placeholder)");
+            mysqli_stmt_bind_param($del_fb, $types, ...$appointment_ids);
+            mysqli_stmt_execute($del_fb);
+            mysqli_stmt_close($del_fb);
+
+            // 4. Delete payment_tbl records linked to these appointments
+            $del_pay = mysqli_prepare($conn, "DELETE FROM payment_tbl WHERE APPOINTMENT_ID IN ($ids_placeholder)");
+            mysqli_stmt_bind_param($del_pay, $types, ...$appointment_ids);
+            mysqli_stmt_execute($del_pay);
+            mysqli_stmt_close($del_pay);
+
+            // 5. Delete appointments
+            $del_appt = mysqli_prepare($conn, "DELETE FROM appointment_tbl WHERE PATIENT_ID = ?");
+            mysqli_stmt_bind_param($del_appt, "i", $patient_id);
+            mysqli_stmt_execute($del_appt);
+            mysqli_stmt_close($del_appt);
+        }
+
+        // 6. Delete medicine reminders (has ON DELETE CASCADE but explicit for safety)
+        $del_med = mysqli_prepare($conn, "DELETE FROM medicine_reminder_tbl WHERE PATIENT_ID = ?");
+        mysqli_stmt_bind_param($del_med, "i", $patient_id);
+        mysqli_stmt_execute($del_med);
+        mysqli_stmt_close($del_med);
+
+        // 7. Finally delete the patient
+        $del_pat = mysqli_prepare($conn, "DELETE FROM patient_tbl WHERE PATIENT_ID = ?");
+        mysqli_stmt_bind_param($del_pat, "i", $patient_id);
+        mysqli_stmt_execute($del_pat);
+        mysqli_stmt_close($del_pat);
+
+        mysqli_commit($conn);
+
+        // Redirect with success flag
+        header("Location: recep_patient.php?deleted=1");
+        exit();
+
+    } catch (Exception $e) {
+        mysqli_rollback($conn);
+        $error_message = "Error deleting patient: " . $e->getMessage();
     }
-    mysqli_stmt_close($stmt);
-    
-    // Redirect to remove delete parameters from URL
-    header("Location: recep_patient.php");
-    exit();
 }
 ?>
 

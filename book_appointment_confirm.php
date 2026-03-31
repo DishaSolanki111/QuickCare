@@ -118,6 +118,8 @@ body::before {
         .booking-section {
             padding: 2.5rem 0;
             flex-grow: 1;
+            position: relative;
+            z-index: 10;
         }
 
         .booking-container {
@@ -132,10 +134,10 @@ body::before {
         .doctor-summary {
             background: linear-gradient(135deg, var(--dark-blue) 0%, var(--mid-blue) 100%);
             color: white;
-            padding: 2rem;
+            padding: 1rem 1.5rem;
             display: flex;
             align-items: center;
-            gap: 2rem;
+            gap: 1.5rem;
         }
 
         .doctor-avatar {
@@ -163,7 +165,7 @@ body::before {
 
         .modal-content {
             background-color: #fefefe;
-            padding: 30px;
+            padding: 20px;
             width: 100%;
         }
 
@@ -242,7 +244,8 @@ body::before {
         .step-indicator {
             display: flex;
             justify-content: center;
-            margin-bottom: 30px;
+            margin-top: 5px;
+            margin-bottom: 15px;
         }
 
         .step {
@@ -270,46 +273,48 @@ body::before {
         /* Appointment Confirmation Styles */
         .confirmation-container {
             text-align: center;
-            padding: 20px;
+            padding: 0 10px;
         }
 
         .confirmation-icon {
-            font-size: 4rem;
+            font-size: 3rem;
             color: var(--accent-color);
-            margin-bottom: 20px;
+            margin-bottom: 10px;
         }
 
         .confirmation-title {
-            font-size: 1.5rem;
+            font-size: 1.35rem;
             color: var(--primary-color);
-            margin-bottom: 15px;
+            margin-bottom: 10px;
         }
 
         .confirmation-message {
-            color: var(--primary-color);
+            color: var(--text-dark);
             margin-bottom: 20px;
         }
 
         .appointment-details {
             background-color: #f9f9f9;
             border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 20px;
+            padding: 15px;
+            margin-bottom: 15px;
             text-align: left;
         }
 
         .appointment-details h4 {
             color: var(--primary-color);
-            margin-bottom: 15px;
+            margin-bottom: 10px;
             text-align: center;
+            font-size: 1.1rem;
         }
 
         .detail-row {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 10px;
-            padding-bottom: 10px;
+            margin-bottom: 8px;
+            padding-bottom: 8px;
             border-bottom: 1px solid #eee;
+            font-size: 0.95rem;
         }
 
         .detail-row:last-child {
@@ -478,12 +483,12 @@ body::before {
                         </div>
                         
                         <div class="btn-group" style="justify-content: center;">
-                            <button type="button" class="btn btn-danger" onclick="goBack()">
+                            <a href="book_appointment_time.php" class="btn btn-danger" style="text-decoration: none;">
                                 <i class="fas fa-arrow-left" style="margin-right: 5px;"></i> Back
-                            </button>
-                            <button type="button" class="btn btn-success" onclick="proceedToPayment()">
-                            <i class="fas fa-credit-card"></i> Proceed to Payment
-                            </button>
+                            </a>
+                            <a href="book_appointment_payment.php" class="btn btn-success" style="text-decoration: none;">
+                            <i class="fas fa-credit-card" style="margin-right: 5px;"></i> Proceed to Payment
+                            </a>
                         </div>
                     </div>
                 </div>

@@ -8,6 +8,9 @@ if (!isset($_SESSION['LOGGED_IN']) || $_SESSION['LOGGED_IN'] !== true || ($_SESS
     exit;
 }
 
+include 'admin_sidebar.php';
+$adminName = isset($_SESSION['USER_NAME']) ? $_SESSION['USER_NAME'] : 'Admin';
+
 $doctor_id = 0;
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['doctor_id'])) {
     $doctor_id = (int)$_POST['doctor_id'];
@@ -59,42 +62,33 @@ $img = !empty($doctor['PROFILE_IMAGE']) ? $doctor['PROFILE_IMAGE'] : 'uploads/de
         }
 
         body {
-            background: #e5edf5;
-            min-height: 100vh;
-            padding: 20px 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+    background: #e5edf5;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+}
 
+.main {
+    margin-left: 240px; /* same as sidebar width */
+    width: calc(100% - 240px);
+    min-height: 100vh;
+    padding: 20px;
+    box-sizing: border-box;
+}
         .sheet {
-            width: 794px;
-            max-width: 100%;
-            background: #ffffff;
-            box-shadow: 0 10px 25px rgba(15, 23, 42, 0.25);
-            border-radius: 10px;
-            padding: 24px 28px 28px;
-        }
+    width: 100%;
+    background: #ffffff;
+    border: 1px solid #d9dee5;
+    border-radius: 12px;
+    padding: 24px 28px 28px;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+    margin-top: 18px;
+}
 
         .sheet-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
             border-bottom: none;
             padding-bottom: 0;
             margin-bottom: 0;
-        }
-
-        .brand-title {
-            font-size: 1.3rem;
-            font-weight: 800;
-            color: #072D44;
-        }
-
-        .brand-sub {
-            font-size: 0.8rem;
-            color: #64748b;
-            margin-top: 2px;
         }
 
         .profile-header {
@@ -113,6 +107,9 @@ $img = !empty($doctor['PROFILE_IMAGE']) ? $doctor['PROFILE_IMAGE'] : 'uploads/de
             display: flex;
             align-items: center;
             justify-content: center;
+            font-size: 26px;
+            font-weight: 700;
+            color: #1d4ed8;
             overflow: hidden;
             flex-shrink: 0;
         }
@@ -135,29 +132,6 @@ $img = !empty($doctor['PROFILE_IMAGE']) ? $doctor['PROFILE_IMAGE'] : 'uploads/de
             margin-top: 4px;
         }
 
-        .badge-chip {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            padding: 3px 10px;
-            border-radius: 999px;
-            background: #eff6ff;
-            color: #1d4ed8;
-            font-size: 0.75rem;
-            font-weight: 600;
-            margin-top: 6px;
-        }
-
-        .section-title {
-            font-size: 0.9rem;
-            font-weight: 700;
-            color: #0f172a;
-            margin-top: 14px;
-            margin-bottom: 8px;
-            padding-bottom: 4px;
-            border-bottom: 1px solid #e2e8f0;
-        }
-
         .grid-2 {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -177,6 +151,16 @@ $img = !empty($doctor['PROFILE_IMAGE']) ? $doctor['PROFILE_IMAGE'] : 'uploads/de
         .field-value {
             color: #111827;
             line-height: 1.35;
+        }
+
+        .section-title {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin-top: 14px;
+            margin-bottom: 8px;
+            padding-bottom: 4px;
+            border-bottom: 1px solid #e2e8f0;
         }
 
         .footer-actions {
@@ -209,6 +193,7 @@ $img = !empty($doctor['PROFILE_IMAGE']) ? $doctor['PROFILE_IMAGE'] : 'uploads/de
                 box-shadow: none;
                 border-radius: 0;
                 width: auto;
+                margin-top: 0;
             }
             .footer-actions {
                 display: none;
@@ -217,10 +202,11 @@ $img = !empty($doctor['PROFILE_IMAGE']) ? $doctor['PROFILE_IMAGE'] : 'uploads/de
     </style>
 </head>
 <body>
-    <div class="sheet">
-        <div class="sheet-header">
-            <div></div>
-        </div>
+    
+    <div class="main">
+        <?php include 'admin_header.php'; ?>
+        <div class="sheet">
+            <div class="sheet-header"></div>
 
         <div class="profile-header">
             <div class="avatar-lg">
@@ -229,48 +215,52 @@ $img = !empty($doctor['PROFILE_IMAGE']) ? $doctor['PROFILE_IMAGE'] : 'uploads/de
             <div>
                 <div class="profile-main-name">Dr. <?php echo htmlspecialchars($doctor_name); ?></div>
                 <div class="profile-id">Specialization: <?php echo htmlspecialchars($doctor['SPECIALISATION_NAME']); ?></div>
-               
+                <div class="badge-chip">
+                    <i class="fas fa-user-md"></i>
+                    Verified Doctor
+                </div>
             </div>
         </div>
 
-        <div class="section-title">Personal Information</div>
-        <div class="grid-2">
-            <div>
-                <div class="field-label">Date of Birth</div>
-                <div class="field-value"><?php echo htmlspecialchars($doctor['DOB']); ?></div>
+            <div class="section-title">Personal Information</div>
+            <div class="grid-2">
+                <div>
+                    <div class="field-label">Date of Birth</div>
+                    <div class="field-value"><?php echo htmlspecialchars($doctor['DOB']); ?></div>
+                </div>
+                <div>
+                    <div class="field-label">Gender</div>
+                    <div class="field-value"><?php echo htmlspecialchars($doctor['GENDER']); ?></div>
+                </div>
+                <div>
+                    <div class="field-label">Date of Joining</div>
+                    <div class="field-value"><?php echo htmlspecialchars($doctor['DOJ']); ?></div>
+                </div>
+                <div>
+                    <div class="field-label">Education</div>
+                    <div class="field-value"><?php echo htmlspecialchars($doctor['EDUCATION']); ?></div>
+                </div>
             </div>
-            <div>
-                <div class="field-label">Gender</div>
-                <div class="field-value"><?php echo htmlspecialchars($doctor['GENDER']); ?></div>
-            </div>
-            <div>
-                <div class="field-label">Date of Joining</div>
-                <div class="field-value"><?php echo htmlspecialchars($doctor['DOJ']); ?></div>
-            </div>
-            <div>
-                <div class="field-label">Education</div>
-                <div class="field-value"><?php echo htmlspecialchars($doctor['EDUCATION']); ?></div>
-            </div>
-        </div>
 
-        <div class="section-title" style="margin-top:16px;">Contact Information</div>
-        <div class="grid-2">
-            <div>
-                <div class="field-label">Phone</div>
-                <div class="field-value"><?php echo htmlspecialchars($doctor['PHONE']); ?></div>
+            <div class="section-title" style="margin-top:16px;">Contact Information</div>
+            <div class="grid-2">
+                <div>
+                    <div class="field-label">Phone</div>
+                    <div class="field-value"><?php echo htmlspecialchars($doctor['PHONE']); ?></div>
+                </div>
+                <div>
+                    <div class="field-label">Email</div>
+                    <div class="field-value"><?php echo htmlspecialchars($doctor['EMAIL']); ?></div>
+                </div>
             </div>
-            <div>
-                <div class="field-label">Email</div>
-                <div class="field-value"><?php echo htmlspecialchars($doctor['EMAIL']); ?></div>
-            </div>
-        </div>
 
-        <div class="footer-actions">
-            <a class="btn-back" href="Admin_doctor.php">
-                <i class="fas fa-arrow-left"></i> Back to Doctors
-            </a>
+            <div class="footer-actions">
+                <a class="btn-back" href="Admin_doctor.php">
+                    <i class="fas fa-arrow-left"></i> Back to Doctors
+                </a>
+            </div>
+
         </div>
     </div>
 </body>
 </html>
-

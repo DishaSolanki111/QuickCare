@@ -1,12 +1,14 @@
 <?php
 session_start();
 include 'config.php';
-
-// Receptionist access control
+ include 'recept_sidebar.php'; 
 if (!isset($_SESSION['RECEPTIONIST_ID'])) {
     header("Location: login.php");
     exit;
 }
+
+
+
 
 // ✅ SECURITY: Changed from GET to POST to hide doctor_id from URL
 $doctor_id = isset($_POST['doctor_id']) ? (int)$_POST['doctor_id'] : 0;
@@ -82,52 +84,33 @@ function recep_day_name($code) {
         }
 
         body {
-            background: #e5edf5;
-            min-height: 100vh;
-            padding: 20px 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+    background: #e5edf5;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+}
 
+.main {
+    margin-left: 240px; /* same as sidebar width */
+    width: calc(100% - 240px);
+    min-height: 100vh;
+    padding: 20px;
+    box-sizing: border-box;
+}
         .sheet {
-            width: 794px;
-            max-width: 100%;
-            background: #ffffff;
-            box-shadow: 0 10px 25px rgba(15, 23, 42, 0.25);
-            border-radius: 10px;
-            padding: 24px 28px 28px;
-        }
+    width: 100%;
+    background: #ffffff;
+    border: 1px solid #d9dee5;
+    border-radius: 12px;
+    padding: 24px 28px 28px;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+    margin-top: 18px;
+}
 
         .sheet-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
             border-bottom: none;
             padding-bottom: 0;
             margin-bottom: 0;
-        }
-
-        .brand-title {
-            font-size: 1.3rem;
-            font-weight: 800;
-            color: #072D44;
-        }
-
-        .brand-sub {
-            font-size: 0.8rem;
-            color: #64748b;
-            margin-top: 2px;
-        }
-
-        .meta-block {
-            text-align: right;
-            font-size: 0.8rem;
-            color: #64748b;
-        }
-
-        .meta-block div + div {
-            margin-top: 3px;
         }
 
         .profile-header {
@@ -146,6 +129,9 @@ function recep_day_name($code) {
             display: flex;
             align-items: center;
             justify-content: center;
+            font-size: 26px;
+            font-weight: 700;
+            color: #1d4ed8;
             overflow: hidden;
             flex-shrink: 0;
         }
@@ -181,16 +167,6 @@ function recep_day_name($code) {
             margin-top: 6px;
         }
 
-        .section-title {
-            font-size: 0.9rem;
-            font-weight: 700;
-            color: #0f172a;
-            margin-top: 14px;
-            margin-bottom: 8px;
-            padding-bottom: 4px;
-            border-bottom: 1px solid #e2e8f0;
-        }
-
         .grid-2 {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -212,55 +188,20 @@ function recep_day_name($code) {
             line-height: 1.35;
         }
 
-        .schedule-list {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            font-size: 0.86rem;
-        }
-
-        .schedule-row {
-            display: flex;
-            justify-content: space-between;
-            gap: 20px;
-            border: 1px solid #eef2f7;
-            padding: 10px 12px;
-            border-radius: 10px;
-        }
-
-        .schedule-day {
+        .section-title {
+            font-size: 0.9rem;
             font-weight: 700;
             color: #0f172a;
-        }
-
-        .schedule-time {
-            color: #1d4ed8;
-            font-weight: 600;
+            margin-top: 14px;
+            margin-bottom: 8px;
+            padding-bottom: 4px;
+            border-bottom: 1px solid #e2e8f0;
         }
 
         .footer-actions {
             margin-top: 18px;
             display: flex;
-            justify-content: space-between;
-            gap: 10px;
-        }
-
-        .btn-print {
-            padding: 7px 16px;
-            border-radius: 999px;
-            border: none;
-            background: #072D44;
-            color: #ffffff;
-            font-size: 0.8rem;
-            font-weight: 600;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .btn-print:hover {
-            background: #0b3a60;
+            justify-content: flex-start;
         }
 
         .btn-back {
@@ -278,10 +219,6 @@ function recep_day_name($code) {
             text-decoration: none;
         }
 
-        .btn-back:hover {
-            background: #e2e8f0;
-        }
-
         @media print {
             body {
                 background: #ffffff;
@@ -291,6 +228,7 @@ function recep_day_name($code) {
                 box-shadow: none;
                 border-radius: 0;
                 width: auto;
+                margin-top: 0;
             }
             .footer-actions {
                 display: none;
@@ -299,11 +237,10 @@ function recep_day_name($code) {
     </style>
 </head>
 <body>
+    <div class="main">
+    <?php include 'doctor_header.php'; ?>
     <div class="sheet">
-        <div class="sheet-header">
-            <div>
-            </div>
-        </div>
+        <div class="sheet-header"></div>
 
         <div class="profile-header">
             <div class="avatar-lg">
@@ -359,6 +296,7 @@ function recep_day_name($code) {
             </a>
         </div>
     </div>
+</div>
 </body>
 </html>
 

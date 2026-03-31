@@ -1,6 +1,9 @@
 <?php
 session_start();
 include 'config.php';
+include 'recept_sidebar.php'; 
+
+
 
 // Receptionist access control
 if (!isset($_SESSION['RECEPTIONIST_ID'])) {
@@ -50,52 +53,33 @@ $fullName = $patient['FIRST_NAME'] . ' ' . $patient['LAST_NAME'];
         }
 
         body {
-            background: #e5edf5;
-            min-height: 100vh;
-            padding: 20px 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+    background: #e5edf5;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+}
 
+.main {
+    margin-left: 240px; /* same as sidebar width */
+    width: calc(100% - 240px);
+    min-height: 100vh;
+    padding: 20px;
+    box-sizing: border-box;
+}
         .sheet {
-            width: 794px;
-            max-width: 100%;
-            background: #ffffff;
-            box-shadow: 0 10px 25px rgba(15, 23, 42, 0.25);
-            border-radius: 10px;
-            padding: 24px 28px 28px;
-        }
+    width: 100%;
+    background: #ffffff;
+    border: 1px solid #d9dee5;
+    border-radius: 12px;
+    padding: 24px 28px 28px;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+    margin-top: 18px;
+}
 
         .sheet-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
             border-bottom: none;
             padding-bottom: 0;
             margin-bottom: 0;
-        }
-
-        .brand-title {
-            font-size: 1.3rem;
-            font-weight: 800;
-            color: #072D44;
-        }
-
-        .brand-sub {
-            font-size: 0.8rem;
-            color: #64748b;
-            margin-top: 2px;
-        }
-
-        .meta-block {
-            text-align: right;
-            font-size: 0.8rem;
-            color: #64748b;
-        }
-
-        .meta-block div + div {
-            margin-top: 3px;
         }
 
         .profile-header {
@@ -117,6 +101,8 @@ $fullName = $patient['FIRST_NAME'] . ' ' . $patient['LAST_NAME'];
             font-size: 26px;
             font-weight: 700;
             color: #1d4ed8;
+            overflow: hidden;
+            flex-shrink: 0;
         }
 
         .profile-main-name {
@@ -129,29 +115,6 @@ $fullName = $patient['FIRST_NAME'] . ' ' . $patient['LAST_NAME'];
             font-size: 0.85rem;
             color: #64748b;
             margin-top: 4px;
-        }
-
-        .badge-chip {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            padding: 3px 10px;
-            border-radius: 999px;
-            background: #eff6ff;
-            color: #1d4ed8;
-            font-size: 0.75rem;
-            font-weight: 600;
-            margin-top: 6px;
-        }
-
-        .section-title {
-            font-size: 0.9rem;
-            font-weight: 700;
-            color: #0f172a;
-            margin-top: 14px;
-            margin-bottom: 8px;
-            padding-bottom: 4px;
-            border-bottom: 1px solid #e2e8f0;
         }
 
         .grid-2 {
@@ -175,34 +138,25 @@ $fullName = $patient['FIRST_NAME'] . ' ' . $patient['LAST_NAME'];
             line-height: 1.35;
         }
 
+        .section-title {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin-top: 14px;
+            margin-bottom: 8px;
+            padding-bottom: 4px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
         .address-block {
-            margin-top: 8px;
+            margin-top: 4px;
             font-size: 0.86rem;
         }
 
         .footer-actions {
             margin-top: 18px;
             display: flex;
-            justify-content: space-between;
-            gap: 10px;
-        }
-
-        .btn-print {
-            padding: 7px 16px;
-            border-radius: 999px;
-            border: none;
-            background: #072D44;
-            color: #ffffff;
-            font-size: 0.8rem;
-            font-weight: 600;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .btn-print:hover {
-            background: #0b3a60;
+            justify-content: flex-start;
         }
 
         .btn-back {
@@ -220,10 +174,6 @@ $fullName = $patient['FIRST_NAME'] . ' ' . $patient['LAST_NAME'];
             text-decoration: none;
         }
 
-        .btn-back:hover {
-            background: #e2e8f0;
-        }
-
         @media print {
             body {
                 background: #ffffff;
@@ -233,6 +183,7 @@ $fullName = $patient['FIRST_NAME'] . ' ' . $patient['LAST_NAME'];
                 box-shadow: none;
                 border-radius: 0;
                 width: auto;
+                margin-top: 0;
             }
             .footer-actions {
                 display: none;
@@ -241,70 +192,73 @@ $fullName = $patient['FIRST_NAME'] . ' ' . $patient['LAST_NAME'];
     </style>
 </head>
 <body>
-    <div class="sheet">
-        <div class="sheet-header">
-            <div>
-            </div>
-        </div>
+    
+    <div class="main">
+        <?php include 'receptionist_header.php'; ?>
+        <div class="sheet">
+            <div class="sheet-header"></div>
 
-        <div class="profile-header">
-            <div class="avatar-lg">
-                <?php echo strtoupper(substr($patient['FIRST_NAME'], 0, 1) . substr($patient['LAST_NAME'], 0, 1)); ?>
-            </div>
-            <div>
-                <div class="profile-main-name"><?php echo htmlspecialchars($fullName); ?></div>
-                <div class="profile-id">Username: <?php echo htmlspecialchars($patient['USERNAME']); ?></div>
-                <div class="badge-chip">
-                    <i class="fas fa-heartbeat"></i>
-                    Active Patient Record
+            <div class="profile-header">
+                <div class="avatar-lg">
+                    <?php echo strtoupper(substr($patient['FIRST_NAME'], 0, 1) . substr($patient['LAST_NAME'], 0, 1)); ?>
+                </div>
+                <div>
+                    <div class="profile-main-name"><?php echo htmlspecialchars($fullName); ?></div>
+                    <div class="profile-id">Username: <?php echo htmlspecialchars($patient['USERNAME']); ?></div>
                 </div>
             </div>
-        </div>
 
-        <div class="section-title">Personal Information</div>
-        <div class="grid-2">
-            <div>
-                <div class="field-label">Full Name</div>
-                <div class="field-value"><?php echo htmlspecialchars($fullName); ?></div>
+            <div class="section-title">Personal Information</div>
+            <div class="grid-2">
+                <div>
+                    <div class="field-label">Full Name</div>
+                    <div class="field-value"><?php echo htmlspecialchars($fullName); ?></div>
+                </div>
+                <div>
+                    <div class="field-label">Date of Birth</div>
+                    <div class="field-value"><?php echo htmlspecialchars($patient['DOB']); ?></div>
+                </div>
+                <div>
+                    <div class="field-label">Gender</div>
+                    <div class="field-value"><?php echo htmlspecialchars($patient['GENDER']); ?></div>
+                </div>
+                <div>
+                    <div class="field-label">Blood Group</div>
+                    <div class="field-value"><?php echo htmlspecialchars($patient['BLOOD_GROUP']); ?></div>
+                </div>
             </div>
-            <div>
-                <div class="field-label">Date of Birth</div>
-                <div class="field-value"><?php echo htmlspecialchars($patient['DOB']); ?></div>
-            </div>
-            <div>
-                <div class="field-label">Gender</div>
-                <div class="field-value"><?php echo htmlspecialchars($patient['GENDER']); ?></div>
-            </div>
-            <div>
-                <div class="field-label">Blood Group</div>
-                <div class="field-value"><?php echo htmlspecialchars($patient['BLOOD_GROUP']); ?></div>
-            </div>
-        </div>
 
-        <div class="section-title" style="margin-top:16px;">Contact Information</div>
-        <div class="grid-2">
-            <div>
-                <div class="field-label">Phone</div>
-                <div class="field-value"><?php echo htmlspecialchars($patient['PHONE']); ?></div>
+            <div class="section-title" style="margin-top:16px;">Contact Information</div>
+            <div class="grid-2">
+                <div>
+                    <div class="field-label">Phone</div>
+                    <div class="field-value"><?php echo htmlspecialchars($patient['PHONE']); ?></div>
+                </div>
+                <div>
+                    <div class="field-label">Email</div>
+                    <div class="field-value"><?php echo htmlspecialchars($patient['EMAIL']); ?></div>
+                </div>
             </div>
-            <div>
-                <div class="field-label">Email</div>
-                <div class="field-value"><?php echo htmlspecialchars($patient['EMAIL']); ?></div>
+
+            <div class="section-title" style="margin-top:16px;">Address</div>
+            <div class="address-block">
+                <div class="field-label">Full Address</div>
+                <div class="field-value"><?php echo nl2br(htmlspecialchars($patient['ADDRESS'])); ?></div>
             </div>
-        </div>
 
-        <div class="section-title" style="margin-top:16px;">Address</div>
-        <div class="address-block">
-            <div class="field-label">Full Address</div>
-            <div class="field-value"><?php echo nl2br(htmlspecialchars($patient['ADDRESS'])); ?></div>
-        </div>
-
-        <div class="footer-actions">
-            <a class="btn-back" href="recep_patient.php">
-                <i class="fas fa-arrow-left"></i> Back to Patients
-            </a>
+            <div class="footer-actions">
+                <a class="btn-back" onclick="goBackToPatients()" style="cursor: pointer;">
+                    <i class="fas fa-arrow-left"></i> Back to Patients
+                </a>
+            </div>
         </div>
     </div>
+
+<script>
+function goBackToPatients() {
+    window.location.href = 'recep_patient.php';
+}
+</script>
 </body>
 </html>
 

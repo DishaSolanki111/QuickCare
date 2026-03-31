@@ -1,11 +1,15 @@
 <?php
 session_start();
 include 'config.php';
+
 // Access control: only admin can view receptionist details
 if (!isset($_SESSION['LOGGED_IN']) || $_SESSION['LOGGED_IN'] !== true || ($_SESSION['USER_TYPE'] ?? '') !== 'admin') {
     header("Location: admin_login.php");
     exit;
 }
+
+include 'admin_sidebar.php';
+$adminName = isset($_SESSION['USER_NAME']) ? $_SESSION['USER_NAME'] : 'Admin';
 
 $receptionist_id = 0;
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['receptionist_id'])) {
@@ -56,22 +60,28 @@ $fullName = $receptionist['FIRST_NAME'] . ' ' . $receptionist['LAST_NAME'];
         }
 
         body {
-            background: #e5edf5;
-            min-height: 100vh;
-            padding: 20px 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+    background: #e5edf5;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+}
 
+.main {
+    margin-left: 240px; /* same as sidebar width */
+    width: calc(100% - 240px);
+    min-height: 100vh;
+    padding: 20px;
+    box-sizing: border-box;
+}
         .sheet {
-            width: 794px;
-            max-width: 100%;
-            background: #ffffff;
-            box-shadow: 0 10px 25px rgba(15, 23, 42, 0.25);
-            border-radius: 10px;
-            padding: 24px 28px 28px;
-        }
+    width: 100%;
+    background: #ffffff;
+    border: 1px solid #d9dee5;
+    border-radius: 12px;
+    padding: 24px 28px 28px;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+    margin-top: 18px;
+}
 
         .sheet-header {
             border-bottom: none;
@@ -162,7 +172,11 @@ $fullName = $receptionist['FIRST_NAME'] . ' ' . $receptionist['LAST_NAME'];
     </style>
 </head>
 <body>
-    <div class="sheet">
+    
+    
+    <div class="main">
+        <?php include 'admin_header.php'; ?>
+        <div class="sheet">
         <div class="sheet-header"></div>
 
         <div class="profile-header">
@@ -222,6 +236,7 @@ $fullName = $receptionist['FIRST_NAME'] . ' ' . $receptionist['LAST_NAME'];
                 <i class="fas fa-arrow-left"></i> Back to Receptionists
             </a>
         </div>
+</div>
     </div>
 </body>
 </html>

@@ -164,12 +164,14 @@ body::before {
         }
 
         .booking-section {
-            padding: 4rem 0;
+            padding: 2.5rem 0;
             flex-grow: 1;
+            position: relative;
+            z-index: 10;
         }
 
         .booking-container {
-            max-width: 600px;
+            max-width: 900px;
             margin: 0 auto;
             background: white;
             border-radius: 15px;
@@ -177,13 +179,20 @@ body::before {
             overflow: hidden;
         }
 
+        .landscape-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            align-items: start;
+        }
+
         .doctor-summary {
             background: linear-gradient(135deg, var(--dark-blue) 0%, var(--mid-blue) 100%);
             color: white;
-            padding: 2rem;
+            padding: 1rem 1.5rem;
             display: flex;
             align-items: center;
-            gap: 2rem;
+            gap: 1.5rem;
         }
 
         .doctor-avatar {
@@ -211,7 +220,7 @@ body::before {
 
         .modal-content {
             background-color: #fefefe;
-            padding: 30px;
+            padding: 20px;
             width: 100%;
         }
 
@@ -313,7 +322,8 @@ body::before {
         .step-indicator {
             display: flex;
             justify-content: center;
-            margin-bottom: 30px;
+            margin-top: 5px;
+            margin-bottom: 15px;
         }
 
         .step {
@@ -339,27 +349,27 @@ body::before {
         }
 
         .payment-processing-container {
-            max-width: 500px;
+            width: 100%;
             margin: 0 auto;
-            padding: 20px;
+            padding: 0 10px;
             text-align: center;
         }
 
         .payment-icon {
             font-size: 3rem;
             color: var(--primary-color);
-            margin-bottom: 20px;
+            margin-bottom: 10px;
         }
 
         .payment-title {
-            font-size: 1.5rem;
+            font-size: 1.35rem;
             color: var(--primary-color);
-            margin-bottom: 15px;
+            margin-bottom: 10px;
         }
 
         .payment-message {
-            color: var(--text-dark);
-            margin-bottom: 25px;
+            color: var(--dark-color);
+            margin-bottom: 20px;
         }
 
         .payment-form {
@@ -442,11 +452,11 @@ body::before {
 
         .box {
             width: 100%;
-            padding: 25px;
+            padding: 15px;
             background: white;
             border-radius: 8px;
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
         .box h2 {
@@ -457,6 +467,7 @@ body::before {
         .box p {
             margin-bottom: 20px;
             font-size: 18px;
+            color: var(--dark-color);
         }
 
         .razorpay-payment-button {
@@ -561,7 +572,7 @@ body::before {
         }
 
         /* Responsive Design */
-           @media (max-width: 768px) {
+        @media (max-width: 768px) {
             .page-header h1 {
                 font-size: 2.2rem;
             }
@@ -570,12 +581,13 @@ body::before {
                 font-size: 1rem;
             }
             
-        @media (max-width: 768px) {
-         
-            
             .doctor-summary {
                 flex-direction: column;
                 text-align: center;
+            }
+            
+            .landscape-layout {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -600,7 +612,6 @@ body::before {
                 <?php endif; ?>
 
                 <div class="modal-content">
-                    <h2>Secure Payment</h2>
                     
                     <!-- Step Indicator -->
                     <div class="step-indicator">
@@ -611,65 +622,73 @@ body::before {
                         <div class="step active" id="step5">5</div>
                     </div>
                     
-                    <!-- Patient Information -->
-                    <div class="patient-info">
-                        <h4>Patient Information</h4>
-                        <div class="detail-row">
-                            <span class="detail-label">Name:</span>
-                            <span class="detail-value"><?php echo htmlspecialchars($patient['FIRST_NAME'] . ' ' . $patient['LAST_NAME']); ?></span>
-                        </div>
-                        <div class="detail-row">
-                            <span class="detail-label">Username:</span>
-                            <span class="detail-value"><?php echo htmlspecialchars($patient['USERNAME']); ?></span>
-                        </div>
-                    </div>
-                    
-                    <?php if (isset($error_message)): ?>
-                    <div class="error-message"><?php echo $error_message; ?></div>
-                    <?php endif; ?>
-                    
-                    <div class="payment-processing-container">
-                        <i class="fas fa-lock payment-icon"></i>
-                        <h3 class="payment-title">Secure Payment</h3>
-                        <p class="payment-message">Complete your payment to confirm the appointment</p>
-                        
-                        <div class="box">
-                            <h2>Payment</h2>
-                            <p>Total Amount: <b>₹<?php echo $amount; ?></b></p>
+                    <div class="landscape-layout">
+                        <!-- Left Column: Details -->
+                        <div class="left-col">
+                            <!-- Patient Information -->
+                            <div class="patient-info">
+                                <h4>Patient Information</h4>
+                                <div class="detail-row">
+                                    <span class="detail-label">Name:</span>
+                                    <span class="detail-value"><?php echo htmlspecialchars($patient['FIRST_NAME'] . ' ' . $patient['LAST_NAME']); ?></span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-label">Username:</span>
+                                    <span class="detail-value"><?php echo htmlspecialchars($patient['USERNAME']); ?></span>
+                                </div>
+                            </div>
 
-                            <!-- Razorpay Payment Button -->
-                            <button class="razorpay-payment-button" id="rzp-button">Pay with Razorpay</button>
+                            <?php if ($doctor): ?>
+                            <div class="appointment-summary">
+                                <h4>Appointment Summary</h4>
+                                <div class="summary-row">
+                                    <span>Doctor:</span>
+                                    <span>Dr. <?php echo htmlspecialchars($doctor['FIRST_NAME'] . ' ' . $doctor['LAST_NAME']); ?></span>
+                                </div>
+                                <?php if ($selected_date): ?>
+                                <div class="summary-row">
+                                    <span>Date:</span>
+                                    <span><?php echo htmlspecialchars($selected_date); ?></span>
+                                </div>
+                                <?php endif; ?>
+                                <?php if ($selected_time): ?>
+                                <div class="summary-row">
+                                    <span>Time:</span>
+                                    <span><?php echo htmlspecialchars($selected_time); ?></span>
+                                </div>
+                                <?php endif; ?>
+                                <div class="summary-row">
+                                    <span>Booking Charge:</span>
+                                    <span>₹<?php echo number_format($amount, 2); ?></span>
+                                </div>
+                                <div class="summary-row total">
+                                    <span>Total Amount:</span>
+                                    <span>₹<?php echo $amount; ?></span>
+                                </div>
+                            </div>
+                            <?php endif; ?>
                         </div>
                         
-                        <?php if ($doctor): ?>
-                        <div class="appointment-summary">
-                            <h4>Appointment Summary</h4>
-                            <div class="summary-row">
-                                <span>Doctor:</span>
-                                <span>Dr. <?php echo htmlspecialchars($doctor['FIRST_NAME'] . ' ' . $doctor['LAST_NAME']); ?></span>
-                            </div>
-                            <?php if ($selected_date): ?>
-                            <div class="summary-row">
-                                <span>Date:</span>
-                                <span><?php echo htmlspecialchars($selected_date); ?></span>
-                            </div>
+                        <!-- Right Column: Payment Process -->
+                        <div class="right-col">
+                            <?php if (isset($error_message)): ?>
+                            <div class="error-message"><?php echo $error_message; ?></div>
                             <?php endif; ?>
-                            <?php if ($selected_time): ?>
-                            <div class="summary-row">
-                                <span>Time:</span>
-                                <span><?php echo htmlspecialchars($selected_time); ?></span>
-                            </div>
-                            <?php endif; ?>
-                            <div class="summary-row">
-                                <span>Booking Charge:</span>
-                                <span>₹<?php echo number_format($amount, 2); ?></span>
-                            </div>
-                            <div class="summary-row total">
-                                <span>Total Amount:</span>
-                                <span>₹<?php echo $amount; ?></span>
+                            
+                            <div class="payment-processing-container">
+                                <i class="fas fa-lock payment-icon"></i>
+                                <h3 class="payment-title">Secure Payment</h3>
+                                <p class="payment-message">Complete your payment to confirm the appointment</p>
+                                
+                                <div class="box">
+                                    <h2>Payment</h2>
+                                    <p>Total Amount: <b>₹<?php echo $amount; ?></b></p>
+
+                                    <!-- Razorpay Payment Button -->
+                                    <button class="razorpay-payment-button" id="rzp-button">Pay with Razorpay</button>
+                                </div>
                             </div>
                         </div>
-                        <?php endif; ?>
                     </div>
                 </div>
             </div>

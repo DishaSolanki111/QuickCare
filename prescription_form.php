@@ -354,7 +354,7 @@ $conn->close();
             --gray-blue: #D0D7E1; --white: #ffffff; --card-bg: #F6F9FB; --primary-color: #1a3a5f;
             --secondary-color: #3498db; --accent-color: #2ecc71; --danger-color: #e74c3c;
         }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; cursor:default;}
         body { background-color: #f5f7fa; color: #333; line-height: 1.6; }
         .container { display: flex; min-height: 100vh; }
         .sidebar { width: 250px; background: #072D44; min-height: 100vh; color: white; padding-top: 30px; position: fixed; }
@@ -373,7 +373,7 @@ $conn->close();
         .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; }
         .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         .medicine-block { background: #f9f9f9; padding: 15px; border: 1px solid #eee; border-radius: 5px; margin-bottom: 10px; position: relative; }
-        .btn { padding: 10px 15px; border-radius: 5px; color: #fff; border: none; cursor: pointer; }
+        .btn { padding: 10px 15px; border-radius: 5px; color: #fff; border: none; cursor: auto; }
         .btn-submit { background-color: #072d44; width: 100%; font-size: 16px; margin-top: 10px; }
         .btn-add { background-color: var(--accent-color); margin-bottom: 15px; }
         .btn-delete { background-color: #dc3545; float: right; }
@@ -390,7 +390,7 @@ $conn->close();
             <div class="content-card">
                 <!-- Back button uses POST to avoid exposing patient_id in URL -->
                 <form method="POST" action="manage_prescriptions.php" style="display:inline; margin-bottom:20px;">
-                    <button type="submit" style="background-color: var(--primary-color); color:#fff; font-weight:bold; padding:8px 16px; border:none; border-radius:5px; cursor:pointer;">&larr; Back to Manage Prescriptions</button>
+                    <button type="submit" style="background-color: var(--primary-color); color:#fff; font-weight:bold; padding:8px 16px; border:none; border-radius:5px; cursor:auto;">&larr; Back to Manage Prescriptions</button>
                 </form>
 
                 <?php echo $message; ?>
@@ -412,7 +412,7 @@ $conn->close();
                         </div>
                         <div class="patient-detail-item">
                             <div class="patient-detail-icon"><i class="fas fa-calendar-check"></i></div>
-                            <div><div style="font-size:0.85rem; color:#666;">Last Visit</div><strong><?php echo $last_appointment_formatted ?? 'N/A'; ?></strong></div>
+                            <div><div style="font-size:0.85rem; color:#666;"> Visit date</div><strong><?php echo $last_appointment_formatted ?? 'N/A'; ?></strong></div>
                         </div>
                     </div>
                 </div>
@@ -625,7 +625,7 @@ $conn->close();
             row.querySelectorAll('select').forEach(s => s.selectedIndex = 0);
             const delBtn = document.createElement('button');
             delBtn.type      = 'button';
-            delBtn.style     = 'background:red; color:white; border:none; padding:5px 10px; border-radius:3px; cursor:pointer; margin-top:5px;';
+            delBtn.style     = 'background:red; color:white; border:none; padding:5px 10px; border-radius:3px; cursor:auto; margin-top:5px;';
             delBtn.innerHTML = 'Remove Row';
             delBtn.onclick   = function () { this.parentElement.remove(); };
             row.appendChild(delBtn);
