@@ -425,11 +425,7 @@ if (empty($error_message) && isset($_GET['error'])) {
                     <td>$phone</td>
                     <td>$email</td>
                     <td class='actions-td'>
-                        <button class='action-btn edit-btn'
-                            onclick=\"openEditModal($pid, '$fname', '$lname', '$dob', '$gender', '$bg', '$phone', '$email', '$address')\">
-                            <i class='bi bi-pencil'></i>
-                            Edit
-                        </button>
+                      
                         <button class='action-btn view-btn'
                             onclick=\"viewPatient($pid)\">
                             <i class='bi bi-eye'></i>
