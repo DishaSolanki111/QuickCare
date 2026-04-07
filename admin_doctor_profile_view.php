@@ -215,10 +215,7 @@ $img = !empty($doctor['PROFILE_IMAGE']) ? $doctor['PROFILE_IMAGE'] : 'uploads/de
             <div>
                 <div class="profile-main-name">Dr. <?php echo htmlspecialchars($doctor_name); ?></div>
                 <div class="profile-id">Specialization: <?php echo htmlspecialchars($doctor['SPECIALISATION_NAME']); ?></div>
-                <div class="badge-chip">
-                    <i class="fas fa-user-md"></i>
-                    Verified Doctor
-                </div>
+                
             </div>
         </div>
 

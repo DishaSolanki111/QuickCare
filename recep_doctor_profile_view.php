@@ -7,6 +7,14 @@ if (!isset($_SESSION['RECEPTIONIST_ID'])) {
     exit;
 }
 
+// Fetch receptionist name from database
+$receptionist_id = $_SESSION['RECEPTIONIST_ID'];
+$receptionist_name = 'Receptionist';
+$rec_query = mysqli_query($conn, "SELECT FIRST_NAME, LAST_NAME FROM receptionist_tbl WHERE RECEPTIONIST_ID = '$receptionist_id'");
+if ($rec_query && $rec_row = mysqli_fetch_assoc($rec_query)) {
+    $receptionist_name = htmlspecialchars($rec_row['FIRST_NAME'] . ' ' . $rec_row['LAST_NAME']);
+}
+
 
 
 
