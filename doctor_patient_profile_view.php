@@ -213,10 +213,7 @@ $fullName = $patient['FIRST_NAME'] . ' ' . $patient['LAST_NAME'];
                 <div>
                     <div class="profile-main-name"><?php echo htmlspecialchars($fullName); ?></div>
                     <div class="profile-id">Username: <?php echo htmlspecialchars($patient['USERNAME']); ?></div>
-                    <div class="badge-chip">
-                        <i class="fas fa-heartbeat"></i>
-                        Active Patient Record
-                    </div>
+                   
                 </div>
             </div>
 

@@ -3,15 +3,37 @@ session_start();
 include 'config.php';
 include 'recept_sidebar.php'; 
 
-
-
 // Receptionist access control
 if (!isset($_SESSION['RECEPTIONIST_ID'])) {
     header("Location: login.php");
     exit;
 }
 
-$patient_id = isset($_GET['patient_id']) ? (int)$_GET['patient_id'] : 0;
+// Fetch receptionist info for the header name display
+$receptionist_id = $_SESSION['RECEPTIONIST_ID'];
+$rec_q = mysqli_query($conn, "SELECT * FROM receptionist_tbl WHERE RECEPTIONIST_ID = '" . (int)$receptionist_id . "'");
+$receptionist = mysqli_fetch_assoc($rec_q);
+
+// Accept patient_id via POST (hidden from URL) or GET as fallback
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['patient_id'])) {
+    $patient_id = (int)$_POST['patient_id'];
+} elseif (isset($_GET['patient_id'])) {
+    // Redirect GET requests to a POST-based form so the ID stays hidden
+    $pid = (int)$_GET['patient_id'];
+    if ($pid <= 0) {
+        die("Invalid patient.");
+    }
+    // Auto-submit via a self-posting redirect page
+    echo '<!DOCTYPE html><html><body>';
+    echo '<form id="rf" method="POST" action="recep_patient_profile_view.php">';
+    echo '<input type="hidden" name="patient_id" value="' . $pid . '">';
+    echo '</form><script>document.getElementById("rf").submit();</script>';
+    echo '</body></html>';
+    exit;
+} else {
+    die("Invalid patient.");
+}
+
 if ($patient_id <= 0) {
     die("Invalid patient.");
 }
@@ -247,17 +269,17 @@ $fullName = $patient['FIRST_NAME'] . ' ' . $patient['LAST_NAME'];
             </div>
 
             <div class="footer-actions">
-                <a class="btn-back" onclick="goBackToPatients()" style="cursor: pointer;">
-                    <i class="fas fa-arrow-left"></i> Back to Patients
-                </a>
+                <form method="POST" action="recep_patient.php" style="display:inline;">
+                    <button type="submit" class="btn-back">
+                        <i class="fas fa-arrow-left"></i> Back to Patients
+                    </button>
+                </form>
             </div>
         </div>
     </div>
 
 <script>
-function goBackToPatients() {
-    window.location.href = 'recep_patient.php';
-}
+// No JS navigation needed
 </script>
 </body>
 </html>
