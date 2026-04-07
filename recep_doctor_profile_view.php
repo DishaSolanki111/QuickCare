@@ -238,7 +238,7 @@ function recep_day_name($code) {
 </head>
 <body>
     <div class="main">
-    <?php include 'doctor_header.php'; ?>
+    <?php include 'receptionist_header.php'; ?>
     <div class="sheet">
         <div class="sheet-header"></div>
 
