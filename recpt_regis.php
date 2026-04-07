@@ -245,25 +245,100 @@ include 'config.php';
 
                     if ($conn->query($sql) === TRUE) {
                         $conn->close();
-                        ob_end_clean();
-                        header("Location: admin.php");
-                        exit;
+                        $registration_success = true;
                     } else {
                         $error = "Database error: " . $conn->error;
                     }
 
-                    $conn->close();
                 }
-            }
-            ?>
+                ?>
 
-            <?php if (!empty($error)): ?>
-                <div class="toast show"><?php echo htmlspecialchars($error); ?></div>
-            <?php endif; ?>
+                    // Name validation
+                    $first_nameNormalized = '';
+                    $last_nameNormalized  = '';
+                    if (!local_validate_person_name($form_data['first_name'], $first_nameNormalized, $first_nameErr)) {
+                        $field_errors['first_name'] = $first_nameErr;
+                    } else {
+                        $first_name = mysqli_real_escape_string($conn, $first_nameNormalized);
+                    }
+                    if (!local_validate_person_name($form_data['last_name'], $last_nameNormalized, $last_nameErr)) {
+                        $field_errors['last_name'] = $last_nameErr;
+                    } else {
+                        $last_name = mysqli_real_escape_string($conn, $last_nameNormalized);
+                    }
 
-            <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post" id="receptionistForm" enctype="multipart/form-data">
-                <div class="form-grid">
-                    <!-- Column 1: Personal Details -->
+                    // Username validation
+                    $usernameNormalized = '';
+                    $usernameError      = '';
+                    if (!local_validate_username($username, $usernameNormalized, $usernameError)) {
+                        $field_errors['username'] = $usernameError;
+                    } else {
+                        $username = $usernameNormalized;
+                    }
+
+                    // Password validation
+                    $passwordError = '';
+                    $emailLower    = strtolower(trim($email));
+                    if (!local_validate_password($password, $username, $emailLower, $passwordError)) {
+                        $field_errors['password'] = $passwordError;
+                    }
+
+                    // Phone validation
+                    if (!preg_match('/^[0-9]{10}$/', $phone)) {
+                        $field_errors['phone'] = "Phone number must be exactly 10 digits.";
+                    }
+
+                    // Email validation
+                    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                        $field_errors['email'] = "Invalid email format.";
+                    }
+
+                    // Username exists check
+                    if (empty($field_errors['username'])) {
+                        $stmt = $conn->prepare("SELECT COUNT(*) as cnt FROM receptionist_tbl WHERE LOWER(USERNAME) = ?");
+                        $stmt->bind_param("s", $username);
+                        $stmt->execute();
+                        $check_result = $stmt->get_result();
+                        if ($check_result && $check_result->fetch_assoc()['cnt'] > 0) {
+                            $field_errors['username'] = "Username already exists.";
+                        }
+                        $stmt->close();
+                    }
+
+                    // Final insert
+                    if (empty(array_filter($field_errors))) {
+                        $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+                        $sql = "INSERT INTO receptionist_tbl
+                            (FIRST_NAME, LAST_NAME, DOB, DOJ, GENDER, PHONE, EMAIL, ADDRESS, USERNAME, PSWD, SECURITY_QUESTION, SECURITY_ANSWER)
+                            VALUES ('$first_name','$last_name','$dob','$doj','$gender','$phone','$email','$address','$username','$hashed_password','','')";
+
+                        if ($conn->query($sql) === TRUE) {
+                            $conn->close();
+                            $registration_success = true;
+                        } else {
+                            $error = "Database error: " . $conn->error;
+                        }
+
+                    }
+                    ?>
+
+                    <?php if (!empty($error)): ?>
+                        <div class="toast show"><?php echo htmlspecialchars($error); ?></div>
+                    <?php endif; ?>
+
+                    <?php if (isset($registration_success) && $registration_success): ?>
+                        <div class="toast success show" id="successToast">
+                            <i class="fas fa-check-circle"></i> 
+                            Receptionist registration successful! Redirecting to admin dashboard...
+                        </div>
+                        <script>
+                            setTimeout(function() {
+                                window.location.href = 'admin.php';
+                            }, 3000);
+                        </script>
+                    <?php endif; ?>
+
+                <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post" id="receptionistForm" enctype="multipart/form-data">
                     <div class="form-section">
                         <div class="form-section-title">Personal Details</div>
 

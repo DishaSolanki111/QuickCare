@@ -281,22 +281,32 @@ include 'config.php'; ?>
 
                     if ($stmt->execute()) {
                         $stmt->close();
-                        $conn->close();
-                        ob_end_clean();
-                        header("Location: admin.php");
-                        exit;
+                        $registration_success = true;
                     } else {
                         $error = "Database error: " . $stmt->error;
                         $stmt->close();
                     }
                 }
 
+                // Close connection only after database operations
                 $conn->close();
             }
             ?>
 
             <?php if (!empty($error)): ?>
                 <div class="toast show"><?php echo htmlspecialchars($error); ?></div>
+            <?php endif; ?>
+
+            <?php if (isset($registration_success) && $registration_success): ?>
+                <div class="toast success show" id="successToast">
+                    <i class="fas fa-check-circle"></i> 
+                    Doctor registration successful! Redirecting to admin dashboard...
+                </div>
+                <script>
+                    setTimeout(function() {
+                        window.location.href = 'admin.php';
+                    }, 3000);
+                </script>
             <?php endif; ?>
 
             <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post" id="doctorForm" enctype="multipart/form-data">
