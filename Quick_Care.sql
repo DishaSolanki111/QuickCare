@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 08, 2026 at 08:08 AM
+-- Generation Time: Apr 08, 2026 at 08:12 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -313,7 +313,6 @@ INSERT INTO `doctor_tbl` (`DOCTOR_ID`, `SPECIALISATION_ID`, `PROFILE_IMAGE`, `FI
 (12, 1, 'uploads/lakshmi.jpeg', 'Lakshmi', 'Iyer', '1983-09-05', '2014-02-20', 'Dr_lakshmi12', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543221, 'lakshmi.iyer@gmail.com', 'FEMALE', 'MBBS, DCH', 'approved', 'What was the nickname your family calls you?', 'Lakku'),
 (14, 1, 'uploads/Deepa.jpeg', 'Deepa', 'Nair', '1981-04-08', '2016-11-01', 'Dr_deepa14', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543223, 'deepa.nair@gmail.com', 'FEMALE', 'MBBS, MD (Pediatrics)', 'approved', 'What is your favorite food from childhood?', 'Pav bhaji'),
 (15, 1, 'uploads/karthik.jpeg', 'Karthik', 'Pillai', '1977-07-30', '2010-03-12', 'Dr_karthik15', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 9876543224, 'karthik.pillai@gmail.com', 'MALE', 'MBBS, DCH', 'approved', 'Where did you go for your first school trip?', 'Munnar'),
-(16, 2, 'uploads/doctor_16_1774934625.jpg', 'Nihir', 'Sharma', '1977-06-05', '2024-05-19', 'dr_nihir96', '$2y$10$abcdefghijklmnopqrstuv1234567890abcdefghijklmnopqrstu', 9874563215, 'nihir96@gmail.com', 'MALE', 'MBBS MD', 'approved', 'What is your favorite color?', 'blue'),
 (17, 3, 'uploads/doctor_17_1774934868.jpeg', 'Meera', 'Patel', '1985-11-18', '2023-08-14', 'dr_meera85', '$2y$10$abcdefghijklmnopqrstuv1234567890abcdefghijklmnopqrstu', 9876541230, 'meera.patel85@gmail.com', 'FEMALE', 'MBBS MS', 'approved', 'What is your favorite food from childhood?', 'pizza');
 
 -- --------------------------------------------------------
@@ -647,7 +646,6 @@ INSERT INTO `patient_tbl` (`PATIENT_ID`, `FIRST_NAME`, `LAST_NAME`, `USERNAME`, 
 (7, 'Vikas', 'Singh', 'Vikas_s07', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', '1986-09-14', 'MALE', 'O-', 9876543207, 'vikas.singh@gmail.com', '147, Connaught Place, Delhi', '', 'Where did you go for your first school trip?', 'Shimla'),
 (8, 'Anjali', 'Desai', 'Anjali_d08', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', '1993-02-05', 'FEMALE', 'AB-', 9876543208, 'anjali.desai@gmail.com', '258, Marine Drive, Mumbai', '', 'What was the nickname your family calls you?', 'Anju'),
 (9, 'Rahul', 'Verma', 'Rahul_v09', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', '1989-06-20', 'MALE', 'A+', 9876543209, 'rahul.verma@gmail.com', '369, Park Street, Kolkata', '', 'What was the name of your first school?', 'Green Valley School'),
-(10, 'Kavita', 'Noel', 'kavita_noel', '$2y$10$8rU8YF/bLx36N1CurvxxlumQQSPQ.2k4nrMAXT4VMzr2de5teZ2Pa', '1995-06-15', 'FEMALE', 'O+', 9876543210, 'kavita.noel@gmail.com', 'Surat, Gujarat, India', 'uploads/medical_history.pdf', 'What is your pet name?', 'Fluffy'),
 (12, 'MARVIN', 'SHAH', 'marvin_01', '$2y$10$7..8QTdjKbPGAt.HkazvbOfwNytzjinvUrsFaXrosOpg75ce9vBXm', '2000-10-31', 'MALE', 'O+', 9874563218, 'marvin01@gmail.com', 'C-101 shreyas Tower vasna Ahemdabad ', '', 'What is your favorite food from childhood?', 'dosa');
 
 -- --------------------------------------------------------
@@ -891,7 +889,6 @@ INSERT INTO `receptionist_tbl` (`RECEPTIONIST_ID`, `FIRST_NAME`, `LAST_NAME`, `D
 (2, 'Ramesh', 'Kumar', '1987-07-22', '2019-09-15', 'MALE', 9876543302, 'ramesh.k@gmail.com', '456, Staff Quarters, Delhi', 'Ramesh_k02', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 'What is your favorite food from childhood?', 'Idli sambar'),
 (3, 'Sunita', 'Devi', '1990-11-10', '2020-03-25', 'FEMALE', 9876543303, 'sunita.d@gmail.com', '789, Staff Quarters, Bangalore', 'Sunita_d03', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 'Where did you go for your first school trip?', 'Ooty'),
 (4, 'Anil', 'Sharma', '1988-05-18', '2021-07-10', 'MALE', 9876543304, 'anil.s@gmail.com', '321, Staff Quarters, Pune', 'Anil_s04', '$2y$10$3mncvv9RcxtYax9yfevdOenGwQo5mOwt4tFobJp.iveNEyfSsVA9K', 'What was the nickname your family calls you?', 'Anu'),
-(5, 'Yash', 'Sarma', '1996-12-05', '2025-09-07', 'MALE', 9685558523, 'yash@gmail.com', 'C-101 Vistra Sheri Vasna, Ahmedabad', 'yash_soni', '$2y$10$abcdefghijklmnopqrstuv1234567890abcdefghijklmnopqrstu', 'What is your pet name?', 'tommy'),
 (8, 'Arpit', 'Patel', '2000-09-05', '2025-04-22', 'MALE', 9632587415, 'arpit01@gmail.com', 'F-204 Swastik Society Gathlodiya Ahemdabad', 'arpit_02', '$2y$10$22Mj9.HbP5oyizhRJZIy/.Ktfapt6Dx6SK8tvQDHu2s2pDMl5JMNi', 'What was the nickname your family calls you?', 'monty');
 
 -- --------------------------------------------------------
