@@ -526,13 +526,13 @@ $receptionist_id = $_SESSION['RECEPTIONIST_ID'];
                             <i class='bi bi-pencil'></i>
                             Edit
                         </button>
-                        <button
-                            class='action-btn view-btn'
-                            type='button'
-                            onclick=\"window.location.href='recep_patient_profile_view.php?patient_id={$row['PATIENT_ID']}';\">
-                            <i class='bi bi-eye'></i>
-                            View
-                        </button>
+                        <form method='POST' action='recep_patient_profile_view.php' style='display:inline;'>
+                            <input type='hidden' name='patient_id' value='{$row['PATIENT_ID']}'>
+                            <button type='submit' class='action-btn view-btn'>
+                                <i class='bi bi-eye'></i>
+                                View
+                            </button>
+                        </form>
                         <button class='action-btn delete-btn'
                             onclick=\"deletePatient({$row['PATIENT_ID']})\">
                             <i class='bi bi-trash'></i>

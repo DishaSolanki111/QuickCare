@@ -258,8 +258,7 @@ function recep_day_name($code) {
                 <div class="profile-main-name">Dr. <?php echo htmlspecialchars($doctor_name); ?></div>
                 <div class="profile-id">Specialization: <?php echo htmlspecialchars($doctor['SPECIALISATION_NAME']); ?></div>
                 <div class="badge-chip">
-                    <i class="fas fa-user-md"></i>
-                    Verified Doctor
+                    
                 </div>
             </div>
         </div>
