@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 08, 2026 at 06:28 AM
+-- Generation Time: Apr 08, 2026 at 08:08 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -159,28 +159,28 @@ CREATE TABLE `appointment_tbl` (
 
 INSERT INTO `appointment_tbl` (`APPOINTMENT_ID`, `PATIENT_ID`, `DOCTOR_ID`, `SCHEDULE_ID`, `CREATED_AT`, `APPOINTMENT_DATE`, `APPOINTMENT_TIME`, `STATUS`) VALUES
 (1, 1, 1, 3, '2026-03-19 10:00:00', '2026-03-20', '11:00:00', 'COMPLETED'),
-(4, 5, 2, 6, '2026-03-23 00:00:00', '2026-03-28', '17:00:00', 'SCHEDULED'),
-(6, 7, 3, 57, '2026-03-23 00:00:00', '2026-03-28', '09:00:00', 'SCHEDULED'),
-(7, 8, 3, 57, '2026-03-24 00:00:00', '2026-03-28', '12:00:00', 'SCHEDULED'),
-(8, 9, 3, 9, '2026-03-23 00:00:00', '2026-03-30', '11:00:00', 'SCHEDULED'),
-(10, 1, 4, 11, '2026-03-21 00:00:00', '2026-04-01', '10:00:00', 'SCHEDULED'),
-(11, 2, 4, 12, '2026-03-22 00:00:00', '2026-04-02', '11:00:00', 'SCHEDULED'),
-(12, 3, 5, 15, '2026-03-23 00:00:00', '2026-03-27', '15:00:00', 'SCHEDULED'),
+(4, 5, 2, 6, '2026-03-23 00:00:00', '2026-03-28', '17:00:00', 'COMPLETED'),
+(6, 7, 3, 57, '2026-03-23 00:00:00', '2026-03-28', '09:00:00', 'COMPLETED'),
+(7, 8, 3, 57, '2026-03-24 00:00:00', '2026-03-28', '12:00:00', 'COMPLETED'),
+(8, 9, 3, 9, '2026-03-23 00:00:00', '2026-03-30', '11:00:00', 'COMPLETED'),
+(10, 1, 4, 11, '2026-03-21 00:00:00', '2026-04-01', '10:00:00', 'COMPLETED'),
+(11, 2, 4, 12, '2026-03-22 00:00:00', '2026-04-02', '11:00:00', 'COMPLETED'),
+(12, 3, 5, 15, '2026-03-23 00:00:00', '2026-03-27', '15:00:00', 'COMPLETED'),
 (13, 4, 5, 14, '2026-03-20 00:00:00', '2026-03-25', '14:00:00', 'CANCELLED'),
 (14, 5, 5, 15, '2026-03-19 00:00:00', '2026-03-27', '11:00:00', 'CANCELLED'),
-(15, 6, 6, 16, '2026-03-18 00:00:00', '2026-04-06', '09:00:00', 'SCHEDULED'),
+(15, 6, 6, 16, '2026-03-18 00:00:00', '2026-04-06', '09:00:00', 'COMPLETED'),
 (16, 7, 6, 17, '2026-03-20 00:00:00', '2026-04-07', '10:00:00', 'CANCELLED'),
 (17, 8, 6, 18, '2026-03-19 00:00:00', '2026-04-08', '11:00:00', 'SCHEDULED'),
 (18, 9, 7, 19, '2026-03-23 00:00:00', '2026-04-09', '09:00:00', 'CANCELLED'),
-(20, 1, 7, 20, '2026-03-24 00:00:00', '2026-03-27', '16:00:00', 'SCHEDULED'),
+(20, 1, 7, 20, '2026-03-24 00:00:00', '2026-03-27', '16:00:00', 'COMPLETED'),
 (21, 2, 8, 22, '2026-03-23 00:00:00', '2026-04-12', '09:00:00', 'SCHEDULED'),
 (22, 3, 8, 23, '2026-03-19 00:00:00', '2026-04-13', '10:00:00', 'SCHEDULED'),
-(23, 4, 8, 22, '2026-03-11 00:00:00', '2026-04-07', '16:00:00', 'SCHEDULED'),
+(23, 4, 8, 22, '2026-03-11 00:00:00', '2026-04-07', '16:00:00', 'COMPLETED'),
 (24, 5, 9, 25, '2026-03-12 00:00:00', '2026-04-15', '09:00:00', 'SCHEDULED'),
 (25, 6, 9, 26, '2026-03-13 00:00:00', '2026-04-16', '10:00:00', 'SCHEDULED'),
 (26, 7, 9, 27, '2026-03-14 00:00:00', '2026-04-17', '11:00:00', 'SCHEDULED'),
 (27, 8, 10, 28, '2026-03-15 00:00:00', '2026-04-18', '09:00:00', 'SCHEDULED'),
-(28, 9, 10, 28, '2026-03-16 00:00:00', '2026-04-07', '10:00:00', 'SCHEDULED'),
+(28, 9, 10, 28, '2026-03-16 00:00:00', '2026-04-07', '10:00:00', 'COMPLETED'),
 (35, 1, 1, 2, '2026-03-23 14:51:23', '2026-03-25', '16:00:00', 'CANCELLED'),
 (36, 3, 4, 10, '2026-03-24 08:10:21', '2026-03-24', '14:00:00', 'COMPLETED'),
 (38, 2, 5, 13, '2026-03-15 06:30:00', '2026-03-16', '10:00:00', 'COMPLETED'),
@@ -343,7 +343,18 @@ INSERT INTO `feedback_tbl` (`FEEDBACK_ID`, `APPOINTMENT_ID`, `RATING`, `COMMENTS
 (7, 43, 5, 'Great experience. Doctor listened carefully to my concerns and provided practical advice for managing back pain.'),
 (8, 44, 5, 'Very knowledgeable and empathetic. Helped us understand the diagnosis and next steps. Highly recommend.'),
 (9, 45, 5, 'Outstanding care for my child. Took time to teach us how to use the inhaler properly. Very patient and kind.'),
-(10, 53, 3, 'Doctor Is good but did\'t explain properly');
+(10, 53, 3, 'Doctor Is good but did\'t explain properly'),
+(11, 4, 4, 'Dr. Priya Sharma was thorough and professional. She explained my heart condition clearly and adjusted my medication. Happy with the care.'),
+(12, 6, 4, 'Good experience overall. Dr. Amit Patel was attentive. The clinic was slightly crowded but the consultation itself was helpful.'),
+(13, 7, 5, 'Excellent doctor! Very caring and listened to all my concerns patiently. The prescription worked well. Would definitely visit again.'),
+(14, 8, 4, 'Dr. Amit Patel was knowledgeable and explained the treatment well. Recovery was smooth. Satisfied with the visit.'),
+(15, 12, 5, 'Dr. Akshat Khotari is very thorough and professional. He took time to explain the cardiac report in detail. Highly recommend.'),
+(16, 20, 5, 'Great orthopedic consultation for my child. Dr. Rahul Verma was gentle and reassuring. The treatment plan was well explained.'),
+(17, 10, 4, 'Dr. Sunita Reddy was very patient with my child during the cardiac checkup. Gave clear guidance on follow-up care.'),
+(18, 11, 5, 'Very impressed with Dr. Sunita Reddy. She explained hypertension management thoroughly and the medicines are working well.'),
+(19, 15, 4, 'Dr. Anjali Gupta was professional and detailed in her assessment. Slight wait time but the consultation quality was excellent.'),
+(20, 23, 5, 'Dr. Meera Joshi was wonderful with my child. She was patient, explained the treatment clearly, and gave helpful exercises. Highly satisfied.'),
+(21, 28, 4, 'Dr. Kavita Nair was professional and thorough in her neurological assessment. She explained the treatment plan in simple terms.');
 
 -- --------------------------------------------------------
 
@@ -571,7 +582,9 @@ INSERT INTO `notification_seen_tbl` (`SEEN_ID`, `USER_TYPE`, `USER_ID`, `NOTIF_K
 (124, 'doctor', 6, '56069c0fc701a83cee99815d58a433995762dac4', '2026-04-08 00:34:18'),
 (125, 'doctor', 6, 'e406c272e1d82aacb8e338945b15ad42c00391e6', '2026-04-08 00:34:18'),
 (126, 'doctor', 7, '3df025628cc3cb21fa9d109a4b830eff0af3da4c', '2026-04-08 01:30:06'),
-(127, 'doctor', 5, '9b3be8961d6a6307e77a893ba5fbb037bbb2eab6', '2026-04-08 09:50:47');
+(127, 'doctor', 5, '9b3be8961d6a6307e77a893ba5fbb037bbb2eab6', '2026-04-08 09:50:47'),
+(128, 'receptionist', 8, '9ed1d34d6b3ff73b931926507e64429a23f4c3f4', '2026-04-08 11:12:15'),
+(129, 'receptionist', 8, 'ee0b643a91437a03d76a20f8946aa1a834cb8a6f', '2026-04-08 11:12:15');
 
 -- --------------------------------------------------------
 
@@ -661,7 +674,6 @@ CREATE TABLE `payment_tbl` (
 INSERT INTO `payment_tbl` (`PAYMENT_ID`, `APPOINTMENT_ID`, `AMOUNT`, `PAYMENT_DATE`, `PAYMENT_MODE`, `STATUS`, `TRANSACTION_ID`, `CREATED_AT`) VALUES
 (1, 1, 300.00, '2026-03-19', 'CREDIT CARD', 'COMPLETED', 'TXN100000001', '2026-03-19 10:00:00'),
 (4, 4, 300.00, '2026-03-23', 'NET BANKING', 'COMPLETED', 'TXN100000004', '2026-03-23 00:00:00'),
-(6, 6, 300.00, '2026-03-23', 'GOOGLE PAY', 'COMPLETED', 'TXN100000006', '2026-03-23 00:00:00'),
 (7, 7, 300.00, '2026-03-24', 'UPI', 'COMPLETED', 'TXN100000007', '2026-03-24 00:00:00'),
 (8, 8, 300.00, '2026-03-23', 'NET BANKING', 'COMPLETED', 'TXN100000008', '2026-03-23 00:00:00'),
 (10, 10, 300.00, '2026-03-21', 'GOOGLE PAY', 'COMPLETED', 'TXN100000010', '2026-03-21 00:00:00'),
@@ -700,7 +712,6 @@ INSERT INTO `payment_tbl` (`PAYMENT_ID`, `APPOINTMENT_ID`, `AMOUNT`, `PAYMENT_DA
 (47, 53, 300.00, '2026-03-26', 'UPI', 'COMPLETED', 'pay_SVoPJMu66ud5Pv', '2026-03-26 09:54:58'),
 (48, 54, 300.00, '2026-03-27', 'UPI', 'COMPLETED', 'pay_SVxbRa98HarBuG', '2026-03-26 18:54:41'),
 (49, 55, 300.00, '2026-03-31', 'UPI', 'COMPLETED', 'pay_SXYiMZw9ReM6j7', '2026-03-30 19:51:56'),
-(50, 56, 300.00, '2026-03-31', 'UPI', 'COMPLETED', 'pay_SXmBZvBpJs6Xxw', '2026-03-31 09:02:37'),
 (51, 57, 300.00, '2026-04-08', 'UPI', 'COMPLETED', 'pay_Sark55hcpe6o2k', '2026-04-08 04:25:47');
 
 -- --------------------------------------------------------
@@ -749,7 +760,30 @@ INSERT INTO `prescription_medicine_tbl` (`PRESCRIPTION_ID`, `MEDICINE_ID`, `DOSA
 (30, 17, '5ml', '14 days', 'Twice daily', '2026-03-18 11:50:00'),
 (31, 1, '400mg', '15 days', 'Three times daily', '2026-03-26 11:43:12'),
 (31, 6, '400MG', '10 days', 'Three times daily', '2026-03-26 11:43:12'),
-(31, 10, '500mg', '15 days', 'Three times daily', '2026-03-26 11:43:12');
+(31, 10, '500mg', '15 days', 'Three times daily', '2026-03-26 11:43:12'),
+(32, 5, '50mg', '30 days', 'Once daily morning', '2026-03-28 17:30:00'),
+(32, 6, '75mg', '30 days', 'Once daily evening', '2026-03-28 17:30:00'),
+(33, 1, '10ml', '5 days', 'Twice daily after meals', '2026-03-28 09:30:00'),
+(33, 2, '500mg', '5 days', 'Twice daily after meals', '2026-03-28 09:30:00'),
+(34, 1, '10ml', '5 days', 'Thrice daily after meals', '2026-03-28 12:30:00'),
+(34, 2, '500mg', '3 days', 'Twice daily after meals', '2026-03-28 12:30:00'),
+(35, 1, '10ml', '5 days', 'Twice daily after meals', '2026-03-30 11:30:00'),
+(35, 2, '500mg', '7 days', 'Twice daily after meals', '2026-03-30 11:30:00'),
+(36, 5, '50mg', '30 days', 'Once daily morning', '2026-03-27 15:30:00'),
+(36, 6, '75mg', '30 days', 'Once daily evening', '2026-03-27 15:30:00'),
+(36, 7, '10mg', '30 days', 'Once daily morning', '2026-03-27 15:30:00'),
+(37, 9, '100mg', '7 days', 'Twice daily after meals', '2026-03-27 16:30:00'),
+(37, 10, '250mg', '30 days', 'Once daily with milk', '2026-03-27 16:30:00'),
+(38, 6, '50mg', '30 days', 'Once daily after breakfast', '2026-04-01 10:30:00'),
+(39, 5, '50mg', '30 days', 'Once daily morning', '2026-04-02 11:30:00'),
+(39, 7, '10mg', '30 days', 'Once daily morning', '2026-04-02 11:30:00'),
+(39, 8, '20mg', '30 days', 'Once daily at night', '2026-04-02 11:30:00'),
+(40, 5, '25mg', '30 days', 'Once daily morning', '2026-04-06 09:30:00'),
+(40, 6, '75mg', '30 days', 'Once daily evening', '2026-04-06 09:30:00'),
+(41, 4, '4 drops', '30 days', 'Once daily after breakfast', '2026-04-07 16:30:00'),
+(41, 10, '250mg', '30 days', 'Once daily with milk', '2026-04-07 16:30:00'),
+(42, 14, '10mg', '30 days', 'Once daily at night', '2026-04-07 10:30:00'),
+(42, 16, '25mg', '30 days', 'Once daily at night', '2026-04-07 10:30:00');
 
 -- --------------------------------------------------------
 
@@ -786,7 +820,19 @@ INSERT INTO `prescription_tbl` (`PRESCRIPTION_ID`, `APPOINTMENT_ID`, `ISSUE_DATE
 (28, 43, '2026-03-16', 158, 68.00, '122/78', 'NO', 'Lower back pain, stiffness, limited mobility', 'Lumbar strain with muscle spasm', 'Avoid heavy lifting. Apply heat therapy. Maintain good posture. Gentle stretching exercises recommended.', '2026-03-16 10:45:00'),
 (29, 44, '2026-03-09', 175, 85.00, '135/88', 'NO', 'Memory problems, confusion, tremors', 'Early stage Parkinson\'s disease', 'Patient enrolled in support group. Family counseling recommended. Regular neurological follow-ups scheduled.', '2026-03-09 09:55:00'),
 (30, 45, '2026-03-18', 110, 22.00, '100/65', 'NO', 'Persistent cough, wheezing, breathing difficulty', 'Bronchial asthma', 'Teach proper inhaler technique. Avoid allergens and cold air. Emergency action plan provided to parents.', '2026-03-18 11:50:00'),
-(31, 53, '2026-03-26', 102, 16.30, '120/79', 'NO', 'viral Fever\r\n', 'body aches, weekness', 'take all medicne after meals', '2026-03-26 10:37:06');
+(31, 53, '2026-03-26', 102, 16.30, '120/79', 'NO', 'viral Fever\r\n', 'body aches, weekness', 'take all medicne after meals', '2026-03-26 10:37:06'),
+(32, 4, '2026-03-28', 174, 78.00, '142/90', 'NO', 'Chest discomfort, mild shortness of breath, elevated BP readings at home', 'Stage 1 Hypertension with suspected stable angina', 'Patient advised low-sodium diet, daily 30-minute walk, avoid stress. BP monitoring weekly. Follow-up in 4 weeks.', '2026-03-28 17:30:00'),
+(33, 6, '2026-03-28', 176, 80.00, '118/76', 'NO', 'High fever (102°F), sore throat, runny nose, body aches', 'Viral fever with upper respiratory tract infection', 'Adequate rest and fluid intake. Avoid cold beverages. Return if fever persists beyond 3 days.', '2026-03-28 09:30:00'),
+(34, 7, '2026-03-28', 163, 57.00, '112/72', 'NO', 'Fever (101°F), mild cough, sore throat, fatigue', 'Viral fever with pharyngitis', 'Rest, warm fluids, steam inhalation for cough relief. Follow up if no improvement in 3 days.', '2026-03-28 12:30:00'),
+(35, 8, '2026-03-30', 178, 82.00, '120/78', 'NO', 'Persistent cough with productive sputum, mild fever (100°F), nasal congestion', 'Bacterial upper respiratory tract infection', 'Complete the full antibiotic course. Steam inhalation twice daily. Return if symptoms worsen.', '2026-03-30 11:30:00'),
+(36, 12, '2026-03-27', 170, 74.00, '148/94', 'NO', 'Palpitations, occasional chest tightness, headache, dizziness', 'Stage 1 Hypertension with palpitations, rule out arrhythmia', 'Lifestyle modification: reduce sodium, caffeine, and alcohol. Regular BP log. ECG recommended. Follow-up in 2 weeks.', '2026-03-27 15:30:00'),
+(37, 20, '2026-03-27', 108, 18.00, '95/60', 'NO', 'Right leg pain after fall, mild swelling around ankle, difficulty bearing weight', 'Mild growth plate strain (Salter-Harris Type I), no fracture on X-ray', 'Rest the limb, avoid running/jumping for 2 weeks. Apply ice pack 15 min thrice daily. Review with X-ray in 2 weeks.', '2026-03-27 16:30:00'),
+(38, 10, '2026-04-01', 108, 18.50, '92/60', 'NO', 'Soft systolic murmur noticed during routine check, no cyanosis, normal activity tolerance', 'Innocent cardiac murmur, physiological in nature', 'No cardiac restrictions. Monitor growth and activity. Echocardiogram advised for baseline. Follow-up in 6 months.', '2026-04-01 10:30:00'),
+(39, 11, '2026-04-02', 162, 72.00, '146/92', 'NO', 'Persistent headache, fatigue, occasional dizziness, elevated BP on home monitoring', 'Primary hypertension with hypercholesterolaemia', 'DASH diet recommended. Daily 30-minute brisk walk. Avoid processed food and excess salt. Follow-up in 4 weeks with lipid profile.', '2026-04-02 11:30:00'),
+(40, 15, '2026-04-06', 158, 60.00, '138/88', 'NO', 'Chest pain on exertion, fatigue, mild breathlessness, occasional palpitations', 'Stable angina, borderline hypertension', 'Avoid strenuous activity. Nitroglycerin spray prescribed for emergency chest pain. Stress test recommended. Follow-up in 2 weeks.', '2026-04-06 09:30:00'),
+(41, 23, '2026-04-07', 92, 13.50, '90/58', 'NO', 'Leg pain, bowing of legs, delayed walking milestones, bone tenderness on palpation', 'Vitamin D deficiency with nutritional rickets', 'Adequate sun exposure daily (15-20 min). Calcium-rich diet. Avoid carbonated drinks. Follow-up with serum Vitamin D levels in 6 weeks.', '2026-04-07 16:30:00'),
+(42, 28, '2026-04-07', 178, 82.00, '122/80', 'NO', 'Recurrent throbbing headaches (3-4 episodes/month), nausea, sensitivity to light and sound, disturbed sleep', 'Chronic migraine with tension-type headache component', 'Maintain headache diary. Identify and avoid triggers (bright light, stress, irregular meals). Regular sleep schedule essential. Follow-up in 6 weeks.', '2026-04-07 10:30:00'),
+(43, 49, '2026-04-01', 170, 70.50, '120/80', 'NO', 'Chest discomfort and mild pain', 'Normal condition, no major issue', 'Take medicines regularly and avoid stress', '2026-04-08 06:04:55');
 
 -- --------------------------------------------------------
 
@@ -1179,7 +1225,7 @@ ALTER TABLE `doctor_tbl`
 -- AUTO_INCREMENT for table `feedback_tbl`
 --
 ALTER TABLE `feedback_tbl`
-  MODIFY `FEEDBACK_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `FEEDBACK_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT for table `medicine_reminder_tbl`
@@ -1197,7 +1243,7 @@ ALTER TABLE `medicine_tbl`
 -- AUTO_INCREMENT for table `notification_seen_tbl`
 --
 ALTER TABLE `notification_seen_tbl`
-  MODIFY `SEEN_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=128;
+  MODIFY `SEEN_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=130;
 
 --
 -- AUTO_INCREMENT for table `password_resets`
@@ -1221,7 +1267,7 @@ ALTER TABLE `payment_tbl`
 -- AUTO_INCREMENT for table `prescription_tbl`
 --
 ALTER TABLE `prescription_tbl`
-  MODIFY `PRESCRIPTION_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
+  MODIFY `PRESCRIPTION_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=44;
 
 --
 -- AUTO_INCREMENT for table `receptionist_notifications`

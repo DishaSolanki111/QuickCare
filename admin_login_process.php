@@ -35,8 +35,8 @@ if ($user_type === 'admin') {
         $_SESSION['ADMIN_ID'] = 1; // Hardcoded admin ID
         $_SESSION['USER_NAME'] = 'Administrator'; // Hardcoded admin name
         
-        // Redirect to acknowledgement page
-        header("Location: admin_login_success.php");
+        // Redirect directly to admin dashboard
+        header("Location: admin.php");
         exit();
     }
 
